@@ -528,13 +528,13 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 		difsq = NUMsum2 (r.all());
 		farFromConvergence = ( fabs (difsq - difsq_previous) > std::max (tol * normSquared_y, NUMeps) );
 		if (infoLevel > 1)
-			MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", difsq);
+			MelderInfo_writeLine (U"\t\tIteration: ", iter, U", error: ", difsq);
 		difsq_previous = difsq;
 		iter ++;
 	}
 	iter --;
 	if (infoLevel >= 1)
-		MelderInfo_writeLine (U"Number of iterations: ", iter, U"; Minimum: ", difsq);
+		MelderInfo_writeLine (U"\t\tNumber of iterations: ", iter, U"; Minimum: ", difsq);
 	if (infoLevel > 0)
 			MelderInfo_drain();
 }
@@ -3072,7 +3072,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			const double relativeError = fabs (rms - rms_new) / rms_y;
 			convergence = relativeError < tolerance;
 			if (infoLevel > 1)
-				MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", rms_new, U" relative: ", relativeError, U" stepSize: ", stepSize);
+				MelderInfo_writeLine (U"\t\tIteration: ", iter, U", error: ", rms_new, U" relative: ", relativeError, U" stepSize: ", stepSize);
 			
 			x  <<=  x_new.all();
 			support.all()  <<=  support_new.all();
@@ -3082,7 +3082,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 		}
 		iter = std::min (iter, maximumNumberOfIterations);
 		if (infoLevel >= 1)
-			MelderInfo_writeLine (U"Number of iterations: ", iter, U" Difference squared: ", rms);
+			MelderInfo_writeLine (U"\t\tNumber of iterations: ", iter, U" Difference squared: ", rms);
 		if (infoLevel > 0)
 			MelderInfo_drain();
 	} catch (MelderError) {

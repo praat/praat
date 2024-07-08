@@ -1,13 +1,16 @@
 # test_Matrix_solve.praat
-# djmw 20031020, 20171211,20180918,20100406
+# djmw 20031020, 20171211,20180918,20100406, 20240708
 
 appendInfoLine: "test_Matrix_solve.praat"
 
 @solve_undetermined: 10, 100
 @solve3x3
+
+appendInfoLine: tab$, "Solve sparse systems"
 for i to 200
 	@solve_sparse_system
 endfor
+appendInfoLine: tab$, "Solve sparse systems: OK"
 
 @solve2by3
 @matrix_solve: 1
@@ -30,7 +33,7 @@ procedure solve_sparse_system
 		.phi## = randomGauss## (.nrow, .ncol, 0.0, 1.0 / .nrow)
 		.y# = mul# (.phi##, .x#)
 		.numberOfNonzerosToSearch = .numberOfNonZeros + 5
-		appendInfoLine: "Sparse 100x100: solve for ",  .numberOfNonZeros, " non zero elements."
+		appendInfoLine: tab$, tab$, "Sparse 100x100: solve for ",  .numberOfNonZeros, " non zero elements."
 		.xs# = solveSparse# (.phi##, .y#, .numberOfNonzerosToSearch, 200, 1e-17, 0) ; 6 arguments
 		.dif# = .x# - .xs#
 		.inner = inner (.dif#, .dif#)
@@ -43,9 +46,10 @@ procedure solve_sparse_system
 endproc
 
 procedure matrix_solve: .ncol
+	appendInfoLine: tab$, "Solve equation:"
   for .i to 4
     .nrow = .i * .ncol
-    appendInfoLine: tab$, "nrow = ", .nrow, ", ncol = ", .ncol
+    appendInfoLine: tab$, tab$, "nrow = ", .nrow, ", ncol = ", .ncol
     .eps = .nrow * 1e-7
     .m = Create simple Matrix: string$(.i), .nrow, .ncol+1, "0.0"
     Formula: "if (col <= ((row - 1) mod .ncol)+1) then 1 else 0 fi"
@@ -60,6 +64,8 @@ procedure matrix_solve: .ncol
     endfor
     removeObject: .m, .ms
   endfor
+	appendInfoLine: tab$, "Solve equation: OK"
+	
 endproc
 
 procedure solve_undetermined: .nrow, .ncol
@@ -80,9 +86,10 @@ endproc
 # test for several dimensions
 
 procedure solve2by3
+	appendInfoLine: tab$, "Solve 2x3:"
 	.nrow = 2
 	.ncol = 3
-  	appendInfoLine: tab$, "nrow = ", .nrow, ", ncol = ", .ncol
+  appendInfoLine: tab$, tab$, "nrow = ", .nrow, ", ncol = ", .ncol
 	.m = Create simple Matrix: "2x3", .nrow, .ncol, "0"
 	Set value: 1, 1, 1
 	Set value: 1, 2, 2
@@ -97,9 +104,11 @@ procedure solve2by3
 	assert .s1-.eps < 1 and .s1+.eps > 1; '.s1'
 	assert .s2-.eps < 1 and .s2+.eps > 1; '.s2'
 	removeObject: .m, .solution		
+	appendInfoLine: tab$, "Solve 2x3: OK"
 endproc
 
 procedure solve3x3
+	appendInfoLine: tab$, "Solve 3x3:"
 ; a * x = b
 	.a## = {{1,2,3}, {1,5,7},{2,3,5}}
 	.x## = {{1,12},{2,20},{3,30}}
@@ -117,7 +126,7 @@ procedure solve3x3
 		.dif = abs (object [.xx, 1, .irow] - .x## [.irow, 1])
 		assert .dif < .eps; '.dif'< '.eps'
 	endfor
-  	appendInfoLine: tab$, "A[3x3] * X[3x2] = B[3x2]"
+  appendInfoLine: tab$, tab$, "A[3x3] * X[3x2] = B[3x2]"
 	removeObject: .a, .xx
 	.a = Create simple Matrix: "1", 3, 3, "0"
 	for .irow to 3
@@ -139,5 +148,6 @@ procedure solve3x3
 		assert .dif < .eps; '.dif'< '.eps'
 	endfor
 	removeObject: .b, .xx, .a
+	appendInfoLine: tab$, "Solve 3x3: OK"
 endproc
 appendInfoLine: "test_Matrix_solve.praat OK"
