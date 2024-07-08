@@ -216,15 +216,15 @@ autoRoots Polynomial_to_Roots (constPolynomial me) {
 }
 
 /*
-	workspace.size >= n * n + 9 * n =
+	workspace.size >= n * n + 2 * n + 11 * n =
 		n * n		; for hessenberg matrix
 		+ 2 * n 	; for real and imaginary parts
-		+ 6 * n		; the maximum for dhseqr_
+		+ 11 * n	; the maximum for dhseqr_
 */
 void Polynomial_into_Roots (constPolynomial me, mutableRoots r, mutableWorkvectorPool workplace) {
 	Melder_assert (my numberOfCoefficients == my coefficients.size); // check invariant
 	r -> roots.resize (0);
-	r -> numberOfRoots = r -> roots.size; 	
+	r -> numberOfRoots = r -> roots.size;	
 	integer np1 = my numberOfCoefficients, n = np1 - 1;
 	if (n == 0)
 		return;
@@ -233,7 +233,6 @@ void Polynomial_into_Roots (constPolynomial me, mutableRoots r, mutableWorkvecto
 	*/
 	
 	MAT upperHessenberg = workplace -> getZeroMAT (1, n, n);
-	upperHessenberg  <<=  0.0;
 	MATVU uh_CM (upperHessenberg);
 	uh_CM.rowStride = 1; uh_CM.colStride = n;
 	uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);

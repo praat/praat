@@ -50,19 +50,4 @@ void LPCToSampledWorkspace_initSkeleton (mutableLPCToSampledWorkspace me, constL
 	SampledToSampledWorkspace_init (me, input, output);
 }
 
-/* deprecated */
-
-void LPCToSampledWorkspace_initInputDependency (mutableLPCToSampledWorkspace me, double samplingPeriod, integer maxnCoefficients) {
-	my samplingPeriod = samplingPeriod;
-	my maxnCoefficients = maxnCoefficients;
-	LPC_Frame_init (& my lpcFrame, my maxnCoefficients);
-}
-
-void LPCToSampledWorkspace_init2 (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output) {
-	SampledToSampledWorkspace_init (me, input, output);
-	if (input)
-		LPCToSampledWorkspace_initInputDependency (me, my samplingPeriod, my maxnCoefficients);
-	// if (output) : no extra output dependency needed
-}
-
 /* End of file LPCToSampledWorkspace.cpp */

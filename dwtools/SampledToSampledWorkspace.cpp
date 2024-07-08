@@ -70,11 +70,6 @@ void structSampledToSampledWorkspace :: inputFramesToOutputFrames (integer fromF
 	}	
 }
 
-void SampledToSampledWorkspace_initWorkvectorPool (mutableSampledToSampledWorkspace me, constINTVEC const& vectorSizes) {
-	Melder_assert (vectorSizes.size > 0);
-	my workvectorPool = WorkvectorPool_create (vectorSizes, true);
-}
-
 void SampledToSampledWorkspace_init (mutableSampledToSampledWorkspace me, constSampled input, mutableSampled output) {
 	if (input && output)
 		Sampled_assertEqualDomains (input, output);
@@ -88,16 +83,6 @@ void SampledToSampledWorkspace_init (mutableSampledToSampledWorkspace me, constS
 	}
 	my useMultiThreading = ( Melder_debug != -8 ? true : false );
 	my minimumNumberOfFramesPerThread = 40;
-}
-
-autoSampledToSampledWorkspace SampledToSampledWorkspace_create (constSound input, mutableSampled output) {
-	try {
-		autoSampledToSampledWorkspace me = Thing_new (SampledToSampledWorkspace);
-		SampledToSampledWorkspace_init (me.get(), input, output);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"SampledToSampledWorkspace not created.");
-	}
 }
 
 void SampledToSampledWorkspace_replaceInput (mutableSampledToSampledWorkspace me, constSampled thee) {

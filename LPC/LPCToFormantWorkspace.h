@@ -31,4 +31,8 @@ autoLPCToFormantWorkspace LPCToFormantWorkspace_createSkeleton (constLPC input, 
 
 autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableFormant output, double margin);
 
+inline integer numberOfFormantsFromNumberOfCoefficients (integer maxnCoefficients, double margin) {
+	return ( margin == 0.0 ? maxnCoefficients : (maxnCoefficients + 1) / 2 );
+}
+
 #endif /*_LPCToFormantWorkspace_h_ */

@@ -28,16 +28,16 @@
 
 #include "SoundToFormantWorkspace.h"
 
-void Sound_into_Formant_robust_mt (constSound me, Formant out,	double windowLength, 
-	double safetyMargin, double k, integer itermax, double tol,	double location, bool wantlocation
+void Sound_into_Formant_robust_mt (constSound me, Formant out,	double windowLength,
+	integer numberOfPoles, double safetyMargin, double k, integer itermax, double tol, double location, bool wantlocation
 );
 
 autoFormant Sound_to_Formant_robust_mt (constSound me, double dt, double numberOfFormants, double maximumFrequency,
-	double windowLength, double preemphasisFrequency, double safetyMargin, double k, integer itermax, double tol, 
+	double windowLength, double preemphasisFrequency, double safetyMargin, double k, integer itermax, double tol,
 	double location, bool wantlocation
 );
 
-void Sound_into_Formant_burg_mt (constSound me, Formant thee, double windowLength, double preemphasisFrequency, double safetyMargin);
+void Sound_into_Formant_burg_mt (constSound me, Formant thee, double windowLength, integer numberOfPoles, double safetyMargin);
 
 autoFormant Sound_to_Formant_burg_mt (constSound me, double dt, double numberOfFormants, double maximumFrequency,
 	double windowLength, double preemphasisFrequency, double safetyMargin

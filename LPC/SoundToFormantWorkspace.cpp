@@ -66,41 +66,38 @@ void SoundToFormantWorkspace_initSkeleton (SoundToFormantWorkspace me, constSoun
 	SoundToSampledWorkspace_initSkeleton (me, input, output);
 }
 
-void SoundToFormantWorkspace_init (SoundToFormantWorkspace me, double samplingPeriod, integer maxnFormants, 
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin)
+void SoundToFormantWorkspace_init (SoundToFormantWorkspace me, double samplingPeriod, double effectiveAnalysisWidth,
+	kSound_windowShape windowShape, integer numberOfPoles, double margin)
 {
 	SoundToSampledWorkspace_init (me, samplingPeriod, effectiveAnalysisWidth, windowShape);
-	const integer maxnCoefficients = 2 * maxnFormants;
-	LPCToFormantWorkspace_init (my lpcToFormant.get(), samplingPeriod, maxnCoefficients, margin);
+	LPCToFormantWorkspace_init (my lpcToFormant.get(), samplingPeriod, numberOfPoles, margin);
 }
 
 Thing_implement (SoundToFormantBurgWorkspace, SoundToFormantWorkspace, 0);
 
-void SoundToFormantBurgWorkspace_init (SoundToFormantBurgWorkspace me, double samplingPeriod, integer maxnFormants,
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin)
+void SoundToFormantBurgWorkspace_init (SoundToFormantBurgWorkspace me, double samplingPeriod, double effectiveAnalysisWidth,
+	kSound_windowShape windowShape, integer numberOfPoles, double margin)
 {
-	SoundToFormantWorkspace_init (me, samplingPeriod, maxnFormants, effectiveAnalysisWidth, windowShape, margin);
-	const integer maxnCoefficients = 2 * maxnFormants;
+	SoundToFormantWorkspace_init (me, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles, margin);
 	SoundToLPCBurgWorkspace stlb = reinterpret_cast<SoundToLPCBurgWorkspace> (my soundToLPC.get());
-	SoundToLPCBurgWorkspace_init (stlb, samplingPeriod, maxnCoefficients, effectiveAnalysisWidth, windowShape);
+	SoundToLPCBurgWorkspace_init (stlb, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles);
 }
 
 autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_createSkeleton (constSound input, mutableFormant output) {
 	autoSoundToFormantBurgWorkspace me = Thing_new (SoundToFormantBurgWorkspace);
-	SoundToSampledWorkspace_initSkeleton (me.get(), input, output);
+	SoundToFormantWorkspace_initSkeleton (me.get(), input, output);
 	my soundToLPC = SoundToLPCBurgWorkspace_createSkeleton (nullptr, nullptr);
 	my lpcToFormant = LPCToFormantWorkspace_createSkeleton (nullptr, output);
 	return me;
 }
 
 autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_create (constSound input, mutableFormant output,
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin)
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, integer numberOfPoles, double margin)
 {
 	try {
-		Melder_assert (input && output);
 		Sampled_assertEqualDomains (input, output);
 		autoSoundToFormantBurgWorkspace me = SoundToFormantBurgWorkspace_createSkeleton (input, output);
-		SoundToFormantBurgWorkspace_init (me.get(), input -> dx, output -> maxnFormants, effectiveAnalysisWidth, windowShape, margin);
+		SoundToFormantBurgWorkspace_init (me.get(), input -> dx, effectiveAnalysisWidth, windowShape, numberOfPoles, margin);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SoundToFormantBurgWorkspace not created.");
@@ -109,16 +106,15 @@ autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_create (constSound i
 
 Thing_implement (SoundToFormantRobustWorkspace, SoundToFormantWorkspace, 0);
 
-void SoundToFormantRobustWorkspace_init (SoundToFormantRobustWorkspace me, double samplingPeriod, integer maxnFormants,
+void SoundToFormantRobustWorkspace_init (SoundToFormantRobustWorkspace me, double samplingPeriod,
 	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax,
-	double tol, double location, bool wantlocation, double margin)
+	double tol, double location, bool wantlocation, integer numberOfPoles, double margin)
 {
 	SoundToLPCRobustWorkspace stlr = reinterpret_cast<SoundToLPCRobustWorkspace> (my soundToLPC.get());
-	const integer maxnCoefficients = 2 * maxnFormants;
-	SoundToLPCRobustWorkspace_init (stlr, samplingPeriod, maxnCoefficients, effectiveAnalysisWidth, windowShape,
+	SoundToLPCRobustWorkspace_init (stlr, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles,
 		k_stdev, itermax, tol, location, wantlocation);
-	LPCToFormantWorkspace_init (my lpcToFormant.get(), samplingPeriod, maxnCoefficients, margin);
-	SoundToFormantWorkspace_init (me, samplingPeriod, maxnFormants, effectiveAnalysisWidth, windowShape, margin);
+	LPCToFormantWorkspace_init (my lpcToFormant.get(), samplingPeriod, numberOfPoles, margin);
+	SoundToFormantWorkspace_init (me, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles, margin);
 }
 
 autoSoundToFormantRobustWorkspace SoundToFormantRobustWorkspace_createSkeleton (constSound input, mutableFormant output)
@@ -132,14 +128,13 @@ autoSoundToFormantRobustWorkspace SoundToFormantRobustWorkspace_createSkeleton (
 
 autoSoundToFormantRobustWorkspace SoundToFormantRobustWorkspace_create (constSound input, mutableFormant output,
 	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax,
-	double tol, double location, bool wantlocation, double margin)
+	double tol, double location, bool wantlocation, integer numberOfPoles, double margin)
 {
 	try {
-		Melder_assert (input && output);
 		Sampled_assertEqualDomains (input, output);
 		autoSoundToFormantRobustWorkspace me = SoundToFormantRobustWorkspace_createSkeleton (input, output);
-		SoundToFormantRobustWorkspace_init (me.get(), input -> dx, output -> maxnFormants, effectiveAnalysisWidth,
-			windowShape, k_stdev, itermax, tol, location, wantlocation, margin);
+		SoundToFormantRobustWorkspace_init (me.get(), input -> dx, effectiveAnalysisWidth,
+			windowShape, k_stdev, itermax, tol, location, wantlocation, numberOfPoles, margin);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SoundToFormantRobustWorkspace not created.");

@@ -28,7 +28,7 @@
 void SoundToLPCWorkspace_initSkeleton (mutableSoundToLPCWorkspace me, constSound input, mutableLPC output);
 
 void SoundToLPCWorkspace_init (mutableSoundToLPCWorkspace me,
-	double samplingPeriod, integer maxnCoefficients, double effectiveAnalysisWidth, kSound_windowShape windowShape
+	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape, integer maxnCoefficients
 );
 
 /********************* autocorrelation method ***********************/
@@ -38,12 +38,12 @@ Thing_define (SoundToLPCAutocorrelationWorkspace, SoundToLPCWorkspace) {
 };
 
 void SoundToLPCAutocorrelationWorkspace_init (SoundToLPCAutocorrelationWorkspace me,
-	double samplingPeriod, integer maxnCoefficients, double effectiveAnalysisWidth, kSound_windowShape windowShape
+	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape, integer maxnCoefficients
 );
 
 autoSoundToLPCAutocorrelationWorkspace SoundToLPCAutocorrelationWorkspace_createSkeleton (constSound input, mutableLPC output);
 
-autoSoundToLPCAutocorrelationWorkspace SoundToLPCAutocorrelationWorkspace_create (constSound input, mutableLPC output, 
+autoSoundToLPCAutocorrelationWorkspace SoundToLPCAutocorrelationWorkspace_create (constSound input, mutableLPC output,
 	double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
@@ -54,7 +54,7 @@ Thing_define (SoundToLPCCovarianceWorkspace, SoundToLPCWorkspace) {
 };
 
 void SoundToLPCCovarianceWorkspace_init (SoundToLPCCovarianceWorkspace me,
-	double samplingPeriod, integer maxnCoefficients, double effectiveAnalysisWidth, kSound_windowShape windowShape
+	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape, integer maxnCoefficients
 );
 
 autoSoundToLPCCovarianceWorkspace SoundToLPCCovarianceWorkspace_createSkeleton (constSound input, mutableLPC output);
@@ -70,7 +70,7 @@ Thing_define (SoundToLPCBurgWorkspace, SoundToLPCWorkspace) {
 };
 
 void SoundToLPCBurgWorkspace_init (SoundToLPCBurgWorkspace me,
-	double samplingPeriod, integer maxnCoefficients, double effectiveAnalysisWidth, kSound_windowShape windowShape
+	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape, integer maxnCoefficients
 );
 
 autoSoundToLPCBurgWorkspace SoundToLPCBurgWorkspace_createSkeleton (constSound input, mutableLPC output);
@@ -87,7 +87,7 @@ Thing_define (SoundToLPCMarpleWorkspace, SoundToLPCWorkspace) {
 };
 
 void SoundToLPCMarpleWorkspace_init (SoundToLPCMarpleWorkspace me,
-	double samplingPeriod, integer maxnCoefficients, double effectiveAnalysisWidth, kSound_windowShape windowShape,
+	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape, integer maxnCoefficients,
 	double tol1, double tol2
 );
 
@@ -101,8 +101,8 @@ autoSoundToLPCMarpleWorkspace SoundToLPCMarpleWorkspace_create (constSound input
 /**************** SoundAndLPCToLPCRobustWorkspace *************************************/
 
 void SoundAndLPCToLPCRobustWorkspace_init (SoundAndLPCToLPCRobustWorkspace me,
-	double samplingPeriod, integer maxnCoefficients, double effectiveAnalysisWidth,
-	kSound_windowShape windowShape, double k_stdev, integer itermax, double tol, double location, bool wantlocation
+	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape,
+	integer maxnCoefficients, double k_stdev, integer itermax, double tol, double location, bool wantlocation
 );
 
 autoSoundAndLPCToLPCRobustWorkspace SoundAndLPCToLPCRobustWorkspace_createSkeleton (
@@ -110,15 +110,15 @@ autoSoundAndLPCToLPCRobustWorkspace SoundAndLPCToLPCRobustWorkspace_createSkelet
 );
 
 autoSoundAndLPCToLPCRobustWorkspace SoundAndLPCToLPCRobustWorkspace_create (constSound input, constLPC otherInput, mutableLPC output, 
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, 
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev,
 	integer itermax, double tol, double location, bool wantlocation
 );
 
 /**************** SoundToLPCRobustWorkspace *************************************/
 
 void SoundToLPCRobustWorkspace_init (SoundToLPCRobustWorkspace me,
-	double samplingPeriod, integer maxnCoefficients, double effectiveAnalysisWidth,
-	kSound_windowShape windowShape,	double k_stdev,	integer itermax, double tol, double location, bool wantlocation
+	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape,
+	integer maxnCoefficients,	double k_stdev,	integer itermax, double tol, double location, bool wantlocation
 );
 
 autoSoundToLPCRobustWorkspace SoundToLPCRobustWorkspace_createSkeleton (constSound input, mutableLPC output);

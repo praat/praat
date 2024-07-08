@@ -20,10 +20,11 @@
 oo_DEFINE_CLASS (LPCToFormantWorkspace, LPCToSampledWorkspace)
 
 	oo_DOUBLE (margin)
-	oo_INTEGER (maxnFormants) // if output object is missing
+	oo_INTEGER (maxnFormants) // for initialisation of the Formant_Frame if output object is missing
 	oo_STRUCT (Formant_Frame, formantFrame)
-	oo_OBJECT (Polynomial, 0, p)
-	oo_OBJECT (Roots, 0, roots)
+	
+	oo_OBJECT (Polynomial, 0, p)	// for the coefficients
+	oo_OBJECT (Roots, 0, roots)		// the roots of the polynomial
 
 	#if oo_DECLARING
 	
@@ -38,7 +39,7 @@ oo_DEFINE_CLASS (LPCToFormantWorkspace, LPCToSampledWorkspace)
 		
 	#if oo_COPYING
 	
-		thy formantFrameRef = formantFrameRef;
+		thy formantFrameRef = & thy formantFrame;
 
 	#endif
 

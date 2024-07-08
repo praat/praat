@@ -45,7 +45,7 @@ oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 	
 	oo_INTEGER (currentFrame)				// the frame we are working on
 	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in a frame analysis
-	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo 
+	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo
 	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occured
 	
 	/*

@@ -26,11 +26,4 @@ void LPCToSampledWorkspace_init (mutableLPCToSampledWorkspace me, double samplin
 
 void LPCToSampledWorkspace_initSkeleton (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output);
 
-
-/* deprecated */
-
-void LPCToSampledWorkspace_init2 (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output);
-
-void LPCToSampledWorkspace_initInputDependency (mutableLPCToSampledWorkspace me, double samplingPeriod, integer maxnCoefficients);
-
 #endif /* _LPCToSampledWorkspace_h_ */

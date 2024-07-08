@@ -28,10 +28,10 @@ static integer getNumberOfFormants (double numberOfFormants) {
 	return (Melder_iround (2.0 * numberOfFormants) + 1) / 2;
 }
 
-void Sound_into_Formant_burg_mt (constSound me, Formant thee, double effectiveAnalysisWidth, double safetyMargin) {
+void Sound_into_Formant_burg_mt (constSound me, Formant thee, double effectiveAnalysisWidth, integer numberOfPoles, double safetyMargin) {
 	try {
 		autoSoundToFormantBurgWorkspace ws = SoundToFormantBurgWorkspace_create (me, thee, effectiveAnalysisWidth,
-			kSound_windowShape :: GAUSSIAN_2, safetyMargin);
+			kSound_windowShape :: GAUSSIAN_2, numberOfPoles, safetyMargin);
 		SampledToSampledWorkspace_analyseThreaded (ws.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": Formant could not be calculated.");
@@ -48,21 +48,21 @@ autoFormant Sound_to_Formant_burg_mt (constSound me, double dt_in, double number
 		double t1;
 		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 		Sampled_shortTermAnalysis (me, physicalAnalysisWidth, dt, & numberOfFrames, & t1);
-		const integer maximumNumberOfFormants = getNumberOfFormants (numberOfFormants);
-		autoFormant formant = Formant_create (my xmin, my xmax, numberOfFrames, dt, t1, maximumNumberOfFormants);
-		Sound_into_Formant_burg_mt (me, formant.get(), effectiveAnalysisWidth, safetyMargin);
+		const integer numberOfPoles = numberOfPolesFromNumberOfFormants (numberOfFormants);
+		const integer numberOfFormants = numberOfFormantsFromNumberOfCoefficients (numberOfPoles, safetyMargin);
+		autoFormant formant = Formant_create (my xmin, my xmax, numberOfFrames, dt, t1, numberOfFormants);
+		Sound_into_Formant_burg_mt (me, formant.get(), effectiveAnalysisWidth, numberOfPoles, safetyMargin);
 		return formant;
 	} catch (MelderError) {
 		Melder_throw (me, U"Could not create Formant.");
 	}
-	
 }
 
-void Sound_into_Formant_robust_mt (constSound me, mutableFormant thee, double effectiveAnalysisWidth, double safetyMargin, 
+void Sound_into_Formant_robust_mt (constSound me, mutableFormant thee, double effectiveAnalysisWidth, integer numberOfPoles, double safetyMargin,
 	double k_stdev, integer itermax, double tol, double location, bool wantlocation)
 {
 	autoSoundToFormantRobustWorkspace ws = SoundToFormantRobustWorkspace_create (me, thee,
-		effectiveAnalysisWidth, kSound_windowShape :: GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation, safetyMargin);
+		effectiveAnalysisWidth, kSound_windowShape :: GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation, numberOfPoles, safetyMargin);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
 
@@ -76,10 +76,11 @@ autoFormant Sound_to_Formant_robust_mt (constSound me, double dt_in, double numb
 		integer numberOfFrames;
 		double t1;
 		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-		Sampled_shortTermAnalysis (me, physicalAnalysisWidth, dt, & numberOfFrames, & t1);
-		const integer maximumNumberOfFormants = getNumberOfFormants (numberOfFormants);	
-		autoFormant formant = Formant_create (my xmin, my xmax, numberOfFrames, dt, t1, maximumNumberOfFormants);
-		Sound_into_Formant_robust_mt (me, formant.get(), effectiveAnalysisWidth, safetyMargin, k_stdev,
+		Sampled_shortTermAnalysis (sound.get(), physicalAnalysisWidth, dt, & numberOfFrames, & t1);
+		const integer numberOfPoles = numberOfPolesFromNumberOfFormants (numberOfFormants);
+		const integer numberOfFormants = numberOfFormantsFromNumberOfCoefficients (numberOfPoles, safetyMargin);
+		autoFormant formant = Formant_create (my xmin, my xmax, numberOfFrames, dt, t1, numberOfFormants);
+		Sound_into_Formant_robust_mt (sound.get(), formant.get(), effectiveAnalysisWidth, numberOfPoles, safetyMargin, k_stdev,
 			itermax, tol, location, wantlocation);
 		return formant;
 	} catch (MelderError) {

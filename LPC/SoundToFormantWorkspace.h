@@ -28,26 +28,33 @@
 
 /*
 	Workspace to calculate formant frequencies from intermediate LPC coefficients.
-	To specify the SoundToFormantWorkspace completely we need both the input object and the output object.
+	To specify the SoundToFormantWorkspace completely we need both the input object and the output object and the numberOfPoles.
 		input  : supplies the samplingPeriod
-		output : supplies the maxnFormants from which the maxnCoefficients (= 2 * maxnFormants) for the LPC are calulated.
+		output : supplies the maxnFormants
+		numberOfPoles  : specifies the maxnCoefficients (= numberOfPoles) (we can input e.g numberOfFormants = 5.5)
 */
 
 void SoundToFormantWorkspace_initSkeleton (SoundToFormantWorkspace me, constSound input, mutableFormant output);
 
-void SoundToFormantWorkspace_init (SoundToFormantWorkspace me, double samplingTime, double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin);
+void SoundToFormantWorkspace_init (SoundToFormantWorkspace me,
+	double samplingTime, double effectiveAnalysisWidth, kSound_windowShape windowShape, integer numberOfPoles, double margin
+);
+
+inline integer numberOfPolesFromNumberOfFormants (double numberOfFormants) {
+	return Melder_ifloor (2.0 * numberOfFormants);
+}
 
 /* *********************** burg ********************************************** */
 
 Thing_define (SoundToFormantBurgWorkspace, SoundToFormantWorkspace) {
 };
 
-void SoundToFormantBurgWorkspace_init (SoundToFormantBurgWorkspace me, double samplingPeriod, integer maxnFormants, double margin);
+void SoundToFormantBurgWorkspace_init (SoundToFormantBurgWorkspace me, double samplingPeriod, integer numberOfPoles, double margin);
 
 autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_createSkeleton (constSound input, mutableFormant output);
 
 autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_create (constSound input, mutableFormant output,
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, integer numberOfPoles, double margin
 );
 
 /* *********************** robust ********************************************** */
@@ -55,17 +62,16 @@ autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_create (constSound i
 Thing_define (SoundToFormantRobustWorkspace, SoundToFormantWorkspace) {
 };
 
-void SoundToFormantRobustWorkspace_init (SoundToFormantRobustWorkspace me, double samplingPeriod, integer maxnFormants,
+void SoundToFormantRobustWorkspace_init (SoundToFormantRobustWorkspace me, double samplingPeriod,
 	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax,
-	double tol, double location, bool wantlocation, double margin
+	double tol, double location, bool wantlocation, integer numberOfPoles, double margin
 );
-
 
 autoSoundToFormantRobustWorkspace SoundToFormantRobustWorkspace_createSkeleton (constSound input, mutableFormant output);
 
 autoSoundToFormantRobustWorkspace SoundToFormantRobustWorkspace_create (constSound input, mutableFormant output,
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax, double tol, 
-	double location, bool wantlocation, double margin
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax, double tol,
+	double location, bool wantlocation, integer numberOfPoles, double margin
 );
 
 #endif /*_SoundToFormantWorkspace_h_ */

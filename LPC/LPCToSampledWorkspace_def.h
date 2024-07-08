@@ -19,9 +19,9 @@
 #define ooSTRUCT LPCToSampledWorkspace
 oo_DEFINE_CLASS (LPCToSampledWorkspace, SampledToSampledWorkspace)
 
-	oo_STRUCT (LPC_Frame, lpcFrame)
 	oo_DOUBLE (samplingPeriod)
 	oo_INTEGER (maxnCoefficients)
+	oo_STRUCT (LPC_Frame, lpcFrame)
 	
 	#if oo_DECLARING
 

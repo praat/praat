@@ -19,8 +19,8 @@
 #define ooSTRUCT SoundToLPCWorkspace
 oo_DEFINE_CLASS (SoundToLPCWorkspace, SoundToSampledWorkspace)
 
-	oo_INTEGER (maxnCoefficients) 			// if output object not present!
 	oo_DOUBLE (samplingPeriod)				// if input && output object not present
+	oo_INTEGER (maxnCoefficients) 			// if output object not present!
 	oo_STRUCT (LPC_Frame, outputLPCFrame)
 
 	#if oo_DECLARING
@@ -43,15 +43,14 @@ oo_END_CLASS (SoundToLPCWorkspace)
 #undef ooSTRUCT
 
 #define ooSTRUCT SoundAndLPCToLPCRobustWorkspace
-oo_DEFINE_CLASS (SoundAndLPCToLPCRobustWorkspace, SoundToLPCWorkspace)
 
+	oo_DEFINE_CLASS (SoundAndLPCToLPCRobustWorkspace, SoundToLPCWorkspace)
 	oo_BOOLEAN (otherInputObjectPresent)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, otherInput)
 	oo_STRUCT (LPC_Frame, otherInputLPCFrame)
+	oo_INTEGER (currentPredictionOrder)
 	
-	oo_INTEGER (computeSVDworksize)
 	oo_DOUBLE (k_stdev)
-	oo_INTEGER (currentPredictionOrder) // may change from frame to frame
 	oo_INTEGER (iter)
 	oo_INTEGER (itermax)
 	oo_INTEGER (huber_iterations) // = 5;
@@ -64,6 +63,7 @@ oo_DEFINE_CLASS (SoundAndLPCToLPCRobustWorkspace, SoundToLPCWorkspace)
 	oo_VEC (coefficients, otherInput -> maxnCoefficients)
 	oo_VEC (covariancesw, otherInput -> maxnCoefficients)
 	oo_MAT (covarmatrixw, otherInput -> maxnCoefficients, otherInput -> maxnCoefficients)
+	oo_INTEGER (computeSVDworksize)
 	oo_OBJECT (SVD, 1, svd)
 
 	#if oo_DECLARING

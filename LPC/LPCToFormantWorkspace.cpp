@@ -57,7 +57,8 @@ static void LPC_Frame_into_Polynomial (constLPC_Frame me, mutablePolynomial p) {
 }
 
 void structLPCToFormantWorkspace :: allocateOutputFrames () {
-	if (! outputObjectPresent) return;
+	if (! outputObjectPresent)
+		return;
 	Formant thee = reinterpret_cast<Formant> (output);
 	for (integer iframe = 1; iframe <= thy nx; iframe ++) {
 		const Formant_Frame formantFrame = & thy frames [iframe];
@@ -66,7 +67,8 @@ void structLPCToFormantWorkspace :: allocateOutputFrames () {
 }
 
 void structLPCToFormantWorkspace :: getInputFrame () {
-	if (! inputObjectPresent) return;
+	if (! inputObjectPresent)
+		return;
 	constLPC me = reinterpret_cast<constLPC> (input);
 	my d_frames [currentFrame].copy (& lpcFrame);
 }
@@ -98,7 +100,7 @@ void structLPCToFormantWorkspace :: saveOutputFrame () {
 void LPCToFormantWorkspace_init (LPCToFormantWorkspace me, double samplingPeriod, integer maxnCoefficients, double margin) {
 	LPCToSampledWorkspace_init (me, samplingPeriod, maxnCoefficients);
 	my margin = margin;
-	const integer maxnFormants = ( margin == 0.0 ? my maxnCoefficients : (my maxnCoefficients + 1) / 2 );
+	const integer maxnFormants = numberOfFormantsFromNumberOfCoefficients (maxnCoefficients, margin);
 	if (my output) {
 		Formant f = reinterpret_cast<Formant> (my output);
 		Melder_assert (f -> maxnFormants == maxnFormants);
@@ -106,7 +108,7 @@ void LPCToFormantWorkspace_init (LPCToFormantWorkspace me, double samplingPeriod
 	my maxnFormants = maxnFormants;
 	Formant_Frame_init (& my formantFrame, maxnFormants);
 	/*
-		upperHessenberg (n*n), real part (n), imaginary part (n), dhseqr workspace (11*n)
+		upperHessenberg (n*n), real part (n), imaginary part (n), dhseqr workspace (<= 11*n)
 	*/
 	autoINTVEC sizes {maxnCoefficients * maxnCoefficients, maxnCoefficients, maxnCoefficients, 11 * maxnCoefficients};
 	my workvectorPool = WorkvectorPool_create (sizes.get(), true);		
@@ -122,7 +124,6 @@ autoLPCToFormantWorkspace LPCToFormantWorkspace_createSkeleton (constLPC input, 
 
 autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableFormant output, double margin) {
 	try {
-		Melder_assert (input && output);
 		Sampled_assertEqualDomainsAndSampling (input, output);
 		autoLPCToFormantWorkspace me = LPCToFormantWorkspace_createSkeleton (input, output);
 		LPCToFormantWorkspace_init (me.get(), input -> samplingPeriod, input -> maxnCoefficients, margin);
