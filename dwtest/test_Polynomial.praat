@@ -4,8 +4,8 @@
 appendInfoLine: "test_Polynomial.praat"
 for i to 10
 	@test_roots
-	@test_products
 endfor
+@test_products
 appendInfoLine: "test_Polynomial.praat OK"
 
 procedure test_roots
@@ -15,7 +15,7 @@ procedure test_roots
 	# Once in a while the precision is not as good as wanted and a notification will be given.
 	.eps1 = 2e-6
 	.eps2 = 1e-6
-	appendInfoLine: tab$, "roots"
+	appendInfoLine: tab$, "Test roots of polynomial with random coefficients:"
 	for .i to 20
 		.xmin = -2
 		.xmax = randomUniform (1, 2)
@@ -48,16 +48,18 @@ procedure test_roots
 			.rootj = .root [.j]
 			.dif = abs (.rootj - .root)
 			if .dif > .eps2 * abs (.rootj)
-				appendInfoLine: "Possible precision problem for ", .numberOfRoots, " roots: ", .roots$
-				appendInfoLine: .dif, "(= abs(root-rootFound):", .rootj, "-", .root, ") for ", .j, "th  root)"
+				appendInfoLine: tab$, tab$, "Possible precision problem for ", .numberOfRoots, " roots: ", .roots$
+				appendInfoLine: tab$, tab$, .dif, "(= abs(root-rootFound):", .rootj, "-", .root, ") for ", .j, "th  root)"
 			endif
 			;assert .dif < .eps2 * abs (.root [.j]); '.root' '.rootj' '.j'
 		endfor
 		removeObject: .p, .rootsTable
 	endfor
+	appendInfoLine: tab$, "Test roots of polynomial with random coefficients: OK"
 endproc
 
 procedure test_products
+	appendInfo: tab$, "Test product terms:"
 	.eps = 1e-15
 	.p = Create Polynomial from product terms: "p", -3, 3, "1 2 -1 -2"
 	.coefs$ = "1 0 -1 0 0 0 -1 0 1"
@@ -71,5 +73,6 @@ procedure test_products
 		assert abs (number (.coef$) - .coef) < .eps; '.coef' '.coef$'
 	endfor
 	removeObject: .p, .strings
+	appendInfoLine: " OK"
 endproc
 
