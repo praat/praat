@@ -43,11 +43,26 @@ oo_END_CLASS (SoundToLPCWorkspace)
 #undef ooSTRUCT
 
 #define ooSTRUCT SoundAndLPCToLPCRobustWorkspace
+oo_DEFINE_CLASS (SoundAndLPCToLPCRobustWorkspace, SoundToLPCWorkspace)
 
-	oo_DEFINE_CLASS (SoundAndLPCToLPCRobustWorkspace, SoundToLPCWorkspace)
-	oo_BOOLEAN (otherInputObjectPresent)
-	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, otherInput)
 	oo_STRUCT (LPC_Frame, otherInputLPCFrame)
+	
+	#if oo_DECLARING
+
+		constLPC otherInput;
+		LPC_Frame otherInputLPCFrameRef = & otherInputLPCFrame;
+
+	#endif
+
+	#if oo_COPYING
+
+		thy otherInput = otherInput;
+		thy otherInputLPCFrameRef = & thy otherInputLPCFrame;
+
+	#endif
+		
+
+	oo_BOOLEAN (otherInputObjectPresent)
 	oo_INTEGER (currentPredictionOrder)
 	
 	oo_DOUBLE (k_stdev)
@@ -68,20 +83,12 @@ oo_END_CLASS (SoundToLPCWorkspace)
 
 	#if oo_DECLARING
 
-		LPC_Frame otherInputLPCFrameRef = & otherInputLPCFrame;
-		
 		void getInputFrame (void) override;
 		bool inputFrameToOutputFrame (void) override;
 		void saveOutputFrame (void) override;
 
 	#endif
 
-	#if oo_COPYING
-
-		thy otherInputLPCFrameRef = & thy otherInputLPCFrame;
-
-	#endif
-		
 oo_END_CLASS (SoundAndLPCToLPCRobustWorkspace)
 #undef ooSTRUCT
 
