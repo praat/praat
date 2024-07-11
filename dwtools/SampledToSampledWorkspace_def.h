@@ -22,22 +22,27 @@
 #define ooSTRUCT SampledToSampledWorkspace
 oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 
-	/*
-		Only a reference to the Sampled that is analysed is needed in a thread because
-		each thread only accesses disjoint parts of it.
-	*/
+	#if oo_DECLARING
+
+		/*
+			Only a reference to the Sampled input and output objects are needed because
+			each thread only accesses disjoint parts of it. And only the reference needs to be copied.
+			The domains of input and output should be equal, the sampling can be different.
+		*/
+		constSampled input;
+		Sampled output;
+
+	#endif
+
+	#if oo_COPYING
+
+		thy input = input;
+		thy output = output;
+
+	#endif
+		
 	oo_BOOLEAN (inputObjectPresent)
-	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sampled, input)
-	
-	/*
-		Each thread should only access disjoint parts in the result object.
-		Precondition:
-			input -> xmin == output -> xmin; // equal domains
-			input -> xmax == output -> xmax;
-		The input and output objects can have different sampling (y1, nx, dx).
-	*/
 	oo_BOOLEAN (outputObjectPresent)
-	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
 	
 	oo_BOOLEAN (useMultiThreading)
 	oo_INTEGER (minimumNumberOfFramesPerThread) // default 40

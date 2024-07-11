@@ -28,7 +28,7 @@
 
 /*
 	Conversion from Y(w) to a polynomial in x (= 2 cos (w))
-	From: Joseph Rothweiler (1999), "On Polynomial Reduction in the Computation of LSP Frequencies." 
+	From: Joseph Rothweiler (1999), "On Polynomial Reduction in the Computation of LSP Frequencies."
 	IEEE Trans. on ASSP 7, 592--594.
 */
 static void cos2x (VECVU const& g) {
