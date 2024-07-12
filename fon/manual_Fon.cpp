@@ -1117,14 +1117,14 @@ ENTRY (U"Stylization")
 		"commands from the #Pitch menu.")
 MAN_END
 
-MAN_BEGIN (U"Matrix", U"ppgb", 20030216)
+MAN_BEGIN (U"Matrix", U"ppgb", 20240712)
 INTRO (U"One of the @@types of objects@ in Praat. "
 	"A Matrix object represents a function %z (%x, %y) "
 	"on the domain [%x__%min_, %x__%max_] × [%y__%min_, %y__%max_]. "
 	"The domain has been sampled in the %x and %y directions "
 	"with constant sampling intervals (%dx and %dy) along each direction. "
 	"The samples are thus %z [%i_%y] [%i_%x], %i_%x = 1 ... %n_%x, %i_%y = 1 ... %n_%y. "
-	"The samples represent the function values %z (%x__1_ + (%ix - 1) %dx, %y__1_ + (%iy - 1) %dy).")
+	"The samples represent the function values %z (%x__1_ + (%i_%x - 1) %dx, %y__1_ + (%i_%y - 1) %dy).")
 ENTRY (U"Matrix commands")
 NORMAL (U"Creation:")
 LIST_ITEM (U"• @@Create Matrix...")
