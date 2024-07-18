@@ -18,6 +18,7 @@ OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	LPC_to_Spectrum.o LPC_to_Spectrogram.o \
 	LPC_and_Tube.o PowerCepstrum.o PowerCepstrogram.o \
 	Sound_and_LPC.o Sound_and_LPC_robust.o \
+	Sound_to_Formant_mt.o Roots_and_Formant.o SoundToFormantWorkspace.o \
 	Sound_and_Cepstrum.o Tube.o \
 	VocalTractTier.o \
 	praat_LPC_init.o manual_LPC.o
