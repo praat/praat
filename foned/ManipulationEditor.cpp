@@ -594,7 +594,7 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		FunctionEditor_init (me.get(), title, manipulation);
 
 		my synthesisMethod = prefs_synthesisMethod; // BUG: should be in v1_dataChanged()
-		my v_updateMenuItems ();
+		my v_updateMenuItems ();  // BUG: should not be necessary
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Manipulation window not created.");

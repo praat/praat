@@ -832,7 +832,7 @@ void praat_dataChanged (Daata object) {
 		/*
 			If we are during error time, then this error should be caught
 			either by `throw` (see praatM.h, two occurrences) or by Melder_flushError (also see praatM.h, one occurrence).
-			LAST CHECKED 2021-12-02
+			(last checked 2021-12-02)
 		*/
 	}
 }

@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2023 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2024 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -505,7 +505,7 @@ void _GuiText_exit () {
 		/*
 			The same can be done for insertTab.
 			But tabs are captured at a lower level, in our `sendEvent` (see GuiMenu.cpp).
-			LAST CHECKED 2021-12-04
+			(last checked 2021-12-04)
 		*/
 		return NO;
 	}

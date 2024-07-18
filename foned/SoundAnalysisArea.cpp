@@ -1003,8 +1003,10 @@ static void menu_cb_pitchSettings_BEFORE_6400 (SoundAnalysisArea me, EDITOR_ARGS
 	EDITOR_END
 }
 
-static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
+static void menu_cb_pitchSettings_BEFORE_6414 (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings", U"Intro 4.2. Configuring the pitch contour")
+		//LABEL   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
+		//LABEL   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
 		POSITIVE (pitchFloor,   U"left Pitch range (Hz)",  my default_pitch_floor())
 		POSITIVE (pitchCeiling, U"right Pitch range (Hz)", my default_pitch_ceiling())
 		OPTIONMENU_ENUM (kPitch_unit, unit,
@@ -1195,6 +1197,30 @@ static void menu_cb_advancedPitchSettings_filteredAcCc (SoundAnalysisArea me, ED
 		my d_pulses.    reset();
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
+}
+
+static void menu_cb_howToChooseAPitchAnalysisMethod (SoundAnalysisArea /* me */, EDITOR_ARGS) {
+	Melder_help (U"How to choose a pitch analysis method");
+}
+
+static void shared_menu_cb_pitchMethodIsXXX (SoundAnalysisArea me, kSoundAnalysisArea_pitch_analysisMethod method) {
+	my setInstancePref_pitch_method (method);
+	my d_pitch.     reset();
+	my d_intensity. reset();
+	my d_pulses.    reset();
+	FunctionEditor_redraw (my functionEditor());   // this will call v_updateMenuItems (last checked 2024-07-18 for Mac, Win, Linux)
+}
+static void menu_cb_pitchMethodIsFilteredAutocorrelation (SoundAnalysisArea me, EDITOR_ARGS) {
+	shared_menu_cb_pitchMethodIsXXX (me, kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_AUTOCORRELATION);
+}
+static void menu_cb_pitchMethodIsRawCrossCorrelation (SoundAnalysisArea me, EDITOR_ARGS) {
+	shared_menu_cb_pitchMethodIsXXX (me, kSoundAnalysisArea_pitch_analysisMethod :: RAW_CROSS_CORRELATION);
+}
+static void menu_cb_pitchMethodIsRawAutocorrelation (SoundAnalysisArea me, EDITOR_ARGS) {
+	shared_menu_cb_pitchMethodIsXXX (me, kSoundAnalysisArea_pitch_analysisMethod :: RAW_AUTOCORRELATION);
+}
+static void menu_cb_pitchMethodIsFilteredCrossCorrelation (SoundAnalysisArea me, EDITOR_ARGS) {
+	shared_menu_cb_pitchMethodIsXXX (me, kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_CROSS_CORRELATION);
 }
 
 static void INFO_DATA__pitchListing (SoundAnalysisArea me, EDITOR_ARGS) {
@@ -1907,11 +1933,22 @@ void structSoundAnalysisArea :: v_createMenus () {
 	if (our v_hasPitch ()) {
 		EditorMenu menu = Editor_addMenu (our functionEditor(), U"Pitch", 0);
 		our pitchToggle = FunctionAreaMenu_addCommand (menu, U"Show pitch",
-			GuiMenu_CHECKBUTTON | (instancePref_pitch_show() ? GuiMenu_TOGGLE_ON : 0),
+			GuiMenu_CHECKBUTTON | ( our instancePref_pitch_show() ? GuiMenu_TOGGLE_ON : 0 ),
 			menu_cb_showPitch, this
 		);
+		FunctionAreaMenu_addCommand (menu, U"- Pitch methods and settings:", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (menu, U"How to choose a pitch analysis method", GuiMenu_DEPTH_1,
+				menu_cb_howToChooseAPitchAnalysisMethod, this);
+		our pitchFilteredAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch method is filtered autocorrelation",
+				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsFilteredAutocorrelation, this);
+		our pitchRawCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch method is raw cross-correlation",
+				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsRawCrossCorrelation, this);
+		our pitchRawAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch method is raw autocorrelation",
+				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsRawAutocorrelation, this);
+		our pitchFilteredCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch method is filtered cross-correlation",
+			GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsFilteredCrossCorrelation, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings...", 0,
-				menu_cb_pitchSettings, this);
+				menu_cb_pitchSettings_BEFORE_6414, this);
 		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings...", GuiMenu_HIDDEN,
 				menu_cb_advancedPitchSettings, this);
 		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (filtered AC and CC)...", 0,
@@ -2002,6 +2039,17 @@ void structSoundAnalysisArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (menu, U"Extract visible pulses", 1,
 				CONVERT_DATA_TO_ONE__ExtractVisiblePulses, this);
 	}
+}
+
+void structSoundAnalysisArea :: v_updateMenuItems () {
+	GuiMenuItem_check (pitchFilteredAutocorrelationToggle,
+			our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_AUTOCORRELATION);
+	GuiMenuItem_check (pitchRawCrossCorrelationToggle,
+			our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: RAW_CROSS_CORRELATION);
+	GuiMenuItem_check (pitchRawAutocorrelationToggle,
+			our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: RAW_AUTOCORRELATION);
+	GuiMenuItem_check (pitchFilteredCrossCorrelationToggle,
+			our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_CROSS_CORRELATION);
 }
 
 #pragma mark - SoundAnalysisArea Drawing
