@@ -2,7 +2,7 @@
 #define _SoundAnalysisArea_h_
 /* SoundAnalysisArea.h
  *
- * Copyright (C) 1992-2005,2007-2023 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,8 @@ Thing_define (SoundAnalysisArea, FunctionArea) {
 	autoFormant d_formant;
 	autoPointProcess d_pulses;
 	GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
+	GuiMenuItem pitchFilteredAutocorrelationToggle, pitchRawCrossCorrelationToggle, pitchRawAutocorrelationToggle,
+			pitchFilteredCrossCorrelationToggle;
 
 	virtual bool v_hasSpectrogram () { return true; }
 	virtual bool v_hasPitch       () { return true; }
@@ -86,6 +88,8 @@ public:
 	void v_createMenus ()
 		override;
 	virtual void v_createMenuItems_formant (EditorMenu menu);
+	void v_updateMenuItems ()
+		override;
 
 	#include "SoundAnalysisArea_prefs.h"
 
