@@ -1,5 +1,5 @@
 # Makefile of the library "LPC"
-# David Weenink and Paul Boersma, 30 April 2024
+# David Weenink and Paul Boersma, 18 July 2024
 
 include ../makefile.defs
 
@@ -12,12 +12,12 @@ OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	FormantPath.o FormantPath_to_IntervalTier.o FormantPathArea.o FormantPathEditor.o \
 	LineSpectralFrequencies.o \
 	SoundToLPCAnalysisWorkspace.o \
-	LPCAnalysisWorkspace.o LPCToFormantAnalysisWorkspace.o \
+	LPCToSampledWorkspace.o LPCToFormantWorkspace.o \
 	LPC.o LPC_and_Cepstrumc.o LPC_and_Formant.o LPC_and_LFCC.o \
 	LPC_and_LineSpectralFrequencies.o LPC_and_Polynomial.o \
-	LPC_to_Spectrum.o  LPC_to_Spectrogram.o \
+	LPC_to_Spectrum.o LPC_to_Spectrogram.o \
 	LPC_and_Tube.o PowerCepstrum.o PowerCepstrogram.o \
-	Sound_and_LPC.o  Sound_and_LPC_robust.o \
+	Sound_and_LPC.o Sound_and_LPC_robust.o \
 	Sound_and_Cepstrum.o Tube.o \
 	VocalTractTier.o \
 	praat_LPC_init.o manual_LPC.o
