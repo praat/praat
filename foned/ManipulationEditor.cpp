@@ -1,6 +1,6 @@
 /* ManipulationEditor.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -396,6 +396,7 @@ static const conststring32 units_strings [] = { 0, U"Hz", U"st" };
 static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered across editor creations, not across Praat sessions. */
 
 void structManipulationEditor :: v_updateMenuItems () {
+	ManipulationEditor_Parent :: v_updateMenuItems ();
 	Melder_assert (our synthPulsesButton);
 	GuiMenuItem_check (our synthPulsesButton, our synthesisMethod == Manipulation_PULSES);
 	Melder_assert (our synthPulsesHumButton);
@@ -469,7 +470,7 @@ static void menu_cb_ManipulationHelp (ManipulationEditor, EDITOR_ARGS) { Melder_
 #define menu_cb_Synth_common(menu_cb,meth) \
 static void menu_cb (ManipulationEditor me, EDITOR_ARGS) { \
 	prefs_synthesisMethod = my synthesisMethod = meth; \
-	my v_updateMenuItems (); \
+	my v_updateMenuItems (); /* once this change should be reflected graphically, use FunctionEditor_redraw() instead */ \
 }
 menu_cb_Synth_common (menu_cb_Synth_Pulses, Manipulation_PULSES)
 menu_cb_Synth_common (menu_cb_Synth_Pulses_hum, Manipulation_PULSES_HUM)
@@ -594,7 +595,7 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		FunctionEditor_init (me.get(), title, manipulation);
 
 		my synthesisMethod = prefs_synthesisMethod; // BUG: should be in v1_dataChanged()
-		my v_updateMenuItems ();  // BUG: should not be necessary
+		//my v_updateMenuItems ();  // BUG: should not be necessary
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Manipulation window not created.");
