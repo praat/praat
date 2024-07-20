@@ -1129,15 +1129,10 @@ static void menu_cb_pitchSettings_BEFORE_6414 (SoundAnalysisArea me, EDITOR_ARGS
 		POSITIVE (pitchCeiling, U"right Pitch range (Hz)", my default_pitch_rawAC_ceiling())
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit", my default_pitch_rawAC_unit ())
-		LABEL (U"The filtered autocorrelation method optimizes for")
-		LABEL (U"   vocal fold vibration and intonation research;")
-		LABEL (U"the raw cross-correlation method optimizes for voice research;")
-		LABEL (U"and the raw autocorrelation method optimizes for pure periodicity:")
 		CHOICE_ENUM (kSoundAnalysisArea_pitch_analysisMethod, analysisMethod,
 				U"Analysis method", my default_pitch_method())
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
 				U"Drawing method", my default_pitch_rawAC_drawingMethod())
-		LABEL   (U"Make view range different from analysis range:")
 		REAL    (viewFrom,                  U"left View range (units)",   my default_pitch_rawAC_viewFrom                  ())
 		REAL    (viewTo,                    U"right View range (units)",  my default_pitch_rawAC_viewTo                    ())
 	EDITOR_OK
@@ -1312,8 +1307,11 @@ static void menu_cb_advancedPitchSettings_filteredAcCc_BEFORE_6414 (SoundAnalysi
 
 static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings for the filtered autocorrelation method", U"Intro 4.2. Configuring the pitch contour")
+		HEADING (U"Where to search...")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_filteredAC_floor())
 		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_filteredAC_ceiling())
+		MUTABLE_LABEL (note, U"")
+		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_filteredAC_unit ())
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
@@ -1321,13 +1319,12 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 		LABEL   (U"      Optionally make view range different from analysis range:")
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_filteredAC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_filteredAC_viewTo())
-		MUTABLE_LABEL (note, U"")
-		LABEL (U"Finding the candidates...")
+		HEADING (U"How to find the candidates...")
 		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_filteredAC_maximumNumberOfCandidates ())
 		BOOLEAN  (veryAccurate,              U"Very accurate",             my default_pitch_filteredAC_veryAccurate())
-		LABEL (U"Preprocessing...")
+		HEADING (U"How to preprocess the sound...")
 		POSITIVE (attenuationAtCeiling,      U"Attenuation at ceiling",    my default_pitch_filteredAC_attenuationAtCeiling      ())
-		LABEL (U"Finding a path...")
+		HEADING (U"How to find a path through the candidates...")
 		REAL     (silenceThreshold,          U"Silence threshold",         my default_pitch_filteredAC_silenceThreshold          ())
 		REAL     (voicingThreshold,          U"Voicing threshold",         my default_pitch_filteredAC_voicingThreshold          ())
 		REAL     (octaveCost,                U"Octave cost",               my default_pitch_filteredAC_octaveCost                ())
@@ -1336,16 +1333,16 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 	EDITOR_OK
 		SET_REAL (pitchFloor,                   my instancePref_pitch_filteredAC_floor())
 		SET_REAL (pitchCeiling,                 my instancePref_pitch_filteredAC_ceiling())
+		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
+			SET_STRING (note, U"      Warning: you have a non-standard “time step strategy”.")
+		} else {
+			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
+		}
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_filteredAC_unit())
 		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
 				                                my instancePref_pitch_filteredAC_drawingMethod())
 		SET_REAL (viewFrom,                     my instancePref_pitch_filteredAC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_filteredAC_viewTo())
-		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
-			SET_STRING (note, U"Warning: you have a non-standard “time step strategy”.")
-		} else {
-			SET_STRING (note, U"(your “time step strategy” has its standard value: automatic)")
-		}
 		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_filteredAC_maximumNumberOfCandidates())
 		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_filteredAC_veryAccurate())
 		SET_REAL    (attenuationAtCeiling,      my instancePref_pitch_filteredAC_attenuationAtCeiling())

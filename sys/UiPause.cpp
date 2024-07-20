@@ -143,10 +143,15 @@ void UiPause_option (conststring32 optionText) {
 		Melder_throw (U"Found the function “option” without a preceding “choice” or “optionmenu”.");
 	}
 }
+void UiPause_heading (conststring32 label) {
+	if (! thePauseForm)
+		Melder_throw (U"The function “comment” should be between a “beginPause” and an “endPause”.");
+	UiForm_addHeading (thePauseForm.get(), nullptr, label);
+}
 void UiPause_comment (conststring32 label) {
 	if (! thePauseForm)
 		Melder_throw (U"The function “comment” should be between a “beginPause” and an “endPause”.");
-	UiForm_addLabel (thePauseForm.get(), nullptr, label);
+	UiForm_addComment (thePauseForm.get(), nullptr, label);
 }
 int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	conststring32 continueText1, conststring32 continueText2, conststring32 continueText3,

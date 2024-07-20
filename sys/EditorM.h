@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2013,2015-2023 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,15 +196,19 @@ _form_inited_: \
 	BOOLEAN_FIELD (booleanVariable, labelText, defaultBooleanValue)
 
 
+#define HEADING(labelText)  \
+	UiForm_addHeading (cmd -> d_uiform.get(), nullptr, labelText);
+
+
 #define LABEL(labelText)  \
-	UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText);
+	UiForm_addComment (cmd -> d_uiform.get(), nullptr, labelText);
 
 
 #define MUTABLE_LABEL_VARIABLE(stringVariable)  \
 	static conststring32 stringVariable;
 
 #define MUTABLE_LABEL_FIELD(stringVariable, labelText)  \
-	UiForm_addLabel (cmd -> d_uiform.get(), & stringVariable, labelText);
+	UiForm_addComment (cmd -> d_uiform.get(), & stringVariable, labelText);
 
 #define MUTABLE_LABEL(stringVariable, labelText)  \
 	MUTABLE_LABEL_VARIABLE (stringVariable) \

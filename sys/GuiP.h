@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2013,2015-2018,2020,2022,2023 Paul Boersma
+ * Copyright (C) 1993-2013,2015-2018,2020,2022-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,6 +188,16 @@ class GuiControlBlockValueChangedCallbacks {
 	void _GuiText_init ();
 	void _GuiText_exit ();
 
+#endif
+
+
+/********** FONTS, BRUSHES **********/
+
+#if defined (macintosh)
+	extern NSFont *theMacGuiNormalLabelFont (), *theMacGuiBoldLabelFont ();
+#elif defined (_WIN32)
+	extern HFONT theWinGuiNormalLabelFont (), theWinGuiBoldLabelFont ();
+	extern HBRUSH theWinGuiBackgroundBrush ();
 #endif
 
 /* End of file GuiP.h */

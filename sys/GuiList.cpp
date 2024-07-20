@@ -1,6 +1,6 @@
 /* GuiList.cpp
  *
- * Copyright (C) 1993-2020,2022 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2020,2022,2024 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,7 +236,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
 			my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
+		SetWindowFont (my d_widget -> window, theWinGuiNormalLabelFont (), false);
 		/*if (MEMBER (my parent, ScrolledWindow)) {
 			XtDestroyWidget (my d_widget -> parent -> motiff.scrolledWindow.horizontalBar);
 			my d_widget -> parent -> motiff.scrolledWindow.horizontalBar = nullptr;
