@@ -399,7 +399,7 @@ void structGraphicsScreen :: v_ellipse (double x1DC, double x2DC, double y1DC, d
 		DEFAULT
 	#elif quartz
 		quartzPrepareLine (this);
-        //NSCAssert (our d_macGraphicsContext, @"nil context");
+		//NSCAssert (our d_macGraphicsContext, @"nil context");
 		CGContextBeginPath (our d_macGraphicsContext);
 		CGContextSaveGState (our d_macGraphicsContext);
 		CGContextTranslateCTM (our d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
@@ -509,7 +509,7 @@ void structGraphicsScreen :: v_fillEllipse (double x1DC, double x2DC, double y1D
 		DEFAULT
 	#elif quartz
 		quartzPrepareFill (this);
-        //NSCAssert (our d_macGraphicsContext, @"nil context");
+		//NSCAssert (our d_macGraphicsContext, @"nil context");
 		CGContextBeginPath (our d_macGraphicsContext);
 		CGContextSaveGState (our d_macGraphicsContext);
 		CGContextTranslateCTM (our d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
@@ -582,7 +582,7 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		}
 		cairo_restore (our d_cairoGraphicsContext);
 	#elif quartz
-        double width = x2DC - x1DC, height = y1DC - y2DC;
+		double width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width <= 0.0 || height <= 0.0)
 			return;
 		/*
@@ -592,17 +592,17 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 
 		CGContextSetLineWidth (our d_macGraphicsContext, 1.0);
 		CGContextSetAllowsAntialiasing (our d_macGraphicsContext, false);   // because we want to draw by pixel
-        CGFloat red = 0.3, green = 0.3, blue = 0.2;
-        CGContextSetRGBStrokeColor (our d_macGraphicsContext, red, green, blue, 1.0);
+		CGFloat red = 0.3, green = 0.3, blue = 0.2;
+		CGContextSetRGBStrokeColor (our d_macGraphicsContext, red, green, blue, 1.0);
 		x1DC += 0.5;
 		x2DC -= 0.5;
 		y1DC -= 0.5;
 		y2DC += 0.5;
 		width = x2DC - x1DC;
 		height = y1DC - y2DC;
-        CGRect rect = CGRectMake (x1DC, y2DC, width, height);
-        CGContextAddRect (our d_macGraphicsContext, rect);
-        CGContextStrokePath (our d_macGraphicsContext);
+		CGRect rect = CGRectMake (x1DC, y2DC, width, height);
+		CGContextAddRect (our d_macGraphicsContext, rect);
+		CGContextStrokePath (our d_macGraphicsContext);
 		x1DC += 1.0;
 		x2DC -= 1.0;
 		y1DC -= 1.0;
@@ -622,26 +622,29 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 			CGContextMoveToPoint (our d_macGraphicsContext, x1DC, y1DC);
 			CGContextAddLineToPoint (our d_macGraphicsContext, x1DC, y2DC);
 			CGContextMoveToPoint (our d_macGraphicsContext, x1DC, y2DC);
-            CGContextAddLineToPoint (our d_macGraphicsContext, x2DC, y2DC);
-            CGContextStrokePath (our d_macGraphicsContext);
+			CGContextAddLineToPoint (our d_macGraphicsContext, x2DC, y2DC);
+			CGContextStrokePath (our d_macGraphicsContext);
 			if (width > 2.0 && height > 2.0) {
 				red = 0.75, green = 0.75, blue = 0.65;
 				CGContextSetRGBFillColor (our d_macGraphicsContext, red, green, blue, 1.0);
 				rect = CGRectMake (x1DC, y2DC, width, height);
 				CGContextFillRect (our d_macGraphicsContext, rect);
-            }
-        }
+			}
+		}
 		CGContextSetAllowsAntialiasing (our d_macGraphicsContext, true);
 		CGContextSetLineDash (our d_macGraphicsContext, 0, nullptr, 0);
-    #elif gdi
-        RECT rect;
-        rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;
-        DrawEdge (our d_gdiGraphicsContext, & rect, EDGE_RAISED, BF_RECT);
-        SelectPen (our d_gdiGraphicsContext, GetStockPen (NULL_PEN));
-        SelectBrush (our d_gdiGraphicsContext, GetStockBrush (LTGRAY_BRUSH));
-        Rectangle (our d_gdiGraphicsContext, x1DC + 1, y2DC + 1, x2DC - 1, y1DC - 1);
-        SelectPen (our d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
-        SelectBrush (our d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
+	#elif gdi
+		RECT rect;
+		rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;
+		DrawEdge (our d_gdiGraphicsContext, & rect, EDGE_RAISED, BF_RECT);
+		SelectPen (our d_gdiGraphicsContext, GetStockPen (NULL_PEN));
+		static HBRUSH brush;
+		if (! brush)
+			brush = CreateSolidBrush (RGB (0.75 * 255, 0.75 * 255, 0.65 * 255));
+		SelectBrush (our d_gdiGraphicsContext, brush);
+		Rectangle (our d_gdiGraphicsContext, x1DC + 1, y2DC + 1, x2DC - 1, y1DC - 1);
+		SelectPen (our d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+		SelectBrush (our d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 	#endif
 }
 

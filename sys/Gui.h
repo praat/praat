@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2023 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2024 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -583,6 +583,7 @@ Thing_define (GuiLabel, GuiControl) {
 /* GuiLabel creation flags: */
 #define GuiLabel_CENTRE  1
 #define GuiLabel_RIGHT  2
+#define GuiLabel_BOLD  4
 GuiLabel GuiLabel_create      (GuiForm parent, int left, int right, int top, int bottom,
 	conststring32 text, uint32 flags);
 GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,

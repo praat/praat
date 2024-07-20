@@ -110,4 +110,42 @@ void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double
 	#endif
 }
 
+/*
+	Fonts, brushes.
+*/
+
+#if defined (macintosh)
+	NSFont *theMacGuiNormalLabelFont () {
+		static NSFont *font;
+		if (! font)
+			font = [NSFont systemFontOfSize: 13.0];
+		return font;
+	}
+	NSFont *theMacGuiBoldLabelFont () {
+		static NSFont *font;
+		if (! font)
+			font = [NSFont boldSystemFontOfSize: 13.0];
+		return font;
+	}
+#elif defined (_WIN32)
+	HFONT theWinGuiNormalLabelFont () {
+		static HFONT font;
+		if (! font)
+			font = CreateFont (15, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, nullptr);
+		return font;
+	}
+	HFONT theWinGuiBoldLabelFont () {
+		static HFONT font;
+		if (! font)
+			font = CreateFont (15, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, nullptr);
+		return font;
+	}
+	HBRUSH theWinGuiBackgroundBrush () {
+		static HBRUSH brush;
+		if (! brush)
+			brush = CreateSolidBrush (RGB (224, 224, 224));
+		return brush;
+	}
+#endif
+
 /* End of file Gui.cpp */

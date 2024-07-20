@@ -1,6 +1,6 @@
 /* Ui.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,7 +212,8 @@ UiOption UiForm_addOption (UiForm me, conststring32 optionText) {
 
 static void UiField_setDefault (UiField me) {
 	switch (my type) {
-		case _kUiField_type::LABEL_:
+		case _kUiField_type::HEADING_:
+		case _kUiField_type::COMMENT_:
 		{
 			// do nothing
 		}
@@ -291,7 +292,8 @@ static void UiField_setDefault (UiField me) {
 static void UiField_widgetToValue (UiField me) {
 	switch (my type)
 	{
-		case _kUiField_type::LABEL_:
+		case _kUiField_type::HEADING_:
+		case _kUiField_type::COMMENT_:
 		{
 			// do nothing
 		}
@@ -664,14 +666,15 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 			UiHistory_write (U"\n");
 			UiHistory_write_colonize (my invokingButtonTitle.get());
 			int size = my numberOfFields;
-			while (size >= 1 && my field [size] -> type == _kUiField_type::LABEL_)
+			while (size >= 1 && (my field [size] -> type == _kUiField_type::HEADING_ || my field [size] -> type == _kUiField_type::COMMENT_))
 				size --;   // ignore trailing fields without a value
 			int next = 0;
 			for (int ifield = 1; ifield <= size; ifield ++) {
 				UiField field = my field [ifield].get();
 				switch (field -> type)
 				{
-					case _kUiField_type::LABEL_:
+					case _kUiField_type::HEADING_:
+					case _kUiField_type::COMMENT_:
 					{
 						// do nothing
 					}
@@ -914,7 +917,7 @@ void UiForm_setPauseForm (UiForm me,
 }
 
 static void commonOkCallback (UiForm /* dia */, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
-	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure, Editor optionalEditor)
+	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure, Editor /* optionalEditor */)
 {
 	EditorCommand cmd = (EditorCommand) closure;
 	cmd -> commandCallback (cmd -> sender, cmd, cmd -> d_uiform.get(), 0, nullptr, nullptr, interpreter);
@@ -1011,8 +1014,16 @@ UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 va
 	return thee;
 }
 
-UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 labelText) {
-	UiField thee = UiForm_addField (me, _kUiField_type::LABEL_, U"");   // this field gets no name; so that the user can give it any title
+UiField UiForm_addHeading (UiForm me, conststring32 *variable, conststring32 labelText) {
+	UiField thee = UiForm_addField (me, _kUiField_type::HEADING_, U"");   // this field gets no name; so that the user can give it any title
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
+	thy stringVariable = variable;
+	thy stringValue = Melder_dup (labelText);
+	return thee;
+}
+
+UiField UiForm_addComment (UiForm me, conststring32 *variable, conststring32 labelText) {
+	UiField thee = UiForm_addField (me, _kUiField_type::COMMENT_, U"");   // this field gets no name; so that the user can give it any title
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringVariable = variable;
 	thy stringValue = Melder_dup (labelText);
@@ -1346,7 +1357,11 @@ void UiForm_finish (UiForm me) {
 				Gui_OPTIONMENU_HEIGHT
 			: thy type == _kUiField_type::LIST_ ?
 				LIST_HEIGHT
-			: thy type == _kUiField_type::LABEL_ && thy stringValue [0] != U'\0' && thy stringValue [Melder_length (thy stringValue.get()) - 1] != U'.' && ifield != my numberOfFields ?
+			: thy type == _kUiField_type::HEADING_ && thy stringValue [0] != U'\0' &&
+					thy stringValue [Melder_length (thy stringValue.get()) - 1] != U'.' && ifield != my numberOfFields ?
+				headerLabelHeight
+			: thy type == _kUiField_type::COMMENT_ && thy stringValue [0] != U'\0' &&
+					thy stringValue [Melder_length (thy stringValue.get()) - 1] != U'.' && ifield != my numberOfFields ?
 				headerLabelHeight
 			: thouHastVerticallyAddedLabel ?
 				multiLineTextHeight (thy numberOfLines)
@@ -1562,7 +1577,17 @@ void UiForm_finish (UiForm me) {
 				);
 			}
 			break;
-			case _kUiField_type::LABEL_:
+			case _kUiField_type::HEADING_:
+			{
+				MelderString_copy (& theFinishBuffer, thy stringValue.get());
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					thy y + 5, thy y + 5 + textFieldHeight,
+					theFinishBuffer.string, GuiLabel_BOLD
+				);
+			}
+			break;
+			case _kUiField_type::COMMENT_:
 			{
 				MelderString_copy (& theFinishBuffer, thy stringValue.get());
 				thy label = GuiLabel_createShown (form,
@@ -1648,7 +1673,7 @@ void UiForm_finish (UiForm me) {
 	}
 	bool commentsOnly = true;
 	for (integer ifield = 1; ifield <= my numberOfFields; ifield ++) {
-		if (my field [ifield] -> type != _kUiField_type::LABEL_) {
+		if (my field [ifield] -> type != _kUiField_type::HEADING_ && my field [ifield] -> type != _kUiField_type::COMMENT_) {
 			commentsOnly = false;
 			break;
 		}
@@ -1657,19 +1682,21 @@ void UiForm_finish (UiForm me) {
 		if (my isPauseForm) {
 			my revertButton = GuiButton_createShown (form,
 				HELP_BUTTON_X, HELP_BUTTON_X + REVERT_BUTTON_WIDTH,
-				y, y + Gui_PUSHBUTTON_HEIGHT, U"Undo", gui_button_cb_revert, me, 0);
+				y, y + Gui_PUSHBUTTON_HEIGHT, U"Undo", gui_button_cb_revert, me, 0
+			);
 		} else {
 			my revertButton = GuiButton_createShown (form,
 				HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING,
 				HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING + STANDARDS_BUTTON_WIDTH,
-				y, y + Gui_PUSHBUTTON_HEIGHT, U"Standards", gui_button_cb_revert, me, 0);
+				y, y + Gui_PUSHBUTTON_HEIGHT, U"Standards", gui_button_cb_revert, me, 0
+			);
 		}
 	}
 	if (my isPauseForm) {
 		int x = HELP_BUTTON_X + REVERT_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING;
 		if (my cancelContinueButton == 0) {
 			my cancelButton = GuiButton_createShown (form, x, x + STOP_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
-				U"Stop", gui_button_cb_cancel, me, GuiButton_CANCEL);
+					U"Stop", gui_button_cb_cancel, me, GuiButton_CANCEL);
 			x += STOP_BUTTON_WIDTH + 7;
 		} else {
 			x += 30;
@@ -1692,17 +1719,16 @@ void UiForm_finish (UiForm me) {
 		}
 	} else {
 		int x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - 2 * Gui_HORIZONTAL_DIALOG_SPACING
-			 - Gui_APPLY_BUTTON_WIDTH - Gui_CANCEL_BUTTON_WIDTH;
+				- Gui_APPLY_BUTTON_WIDTH - Gui_CANCEL_BUTTON_WIDTH;
 		my cancelButton = GuiButton_createShown (form, x, x + Gui_CANCEL_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
-			U"Cancel", gui_button_cb_cancel, me, GuiButton_CANCEL);
+				U"Cancel", gui_button_cb_cancel, me, GuiButton_CANCEL);
 		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - Gui_HORIZONTAL_DIALOG_SPACING - Gui_APPLY_BUTTON_WIDTH;
-		if (my numberOfFields > 1 || my field [1] -> type != _kUiField_type::LABEL_) {
+		if (my numberOfFields > 1 || (my field [1] -> type != _kUiField_type::HEADING_ && my field [1] -> type != _kUiField_type::COMMENT_))
 			my applyButton = GuiButton_createShown (form, x, x + Gui_APPLY_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
-				U"Apply", gui_button_cb_apply, me, 0);
-		}
+					U"Apply", gui_button_cb_apply, me, 0);
 		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH;
 		my okButton = GuiButton_createShown (form, x, x + Gui_OK_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
-			my isPauseForm ? U"Continue" : U"OK", gui_button_cb_ok, me, okButtonIsDefault ? GuiButton_DEFAULT : 0);
+				my isPauseForm ? U"Continue" : U"OK", gui_button_cb_ok, me, okButtonIsDefault ? GuiButton_DEFAULT : 0);
 	}
 	/*GuiObject_show (separator);*/
 }
@@ -1723,7 +1749,7 @@ void UiForm_do (UiForm me, bool modified) {
 static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelField) {
 	if (my labelText && str32chr (my labelText.get(), U':'))
 		trace (U"Form label with colon: ", my labelText.get());
-	if (my type == _kUiField_type::LABEL_) {
+	if (my type == _kUiField_type::HEADING_ || my type == _kUiField_type::COMMENT_) {
 		const bool weAreFollowedByAWideField =
 			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::FORMULA_ ||
 			next -> type == _kUiField_type::INFILE_ || next -> type == _kUiField_type::OUTFILE_ ||
@@ -1913,7 +1939,7 @@ void UiForm_info (UiForm me, integer narg) {
 		*/
 		int lastNonLabelFieldNumber = 0;
 		for (int ifield = my numberOfFields; ifield > 0; ifield --) {
-			if (my field [ifield] -> type != _kUiField_type::LABEL_) {
+			if (my field [ifield] -> type != _kUiField_type::HEADING_ && my field [ifield] -> type != _kUiField_type::COMMENT_) {
 				lastNonLabelFieldNumber = ifield;
 				break;
 			}
@@ -2176,7 +2202,7 @@ void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter
 	//while (size >= 1 && my field [size] -> type == _kUiField_type::LABEL_)
 	//	size --;   // ignore trailing fields without a value
 	for (integer i = 1; i <= size; i ++) {
-		if (my field [i] -> type == _kUiField_type::LABEL_)
+		if (my field [i] -> type == _kUiField_type::HEADING_ || my field [i] -> type == _kUiField_type::COMMENT_)
 			continue;   // ignore non-trailing fields without a value
 		iarg ++;
 		if (iarg > narg)
@@ -2381,12 +2407,12 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter optiona
 		to continue to support the dots-based scripting style until 2036.
 	*/
 	int size = my numberOfFields;
-	while (size >= 1 && my field [size] -> type == _kUiField_type::LABEL_)
+	while (size >= 1 && (my field [size] -> type == _kUiField_type::HEADING_ || my field [size] -> type == _kUiField_type::COMMENT_))
 		size --;   // ignore trailing fields without a value
 	for (int i = 1; i < size; i ++) {
 		static char32 stringValue [3000];
 		int ichar = 0;
-		if (my field [i] -> type == _kUiField_type::LABEL_)
+		if (my field [size] -> type == _kUiField_type::HEADING_ || my field [size] -> type == _kUiField_type::COMMENT_)
 			continue;   // ignore non-trailing fields without a value
 		Melder_skipHorizontalOrVerticalSpace (& arguments);   // go to next argument
 		/*
@@ -2690,7 +2716,8 @@ void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 value
 					GuiText_setString (field -> text, value);
 				}
 				break;
-				case _kUiField_type::LABEL_:
+				case _kUiField_type::HEADING_:
+				case _kUiField_type::COMMENT_:
 				{
 					GuiLabel_setText (field -> label, value);
 				}

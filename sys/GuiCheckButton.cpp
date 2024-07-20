@@ -1,6 +1,6 @@
 /* GuiCheckButton.cpp
  *
- * Copyright (C) 1993-2012,2013,2014,2015,2016,2017 Paul Boersma,
+ * Copyright (C) 1993-2012-2018,2024 Paul Boersma,
  *               2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -112,7 +112,7 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
 			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
+		SetWindowFont (my d_widget -> window, theWinGuiNormalLabelFont (), false);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiCheckButton_SET) {
 			Button_SetCheck (my d_widget -> window, BST_CHECKED);

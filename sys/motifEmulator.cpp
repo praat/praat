@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2023 Paul Boersma
+ * Copyright (C) 1993-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ static int Native_titleWidth (GuiObject me) {
 	if (my parent -> window) {
 		HDC dc = GetDC (my parent -> window);
 		SIZE size;
-		SelectFont (dc, GetStockFont (ANSI_VAR_FONT));   // possible BUG
+		SelectFont (dc, theWinGuiNormalLabelFont ());   // possible BUG
 		conststringW nameW = Melder_peek32toW (my name.get());
 		GetTextExtentPoint32 (dc, nameW, wcslen (nameW), & size);
 		ReleaseDC (my parent -> window, dc);
@@ -390,7 +390,7 @@ char32 * _GuiWin_expandAmpersands (conststring32 title) {
 void _GuiNativeControl_setTitle (GuiObject me) {
 	HDC dc = GetDC (my window);
 	SelectPen (dc, GetStockPen (NULL_PEN));
-	SelectBrush (dc, GetStockBrush (LTGRAY_BRUSH));
+	SelectBrush (dc, theWinGuiBackgroundBrush ());
 	Rectangle (dc, 0, 0, my width, my height);
 	ReleaseDC (my window, dc);
 	SetWindowTextW (my window, Melder_peek32toW (_GuiWin_expandAmpersands (my name.get())));
@@ -600,7 +600,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 					WS_CHILD | BS_PUSHBUTTON | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
-				SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), false);
+				SetWindowFont (my window, theWinGuiNormalLabelFont (), false);
 			}
 		} break;
 		case xmPushButtonWidgetClass: Melder_fatal (U"Should be implemented in GuiButton."); break;
@@ -1769,12 +1769,12 @@ void GuiWin_initialize2 (unsigned int argc, char **argv)
 	windowClass. hInstance = theGui.instance;
 	windowClass. hIcon = NULL;
 	windowClass. hCursor = LoadCursor (NULL, IDC_ARROW);
-	windowClass. hbrBackground = /*(HBRUSH) (COLOR_WINDOW + 1)*/ GetStockBrush (LTGRAY_BRUSH);
+	windowClass. hbrBackground = theWinGuiBackgroundBrush ();
 	windowClass. lpszMenuName = NULL;
 	windowClass. lpszClassName = Melder_32toW (theWindowClassName).transfer();
 	windowClass. hIconSm = NULL;
 	RegisterClassEx (& windowClass);
-	windowClass. hbrBackground = GetStockBrush (WHITE_BRUSH);
+	windowClass. hbrBackground = theWinGuiBackgroundBrush ();
 	windowClass. lpszClassName = Melder_32toW (theDrawingAreaClassName).transfer();
 	RegisterClassEx (& windowClass);
 	windowClass. lpszClassName = Melder_32toW (theApplicationClassName).transfer();
@@ -2714,7 +2714,7 @@ static HBRUSH on_ctlColorStatic (HWND window, HDC hdc, HWND controlWindow, int t
 		GuiObject control = (GuiObject) GetWindowLongPtr (controlWindow, GWLP_USERDATA);
 		if (control) {
 			SetBkMode (hdc, TRANSPARENT);
-			return GetStockBrush (LTGRAY_BRUSH);
+			return theWinGuiBackgroundBrush ();
 		}
 	}
 	return FORWARD_WM_CTLCOLORSTATIC (window, hdc, controlWindow, DefWindowProc);
@@ -2726,7 +2726,7 @@ static HBRUSH on_ctlColorBtn (HWND window, HDC hdc, HWND controlWindow, int type
 		GuiObject control = (GuiObject) GetWindowLongPtr (controlWindow, GWLP_USERDATA);
 		if (control) {
 			SetBkMode (hdc, TRANSPARENT);
-			return GetStockBrush (LTGRAY_BRUSH);
+			return theWinGuiBackgroundBrush ();
 		}
 	}
 	return FORWARD_WM_CTLCOLORBTN (window, hdc, controlWindow, DefWindowProc);

@@ -162,7 +162,7 @@ enum { NO_SYMBOL_,
 		CHOICE_, OPTIONMENU_, OPTION_MENU_, OPTION_,
 		INFILE_, OUTFILE_, FOLDER_,
 		REALVECTOR_, POSITIVEVECTOR_, INTEGERVECTOR_, NATURALVECTOR_,
-		COMMENT_, END_PAUSE_,
+		HEADING_, COMMENT_, END_PAUSE_,
 		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_FOLDER_STR_, CHOOSE_DIRECTORY_STR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
@@ -315,7 +315,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"choice", U"optionmenu", U"optionMenu", U"option",
 	U"infile", U"outfile", U"folder",
 	U"realvector", U"positivevector", U"integervector", U"naturalvector",
-	U"comment", U"endPause",
+	U"heading", U"comment", U"endPause",
 	U"chooseReadFile$", U"chooseWriteFile$", U"chooseFolder$", U"chooseDirectory$",
 	U"demoWindowTitle", U"demoShow", U"demoWaitForInput", U"demoPeekInput", U"demoInput", U"demoClickedIn",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
@@ -7416,6 +7416,18 @@ static void do_option () {
 	UiPause_option (text->getString());
 	pushNumber (1);
 }
+static void do_heading () {
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+		U"The function “heading” is not available inside manuals.");
+	const Stackel n = pop;
+	Melder_require (n->number == 1,
+		U"The function “heading” requires 1 argument (a text), not ", n->number, U".");
+	const Stackel text = pop;
+	Melder_require (text->which == Stackel_STRING,
+		U"The argument of “heading” should be a string (the text), not ", text->whichText(), U".");
+	UiPause_heading (text->getString());
+	pushNumber (1);
+}
 static void do_comment () {
 	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “comment” is not available inside manuals.");
@@ -8531,6 +8543,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case POSITIVEVECTOR_: { do_positivevector ();
 } break; case INTEGERVECTOR_: { do_integervector ();
 } break; case NATURALVECTOR_: { do_naturalvector ();
+} break; case HEADING_: { do_heading ();
 } break; case COMMENT_: { do_comment ();
 } break; case END_PAUSE_: { do_endPause ();
 } break; case CHOOSE_READ_FILE_STR_: { do_chooseReadFileStr ();

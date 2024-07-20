@@ -2,7 +2,7 @@
 #define _UiPause_h_
 /* UiPause.h
  *
- * Copyright (C) 2009-2012,2015,2016,2018,2020,2022,2023 Paul Boersma
+ * Copyright (C) 2009-2012,2015,2016,2018,2020,2022-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ void UiPause_naturalvector  (conststring32 label, kUi_integerVectorFormat defaul
 void UiPause_choice         (conststring32 label, int defaultValue);
 void UiPause_optionmenu     (conststring32 label, int defaultValue);
 void UiPause_option         (conststring32 label);
+void UiPause_heading        (conststring32 label);
 void UiPause_comment        (conststring32 label);
 
 int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,

@@ -2,7 +2,7 @@
 #define _praatM_h_
 /* praatM.h
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,11 +119,13 @@
 		static bool booleanVariable; \
 		UiForm_addBoolean (_dia_.get(), & booleanVariable, U"" #booleanVariable, labelText, defaultBooleanValue);
 
-#define LABEL(labelText)  UiForm_addLabel (_dia_.get(), nullptr, labelText);
+#define HEADING(labelText)  UiForm_addHeading (_dia_.get(), nullptr, labelText);
+
+#define LABEL(labelText)  UiForm_addComment (_dia_.get(), nullptr, labelText);
 
 #define MUTABLE_LABEL(stringVariable, labelText)  \
 		static conststring32 stringVariable; \
-		UiForm_addLabel (_dia_.get(), & stringVariable, labelText);
+		UiForm_addComment (_dia_.get(), & stringVariable, labelText);
 
 #define TEXTFIELD(stringVariable, labelText, defaultStringValue, numberOfLines)  \
 		static conststring32 stringVariable; \

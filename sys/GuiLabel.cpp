@@ -1,6 +1,6 @@
 /* GuiLabel.cpp
  *
- * Copyright (C) 1993-2008,2010-2018,2020 Paul Boersma, 2007 Stefan de Konink
+ * Copyright (C) 1993-2008,2010-2018,2020,2024 Paul Boersma, 2007 Stefan de Konink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,15 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
-		my d_widget = gtk_label_new (Melder_peek32to8 (labelText));
+		if (flags & GuiLabel_BOLD) {
+			my d_widget = gtk_label_new (nullptr);
+			const char *format = "<b>%s</b>";
+			char *markedUpText = g_markup_printf_escaped (format, Melder_peek32to8 (labelText));
+			gtk_label_set_markup (GTK_LABEL (my d_widget), markedUpText);
+			g_free (markedUpText);
+		} else {
+			my d_widget = gtk_label_new (Melder_peek32to8 (labelText));
+		}
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkLabel_destroyCallback), me.get());
@@ -108,11 +116,14 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
 			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
+		if (flags & GuiLabel_BOLD)
+			SetWindowFont (my d_widget -> window, theWinGuiBoldLabelFont (), false);
+		else
+			SetWindowFont (my d_widget -> window, theWinGuiNormalLabelFont (), false);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif cocoa
 		trace (U"create");
-        GuiCocoaLabel *label = [[GuiCocoaLabel alloc] init];
+		GuiCocoaLabel *label = [[GuiCocoaLabel alloc] init];
 		my d_widget = label;
 		trace (U"position");
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
@@ -126,12 +137,11 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		[label setSelectable: NO];
 		trace (U"title");
 		[label setTitleWithMnemonic: (NSString *) Melder_peek32toCfstring (labelText)];
-        [label setAlignment:( flags & GuiLabel_RIGHT ? NSRightTextAlignment : flags & GuiLabel_CENTRE ? NSCenterTextAlignment : NSLeftTextAlignment )];
-		static NSFont *theLabelFont;
-		if (! theLabelFont) {
-			theLabelFont = [NSFont systemFontOfSize: 13.0];
-		}
-		[label setFont: theLabelFont];
+		[label setAlignment:( flags & GuiLabel_RIGHT ? NSRightTextAlignment : flags & GuiLabel_CENTRE ? NSCenterTextAlignment : NSLeftTextAlignment )];
+		if (flags & GuiLabel_BOLD)
+			[label setFont: theMacGuiBoldLabelFont ()];
+		else
+			[label setFont: theMacGuiNormalLabelFont ()];
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
