@@ -1,6 +1,6 @@
 /* TextGridArea.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1301,19 +1301,22 @@ static void menu_cb_DrawTextGridAndPitch (TextGridArea me, EDITOR_ARGS) {
 		my setClassPref_picture_garnish (garnish);
 		SoundAnalysisArea_haveVisiblePitch (my borrowedSoundAnalysisArea);
 		DataGui_openPraatPicture (me);
+		const kPitch_unit borrowedPitchUnit = my borrowedSoundAnalysisArea -> dynamic_instancePref_pitch_unit();
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my borrowedSoundAnalysisArea -> d_pitch.get(),
-				my borrowedSoundAnalysisArea -> instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
+				my borrowedSoundAnalysisArea -> dynamic_instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) borrowedPitchUnit);
 		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my borrowedSoundAnalysisArea -> d_pitch.get(),
-				my borrowedSoundAnalysisArea -> instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
+				my borrowedSoundAnalysisArea -> dynamic_instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) borrowedPitchUnit);
 		const double pitchFloor_overt = Function_convertToNonlogarithmic (my borrowedSoundAnalysisArea -> d_pitch.get(),
-				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
+				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) borrowedPitchUnit);
 		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my borrowedSoundAnalysisArea -> d_pitch.get(),
-				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
-		const double pitchViewFrom_overt = ( my borrowedSoundAnalysisArea -> instancePref_pitch_viewFrom() < my borrowedSoundAnalysisArea -> instancePref_pitch_viewTo() ? my borrowedSoundAnalysisArea -> instancePref_pitch_viewFrom() : pitchFloor_overt );
-		const double pitchViewTo_overt = ( my borrowedSoundAnalysisArea -> instancePref_pitch_viewFrom() < my borrowedSoundAnalysisArea -> instancePref_pitch_viewTo() ? my borrowedSoundAnalysisArea -> instancePref_pitch_viewTo() : pitchCeiling_overt );
+				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) borrowedPitchUnit);
+		const double borrowedPitchViewFrom = my borrowedSoundAnalysisArea -> dynamic_instancePref_pitch_viewFrom();
+		const double borrowedPitchViewTo = my borrowedSoundAnalysisArea -> dynamic_instancePref_pitch_viewTo();
+		const double pitchViewFrom_overt = ( borrowedPitchViewFrom < borrowedPitchViewTo ? borrowedPitchViewFrom : pitchFloor_overt );
+		const double pitchViewTo_overt = ( borrowedPitchViewFrom < borrowedPitchViewTo ? borrowedPitchViewTo : pitchCeiling_overt );
 		TextGrid_Pitch_drawSeparately (my textGrid(), my borrowedSoundAnalysisArea -> d_pitch.get(), my pictureGraphics(), my startWindow(), my endWindow(),
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my instancePref_useTextStyles(), garnish,
-			speckle, my borrowedSoundAnalysisArea -> instancePref_pitch_unit()
+			speckle, borrowedPitchUnit
 		);
 		FunctionArea_garnishPicture (me);
 		DataGui_closePraatPicture (me);
@@ -1562,7 +1565,7 @@ static void menu_cb_RemoveTier (TextGridArea me, EDITOR_ARGS) {
 	checkTierSelection (me, U"remove a tier");
 
 	FunctionArea_save (me, U"Remove tier");
-	my textGrid() -> tiers-> removeItem (my selectedTier);
+	my textGrid() -> tiers -> removeItem (my selectedTier);
 
 	//my textGridArea -> selectedTier = 1; TRY OUT 2022-07-23
 	FunctionArea_broadcastDataChanged (me);
@@ -1873,7 +1876,6 @@ void structTextGridArea :: v_createMenus () {
 	}
 }
 void structTextGridArea :: v_updateMenuItems () {
-	TextGridArea_Parent :: v_updateMenuItems ();
 	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our endSelection() > our startSelection());
 	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our endSelection() > our startSelection());
 }

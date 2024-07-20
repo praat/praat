@@ -92,6 +92,16 @@ public:
 		override;
 
 	#include "SoundAnalysisArea_prefs.h"
+	double dynamic_instancePref_pitch_floor ();
+	double dynamic_instancePref_pitch_ceiling ();
+	kPitch_unit dynamic_instancePref_pitch_unit ();
+	kSoundAnalysisArea_pitch_drawingMethod dynamic_instancePref_pitch_drawingMethod ();
+	double dynamic_instancePref_pitch_viewFrom ();
+	double dynamic_instancePref_pitch_viewTo ();
+	bool dynamic_instancePref_pitch_veryAccurate ();
+	integer dynamic_instancePref_pitch_maximumNumberOfCandidates ();
+	double dynamic_instancePref_pitch_silenceThreshold ();
+	double dynamic_instancePref_pitch_voicingThreshold ();
 
 	void v9_repairPreferences () override;
 };

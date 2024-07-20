@@ -195,17 +195,17 @@ static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_AR
 	EDITOR_OK
 		SET_STRING (parameters_string, my instancePref_modeler_numberOfParametersPerTrack())
 	EDITOR_DO
-	my setInstancePref_modeler_numberOfParametersPerTrack (parameters_string);
-	autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
-	Melder_require (parameters.size > 0,
-		U"At least one coefficient should be given.");
-	const integer numberOfTracks = FormantPath_getNumberOfFormantTracks (my formantPath());
-	Melder_require (parameters.size <= numberOfTracks,
-		U"The number of coefficients (", parameters.size, U") should not exceed the number of tracks (", numberOfTracks, U").");
-	Melder_require (NUMmin_e (parameters.get()) > 0.0,
-		U"All coefficients should be larger than zero.");
-	my setInstancePref_modeler_varianceExponent (varianceExponent);
-	FunctionEditor_redraw (me);
+		my setInstancePref_modeler_numberOfParametersPerTrack (parameters_string);
+		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
+		Melder_require (parameters.size > 0,
+			U"At least one coefficient should be given.");
+		const integer numberOfTracks = FormantPath_getNumberOfFormantTracks (my formantPath());
+		Melder_require (parameters.size <= numberOfTracks,
+			U"The number of coefficients (", parameters.size, U") should not exceed the number of tracks (", numberOfTracks, U").");
+		Melder_require (NUMmin_e (parameters.get()) > 0.0,
+			U"All coefficients should be larger than zero.");
+		my setInstancePref_modeler_varianceExponent (varianceExponent);
+		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 

@@ -1322,7 +1322,7 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 
 	/*
 		Not really drawing, but until further notice we believe that updating the menu items
-		(i.e. making them sensitive or insensitive, or checking or unchecking them) could be done as often as redrawing).
+		(i.e. making them sensitive or insensitive, or checking or unchecking them) could be done as often as redrawing.
 	*/
 	my v_updateMenuItems ();
 }
