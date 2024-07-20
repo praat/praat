@@ -1314,11 +1314,11 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_filteredAC_unit ())
-		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
-				U"Drawing method",                                         my default_pitch_filteredAC_drawingMethod())
 		LABEL   (U"      Optionally make view range different from analysis range:")
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_filteredAC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_filteredAC_viewTo())
+		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
+				U"Drawing method",                                         my default_pitch_filteredAC_drawingMethod())
 		HEADING (U"How to find the candidates...")
 		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_filteredAC_maximumNumberOfCandidates ())
 		BOOLEAN  (veryAccurate,              U"Very accurate",             my default_pitch_filteredAC_veryAccurate())
@@ -1372,6 +1372,220 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 		my setInstancePref_pitch_filteredAC_octaveCost (octaveCost);
 		my setInstancePref_pitch_filteredAC_octaveJumpCost (octaveJumpCost);
 		my setInstancePref_pitch_filteredAC_voicedUnvoicedCost (voicedUnvoicedCost);
+		my d_pitch. reset();
+		my d_intensity. reset();
+		my d_pulses. reset();
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+
+static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Pitch settings for the raw cross-correlation method", U"Intro 4.2. Configuring the pitch contour")
+		HEADING (U"Where to search...")
+		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_rawCC_floor())
+		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_rawCC_ceiling())
+		MUTABLE_LABEL (note, U"")
+		HEADING (U"How to view...")
+		OPTIONMENU_ENUM (kPitch_unit, unit,
+				U"Unit",                                                   my default_pitch_rawCC_unit ())
+		LABEL   (U"      Optionally make view range different from analysis range:")
+		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_rawCC_viewFrom())
+		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_rawCC_viewTo())
+		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
+				U"Drawing method",                                         my default_pitch_rawCC_drawingMethod())
+		HEADING (U"How to find the candidates...")
+		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_rawCC_maximumNumberOfCandidates ())
+		BOOLEAN  (veryAccurate,              U"Very accurate",             my default_pitch_rawCC_veryAccurate())
+		HEADING (U"How to find a path through the candidates...")
+		REAL     (silenceThreshold,          U"Silence threshold",         my default_pitch_rawCC_silenceThreshold          ())
+		REAL     (voicingThreshold,          U"Voicing threshold",         my default_pitch_rawCC_voicingThreshold          ())
+		REAL     (octaveCost,                U"Octave cost",               my default_pitch_rawCC_octaveCost                ())
+		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_rawCC_octaveJumpCost            ())
+		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_rawCC_voicedUnvoicedCost        ())
+	EDITOR_OK
+		SET_REAL (pitchFloor,                   my instancePref_pitch_rawCC_floor())
+		SET_REAL (pitchCeiling,                 my instancePref_pitch_rawCC_ceiling())
+		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
+			SET_STRING (note, U"      Warning: you have a non-standard “time step strategy”.")
+		} else {
+			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
+		}
+		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_rawCC_unit())
+		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
+				                                my instancePref_pitch_rawCC_drawingMethod())
+		SET_REAL (viewFrom,                     my instancePref_pitch_rawCC_viewFrom())
+		SET_REAL (viewTo,                       my instancePref_pitch_rawCC_viewTo())
+		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_rawCC_maximumNumberOfCandidates())
+		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_rawCC_veryAccurate())
+		SET_REAL    (silenceThreshold,          my instancePref_pitch_rawCC_silenceThreshold())
+		SET_REAL    (voicingThreshold,          my instancePref_pitch_rawCC_voicingThreshold())
+		SET_REAL    (octaveCost,                my instancePref_pitch_rawCC_octaveCost())
+		SET_REAL    (octaveJumpCost,            my instancePref_pitch_rawCC_octaveJumpCost())
+		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_rawCC_voicedUnvoicedCost())
+	EDITOR_DO
+		Melder_require (pitchCeiling > pitchFloor,
+			U"The pitch ceiling has to be greater than the pitch floor, so they cannot be ",
+			pitchCeiling, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
+		);
+		if (maximumNumberOfCandidates < 2)
+			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
+		my setInstancePref_pitch_rawCC_floor (pitchFloor);
+		my setInstancePref_pitch_rawCC_ceiling (pitchCeiling);
+		my setInstancePref_pitch_rawCC_unit (unit);
+		my setInstancePref_pitch_rawCC_drawingMethod (drawingMethod);
+		my setInstancePref_pitch_rawCC_viewFrom (viewFrom);
+		my setInstancePref_pitch_rawCC_viewTo (viewTo);
+		my setInstancePref_pitch_rawCC_maximumNumberOfCandidates (maximumNumberOfCandidates);
+		my setInstancePref_pitch_rawCC_veryAccurate (veryAccurate);
+		my setInstancePref_pitch_rawCC_silenceThreshold (silenceThreshold);
+		my setInstancePref_pitch_rawCC_voicingThreshold (voicingThreshold);
+		my setInstancePref_pitch_rawCC_octaveCost (octaveCost);
+		my setInstancePref_pitch_rawCC_octaveJumpCost (octaveJumpCost);
+		my setInstancePref_pitch_rawCC_voicedUnvoicedCost (voicedUnvoicedCost);
+		my d_pitch. reset();
+		my d_intensity. reset();
+		my d_pulses. reset();
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+
+static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Pitch settings for the raw autocorrelation method", U"Intro 4.2. Configuring the pitch contour")
+		HEADING (U"Where to search...")
+		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_rawAC_floor())
+		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_rawAC_ceiling())
+		MUTABLE_LABEL (note, U"")
+		HEADING (U"How to view...")
+		OPTIONMENU_ENUM (kPitch_unit, unit,
+				U"Unit",                                                   my default_pitch_rawAC_unit ())
+		LABEL   (U"      Optionally make view range different from analysis range:")
+		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_rawAC_viewFrom())
+		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_rawAC_viewTo())
+		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
+				U"Drawing method",                                         my default_pitch_rawAC_drawingMethod())
+		HEADING (U"How to find the candidates...")
+		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_rawAC_maximumNumberOfCandidates ())
+		BOOLEAN  (veryAccurate,              U"Very accurate",             my default_pitch_rawAC_veryAccurate())
+		HEADING (U"How to find a path through the candidates...")
+		REAL     (silenceThreshold,          U"Silence threshold",         my default_pitch_rawAC_silenceThreshold          ())
+		REAL     (voicingThreshold,          U"Voicing threshold",         my default_pitch_rawAC_voicingThreshold          ())
+		REAL     (octaveCost,                U"Octave cost",               my default_pitch_rawAC_octaveCost                ())
+		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_rawAC_octaveJumpCost            ())
+		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_rawAC_voicedUnvoicedCost        ())
+	EDITOR_OK
+		SET_REAL (pitchFloor,                   my instancePref_pitch_rawAC_floor())
+		SET_REAL (pitchCeiling,                 my instancePref_pitch_rawAC_ceiling())
+		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
+			SET_STRING (note, U"      Warning: you have a non-standard “time step strategy”.")
+		} else {
+			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
+		}
+		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_rawAC_unit())
+		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
+				                                my instancePref_pitch_rawAC_drawingMethod())
+		SET_REAL (viewFrom,                     my instancePref_pitch_rawAC_viewFrom())
+		SET_REAL (viewTo,                       my instancePref_pitch_rawAC_viewTo())
+		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_rawAC_maximumNumberOfCandidates())
+		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_rawAC_veryAccurate())
+		SET_REAL    (silenceThreshold,          my instancePref_pitch_rawAC_silenceThreshold())
+		SET_REAL    (voicingThreshold,          my instancePref_pitch_rawAC_voicingThreshold())
+		SET_REAL    (octaveCost,                my instancePref_pitch_rawAC_octaveCost())
+		SET_REAL    (octaveJumpCost,            my instancePref_pitch_rawAC_octaveJumpCost())
+		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_rawAC_voicedUnvoicedCost())
+	EDITOR_DO
+		Melder_require (pitchCeiling > pitchFloor,
+			U"The pitch ceiling has to be greater than the pitch floor, so they cannot be ",
+			pitchCeiling, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
+		);
+		if (maximumNumberOfCandidates < 2)
+			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
+		my setInstancePref_pitch_rawAC_floor (pitchFloor);
+		my setInstancePref_pitch_rawAC_ceiling (pitchCeiling);
+		my setInstancePref_pitch_rawAC_unit (unit);
+		my setInstancePref_pitch_rawAC_drawingMethod (drawingMethod);
+		my setInstancePref_pitch_rawAC_viewFrom (viewFrom);
+		my setInstancePref_pitch_rawAC_viewTo (viewTo);
+		my setInstancePref_pitch_rawAC_maximumNumberOfCandidates (maximumNumberOfCandidates);
+		my setInstancePref_pitch_rawAC_veryAccurate (veryAccurate);
+		my setInstancePref_pitch_rawAC_silenceThreshold (silenceThreshold);
+		my setInstancePref_pitch_rawAC_voicingThreshold (voicingThreshold);
+		my setInstancePref_pitch_rawAC_octaveCost (octaveCost);
+		my setInstancePref_pitch_rawAC_octaveJumpCost (octaveJumpCost);
+		my setInstancePref_pitch_rawAC_voicedUnvoicedCost (voicedUnvoicedCost);
+		my d_pitch. reset();
+		my d_intensity. reset();
+		my d_pulses. reset();
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+
+static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Pitch settings for the filtered cross-correlation method", U"Intro 4.2. Configuring the pitch contour")
+		HEADING (U"Where to search...")
+		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_filteredCC_floor())
+		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_filteredCC_ceiling())
+		MUTABLE_LABEL (note, U"")
+		HEADING (U"How to view...")
+		OPTIONMENU_ENUM (kPitch_unit, unit,
+				U"Unit",                                                   my default_pitch_filteredCC_unit ())
+		LABEL   (U"      Optionally make view range different from analysis range:")
+		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_filteredCC_viewFrom())
+		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_filteredCC_viewTo())
+		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
+				U"Drawing method",                                         my default_pitch_filteredCC_drawingMethod())
+		HEADING (U"How to find the candidates...")
+		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_filteredCC_maximumNumberOfCandidates ())
+		BOOLEAN  (veryAccurate,              U"Very accurate",             my default_pitch_filteredCC_veryAccurate())
+		HEADING (U"How to preprocess the sound...")
+		POSITIVE (attenuationAtCeiling,      U"Attenuation at ceiling",    my default_pitch_filteredCC_attenuationAtCeiling      ())
+		HEADING (U"How to find a path through the candidates...")
+		REAL     (silenceThreshold,          U"Silence threshold",         my default_pitch_filteredCC_silenceThreshold          ())
+		REAL     (voicingThreshold,          U"Voicing threshold",         my default_pitch_filteredCC_voicingThreshold          ())
+		REAL     (octaveCost,                U"Octave cost",               my default_pitch_filteredCC_octaveCost                ())
+		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_filteredCC_octaveJumpCost            ())
+		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_filteredCC_voicedUnvoicedCost        ())
+	EDITOR_OK
+		SET_REAL (pitchFloor,                   my instancePref_pitch_filteredCC_floor())
+		SET_REAL (pitchCeiling,                 my instancePref_pitch_filteredCC_ceiling())
+		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
+			SET_STRING (note, U"      Warning: you have a non-standard “time step strategy”.")
+		} else {
+			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
+		}
+		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_filteredCC_unit())
+		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
+				                                my instancePref_pitch_filteredCC_drawingMethod())
+		SET_REAL (viewFrom,                     my instancePref_pitch_filteredCC_viewFrom())
+		SET_REAL (viewTo,                       my instancePref_pitch_filteredCC_viewTo())
+		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_filteredCC_maximumNumberOfCandidates())
+		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_filteredCC_veryAccurate())
+		SET_REAL    (attenuationAtCeiling,      my instancePref_pitch_filteredCC_attenuationAtCeiling())
+		SET_REAL    (silenceThreshold,          my instancePref_pitch_filteredCC_silenceThreshold())
+		SET_REAL    (voicingThreshold,          my instancePref_pitch_filteredCC_voicingThreshold())
+		SET_REAL    (octaveCost,                my instancePref_pitch_filteredCC_octaveCost())
+		SET_REAL    (octaveJumpCost,            my instancePref_pitch_filteredCC_octaveJumpCost())
+		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_filteredCC_voicedUnvoicedCost())
+	EDITOR_DO
+		Melder_require (pitchCeiling > pitchFloor,
+			U"The pitch ceiling has to be greater than the pitch floor, so they cannot be ",
+			pitchCeiling, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
+		);
+		if (maximumNumberOfCandidates < 2)
+			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
+		my setInstancePref_pitch_filteredCC_floor (pitchFloor);
+		my setInstancePref_pitch_filteredCC_ceiling (pitchCeiling);
+		my setInstancePref_pitch_filteredCC_unit (unit);
+		my setInstancePref_pitch_filteredCC_drawingMethod (drawingMethod);
+		my setInstancePref_pitch_filteredCC_viewFrom (viewFrom);
+		my setInstancePref_pitch_filteredCC_viewTo (viewTo);
+		my setInstancePref_pitch_filteredCC_maximumNumberOfCandidates (maximumNumberOfCandidates);
+		my setInstancePref_pitch_filteredCC_veryAccurate (veryAccurate);
+		my setInstancePref_pitch_filteredCC_attenuationAtCeiling (attenuationAtCeiling);
+		my setInstancePref_pitch_filteredCC_silenceThreshold (silenceThreshold);
+		my setInstancePref_pitch_filteredCC_voicingThreshold (voicingThreshold);
+		my setInstancePref_pitch_filteredCC_octaveCost (octaveCost);
+		my setInstancePref_pitch_filteredCC_octaveJumpCost (octaveJumpCost);
+		my setInstancePref_pitch_filteredCC_voicedUnvoicedCost (voicedUnvoicedCost);
 		my d_pitch. reset();
 		my d_intensity. reset();
 		my d_pulses. reset();
@@ -2125,24 +2339,34 @@ void structSoundAnalysisArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (menu, U"- Pitch methods and settings:", 0, nullptr, this);
 		FunctionAreaMenu_addCommand (menu, U"How to choose a pitch analysis method", GuiMenu_DEPTH_1,
 				menu_cb_howToChooseAPitchAnalysisMethod, this);
-		our pitchFilteredAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch method is filtered autocorrelation",
+		FunctionAreaMenu_addCommand (menu, U"", 0, nullptr, this);
+		our pitchFilteredAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Choose filtered autocorrelation",
 				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsFilteredAutocorrelation, this);
-		our pitchRawCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch method is raw cross-correlation",
-				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsRawCrossCorrelation, this);
-		our pitchRawAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch method is raw autocorrelation",
-				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsRawAutocorrelation, this);
-		our pitchFilteredCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch method is filtered cross-correlation",
-			GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsFilteredCrossCorrelation, this);
-		FunctionAreaMenu_addCommand (menu, U"Pitch settings...", 0,
-				menu_cb_pitchSettings_BEFORE_6414, this);
-		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings...", 0,
-				menu_cb_advancedPitchSettings_BEFORE_6400, this);
-		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (filtered AC and CC)...", 0,
-				menu_cb_advancedPitchSettings_filteredAcCc_BEFORE_6414, this);
-		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (raw AC and CC)...", 0,
-				menu_cb_advancedPitchSettings_rawAcCc_BEFORE_6414, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings (filtered autocorrelation)...", GuiMenu_DEPTH_1,
 				menu_cb_pitchSettings_filteredAC, this);
+		FunctionAreaMenu_addCommand (menu, U"", 0, nullptr, this);
+		our pitchRawCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Choose raw cross-correlation",
+				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsRawCrossCorrelation, this);
+		FunctionAreaMenu_addCommand (menu, U"Pitch settings (raw cross-correlation)...", GuiMenu_DEPTH_1,
+				menu_cb_pitchSettings_rawCC, this);
+		FunctionAreaMenu_addCommand (menu, U"", 0, nullptr, this);
+		our pitchRawAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Choose raw autocorrelation",
+				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsRawAutocorrelation, this);
+		FunctionAreaMenu_addCommand (menu, U"Pitch settings (raw autocorrelation)...", GuiMenu_DEPTH_1,
+				menu_cb_pitchSettings_rawAC, this);
+		FunctionAreaMenu_addCommand (menu, U"", 0, nullptr, this);
+		our pitchFilteredCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Choose filtered cross-correlation",
+			GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsFilteredCrossCorrelation, this);
+		FunctionAreaMenu_addCommand (menu, U"Pitch settings (filtered cross-correlation)...", GuiMenu_DEPTH_1,
+				menu_cb_pitchSettings_filteredCC, this);
+		FunctionAreaMenu_addCommand (menu, U"Pitch settings...", GuiMenu_HIDDEN,
+				menu_cb_pitchSettings_BEFORE_6414, this);
+		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings...", GuiMenu_HIDDEN,
+				menu_cb_advancedPitchSettings_BEFORE_6400, this);
+		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (filtered AC and CC)...", GuiMenu_HIDDEN,
+				menu_cb_advancedPitchSettings_filteredAcCc_BEFORE_6414, this);
+		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (raw AC and CC)...", GuiMenu_HIDDEN,
+				menu_cb_advancedPitchSettings_rawAcCc_BEFORE_6414, this);
 		FunctionAreaMenu_addCommand (menu, U"- Query pitch:", 0, nullptr, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch listing", 1,
 				INFO_DATA__pitchListing, this);
