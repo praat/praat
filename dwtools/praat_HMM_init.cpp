@@ -245,7 +245,7 @@ FORM (CREATE_ONE__HMM_createContinuousModel, U"HMM: Create continuous model", nu
 	BOOLEAN (leftToRightModel, U"Left to right model", false)
 	NATURAL (numberOfStates, U"Number of states", U"3")
 	NATURAL (numberOfSymbols, U"Number of symbols", U"10")
-	LABEL (U"For the Gaussian mixtures:")
+	COMMENT (U"For the Gaussian mixtures:")
 	NATURAL (numberOfComponents, U"Number of components", U"3")
 	NATURAL (componentDimension, U"Dimension of component", U"39")
 	CHOICE_ENUM (kHMMstorage, storage,
@@ -260,7 +260,7 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", nullptr) {
-	LABEL (U"(0 states gives a non-hidden model) ")
+	COMMENT (U"(0 states gives a non-hidden model) ")
 	INTEGER (numberOfHiddenStates, U"Number of hidden states", U"2")
 	BOOLEAN (leftToRightModel, U"Left to right model", false)
 	OK

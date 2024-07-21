@@ -67,7 +67,7 @@ DO
 }
 
 FORM (CREATE_MULTIPLE__FFNet_createIrisExample, U"Create iris example", U"Create iris example...") {
-	LABEL (U"For the feedforward neural net we need to know the:")
+	COMMENT (U"For the feedforward neural net we need to know the:")
 	INTEGER (numberOfUnits1, U"Number of units in hidden layer 1", U"0")
 	INTEGER (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
 	OK
@@ -137,7 +137,7 @@ DO
 }
 	
 FORM (GRAPHICS_EACH__FFNet_drawWeightsToLayer, U"FFNet: Draw weights to layer", nullptr) {
-	LABEL (U"Warning: Disapproved. Use \"Draw weights..\" instead.")
+	COMMENT (U"Warning: Disapproved. Use \"Draw weights..\" instead.")
 	NATURAL (layer, U"Layer number", U"1")
 	CHOICE (scale, U"Scale", 1)
 		OPTION (U"by maximum of all weights to layer")
@@ -282,8 +282,8 @@ DO
 }
 
 FORM (MODIFY_EACH__FFNet_reset, U"FFNet: Reset", U"FFNet: Reset...") {
-	LABEL (U"Warning: this command destroys all previous learning.")
-	LABEL (U"New weights will be randomly chosen from the interval [-range, +range].")
+	COMMENT (U"Warning: this command destroys all previous learning.")
+	COMMENT (U"New weights will be randomly chosen from the interval [-range, +range].")
 	POSITIVE (range, U"Range", U"0.1")
 	OK
 DO
@@ -293,8 +293,8 @@ DO
 }
 	
 FORM (MODIFY_EACH__FFNet_selectBiasesInLayer, U"FFNet: Select biases", U"FFNet: Select biases...") {
-	LABEL (U"WARNING: This command induces very specific behaviour ")
-	LABEL (U"during a following learning phase.")
+	COMMENT (U"WARNING: This command induces very specific behaviour ")
+	COMMENT (U"during a following learning phase.")
 	NATURAL (layer, U"Layer number", U"1")
 	OK
 DO
@@ -319,7 +319,7 @@ DO
 }
 
 FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
-	LABEL (U"Warning: Use \"Extract weights..\" instead.")
+	COMMENT (U"Warning: Use \"Extract weights..\" instead.")
 	NATURAL (layer, U"Layer number", U"1")
 	OK
 DO
@@ -464,7 +464,7 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_ActivationList_lear
 	// NATURAL (U"Layer", U"1")
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
-	LABEL (U"Specific for this minimization")
+	COMMENT (U"Specific for this minimization")
 	POSITIVE (learningRate, U"Learning rate", U"0.1")
 	REAL (momentum, U"Momentum", U"0.9")
 	CHOICE (costFunctionType, U"Cost function", 1)
@@ -517,7 +517,7 @@ DO
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...") {
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
-	LABEL (U"Specific for this minimization")
+	COMMENT (U"Specific for this minimization")
 	POSITIVE (learningRate, U"Learning rate", U"0.1")
 	REAL (momentum, U"Momentum", U"0.9")
 	CHOICE (costFunctionType, U"Cost function", 1)

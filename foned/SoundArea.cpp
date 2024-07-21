@@ -1,6 +1,6 @@
 /* SoundArea.cpp
  *
- * Copyright (C) 2022,2023 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 2022-2024 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -787,9 +787,9 @@ static void menu_cb_soundScaling (SoundArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Sound scaling", nullptr)
 		OPTIONMENU_ENUM (kSoundArea_scalingStrategy, scalingStrategy,
 				U"Scaling strategy", my default_scalingStrategy())
-		LABEL (U"For \"fixed height\":")
+		COMMENT (U"For \"fixed height\":")
 		POSITIVE (height, U"Height", my default_scaling_height())
-		LABEL (U"For \"fixed range\":")
+		COMMENT (U"For \"fixed range\":")
 		REAL (minimum, U"Minimum", my default_scaling_minimum())
 		REAL (maximum, U"Maximum", my default_scaling_maximum())
 	EDITOR_OK
@@ -840,7 +840,7 @@ static void menu_cb_MoveEndOfSelectionToNearestZeroCrossing (SoundArea me, EDITO
 static void menu_cb_DrawVisibleSound (SoundArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Draw visible sound", nullptr)
 		my v_form_pictureWindow (cmd);
-		LABEL (U"Sound:")
+		COMMENT (U"Sound:")
 		BOOLEAN (preserveTimes, U"Preserve times", my default_picture_preserveTimes());
 		REAL (bottom, U"left Vertical range", my default_picture_bottom())
 		REAL (top, U"right Vertical range", my default_picture_top())
@@ -878,7 +878,7 @@ static void menu_cb_DrawVisibleSound (SoundArea me, EDITOR_ARGS) {
 static void menu_cb_DrawSelectedSound (SoundArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Draw selected sound", nullptr)
 		my v_form_pictureWindow (cmd);
-		LABEL (U"Sound:")
+		COMMENT (U"Sound:")
 		BOOLEAN (preserveTimes, U"Preserve times",       my default_picture_preserveTimes());
 		REAL    (bottom,        U"left Vertical range",  my default_picture_bottom());
 		REAL    (top,           U"right Vertical range", my default_picture_top());

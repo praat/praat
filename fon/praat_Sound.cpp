@@ -1,6 +1,6 @@
 /* praat_Sound.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -257,12 +257,12 @@ FORM_SAVE (SAVE_ONE__LongSound_saveRightChannelAsWavFile, U"Save right channel a
 }
 
 FORM (SETTINGS__LongSoundSettings, U"LongSound settings", U"LongSound") {
-	LABEL (U"This setting determines the maximum number of seconds")
-	LABEL (U"for viewing the waveform and playing a sound in the LongSound window.")
-	LABEL (U"The LongSound window can become very slow if you set it too high.")
+	COMMENT (U"This setting determines the maximum number of seconds")
+	COMMENT (U"for viewing the waveform and playing a sound in the LongSound window.")
+	COMMENT (U"The LongSound window can become very slow if you set it too high.")
 	NATURAL (maximumViewablePart, U"Maximum viewable part (seconds)", U"60")
-	LABEL (U"Note: this setting works for the next long sound file that you open,")
-	LABEL (U"not for currently existing LongSound objects.")
+	COMMENT (U"Note: this setting works for the next long sound file that you open,")
+	COMMENT (U"not for currently existing LongSound objects.")
 OK
 	SET_INTEGER (maximumViewablePart, LongSound_getBufferSizePref_seconds ())
 DO
@@ -312,8 +312,8 @@ FORM_SAVE (SAVE_ALL__LongSound_Sound_saveAsWavFile, U"Save as WAV file", nullptr
 /********** SOUND **********/
 
 FORM (MODIFY_Sound_add, U"Sound: Add", nullptr) {
-	LABEL (U"The following number will be added to the amplitudes of ")
-	LABEL (U"all samples of the sound.")
+	COMMENT (U"The following number will be added to the amplitudes of ")
+	COMMENT (U"all samples of the sound.")
 	REAL (number, U"Number", U"0.1")
 	OK
 DO
@@ -630,7 +630,7 @@ FORM (GRAPHICS_EACH__Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
 	REAL (toAmplitude, U"right Amplitude range", U"0.0 (= auto)")
 	BOOLEAN (garnish, U"Garnish", true)
-	LABEL (U"")
+	COMMENT (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"curve")
 		OPTION (U"bars")
@@ -744,8 +744,8 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_filter_formula, U"Sound: Filter (formula)...", U"Formula...") {
-	LABEL (U"Frequency-domain filtering with a formula")
-	LABEL (U"(uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
+	COMMENT (U"Frequency-domain filtering with a formula")
+	COMMENT (U"(uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
 	FORMULA (formula, U"Formula", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
 	OK
 DO
@@ -806,13 +806,13 @@ DO
 }
 
 FORM (MODIFY_Sound_formula, U"Sound: Formula", U"Sound: Formula...") {
-	LABEL (U"# `x` is the time in seconds, `col` is the sample number.")
-	LABEL (U"x = x1   ! time associated with first sample")
-	LABEL (U"for col from 1 to ncol")
-	LABEL (U"   self [col] = ...")
+	COMMENT (U"# `x` is the time in seconds, `col` is the sample number.")
+	COMMENT (U"x = x1   ! time associated with first sample")
+	COMMENT (U"for col from 1 to ncol")
+	COMMENT (U"   self [col] = ...")
 	FORMULA (formula, U"Formula", U"self")
-	LABEL (U"   x = x + dx")
-	LABEL (U"endfor")
+	COMMENT (U"   x = x + dx")
+	COMMENT (U"endfor")
 	OK
 DO
 	MODIFY_EACH_WEAK (Sound)
@@ -1225,12 +1225,12 @@ DIRECT (SINGLETON_CREATION_WINDOW__Sound_recordStereo) {
 }
 
 FORM (RECORD_ONE__Sound_record_fixedTime, U"Record Sound", nullptr) {
-	LABEL (U"This menu command is usually hidden,")
-	LABEL (U"   because its behaviour is platform-dependent.")
-	LABEL (U"The combination of “microphone” and “48000 Hz” is likely")
-	LABEL (U"   to work on all computers.")
-	LABEL (U"The “Gain” and “Balance” settings tend to be obsolete")
-	LABEL (U"   and may not work at all on your computer.")
+	COMMENT (U"This menu command is usually hidden,")
+	COMMENT (U"   because its behaviour is platform-dependent.")
+	COMMENT (U"The combination of “microphone” and “48000 Hz” is likely")
+	COMMENT (U"   to work on all computers.")
+	COMMENT (U"The “Gain” and “Balance” settings tend to be obsolete")
+	COMMENT (U"   and may not work at all on your computer.")
 	CHOICE (inputSource, U"Input source", 1)
 		OPTION (U"microphone")
 		OPTION (U"line")
@@ -1415,7 +1415,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Cochleagram_edb, U"Sound: To Cochleagram (De
 	POSITIVE (timeStep, U"Time step (s)", U"0.01")
 	POSITIVE (frequencyResolution, U"Frequency resolution (Bark)", U"0.1")
 	BOOLEAN (hasSynapse, U"Has synapse", true)
-	LABEL (U"Meddis synapse properties")
+	COMMENT (U"Meddis synapse properties")
 	POSITIVE (replenishmentRate, U"   replenishment rate (/sec)", U"5.05")
 	POSITIVE (lossRate, U"   loss rate (/sec)", U"2500.0")
 	POSITIVE (returnRate, U"   return rate (/sec)", U"6580.0")
@@ -1607,12 +1607,12 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_ac, U"Sound: To Pitch (ac)", U"Sound: To Pitch (ac)...") {
-	LABEL (U"Finding the candidates...")
+	COMMENT (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Finding a path...")
+	COMMENT (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1632,12 +1632,12 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_cc, U"Sound: To Pitch (cc)", U"Sound: To Pitch (cc)...") {
-	LABEL (U"Finding the candidates...")
+	COMMENT (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Finding a path...")
+	COMMENT (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1658,13 +1658,13 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawAc, U"Sound: To Pitch (raw ac)", U"Sound: To Pitch (raw ac)...") {
-	LABEL (U"Finding the candidates...")
+	COMMENT (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Finding a path...")
+	COMMENT (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1684,13 +1684,13 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCc, U"Sound: To Pitch (raw cc)", U"Sound: To Pitch (raw cc)...") {
-	LABEL (U"Finding the candidates...")
+	COMMENT (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Finding a path...")
+	COMMENT (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1710,15 +1710,15 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAc, U"Sound: To Pitch (filtered ac)", U"Sound: To Pitch (filtered ac)...") {
-	LABEL (U"Finding the candidates...")
+	COMMENT (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"50.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Preprocessing...")
+	COMMENT (U"Preprocessing...")
 	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
-	LABEL (U"Finding a path...")
+	COMMENT (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.09")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
 	REAL (octaveCost, U"Octave cost", U"0.055")
@@ -1738,15 +1738,15 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCc, U"Sound: To Pitch (filtered cc)", U"Sound: To Pitch (filtered cc)...") {
-	LABEL (U"Finding the candidates...")
+	COMMENT (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"50.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Preprocessing...")
+	COMMENT (U"Preprocessing...")
 	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
-	LABEL (U"Finding a path...")
+	COMMENT (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.09")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
 	REAL (octaveCost, U"Octave cost", U"0.055")
@@ -1887,9 +1887,9 @@ DO
 }
 
 FORM (SETTINGS__SoundPlayingSettings, U"Sound playing settings", nullptr) {
-	LABEL (U"The following determines how sounds are played.")
-	LABEL (U"Between parentheses, you find what you can do simultaneously.")
-	LABEL (U"Decrease asynchronicity if sound plays with discontinuities.")
+	COMMENT (U"The following determines how sounds are played.")
+	COMMENT (U"Between parentheses, you find what you can do simultaneously.")
+	COMMENT (U"Decrease asynchronicity if sound plays with discontinuities.")
 	OPTIONMENU_ENUM (kMelder_asynchronicityLevel, maximumAsynchronicity,
 			U"Maximum asynchronicity", kMelder_asynchronicityLevel::DEFAULT)
 	REAL (silenceBefore, U"Silence before (s)", U"" stringize(kMelderAudio_outputSilenceBefore_DEFAULT))

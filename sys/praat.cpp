@@ -863,7 +863,7 @@ static int publishProc (autoDaata me) {
 /***** QUIT *****/
 
 FORM (DO_Quit, U"Confirm Quit", U"Quit") {
-	MUTABLE_LABEL (label, U"You have objects in your list!")
+	MUTABLE_COMMENT (label, U"You have objects in your list!")
 	OK
 {
 	char32 prompt [300];

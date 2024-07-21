@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2019,2021-2023 Paul Boersma
+ * Copyright (C) 1992-2019,2021-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -932,7 +932,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_collapseRows, U"Table: Collapse rows", nullptr)
 	STRINGARRAY_LINES (3, columnsToMedianize, U"Columns to medianize", { U"vot" })
 	STRINGARRAY_LINES (3, columnsToAverageLogarithmically, U"Columns to average logarithmically", { U"duration" })
 	STRINGARRAY_LINES (3, columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically", { U"F0", U"F1", U"F2", U"F3" })
-	LABEL (U"Columns not mentioned above will be ignored.")
+	COMMENT (U"Columns not mentioned above will be ignored.")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
@@ -982,7 +982,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_rowsToColumns, U"Table: Rows to columns", nullp
 	STRINGARRAY (factors, U"Columns with factors (independent variables)", { U"dialect", U"gender", U"speaker" })
 	SENTENCE (columnToTranspose, U"Column to transpose", U"vowel")
 	STRINGARRAY (columnsToExpand, U"Columns to expand", { U"duration", U"F0", U"F1", U"F2", U"F3" })
-	LABEL (U"Columns not mentioned above will be ignored.")
+	COMMENT (U"Columns not mentioned above will be ignored.")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)

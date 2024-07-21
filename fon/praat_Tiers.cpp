@@ -1,6 +1,6 @@
 /* praat_Tiers.cpp
  *
- * Copyright (C) 1992-2018,2020-2023 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,12 +167,12 @@ DO
 }
 
 FORM (MODIFY_AmplitudeTier_formula, U"AmplitudeTier: Formula", U"AmplitudeTier: Formula...") {
-	LABEL (U"# ncol = the number of points")
-	LABEL (U"for col from 1 to ncol")
-	LABEL (U"   # x = the time of the colth point, in seconds")
-	LABEL (U"   # self = the value of the colth point, in Pascal")
-	LABEL (U"   self = `formula'")
-	LABEL (U"endfor")
+	COMMENT (U"# ncol = the number of points")
+	COMMENT (U"for col from 1 to ncol")
+	COMMENT (U"   # x = the time of the colth point, in seconds")
+	COMMENT (U"   # self = the value of the colth point, in Pascal")
+	COMMENT (U"   self = `formula'")
+	COMMENT (U"endfor")
 	FORMULA (formula, U"Formula", U"- self ; upside down")
 	OK
 DO
@@ -318,12 +318,12 @@ DO
 }
 
 FORM (MODIFY_DurationTier_formula, U"DurationTier: Formula", U"DurationTier: Formula...") {
-	LABEL (U"# ncol = the number of points")
-	LABEL (U"for col from 1 to ncol")
-	LABEL (U"   # x = the time of the colth point, in seconds")
-	LABEL (U"   # self = the value of the colth point, in relative units")
-	LABEL (U"   self = `formula'")
-	LABEL (U"endfor")
+	COMMENT (U"# ncol = the number of points")
+	COMMENT (U"for col from 1 to ncol")
+	COMMENT (U"   # x = the time of the colth point, in seconds")
+	COMMENT (U"   # self = the value of the colth point, in relative units")
+	COMMENT (U"   self = `formula'")
+	COMMENT (U"endfor")
 	FORMULA (formula, U"Formula", U"self * 1.5 ; slow down")
 	OK
 DO
@@ -398,8 +398,8 @@ DIRECT (EDITOR_ONE_FormantGrid_edit) {
 // MARK: Modify
 
 FORM (MODIFY_FormantGrid_formula_frequencies, U"FormantGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
-	LABEL (U"row is formant number, col is point number:")
-	LABEL (U"   for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+	COMMENT (U"row is formant number, col is point number:")
+	COMMENT (U"   for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
 	FORMULA (formula, U"Formula", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
@@ -409,9 +409,9 @@ DO
 }
 
 FORM (MODIFY_FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
-	LABEL (U"row is formant number, col is point number:")
-	LABEL (U"   for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
-	LABEL (U"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
+	COMMENT (U"row is formant number, col is point number:")
+	COMMENT (U"   for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
+	COMMENT (U"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
 	FORMULA (formula, U"Formula", U"self / 10 ; one tenth of the formant frequency")
 	OK
 DO
@@ -662,12 +662,12 @@ DO
 }
 
 FORM (MODIFY_IntensityTier_formula, U"IntensityTier: Formula", U"IntensityTier: Formula...") {
-	LABEL (U"# ncol = the number of points")
-	LABEL (U"for col from 1 to ncol")
-	LABEL (U"   # x = the time of the colth point, in seconds")
-	LABEL (U"   # self = the value of the colth point, in dB")
-	LABEL (U"   self = `formula`")
-	LABEL (U"endfor")
+	COMMENT (U"# ncol = the number of points")
+	COMMENT (U"for col from 1 to ncol")
+	COMMENT (U"   # x = the time of the colth point, in seconds")
+	COMMENT (U"   # self = the value of the colth point, in dB")
+	COMMENT (U"   self = `formula`")
+	COMMENT (U"endfor")
 	FORMULA (formula, U"Formula", U"self + 3.0")
 	OK
 DO
@@ -795,7 +795,7 @@ FORM (GRAPHICS_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
 	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"500.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	LABEL (U"")
+	COMMENT (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"lines")
 		OPTION (U"speckles")
@@ -816,12 +816,12 @@ DIRECT (EDITOR_ONE_WITH_ONE_PitchTier_viewAndEdit) {
 }
 
 FORM (MODIFY_PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...") {
-	LABEL (U"# ncol = the number of points")
-	LABEL (U"for col from 1 to ncol")
-	LABEL (U"   # x = the time of the colth point, in seconds")
-	LABEL (U"   # self = the value of the colth point, in hertz")
-	LABEL (U"   self = `formula`")
-	LABEL (U"endfor")
+	COMMENT (U"# ncol = the number of points")
+	COMMENT (U"for col from 1 to ncol")
+	COMMENT (U"   # x = the time of the colth point, in seconds")
+	COMMENT (U"   # self = the value of the colth point, in hertz")
+	COMMENT (U"   self = `formula`")
+	COMMENT (U"endfor")
 	FORMULA (formula, U"Formula", U"self * 2 ; one octave up")
 	OK
 DO
@@ -1652,12 +1652,12 @@ DO
 }
 
 FORM (MODIFY_RealTier_formula, U"RealTier: Formula", U"RealTier: Formula...") {
-	LABEL (U"# ncol = the number of points")
-	LABEL (U"for col from 1 to ncol")
-	LABEL (U"   # x = the time of the colth point, in seconds")
-	LABEL (U"   # self = the value of the colth point")
-	LABEL (U"   self = `formula`")
-	LABEL (U"endfor")
+	COMMENT (U"# ncol = the number of points")
+	COMMENT (U"for col from 1 to ncol")
+	COMMENT (U"   # x = the time of the colth point, in seconds")
+	COMMENT (U"   # self = the value of the colth point")
+	COMMENT (U"   self = `formula`")
+	COMMENT (U"endfor")
 	FORMULA (formula, U"Formula", U"self + 3.0")
 	OK
 DO
@@ -1742,7 +1742,7 @@ FORM (GRAPHICS_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {
 	REAL (fromPower, U"left Power range (dB)", U"20.0")
 	REAL (toPower, U"right Power range (dB)", U"80.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	LABEL (U"")
+	COMMENT (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"lines")
 		OPTION (U"speckles")

@@ -149,8 +149,8 @@ static void menu_cb_FormantSettings (FormantPathArea me, EDITOR_ARGS) {
 		REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", my default_formant_path_middleFormantCeiling ())
 		POSITIVE (windowLength, U"Window length (s)", my default_formant_path_windowLength ())
 		POSITIVE (preEmphasisFrom, U"Pre-emphasis from (Hz)", my default_formant_path_preEmpasisFrom ())
-		LABEL (U"The maximum and minimum ceiling frequencies are determined as:")
-		LABEL (U" middleFormantCeiling * exp(+/- ceilingStepSize * numberOfStepsUpDown).")
+		COMMENT (U"The maximum and minimum ceiling frequencies are determined as:")
+		COMMENT (U" middleFormantCeiling * exp(+/- ceilingStepSize * numberOfStepsUpDown).")
 		POSITIVE (ceilingStepSize, U"Ceiling step size", my default_formant_path_ceilingStepSize ())
 		NATURAL (numberOfStepsUpDown, U"Number of steps up / down", my default_formant_path_numberOfStepsUpDown ())
 	EDITOR_OK

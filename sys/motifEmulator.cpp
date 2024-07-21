@@ -666,7 +666,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 			my window = CreateWindowEx (theDialogHint ? WS_EX_DLGMODALFRAME /* | WS_EX_TOPMOST */ : 0,
 				Melder_peek32toW (className), Melder_peek32toW (className),
 				theDialogHint ? WS_CAPTION | WS_SYSMENU : WS_OVERLAPPEDWINDOW,
-				CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,  my parent ? my parent -> window : NULL, NULL, theGui.instance, NULL);
+				CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, my parent ? my parent -> window : NULL, NULL, theGui.instance, NULL);
 			className = theWindowClassName;   // all later windows
 			SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 			my motiff.shell.isDialog = theDialogHint;   // so we can maintain a single Shell class instead of two different
@@ -710,19 +710,52 @@ static void Native_move (GuiObject me, int dx, int dy) {
 		return;   // ignore menu items
 	if (MEMBER (me, Shell)) {
 		my nat.shell.duringMoveWindow = True;
-		if (my motiff.shell.isDialog)
+		if (my motiff.shell.isDialog) {
+			#ifndef __clang__
+				/*
+					In a Windows app, both following system frame measurements should be 8:
+				*/
+				const int cxFixedFrame = GetSystemMetrics (SM_CXFIXEDFRAME);
+				const int cyFixedFrame = GetSystemMetrics (SM_CYFIXEDFRAME);
+			#else
+				/*
+					However, CLANG under MSYS2 thinks it's in a console app,
+					so that these two values are 4 instead of 8,
+					which causes text fields and caption to run off the right edge of the window.
+					Repair.
+				*/
+				const int cxFixedFrame = 8;
+				const int cyFixedFrame = 8;
+			#endif
 			MoveWindow (my window, my x, my y,
-				my width + 2 * GetSystemMetrics (SM_CXFIXEDFRAME),
-				my height + 2 * GetSystemMetrics (SM_CYFIXEDFRAME) + GetSystemMetrics (SM_CYCAPTION),
+				my width + 2 * cxFixedFrame,
+				my height + 2 * cyFixedFrame + GetSystemMetrics (SM_CYCAPTION),
 				true
 			);
-		else
+		} else {
+			#ifndef __clang__
+				/*
+					In a Windows app, both following system frame measurements should be 8:
+				*/
+				const int cxSizeFrame = GetSystemMetrics (SM_CXSIZEFRAME);
+				const int cySizeFrame = GetSystemMetrics (SM_CYSIZEFRAME);
+			#else
+				/*
+					However, CLANG under MSYS2 thinks it's in a console app,
+					so that these two values are 4 instead of 8,
+					which causes the scroll bars to be cut off.
+					Repair.
+				*/
+				const int cxSizeFrame = 8;
+				const int cySizeFrame = 8;
+			#endif
 			MoveWindow (my window, my x, my y,
-				my width + 2 * GetSystemMetrics (SM_CXSIZEFRAME),
-				my height + 2 * GetSystemMetrics (SM_CYSIZEFRAME) + GetSystemMetrics (SM_CYCAPTION) +
+				my width + 2 * cxSizeFrame,
+				my height + 2 * cySizeFrame + GetSystemMetrics (SM_CYCAPTION) +
 						( my nat.shell.menuBar ? GetSystemMetrics (SM_CYMENU) : 0 ),
 				true
 			);
+		}
 	} else
 		MoveWindow (my window, my x, my y, my width, my height, True);
 }

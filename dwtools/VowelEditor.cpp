@@ -734,15 +734,15 @@ static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS) {
 static void menu_cb_settings (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Settings", nullptr);
 		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", my default_soundFollowsMouse())
-		LABEL (U"F1 and F2 frequencies are specified by the trajectory.")
-		LABEL (U"The bandwidths of a formant can be specified by its Q-value")
-		LABEL (U"which defines the sharpness of the peak: Q = frequency / bandwidth. ")
+		COMMENT (U"F1 and F2 frequencies are specified by the trajectory.")
+		COMMENT (U"The bandwidths of a formant can be specified by its Q-value")
+		COMMENT (U"which defines the sharpness of the peak: Q = frequency / bandwidth. ")
 		POSITIVE (q1, U"F1 sharpness", my default_synthesis_q1 ())
 		POSITIVE (q2, U"F2 sharpness", my default_synthesis_q2 ())
-		LABEL (U"You can define extra fixed formants for the synthesis by supplying")
-		LABEL (U"formant frequency bandwidth pairs.")
+		COMMENT (U"You can define extra fixed formants for the synthesis by supplying")
+		COMMENT (U"formant frequency bandwidth pairs.")
 		TEXTFIELD (extraFrequencyBandwidthPairs_string, U"Frequency–bandwidth pairs", my default_synthesis_extraFBPairs(), 3)
-		LABEL (U"The total number of formants used for synthesis")
+		COMMENT (U"The total number of formants used for synthesis")
 		NATURAL (numberOfFormants, U"Number of formants for synthesis", my default_synthesis_numberOfFormants ())
 	EDITOR_OK
 		SET_BOOLEAN (soundFollowsMouse, my instancePref_soundFollowsMouse())

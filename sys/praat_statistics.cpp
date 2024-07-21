@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012,2014-2022 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,6 +195,14 @@ void praat_reportSystemProperties () {
 		MelderInfo_writeLine (U"Process ID: ", processID);
 		MelderInfo_writeLine (U"Localized app name: ", Melder_peek8to32 ([[currentApplication localizedName] UTF8String]));
 		MelderInfo_writeLine (U"App bundle identifier: ", Melder_peek8to32 ([[currentApplication bundleIdentifier] UTF8String]));
+	#endif
+	#ifdef _WIN32
+		MelderInfo_writeLine (U"SM_CXFIXEDFRAME: ", GetSystemMetrics (SM_CXFIXEDFRAME));
+		MelderInfo_writeLine (U"SM_CYFIXEDFRAME: ", GetSystemMetrics (SM_CYFIXEDFRAME));
+		MelderInfo_writeLine (U"SM_CXSIZEFRAME: ", GetSystemMetrics (SM_CXSIZEFRAME));
+		MelderInfo_writeLine (U"SM_CYSIZEFRAME: ", GetSystemMetrics (SM_CYSIZEFRAME));
+		MelderInfo_writeLine (U"SM_CYCAPTION: ", GetSystemMetrics (SM_CYCAPTION));
+		MelderInfo_writeLine (U"SM_CYMENU: ", GetSystemMetrics (SM_CYMENU));
 	#endif
 	MelderInfo_close ();
 }

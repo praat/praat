@@ -42,7 +42,7 @@
 	CHANNEL (variable, labelText, defaultStringValue)
 	BOOLEAN (variable, labelText, defaultBooleanValue)
 		the value is 0 (off) or 1 (on).
-	LABEL (labelText)
+	COMMENT (labelText)
 	TEXTFIELD (variable, labelText, defaultStringValue, numberOfLines)
 	REALVECTOR (variable, labelText, WHITESPACE_SEPARATED_, defaultStringValue)
 	REALMATRIX (variable, labelText, ONE_ROW_PER_LINE_, defaultStringValue)
@@ -121,9 +121,11 @@
 
 #define HEADING(labelText)  UiForm_addHeading (_dia_.get(), nullptr, labelText);
 
-#define LABEL(labelText)  UiForm_addComment (_dia_.get(), nullptr, labelText);
+#define COMMENT(labelText)  UiForm_addComment (_dia_.get(), nullptr, labelText);
 
-#define MUTABLE_LABEL(stringVariable, labelText)  \
+#define CAPTION(labelText)  UiForm_addCaption (_dia_.get(), nullptr, labelText);
+
+#define MUTABLE_COMMENT(stringVariable, labelText)  \
 		static conststring32 stringVariable; \
 		UiForm_addComment (_dia_.get(), & stringVariable, labelText);
 

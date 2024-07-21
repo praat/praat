@@ -252,7 +252,7 @@ static void menu_cb_shiftPitchFrequencies (ManipulationPitchTierArea me, EDITOR_
 static void menu_cb_multiplyPitchFrequencies (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Multiply pitch frequencies", nullptr)
 		POSITIVE (factor, U"Factor", U"1.2")
-		LABEL (U"The multiplication is always done in hertz.")
+		COMMENT (U"The multiplication is always done in hertz.")
 	EDITOR_OK
 	EDITOR_DO
 		if (! my pitch())

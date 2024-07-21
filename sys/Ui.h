@@ -84,6 +84,7 @@ Thing_define (UiOption, Thing) {
 
 enum class _kUiField_type {
 	REAL_ = 1,
+		LABELLED_TEXT_MIN_ = REAL_,
 	REAL_OR_UNDEFINED_ = 2,
 	POSITIVE_ = 3,
 	INTEGER_ = 4,
@@ -92,26 +93,36 @@ enum class _kUiField_type {
 	SENTENCE_ = 7,
 	COLOUR_ = 8,
 	CHANNEL_ = 9,
+		LABELLED_TEXT_MAX_ = CHANNEL_,
+
 	HEADING_ = 10,
+		COMMENT_MIN_ = HEADING_,
 	COMMENT_ = 11,
-	TEXT_ = 12,
-	FORMULA_ = 13,
-	INFILE_ = 14,
-	OUTFILE_ = 15,
-	FOLDER_ = 16,
-	REALVECTOR_ = 17,
-	POSITIVEVECTOR_ = 18,
-	INTEGERVECTOR_ = 19,
-	NATURALVECTOR_ = 20,
-	REALMATRIX_ = 21,
-	STRINGARRAY_ = 22,
-	BOOLEAN_ = 23,
-	CHOICE_ = 24,
-	OPTIONMENU_ = 25,
-	LIST_ = 26,
-	LABELLED_TEXT_MIN_ = 1,
-	LABELLED_TEXT_MAX_ = 9
+	CAPTION_ = 12,
+		COMMENT_MAX_ = CAPTION_,
+
+	TEXT_ = 13,
+	FORMULA_ = 14,
+	INFILE_ = 15,
+	OUTFILE_ = 16,
+	FOLDER_ = 17,
+	REALVECTOR_ = 18,
+	POSITIVEVECTOR_ = 19,
+	INTEGERVECTOR_ = 20,
+	NATURALVECTOR_ = 21,
+	REALMATRIX_ = 22,
+	STRINGARRAY_ = 23,
+	BOOLEAN_ = 24,
+	CHOICE_ = 25,
+	OPTIONMENU_ = 26,
+	LIST_ = 27,
 };
+inline bool _kUiField_type_isLabelledText (_kUiField_type type) {
+	return type >= _kUiField_type :: LABELLED_TEXT_MIN_ && type <= _kUiField_type :: LABELLED_TEXT_MAX_;
+}
+inline bool _kUiField_type_isComment (_kUiField_type type) {
+	return type >= _kUiField_type :: COMMENT_MIN_ && type <= _kUiField_type :: COMMENT_MAX_;
+}
 
 Thing_define (UiField, Thing) {
 	_kUiField_type type;
@@ -221,6 +232,7 @@ UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 va
 		conststring32 labelText, conststring32 defaultValue);
 UiField UiForm_addHeading (UiForm me, conststring32 *variable, conststring32 labelText);
 UiField UiForm_addComment (UiForm me, conststring32 *variable, conststring32 labelText);
+UiField UiForm_addCaption (UiForm me, conststring32 *variable, conststring32 labelText);
 UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName,
 		conststring32 labelText, bool defaultValue);
 UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName,

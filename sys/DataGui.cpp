@@ -1,6 +1,6 @@
 /* DataGui.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2024 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ Thing_implement_pureVirtual (DataGui, Thing, 0);
 
 BOOLEAN_VARIABLE (v_form_pictureWindow__eraseFirst)
 void structDataGui :: v_form_pictureWindow (EditorCommand cmd) {
-	LABEL (U"Picture window:")
+	COMMENT (U"Picture window:")
 	BOOLEAN_FIELD (v_form_pictureWindow__eraseFirst, U"Erase first", true)
 }
 void structDataGui :: v_ok_pictureWindow (EditorCommand cmd) {
@@ -48,7 +48,7 @@ void structDataGui :: v_do_pictureWindow (EditorCommand /* cmd */) {
 
 OPTIONMENU_ENUM_VARIABLE (kDataGui_writeNameAtTop, v_form_pictureMargins__writeNameAtTop)
 void structDataGui :: v_form_pictureMargins (EditorCommand cmd) {
-	LABEL (U"Margins:")
+	COMMENT (U"Margins:")
 	OPTIONMENU_ENUM_FIELD (kDataGui_writeNameAtTop, v_form_pictureMargins__writeNameAtTop,
 			U"Write name at top", kDataGui_writeNameAtTop::DEFAULT)
 }

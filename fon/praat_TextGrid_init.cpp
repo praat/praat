@@ -207,7 +207,7 @@ DO
 FORM (GRAPHICS_TextGrid_Pitch_drawSemitones, U"TextGrid & Pitch: Draw semitones", nullptr) {
 	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"Range in semitones re 100 hertz:")
+	COMMENT (U"Range in semitones re 100 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	POSITIVE (fontSize, U"Font size (points)", U"18")
@@ -284,7 +284,7 @@ DO
 
 FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelySemitones, U"TextGrid & Pitch: Draw separately semitones", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"Range in semitones re 100 hertz:")
+	COMMENT (U"Range in semitones re 100 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	BOOLEAN (showBoundaries, U"Show boundaries", true)
@@ -365,7 +365,7 @@ DO
 FORM (GRAPHICS_TextGrid_Pitch_speckleSemitones, U"TextGrid & Pitch: Speckle semitones", nullptr) {
 	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"Range in semitones re 100 hertz:")
+	COMMENT (U"Range in semitones re 100 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	BOOLEAN (showBoundaries, U"Show boundaries", true)
@@ -441,7 +441,7 @@ DO
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelySemitones, U"TextGrid & Pitch: Speckle separately semitones", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"Range in semitones re 100 hertz:")
+	COMMENT (U"Range in semitones re 100 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	BOOLEAN (showBoundaries, U"Show boundaries", true)
@@ -574,19 +574,19 @@ DO
 }
 
 FORM (WINDOW_SpellingChecker_viewAndEdit, U"Edit spelling checker", U"SpellingChecker") {
-	LABEL (U"-- Syntax --")
+	COMMENT (U"-- Syntax --")
 	SENTENCE (forbiddenStrings, U"Forbidden strings", U"")
 	BOOLEAN (checkMatchingParentheses, U"Check matching parentheses", false)
 	SENTENCE (separatingCharacters, U"Separating characters", U"")
 	BOOLEAN (allowAllParenthesized, U"Allow all parenthesized", false)
-	LABEL (U"-- Capitals --")
+	COMMENT (U"-- Capitals --")
 	BOOLEAN (allowAllNames, U"Allow all names", false)
 	SENTENCE (namePrefixes, U"Name prefixes", U"")
 	BOOLEAN (allowAllAbbreviations, U"Allow all abbreviations", false)
-	LABEL (U"-- Capitalization --")
+	COMMENT (U"-- Capitalization --")
 	BOOLEAN (allowCapsSentenceInitially, U"Allow caps sentence-initially", false)
 	BOOLEAN (allowCapsAfterColon, U"Allow caps after colon", false)
-	LABEL (U"-- Word parts --")
+	COMMENT (U"-- Word parts --")
 	SENTENCE (allowAllWordsContaining, U"Allow all words containing", U"")
 	SENTENCE (allowAllWordsStartingWith, U"Allow all words starting with", U"")
 	SENTENCE (allowAllWordsEndingIn, U"Allow all words ending in", U"")

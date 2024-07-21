@@ -1,6 +1,6 @@
 /* FormantGridArea.cpp
  *
- * Copyright (C) 2008-2022 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2022,2024 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,8 +168,8 @@ static void menu_cb_selectFormantOrBandwidth (FormantGridArea me, EDITOR_ARGS) {
 
 static void menu_cb_pitchSettings (FormantGridArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Source pitch settings", nullptr)
-		LABEL (U"These settings apply to the pitch curve")
-		LABEL (U"that you hear when playing the FormantGrid.")
+		COMMENT (U"These settings apply to the pitch curve")
+		COMMENT (U"that you hear when playing the FormantGrid.")
 		REAL     (startTime,  U"Start time",       my default_source_pitch_tStart  ())
 		POSITIVE (startPitch, U"Start pitch (Hz)", my default_source_pitch_f0Start ())
 		REAL     (midTime,    U"Mid time",         my default_source_pitch_tMid    ())

@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2023 Paul Boersma
+ * Copyright (C) 1997-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@
 // MARK: New
 
 #define UiForm_addNetworkFields  \
-	LABEL (U"Activity spreading settings:") \
+	COMMENT (U"Activity spreading settings:") \
 	REAL (spreadingRate, U"Spreading rate", U"0.01") \
 	OPTIONMENU_ENUM (kNetwork_activityClippingRule, activityClippingRule, \
 			U"Activity clipping rule", kNetwork_activityClippingRule::DEFAULT) \
 	REAL (minimumActivity, U"left Activity range", U"0.0") \
 	REAL (maximumActivity, U"right Activity range", U"1.0") \
 	REAL (activityLeak, U"Activity leak", U"1.0") \
-	LABEL (U"Weight update settings:") \
+	COMMENT (U"Weight update settings:") \
 	REAL (learningRate, U"Learning rate", U"0.1") \
 	REAL (minimumWeight, U"left Weight range", U"-1.0") \
 	REAL (maximumWeight, U"right Weight range", U"1.0") \
@@ -49,7 +49,7 @@
 FORM (CREATE_ONE__Create_empty_Network, U"Create empty Network", nullptr) {
 	WORD (name, U"Name", U"network")
 	UiForm_addNetworkFields
-	LABEL (U"World coordinates:")
+	COMMENT (U"World coordinates:")
 	REAL (fromX, U"left x range", U"0.0")
 	REAL (toX, U"right x range", U"10.0")
 	REAL (fromY, U"left y range", U"0.0")
@@ -66,11 +66,11 @@ DO
 
 FORM (CREATE_ONE__Create_rectangular_Network, U"Create rectangular Network", nullptr) {
 	UiForm_addNetworkFields
-	LABEL (U"Structure settings:")
+	COMMENT (U"Structure settings:")
 	NATURAL (numberOfRows, U"Number of rows", U"10")
 	NATURAL (numberOfColumns, U"Number of columns", U"10")
 	BOOLEAN (bottomRowClamped, U"Bottom row clamped", 1)
-	LABEL (U"Initial state settings:")
+	COMMENT (U"Initial state settings:")
 	REAL (minimumInitialWeight, U"left Initial weight range", U"-0.1")
 	REAL (maximumInitialWeight, U"right Initial weight range", U"0.1")
 	OK
@@ -85,11 +85,11 @@ DO
 
 FORM (CREATE_ONE__Create_rectangular_Network_vertical, U"Create rectangular Network (vertical)", nullptr) {
 	UiForm_addNetworkFields
-	LABEL (U"Structure settings:")
+	COMMENT (U"Structure settings:")
 	NATURAL (numberOfRows, U"Number of rows", U"10")
 	NATURAL (numberOfColumns, U"Number of columns", U"10")
 	BOOLEAN (bottomRowClamped, U"Bottom row clamped", 1)
-	LABEL (U"Initial state settings:")
+	COMMENT (U"Initial state settings:")
 	REAL (minimumInitialWeight, U"left Initial weight range", U"-0.1")
 	REAL (maximumInitialWeight, U"right Initial weight range", U"0.1")
 	OK
@@ -250,8 +250,8 @@ DO
 FORM (MODIFY_EACH_WEAK__Network_formula_activities, U"Network: Formula (activities)", nullptr) {
 	INTEGER (fromNode, U"From node", U"1")
 	INTEGER (toNode, U"To node", U"0 (= all)")
-	LABEL (U"`col` is the node number, `self` is the current activity")
-	LABEL (U"for col := 1 to ncol do { self [col] := `formula' }")
+	COMMENT (U"`col` is the node number, `self` is the current activity")
+	COMMENT (U"for col := 1 to ncol do { self [col] := `formula' }")
 	FORMULA (formula, U"Formula", U"0")
 	OK
 DO
@@ -779,7 +779,7 @@ DO
 }
 
 FORM (MODIFY_EACH_WEAK__OTGrammar_learnOneFromPartialOutput, U"OTGrammar: Learn one from partial adult output", nullptr) {
-	LABEL (U"Partial adult surface form (e.g. overt form):")
+	COMMENT (U"Partial adult surface form (e.g. overt form):")
 	SENTENCE (partialOutput, U"Partial output", U"")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,

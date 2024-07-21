@@ -137,7 +137,7 @@ void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double
 	HFONT theWinGuiBoldLabelFont () {
 		static HFONT font;
 		if (! font)
-			font = CreateFont (15, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, nullptr);
+			font = CreateFont (15, 0, 0, 0, FW_HEAVY/*FW_BOLD*/, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, nullptr);
 		return font;
 	}
 	HBRUSH theWinGuiBackgroundBrush () {
