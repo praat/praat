@@ -280,14 +280,14 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__FormantPath_to_Matrix_deltas,  U"FormantPath: To Matrix (deltas)", nullptr) {
-	LABEL (U"Within frame:")
+	COMMENT (U"Within frame:")
 	REAL (qWeight, U"F/B weight (0-1)", U"1.0")
-	LABEL (U"Between frames:")
+	COMMENT (U"Between frames:")
 	REAL (frequencyChangeWeight, U"Frequency change weight (0-1)", U"1.0")
 	REAL (stressWeight, U"Stress weight (0-1)", U"1.0")
 	REAL (ceilingChangeWeight, U"Ceiling change weight (0-1)", U"1.0")
 	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
-	LABEL (U"Global stress parameters:")
+	COMMENT (U"Global stress parameters:")
 	POSITIVE (windowLength, U"Window length", U"0.035")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
@@ -306,14 +306,14 @@ DO
 }
 
 FORM (MODIFY_EACH__FormantPath_pathFinder,  U"FormantPath: Path finder", nullptr) {
-	LABEL (U"Within frame:")
+	COMMENT (U"Within frame:")
 	REAL (qWeight, U"F/B weight (0-1)", U"1.0")
-	LABEL (U"Between frames:")
+	COMMENT (U"Between frames:")
 	REAL (frequencyChangeWeight, U"Frequency change weight (0-1)", U"1.0")
 	REAL (stressWeight, U"Stress weight (0-1)", U"1.0")
 	REAL (ceilingChangeWeight, U"Ceiling change weight (0-1)", U"1.0")
 	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
-	LABEL (U"Global stress parameters:")
+	COMMENT (U"Global stress parameters:")
 	POSITIVE (windowLength, U"Window length", U"0.035")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
@@ -396,7 +396,7 @@ FORM (GRAPHICS_EACH__PowerCepstrum_drawTrendLine, U"PowerCepstrum: Draw trend li
 	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
 	REAL (fromAmplitude_dB, U"left Amplitude range (dB)", U"0.0")
 	REAL (toAmplitude_dB, U"right Amplitude range (dB)", U"0.0")
-	LABEL (U"Parameters for the trend line fit")
+	COMMENT (U"Parameters for the trend line fit")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrum_trendType, lineType, U"Trend type", kCepstrum_trendType::DEFAULT)
@@ -409,7 +409,7 @@ DO
 }
 
 FORM (MODIFY_EACH__PowerCepstrum_formula, U"PowerCepstrum: Formula...", U"PowerCepstrum: Formula...") {
-	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
+	COMMENT (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	FORMULA (formula, U"Formula", U"self")
 	OK
@@ -739,11 +739,11 @@ DO
 }
 
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", nullptr) {
-	LABEL (U"Smoothing:")
+	COMMENT (U"Smoothing:")
 	BOOLEAN (subtractTrendBeforeSmoothing, U"Subtract trend before smoothing", true)
 	REAL (smoothinWindowDuration, U"Time averaging window (s)", U"0.001")
 	REAL (quefrencySmoothinWindowDuration, U"Quefrency averaging window (s)", U"0.00005")
-	LABEL (U"Peak search:")
+	COMMENT (U"Peak search:")
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	OK
@@ -754,17 +754,17 @@ DO
 }
 
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepstrogram: Get CPPS...") {
-	LABEL (U"Smoothing of the Cepstrogram")
+	COMMENT (U"Smoothing of the Cepstrogram")
 	BOOLEAN (subtractTrendBeforeSmoothing, U"Subtract trend before smoothing", true)
 	REAL (smoothingWindowDuration, U"Time averaging window (s)", U"0.02")
 	REAL (quefrencySmoothingWindowDuration, U"Quefrency averaging window (s)", U"0.0005")
-	LABEL (U"Peak search:")
+	COMMENT (U"Peak search:")
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
 	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
-	LABEL (U"Trend line:")
+	COMMENT (U"Trend line:")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrum_trendType, lineType, U"Trend type", kCepstrum_trendType::DEFAULT)
@@ -777,10 +777,10 @@ DO
 }
 
 FORM (MODIFY__EACH_WEAK__PowerCepstrogram_formula, U"PowerCepstrogram: Formula", nullptr) {
-	LABEL (U"Do for all times and quefrencies:")
-	LABEL (U"   `x` is the time in seconds")
-	LABEL (U"   `y` is the quefrency in seconds")
-	LABEL (U"   `self` is the current value")
+	COMMENT (U"Do for all times and quefrencies:")
+	COMMENT (U"   `x` is the time in seconds")
+	COMMENT (U"   `y` is the quefrency in seconds")
+	COMMENT (U"   `self` is the current value")
 	FORMULA (formula, U"   Replace all values with", U"sqrt(self)")
 	OK
 DO
@@ -873,13 +873,13 @@ DIRECT (CONVERT_EACH_TO_ONE__Cepstrumc_to_LPC) {
 }
 
 FORM (CONVERT_TWO_TO_ONE__Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: To DTW...") {
-	LABEL (U"Distance calculation between Cepstra")
+	COMMENT (U"Distance calculation between Cepstra")
 	REAL (cepstralWeight, U"Cepstral weight", U"1.0")
 	REAL (logEnergyWeight, U"Log energy weight", U"0.0")
 	REAL (regressionWeight, U"Regression weight", U"0.0")
 	REAL (regressionLogEnergyWeight, U"Regression weight log energy", U"0.0")
 	REAL (windowDuration, U"Window for regression coefficients (seconds)", U"0.056")
-	LABEL (U"Boundary conditions for time warp")
+	COMMENT (U"Boundary conditions for time warp")
 	BOOLEAN (matchBeginPositions, U"Match begin positions", false)
 	BOOLEAN (matchEndPositions, U"Match end positions", false)
 	CHOICE (slopeConstraintType, U"Slope constraints", 1)
@@ -927,8 +927,8 @@ FORM (MODIFY_EACH_WEAK__Formant_formula, U"Formant: Formula", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (fromFormant, U"left Formant range", U"1")
 	NATURAL (toFormant, U"right Formant range", U"5")
-	LABEL (U"Formant frequencies in odd numbered rows")
-	LABEL (U"Formant bandwidths in even numbered rows")
+	COMMENT (U"Formant frequencies in odd numbered rows")
+	COMMENT (U"Formant bandwidths in even numbered rows")
 	SENTENCE (formula, U"Formula", U"if row mod 2 = 1 and self [row,col] / self [row+1,col] < 5 then 0 else self fi")
 	OK
 DO
@@ -1241,14 +1241,14 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantPath, U"Sound: To FormantPath", nullp
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	OPTIONMENU_ENUM (kLPC_Analysis, lpcModel, U"LPC model", kLPC_Analysis::DEFAULT)
-	LABEL (U"The maximum and minimum ceiling frequencies are determined as:")
-	LABEL (U" middleFormantCeiling * exp(+/- ceilingStepSize * numberOfStepsUpDown).")
+	COMMENT (U"The maximum and minimum ceiling frequencies are determined as:")
+	COMMENT (U" middleFormantCeiling * exp(+/- ceilingStepSize * numberOfStepsUpDown).")
 	POSITIVE (ceilingStepSize, U"Ceiling step size", U"0.05")
 	NATURAL (numberOfStepsUpDown, U"Number of steps up / down", U"4")
-	LABEL (U"For Marple analysis:")
+	COMMENT (U"For Marple analysis:")
 	POSITIVE (marple_tol1, U"Tolerance 1", U"1e-6")
 	POSITIVE (marple_tol2, U"Tolerance 2", U"1e-6")
-	LABEL (U"For Robust analysis:")
+	COMMENT (U"For Robust analysis:")
 	POSITIVE (huber_numberOfStdDev, U"Number of std. dev.", U"1.5")
 	NATURAL (huber_maximumNumberOfIterations, U"Maximum number of iterations", U"5")
 	REAL (huber_tolerance, U"Tolerance", U"0.000001")
@@ -1270,8 +1270,8 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantPath_burg, U"Sound: To FormantPath (B
 	REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	LABEL (U"The maximum and minimum ceiling frequencies are determined as:")
-	LABEL (U" middleCeiling * exp(+/- ceilingStepSize * numberOfStepsUpDown).")
+	COMMENT (U"The maximum and minimum ceiling frequencies are determined as:")
+	COMMENT (U" middleCeiling * exp(+/- ceilingStepSize * numberOfStepsUpDown).")
 	POSITIVE (ceilingStepSize, U"Ceiling step size", U"0.05")
 	NATURAL (numberOfStepsUpDown, U"Number of steps up / down", U"4")
 	OK
@@ -1290,8 +1290,8 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantPath_robust, U"Sound: To FormantPath 
 	POSITIVE (numberOfStandardDeviations, U"Number of std. dev.", U"1.5")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"5")
 	REAL (tolerance, U"Tolerance", U"0.000001")
-	LABEL (U"The maximum and minimum ceiling frequencies are determined as:")
-	LABEL (U" middleCeiling * exp(+/- ceilingStepSize * numberOfStepsUpDown).")
+	COMMENT (U"The maximum and minimum ceiling frequencies are determined as:")
+	COMMENT (U" middleCeiling * exp(+/- ceilingStepSize * numberOfStepsUpDown).")
 	POSITIVE (ceilingStepSize, U"Ceiling step size", U"0.05")
 	NATURAL (numberOfStepsUpDown, U"Number of steps up / down", U"4")
 	OK
@@ -1302,10 +1302,10 @@ DO
 }
 
 #define Sound_to_LPC_addWarning \
-	LABEL (U"Warning 1:  for formant analysis, use \"To Formant\" instead.") \
-	LABEL (U"Warning 2:  if you do use \"To LPC\", you may want to resample first.") \
-	LABEL (U"Click Help for more details.") \
-	LABEL (U"")
+	COMMENT (U"Warning 1:  for formant analysis, use \"To Formant\" instead.") \
+	COMMENT (U"Warning 2:  if you do use \"To LPC\", you may want to resample first.") \
+	COMMENT (U"Click Help for more details.") \
+	COMMENT (U"")
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_LPC_autocorrelation, U"Sound: To LPC (autocorrelation)", U"Sound: To LPC (autocorrelation)...") {
 	Sound_to_LPC_addWarning
@@ -1387,7 +1387,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_MFCC, U"Sound: To MFCC", U"Sound: To MFCC...
 	NATURAL (numberOfCoefficients, U"Number of coefficients", U"12")
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
 	POSITIVE (timeStep, U"Time step (s)", U"0.005")
-	LABEL (U"Filter bank parameters")
+	COMMENT (U"Filter bank parameters")
 	POSITIVE (firstFilterFrequency, U"First filter frequency (mel)", U"100.0")
 	POSITIVE (distancBetweenFilters, U"Distance between filters (mel)", U"100.0")
 	REAL (maximumFrequency, U"Maximum frequency (mel)", U"0.0");

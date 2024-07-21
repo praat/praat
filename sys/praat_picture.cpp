@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,10 +197,10 @@ DIRECT (GRAPHICS_MouseSelectsOuterViewport) {
 }
 
 FORM (GRAPHICS_SelectInnerViewport, U"Praat picture: Select inner viewport", U"Select inner viewport...") {
-	LABEL (U"The viewport is the selected rectangle in the Picture window.")
-	LABEL (U"It is where your next drawing will appear.")
-	LABEL (U"The rectangle you select here will not include the margins.")
-	LABEL (U"")
+	COMMENT (U"The viewport is the selected rectangle in the Picture window.")
+	COMMENT (U"It is where your next drawing will appear.")
+	COMMENT (U"The rectangle you select here will not include the margins.")
+	COMMENT (U"")
 	REAL (left, U"left Horizontal range (inches)", U"0.0")
 	REAL (right, U"right Horizontal range (inches)", U"6.0")
 	REAL (top, U"left Vertical range (inches)", U"0.0")
@@ -269,10 +269,10 @@ DO
 }
 
 FORM (GRAPHICS_SelectOuterViewport, U"Praat picture: Select outer viewport", U"Select outer viewport...") {
-	LABEL (U"The viewport is the selected rectangle in the Picture window.")
-	LABEL (U"It is where your next drawing will appear.")
-	LABEL (U"The rectangle you select here will include the margins.")
-	LABEL (U"")
+	COMMENT (U"The viewport is the selected rectangle in the Picture window.")
+	COMMENT (U"It is where your next drawing will appear.")
+	COMMENT (U"The rectangle you select here will include the margins.")
+	COMMENT (U"")
 	REAL (left, U"left Horizontal range (inches)", U"0.0")
 	REAL (right, U"right Horizontal range (inches)", U"6.0")
 	REAL (top, U"left Vertical range (inches)", U"0.0")
@@ -423,8 +423,8 @@ DO
 }
 
 FORM (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", nullptr) {
-	LABEL (U"Here you determine the diameter (in millimetres)")
-	LABEL (U"of the dots that are drawn by \"speckle\" commands.")
+	COMMENT (U"Here you determine the diameter (in millimetres)")
+	COMMENT (U"of the dots that are drawn by \"speckle\" commands.")
 	POSITIVE (speckleSize, U"Speckle size (mm)", U"1.0")
 OK
 	SET_REAL (speckleSize, theCurrentPraatPicture -> speckleSize)
@@ -762,8 +762,8 @@ Thing_define (PraatPictureFunction, Daata) {
 Thing_implement (PraatPictureFunction, Daata, 0);
 
 FORM (GRAPHICS_DrawFunction, U"Praat picture: Draw function", nullptr) {
-	LABEL (U"This command assumes that the x and y axes")
-	LABEL (U"have been set by a Draw command or by \"Axes...\".")
+	COMMENT (U"This command assumes that the x and y axes")
+	COMMENT (U"have been set by a Draw command or by \"Axes...\".")
 	REAL (fromX, U"From x", U"0.0")
 	REAL (toX, U"To x", U"0.0 (= all)")
 	NATURAL (numberOfHorizontalSteps, U"Number of horizontal steps", U"1000")

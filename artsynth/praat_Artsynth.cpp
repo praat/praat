@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2022 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -282,8 +282,8 @@ DIRECT (GRAPHICS_VocalTract_draw) {
 }
 
 FORM (MODIFY_VocalTract_formula, U"VocalTract Formula", U"Matrix: Formula...") {
-	LABEL (U"`x` is the distance form the glottis in metres, `col` is the section number, `self` is in m\u00B2")
-	LABEL (U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
+	COMMENT (U"`x` is the distance form the glottis in metres, `col` is the section number, `self` is in m\u00B2")
+	COMMENT (U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
 	FORMULA (formula, U"Formula", U"0")
 	OK
 DO
@@ -303,7 +303,7 @@ DIRECT (NEW_VocalTract_to_Matrix) {
 }
 
 FORM (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
-	LABEL (U"Compute transfer function")
+	COMMENT (U"Compute transfer function")
 	NATURAL (numberOfFequencies, U"Number of frequencies", U"4097")
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
 	REAL (glottalDamping, U"Glottal damping", U"0.1")

@@ -214,6 +214,7 @@ static void UiField_setDefault (UiField me) {
 	switch (my type) {
 		case _kUiField_type::HEADING_:
 		case _kUiField_type::COMMENT_:
+		case _kUiField_type::CAPTION_:
 		{
 			// do nothing
 		}
@@ -294,6 +295,7 @@ static void UiField_widgetToValue (UiField me) {
 	{
 		case _kUiField_type::HEADING_:
 		case _kUiField_type::COMMENT_:
+		case _kUiField_type::CAPTION_:
 		{
 			// do nothing
 		}
@@ -666,7 +668,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 			UiHistory_write (U"\n");
 			UiHistory_write_colonize (my invokingButtonTitle.get());
 			int size = my numberOfFields;
-			while (size >= 1 && (my field [size] -> type == _kUiField_type::HEADING_ || my field [size] -> type == _kUiField_type::COMMENT_))
+			while (size >= 1 && _kUiField_type_isComment (my field [size] -> type))
 				size --;   // ignore trailing fields without a value
 			int next = 0;
 			for (int ifield = 1; ifield <= size; ifield ++) {
@@ -675,6 +677,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 				{
 					case _kUiField_type::HEADING_:
 					case _kUiField_type::COMMENT_:
+					case _kUiField_type::CAPTION_:
 					{
 						// do nothing
 					}
@@ -1030,6 +1033,14 @@ UiField UiForm_addComment (UiForm me, conststring32 *variable, conststring32 lab
 	return thee;
 }
 
+UiField UiForm_addCaption (UiForm me, conststring32 *variable, conststring32 labelText) {
+	UiField thee = UiForm_addField (me, _kUiField_type::CAPTION_, U"");   // this field gets no name; so that the user can give it any title
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
+	thy stringVariable = variable;
+	thy stringValue = Melder_dup (labelText);
+	return thee;
+}
+
 UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName,
 	conststring32 labelText, bool defaultValue)
 {
@@ -1363,6 +1374,9 @@ void UiForm_finish (UiForm me) {
 			: thy type == _kUiField_type::COMMENT_ && thy stringValue [0] != U'\0' &&
 					thy stringValue [Melder_length (thy stringValue.get()) - 1] != U'.' && ifield != my numberOfFields ?
 				headerLabelHeight
+			: thy type == _kUiField_type::CAPTION_ && thy stringValue [0] != U'\0' &&
+					thy stringValue [Melder_length (thy stringValue.get()) - 1] != U'.' && ifield != my numberOfFields ?
+				headerLabelHeight
 			: thouHastVerticallyAddedLabel ?
 				multiLineTextHeight (thy numberOfLines)
 			:
@@ -1579,21 +1593,43 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::HEADING_:
 			{
+				int ylabel = thy y;
+				#if defined (macintosh)
+					ylabel += 2;
+				#endif
 				MelderString_copy (& theFinishBuffer, thy stringValue.get());
 				thy label = GuiLabel_createShown (form,
 					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
-					thy y + 5, thy y + 5 + textFieldHeight,
+					ylabel + 5, ylabel + 5 + textFieldHeight,
 					theFinishBuffer.string, GuiLabel_BOLD
 				);
 			}
 			break;
 			case _kUiField_type::COMMENT_:
 			{
+				int ylabel = thy y;
+				#if defined (macintosh)
+					ylabel += 0;
+				#endif
 				MelderString_copy (& theFinishBuffer, thy stringValue.get());
 				thy label = GuiLabel_createShown (form,
 					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
-					thy y + 5, thy y + 5 + textFieldHeight,
+					ylabel + 5, ylabel + 5 + textFieldHeight,
 					theFinishBuffer.string, 0
+				);
+			}
+			break;
+			case _kUiField_type::CAPTION_:
+			{
+				int ylabel = thy y;
+				#if defined (macintosh)
+					ylabel += 0;
+				#endif
+				MelderString_copy (& theFinishBuffer, thy stringValue.get());
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel - 10, ylabel - 10 + textFieldHeight,
+					theFinishBuffer.string, GuiLabel_RIGHT
 				);
 			}
 			break;
@@ -1673,7 +1709,7 @@ void UiForm_finish (UiForm me) {
 	}
 	bool commentsOnly = true;
 	for (integer ifield = 1; ifield <= my numberOfFields; ifield ++) {
-		if (my field [ifield] -> type != _kUiField_type::HEADING_ && my field [ifield] -> type != _kUiField_type::COMMENT_) {
+		if (! _kUiField_type_isComment (my field [ifield] -> type)) {
 			commentsOnly = false;
 			break;
 		}
@@ -1723,7 +1759,7 @@ void UiForm_finish (UiForm me) {
 		my cancelButton = GuiButton_createShown (form, x, x + Gui_CANCEL_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
 				U"Cancel", gui_button_cb_cancel, me, GuiButton_CANCEL);
 		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - Gui_HORIZONTAL_DIALOG_SPACING - Gui_APPLY_BUTTON_WIDTH;
-		if (my numberOfFields > 1 || (my field [1] -> type != _kUiField_type::HEADING_ && my field [1] -> type != _kUiField_type::COMMENT_))
+		if (my numberOfFields > 1 || ! _kUiField_type_isComment (my field [1] -> type))
 			my applyButton = GuiButton_createShown (form, x, x + Gui_APPLY_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
 					U"Apply", gui_button_cb_apply, me, 0);
 		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH;
@@ -1749,7 +1785,7 @@ void UiForm_do (UiForm me, bool modified) {
 static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelField) {
 	if (my labelText && str32chr (my labelText.get(), U':'))
 		trace (U"Form label with colon: ", my labelText.get());
-	if (my type == _kUiField_type::HEADING_ || my type == _kUiField_type::COMMENT_) {
+	if (_kUiField_type_isComment (my type)) {
 		const bool weAreFollowedByAWideField =
 			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::FORMULA_ ||
 			next -> type == _kUiField_type::INFILE_ || next -> type == _kUiField_type::OUTFILE_ ||
@@ -1939,7 +1975,7 @@ void UiForm_info (UiForm me, integer narg) {
 		*/
 		int lastNonLabelFieldNumber = 0;
 		for (int ifield = my numberOfFields; ifield > 0; ifield --) {
-			if (my field [ifield] -> type != _kUiField_type::HEADING_ && my field [ifield] -> type != _kUiField_type::COMMENT_) {
+			if (! _kUiField_type_isComment (my field [ifield] -> type)) {
 				lastNonLabelFieldNumber = ifield;
 				break;
 			}
@@ -2202,7 +2238,7 @@ void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter
 	//while (size >= 1 && my field [size] -> type == _kUiField_type::LABEL_)
 	//	size --;   // ignore trailing fields without a value
 	for (integer i = 1; i <= size; i ++) {
-		if (my field [i] -> type == _kUiField_type::HEADING_ || my field [i] -> type == _kUiField_type::COMMENT_)
+		if (_kUiField_type_isComment (my field [i] -> type))
 			continue;   // ignore non-trailing fields without a value
 		iarg ++;
 		if (iarg > narg)
@@ -2407,12 +2443,12 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter optiona
 		to continue to support the dots-based scripting style until 2036.
 	*/
 	int size = my numberOfFields;
-	while (size >= 1 && (my field [size] -> type == _kUiField_type::HEADING_ || my field [size] -> type == _kUiField_type::COMMENT_))
+	while (size >= 1 && _kUiField_type_isComment (my field [size] -> type))
 		size --;   // ignore trailing fields without a value
 	for (int i = 1; i < size; i ++) {
 		static char32 stringValue [3000];
 		int ichar = 0;
-		if (my field [size] -> type == _kUiField_type::HEADING_ || my field [size] -> type == _kUiField_type::COMMENT_)
+		if (_kUiField_type_isComment (my field [size] -> type))
 			continue;   // ignore non-trailing fields without a value
 		Melder_skipHorizontalOrVerticalSpace (& arguments);   // go to next argument
 		/*
@@ -2718,6 +2754,7 @@ void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 value
 				break;
 				case _kUiField_type::HEADING_:
 				case _kUiField_type::COMMENT_:
+				case _kUiField_type::CAPTION_:
 				{
 					GuiLabel_setText (field -> label, value);
 				}

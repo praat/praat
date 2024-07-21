@@ -200,19 +200,34 @@ _form_inited_: \
 	UiForm_addHeading (cmd -> d_uiform.get(), nullptr, labelText);
 
 
-#define LABEL(labelText)  \
+#define COMMENT(labelText)  \
 	UiForm_addComment (cmd -> d_uiform.get(), nullptr, labelText);
 
 
-#define MUTABLE_LABEL_VARIABLE(stringVariable)  \
+#define MUTABLE_COMMENT_VARIABLE(stringVariable)  \
 	static conststring32 stringVariable;
 
-#define MUTABLE_LABEL_FIELD(stringVariable, labelText)  \
+#define MUTABLE_COMMENT_FIELD(stringVariable, labelText)  \
 	UiForm_addComment (cmd -> d_uiform.get(), & stringVariable, labelText);
 
-#define MUTABLE_LABEL(stringVariable, labelText)  \
-	MUTABLE_LABEL_VARIABLE (stringVariable) \
-	MUTABLE_LABEL_FIELD (stringVariable, labelText)
+#define MUTABLE_COMMENT(stringVariable, labelText)  \
+	MUTABLE_COMMENT_VARIABLE (stringVariable) \
+	MUTABLE_COMMENT_FIELD (stringVariable, labelText)
+
+
+#define CAPTION(labelText)  \
+	UiForm_addCaption (cmd -> d_uiform.get(), nullptr, labelText);
+
+
+#define MUTABLE_CAPTION_VARIABLE(stringVariable)  \
+	static conststring32 stringVariable;
+
+#define MUTABLE_CAPTION_FIELD(stringVariable, labelText)  \
+	UiForm_addCaption (cmd -> d_uiform.get(), & stringVariable, labelText);
+
+#define MUTABLE_CAPTION(stringVariable, labelText)  \
+	MUTABLE_CAPTION_VARIABLE (stringVariable) \
+	MUTABLE_CAPTION_FIELD (stringVariable, labelText)
 
 
 #define TEXTFIELD_VARIABLE(stringVariable)  \

@@ -153,6 +153,11 @@ void UiPause_comment (conststring32 label) {
 		Melder_throw (U"The function “comment” should be between a “beginPause” and an “endPause”.");
 	UiForm_addComment (thePauseForm.get(), nullptr, label);
 }
+void UiPause_caption (conststring32 label) {
+	if (! thePauseForm)
+		Melder_throw (U"The function “caption” should be between a “beginPause” and an “endPause”.");
+	UiForm_addCaption (thePauseForm.get(), nullptr, label);
+}
 int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	conststring32 continueText1, conststring32 continueText2, conststring32 continueText3,
 	conststring32 continueText4, conststring32 continueText5, conststring32 continueText6,

@@ -42,6 +42,7 @@ void UiPause_optionmenu     (conststring32 label, int defaultValue);
 void UiPause_option         (conststring32 label);
 void UiPause_heading        (conststring32 label);
 void UiPause_comment        (conststring32 label);
+void UiPause_caption        (conststring32 label);
 
 int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	conststring32 continueText1, conststring32 continueText2, conststring32 continueText3,

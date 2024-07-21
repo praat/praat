@@ -1,6 +1,6 @@
 /* OTGrammarEditor.cpp
  *
- * Copyright (C) 1997-2005,2007-2020,2022 Paul Boersma
+ * Copyright (C) 1997-2005,2007-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ static void menu_cb_evaluate_zeroNoise (OTGrammarEditor me, EDITOR_ARGS) {
 
 static void menu_cb_editConstraint (OTGrammarEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Edit constraint", nullptr)
-		MUTABLE_LABEL (constraintLabel, U"");
+		MUTABLE_COMMENT (constraintLabel, U"");
 		REAL (rankingValue, U"Ranking value", U"100.0");
 		REAL (disharmony, U"Disharmony", U"100.0");
 		REAL (plasticity, U"Plasticity", U"1.0");
@@ -88,9 +88,9 @@ static void menu_cb_editConstraint (OTGrammarEditor me, EDITOR_ARGS) {
 
 static void menu_cb_learnOne (OTGrammarEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Learn one", U"OTGrammar: Learn one...")
-		LABEL (U"Underlying form:")
+		COMMENT (U"Underlying form:")
 		SENTENCE (inputString, U"Input string", U"")
-		LABEL (U"Adult surface form:")
+		COMMENT (U"Adult surface form:")
 		SENTENCE (outputString, U"Output string", U"")
 		REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 		OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
@@ -112,7 +112,7 @@ static void menu_cb_learnOne (OTGrammarEditor me, EDITOR_ARGS) {
 
 static void menu_cb_learnOneFromPartialOutput (OTGrammarEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Learn one from partial adult output", nullptr)
-		LABEL (U"Partial adult surface form (e.g. overt form):")
+		COMMENT (U"Partial adult surface form (e.g. overt form):")
 		SENTENCE (partialOutput, U"Partial output", U"")
 		REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 		OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,

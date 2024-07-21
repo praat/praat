@@ -1,6 +1,6 @@
 /* praat_TableOfReal.cpp
  *
- * Copyright (C) 1992-2018,2021-2023 Paul Boersma
+ * Copyright (C) 1992-2018,2021-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,7 +230,7 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_TableOfReal_formula, U"TableOfReal: Formula", U"Formula...") {
-	LABEL (U"for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
+	COMMENT (U"for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
 	FORMULA (formula, U"Formula", U"if col = 5 then self + self [6] else self fi")
 	OK
 DO
@@ -341,7 +341,7 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_sortByLabel, U"Sort rows by label", nullptr) {
-	LABEL (U"Secondary sorting keys:")
+	COMMENT (U"Secondary sorting keys:")
 	INTEGER (column1, U"Column1", U"1")
 	INTEGER (column2, U"Column2", U"0")
 	OK
@@ -360,7 +360,7 @@ DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
 }
 
 FORM (NEW_TableOfReal_extractColumnsByNumber, U"Extract columns by number", nullptr) {
-	LABEL (U"Create a new TableOfReal from the following existing columns.")
+	COMMENT (U"Create a new TableOfReal from the following existing columns.")
 	NATURALVECTOR (columnNumbers, U"Column numbers", RANGES_, U"1 2")
 	OK
 DO
@@ -370,7 +370,7 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
-	LABEL (U"Extract all columns with at least one cell where the following condition holds.")
+	COMMENT (U"Extract all columns with at least one cell where the following condition holds.")
 	FORMULA (condition, U"Condition", U"col mod 3 = 0 ; this example extracts every third column")
 	OK
 DO
@@ -408,7 +408,7 @@ DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
 }
 
 FORM (NEW_TableOfReal_extractRowsByNumber, U"Extract rows by number", nullptr) {
-	LABEL (U"Create a new TableOfReal from the following existing rows.")
+	COMMENT (U"Create a new TableOfReal from the following existing rows.")
 	NATURALVECTOR (rowNumbers, U"Row numbers", RANGES_, U"1 2")
 	OK
 DO
@@ -418,7 +418,7 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
-	LABEL (U"Extract all rows with at least one cell where the following condition holds.")
+	COMMENT (U"Extract all rows with at least one cell where the following condition holds.")
 	FORMULA (condition, U"Condition", U"row mod 3 = 0 ; this example extracts every third row")
 	OK
 DO

@@ -1,6 +1,6 @@
 /* PointArea.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,11 @@ Thing_implement (PointArea, FunctionArea, 0);
 
 static void menu_cb_pulsesSettings (PointArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pulses settings", U"Pulses settings...")
-		LABEL   (U"Settings that influence both jitter and shimmer:")
+		COMMENT   (U"Settings that influence both jitter and shimmer:")
 		POSITIVE (periodFloor,            U"Period floor (s)",         my default_periodFloor            ())
 		POSITIVE (periodCeiling,          U"Period ceiling (s)",       my default_periodCeiling          ())
 		POSITIVE (maximumPeriodFactor,    U"Maximum period factor",    my default_maximumPeriodFactor    ())
-		LABEL   (U"A setting that influences shimmer only:")
+		COMMENT   (U"A setting that influences shimmer only:")
 		POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", my default_maximumAmplitudeFactor ())
 	EDITOR_OK
 		SET_REAL (periodFloor,            my instancePref_periodFloor())

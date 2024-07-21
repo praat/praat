@@ -668,11 +668,11 @@ static void menu_cb_useSelectionForFind (TextEditor me, EDITOR_ARGS) {
 
 static void menu_cb_replace (TextEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Find", nullptr)
-		LABEL (U"This is a \"slow\" find-and-replace method;")
-		LABEL (U"if the selected text is identical to the Find string,")
-		LABEL (U"the selected text will be replaced by the Replace string;")
-		LABEL (U"otherwise, the next occurrence of the Find string will be selected.")
-		LABEL (U"So you typically need two clicks on Apply to get a text replaced.")
+		COMMENT (U"This is a \"slow\" find-and-replace method;")
+		COMMENT (U"if the selected text is identical to the Find string,")
+		COMMENT (U"the selected text will be replaced by the Replace string;")
+		COMMENT (U"otherwise, the next occurrence of the Find string will be selected.")
+		COMMENT (U"So you typically need two clicks on Apply to get a text replaced.")
 		TEXTFIELD (findString, U"Find", U"", 5)
 		TEXTFIELD (replaceString, U"Replace with", U"", 5)
 	EDITOR_OK

@@ -36,9 +36,9 @@ Thing_implement (GuiOptionMenu, GuiControl, 0);
 	}
 	- (void) dealloc {   // override
 		GuiOptionMenu me = d_userData;
-        [self removeAllItems];
-        [self setMenu:nil];
-        
+		[self removeAllItems];
+		[self setMenu:nil];
+
 		forget (me);
 		trace (U"deleting an option menu");
 		[super dealloc];
@@ -57,7 +57,7 @@ void structGuiOptionMenu :: v_show () {
 		GuiOptionMenu_Parent :: v_show ();
 	#elif motif
 		XtManageChild (d_xmMenuBar);
-    #elif cocoa
+	#elif cocoa
 		//NSLog(@"cocoa structGuiOptionMenu :: v_show"); // ?
 	#endif
 }
@@ -85,12 +85,12 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 		XtVaSetValues (my d_xmMenuBar, XmNwidth, right - left + 8, nullptr);   // BUG: twice?
 		XtVaSetValues (my d_xmCascadeButton, XmNx, 4, XmNy, 4, XmNwidth, right - left, XmNheight, bottom - top, nullptr);
 	#elif cocoa
-        GuiCocoaOptionMenu *optionMenu = [[GuiCocoaOptionMenu alloc] init];
-        my d_widget = (GuiObject) optionMenu;
-		my v_positionInForm (my d_widget, left, right, top - 1, bottom + 1, parent);
-        [optionMenu   setUserData: me];
-//        [optionMenu setBezelStyle: NSRoundedBezelStyle];
-//        [optionMenu setBordered: NO];
+		GuiCocoaOptionMenu *optionMenu = [[GuiCocoaOptionMenu alloc] init];
+		my d_widget = (GuiObject) optionMenu;
+		my v_positionInForm (my d_widget, left, right, top + 1, bottom + 6, parent);
+		[optionMenu   setUserData: me];
+//		[optionMenu setBezelStyle: NSRoundedBezelStyle];
+//		[optionMenu setBordered: NO];
 	#endif
 
 	#if gtk
@@ -138,9 +138,9 @@ void GuiOptionMenu_addOption (GuiOptionMenu me, conststring32 text) {
 		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (text), xmToggleButtonWidgetClass, my d_widget, nullptr);
 		XtAddCallback (menuItem -> d_widget, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) me);
 		my d_options. addItem_move (menuItem.move());
-    #elif cocoa
-        GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
-        [menu addItemWithTitle: [NSString stringWithUTF8String: Melder_peek32to8 (text)]];
+	#elif cocoa
+		GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
+		[menu addItemWithTitle: [NSString stringWithUTF8String: Melder_peek32to8 (text)]];
 	#endif
 }
 
@@ -155,7 +155,7 @@ int GuiOptionMenu_getValue (GuiOptionMenu me) {
 			if (XmToggleButtonGetState (menuItem -> d_widget))
 				my d_value = i;
 		}
-    #elif cocoa
+	#elif cocoa
 		GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
 		my d_value = [menu indexOfSelectedItem] + 1;
 	#endif
@@ -173,8 +173,8 @@ void GuiOptionMenu_setValue (GuiOptionMenu me, int value) {
 				XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (menuItem -> d_widget -> name.get()), nullptr);
 		}
 	#elif cocoa
-        GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
-        [menu   selectItemAtIndex: value - 1];
+		GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
+		[menu   selectItemAtIndex: value - 1];
 	#endif
 	my d_value = value;
 }

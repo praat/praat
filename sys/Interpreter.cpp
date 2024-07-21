@@ -56,6 +56,7 @@
 #define Interpreter_OPTION 20
 #define Interpreter_HEADING 21
 #define Interpreter_COMMENT 22
+#define Interpreter_CAPTION 23
 
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
@@ -821,6 +822,8 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, Editor opti
 				UiForm_addHeading (form.get(), nullptr, my arguments [ipar].get());
 			} break; case Interpreter_COMMENT: {
 				UiForm_addComment (form.get(), nullptr, my arguments [ipar].get());
+			} break; case Interpreter_CAPTION: {
+				UiForm_addCaption (form.get(), nullptr, my arguments [ipar].get());
 			} break; default: {
 				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			}

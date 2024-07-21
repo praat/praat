@@ -1,6 +1,6 @@
 /* praat_EEG.cpp
  *
- * Copyright (C) 2011-2018,2020-2023 Paul Boersma
+ * Copyright (C) 2011-2018,2020-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ DO
 }
 
 FORM (MODIFY_EEG_subtractMeanChannel, U"Subtract mean channel", nullptr) {
-	LABEL (U"Range of reference channels:")
+	COMMENT (U"Range of reference channels:")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"32")
 	OK
@@ -545,13 +545,13 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
-	LABEL (U"! `x` is the time in seconds, `col` is the sample number.")
-	LABEL (U"x = x1   ! time associated with first sample")
-	LABEL (U"for col from 1 to ncol")
-	LABEL (U"   self [col] = ...")
+	COMMENT (U"! `x` is the time in seconds, `col` is the sample number.")
+	COMMENT (U"x = x1   ! time associated with first sample")
+	COMMENT (U"for col from 1 to ncol")
+	COMMENT (U"   self [col] = ...")
 	FORMULA (formula, U"Formula", U"self")
-	LABEL (U"   x = x + dx")
-	LABEL (U"endfor")
+	COMMENT (U"   x = x + dx")
+	COMMENT (U"endfor")
 	OK
 DO
 	MODIFY_EACH_WEAK (ERP)

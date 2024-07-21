@@ -642,11 +642,11 @@ static void menu_cb_timeStepSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Time step settings", U"Time step settings...")
 		OPTIONMENU_ENUM (kSoundAnalysisArea_timeStepStrategy, timeStepStrategy,
 				U"Time step strategy", my default_timeStepStrategy ())
-		LABEL (U"")
-		LABEL (U"If the time step strategy is \"fixed\":")
+		COMMENT (U"")
+		COMMENT (U"If the time step strategy is \"fixed\":")
 		POSITIVE (fixedTimeStep, U"Fixed time step (s)", my default_fixedTimeStep ())
-		LABEL (U"")
-		LABEL (U"If the time step strategy is \"view-dependent\":")
+		COMMENT (U"")
+		COMMENT (U"If the time step strategy is \"view-dependent\":")
 		NATURAL (numberOfTimeStepsPerView, U"Number of time steps per view", my default_numberOfTimeStepsPerView ())
 	EDITOR_OK
 		SET_ENUM (timeStepStrategy, kSoundAnalysisArea_timeStepStrategy, my instancePref_timeStepStrategy())
@@ -908,8 +908,8 @@ static void menu_cb_spectrogramSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 		POSITIVE (viewTo,       U"right View range (Hz)", my default_spectrogram_viewTo())
 		POSITIVE (windowLength, U"Window length (s)",     my default_spectrogram_windowLength())
 		POSITIVE (dynamicRange, U"Dynamic range (dB)",    my default_spectrogram_dynamicRange())
-		MUTABLE_LABEL (note1, U"")
-		MUTABLE_LABEL (note2, U"")
+		MUTABLE_COMMENT (note1, U"")
+		MUTABLE_COMMENT (note2, U"")
 	EDITOR_OK
 		SET_REAL (viewFrom,     my instancePref_spectrogram_viewFrom())
 		SET_REAL (viewTo,       my instancePref_spectrogram_viewTo())
@@ -947,15 +947,15 @@ static void menu_cb_spectrogramSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 
 static void menu_cb_advancedSpectrogramSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Advanced spectrogram settings", U"Advanced spectrogram settings...")
-		LABEL (U"Time and frequency resolutions:")
+		COMMENT (U"Time and frequency resolutions:")
 		NATURAL (numberOfTimeSteps,      U"Number of time steps",      my default_spectrogram_timeSteps())
 		NATURAL (numberOfFrequencySteps, U"Number of frequency steps", my default_spectrogram_frequencySteps())
-		LABEL (U"Spectrogram analysis settings:")
+		COMMENT (U"Spectrogram analysis settings:")
 		OPTIONMENU_ENUM (kSound_to_Spectrogram_method, method,
 				U"Method", my default_spectrogram_method ())
 		OPTIONMENU_ENUM (kSound_to_Spectrogram_windowShape, windowShape,
 				U"Window shape", my default_spectrogram_windowShape ())
-		LABEL (U"Spectrogram view settings:")
+		COMMENT (U"Spectrogram view settings:")
 		BOOLEAN (autoscaling, U"Autoscaling", my default_spectrogram_autoscaling())
 		REAL (maximum, U"Maximum (dB/Hz)", my default_spectrogram_maximum())
 		REAL (preemphasis, U"Pre-emphasis (dB/oct)", my default_spectrogram_preemphasis())
@@ -1086,8 +1086,8 @@ static void menu_cb_showPitch (SoundAnalysisArea me, EDITOR_ARGS) {
 
 static void menu_cb_pitchSettings_BEFORE_6400 (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings", U"Intro 4.2. Configuring the pitch contour")
-		LABEL   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
-		LABEL   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
+		COMMENT   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
+		COMMENT   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
 		POSITIVE (pitchFloor,   U"left Pitch range (Hz)",  my default_pitch_rawAC_floor())   // the default is ignored if not shown
 		POSITIVE (pitchCeiling, U"right Pitch range (Hz)", my default_pitch_rawAC_ceiling())
 		OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", my default_pitch_rawAC_unit ())
@@ -1123,8 +1123,8 @@ static void menu_cb_pitchSettings_BEFORE_6400 (SoundAnalysisArea me, EDITOR_ARGS
 
 static void menu_cb_pitchSettings_BEFORE_6414 (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings", U"Intro 4.2. Configuring the pitch contour")
-		LABEL   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
-		LABEL   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
+		COMMENT   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
+		COMMENT   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
 		POSITIVE (pitchFloor,   U"left Pitch range (Hz)",  my default_pitch_rawAC_floor())   // the default is ignored if not shown
 		POSITIVE (pitchCeiling, U"right Pitch range (Hz)", my default_pitch_rawAC_ceiling())
 		OPTIONMENU_ENUM (kPitch_unit, unit,
@@ -1183,8 +1183,8 @@ static void menu_cb_pitchSettings_BEFORE_6414 (SoundAnalysisArea me, EDITOR_ARGS
 
 static void menu_cb_advancedPitchSettings_BEFORE_6400 (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Advanced pitch settings", U"Advanced pitch settings...")
-		LABEL   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
-		LABEL   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
+		COMMENT   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
+		COMMENT   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
 		REAL    (viewFrom,                  U"left View range (units)",   my default_pitch_rawAC_viewFrom                  ())   // the default is ignored if not shown
 		REAL    (viewTo,                    U"right View range (units)",  my default_pitch_rawAC_viewTo                    ())
 		BOOLEAN (veryAccurate,              U"Very accurate",             false)
@@ -1232,8 +1232,8 @@ static void menu_cb_advancedPitchSettings_BEFORE_6400 (SoundAnalysisArea me, EDI
 
 static void menu_cb_advancedPitchSettings_rawAcCc_BEFORE_6414 (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Advanced pitch settings (raw AC and CC)", U"Advanced pitch settings (raw AC and CC)...")
-		LABEL   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
-		LABEL   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
+		COMMENT   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
+		COMMENT   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
 		NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_rawAC_maximumNumberOfCandidates ())   // the default is ignored if not shown
 		BOOLEAN (veryAccurate,              U"Very accurate", false)
 		REAL    (silenceThreshold,          U"Silence threshold",         my default_pitch_rawAC_silenceThreshold          ())
@@ -1268,8 +1268,8 @@ static void menu_cb_advancedPitchSettings_rawAcCc_BEFORE_6414 (SoundAnalysisArea
 
 static void menu_cb_advancedPitchSettings_filteredAcCc_BEFORE_6414 (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Advanced pitch settings (filtered AC and CC)", U"Advanced pitch settings (filtered AC and CC)...")
-		LABEL   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
-		LABEL   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
+		COMMENT   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
+		COMMENT   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
 		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_filteredAC_maximumNumberOfCandidates ())   // the default is ignored if not shown
 		BOOLEAN  (veryAccurate,              U"Very accurate",             my default_pitch_filteredAC_veryAccurate              ())
 		POSITIVE (attenuationAtCeiling,      U"Attenuation at ceiling",    my default_pitch_filteredAC_attenuationAtCeiling      ())
@@ -1308,15 +1308,15 @@ static void menu_cb_advancedPitchSettings_filteredAcCc_BEFORE_6414 (SoundAnalysi
 static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings for the filtered autocorrelation method", U"Intro 4.2. Configuring the pitch contour")
 		HEADING (U"Where to search...")
+		MUTABLE_CAPTION (note, U"")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_filteredAC_floor())
 		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_filteredAC_ceiling())
-		MUTABLE_LABEL (note, U"")
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_filteredAC_unit ())
-		LABEL   (U"      Optionally make view range different from analysis range:")
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_filteredAC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_filteredAC_viewTo())
+		CAPTION (U"(“auto” means ‘same as pitch floor and ceiling’)")
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
 				U"Drawing method",                                         my default_pitch_filteredAC_drawingMethod())
 		HEADING (U"How to find the candidates...")
@@ -1331,18 +1331,17 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_filteredAC_octaveJumpCost            ())
 		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_filteredAC_voicedUnvoicedCost        ())
 	EDITOR_OK
+		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ())
+			SET_STRING (note, U"(Warning: your time step settings are non-standard; see Analysis menu)")
+		else
+			SET_STRING (note, U"(you have standard time step settings; see Analysis menu)")
 		SET_REAL (pitchFloor,                   my instancePref_pitch_filteredAC_floor())
 		SET_REAL (pitchCeiling,                 my instancePref_pitch_filteredAC_ceiling())
-		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
-			SET_STRING (note, U"      Warning: you have a non-standard “time step strategy”.")
-		} else {
-			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
-		}
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_filteredAC_unit())
-		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
-				                                my instancePref_pitch_filteredAC_drawingMethod())
 		SET_REAL (viewFrom,                     my instancePref_pitch_filteredAC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_filteredAC_viewTo())
+		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
+				                                my instancePref_pitch_filteredAC_drawingMethod())
 		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_filteredAC_maximumNumberOfCandidates())
 		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_filteredAC_veryAccurate())
 		SET_REAL    (attenuationAtCeiling,      my instancePref_pitch_filteredAC_attenuationAtCeiling())
@@ -1361,9 +1360,9 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 		my setInstancePref_pitch_filteredAC_floor (pitchFloor);
 		my setInstancePref_pitch_filteredAC_ceiling (pitchCeiling);
 		my setInstancePref_pitch_filteredAC_unit (unit);
-		my setInstancePref_pitch_filteredAC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_filteredAC_viewFrom (viewFrom);
 		my setInstancePref_pitch_filteredAC_viewTo (viewTo);
+		my setInstancePref_pitch_filteredAC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_filteredAC_maximumNumberOfCandidates (maximumNumberOfCandidates);
 		my setInstancePref_pitch_filteredAC_veryAccurate (veryAccurate);
 		my setInstancePref_pitch_filteredAC_attenuationAtCeiling (attenuationAtCeiling);
@@ -1384,11 +1383,11 @@ static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
 		HEADING (U"Where to search...")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_rawCC_floor())
 		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_rawCC_ceiling())
-		MUTABLE_LABEL (note, U"")
+		MUTABLE_COMMENT (note, U"")
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_rawCC_unit ())
-		LABEL   (U"      Optionally make view range different from analysis range:")
+		COMMENT   (U"      Optionally make view range different from analysis range:")
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_rawCC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_rawCC_viewTo())
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
@@ -1411,10 +1410,10 @@ static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
 			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
 		}
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_rawCC_unit())
-		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
-				                                my instancePref_pitch_rawCC_drawingMethod())
 		SET_REAL (viewFrom,                     my instancePref_pitch_rawCC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_rawCC_viewTo())
+		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
+				                                my instancePref_pitch_rawCC_drawingMethod())
 		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_rawCC_maximumNumberOfCandidates())
 		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_rawCC_veryAccurate())
 		SET_REAL    (silenceThreshold,          my instancePref_pitch_rawCC_silenceThreshold())
@@ -1432,9 +1431,9 @@ static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
 		my setInstancePref_pitch_rawCC_floor (pitchFloor);
 		my setInstancePref_pitch_rawCC_ceiling (pitchCeiling);
 		my setInstancePref_pitch_rawCC_unit (unit);
-		my setInstancePref_pitch_rawCC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_rawCC_viewFrom (viewFrom);
 		my setInstancePref_pitch_rawCC_viewTo (viewTo);
+		my setInstancePref_pitch_rawCC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_rawCC_maximumNumberOfCandidates (maximumNumberOfCandidates);
 		my setInstancePref_pitch_rawCC_veryAccurate (veryAccurate);
 		my setInstancePref_pitch_rawCC_silenceThreshold (silenceThreshold);
@@ -1454,11 +1453,11 @@ static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
 		HEADING (U"Where to search...")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_rawAC_floor())
 		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_rawAC_ceiling())
-		MUTABLE_LABEL (note, U"")
+		MUTABLE_COMMENT (note, U"")
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_rawAC_unit ())
-		LABEL   (U"      Optionally make view range different from analysis range:")
+		COMMENT   (U"      Optionally make view range different from analysis range:")
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_rawAC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_rawAC_viewTo())
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
@@ -1481,10 +1480,10 @@ static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
 			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
 		}
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_rawAC_unit())
-		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
-				                                my instancePref_pitch_rawAC_drawingMethod())
 		SET_REAL (viewFrom,                     my instancePref_pitch_rawAC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_rawAC_viewTo())
+		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
+				                                my instancePref_pitch_rawAC_drawingMethod())
 		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_rawAC_maximumNumberOfCandidates())
 		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_rawAC_veryAccurate())
 		SET_REAL    (silenceThreshold,          my instancePref_pitch_rawAC_silenceThreshold())
@@ -1502,9 +1501,9 @@ static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
 		my setInstancePref_pitch_rawAC_floor (pitchFloor);
 		my setInstancePref_pitch_rawAC_ceiling (pitchCeiling);
 		my setInstancePref_pitch_rawAC_unit (unit);
-		my setInstancePref_pitch_rawAC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_rawAC_viewFrom (viewFrom);
 		my setInstancePref_pitch_rawAC_viewTo (viewTo);
+		my setInstancePref_pitch_rawAC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_rawAC_maximumNumberOfCandidates (maximumNumberOfCandidates);
 		my setInstancePref_pitch_rawAC_veryAccurate (veryAccurate);
 		my setInstancePref_pitch_rawAC_silenceThreshold (silenceThreshold);
@@ -1524,11 +1523,11 @@ static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS)
 		HEADING (U"Where to search...")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_filteredCC_floor())
 		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_filteredCC_ceiling())
-		MUTABLE_LABEL (note, U"")
+		MUTABLE_COMMENT (note, U"")
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_filteredCC_unit ())
-		LABEL   (U"      Optionally make view range different from analysis range:")
+		COMMENT   (U"      Optionally make view range different from analysis range:")
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_filteredCC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_filteredCC_viewTo())
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
@@ -1553,10 +1552,10 @@ static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS)
 			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
 		}
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_filteredCC_unit())
-		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
-				                                my instancePref_pitch_filteredCC_drawingMethod())
 		SET_REAL (viewFrom,                     my instancePref_pitch_filteredCC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_filteredCC_viewTo())
+		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod,
+				                                my instancePref_pitch_filteredCC_drawingMethod())
 		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_filteredCC_maximumNumberOfCandidates())
 		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_filteredCC_veryAccurate())
 		SET_REAL    (attenuationAtCeiling,      my instancePref_pitch_filteredCC_attenuationAtCeiling())
@@ -1575,9 +1574,9 @@ static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS)
 		my setInstancePref_pitch_filteredCC_floor (pitchFloor);
 		my setInstancePref_pitch_filteredCC_ceiling (pitchCeiling);
 		my setInstancePref_pitch_filteredCC_unit (unit);
-		my setInstancePref_pitch_filteredCC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_filteredCC_viewFrom (viewFrom);
 		my setInstancePref_pitch_filteredCC_viewTo (viewTo);
+		my setInstancePref_pitch_filteredCC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_filteredCC_maximumNumberOfCandidates (maximumNumberOfCandidates);
 		my setInstancePref_pitch_filteredCC_veryAccurate (veryAccurate);
 		my setInstancePref_pitch_filteredCC_attenuationAtCeiling (attenuationAtCeiling);
@@ -1734,7 +1733,7 @@ static void CONVERT_DATA_TO_ONE__ExtractVisiblePitchContour (SoundAnalysisArea m
 static void menu_cb_drawVisiblePitchContour (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Draw visible pitch contour", nullptr)
 		my v_form_pictureWindow (cmd);
-		LABEL (U"Pitch:")
+		COMMENT (U"Pitch:")
 		BOOLEAN (speckle, U"Speckle", false)
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
@@ -1790,8 +1789,8 @@ static void menu_cb_intensitySettings (SoundAnalysisArea me, EDITOR_ARGS) {
 		CHOICE_ENUM (kSoundAnalysisArea_intensity_averagingMethod, averagingMethod,
 				U"Averaging method", my default_intensity_averagingMethod ())
 		BOOLEAN (subtractMeanPressure, U"Subtract mean pressure", my default_intensity_subtractMeanPressure ())
-		LABEL (U"Note: the pitch floor is taken from the pitch settings.")
-		MUTABLE_LABEL (note2, U"")
+		COMMENT (U"Note: the pitch floor is taken from the pitch settings.")
+		MUTABLE_COMMENT (note2, U"")
 	EDITOR_OK
 		SET_REAL (viewFrom,  my instancePref_intensity_viewFrom())
 		SET_REAL (viewTo,    my instancePref_intensity_viewTo())
@@ -1922,8 +1921,8 @@ static void menu_cb_formantSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 		POSITIVE (windowLength, U"Window length (s)",       my default_formant_windowLength     ())
 		REAL     (dynamicRange, U"Dynamic range (dB)",      my default_formant_dynamicRange     ())
 		POSITIVE (dotSize, U"Dot size (mm)",                my default_formant_dotSize          ())
-		MUTABLE_LABEL (note1, U"")
-		MUTABLE_LABEL (note2, U"")
+		MUTABLE_COMMENT (note1, U"")
+		MUTABLE_COMMENT (note2, U"")
 	EDITOR_OK
 		SET_REAL (formantCeiling,    my instancePref_formant_ceiling())
 		SET_REAL (numberOfFormants,  my instancePref_formant_numberOfFormants())
@@ -2356,7 +2355,7 @@ void structSoundAnalysisArea :: v_createMenus () {
 				menu_cb_pitchSettings_rawAC, this);
 		FunctionAreaMenu_addCommand (menu, U"", 0, nullptr, this);
 		our pitchFilteredCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Choose filtered cross-correlation",
-			GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsFilteredCrossCorrelation, this);
+				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsFilteredCrossCorrelation, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings (filtered cross-correlation)...", GuiMenu_DEPTH_1,
 				menu_cb_pitchSettings_filteredCC, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings...", GuiMenu_HIDDEN,

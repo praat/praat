@@ -1,6 +1,6 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2022 Paul Boersma
+ * Copyright (C) 2005-2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ static void menu_cb_evaluate_tinyNoise (OTMultiEditor me, EDITOR_ARGS) {
 
 static void menu_cb_editRanking (OTMultiEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Edit ranking", nullptr)
-		MUTABLE_LABEL (constraintLabel, U"")
+		MUTABLE_COMMENT (constraintLabel, U"")
 		REAL (rankingValue, U"Ranking value", U"100.0")
 		REAL (disharmony, U"Disharmony", U"100.0")
 	EDITOR_OK

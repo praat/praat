@@ -1278,9 +1278,9 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridArea me, EDITOR_ARGS) {
 static void menu_cb_DrawTextGridAndPitch (TextGridArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Draw TextGrid and Pitch separately", nullptr)
 		my v_form_pictureWindow (cmd);
-		LABEL (U"TextGrid:")
+		COMMENT (U"TextGrid:")
 		BOOLEAN (showBoundariesAndPoints, U"Show boundaries and points", my default_picture_showBoundaries ());
-		LABEL (U"Pitch:")
+		COMMENT (U"Pitch:")
 		BOOLEAN (speckle, U"Speckle", my default_picture_pitch_speckle ());
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
