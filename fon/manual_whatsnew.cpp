@@ -29,6 +29,14 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.14# (21 July 2024)
+• Pitch menu (in e.g. Sound or TextGrid window): separate settings for four pitch analysis methods.
+• Formant analysis: faster on all systems.
+• ARM64 Windows: worked around a compiler bug that caused incorrect window sizes.
+• Pitch analysis: faster on Windows (Intel64 and Intel32).
+• Windows: better fonts and background colours (perhaps dependent on language settings).
+• ##TextGrids: Concatenate#: guard against some incorrect TexGrid files.
+
 ##6.4.13# (10 June 2024)
 • More manual pages.
 • @@Sounds: Concatenate with overlap...@: guard against a crash that would occur

@@ -1,6 +1,6 @@
 /* TextGrid.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1842,13 +1842,19 @@ void TextGrid_correctRoundingErrors (TextGrid me) {
 			Melder_assert (tier -> intervals.size > 0);
 			TextInterval first = tier -> intervals.at [1];
 			first -> xmin = my xmin;
-			Melder_assert (first -> xmin < first -> xmax);
+			Melder_require (first -> xmin < first -> xmax,
+				U"Interval 1 of tier ", itier,
+				U" has an empty time domain, running from ", first -> xmin, U" to ", first -> xmax, U" seconds."
+			);
 			for (integer iinterval = 1; iinterval < tier -> intervals.size; iinterval ++) {
 				TextInterval left = tier -> intervals.at [iinterval];
 				TextInterval right = tier -> intervals.at [iinterval + 1];
 				right -> xmin = left -> xmax;
 				trace (U"tier ", itier, U", interval ", iinterval, U", ", right -> xmin, U" ", right -> xmax);
-				Melder_assert (right -> xmin < right -> xmax);
+				Melder_require (right -> xmin < right -> xmax,
+					U"Interval ", iinterval + 1, U" of tier ", itier,
+					U" has an empty time domain, running from ", first -> xmin, U" to ", first -> xmax, U" seconds."
+				);
 			}
 			TextInterval last = tier -> intervals.at [tier -> intervals.size];
 			trace (tier -> intervals.size, U" ", last -> xmax, U" ", my xmax);

@@ -1381,15 +1381,15 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings for the raw cross-correlation method", U"Intro 4.2. Configuring the pitch contour")
 		HEADING (U"Where to search...")
+		MUTABLE_CAPTION (note, U"")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_rawCC_floor())
 		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_rawCC_ceiling())
-		MUTABLE_COMMENT (note, U"")
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_rawCC_unit ())
-		COMMENT   (U"      Optionally make view range different from analysis range:")
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_rawCC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_rawCC_viewTo())
+		CAPTION (U"(“auto” means ‘same as pitch floor and ceiling’)")
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
 				U"Drawing method",                                         my default_pitch_rawCC_drawingMethod())
 		HEADING (U"How to find the candidates...")
@@ -1402,13 +1402,12 @@ static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
 		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_rawCC_octaveJumpCost            ())
 		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_rawCC_voicedUnvoicedCost        ())
 	EDITOR_OK
+		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ())
+			SET_STRING (note, U"(Warning: your time step settings are non-standard; see Analysis menu)")
+		else
+			SET_STRING (note, U"(you have standard time step settings; see Analysis menu)")
 		SET_REAL (pitchFloor,                   my instancePref_pitch_rawCC_floor())
 		SET_REAL (pitchCeiling,                 my instancePref_pitch_rawCC_ceiling())
-		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
-			SET_STRING (note, U"      Warning: you have a non-standard “time step strategy”.")
-		} else {
-			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
-		}
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_rawCC_unit())
 		SET_REAL (viewFrom,                     my instancePref_pitch_rawCC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_rawCC_viewTo())
@@ -1451,15 +1450,15 @@ static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
 static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings for the raw autocorrelation method", U"Intro 4.2. Configuring the pitch contour")
 		HEADING (U"Where to search...")
+		MUTABLE_CAPTION (note, U"")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_rawAC_floor())
 		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_rawAC_ceiling())
-		MUTABLE_COMMENT (note, U"")
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_rawAC_unit ())
-		COMMENT   (U"      Optionally make view range different from analysis range:")
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_rawAC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_rawAC_viewTo())
+		CAPTION (U"(“auto” means ‘same as pitch floor and ceiling’)")
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
 				U"Drawing method",                                         my default_pitch_rawAC_drawingMethod())
 		HEADING (U"How to find the candidates...")
@@ -1472,13 +1471,12 @@ static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
 		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_rawAC_octaveJumpCost            ())
 		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_rawAC_voicedUnvoicedCost        ())
 	EDITOR_OK
+		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ())
+			SET_STRING (note, U"(Warning: your time step settings are non-standard; see Analysis menu)")
+		else
+			SET_STRING (note, U"(you have standard time step settings; see Analysis menu)")
 		SET_REAL (pitchFloor,                   my instancePref_pitch_rawAC_floor())
 		SET_REAL (pitchCeiling,                 my instancePref_pitch_rawAC_ceiling())
-		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
-			SET_STRING (note, U"      Warning: you have a non-standard “time step strategy”.")
-		} else {
-			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
-		}
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_rawAC_unit())
 		SET_REAL (viewFrom,                     my instancePref_pitch_rawAC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_rawAC_viewTo())
@@ -1521,15 +1519,15 @@ static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
 static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings for the filtered cross-correlation method", U"Intro 4.2. Configuring the pitch contour")
 		HEADING (U"Where to search...")
+		MUTABLE_CAPTION (note, U"")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_filteredCC_floor())
 		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_filteredCC_ceiling())
-		MUTABLE_COMMENT (note, U"")
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_filteredCC_unit ())
-		COMMENT   (U"      Optionally make view range different from analysis range:")
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_filteredCC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_filteredCC_viewTo())
+		CAPTION (U"(“auto” means ‘same as pitch floor and ceiling’)")
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
 				U"Drawing method",                                         my default_pitch_filteredCC_drawingMethod())
 		HEADING (U"How to find the candidates...")
@@ -1544,13 +1542,12 @@ static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS)
 		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_filteredCC_octaveJumpCost            ())
 		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_filteredCC_voicedUnvoicedCost        ())
 	EDITOR_OK
+		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ())
+			SET_STRING (note, U"(Warning: your time step settings are non-standard; see Analysis menu)")
+		else
+			SET_STRING (note, U"(you have standard time step settings; see Analysis menu)")
 		SET_REAL (pitchFloor,                   my instancePref_pitch_filteredCC_floor())
 		SET_REAL (pitchCeiling,                 my instancePref_pitch_filteredCC_ceiling())
-		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
-			SET_STRING (note, U"      Warning: you have a non-standard “time step strategy”.")
-		} else {
-			SET_STRING (note, U"      (your “time step strategy” has its standard value: automatic)")
-		}
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_filteredCC_unit())
 		SET_REAL (viewFrom,                     my instancePref_pitch_filteredCC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_filteredCC_viewTo())
