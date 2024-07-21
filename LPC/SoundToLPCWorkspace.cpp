@@ -652,13 +652,8 @@ static void SoundAndLPCToLPCRobustWorkspace_solvelpc (mutableSoundAndLPCToLPCRob
 	my coefficients.resize (my currentPredictionOrder); // maintain invariant
 }
 
-void structSoundAndLPCToLPCRobustWorkspace :: getInputFrame () {
-	SoundAndLPCToLPCRobustWorkspace_Parent :: getInputFrame (); // soundFrame
-	if (otherInputObjectPresent)
-		otherInputLPCFrameRef = & otherInput -> d_frames [currentFrame];
-}
-
 bool structSoundAndLPCToLPCRobustWorkspace :: inputFrameToOutputFrame () {
+	LPC_Frame otherInputLPCFrameRef = ( otherInputObjectPresent ? & otherInput -> d_frames [currentFrame] : & otherInputLPCFrame );
 	currentPredictionOrder = otherInputLPCFrameRef -> nCoefficients;
 	otherInputLPCFrameRef -> copy (outputLPCFrameRef); // outputLPCFrame should already exist here!
 	if (currentPredictionOrder == 0) // is empty frame ?
@@ -793,7 +788,6 @@ bool structSoundToLPCRobustWorkspace :: inputFrameToOutputFrame (void) {
 	bool step1 = soundToLPC -> inputFrameToOutputFrame ();
 	soundAndLPCToLPC -> currentFrame = currentFrame;
 	soundAndLPCToLPC -> soundFrameVEC = soundFrameVEC;
-	soundAndLPCToLPC -> otherInputLPCFrameRef = soundToLPC -> outputLPCFrameRef;
 	bool step2 = soundAndLPCToLPC -> inputFrameToOutputFrame ();
 	outputLPCFrameRef = soundAndLPCToLPC -> outputLPCFrameRef;
 	return step1 && step2;
