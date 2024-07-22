@@ -105,7 +105,7 @@ MAN_BEGIN (U"end time", U"ppgb", 20060714)
 INTRO (U"- the end of the @@time domain@ (see there).")
 MAN_END
 
-MAN_BEGIN (U"Fast Fourier Transform", U"ppgb", 20231115)  // 20041123
+MAN_BEGIN (U"Fast Fourier Transform", U"ppgb", 20231115)  // 20041123, 2024
 INTRO (U"An algorithm for fast computation of the Fourier transform of a sampled signal. "
 	"It involves increasing the number of samples %N to the next-highest power of two, "
 	"and the computation time scales as %N log %N.")
@@ -113,7 +113,7 @@ NORMAL (U"In Praat, the Fast Fourier Transform is used:")
 LIST_ITEM (U"1. For the Fourier transform of an entire sound: @@Sound: To Spectrum...@ with #yes for the #Fast setting, "
 	"and @@Spectrum: To Sound@.")
 LIST_ITEM (U"2. For the Fourier transform of consecutive frames in a sound. See @@Sound: To Spectrogram...@.")
-LIST_ITEM (U"3. For the fast computation of correlations, e.g. in @@Sound: To Pitch (raw ac)...@.")
+LIST_ITEM (U"3. For the fast computation of correlations, e.g. in @@Sound: To Pitch (raw autocorrelation)...@.")
 MAN_END
 
 MAN_BEGIN (U"FFT", U"ppgb", 20011121)

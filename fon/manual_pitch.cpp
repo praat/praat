@@ -170,7 +170,7 @@ TERM (U"##Frame number")
 DEFINITION (U"the frame whose value is to be looked up.")
 MAN_END
 
-MAN_BEGIN (U"Pitch", U"ppgb", 20231115)  // 20101230
+MAN_BEGIN (U"Pitch", U"ppgb", 20240722)  // 20101230, 20231115
 INTRO (U"One of the @@types of objects@ in Praat. For tutorial information, see @@Intro 4. Pitch analysis@.")
 NORMAL (U"A Pitch object represents periodicity candidates as a function of time. "
 	"It does not mind whether this periodicity refers to acoustics, "
@@ -178,10 +178,10 @@ NORMAL (U"A Pitch object represents periodicity candidates as a function of time
 	"It is sampled into a number of %frames centred around equally spaced times.")
 ENTRY (U"Pitch commands")
 NORMAL (U"Creation:")
-LIST_ITEM (U"\\bu @@Sound: To Pitch (filtered ac)...@: preferred method (filtered autocorrelation).")
-LIST_ITEM (U"\\bu @@Sound: To Pitch (raw cc)...@: raw cross-correlation method.")
-LIST_ITEM (U"\\bu @@Sound: To Pitch (raw ac)...@: raw autocorrelation method.")
-LIST_ITEM (U"\\bu @@Sound: To Pitch (filtered cc)...@: filtered cross-correlation method.")
+LIST_ITEM (U"\\bu @@Sound: To Pitch (filtered autocorrelation)...@: for intonation and vocal-fold vibration")
+LIST_ITEM (U"\\bu @@Sound: To Pitch (raw cross-correlation)...@: for voice analysis")
+LIST_ITEM (U"\\bu @@Sound: To Pitch (raw autocorrelation)...@: for raw periodicity")
+LIST_ITEM (U"\\bu @@Sound: To Pitch (filtered cross-correlation)...@")
 NORMAL (U"Drawing:")
 LIST_ITEM (U"\\bu @@Pitch: Draw...@")
 NORMAL (U"Viewing and editing:")
@@ -360,7 +360,7 @@ NORMAL (U"The time domain of the resulting PitchTier is a union of the domains o
 	"and PointProcess functions.")
 MAN_END
 
-MAN_BEGIN (U"PitchEditor", U"ppgb", /*20110808 20220814*/ 20231115)
+MAN_BEGIN (U"PitchEditor", U"ppgb", /*20110808 20220814 20231115*/ 20240722)
 INTRO (U"One of the @Editors in Praat, for viewing and modifying a @Pitch object.")
 ENTRY (U"What the Pitch editor shows")
 NORMAL (U"In the window of the PitchEditor, you will see the following features:")
@@ -390,7 +390,8 @@ NORMAL (U"To change the path through the candidates manually, click on the candi
 	"The changes will immediately affect the Pitch object that you are editing. To make a voiced frame "
 	"voiceless, click in the voicelessness bar.")
 NORMAL (U"To change the path automatically, choose ##Path finder...# from the #Edit menu; "
-	"this will have the same effect as filling in different values in the @@Sound: To Pitch (filtered ac)...@ or @@Sound: To Pitch (raw ac)...@ command window, "
+	"this will have the same effect as filling in different values in "
+	"the @@Sound: To Pitch (filtered autocorrelation)...@ or @@Sound: To Pitch (raw autocorrelation)...@ command window, "
 	"but is much faster because the candidates do not have to be determined again.")
 ENTRY (U"Resynthesis")
 NORMAL (U"To hum any part of the pitch contour, click one of the buttons "
@@ -639,32 +640,43 @@ MAN_END
 MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
-"How to choose a pitch analysis method"
-© Paul Boersma 2023
+"how to choose a pitch analysis method"
+© Paul Boersma 2023,2024
 
-For measuring vocal-fold vibration frequency or intonation,
-you are advised to use @@Sound: To Pitch (filtered ac)...@.
-For voice analysis (such as is used in the area of voice pathology),
-you are advised to use @@Sound: To Pitch (raw cc)...@.
+Pitch analysis is the determination of a pitch curve from a given sound.
+
+In Praat you can choose from at least four methods for pitch analysis:
+- @@pitch analysis by filtered autocorrelation
+- @@pitch analysis by raw cross-correlation
+- @@pitch analysis by raw autocorrelation
+- @@pitch analysis by filtered cross-correlation
+
+These method have been listed here in order of usefulness for the %average speech researcher:
+for measuring vocal-fold vibration frequency or intonation,
+you are advised to use @@pitch analysis by ||filtered autocorrelation@;
+for voice analysis (such as is used in the area of voice pathology),
+you are advised to use @@pitch analysis by ||raw cross-correlation@;
+and for measuring pure periodicity,
+ou are advised to use @@pitch analysis by ||raw autocorrelation@.
 
 Measuring intonation
 ====================
 
 From 1993 to 2023, Praat’s preferred method for measuring intonation
 (and for most use cases involving vocal-fold vibration) was
-@@Sound: To Pitch (raw ac)...@, and this is still available if you
+@@pitch analysis by ||raw autocorrelation@, and this is still available if you
 want to measure raw periodicity (see below). From 2023 on,
 Praat’s preferred method for measuring intonation
 (and for most use cases involving vocal-fold vibration) has been
-@@Sound: To Pitch (filtered ac)...@.
+@@pitch analysis by ||filtered autocorrelation@.
 
 All these methods measure pitch in terms of the self-similarity of the waveform.
 If the waveform is almost identical if you shift it by 10 milliseconds in time,
 then 100 Hz will be a good candidate for being the F0. This idea has been used in Praat from 1993 on,
 using the "autocorrelation" and "cross-correlation" methods,
-which are nowadays called "raw AC" and "raw CC".
+which are nowadays called "raw autocorrelation" and "raw cross-correlation".
 Both methods measure self-similarity as a number between -1.0 and +1.0.
-From 2023 on, we also have "filtered AC" and "filtered CC",
+From 2023 on, we also have "filtered autocorrelation" and "filtered cross-correlation",
 which use low-pass filtering of the waveform (by a Gaussian filter)
 prior to doing autocorrelation or cross-correlation.
 
@@ -735,7 +747,7 @@ and may not have to be adapted to the speaker’s gender.
 Voice analysis
 ==============
 
-For voice analysis, we probably shouldn’t filter away noise, so raw CC is the preferred method.
+For voice analysis, we probably shouldn’t filter away noise, so @@pitch analysis by ||raw cross-correlation@ is the preferred method.
 
 Measuring prevoicing
 ====================
@@ -758,21 +770,21 @@ Mathematically generated periodic signals aren’t necessarily speechlike. For i
 	Draw: 0.08, 0.12, 0, 0, "yes", "curve"
 }
 Both the left part of this sound and the right part have a period of 5 ms,
-and therefore an F0 of 200 Hz. @@Sound: To Pitch (raw ac)...@ measures an equally
-strong pitch of 200 Hz throughout this signal, while @@Sound: To Pitch (filtered ac)...@
+and therefore an F0 of 200 Hz. The @@pitch analysis by ||raw autocorrelation@ method measures an equally
+strong pitch of 200 Hz throughout this signal, while @@pitch analysis by ||filtered autocorrelation@
 considers the right part voiceless. This is because the right part contains
 only components at 800 and 1000 Hz, which will be filtered out by the low-pass filter,
 and only very small components at 200, 400 or 600 Hz.
 This problem of the %%missing fundamental% was the reason why low-pass filtering
-was not included in @@Sound: To Pitch (raw ac)...@ in 1993. However,
-this situation is %very rare in speech, so for speech we do nowadays recommend @@Sound: To Pitch (filtered ac)...@,
-while we recommend @@Sound: To Pitch (raw ac)...@ only if you want to measure %raw periodicity.
+was not included in @@pitch analysis by ||raw autocorrelation@ in 1993. However,
+this situation is %very rare in speech, so for speech we do nowadays recommend @@pitch analysis by ||filtered autocorrelation@,
+while we recommend @@pitch analysis by ||raw autocorrelation@ only if you want to measure %raw periodicity.
 
 ################################################################################
 "Sound: To Pitch..."
-© Paul Boersma 1996,2003,2023
+© Paul Boersma 1996,2003,2023,2024
 
-A command that creates a @Pitch object from every selected @Sound object.
+A @@hidden commands|hidden command@ that creates a @Pitch object from every selected @Sound object.
 
 Purpose
 =======
@@ -804,12 +816,12 @@ within one window length, i.e., the degree of %oversampling is 4.
 Algorithm
 =========
 
-This is the algorithm described at @@Sound: To Pitch (raw ac)...@,
+This is the algorithm described at @@Sound: To Pitch (raw autocorrelation)...@,
 with all the parameters not mentioned above set to their standard values.
 
 ################################################################################
 "Sound: To Pitch (ac)..."
-© Paul Boersma 1996,2001–2003,2022,2023
+© Paul Boersma 1996,2001–2003,2022–2024
 
 A @@hidden commands|hidden command@ that creates a @Pitch object from every selected @Sound object.
 
@@ -825,14 +837,14 @@ The parameters are in the following order:
 - ##Voiced / unvoiced cost# (standard value: 0.14)
 - ##Pitch ceiling (Hz)# (standard value: 600 Hz)
 
-With the advent of @@Sound: To Pitch (filtered ac)...@ in 2023,
-this command was replaced with @@Sound: To Pitch (raw ac)...@.
+With the advent of @@Sound: To Pitch (filtered autocorrelation)...@ in 2023,
+this command was replaced with @@Sound: To Pitch (raw autocorrelation)...@.
 
 Transitioning
 =============
 
 While ##Sound: To Pitch (ac)...# will still work in scripts,
-you make like to transition to @@Sound: To Pitch (raw ac)...@.
+you make like to transition to @@Sound: To Pitch (raw autocorrelation)...@.
 Please note that the %%Pitch ceiling% parameter was moved immediately after %%Pitch floor%,
 where it fits more logically.
 For example, you can replace the line
@@ -841,12 +853,12 @@ For example, you can replace the line
 }
 with the entirely equivalent line
 {;
-	\#@{Sound: ||To Pitch (raw ac):} 0.0, 75, 600, 15, “off”, 0.03, 0.45, 0.01, 0.35, 0.14
+	\#@{Sound: ||To Pitch (raw autocorrelation):} 0.0, 75, 600, 15, “off”, 0.03, 0.45, 0.01, 0.35, 0.14
 }
 
 ################################################################################
 "Sound: To Pitch (cc)..."
-© Paul Boersma 1996,2003,2023
+© Paul Boersma 1996,2003,2023,2024
 
 A @@hidden commands|hidden command@ that creates a @Pitch object from every selected @Sound object.
 
@@ -862,14 +874,14 @@ The parameters are in the following order:
 - ##Voiced / unvoiced cost# (standard value: 0.14)
 - ##Pitch ceiling (Hz)# (standard value: 600 Hz)
 
-With the advent of @@Sound: To Pitch (filtered cc)...@ in 2023,
-this command was replaced with @@Sound: To Pitch (raw cc)...@.
+With the advent of @@Sound: To Pitch (filtered cross-correlation)...@ in 2023,
+this command was replaced with @@Sound: To Pitch (raw cross-correlation)...@.
 
 Transitioning
 =============
 
 While ##Sound: To Pitch (cc)...# will still work in scripts,
-you may like to transition to @@Sound: To Pitch (raw cc)...@.
+you may like to transition to @@Sound: To Pitch (raw cross-correlation)...@.
 Please note that the %%Pitch ceiling% parameter was moved immediately after %%Pitch floor%,
 where it fits more logically.
 For example, you can replace the line
@@ -878,14 +890,50 @@ For example, you can replace the line
 }
 with the entirely equivalent line
 {;
-	\#@{Sound: ||To Pitch (raw cc):} 0.0, 75, 600, 15, “off”, 0.03, 0.45, 0.01, 0.35, 0.14
+	\#@{Sound: ||To Pitch (raw cross-correlation):} 0.0, 75, 600, 15, “off”, 0.03, 0.45, 0.01, 0.35, 0.14
 }
 
 ################################################################################
 "Sound: To Pitch (raw ac)..."
-© Paul Boersma 1996,2001–2003,2022,2023
+© Paul Boersma 1996,2001–2003,2022-2024
+
+A @@hidden commands|hidden command@ that creates a @Pitch object from every selected @Sound object.
+
+This command is a precise synonym of @@Sound: To Pitch (raw autocorrelation)...@.
+
+################################################################################
+"Sound: To Pitch (raw autocorrelation)..."
+© Paul Boersma 1996,2001–2003,2022-2024
 
 A command that creates a @Pitch object from every selected @Sound object.
+
+For purpose, algorithm and settings, see @@pitch analysis by raw autocorrelation@.
+
+For usage, see @@how to choose a pitch analysis method@.
+
+Synonyms
+========
+
+In older scripts you may find:
+- @@Sound: To Pitch (raw ac)...@, a precise synonym with an identical list of parameters.
+- @@Sound: To Pitch (ac)...@, a command with the same meaning, with parameters in a different order.
+
+################################################################################
+"Pitch settings..."
+© Paul Boersma 2003,2024
+
+Four commands in the Pitch menu of the @SoundEditor and @TextGridEditor windows:
+
+- ##Pitch settings (filtered autocorrelation)...#: see @@pitch analysis by filtered autocorrelation@
+- ##Pitch settings (raw cross-correlation)...#: see @@pitch analysis by raw cross-correlation@
+- ##Pitch settings (raw autocorrelation)...#: see @@pitch analysis by raw autocorrelation@
+- ##Pitch settings (filtered cross-correlation)...#: see @@pitch analysis by filtered cross-correlation@
+
+Also see @@Intro 4.2. Configuring the pitch contour@ and @@how to choose a pitch analysis method@.
+
+################################################################################
+"pitch analysis by raw autocorrelation"
+© Paul Boersma 1996,2001–2003,2022-2024
 
 Purpose
 =======
@@ -895,10 +943,10 @@ to perform a pitch analysis based on an autocorrelation method.
 Usage
 =====
 
-Normally, you will instead use @@Sound: To Pitch...@, which uses the same method.
-The command described here is mainly for experimenting with the parameters,
-or for the analysis of non-speech signals, which may require different
-standard settings of the parameters.
+Raw autocorrelation is the pitch analysis method of choice if you want measure the raw periodicity of a signal.
+
+Note that the preferred method for speech (intonation, vocal fold vibration) is @@pitch analysis by filtered autocorrelation@.
+See @@how to choose a pitch analysis method@ for details.
 
 Algorithm
 =========
@@ -976,16 +1024,66 @@ To decrease the number of voiced/unvoiced transitions, increase this value. In c
 in the article, this value will be corrected for the time step: multiply by 0.01 s / %TimeStep to get
 the value in the way it is used in the formulas in the article.
 
+The standard settings are best in most cases.
+For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.45,
+in order to get pitch values even in irregular parts of the signal.
+For prevoiced plosives, you may want to lower the silence threshold from 0.03 to 0.01 or so.
+
+Availability in Praat
+=====================
+
+Pitch analysis by raw autocorrelation is available in two ways in Praat:
+
+- via @@Sound: To Pitch (raw autocorrelation)...@
+  from the ##Analyse periodicity# menu in the Objects window when you select a Sound object;
+- via ##Show Pitch# and ##Pitch analysis method is raw autocorrelation#
+  from the #Pitch menu when you are viewing a Sound or TextGrid object (@SoundEditor, @TextGridEditor).
+
 ################################################################################
 "Sound: To Pitch (raw cc)..."
-© Paul Boersma 1996,2003,2023
+© Paul Boersma 1996,2003,2023,2024
+
+A @@hidden commands|hidden command@ that creates a @Pitch object from every selected @Sound object.
+
+This command is a precise synonym of @@Sound: To Pitch (raw cross-correlation)...@.
+
+################################################################################
+"Sound: To Pitch (raw cross-correlation)..."
+© Paul Boersma 1996,2003,2023,2024
 
 A command that creates a @Pitch object from every selected @Sound object.
+
+For purpose, algorithm and settings, see @@pitch analysis by raw cross-correlation@.
+
+For usage, see @@how to choose a pitch analysis method@.
+
+Synonyms
+========
+
+In older scripts you may find:
+- @@Sound: To Pitch (raw cc)...@, a precise synonym with an identical list of parameters.
+- @@Sound: To Pitch (cc)...@, a command with the same meaning, with parameters in a different order.
+
+################################################################################
+"pitch analysis by raw cross-correlation"
+© Paul Boersma 1996,2003,2023,2024
 
 Purpose
 =======
 
 to perform a pitch analysis based on a cross-correlation method.
+
+Usage
+=====
+
+Raw cross-correlation is the pitch analysis method of choice if you want to do voice analysis (e.g. jitter, shimmer).
+
+Note that the preferred method for speech (intonation, vocal fold vibration) is @@pitch analysis by filtered autocorrelation@.
+Raw cross-correlation is mainly for experimenting,
+or for applications where you need short time windows;
+for this latter reason, it is also the standard method for voice analysis.
+
+See @@how to choose a pitch analysis method@ for details.
 
 Algorithm
 =========
@@ -1010,19 +1108,45 @@ Note that if you set the time step to zero, the analysis windows for consecutive
 will overlap appreciably: Praat will always compute 4 pitch values
 within one window length, i.e., the degree of %oversampling is 4.
 
-The other settings are the same as for @@Sound: To Pitch (raw ac)...@.
+The other settings are the same as for @@pitch analysis by raw autocorrelation@.
 
-Usage
-=====
+Availability in Praat
+=====================
 
-The preferred method for speech (intonation, vocal fold vibration) is @@Sound: To Pitch (filtered ac)...@.
-The command described here is mainly for experimenting,
-or for applications where you need short time windows;
-for this latter reason, it is also the standard method for voice analysis.
+Pitch analysis by raw cross-correlation is available in two ways in Praat:
+
+- via @@Sound: To Pitch (raw cross-correlation)...@
+  from the ##Analyse periodicity# menu in the Objects window when you select a Sound object;
+- via ##Show Pitch# and ##Pitch analysis method is raw cross-correlation#
+  from the #Pitch menu when you are viewing a Sound or TextGrid object (@SoundEditor, @TextGridEditor).
 
 ################################################################################
 "Sound: To Pitch (filtered ac)..."
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
+
+A @@hidden commands|hidden command@ that creates a @Pitch object from every selected @Sound object.
+
+This command is a precise synonym of @@Sound: To Pitch (filtered autocorrelation)...@.
+
+################################################################################
+"Sound: To Pitch (filtered autocorrelation)..."
+© Paul Boersma 2023,2024
+
+A command that creates a @Pitch object from every selected @Sound object.
+
+For purpose, algorithm and settings, see @@pitch analysis by filtered autocorrelation@.
+
+For usage, see @@how to choose a pitch analysis method@.
+
+Synonyms
+========
+
+In older scripts you may find:
+- @@Sound: To Pitch (filtered ac)...@, a precise synonym with an identical list of parameters.
+
+################################################################################
+"pitch analysis by filtered autocorrelation"
+© Paul Boersma 2023,2024
 
 A command that creates a @Pitch object from every selected @Sound object.
 
@@ -1031,10 +1155,16 @@ Purpose
 
 to perform a pitch analysis based on the autocorrelation of the low-pass filtered signal.
 
+Usage
+=====
+
+Filtered autocorrelation is the pitch analysis method of choice if you want to measure intonation or vocal-fold vibration frequency.
+See @@how to choose a pitch analysis method@ for details.
+
 Algorithm
 =========
 
-This command will first low-pass filter the signal, then apply @@Sound: To Pitch (raw ac)...@
+This command will first low-pass filter the signal, then apply @@pitch analysis by raw autocorrelation@
 on the filtered signal.
 
 The low-pass filter is Gaussian in the frequency domain. If, for instance,
@@ -1120,8 +1250,47 @@ To decrease the number of voiced/unvoiced transitions, increase this value. In c
 in the article, this value will be corrected for the time step: multiply by 0.01 s / %TimeStep to get
 the value in the way it is used in the formulas in the article.
 
+The standard settings are best in most cases.
+For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.50,
+in order to get pitch values even in irregular parts of the signal.
+For prevoiced plosives, you may want to lower the silence threshold from 0.09 to 0.01 or so.
+
+Availability in Praat
+=====================
+
+Pitch analysis by filtered autocorrelation is available in two ways in Praat:
+
+- via @@Sound: To Pitch (filtered autocorrelation)...@
+  from the ##Analyse periodicity# menu in the Objects window when you select a Sound object;
+- via ##Show Pitch# and ##Pitch analysis method is filtered autocorrelation#
+  from the #Pitch menu when you are viewing a Sound or TextGrid object (@SoundEditor, @TextGridEditor).
+
 ################################################################################
 "Sound: To Pitch (filtered cc)..."
+© Paul Boersma 2023,2024
+
+A @@hidden commands|hidden command@ that creates a @Pitch object from every selected @Sound object.
+
+This command is a precise synonym of @@Sound: To Pitch (filtered cross-correlation)...@.
+
+################################################################################
+"Sound: To Pitch (filtered cross-correlation)..."
+© Paul Boersma 2023,2024
+
+A command that creates a @Pitch object from every selected @Sound object.
+
+For purpose, algorithm and settings, see @@pitch analysis by filtered cross-correlation@.
+
+For usage, see @@how to choose a pitch analysis method@.
+
+Synonyms
+========
+
+In older scripts you may find:
+- @@Sound: To Pitch (filtered cc)...@, a precise synonym with an identical list of parameters.
+
+################################################################################
+"pitch analysis by filtered cross-correlation"
 © Paul Boersma 2023
 
 A command that creates a @Pitch object from every selected @Sound object.
@@ -1131,16 +1300,30 @@ Purpose
 
 to perform a pitch analysis based on the forward cross-correlation of the low-pass filtered signal.
 
+Usage
+=====
+
+
 Algorithm
 =========
 
-This command will first low-pass filter the signal, then apply @@Sound: To Pitch (raw cc)...@
-on the filtered signal. For the filter function, see @@Sound: To Pitch (filtered ac)...@.
+This command will first low-pass filter the signal, then apply @@pitch analysis by raw cross-correlation@
+on the filtered signal. For the filter function, see @@pitch analysis by filtered autocorrelation@.
 
 Settings
 ========
 
-See @@Sound: To Pitch (filtered ac)...@.
+The settings are the same as for @@pitch analysis by filtered autocorrelation@.
+
+Availability in Praat
+=====================
+
+Pitch analysis by raw cross-correlation is available in two ways in Praat:
+
+- via @@Sound: To Pitch (raw cross-correlation)...@
+  from the ##Analyse periodicity# menu in the Objects window when you select a Sound object;
+- via ##Show Pitch# and ##Pitch analysis method is raw cross-correlation#
+  from the #Pitch menu when you are viewing a Sound or TextGrid object (@SoundEditor, @TextGridEditor).
 
 ################################################################################
 )~~~"
@@ -1148,12 +1331,12 @@ MAN_PAGES_END
 
 MAN_BEGIN (U"Sound: To PointProcess (periodic, cc)...", U"ppgb", 20231115)   // 20030309
 INTRO (U"A command that analyses the selected @Sound objects, and creates @PointProcess objects.")
-NORMAL (U"This command combines the actions of @@Sound: To Pitch (raw ac)...@ and @@Sound & Pitch: To PointProcess (cc)@.")
+NORMAL (U"This command combines the actions of @@Sound: To Pitch (raw autocorrelation)...@ and @@Sound & Pitch: To PointProcess (cc)@.")
 MAN_END
 
 MAN_BEGIN (U"Sound: To PointProcess (periodic, peaks)...", U"ppgb", 20231115)   // 20030309
 INTRO (U"A command that analyses the selected @Sound objects, and creates @PointProcess objects.")
-NORMAL (U"This command combines the actions of @@Sound: To Pitch (raw ac)...@ and @@Sound & Pitch: To PointProcess (peaks)...@.")
+NORMAL (U"This command combines the actions of @@Sound: To Pitch (raw autocorrelation)...@ and @@Sound & Pitch: To PointProcess (peaks)...@.")
 MAN_END
 
 MAN_BEGIN (U"Sound & Pitch: To PointProcess (cc)", U"ppgb", 19980322)

@@ -246,8 +246,8 @@ Praat.app that was already there. If on the way you receive an error
 or “Couldn’t communicate with a helper application“,
 or just a crash (happens with Xcode 15.0),
 you will have to log in to `developer.apple.com` and do Review Agreement -> Agree;
-you may then also have to go (or log in) to App Store Connect, then Agreements, Tax, and Banking
--> Paid Apps -> View or Terms (even if you have no paid apps).
+you may then also have to go (or log in) to App Store Connect, then Business (or Agreements, Tax, and Banking)
+-> Paid Apps Agreement -> View and Agree to Terms (even if you have no paid apps).
 
 **Testing** on multiple Intel64 platform versions can be done on older Intel64 Macs,
 using virtual machines with Parallels Desktop. For instance, a 2013 Macbook Pro can handle

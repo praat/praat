@@ -2,4 +2,4 @@
 #define PRAAT_VERSION_NUM 6414
 #define PRAAT_YEAR 2024
 #define PRAAT_MONTH July
-#define PRAAT_DAY 21
+#define PRAAT_DAY 22

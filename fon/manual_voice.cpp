@@ -225,7 +225,7 @@ NORMAL (U"The pulses you see as blue lines are a @PointProcess object. You can s
 NORMAL (U"You can also create a PointProcess in the Objects window directly. To do this, "
 	"select a Sound and choose @@Sound: To PointProcess (periodic, cc)...@ from the #Periodicity menu.")
 NORMAL (U"You can also do this in two steps. First you create a Pitch with "
-	"@@Sound: To Pitch (raw ac)...@ or @@Sound: To Pitch (raw cc)...@. "
+	"@@Sound: To Pitch (raw autocorrelation)...@ or @@Sound: To Pitch (raw cross-correlation)...@. "
 	"Then you select the resulting Pitch %together with the original Sound "
 	"and choose @@Sound & Pitch: To PointProcess (cc)@.")
 NORMAL (U"Since the direct method of @@Sound: To PointProcess (periodic, cc)...@ actually uses the AC method "
