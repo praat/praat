@@ -1592,7 +1592,7 @@ DIRECT (CONVERT_TWO_TO_ONE__Sounds_to_ParamCurve) {
 }
 
 DIRECT (HELP__How_to_choose_a_pitch_analysis_method) {
-	HELP (U"How to choose a pitch analysis method")
+	HELP (U"how to choose a pitch analysis method")
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch, U"Sound: To Pitch", U"Sound: To Pitch...") {
@@ -1657,14 +1657,15 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawAc, U"Sound: To Pitch (raw ac)", U"Sound: To Pitch (raw ac)...") {
-	COMMENT (U"Finding the candidates...")
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawAutocorrelation, U"Sound: To Pitch (raw autocorrelation)", U"Sound: To Pitch (raw autocorrelation)...") {
+	HEADING (U"Where to search...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
-	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"left Pitch floor and ceiling (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)", U"600.0")
+	HEADING (U"How to find the candidates...")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	COMMENT (U"Finding a path...")
+	HEADING (U"How to find a path through the candidates...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1683,14 +1684,15 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCc, U"Sound: To Pitch (raw cc)", U"Sound: To Pitch (raw cc)...") {
-	COMMENT (U"Finding the candidates...")
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCrossCorrelation, U"Sound: To Pitch (raw cross-correlation)", U"Sound: To Pitch (raw cross-correlation)...") {
+	HEADING (U"Where to search...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
-	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"left Pitch floor and ceiling (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)", U"600.0")
+	HEADING (U"How to find the candidates...")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	COMMENT (U"Finding a path...")
+	HEADING (U"How to find a path through the candidates...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1709,16 +1711,17 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAc, U"Sound: To Pitch (filtered ac)", U"Sound: To Pitch (filtered ac)...") {
-	COMMENT (U"Finding the candidates...")
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAutocorrelation, U"Sound: To Pitch (filtered autocorrelation)", U"Sound: To Pitch (filtered autocorrelation)...") {
+	HEADING (U"Where to search...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"50.0")
-	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
+	POSITIVE (pitchFloor, U"left Pitch floor and ceiling (Hz)", U"50.0")
+	POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)", U"800.0")
+	HEADING (U"How to find the candidates...")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	COMMENT (U"Preprocessing...")
+	HEADING (U"How to preprocess the sound...")
 	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
-	COMMENT (U"Finding a path...")
+	HEADING (U"How to find a path through the candidates...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.09")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
 	REAL (octaveCost, U"Octave cost", U"0.055")
@@ -1737,16 +1740,17 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCc, U"Sound: To Pitch (filtered cc)", U"Sound: To Pitch (filtered cc)...") {
-	COMMENT (U"Finding the candidates...")
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCrossCorrelation, U"Sound: To Pitch (filtered cross-correlation)", U"Sound: To Pitch (filtered cross-correlation)...") {
+	HEADING (U"Where to search...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"50.0")
-	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
+	POSITIVE (pitchFloor, U"left Pitch floor and ceiling (Hz)", U"50.0")
+	POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)", U"800.0")
+	HEADING (U"How to find the candidates...")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	COMMENT (U"Preprocessing...")
+	HEADING (U"How to preprocess the sound...")
 	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
-	COMMENT (U"Finding a path...")
+	HEADING (U"How to find a path through the candidates...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.09")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
 	REAL (octaveCost, U"Octave cost", U"0.055")
@@ -2503,14 +2507,14 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 0, U"-- pitch --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"To Pitch...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch);
-		praat_addAction1 (classSound, 0, U"To Pitch (filtered ac)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAc);
-		praat_addAction1 (classSound, 0, U"To Pitch (raw cc)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCc);
-		praat_addAction1 (classSound, 0, U"To Pitch (raw ac)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawAc);
-		praat_addAction1 (classSound, 0, U"To Pitch (filtered cc)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCc);
+		praat_addAction1 (classSound, 0, U"To Pitch (filtered autocorrelation)... || To Pitch (filtered ac)...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAutocorrelation);
+		praat_addAction1 (classSound, 0, U"To Pitch (raw cross-correlation)... || To Pitch (raw cc)...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCrossCorrelation);
+		praat_addAction1 (classSound, 0, U"To Pitch (raw autocorrelation)... || To Pitch (raw ac)...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawAutocorrelation);
+		praat_addAction1 (classSound, 0, U"To Pitch (filtered cross-correlation)... || To Pitch (filtered cc)...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCrossCorrelation);
 		praat_addAction1 (classSound, 0, U"To Pitch (ac)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch_ac);
 		praat_addAction1 (classSound, 0, U"To Pitch (cc)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,

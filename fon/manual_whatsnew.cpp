@@ -123,7 +123,7 @@ Latest changes in Praat.
 • @@Sound: To Pitch (filtered ac)...@ has become the preferred method for
   measuring vocal-fold vibration and intonation (@@Sound: To Pitch (raw cc)...@
   is still the preferred method for voice analysis).
-  See @@How to choose a pitch analysis method@.
+  See @@how to choose a pitch analysis method@.
 
 ##6.3.20# (24 October 2023)
 • SpeechSynthesizer and automatic alignment in TextGridEditor: worked around a bug

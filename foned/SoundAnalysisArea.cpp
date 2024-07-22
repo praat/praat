@@ -1307,6 +1307,7 @@ static void menu_cb_advancedPitchSettings_filteredAcCc_BEFORE_6414 (SoundAnalysi
 
 static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings for the filtered autocorrelation method", U"Intro 4.2. Configuring the pitch contour")
+		MUTABLE_COMMENT (methodMatchWarning, U"")
 		HEADING (U"Where to search...")
 		MUTABLE_CAPTION (note, U"")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_filteredAC_floor())
@@ -1331,6 +1332,12 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_filteredAC_octaveJumpCost            ())
 		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_filteredAC_voicedUnvoicedCost        ())
 	EDITOR_OK
+		const bool methodMatch = ( my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_AUTOCORRELATION );
+		const conststring32 currentMethodText = kSoundAnalysisArea_pitch_analysisMethod_getText (my instancePref_pitch_method());
+		SET_STRING (methodMatchWarning, methodMatch ?
+			Melder_cat (U"(your current pitch analysis method is indeed ", currentMethodText, U")") :
+			Melder_cat (U"WARNING: your current pitch analysis method is ", currentMethodText, U"!")
+		)
 		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ())
 			SET_STRING (note, U"(Warning: your time step settings are non-standard; see Analysis menu)")
 		else
@@ -1380,6 +1387,7 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 
 static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings for the raw cross-correlation method", U"Intro 4.2. Configuring the pitch contour")
+		MUTABLE_COMMENT (methodMatchWarning, U"")
 		HEADING (U"Where to search...")
 		MUTABLE_CAPTION (note, U"")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_rawCC_floor())
@@ -1402,6 +1410,12 @@ static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
 		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_rawCC_octaveJumpCost            ())
 		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_rawCC_voicedUnvoicedCost        ())
 	EDITOR_OK
+		const bool methodMatch = ( my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: RAW_CROSS_CORRELATION );
+		const conststring32 currentMethodText = kSoundAnalysisArea_pitch_analysisMethod_getText (my instancePref_pitch_method());
+		SET_STRING (methodMatchWarning, methodMatch ?
+			Melder_cat (U"(your current pitch analysis method is indeed ", currentMethodText, U")") :
+			Melder_cat (U"WARNING: your current pitch analysis method is ", currentMethodText, U"!")
+		)
 		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ())
 			SET_STRING (note, U"(Warning: your time step settings are non-standard; see Analysis menu)")
 		else
@@ -1449,6 +1463,7 @@ static void menu_cb_pitchSettings_rawCC (SoundAnalysisArea me, EDITOR_ARGS) {
 
 static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings for the raw autocorrelation method", U"Intro 4.2. Configuring the pitch contour")
+		MUTABLE_COMMENT (methodMatchWarning, U"")
 		HEADING (U"Where to search...")
 		MUTABLE_CAPTION (note, U"")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_rawAC_floor())
@@ -1471,6 +1486,12 @@ static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
 		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_rawAC_octaveJumpCost            ())
 		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_rawAC_voicedUnvoicedCost        ())
 	EDITOR_OK
+		const bool methodMatch = ( my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: RAW_AUTOCORRELATION );
+		const conststring32 currentMethodText = kSoundAnalysisArea_pitch_analysisMethod_getText (my instancePref_pitch_method());
+		SET_STRING (methodMatchWarning, methodMatch ?
+			Melder_cat (U"(your current pitch analysis method is indeed ", currentMethodText, U")") :
+			Melder_cat (U"WARNING: your current pitch analysis method is ", currentMethodText, U"!")
+		)
 		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ())
 			SET_STRING (note, U"(Warning: your time step settings are non-standard; see Analysis menu)")
 		else
@@ -1518,6 +1539,7 @@ static void menu_cb_pitchSettings_rawAC (SoundAnalysisArea me, EDITOR_ARGS) {
 
 static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings for the filtered cross-correlation method", U"Intro 4.2. Configuring the pitch contour")
+		MUTABLE_COMMENT (methodMatchWarning, U"")
 		HEADING (U"Where to search...")
 		MUTABLE_CAPTION (note, U"")
 		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_filteredCC_floor())
@@ -1542,6 +1564,12 @@ static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS)
 		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_filteredCC_octaveJumpCost            ())
 		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_filteredCC_voicedUnvoicedCost        ())
 	EDITOR_OK
+		const bool methodMatch = ( my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_CROSS_CORRELATION );
+		const conststring32 currentMethodText = kSoundAnalysisArea_pitch_analysisMethod_getText (my instancePref_pitch_method());
+		SET_STRING (methodMatchWarning, methodMatch ?
+			Melder_cat (U"(your current pitch analysis method is indeed ", currentMethodText, U")") :
+			Melder_cat (U"WARNING: your current pitch analysis method is ", currentMethodText, U"!")
+		)
 		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ())
 			SET_STRING (note, U"(Warning: your time step settings are non-standard; see Analysis menu)")
 		else
@@ -1590,7 +1618,7 @@ static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS)
 }
 
 static void menu_cb_howToChooseAPitchAnalysisMethod (SoundAnalysisArea /* me */, EDITOR_ARGS) {
-	Melder_help (U"How to choose a pitch analysis method");
+	Melder_help (U"how to choose a pitch analysis method");
 }
 
 static void shared_menu_cb_pitchMethodIsXXX (SoundAnalysisArea me, kSoundAnalysisArea_pitch_analysisMethod method) {
@@ -2336,22 +2364,22 @@ void structSoundAnalysisArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (menu, U"How to choose a pitch analysis method", GuiMenu_DEPTH_1,
 				menu_cb_howToChooseAPitchAnalysisMethod, this);
 		FunctionAreaMenu_addCommand (menu, U"", 0, nullptr, this);
-		our pitchFilteredAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Choose filtered autocorrelation",
+		our pitchFilteredAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch analysis method is filtered autocorrelation",
 				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsFilteredAutocorrelation, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings (filtered autocorrelation)...", GuiMenu_DEPTH_1,
 				menu_cb_pitchSettings_filteredAC, this);
 		FunctionAreaMenu_addCommand (menu, U"", 0, nullptr, this);
-		our pitchRawCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Choose raw cross-correlation",
+		our pitchRawCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch analysis method is raw cross-correlation",
 				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsRawCrossCorrelation, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings (raw cross-correlation)...", GuiMenu_DEPTH_1,
 				menu_cb_pitchSettings_rawCC, this);
 		FunctionAreaMenu_addCommand (menu, U"", 0, nullptr, this);
-		our pitchRawAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Choose raw autocorrelation",
+		our pitchRawAutocorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch analysis method is raw autocorrelation",
 				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsRawAutocorrelation, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings (raw autocorrelation)...", GuiMenu_DEPTH_1,
 				menu_cb_pitchSettings_rawAC, this);
 		FunctionAreaMenu_addCommand (menu, U"", 0, nullptr, this);
-		our pitchFilteredCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Choose filtered cross-correlation",
+		our pitchFilteredCrossCorrelationToggle = FunctionAreaMenu_addCommand (menu, U"Pitch analysis method is filtered cross-correlation",
 				GuiMenu_CHECKBUTTON | GuiMenu_DEPTH_1, menu_cb_pitchMethodIsFilteredCrossCorrelation, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings (filtered cross-correlation)...", GuiMenu_DEPTH_1,
 				menu_cb_pitchSettings_filteredCC, this);

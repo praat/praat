@@ -138,8 +138,8 @@ NORMAL (U"Boersma, Paul (2001). Praat, a system for doing phonetics by computer.
 NORMAL (U"This paper can be downloaded from Boersma's website.")
 MAN_END
 
-MAN_BEGIN (U"FAQ: Pitch analysis", U"ppgb", 20231115)   // 20221202
-NORMAL (U"Please also consult @@How to choose a pitch analysis method@.")
+MAN_BEGIN (U"FAQ: Pitch analysis", U"ppgb", 20231115)   // 20221202 2024
+NORMAL (U"Please also consult @@how to choose a pitch analysis method@.")
 NORMAL (U"#Question: what algorithm is used for pitch analysis?")
 NORMAL (U"Answer: for how the raw pitch analysis method works, "
 	"see @@Sound: To Pitch (ac)...@. The 1993 article is downloadable from "
@@ -152,14 +152,14 @@ NORMAL (U"The first possibility is that the pitch has fallen below the @@pitch f
 	"If this happens, it may help to lower the pitch floor to e.g. 30 Hz (@@Pitch settings...@), "
 	"although that may also smooth the pitch curve too much in other places.")
 NORMAL (U"The second possibility is that the pitch has moved too fast. This could happen at the end of a Chinese fourth tone, "
-	"which drops very fast. If this happens, it may help to use the ##optimize for voice analysis# setting, "
-	"(@@Pitch settings...@), although Praat may then hallucinate pitches in other places that you would prefer to consider voiceless.")
+	"which drops very fast. If this happens, it may help to use @@pitch analysis by raw cross-correlation@, "
+	"although Praat may then hallucinate pitches in other places that you would prefer to consider voiceless.")
 NORMAL (U"The third possibility is that the periods are very irregular, as in some pathological voices. "
-	"If you want to see a pitch in those cases, it may help to use the ##optimize for voice analysis# setting "
-	"(@@Pitch settings...@). Or it may help to lower the ##voicing threshold# setting (@@Advanced pitch settings (filtered AC and CC)...@) "
-	"to 0.25 (instead of the standard 0.50) or so.")
+	"If you want to see a pitch in those cases, it may help to use @@pitch analysis by raw cross-correlation@. "
+	"Or it may help to lower the ##voicing threshold# setting "
+	"to 0.25 (instead of the standard 0.50) or so (@@Pitch settings...@).")
 NORMAL (U"The fourth possibility is that there is a lot of background noise, as in a recording on a busy street. "
-	"In such a case, it may help to lower the ##voicing threshold# setting (@@Advanced pitch settings (filtered AC and CC)...@) "
+	"In such a case, it may help to lower the ##voicing threshold# setting "
 	"to 0.25 (instead of the standard 0.50) or so. The disadvantage of lowering this setting is that for non-noisy "
 	"recordings, Praat will become too eager to find voicing in some places that you would prefer to consider voiceless; "
 	"so make sure to set it back to 0.50 once you have finished analysing the noisy recordings.")
@@ -807,14 +807,15 @@ NORMAL (U"To the right of the window, you may see three pitch values, written wi
 	"at the cursor, or the average pitch in the selection.")
 MAN_END
 
-MAN_BEGIN (U"Intro 4.2. Configuring the pitch contour", U"ppgb", 20231115 /*20190331*/)
+MAN_BEGIN (U"Intro 4.2. Configuring the pitch contour", U"ppgb", 20231115 /*20190331*/)  /*2024*/
 NORMAL (U"With @@Pitch settings...@ from the #Pitch menu, "
 	"you can determine how the pitch contour is displayed and how it is computed. "
 	"These settings will be remembered across Praat sessions. "
 	"All these settings have standard values (“factory settings”), which appear "
 	"when you click #Standards.")
-ENTRY (U"The %%pitch range% setting")
-NORMAL (U"This is the most important setting for pitch analysis. The standard range is from 50 to 800 hertz, "
+ENTRY (U"The %%pitch range% (%%pitch floor and ceiling%) setting")
+NORMAL (U"This is the most important setting for pitch analysis. "
+	"The standard range (for filtered autocorrelation) is from 50 to 800 hertz, "
 	"which means that the pitch analysis method will only find values between 50 and 800 Hz. "
 	"The range that you set here will be shown to the right of the analysis window.")
 NORMAL (U"You may have set the range to values appropriate for your speaker, "
@@ -849,8 +850,13 @@ NORMAL (U"Normally, the range of pitch values that can be seen in the editor win
 	"However, the analysis range will also change in that case, so that the curve itself may change. "
 	"If you do not want that, you can change the %%View range% settings "
 	"from “0.0 (= auto)” - “0.0 (= auto)” to something else, perhaps “350” - “400”.")
-ENTRY (U"Advanced settings")
-NORMAL (U"The Pitch menu also contains @@Advanced pitch settings (raw AC and CC)...@ and @@Advanced pitch settings (filtered AC and CC)...@.")
+ENTRY (U"Further reading")
+NORMAL (U"For more details, see:")
+LIST_ITEM (U"@@how to choose a pitch analysis method@")
+LIST_ITEM (U"@@pitch analysis by filtered autocorrelation@")
+LIST_ITEM (U"@@pitch analysis by raw cross-correlation@")
+LIST_ITEM (U"@@pitch analysis by raw autocorrelation@")
+LIST_ITEM (U"@@pitch analysis by filtered cross-correlation@")
 MAN_END
 
 MAN_BEGIN (U"Time step settings...", U"ppgb", 20231115 /*20031003,20220814*/)
@@ -894,28 +900,6 @@ NORMAL (U"Another way to override the standard time step is by setting the %%Tim
 	"As with the %%Fixed time step% setting, Praat will draw the pitch as separate disks in case of undersampling. "
 	"You may want to use this setting if you want the pitch curve to be drawn equally fast independently of the degree "
 	"of zooming.")
-MAN_END
-
-MAN_BEGIN (U"Advanced pitch settings (raw AC and CC)...", U"ppgb", 20231115 /*20110808*/)
-INTRO (U"A command in the #Pitch menu of the @SoundEditor or @TextGridEditor windows. "
-	"Before changing the advanced pitch settings, make sure you understand "
-	"@@Intro 4.2. Configuring the pitch contour@.")
-ENTRY (U"Pitch analysis settings")
-NORMAL (U"For information about these, see @@Sound: To Pitch (raw ac)...@. The standard settings are best in most cases. "
-	"For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.45, "
-	"in order to get pitch values even in irregular parts of the signal. "
-	"For prevocied plosives, you may want to lower the silence threshold from 0.03 to 0.01 or so.")
-MAN_END
-
-MAN_BEGIN (U"Advanced pitch settings (filtered AC and CC)...", U"ppgb", 20231115 /*20110808*/)
-INTRO (U"A command in the #Pitch menu of the @SoundEditor or @TextGridEditor windows. "
-	"Before changing the advanced pitch settings, make sure you understand "
-	"@@Intro 4.2. Configuring the pitch contour@.")
-ENTRY (U"Pitch analysis settings")
-NORMAL (U"For information about these, see @@Sound: To Pitch (filtered ac)...@. The standard settings are best in most cases. "
-	"For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.50, "
-	"in order to get pitch values even in irregular parts of the signal. "
-	"For prevocied plosives, you may want to lower the silence threshold from 0.09 to 0.01 or so.")
 MAN_END
 
 MAN_BEGIN (U"Intro 4.3. Querying the pitch contour", U"ppgb", 20040614)
@@ -1386,13 +1370,13 @@ LIST_ITEM (U"• The @@Save menu@: for writing objects from memory to file.")
 LIST_ITEM (U"• The ##Help menu#: for viewing the manual.")
 MAN_END
 
-MAN_BEGIN (U"Periodicity menu", U"ppgb", 20231115 /*20010417*/)
+MAN_BEGIN (U"Periodicity menu", U"ppgb", 20240722 /*20010417, 20231115*/)
 INTRO (U"A menu that occurs in the @@Dynamic menu@ for a @Sound.")
 NORMAL (U"This menu contains commands for analysing the pitch contour of the selected Sound:")
-LIST_ITEM (U"@@Sound: To Pitch (filtered ac)...")
-LIST_ITEM (U"@@Sound: To Pitch (raw cc)...")
-LIST_ITEM (U"@@Sound: To Pitch (raw ac)...")
-LIST_ITEM (U"@@Sound: To Pitch (filtered ac)...")
+LIST_ITEM (U"@@Sound: To Pitch (filtered autocorrelation)...")
+LIST_ITEM (U"@@Sound: To Pitch (raw cross-correlation)...")
+LIST_ITEM (U"@@Sound: To Pitch (raw autocorrelation)...")
+LIST_ITEM (U"@@Sound: To Pitch (filtered cross-correlation)...")
 LIST_ITEM (U"@@Sound: To Pitch (shs)...")
 LIST_ITEM (U"@@Sound: To Harmonicity (cc)...")
 LIST_ITEM (U"@@Sound: To Harmonicity (ac)...")
@@ -1400,11 +1384,6 @@ MAN_END
 
 MAN_BEGIN (U"Pitch menu", U"ppgb", 20221202)
 INTRO (U"A menu in the @SoundEditor or @TextGridEditor.")
-MAN_END
-
-MAN_BEGIN (U"Pitch settings...", U"ppgb", 20030316)
-INTRO (U"A command in the Pitch menu of the @SoundEditor and @TextGridEditor windows. "
-	"See @@Intro 4.2. Configuring the pitch contour@.")
 MAN_END
 
 MAN_BEGIN (U"Play", U"ppgb", /*20021212*/ 20220814)
