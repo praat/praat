@@ -194,7 +194,7 @@ void checkLPCAnalysisParameters_e (double sound_dx, integer sound_nx, double phy
 {
 	volatile const double physicalDuration = sound_dx * sound_nx;
 	Melder_require (physicalAnalysisWidth <= physicalDuration,
-		U"Your sound is too short: it should be at least as long as two window lengths. "
+		U"Your sound is shorter than two window lengths. "
 		"Either your sound is too short or your window is too long.");
 	// we round the minimum duration to be able to use asserterror in testing scripts.
 	conststring32 minimumDurationRounded = Melder_fixed (predictionOrder * sound_dx , 5);
