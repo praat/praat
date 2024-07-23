@@ -36,6 +36,7 @@ echo 'slope1:6' dB
 removeObject: pitchTier, pulses, sound, spectrum
 
 klatt = Create KlattGrid... a 0 duration numberOfFormants 0 0 0 0 0 0
+#klatt = Create KlattGrid: "a", 0, duration, numberOfFormants, 0, 0, 0, 0, 0, 0
 Add voicing amplitude point... 0 90.0
 Add pitch point... 0 f0start
 Add pitch point... duration f0end
