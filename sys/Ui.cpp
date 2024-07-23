@@ -2237,13 +2237,13 @@ void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter
 	integer size = my numberOfFields, iarg = 0;
 	//while (size >= 1 && my field [size] -> type == _kUiField_type::LABEL_)
 	//	size --;   // ignore trailing fields without a value
-	for (integer i = 1; i <= size; i ++) {
-		if (_kUiField_type_isComment (my field [i] -> type))
+	for (integer ifield = 1; ifield <= size; ifield ++) {
+		if (_kUiField_type_isComment (my field [ifield] -> type))
 			continue;   // ignore non-trailing fields without a value
 		iarg ++;
 		if (iarg > narg)
-			Melder_throw (U"Command requires more than the given ", narg, U" arguments: argument “", my field [i] -> name.get(), U"” not given.");
-		UiField_argToValue (my field [i].get(), & args [iarg], interpreter);
+			Melder_throw (U"Command requires more than the given ", narg, U" arguments: argument “", my field [ifield] -> name.get(), U"” not given.");
+		UiField_argToValue (my field [ifield].get(), & args [iarg], interpreter);
 	}
 	if (iarg < narg)
 		Melder_throw (U"Command requires only ", iarg, U" arguments, not the ", narg, U" given.");
@@ -2445,10 +2445,10 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter optiona
 	int size = my numberOfFields;
 	while (size >= 1 && _kUiField_type_isComment (my field [size] -> type))
 		size --;   // ignore trailing fields without a value
-	for (int i = 1; i < size; i ++) {
+	for (int ifield = 1; ifield < size; ifield ++) {
 		static char32 stringValue [3000];
 		int ichar = 0;
-		if (_kUiField_type_isComment (my field [size] -> type))
+		if (_kUiField_type_isComment (my field [ifield] -> type))
 			continue;   // ignore non-trailing fields without a value
 		Melder_skipHorizontalOrVerticalSpace (& arguments);   // go to next argument
 		/*
@@ -2475,9 +2475,9 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter optiona
 		}
 		stringValue [ichar] = U'\0';   // trailing null character
 		try {
-			UiField_stringToValue (my field [i].get(), stringValue, optionalInterpreter);
+			UiField_stringToValue (my field [ifield].get(), stringValue, optionalInterpreter);
 		} catch (MelderError) {
-			Melder_throw (U"Don't understand contents of field “", my field [i] -> name.get(), U"”.");
+			Melder_throw (U"Don't understand contents of field “", my field [ifield] -> name.get(), U"”.");
 		}
 	}
 	/*
