@@ -54,7 +54,7 @@ Prefs_begin (SoundAnalysisArea)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_voicedUnvoicedCost,         1, U"0.14")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawCC_floor,          1, U"75.0")   // Hz
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawCC_ceiling,        1, U"600.0")   // Hz
-	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_rawCC_unit,           1, kPitch_unit, HERTZ_LOGARITHMIC)
+	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_rawCC_unit,           2, kPitch_unit, HERTZ)
 	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_rawCC_drawingMethod,  1, kSoundAnalysisArea_pitch_drawingMethod, DEFAULT)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawCC_viewFrom,       1, U"0.0 (= auto)")   // units
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawCC_viewTo,         1, U"0.0 (= auto)")   // units
@@ -67,7 +67,7 @@ Prefs_begin (SoundAnalysisArea)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawCC_voicedUnvoicedCost,         1, U"0.14")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawAC_floor,          1, U"75.0")   // Hz
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawAC_ceiling,        1, U"600.0")   // Hz
-	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_rawAC_unit,           1, kPitch_unit, HERTZ_LOGARITHMIC)
+	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_rawAC_unit,           2, kPitch_unit, HERTZ)
 	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_rawAC_drawingMethod,  1, kSoundAnalysisArea_pitch_drawingMethod, DEFAULT)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawAC_viewFrom,       1, U"0.0 (= auto)")   // units
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawAC_viewTo,         1, U"0.0 (= auto)")   // units
