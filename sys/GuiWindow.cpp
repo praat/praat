@@ -134,6 +134,8 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		(void) flags;
 		GuiGtk_initialize ();
 		my d_gtkWindow = (GtkWindow *) gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		static const GdkRGBA backgroundColour { 0.92, 0.92, 0.92, 1.0 };
+		gtk_widget_override_background_color (GTK_WIDGET (my d_gtkWindow), GTK_STATE_FLAG_NORMAL, & backgroundColour);
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "delete-event", goAwayCallback ? G_CALLBACK (_GuiWindow_goAwayCallback) : G_CALLBACK (gtk_widget_hide), me.get());
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "destroy-event", G_CALLBACK (_GuiWindow_destroyCallback), me.get());
 

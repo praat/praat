@@ -57,6 +57,8 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 	my d_goAwayBoss = goAwayBoss;
 	#if gtk
 		my d_gtkWindow = (GtkWindow *) gtk_dialog_new ();
+		static const GdkRGBA backgroundColour { 0.92, 0.92, 0.92, 1.0 };
+		gtk_widget_override_background_color (GTK_WIDGET (my d_gtkWindow), GTK_STATE_FLAG_NORMAL, & backgroundColour);
 		if (parent) {
 			Melder_assert (parent -> d_widget);
 			GuiObject toplevel = gtk_widget_get_ancestor (GTK_WIDGET (parent -> d_widget), GTK_TYPE_WINDOW);
