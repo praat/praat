@@ -766,7 +766,7 @@ Mathematically generated periodic signals aren’t necessarily speechlike. For i
 	... + 0.001*sin(2*pi*600*x) - 0.2*cos(2*pi*800*x+1.5) - 0.2*cos(2*pi*1000*x+1.5)"
 	selectObject: sine, tricky
 	Concatenate
-	Erase all
+	;Erase all
 	Draw: 0.08, 0.12, 0, 0, "yes", "curve"
 }
 Both the left part of this sound and the right part have a period of 5 ms,
