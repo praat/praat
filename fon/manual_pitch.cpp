@@ -657,7 +657,7 @@ you are advised to use @@pitch analysis by ||filtered autocorrelation@;
 for voice analysis (such as is used in the area of voice pathology),
 you are advised to use @@pitch analysis by ||raw cross-correlation@;
 and for measuring pure periodicity,
-ou are advised to use @@pitch analysis by ||raw autocorrelation@.
+you are advised to use @@pitch analysis by ||raw autocorrelation@.
 
 Measuring intonation
 ====================
@@ -700,7 +700,7 @@ will lead to a very strong F1 in the waveform, sometimes causing the pitch to be
 as 450 instead of 150 Hz. This problem is exacerbated by the existence of the “octave cost”,
 which favours higher pitch candidates. Low-pass filtering reduces this problem,
 because the 450-Hz component of the waveform is weakened with respect to the 150-Hz component
-by a factor of 0.373 (if the pitch ceiling is 800 Hz, and the “attenuation at ceiling” is set to 0.03).
+by a factor of 0.373 (if the pitch top is 800 Hz, and the “attenuation at top” is set to 0.03).
 This effect is so strong that the standard “octave cost” can be much higher for filtered pitch analysis
 (the standard value is 0.055 per octave) than for raw pitch analysis (where the standard value is 0.01 per octave):
 this still reduces the formant problem heavily, and it reduces the unwanted octave drops
@@ -766,7 +766,7 @@ Mathematically generated periodic signals aren’t necessarily speechlike. For i
 	... + 0.001*sin(2*pi*600*x) - 0.2*cos(2*pi*800*x+1.5) - 0.2*cos(2*pi*1000*x+1.5)"
 	selectObject: sine, tricky
 	Concatenate
-	;Erase all
+	Erase all
 	Draw: 0.08, 0.12, 0, 0, "yes", "curve"
 }
 Both the left part of this sound and the right part have a period of 5 ms,
@@ -961,8 +961,17 @@ windowed signal by the autocorrelation function of the window:
 
 ~	%r_%x (%\ta) \~~ %r__%xw_ (%\ta) / %r_%w (%\ta)
 
+The pitch is basically determined as the inverse of the time (%lag) where the autocorrelation function %r
+has its maximum. However, there are likely to be multiple peaks in %r,
+and all of these can be %%pitch candidates%. For each moment in time (e.g. every 10 ms),
+the algorithm determines the (typically) 15 highest peaks in %r,
+regards these as %candidates, and then tracks an optimal path through the candidates over time.
+
 Settings
 ========
+
+Several settings are already described in @@Intro 4.2. Configuring the pitch contour@.
+The explanations below assume that you have gone through that part of the Intro.
 
 The settings that control the recruitment of the candidates are:
 
@@ -1094,6 +1103,9 @@ forward cross-correlation analysis.
 Settings
 ========
 
+Several settings are already described in @@Intro 4.2. Configuring the pitch contour@.
+The explanations below assume that you have gone through that part of the Intro.
+
 ##Time step (s)# (standard value: 0.0)
 :	the measurement interval (frame duration), in seconds. If you supply 0,
 Praat will use a time step of 0.25 / (%%pitch floor%), e.g. 0.00333333 seconds if the pitch floor is 75 Hz;
@@ -1168,7 +1180,7 @@ This command will first low-pass filter the signal, then apply @@pitch analysis 
 on the filtered signal.
 
 The low-pass filter is Gaussian in the frequency domain. If, for instance,
-you set the %%pitch ceiling% to 800 Hz, and the %%attenuation at ceiling% to 0.03,
+you set the %%pitch top% to 800 Hz, and the %%attenuation at top% to 0.03,
 then the attenuation at 400 Hz is the fourth root of 0.03, i.e. about 42\% .
 As a function of frequency %f, the attenuation is 0.03^^(%f/800)²^.
 Here’s a table of attenuation factors, also in dB (in this logarithmic domain, the shape is parabolic):
@@ -1183,12 +1195,15 @@ Here’s a table of attenuation factors, also in dB (in this logarithmic domain,
 |   700 Hz  |     0.07    |  -23.3 dB
 |   800 Hz  |     0.03    |  -30.5 dB
 
-Note: the attenuation curve will be identical to the curve shown here if you use a ceiling of 500 Hz
-and an %%attenuation at ceiling% of 0.25; however, this is not advised, because the example table
-provides a more gradual suppression of higher pitches, almost as if there were no ceiling at all.
+Note: the attenuation curve will be identical to the curve shown here if you use a pitch top of 500 Hz
+and an %%attenuation at top% of 0.25; however, this is not advised, because the example table
+provides a more gradual suppression of higher pitches, almost as if there were no pitch top at all.
 
 Settings
 ========
+
+Several settings are already described in @@Intro 4.2. Configuring the pitch contour@.
+The explanations below assume that you have gone through that part of the Intro.
 
 The settings that control the recruitment of the candidates are:
 
@@ -1206,8 +1221,127 @@ Note that if you set the time step to zero, the analysis windows for consecutive
 will overlap appreciably: Praat will always compute 4 pitch values
 within one window length, i.e., the degree of %oversampling is 4.
 
-##Pitch ceiling (Hz)# (standard value: 800 Hz)
-:	candidates above this frequency will be ignored.
+##Pitch top (Hz)# (standard value: 800 Hz)
+:	candidates above this frequency will be ignored. Note, however, that candidates around one half of this (i.e. 400 Hz)
+will already be reduced by 7.6 dB, i.e. they are already moderately disfavoured,
+and that candidates around three-quarters of this (i.e. 600 Hz) will already be reduced by 17.1 dB,
+i.e. they are strongly disfavoured. Hence, the %%pitch top%
+needs to be be set much higher than the %%pitch ceiling% of @@pitch analysis by ||raw autocorrelation@,
+which is why the standard is 800 Hz whereas the standard for raw autocorrelation can be 500 or 600 Hz.
+To illustrate this, consider the search space for raw autocorrelation on the right (with a ceiling of 600 Hz)
+and the search space for filtered autocorrelation on the right (with a top of 800 Hz):
+{- 6x3
+	colour# = { 1.0, 0.5, 0.5 }
+	attenuationAtFloor = 0.03 ^ (50/800)^2
+	info$ = Picture info
+	fontSize = extractNumber: info$, "Font size:"
+
+	Axes: 0, 1, 0, 1000
+	Select outer viewport: 0, 3, 0, 3
+	Draw inner box
+	Marks bottom every: 1.0, 1.0, "yes", "yes", "no"
+	One mark left: 50, "yes", "yes", "yes", ""
+	One mark right: 50, "no", "yes", "no", "floor"
+	One mark left: 600, "yes", "yes", "yes", ""
+	One mark right: 600, "no", "yes", "no", "ceiling"
+	Text bottom: "no", "attenuation"
+	Text left: "yes", "Pitch (Hz)"
+	Colour: colour#
+	Line width: 3
+	Draw line: 0, 1000, 0, 600
+	Draw line: 0, 600, 1, 600
+	Draw line: 1, 600, 1, 50
+	Draw line: 1, 50, 0, 50
+	Draw line: 0, 50, 0, 0
+	Red
+	Text: 0.5, "centre", 50, "bottom", "%%floor"
+	Text: 0.5, "centre", 600, "bottom", "%%ceiling"
+	Line width: 1
+	Black
+
+	Select outer viewport: 3, 6, 0, 3
+	Draw inner box
+	Marks bottom every: 1.0, 1.0, "yes", "yes", "no"
+	One mark left: 50, "yes", "yes", "yes", ""
+	One mark right: 50, "no", "yes", "no", "floor"
+	One mark left: 100, "yes", "yes", "yes", ""
+	One mark left: 200, "yes", "yes", "yes", ""
+	One mark left: 400, "yes", "yes", "yes", ""
+	One mark left: 800, "yes", "yes", "yes", ""
+	One mark right: 800, "no", "yes", "no", "top"
+	Text bottom: "no", "attenuation"
+	Text left: "yes", "Pitch (Hz)"
+	Colour: colour#
+	Line width: 3
+	Draw function: 0, attenuationAtFloor, 300, ~ min (800, 800 * sqrt (ln (x) / ln (0.03)))
+	Draw line: 0, 800, 0, 1000
+	Draw line: attenuationAtFloor, 50, 0, 50
+	Draw line: 0, 50, 0, 0
+	Red
+	Text: 0.5, "centre", 50, "bottom", "%%floor"
+	Text special: 0.5, "centre", 360, "bottom", "Times", fontSize, "-35", "%%ceiling"
+	Line width: 1
+	Black
+}
+: Because of the reduction in strength of high pitch candidates, it may be preferable
+to view pitch on a logarithmic pitch scale, so that the suppressed top octave (from 400 to 800 Hz)
+occupies less space:
+{- 3x3
+	Axes: 0, 1, log10 (40), log10(1000)
+	Draw inner box
+	Marks bottom every: 1.0, 1.0, "yes", "yes", "no"
+	One logarithmic mark left: 50, "yes", "yes", "yes", ""
+	One logarithmic mark right: 50, "no", "yes", "no", "floor"
+	One logarithmic mark left: 100, "yes", "yes", "yes", ""
+	One logarithmic mark left: 200, "yes", "yes", "yes", ""
+	One logarithmic mark left: 400, "yes", "yes", "yes", ""
+	One logarithmic mark left: 800, "yes", "yes", "yes", ""
+	One logarithmic mark right: 800, "no", "yes", "no", "top"
+	Text bottom: "no", "attenuation"
+	Text left: "yes", "pitch (Hz)"
+	Colour: colour#
+	Line width: 3
+	Draw function: 0, attenuationAtFloor, 300, ~ log10 (min (800, 800 * sqrt (ln (x) / ln (0.03))))
+	Draw line: 0, log10(800), 0, log10(1000)
+	Draw line: attenuationAtFloor, log10(50), 0, log10(50)
+	Draw line: 0, log10(50), 0, log10(40)
+	Red
+	Text: 0.5, "centre", log10(50), "bottom", "%%floor"
+	Text special: 0.5, "centre", log10(360), "bottom", "Times", fontSize, "-30", "%%ceiling"
+	Line width: 1
+	Black
+}
+We could say that the whole range from 300 to 800 Hz can be regarded as a skewed “ceiling”.
+This is why we distinguish between the terms “ceiling” and “top”. If you have a speaker
+with an especially high F0, then you can raise the top to e.g. 1200 Hz;
+the attenuation of higher candidates will then have the exact same shape:
+{- 3x3
+	Axes: 0, 1, log10 (40), log10(1500)
+	Draw inner box
+	Marks bottom every: 1.0, 1.0, "yes", "yes", "no"
+	One logarithmic mark left: 50, "yes", "yes", "yes", ""
+	One logarithmic mark right: 50, "no", "yes", "no", "floor"
+	One logarithmic mark left: 75, "yes", "yes", "yes", ""
+	One logarithmic mark left: 150, "yes", "yes", "yes", ""
+	One logarithmic mark left: 300, "yes", "yes", "yes", ""
+	One logarithmic mark left: 600, "yes", "yes", "yes", ""
+	One logarithmic mark left: 1200, "yes", "yes", "yes", ""
+	One logarithmic mark right: 1200, "no", "yes", "no", "top"
+	Text bottom: "no", "attenuation"
+	Text left: "yes", "pitch (Hz)"
+	Colour: colour#
+	Line width: 3
+	attenuationAtFloor = 0.03 ^ (50/1200)^2
+	Draw function: 0, attenuationAtFloor, 300, ~ log10 (min (1200, 1200 * sqrt (ln (x) / ln (0.03))))
+	Draw line: 0, log10(1200), 0, log10(1500)
+	Draw line: attenuationAtFloor, log10(50), 0, log10(50)
+	Draw line: 0, log10(50), 0, log10(40)
+	Red
+	Text: 0.5, "centre", log10(50), "bottom", "%%floor"
+	Text special: 0.5, "centre", log10(540), "bottom", "Times", fontSize, "-30", "%%ceiling"
+	Line width: 1
+	Black
+}
 
 ##Max. number of candidates# (standard value: 15)
 :	each frame will contain at least this many pitch candidates.
@@ -1218,6 +1352,15 @@ time lags over which the signal is more or less similar to itself.
 :	if %off, the window is a Hanning window with a physical length of  3 / (%%pitch floor%).
 If %on, the window is a Gaussian window with a physical length of  6 / (%%pitch floor%),
 i.e. twice the effective length.
+
+A pre-processing algorithm filters the sound before the @@pitch analysis by raw autocorrelation@ begins.
+The shape of the attenutation curve is determined not only by the height of the %pitch top% (in hertz),
+but also by how wide it is (in the pictures above, it’s the tiny horizontal linepiece at the top):
+
+##Attenuation at top# (standard value: 0.03)
+:	this is how much the frequency components of the original sound have been attenuated at the top.
+In the example table above, you can see that at the top (800 Hz) the sounds was attenuated by a factor of 0.03.
+We known of no reasons to change this value, except for experimenting.
 
 A post-processing algorithm seeks the cheapest path through the candidates.
 The settings that determine the cheapest path are:
@@ -1241,7 +1384,7 @@ To more strongly favour recruitment of high-frequency candidates, increase this 
 ##Octave-jump cost# (standard value: 0.35)
 :	degree of disfavouring of pitch changes, relative to the maximum possible autocorrelation.
 To decrease the number of large frequency jumps, increase this value. In contrast with what is described
-in the article, this value will be corrected for the time step: multiply by 0.01 s / %TimeStep to get
+in the article (@@Boersma (1993)@), this value will be corrected for the time step: multiply by 0.01 s / %TimeStep to get
 the value in the way it is used in the formulas in the article.
 
 ##Voiced / unvoiced cost# (standard value: 0.14)
@@ -1291,7 +1434,7 @@ In older scripts you may find:
 
 ################################################################################
 "pitch analysis by filtered cross-correlation"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A command that creates a @Pitch object from every selected @Sound object.
 
@@ -1303,6 +1446,12 @@ to perform a pitch analysis based on the forward cross-correlation of the low-pa
 Usage
 =====
 
+We know of no situation yet in which this method is preferred over @@pitch analysis by filtered autocorrelation@
+(which seems better for measuring intonation and vocal-fold vibration frequency),
+@@pitch analysis by raw cross-correlation@ (which is definitely better for voice analysis, such as jitter and shimmer),
+or @@pitch analysis by raw autocorrelation@ (which is better for determining raw periodicity).
+It is possible that filtered cross-correlation can play a role in voice analysis in the future,
+in combination with one of the other methods; this is yet to be determined.
 
 Algorithm
 =========

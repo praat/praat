@@ -65,7 +65,6 @@ type structSoundAnalysisArea :: dynamic_instancePref_pitch_##setting () { \
 	} \
 }
 DEFINE_dynamic_instancePref_pitch (double, floor)
-DEFINE_dynamic_instancePref_pitch (double, ceiling)
 DEFINE_dynamic_instancePref_pitch (kPitch_unit, unit)
 DEFINE_dynamic_instancePref_pitch (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod)
 DEFINE_dynamic_instancePref_pitch (double, viewFrom)
@@ -75,12 +74,27 @@ DEFINE_dynamic_instancePref_pitch (integer, maximumNumberOfCandidates)
 DEFINE_dynamic_instancePref_pitch (double, silenceThreshold)
 DEFINE_dynamic_instancePref_pitch (double, voicingThreshold)
 
-static double dynamic_instancePref_pitch_attenuationAtCeiling (SoundAnalysisArea me) {
+double structSoundAnalysisArea :: dynamic_instancePref_pitch_ceilingOrTop () {
+	switch (our instancePref_pitch_method()) {
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_AUTOCORRELATION:
+			return our instancePref_pitch_filteredAC_top();
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_CROSS_CORRELATION:
+			return our instancePref_pitch_rawCC_ceiling();
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_AUTOCORRELATION:
+			return our instancePref_pitch_rawAC_ceiling();
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_CROSS_CORRELATION:
+			return our instancePref_pitch_filteredCC_top();
+		default:
+			Melder_fatal (U"Unknown pitch analysis method ", (int) our instancePref_pitch_method(), U".");
+	}
+}
+
+static double dynamic_instancePref_pitch_attenuationAtTop (SoundAnalysisArea me) {
 	switch (my instancePref_pitch_method()) {
 		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_AUTOCORRELATION:
-			return my instancePref_pitch_filteredAC_attenuationAtCeiling();
+			return my instancePref_pitch_filteredAC_attenuationAtTop();
 		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_CROSS_CORRELATION:
-			return my instancePref_pitch_filteredCC_attenuationAtCeiling();
+			return my instancePref_pitch_filteredCC_attenuationAtTop();
 		default:
 			Melder_fatal (U"Unknown pitch analysis method ", (int) my instancePref_pitch_method(), U".");
 	}
@@ -156,9 +170,9 @@ static void tryToComputePitch (SoundAnalysisArea me) {
 		);
 		if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::FILTERED_AUTOCORRELATION)
 			my d_pitch = Sound_to_Pitch_filteredAc (sound.get(),
-				pitchTimeStep, my instancePref_pitch_filteredAC_floor(), my instancePref_pitch_filteredAC_ceiling(),
+				pitchTimeStep, my instancePref_pitch_filteredAC_floor(), my instancePref_pitch_filteredAC_top(),
 				my instancePref_pitch_filteredAC_maximumNumberOfCandidates(), my instancePref_pitch_filteredAC_veryAccurate(),
-				my instancePref_pitch_filteredAC_attenuationAtCeiling(),
+				my instancePref_pitch_filteredAC_attenuationAtTop(),
 				my instancePref_pitch_filteredAC_silenceThreshold(), my instancePref_pitch_filteredAC_voicingThreshold(),
 				my instancePref_pitch_filteredAC_octaveCost(), my instancePref_pitch_filteredAC_octaveJumpCost(),
 				my instancePref_pitch_filteredAC_voicedUnvoicedCost()
@@ -181,9 +195,9 @@ static void tryToComputePitch (SoundAnalysisArea me) {
 			);
 		else if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::FILTERED_CROSS_CORRELATION)
 			my d_pitch = Sound_to_Pitch_filteredCc (sound.get(), pitchTimeStep,
-				my instancePref_pitch_filteredCC_floor(), my instancePref_pitch_filteredCC_ceiling(),
+				my instancePref_pitch_filteredCC_floor(), my instancePref_pitch_filteredCC_top(),
 				my instancePref_pitch_filteredCC_maximumNumberOfCandidates(), my instancePref_pitch_filteredCC_veryAccurate(),
-				my instancePref_pitch_filteredCC_attenuationAtCeiling(),
+				my instancePref_pitch_filteredCC_attenuationAtTop(),
 				my instancePref_pitch_filteredCC_silenceThreshold(), my instancePref_pitch_filteredCC_voicingThreshold(),
 				my instancePref_pitch_filteredCC_octaveCost(), my instancePref_pitch_filteredCC_octaveJumpCost(),
 				my instancePref_pitch_filteredCC_voicedUnvoicedCost()
@@ -404,8 +418,8 @@ void structSoundAnalysisArea :: v_pitchInfo () const {
 			Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_filteredAC_unit(), Function_UNIT_TEXT_MENU);
 	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) floor: ",
 			our instancePref_pitch_filteredAC_floor(), U" Hz");
-	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) ceiling: ",
-			our instancePref_pitch_filteredAC_ceiling(), U" Hz");
+	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) top: ",
+			our instancePref_pitch_filteredAC_top(), U" Hz");
 	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) unit: ",
 			unitText);
 	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) drawing method: ",
@@ -418,8 +432,8 @@ void structSoundAnalysisArea :: v_pitchInfo () const {
 			our instancePref_pitch_filteredAC_maximumNumberOfCandidates());
 	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) very accurate: ",
 			our instancePref_pitch_filteredAC_veryAccurate());
-	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) attenuation at ceiling: ",
-			our instancePref_pitch_filteredAC_attenuationAtCeiling());
+	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) attenuation at top: ",
+			our instancePref_pitch_filteredAC_attenuationAtTop());
 	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) silence threshold: ",
 			our instancePref_pitch_filteredAC_silenceThreshold(), U" of global peak");
 	MelderInfo_writeLine (U"Pitch (filtered autocorrelation) voicing threshold: ",
@@ -499,8 +513,8 @@ void structSoundAnalysisArea :: v_pitchInfo () const {
 			Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_filteredCC_unit(), Function_UNIT_TEXT_MENU);
 	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) floor: ",
 			our instancePref_pitch_filteredCC_floor(), U" Hz");
-	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) ceiling: ",
-			our instancePref_pitch_filteredCC_ceiling(), U" Hz");
+	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) top: ",
+			our instancePref_pitch_filteredCC_top(), U" Hz");
 	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) unit: ",
 			unitText);
 	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) drawing method: ",
@@ -513,8 +527,8 @@ void structSoundAnalysisArea :: v_pitchInfo () const {
 			our instancePref_pitch_filteredCC_maximumNumberOfCandidates());
 	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) very accurate: ",
 			our instancePref_pitch_filteredCC_veryAccurate());
-	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) attenuation at ceiling: ",
-			our instancePref_pitch_filteredCC_attenuationAtCeiling());
+	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) attenuation at top: ",
+			our instancePref_pitch_filteredCC_attenuationAtTop());
 	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) silence threshold: ",
 			our instancePref_pitch_filteredCC_silenceThreshold(), U" of global peak");
 	MelderInfo_writeLine (U"Pitch (filtered cross-correlation) voicing threshold: ",
@@ -1125,7 +1139,7 @@ static void menu_cb_pitchSettings_BEFORE_6414 (SoundAnalysisArea me, EDITOR_ARGS
 	EDITOR_FORM (U"Pitch settings", U"Intro 4.2. Configuring the pitch contour")
 		COMMENT   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
 		COMMENT   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
-		POSITIVE (pitchFloor,   U"left Pitch range (Hz)",  my default_pitch_rawAC_floor())   // the default is ignored if not shown
+		POSITIVE (pitchFloor, U"left Pitch range (Hz)",  my default_pitch_rawAC_floor())   // the default is ignored if not shown
 		POSITIVE (pitchCeiling, U"right Pitch range (Hz)", my default_pitch_rawAC_ceiling())
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit", my default_pitch_rawAC_unit ())
@@ -1151,7 +1165,7 @@ static void menu_cb_pitchSettings_BEFORE_6414 (SoundAnalysisArea me, EDITOR_ARGS
 		);
 		my setInstancePref_pitch_method (analysisMethod);
 		my setInstancePref_pitch_filteredAC_floor (pitchFloor);
-		my setInstancePref_pitch_filteredAC_ceiling (pitchCeiling);
+		my setInstancePref_pitch_filteredAC_top (pitchCeiling);
 		my setInstancePref_pitch_filteredAC_unit (unit);
 		my setInstancePref_pitch_filteredAC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_filteredAC_viewFrom (viewFrom);
@@ -1169,7 +1183,7 @@ static void menu_cb_pitchSettings_BEFORE_6414 (SoundAnalysisArea me, EDITOR_ARGS
 		my setInstancePref_pitch_rawAC_viewFrom (viewFrom);
 		my setInstancePref_pitch_rawAC_viewTo (viewTo);
 		my setInstancePref_pitch_filteredCC_floor (pitchFloor);
-		my setInstancePref_pitch_filteredCC_ceiling (pitchCeiling);
+		my setInstancePref_pitch_filteredCC_top (pitchCeiling);
 		my setInstancePref_pitch_filteredCC_unit (unit);
 		my setInstancePref_pitch_filteredCC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_filteredCC_viewFrom (viewFrom);
@@ -1272,7 +1286,7 @@ static void menu_cb_advancedPitchSettings_filteredAcCc_BEFORE_6414 (SoundAnalysi
 		COMMENT   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
 		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_filteredAC_maximumNumberOfCandidates ())   // the default is ignored if not shown
 		BOOLEAN  (veryAccurate,              U"Very accurate",             my default_pitch_filteredAC_veryAccurate              ())
-		POSITIVE (attenuationAtCeiling,      U"Attenuation at ceiling",    my default_pitch_filteredAC_attenuationAtCeiling      ())
+		POSITIVE (attenuationAtTop,          U"Attenuation at top",        my default_pitch_filteredAC_attenuationAtTop          ())
 		REAL     (silenceThreshold,          U"Silence threshold",         my default_pitch_filteredAC_silenceThreshold          ())
 		REAL     (voicingThreshold,          U"Voicing threshold",         my default_pitch_filteredAC_voicingThreshold          ())
 		REAL     (octaveCost,                U"Octave cost",               my default_pitch_filteredAC_octaveCost                ())
@@ -1286,8 +1300,8 @@ static void menu_cb_advancedPitchSettings_filteredAcCc_BEFORE_6414 (SoundAnalysi
 		my setInstancePref_pitch_filteredCC_maximumNumberOfCandidates (maximumNumberOfCandidates);
 		my setInstancePref_pitch_filteredAC_veryAccurate (veryAccurate);
 		my setInstancePref_pitch_filteredCC_veryAccurate (veryAccurate);
-		my setInstancePref_pitch_filteredAC_attenuationAtCeiling (attenuationAtCeiling);
-		my setInstancePref_pitch_filteredCC_attenuationAtCeiling (attenuationAtCeiling);
+		my setInstancePref_pitch_filteredAC_attenuationAtTop (attenuationAtTop);
+		my setInstancePref_pitch_filteredCC_attenuationAtTop (attenuationAtTop);
 		my setInstancePref_pitch_filteredAC_silenceThreshold (silenceThreshold);
 		my setInstancePref_pitch_filteredCC_silenceThreshold (silenceThreshold);
 		my setInstancePref_pitch_filteredAC_voicingThreshold (voicingThreshold);
@@ -1310,21 +1324,21 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 		MUTABLE_COMMENT (methodMatchWarning, U"")
 		HEADING (U"Where to search...")
 		MUTABLE_CAPTION (note, U"")
-		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_filteredAC_floor())
-		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_filteredAC_ceiling())
+		POSITIVE (pitchFloor, U"left Pitch floor and top (Hz)",            my default_pitch_filteredAC_floor())
+		POSITIVE (pitchTop,   U"right Pitch floor and top (Hz)",           my default_pitch_filteredAC_top())
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_filteredAC_unit ())
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_filteredAC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_filteredAC_viewTo())
-		CAPTION (U"(“auto” means ‘same as pitch floor and ceiling’)")
+		CAPTION (U"(“auto” means ‘same as pitch floor and top’)")
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
 				U"Drawing method",                                         my default_pitch_filteredAC_drawingMethod())
 		HEADING (U"How to find the candidates...")
 		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_filteredAC_maximumNumberOfCandidates ())
 		BOOLEAN  (veryAccurate,              U"Very accurate",             my default_pitch_filteredAC_veryAccurate())
 		HEADING (U"How to preprocess the sound...")
-		POSITIVE (attenuationAtCeiling,      U"Attenuation at ceiling",    my default_pitch_filteredAC_attenuationAtCeiling      ())
+		POSITIVE (attenuationAtTop,          U"Attenuation at top",        my default_pitch_filteredAC_attenuationAtTop          ())
 		HEADING (U"How to find a path through the candidates...")
 		REAL     (silenceThreshold,          U"Silence threshold",         my default_pitch_filteredAC_silenceThreshold          ())
 		REAL     (voicingThreshold,          U"Voicing threshold",         my default_pitch_filteredAC_voicingThreshold          ())
@@ -1343,7 +1357,7 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 		else
 			SET_STRING (note, U"(you have standard time step settings; see Analysis menu)")
 		SET_REAL (pitchFloor,                   my instancePref_pitch_filteredAC_floor())
-		SET_REAL (pitchCeiling,                 my instancePref_pitch_filteredAC_ceiling())
+		SET_REAL (pitchTop,                     my instancePref_pitch_filteredAC_top())
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_filteredAC_unit())
 		SET_REAL (viewFrom,                     my instancePref_pitch_filteredAC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_filteredAC_viewTo())
@@ -1351,28 +1365,28 @@ static void menu_cb_pitchSettings_filteredAC (SoundAnalysisArea me, EDITOR_ARGS)
 				                                my instancePref_pitch_filteredAC_drawingMethod())
 		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_filteredAC_maximumNumberOfCandidates())
 		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_filteredAC_veryAccurate())
-		SET_REAL    (attenuationAtCeiling,      my instancePref_pitch_filteredAC_attenuationAtCeiling())
+		SET_REAL    (attenuationAtTop,          my instancePref_pitch_filteredAC_attenuationAtTop())
 		SET_REAL    (silenceThreshold,          my instancePref_pitch_filteredAC_silenceThreshold())
 		SET_REAL    (voicingThreshold,          my instancePref_pitch_filteredAC_voicingThreshold())
 		SET_REAL    (octaveCost,                my instancePref_pitch_filteredAC_octaveCost())
 		SET_REAL    (octaveJumpCost,            my instancePref_pitch_filteredAC_octaveJumpCost())
 		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_filteredAC_voicedUnvoicedCost())
 	EDITOR_DO
-		Melder_require (pitchCeiling > pitchFloor,
-			U"The pitch ceiling has to be greater than the pitch floor, so they cannot be ",
-			pitchCeiling, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
+		Melder_require (pitchTop > pitchFloor,
+			U"The pitch top has to be greater than the pitch floor, so they cannot be ",
+			pitchTop, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
 		);
 		if (maximumNumberOfCandidates < 2)
 			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
 		my setInstancePref_pitch_filteredAC_floor (pitchFloor);
-		my setInstancePref_pitch_filteredAC_ceiling (pitchCeiling);
+		my setInstancePref_pitch_filteredAC_top (pitchTop);
 		my setInstancePref_pitch_filteredAC_unit (unit);
 		my setInstancePref_pitch_filteredAC_viewFrom (viewFrom);
 		my setInstancePref_pitch_filteredAC_viewTo (viewTo);
 		my setInstancePref_pitch_filteredAC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_filteredAC_maximumNumberOfCandidates (maximumNumberOfCandidates);
 		my setInstancePref_pitch_filteredAC_veryAccurate (veryAccurate);
-		my setInstancePref_pitch_filteredAC_attenuationAtCeiling (attenuationAtCeiling);
+		my setInstancePref_pitch_filteredAC_attenuationAtTop (attenuationAtTop);
 		my setInstancePref_pitch_filteredAC_silenceThreshold (silenceThreshold);
 		my setInstancePref_pitch_filteredAC_voicingThreshold (voicingThreshold);
 		my setInstancePref_pitch_filteredAC_octaveCost (octaveCost);
@@ -1542,21 +1556,21 @@ static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS)
 		MUTABLE_COMMENT (methodMatchWarning, U"")
 		HEADING (U"Where to search...")
 		MUTABLE_CAPTION (note, U"")
-		POSITIVE (pitchFloor,   U"left Pitch floor and ceiling (Hz)",      my default_pitch_filteredCC_floor())
-		POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)",     my default_pitch_filteredCC_ceiling())
+		POSITIVE (pitchFloor, U"left Pitch floor and top (Hz)",            my default_pitch_filteredCC_floor())
+		POSITIVE (pitchTop, U"right Pitch floor and top (Hz)",             my default_pitch_filteredCC_top())
 		HEADING (U"How to view...")
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit",                                                   my default_pitch_filteredCC_unit ())
 		REAL    (viewFrom, U"left View range (units)",                     my default_pitch_filteredCC_viewFrom())
 		REAL    (viewTo,   U"right View range (units)",                    my default_pitch_filteredCC_viewTo())
-		CAPTION (U"(“auto” means ‘same as pitch floor and ceiling’)")
+		CAPTION (U"(“auto” means ‘same as pitch floor and top’)")
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
 				U"Drawing method",                                         my default_pitch_filteredCC_drawingMethod())
 		HEADING (U"How to find the candidates...")
 		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_filteredCC_maximumNumberOfCandidates ())
 		BOOLEAN  (veryAccurate,              U"Very accurate",             my default_pitch_filteredCC_veryAccurate())
 		HEADING (U"How to preprocess the sound...")
-		POSITIVE (attenuationAtCeiling,      U"Attenuation at ceiling",    my default_pitch_filteredCC_attenuationAtCeiling      ())
+		POSITIVE (attenuationAtTop,          U"Attenuation at top",        my default_pitch_filteredCC_attenuationAtTop          ())
 		HEADING (U"How to find a path through the candidates...")
 		REAL     (silenceThreshold,          U"Silence threshold",         my default_pitch_filteredCC_silenceThreshold          ())
 		REAL     (voicingThreshold,          U"Voicing threshold",         my default_pitch_filteredCC_voicingThreshold          ())
@@ -1575,7 +1589,7 @@ static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS)
 		else
 			SET_STRING (note, U"(you have standard time step settings; see Analysis menu)")
 		SET_REAL (pitchFloor,                   my instancePref_pitch_filteredCC_floor())
-		SET_REAL (pitchCeiling,                 my instancePref_pitch_filteredCC_ceiling())
+		SET_REAL (pitchTop,                     my instancePref_pitch_filteredCC_top())
 		SET_ENUM (unit, kPitch_unit,            my instancePref_pitch_filteredCC_unit())
 		SET_REAL (viewFrom,                     my instancePref_pitch_filteredCC_viewFrom())
 		SET_REAL (viewTo,                       my instancePref_pitch_filteredCC_viewTo())
@@ -1583,28 +1597,28 @@ static void menu_cb_pitchSettings_filteredCC (SoundAnalysisArea me, EDITOR_ARGS)
 				                                my instancePref_pitch_filteredCC_drawingMethod())
 		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_filteredCC_maximumNumberOfCandidates())
 		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_filteredCC_veryAccurate())
-		SET_REAL    (attenuationAtCeiling,      my instancePref_pitch_filteredCC_attenuationAtCeiling())
+		SET_REAL    (attenuationAtTop,          my instancePref_pitch_filteredCC_attenuationAtTop())
 		SET_REAL    (silenceThreshold,          my instancePref_pitch_filteredCC_silenceThreshold())
 		SET_REAL    (voicingThreshold,          my instancePref_pitch_filteredCC_voicingThreshold())
 		SET_REAL    (octaveCost,                my instancePref_pitch_filteredCC_octaveCost())
 		SET_REAL    (octaveJumpCost,            my instancePref_pitch_filteredCC_octaveJumpCost())
 		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_filteredCC_voicedUnvoicedCost())
 	EDITOR_DO
-		Melder_require (pitchCeiling > pitchFloor,
-			U"The pitch ceiling has to be greater than the pitch floor, so they cannot be ",
-			pitchCeiling, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
+		Melder_require (pitchTop > pitchFloor,
+			U"The pitch top has to be greater than the pitch floor, so they cannot be ",
+			pitchTop, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
 		);
 		if (maximumNumberOfCandidates < 2)
 			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
 		my setInstancePref_pitch_filteredCC_floor (pitchFloor);
-		my setInstancePref_pitch_filteredCC_ceiling (pitchCeiling);
+		my setInstancePref_pitch_filteredCC_top (pitchTop);
 		my setInstancePref_pitch_filteredCC_unit (unit);
 		my setInstancePref_pitch_filteredCC_viewFrom (viewFrom);
 		my setInstancePref_pitch_filteredCC_viewTo (viewTo);
 		my setInstancePref_pitch_filteredCC_drawingMethod (drawingMethod);
 		my setInstancePref_pitch_filteredCC_maximumNumberOfCandidates (maximumNumberOfCandidates);
 		my setInstancePref_pitch_filteredCC_veryAccurate (veryAccurate);
-		my setInstancePref_pitch_filteredCC_attenuationAtCeiling (attenuationAtCeiling);
+		my setInstancePref_pitch_filteredCC_attenuationAtTop (attenuationAtTop);
 		my setInstancePref_pitch_filteredCC_silenceThreshold (silenceThreshold);
 		my setInstancePref_pitch_filteredCC_voicingThreshold (voicingThreshold);
 		my setInstancePref_pitch_filteredCC_octaveCost (octaveCost);
@@ -1781,7 +1795,7 @@ static void menu_cb_drawVisiblePitchContour (SoundAnalysisArea me, EDITOR_ARGS) 
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
 				my dynamic_instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
 		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
-				my dynamic_instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
+				my dynamic_instancePref_pitch_ceilingOrTop(), Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
 		const double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(),
 				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
 		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(),
@@ -2206,7 +2220,7 @@ static void INFO_DATA__voiceReport (SoundAnalysisArea me, EDITOR_ARGS) {
 		}
 		MelderInfo_writeLine (U"Time range of ", SoundAnalysisArea_partString (part));
 		Sound_Pitch_PointProcess_voiceReport (sound.get(), my d_pitch.get(), my d_pulses.get(), tmin, tmax,
-			my dynamic_instancePref_pitch_floor(), my dynamic_instancePref_pitch_ceiling(),
+			my dynamic_instancePref_pitch_floor(), my dynamic_instancePref_pitch_ceilingOrTop(),
 			my instancePref_pulses_maximumPeriodFactor(), my instancePref_pulses_maximumAmplitudeFactor(),
 			my dynamic_instancePref_pitch_silenceThreshold(), my dynamic_instancePref_pitch_voicingThreshold()
 		);
@@ -2499,7 +2513,7 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 	const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (Thing_dummyObject (Pitch),
 			my dynamic_instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
 	const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (Thing_dummyObject (Pitch),
-			my dynamic_instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
+			my dynamic_instancePref_pitch_ceilingOrTop(), Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
 	const double pitchFloor_overt = Function_convertToNonlogarithmic (Thing_dummyObject (Pitch),
 			pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
 	const double pitchCeiling_overt = Function_convertToNonlogarithmic (Thing_dummyObject (Pitch),
@@ -2760,9 +2774,9 @@ void structSoundAnalysisArea :: v_draw_analysis_pulses () {
 }
 
 void structSoundAnalysisArea :: v9_repairPreferences () {
-	if (! (our instancePref_pitch_filteredAC_floor() < our instancePref_pitch_filteredAC_ceiling())) {   // NaN-safe test
+	if (! (our instancePref_pitch_filteredAC_floor() < our instancePref_pitch_filteredAC_top())) {   // NaN-safe test
 		our setInstancePref_pitch_filteredAC_floor (Melder_atof (our default_pitch_filteredAC_floor()));
-		our setInstancePref_pitch_filteredAC_ceiling (Melder_atof (our default_pitch_filteredAC_ceiling()));
+		our setInstancePref_pitch_filteredAC_top (Melder_atof (our default_pitch_filteredAC_top()));
 		our setInstancePref_pitch_filteredAC_unit (kPitch_unit::HERTZ);
 	}
 	if (! (our instancePref_pitch_rawCC_floor() < our instancePref_pitch_rawCC_ceiling())) {   // NaN-safe test
@@ -2775,9 +2789,9 @@ void structSoundAnalysisArea :: v9_repairPreferences () {
 		our setInstancePref_pitch_rawAC_ceiling (Melder_atof (our default_pitch_rawAC_ceiling()));
 		our setInstancePref_pitch_rawAC_unit (kPitch_unit::HERTZ);
 	}
-	if (! (our instancePref_pitch_filteredCC_floor() < our instancePref_pitch_filteredCC_ceiling())) {   // NaN-safe test
+	if (! (our instancePref_pitch_filteredCC_floor() < our instancePref_pitch_filteredCC_top())) {   // NaN-safe test
 		our setInstancePref_pitch_filteredCC_floor (Melder_atof (our default_pitch_filteredCC_floor()));
-		our setInstancePref_pitch_filteredCC_ceiling (Melder_atof (our default_pitch_filteredCC_ceiling()));
+		our setInstancePref_pitch_filteredCC_top (Melder_atof (our default_pitch_filteredCC_top()));
 		our setInstancePref_pitch_filteredCC_unit (kPitch_unit::HERTZ);
 	}
 	if (! (our instancePref_spectrogram_viewFrom() < our instancePref_spectrogram_viewTo())) {   // NaN-safe test

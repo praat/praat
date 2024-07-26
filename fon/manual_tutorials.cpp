@@ -813,15 +813,16 @@ NORMAL (U"With @@Pitch settings...@ from the #Pitch menu, "
 	"These settings will be remembered across Praat sessions. "
 	"All these settings have standard values (“factory settings”), which appear "
 	"when you click #Standards.")
-ENTRY (U"The %%pitch range% (%%pitch floor and ceiling%) setting")
+ENTRY (U"The %%pitch range% (%%pitch floor and top%) setting")
 NORMAL (U"This is the most important setting for pitch analysis. "
 	"The standard range (for filtered autocorrelation) is from 50 to 800 hertz, "
-	"which means that the pitch analysis method will only find values between 50 and 800 Hz. "
+	"which means that the pitch analysis method will only find values between 50 and 800 Hz "
+	"(and values between 400 and 800 Hz only rarely). "
 	"The range that you set here will be shown to the right of the analysis window.")
 NORMAL (U"You may have set the range to values appropriate for your speaker, "
 	"because speakers can vary enormously in their pitch ranges. "
-	"For some low-pitched (e.g. average male) voices, you might want to set the floor to 50 Hz, and the ceiling to 300 Hz; "
-	"for some high-pitched (e.g. average female) voices, a range of 100-600 Hz might instead be appropriate; "
+	"For some low-pitched (e.g. average male) voices, you might want to set the floor to 50 Hz, and the top to 600 Hz; "
+	"for some high-pitched (e.g. average female) voices, a range of 100-800 Hz might instead be appropriate; "
 	"however, it may well be the case that the standard setting of 50–800 Hz will work for all of these voices. "
 	"On the high side, however, some children can reach almost 2000 Hz when yelling; "
 	"on the low side, creaky voice can go as low as 30 Hz; "

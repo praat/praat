@@ -93,7 +93,7 @@ public:
 
 	#include "SoundAnalysisArea_prefs.h"
 	double dynamic_instancePref_pitch_floor ();
-	double dynamic_instancePref_pitch_ceiling ();
+	double dynamic_instancePref_pitch_ceilingOrTop ();
 	kPitch_unit dynamic_instancePref_pitch_unit ();
 	kSoundAnalysisArea_pitch_drawingMethod dynamic_instancePref_pitch_drawingMethod ();
 	double dynamic_instancePref_pitch_viewFrom ();
