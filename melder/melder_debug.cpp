@@ -208,7 +208,7 @@ FILE * MelderTrace::_open (conststring8 sourceCodeFileName, int lineNumber, cons
 		f = fopen ((char *) utf8path, "a");
 	#endif
 	if (! f)
-		f = stderr;   // if the file cannot be opened, we can still trace to stderr!
+		f = Melder_stderr;   // if the file cannot be opened, we can still trace to stderr!
 	if (sourceCodeFileName) {
 		const char *slashLocation = strrchr (sourceCodeFileName, Melder_DIRECTORY_SEPARATOR);
 		fprintf (f, "%s (%s:%d): ", functionName, slashLocation ? slashLocation + 1 : sourceCodeFileName, lineNumber);
@@ -220,7 +220,7 @@ FILE * MelderTrace::_open (conststring8 sourceCodeFileName, int lineNumber, cons
 
 void MelderTrace::_close (FILE *f) {
 	fprintf (f, "\n");
-	if (f != stderr)
+	if (f != Melder_stderr)
 		fclose (f);
 }
 

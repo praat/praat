@@ -631,9 +631,9 @@ static void praat_exit (int exit_code) {
 				constexpr bool shouldFlushStdout = notFlushingStdoutCouldCauseIncorrectBehaviour;
 				constexpr bool shouldFlushStderr = notFlushingStderrCouldCauseIncorrectBehaviour;
 				if ((shouldFlushStdout))
-					fflush (stdout);
+					fflush (Melder_stdout);
 				if ((shouldFlushStderr))
-					fflush (stderr);
+					fflush (Melder_stderr);
 				constexpr bool thereAreOtherOpenFiles = (false);
 				constexpr bool thereAreOtherOpenFilesWhoseNonflushingCouldCauseIncorrectBehaviour =
 						thereAreOtherOpenFiles;
@@ -1409,6 +1409,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 {
 	setThePraatLocale ();
 	Melder_init ();
+	const bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
+	MelderConsole_init ();
 
 	/*
 		Construct a main-window title like "Praat".
@@ -1490,8 +1492,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 	}
 	for (int iarg = 0; iarg < argc; iarg ++)
 		trace (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
-
-	const bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
 
 	/*
 		Remember the current directory. Useful only for scripts run from batch.
@@ -1749,8 +1749,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 
 	#if defined (NO_GUI)
 		if (! Melder_batch) {
-			fprintf (stderr, "A no-GUI edition of Praat cannot be used interactively. "
-				"Supply \"--run\" and a script file name on the command line.\n");
+			fprintf (Melder_stderr, "A no-GUI edition of Praat cannot be used interactively. "
+					"Supply \"--run\" and a script file name on the command line.\n");
 			exit (1);
 		}
 	#endif

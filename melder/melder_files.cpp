@@ -588,7 +588,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	FILE *f;
 	file -> openForWriting = ( type [0] == 'w' || type [0] == 'a' || strchr (type, '+') );
 	if (str32equ (file -> path, U"<stdout>") && file -> openForWriting) {
-		f = stdout;
+		f = Melder_stdout;
 	#ifdef CURLPRESENT
 	} else if (strstr (utf8path, "://") && file -> openForWriting) {
 		Melder_assert (type [0] == 'w');   // reject "append" and "random" access
@@ -670,7 +670,8 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 }
 
 void Melder_fclose (MelderFile file, FILE *f) {
-	if (! f) return;
+	if (! f)
+		return;
 	#if defined (CURLPRESENT)
  	if (str32str (file -> wpath, U"://") && file -> openForWriting) {
 		unsigned char utf8path [kMelder_MAXPATH+1];
@@ -720,7 +721,7 @@ void Melder_fclose (MelderFile file, FILE *f) {
 		curl_easy_cleanup (CURLhandle);
     }
 	#endif
-	if (f != stdout && fclose (f) == EOF)
+	if (f != Melder_stdout && fclose (f) == EOF)
 		Melder_throw (U"Error closing file ", file, U".");
 }
 

@@ -3,7 +3,7 @@
 
 /* melder_console.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,10 @@ namespace MelderConsole {
 	extern void write (conststring32 message, bool useStderr);
 	extern void setEncoding (Encoding encoding);
 }
+
+extern FILE *Melder_stdout, *Melder_stderr;   // initialized by MelderConsole_init ()
+
+void MelderConsole_init ();   // call at start-up, after attaching to the console
 
 /* End of file melder_console.h */
 #endif
