@@ -29,7 +29,11 @@ R"~~~(
 
 Latest changes in Praat.
 
-##6.4.14# (21 July 2024)
+##6.4.15# (26 July 2024)
+• Distinguish between %%pitch ceiling% (flat) and %%pitch top% (curved ceiling),
+  mainly because of their different meanings.
+
+##6.4.14# (22 July 2024)
 • Pitch menu (in e.g. Sound or TextGrid window): separate settings for four pitch analysis methods.
 • Formant analysis: faster on all systems.
 • ARM64 Windows: worked around a compiler bug that caused incorrect window sizes.

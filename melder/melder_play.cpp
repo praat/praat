@@ -49,7 +49,7 @@ void Melder_beep () {
 	#ifdef macintosh
 		AudioServicesPlayAlertSound (kSystemSoundID_UserPreferredAlert);
 	#else
-		fprintf (stderr, "\a");
+		fprintf (Melder_stderr, "\a");
 	#endif
 }
 

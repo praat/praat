@@ -47,7 +47,11 @@ enums_begin (kManPage_type, 1)
 	enums_add (kManPage_type, 24, CODE4, U"code4")   // only in pre-2023 man pages
 	enums_add (kManPage_type, 25, CODE5, U"code5")   // only in pre-2023 man pages
 	enums_add (kManPage_type, 26, CAPTION, U"caption")
-enums_end (kManPage_type, 26, NORMAL)
+	enums_add (kManPage_type, 27, QUOTE, U"quote")
+	enums_add (kManPage_type, 28, QUOTE1, U"quote1")
+	enums_add (kManPage_type, 29, QUOTE2, U"quote2")
+	enums_add (kManPage_type, 30, QUOTE3, U"quote3")
+enums_end (kManPage_type, 30, NORMAL)
 
 /* End of file ManPage_enums.h */
 

@@ -25,6 +25,7 @@
 #include "site.h"
 
 #include "GuiP.h"
+#include "DemoEditor.h"
 
 static bool praat_mouseSelectsInnerViewport;
 
@@ -637,11 +638,17 @@ DIRECT (GRAPHICS_Undo) {
 }
 
 DIRECT (GRAPHICS_Erase_all) {
+	//TRACE
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		trace(1);
 		Picture_erase (praat_picture.get());   // this kills the recording
 	} else {
+		trace(2);
 		Graphics_clearRecording (GRAPHICS);
-		Graphics_clearWs (GRAPHICS);
+		if (Demo_hasGraphics (GRAPHICS)) {
+			trace (3);
+			Graphics_clearWs (GRAPHICS);
+		}
 	}
 	END_NO_NEW_DATA
 }

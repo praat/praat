@@ -626,6 +626,16 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			line += 2;
 			Melder_skipHorizontalSpace (& line);
 			MelderString_append (& buffer_graphical, line);
+		} else if (line [0] == U'>' && Melder_isHorizontalSpace (line [1])) {
+			type = (
+				numberOfLeadingSpaces <  3 ? kManPage_type::QUOTE :
+				numberOfLeadingSpaces <  7 ? kManPage_type::QUOTE1 :
+				numberOfLeadingSpaces < 11 ? kManPage_type::QUOTE2 :
+				kManPage_type::QUOTE3
+			);
+			line += 2;
+			Melder_skipHorizontalSpace (& line);
+			MelderString_append (& buffer_graphical, line);
 		} else if (numberOfLeadingSpaces == 0 && line [0] == U'~' && Melder_isHorizontalSpace (line [1])) {
 			type = kManPage_type::EQUATION;
 			line += 2;
@@ -788,10 +798,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			if (! shouldShowOutput)
 				MelderString_empty (& buffer_graphical);   // add no SCRIPT paragraph
 		} else if (numberOfLeadingSpaces >= 3) {
-			if (previousParagraph && previousParagraph -> type == kManPage_type::NORMAL && numberOfLeadingEmptyLines == 0)
-				type = kManPage_type::NORMAL;   // this implements a new paragraph by indenting
-			else
-				type = kManPage_type::CAPTION;
+			type = kManPage_type::CAPTION;
 			MelderString_append (& buffer_graphical, line);
 		} else {
 			type = kManPage_type::NORMAL;
@@ -825,12 +832,9 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					nextNumberOfLeadingSpaces += ( continuationLine [ikar] == U'\t' ? 4 - ( nextNumberOfLeadingSpaces & 0b11_integer ) : 1 );
 					ikar ++;
 				}
-				if (type == kManPage_type::NORMAL && nextNumberOfLeadingSpaces >= 3) {   // this implements a new paragraph by indenting
-					line = continuationLine;
-					break;   // not really a continuation line, but a new paragraph
-				}
 				char32 *firstNonSpace = continuationLine + ikar;
 				if (*firstNonSpace == U':' ||
+					*firstNonSpace == U'>' ||
 					*firstNonSpace == U',' && (Melder_isHorizontalSpace (firstNonSpace [1]) || firstNonSpace [1] == U'\0') ||
 					*firstNonSpace == U'-' && Melder_isHorizontalSpace (firstNonSpace [1]) ||
 					*firstNonSpace == U'*' && Melder_isHorizontalSpace (firstNonSpace [1]) ||

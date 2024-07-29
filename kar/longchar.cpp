@@ -631,7 +631,7 @@ void Longchar_init () {
 				We may not be able to use Melder_error yet,
 				so just write a warning to stderr.
 			*/
-			fprintf (stderr, "Longchar init: symbol \"%c%c\" doubly defined.\n",
+			fprintf (Melder_stderr, "Longchar init: symbol \"%c%c\" doubly defined.\n",
 					data -> first, data -> second);
 		}
 		*location = i;

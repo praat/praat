@@ -1714,13 +1714,13 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAutocorrelation, U"Sound: To Pitch (filtered autocorrelation)", U"Sound: To Pitch (filtered autocorrelation)...") {
 	HEADING (U"Where to search...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (pitchFloor, U"left Pitch floor and ceiling (Hz)", U"50.0")
-	POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)", U"800.0")
+	POSITIVE (pitchFloor, U"left Pitch floor and top (Hz)", U"50.0")
+	POSITIVE (pitchTop, U"right Pitch floor and top (Hz)", U"800.0")
 	HEADING (U"How to find the candidates...")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
 	HEADING (U"How to preprocess the sound...")
-	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
+	POSITIVE (attenuationAtTop, U"Attenuation at top", U"0.03")
 	HEADING (U"How to find a path through the candidates...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.09")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
@@ -1733,8 +1733,8 @@ DO
 		U"Your maximum number of candidates should be greater than 1.");
 	CONVERT_EACH_TO_ONE (Sound)
 		autoPitch result = Sound_to_Pitch_filteredAc (me,
-			timeStep, pitchFloor, pitchCeiling,
-			maximumNumberOfCandidates, veryAccurate, attenuationAtCeiling,
+			timeStep, pitchFloor, pitchTop,
+			maximumNumberOfCandidates, veryAccurate, attenuationAtTop,
 			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
@@ -1743,13 +1743,13 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCrossCorrelation, U"Sound: To Pitch (filtered cross-correlation)", U"Sound: To Pitch (filtered cross-correlation)...") {
 	HEADING (U"Where to search...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (pitchFloor, U"left Pitch floor and ceiling (Hz)", U"50.0")
-	POSITIVE (pitchCeiling, U"right Pitch floor and ceiling (Hz)", U"800.0")
+	POSITIVE (pitchFloor, U"left Pitch floor and top (Hz)", U"50.0")
+	POSITIVE (pitchTop, U"right Pitch floor and top (Hz)", U"800.0")
 	HEADING (U"How to find the candidates...")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
 	HEADING (U"How to preprocess the sound...")
-	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
+	POSITIVE (attenuationAtTop, U"Attenuation at top", U"0.03")
 	HEADING (U"How to find a path through the candidates...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.09")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
@@ -1762,8 +1762,8 @@ DO
 		U"Your maximum number of candidates should be greater than 1.");
 	CONVERT_EACH_TO_ONE (Sound)
 		autoPitch result = Sound_to_Pitch_filteredCc (me,
-			timeStep, pitchFloor, pitchCeiling,
-			maximumNumberOfCandidates, veryAccurate, attenuationAtCeiling,
+			timeStep, pitchFloor, pitchTop,
+			maximumNumberOfCandidates, veryAccurate, attenuationAtTop,
 			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())

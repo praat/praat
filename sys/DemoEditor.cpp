@@ -25,6 +25,10 @@ Thing_implement (DemoEditor, Editor, 0);
 
 static DemoEditor theReferenceToTheOnlyDemoEditor;
 
+bool Demo_hasGraphics (Graphics graphics) {
+	return theReferenceToTheOnlyDemoEditor && theReferenceToTheOnlyDemoEditor -> graphics.get() == graphics;
+}
+
 /***** DemoEditor methods *****/
 
 void structDemoEditor :: v9_destroy () noexcept {

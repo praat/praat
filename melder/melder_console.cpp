@@ -1,6 +1,6 @@
 /* melder_console.cpp
  *
- * Copyright (C) 1992-2018,2020,2022 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 	#include <windows.h>
 	#include <fcntl.h>
 	#include <io.h>
+	#include <assert.h>
 #endif
 
 /*
@@ -64,43 +65,70 @@ void MelderConsole::setEncoding (MelderConsole::Encoding newEncoding) {
 	but on Windows satisfying this requirement involves some work.
 */
 
-static void ensureThatStdoutAndStderrAreInitialized () {
+FILE *Melder_stdout, *Melder_stderr;
+
+void MelderConsole_init () {
+	trace (U"init");
 	#if defined (_WIN32)
 		/*
 			Stdout and stderr are initialized automatically if we are redirected to a pipe or file.
 			Stdout and stderr are not initialized, however, if Praat is started from the console,
 			neither in GUI mode nor in console mode; in these latter cases,
-			we manually attach stdout and stderr to the calling console.
+			we manually attach Melder_stdout and Melder_stderr to the calling console.
 		*/
-		auto ensureThatStreamIsInitialized = [] (FILE *stream, int handle) {
-			const bool streamHasBeenInitialized = ( _fileno (stream) >= 0 );
-			if (! streamHasBeenInitialized) {
-				/*
-					Don't change the following four lines into
-						freopen ("CONOUT$", "w", stream);
-					because if you did that, the distinction between stdout and stderr would be lost.
-				*/
-				HANDLE osfHandle = GetStdHandle (handle);
-				if (osfHandle) {
-					const int fileDescriptor = _open_osfhandle ((intptr_t) osfHandle, _O_TEXT);
-					Melder_assert (fileDescriptor != 0);
-					FILE *f = _fdopen (fileDescriptor, "w");
-					if (! f)
-						return;   // this can happen under Cygwin
-					*stream = *f;
+		const bool stdoutHasBeenInitialized = ( _fileno (stdout) >= 0 );   // usual with pipe or file
+		if (! stdoutHasBeenInitialized) {
+			/*
+				Don't change the following four lines into
+					freopen ("CONOUT$", "w", stream);
+				because if you did that, the distinction between stdout and stderr would be lost.
+			*/
+			const HANDLE osfStdoutHandle = GetStdHandle (STD_OUTPUT_HANDLE);
+			if (osfStdoutHandle) {
+				const int fileDescriptor = _open_osfhandle ((intptr_t) osfStdoutHandle, _O_TEXT);
+				Melder_assert (fileDescriptor != 0);
+				FILE *f = _fdopen (fileDescriptor, "w");
+				if (f) {   // usually false under Cygwin
+					#if defined (__clang__)
+						Melder_stdout = f;   // usual under MSYS with Clang
+					#else
+						*stdout = *f;   // usual under GCC (MSYS or Cygwin for Windows)
+					#endif
 				}
 			}
 		};
-		ensureThatStreamIsInitialized (stdout, STD_OUTPUT_HANDLE);
-		ensureThatStreamIsInitialized (stderr, STD_ERROR_HANDLE);
+		const bool stderrHasBeenInitialized = ( _fileno (stderr) >= 0 );   // usual with pipe or file
+		if (! stderrHasBeenInitialized) {
+			/*
+				Don't change the following four lines into
+					freopen ("CONOUT$", "w", stream);
+				because if you did that, the distinction between stdout and stderr would be lost.
+			*/
+			const HANDLE osfStderrHandle = GetStdHandle (STD_ERROR_HANDLE);
+			if (osfStderrHandle) {
+				const int fileDescriptor = _open_osfhandle ((intptr_t) osfStderrHandle, _O_TEXT);
+				Melder_assert (fileDescriptor != 0);
+				FILE *f = _fdopen (fileDescriptor, "w");
+				if (f) {   // usually false under Cygwin
+					#if defined (__clang__)
+						Melder_stderr = f;   // usual under MSYS with Clang
+					#else
+						*stderr = *f;  // usual under GCC (MSYS or Cygwin for Windows)
+					#endif
+				}
+			}
+		};
 	#endif
+	if (! Melder_stdout)
+		Melder_stdout = stdout;
+	if (! Melder_stderr)
+		Melder_stderr = stderr;
 }
 
 void MelderConsole::write (conststring32 message, bool useStderr) {
 	if (! message)
 		return;
-	ensureThatStdoutAndStderrAreInitialized ();
-	FILE *f = useStderr ? stderr : stdout;
+	FILE *f = useStderr ? Melder_stderr : Melder_stdout;
 	if (MelderConsole :: encoding == Encoding::UTF16) {
 		#if defined (_WIN32)
 			fflush (f);

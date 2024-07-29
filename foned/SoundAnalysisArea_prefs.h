@@ -39,14 +39,14 @@ Prefs_begin (SoundAnalysisArea)
 	InstancePrefs_addBool    (SoundAnalysisArea, pitch_show,                      1, true)
 	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_method,                    2, kSoundAnalysisArea_pitch_analysisMethod, DEFAULT)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_floor,          1, U"50.0")   // Hz
-	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_ceiling,        1, U"800.0")   // Hz
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_top,            1, U"800.0")   // Hz
 	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_filteredAC_unit,           1, kPitch_unit, HERTZ_LOGARITHMIC)
 	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_filteredAC_drawingMethod,  1, kSoundAnalysisArea_pitch_drawingMethod, DEFAULT)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_viewFrom,       1, U"0.0 (= auto)")   // units
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_viewTo,         1, U"0.0 (= auto)")   // units
 	InstancePrefs_addInteger (SoundAnalysisArea, pitch_filteredAC_maximumNumberOfCandidates,  1, U"15")
 	InstancePrefs_addBool    (SoundAnalysisArea, pitch_filteredAC_veryAccurate,               1, false)
-	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_attenuationAtCeiling,       1, U"0.03")
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_attenuationAtTop,           1, U"0.03")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_silenceThreshold,           1, U"0.09")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_voicingThreshold,           1, U"0.50")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredAC_octaveCost,                 1, U"0.055")
@@ -79,14 +79,14 @@ Prefs_begin (SoundAnalysisArea)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawAC_octaveJumpCost,             1, U"0.35")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_rawAC_voicedUnvoicedCost,         1, U"0.14")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_floor,          1, U"50.0")   // Hz
-	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_ceiling,        1, U"800.0")   // Hz
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_top,            1, U"800.0")   // Hz
 	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_filteredCC_unit,           1, kPitch_unit, HERTZ_LOGARITHMIC)
 	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_filteredCC_drawingMethod,  1, kSoundAnalysisArea_pitch_drawingMethod, DEFAULT)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_viewFrom,       1, U"0.0 (= auto)")   // units
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_viewTo,         1, U"0.0 (= auto)")   // units
 	InstancePrefs_addInteger (SoundAnalysisArea, pitch_filteredCC_maximumNumberOfCandidates,  1, U"15")
 	InstancePrefs_addBool    (SoundAnalysisArea, pitch_filteredCC_veryAccurate,               1, false)
-	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_attenuationAtCeiling,       1, U"0.03")
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_attenuationAtTop,           1, U"0.03")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_silenceThreshold,           1, U"0.09")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_voicingThreshold,           1, U"0.50")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_filteredCC_octaveCost,                 1, U"0.055")

@@ -1305,7 +1305,7 @@ static void menu_cb_DrawTextGridAndPitch (TextGridArea me, EDITOR_ARGS) {
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my borrowedSoundAnalysisArea -> d_pitch.get(),
 				my borrowedSoundAnalysisArea -> dynamic_instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) borrowedPitchUnit);
 		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my borrowedSoundAnalysisArea -> d_pitch.get(),
-				my borrowedSoundAnalysisArea -> dynamic_instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) borrowedPitchUnit);
+				my borrowedSoundAnalysisArea -> dynamic_instancePref_pitch_ceilingOrTop(), Pitch_LEVEL_FREQUENCY, (int) borrowedPitchUnit);
 		const double pitchFloor_overt = Function_convertToNonlogarithmic (my borrowedSoundAnalysisArea -> d_pitch.get(),
 				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) borrowedPitchUnit);
 		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my borrowedSoundAnalysisArea -> d_pitch.get(),

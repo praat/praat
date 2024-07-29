@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.cpp
  *
- * Copyright (C) 1992-2005,2007-2012,2014-2020,2023 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2014-2020,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -580,14 +580,14 @@ autoPitch Sound_to_Pitch_rawCc (Sound me,
 }
 
 autoPitch Sound_to_Pitch_filteredAc (Sound me,
-	double timeStep, double pitchFloor, double pitchCeiling,
+	double timeStep, double pitchFloor, double pitchTop,
 	integer maxnCandidates, bool veryAccurate,
-	double attenuationAtCeiling,
+	double attenuationAtTop,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
 	try {
-		const double lowPassCutoffFrequency = pitchCeiling / NUMsqrt_e (-2.0 * log (attenuationAtCeiling));
+		const double lowPassCutoffFrequency = pitchTop / NUMsqrt_e (-2.0 * log (attenuationAtTop));
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, true);
@@ -614,7 +614,7 @@ autoPitch Sound_to_Pitch_filteredAc (Sound me,
 			}
 		}
 		return Sound_to_Pitch_any (thee.get(), (int) veryAccurate, 3.0,
-			timeStep, pitchFloor, pitchCeiling,
+			timeStep, pitchFloor, pitchTop,
 			maxnCandidates,
 			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
 		);
@@ -624,14 +624,14 @@ autoPitch Sound_to_Pitch_filteredAc (Sound me,
 }
 
 autoPitch Sound_to_Pitch_filteredCc (Sound me,
-	double timeStep, double pitchFloor, double pitchCeiling,
+	double timeStep, double pitchFloor, double pitchTop,
 	integer maxnCandidates, bool veryAccurate,
-	double attenuationAtCeiling,
+	double attenuationAtTop,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
 	try {
-		const double lowPassCutoffFrequency = pitchCeiling / NUMsqrt_e (-2.0 * log (attenuationAtCeiling));
+		const double lowPassCutoffFrequency = pitchTop / NUMsqrt_e (-2.0 * log (attenuationAtTop));
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, true);
@@ -658,7 +658,7 @@ autoPitch Sound_to_Pitch_filteredCc (Sound me,
 			}
 		}
 		return Sound_to_Pitch_any (thee.get(), 2 + (int) veryAccurate, 1.0,
-			timeStep, pitchFloor, pitchCeiling,
+			timeStep, pitchFloor, pitchTop,
 			maxnCandidates,
 			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
 		);

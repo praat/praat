@@ -2,7 +2,7 @@
 #define _DemoEditor_h_
 /* DemoEditor.h
  *
- * Copyright (C) 2009-2011,2012,2015-2018,2020,2022 Paul Boersma
+ * Copyright (C) 2009-2011,2012,2015-2018,2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ Thing_define (DemoEditor, Editor) {
 
 void DemoEditor_init (DemoEditor me);
 autoDemoEditor DemoEditor_create ();
+bool Demo_hasGraphics (Graphics graphics);
 
 void Demo_open ();
 void Demo_close ();

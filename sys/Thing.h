@@ -273,7 +273,7 @@ public:
 	*/
 	autoSomeThing () : ptr (nullptr) {
 		#if _Thing_auto_DEBUG
-			fprintf (stderr, "default constructor\n");
+			fprintf (Melder_stderr, "default constructor\n");
 		#endif
 	}
 	autoSomeThing (ClassInfo classInfo) {
@@ -287,7 +287,7 @@ public:
 	*/
 	~autoSomeThing () noexcept {
 		#if _Thing_auto_DEBUG
-			fprintf (stderr, "destructor %p %s\n",
+			fprintf (Melder_stderr, "destructor %p %s\n",
 				our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 		#endif
 		if (our ptr) {
@@ -400,16 +400,16 @@ public:
 	autoSomeThing<T> (autoSomeThing<T>&& other) noexcept : ptr (other. ptr) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
-				fprintf (stderr, "move constructor %p from same class %s\n",
-					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
+				fprintf (Melder_stderr, "move constructor %p from same class %s\n",
+						our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
 		#endif
 		other. ptr = nullptr;
 	}
 	template <class Y> autoSomeThing<T> (autoSomeThing<Y>&& other) noexcept : ptr (other.get()) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
-				fprintf (stderr, "move constructor %p from other class %s\n",
-					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
+				fprintf (Melder_stderr, "move constructor %p from other class %s\n",
+						our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
 		#endif
 		other. _zero();
 	}
@@ -423,14 +423,15 @@ public:
 	autoSomeThing<T>& operator= (autoSomeThing<T>&& other) noexcept {
 		if (other. ptr != our ptr) {
 			#if _Thing_auto_DEBUG
-				fprintf (stderr, "move assignment before %p from same class %s\n",
-					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
+				fprintf (Melder_stderr, "move assignment before %p from same class %s\n",
+						our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
-			if (our ptr) _Thing_forget (our ptr);
+			if (our ptr)
+				_Thing_forget (our ptr);
 			our ptr = other. ptr;
 			#if _Thing_auto_DEBUG
-				fprintf (stderr, "move assignment after %p from same class %s\n",
-					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
+				fprintf (Melder_stderr, "move assignment after %p from same class %s\n",
+						our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
 			other. ptr = nullptr;
 		}
@@ -439,14 +440,15 @@ public:
 	template <class Y> autoSomeThing<T>& operator= (autoSomeThing<Y>&& other) noexcept {
 		if (other.get() != our ptr) {
 			#if _Thing_auto_DEBUG
-				fprintf (stderr, "move assignment before %p from other class %s\n",
-					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
+				fprintf (Melder_stderr, "move assignment before %p from other class %s\n",
+						our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
-			if (our ptr) _Thing_forget (our ptr);
+			if (our ptr)
+				_Thing_forget (our ptr);
 			our ptr = other.get();
 			#if _Thing_auto_DEBUG
-				fprintf (stderr, "move assignment after %p from other class %s\n",
-					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
+				fprintf (Melder_stderr, "move assignment after %p from other class %s\n",
+						our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
 			other. _zero();
 		}

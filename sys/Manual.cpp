@@ -140,6 +140,10 @@ void structManual :: v_draw () {
 			case kManPage_type::CODE4: HyperPage_code4 (this, paragraph -> text); break;
 			case kManPage_type::CODE5: HyperPage_code5 (this, paragraph -> text); break;
 			case kManPage_type::CAPTION: HyperPage_caption (this, paragraph -> text); break;
+			case kManPage_type::QUOTE: HyperPage_quote (this, paragraph -> text); break;
+			case kManPage_type::QUOTE1: HyperPage_quote1 (this, paragraph -> text); break;
+			case kManPage_type::QUOTE2: HyperPage_quote2 (this, paragraph -> text); break;
+			case kManPage_type::QUOTE3: HyperPage_quote3 (this, paragraph -> text); break;
 			default: break;
 		}
 	}

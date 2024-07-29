@@ -2143,7 +2143,7 @@ double Graphics_textWidth_ps (Graphics me, conststring32 txt, bool useSilipaPS) 
 			int numberOfFamilies;
 			pango_font_map_list_families (thePangoFontMap, & families, & numberOfFamilies);
 			for (int i = 0; i < numberOfFamilies; i ++)
-				fprintf (stderr, "%d %s\n", i, pango_font_family_get_name (families [i]));
+				fprintf (Melder_stderr, "%d %s\n", i, pango_font_family_get_name (families [i]));
 			g_free (families);
 		#endif
 		const char *trueName;
@@ -2163,8 +2163,8 @@ double Graphics_textWidth_ps (Graphics me, conststring32 txt, bool useSilipaPS) 
 		testFont ("Symbol");
 		testFont ("Dingbats");
 		#if 0   /* For debugging: list font availability. */
-			fprintf (stderr, "times %d helvetica %d courier %d palatino %d doulos %d charis %d\n",
-				hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis);
+			fprintf (Melder_stderr, "times %d helvetica %d courier %d palatino %d doulos %d charis %d\n",
+					hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis);
 		#endif
 		inited = true;
 		return true;

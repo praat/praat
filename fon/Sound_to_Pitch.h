@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.h
  *
- * Copyright (C) 1992-2011,2015,2019,2023 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2019,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 	Failures:
 		Out of memory.
 		Pitch floor too low.
-		Pitch ceiling should not be greater than the Sound's Nyquist frequency.
+		Pitch top (or ceiling) should not be greater than the Sound's Nyquist frequency.
 	Description for method 0 or 1:
 		There is a Hanning window (method == 0) or Gaussian window (method == 1)
 		over the analysis window, in order to avoid phase effects.
@@ -87,16 +87,16 @@ autoPitch Sound_to_Pitch_any (Sound me,
 */
 
 autoPitch Sound_to_Pitch_filteredAc (Sound me,
-	double timeStep, double pitchFloor, double pitchCeiling,
+	double timeStep, double pitchFloor, double pitchTop,
 	integer maxnCandidates, bool veryAccurate,
-	double attenuationAtCeiling,
+	double attenuationAtTop,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost);
 
 autoPitch Sound_to_Pitch_filteredCc (Sound me,
-	double timeStep, double pitchFloor, double pitchCeiling,
+	double timeStep, double pitchFloor, double pitchTop,
 	integer maxnCandidates, bool veryAccurate,
-	double attenuationAtCeiling,
+	double attenuationAtTop,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost);
 
