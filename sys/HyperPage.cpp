@@ -289,6 +289,18 @@ void HyperPage_code5 (HyperPage me, conststring32 text) {
 void HyperPage_caption (HyperPage me, conststring32 text) {
 	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize() * 0.86, 0, 0.0, 0.5, 0.5, 0.0, 0.2, 0);
 }
+void HyperPage_quote (HyperPage me, conststring32 text) {
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize() * 0.86, 0, 0.0, 0.5, 0.0, 0.1, 0.1, 0);
+}
+void HyperPage_quote1 (HyperPage me, conststring32 text) {
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize() * 0.86, 0, 0.0, 1.0, 0.0, 0.1, 0.1, 0);
+}
+void HyperPage_quote2 (HyperPage me, conststring32 text) {
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize() * 0.86, 0, 0.0, 1.5, 0.0, 0.1, 0.1, 0);
+}
+void HyperPage_quote3 (HyperPage me, conststring32 text) {
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize() * 0.86, 0, 0.0, 2.0, 0.0, 0.1, 0.1, 0);
+}
 void HyperPage_prototype (HyperPage me, conststring32 text) {
 	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.03, 0.5, 0.0, 0.0, 0);
 }
