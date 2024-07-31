@@ -1,6 +1,6 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2012,2014-2022 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ autoPointProcess PointProcess_createPoissonProcess (double startingTime, double 
 		const integer numberOfPoints = (integer) NUMrandomPoisson ((finishingTime - startingTime) * density);
 		my t = randomUniform_VEC (numberOfPoints, startingTime, finishingTime);
 		my nt = numberOfPoints;   // maintain invariant
-		sort_VEC_inout (my t.get());
+		sort_e_VEC_inout (my t.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess (Poisson process) not created.");
@@ -212,7 +212,7 @@ void PointProcess_addPoints (PointProcess me, constVECVU const& times) {
 		my t. resize (newNumberOfPoints);
 		my t.part (my nt + 1, newNumberOfPoints)  <<=  times;
 		my nt = newNumberOfPoints;   // maintain invariant
-		sort_VEC_inout (my t.get());
+		sort_e_VEC_inout (my t.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": points not added.");
 	}

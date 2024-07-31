@@ -320,12 +320,12 @@ inline autoINTVEC shuffle_INTVEC (constINTVECVU const& x) {
 	return result;
 }
 
-extern void sort_VEC_inout (VEC const& x) noexcept;   // cannot be a VECVU
+extern void sort_e_VEC_inout (VEC const& x);   // cannot be a VECVU
 extern void sort_INTVEC_inout (INTVEC const& x) noexcept;   // cannot be an INTVECVU
 
-inline autoVEC sort_VEC (constVECVU const& x) {
+inline autoVEC sort_e_VEC (constVECVU const& x) {
 	autoVEC result = copy_VEC (x);
-	sort_VEC_inout (result.get());
+	sort_e_VEC_inout (result.get());
 	return result;
 }
 
@@ -334,6 +334,8 @@ inline autoINTVEC sort_INTVEC (constINTVECVU const& x) {
 	sort_INTVEC_inout (result.get());
 	return result;
 }
+
+autoVEC sort_removeUndefined_VEC (constVECVU const& vec);
 
 inline autoINTVEC sortedSet_INTVEC (constINTVECVU const& x) {
 	if (x.size <= 0)

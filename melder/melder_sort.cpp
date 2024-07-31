@@ -38,12 +38,29 @@ autoSTRVEC shuffle_STRVEC (STRVEC const& x) {
 	return result;
 }
 
-void sort_VEC_inout (VEC const& x) noexcept {
+void sort_e_VEC_inout (VEC const& x) {
+	Melder_require (NUMdefined (x),
+		U"Vector contains one or more undefined elements. Cannot sort.");
 	std::sort (x.begin(), x.end(),
 		[] (double first, double last) {
 			return first < last;
 		}
 	);
+}
+autoVEC sort_removeUndefined_VEC (constVECVU const& vec) {
+	const integer newSize = NUMcountDefined (vec);
+	autoVEC result = raw_VEC (newSize);
+	integer latestIndex = 0;
+	for (integer i = 1; i <= vec.size; i ++)
+		if (isdefined (vec [i]))
+			result [++ latestIndex] = vec [i];
+	Melder_assert (latestIndex == newSize);
+	std::sort (result.begin(), result.end(),
+		[] (double first, double last) {
+			return first < last;
+		}
+	);
+	return result;
 }
 
 void sort_INTVEC_inout (INTVEC const& x) noexcept {

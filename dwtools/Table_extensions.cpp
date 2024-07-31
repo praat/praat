@@ -804,7 +804,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 			ymin = stats.mean - numberOfSigmas * stats.stdev;
 			ymax = stats.mean + numberOfSigmas * stats.stdev;
 		}
-		sort_VEC_inout (data.get());
+		sort_e_VEC_inout (data.get());
 		numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
 		autoTableOfReal thee = TableOfReal_create (numberOfQuantiles, 2);
 		TableOfReal_setColumnLabel (thee.get(), 1, U"Normal distribution quantiles");

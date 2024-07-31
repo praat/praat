@@ -77,6 +77,13 @@ extern MelderIntegerRange NUMextrema_u (constINTVECVU const& vec) noexcept;
 
 extern double NUMcenterOfGravity (constVECVU const& x) noexcept;
 
+inline integer NUMcountDefined (constVECVU const& vec) noexcept {
+	integer result = 0;
+	for (integer i = 1; i <= vec.size; i ++)
+		if (isdefined (vec [i]))
+			result += 1;
+	return result;
+}
 inline bool NUMdefined (constVECVU const& vec) noexcept {
 	for (integer i = 1; i <= vec.size; i ++)
 		if (isundef (vec [i]))
@@ -300,14 +307,14 @@ inline double NUMpow (double base, double exponent) {
 
 inline double NUMsqrt_u (const double x) {
 	#if defined (_WIN32)
-		if (x < 0.0)
+		if (! (x >= 0.0))   // NaN-safe
 			return undefined;
 	#endif
 	return sqrt (x);
 }
 
 inline double NUMsqrt_0 (const double x) {
-	if (x < 0.0)
+	if (! (x >= 0.0))   // NaN-safe
 		return 0.0;
 	return sqrt (x);
 }
