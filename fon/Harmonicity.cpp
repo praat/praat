@@ -1,6 +1,6 @@
 /* Harmonicity.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tma
 
 double Harmonicity_getQuantile (Harmonicity me, double quantile) {
 	autoVEC soundingValues = Harmonicity_getSoundingValues (me, 0.0, 0.0);
-	sort_VEC_inout (soundingValues.get());
+	sort_e_VEC_inout (soundingValues.get());
 	return NUMquantile (soundingValues.get(), quantile);
 }
 
@@ -67,7 +67,7 @@ void structHarmonicity :: v1_info () {
 	MelderInfo_writeLine (U"   First frame centred at: ", our x1, U" seconds");
 	if (soundingValues.size > 0) {
 		MelderInfo_writeLine (U"Periodicity-to-noise ratios of sounding frames:");
-		sort_VEC_inout (soundingValues.get());
+		sort_e_VEC_inout (soundingValues.get());
 		MelderInfo_writeLine (U"   Median ", Melder_single (NUMquantile (soundingValues.get(), 0.50)), U" dB");
 		MelderInfo_writeLine (U"   10 % = ", Melder_single (NUMquantile (soundingValues.get(), 0.10)), U" dB   90 %% = ",
 				Melder_single (NUMquantile (soundingValues.get(), 0.90)), U" dB");

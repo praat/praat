@@ -164,13 +164,31 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS) {
 static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS) {
 	if (my interpreter -> running)
 		Melder_throw (U"The script is already running (paused). Please close or continue the pause or demo window.");
-	autostring32 text = GuiText_getSelection (my textWidget);
-	if (! text)
+	autostring32 selectedText = GuiText_getSelection (my textWidget);
+	if (! selectedText)
 		Melder_throw (U"No text selected.");
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Melder_includeIncludeFiles (& text);
-	const integer npar = Interpreter_readParameters (my interpreter.get(), text.get());
+	Melder_includeIncludeFiles (& selectedText);
+	const integer npar = Interpreter_readParameters (my interpreter.get(), selectedText.get());
+	autoMelderString textPlusProcedures;
+	MelderString_copy (& textPlusProcedures, selectedText.get());
+	if (! Melder_stringMatchesCriterion (selectedText.get(), kMelder_string :: CONTAINS, U"\nprocedure ", true)) {
+		autostring32 wholeText = GuiText_getString (my textWidget);
+		autoMelderReadText textReader = MelderReadText_createFromText (wholeText.move());
+		int procedureDepth = 0;
+		for (;;) {
+			mutablestring32 line = MelderReadText_readLine (textReader.get());
+			if (! line)
+				break;
+			if (Melder_startsWith (line, U"procedure "))
+				procedureDepth += 1;
+			if (procedureDepth > 0)
+				MelderString_append (& textPlusProcedures, U"\n", line);
+			if (Melder_startsWith (line, U"endproc"))
+				procedureDepth -= 1;
+		}
+	}
 	if (npar != 0) {
 		/*
 			Pop up a dialog box for querying the arguments.
@@ -181,7 +199,9 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS) {
 		autoPraatBackground background;
 		if (! MelderFile_isNull (& my file))
 			MelderFile_setDefaultDir (& my file);
-		Interpreter_run (my interpreter.get(), text.get(), false);
+TRACE
+trace (U"<<", textPlusProcedures.string, U">>");
+		Interpreter_run (my interpreter.get(), textPlusProcedures.string, false);
 	}
 }
 

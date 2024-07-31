@@ -151,7 +151,7 @@ static void Spline_initKnots (Spline me, integer degree, constVECVU const& inter
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 		U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
-	autoVEC interiorKnots = sort_VEC (interiorKnots_org);
+	autoVEC interiorKnots = sort_e_VEC (interiorKnots_org);
 	Melder_require (interiorKnots [1] > my xmin && interiorKnots [interiorKnots.size] <= my xmax,
 		U"Knots should be inside domain.");
 

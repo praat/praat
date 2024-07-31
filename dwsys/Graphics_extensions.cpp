@@ -61,7 +61,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 		(lower/upper) outerfence = (lower/upper) hinge +/- 3.0 hspread
 	*/
 	
-	autoVEC sorted = sort_VEC (data);
+	autoVEC sorted = sort_e_VEC (data);
 
 	if (ymax <= ymin) {
 		ymin = sorted [1];
@@ -175,8 +175,8 @@ void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, const
 
 	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
-	autoVEC xsorted = sort_VEC (x);
-	autoVEC ysorted = sort_VEC (y);
+	autoVEC xsorted = sort_e_VEC (x);
+	autoVEC ysorted = sort_e_VEC (y);
 
 	const integer numberOfData = std::min (x.size, y.size);
 	numberOfQuantiles = std::min (numberOfData, numberOfQuantiles);

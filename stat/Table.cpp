@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2023 Paul Boersma
+ * Copyright (C) 2002-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -617,7 +617,7 @@ double Table_getQuantile (Table me, integer columnNumber, double quantile) {
 			const constTableRow row = my rows.at [irow];
 			sortingColumn [irow] = row -> cells [columnNumber]. number;
 		}
-		sort_VEC_inout (sortingColumn.get());
+		sort_e_VEC_inout (sortingColumn.get());
 		return NUMquantile (sortingColumn.get(), quantile);
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute the ", quantile, U" quantile of column ", columnNumber, U".");
@@ -873,7 +873,7 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 					for (integer jrow = rowmin; jrow <= rowmax; jrow ++)
 						sortingColumn [jrow] = my rows.at [jrow] -> cells [columns [icol]]. number;
 					const VEC part = sortingColumn.part (rowmin, rowmax);
-					sort_VEC_inout (part);
+					sort_e_VEC_inout (part);
 					const double median = NUMquantile (part, 0.5);
 					Table_setNumericValue (thee.get(), thy rows.size, icol, median);
 				}
@@ -907,7 +907,7 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 						sortingColumn [jrow] = log (value);
 					}
 					const VEC part = sortingColumn.part (rowmin, rowmax);
-					sort_VEC_inout (part);
+					sort_e_VEC_inout (part);
 					const double median = NUMquantile (part, 0.5);
 					Table_setNumericValue (thee.get(), thy rows.size, icol, exp (median));
 				}

@@ -169,7 +169,7 @@ enum { NO_SYMBOL_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_,
 		ZERO_VEC_, ZERO_MAT_,
 		LINEAR_VEC_, LINEAR_MAT_, TO_VEC_, FROM_TO_VEC_, FROM_TO_BY_VEC_, FROM_TO_COUNT_VEC_, BETWEEN_BY_VEC_, BETWEEN_COUNT_VEC_,
-		SORT_VEC_, SORT_STRVEC_, SORT_NUMBER_AWARE_STRVEC_, SHUFFLE_VEC_, SHUFFLE_STRVEC_,
+		SORT_VEC_, SORT_REMOVE_UNDEFINED_VEC_, SORT_STRVEC_, SORT_NUMBER_AWARE_STRVEC_, SHUFFLE_VEC_, SHUFFLE_STRVEC_,
 		RANDOM_UNIFORM_VEC_, RANDOM_UNIFORM_MAT_,
 		RANDOM_INTEGER_VEC_, RANDOM_INTEGER_MAT_,
 		RANDOM_GAUSS_VEC_, RANDOM_GAUSS_MAT_,
@@ -322,7 +322,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed",
 	U"zero#", U"zero##",
 	U"linear#", U"linear##", U"to#", U"from_to#", U"from_to_by#", U"from_to_count#", U"between_by#", U"between_count#",
-	U"sort#", U"sort$#", U"sort_numberAware$#", U"shuffle#", U"shuffle$#",
+	U"sort#", U"sort_removeUndefined#", U"sort$#", U"sort_numberAware$#", U"shuffle#", U"shuffle$#",
 	U"randomUniform#", U"randomUniform##",
 	U"randomInteger#", U"randomInteger##",
 	U"randomGauss#", U"randomGauss##",
@@ -1597,6 +1597,13 @@ static void parsePowerFactor () {
 	}
 
 	if (symbol == OPENING_BRACE_) {
+		if (newread == CLOSING_BRACE_) {
+			newparse (NUMBER_);
+			parsenumber (0);
+			newparse (TENSOR_LITERAL_);
+			return;
+		}
+		oldread;
 		parseExpression ();
 		int n = 1;
 		while (newread == COMMA_) {
@@ -4394,6 +4401,7 @@ static void do_min () {
 			assert min ({ undefined, undefined }) = undefined
 			assert min ({ undefined }) = undefined
 			assert min (zero# (0)) = undefined
+			assert min ({ }) = undefined
 		@*/
 		Melder_require (n->number == 1,
 			U"The function “min” requires exactly one vector argument.");
@@ -4452,6 +4460,8 @@ static void do_min_e () {
 			pos = min_e ({ undefined })
 			asserterror Cannot determine the minimum of an empty vector.
 			pos = min_e (zero# (0))
+			asserterror Cannot determine the minimum of an empty vector.
+			pos = min_e ({})
 		@*/
 		Melder_require (n->number == 1,
 			U"The function “min_e” requires exactly one vector argument.");
@@ -4497,6 +4507,7 @@ static void do_min_removeUndefined () {
 			assert min_removeUndefined ({ undefined, undefined }) = undefined
 			assert min_removeUndefined ({ undefined }) = undefined
 			assert min_removeUndefined (zero# (0)) = undefined
+			assert min_removeUndefined ({ }) = undefined
 		@*/
 		Melder_require (n->number == 1,
 			U"The function “min_removeUndefined” requires exactly one vector argument.");
@@ -5013,7 +5024,18 @@ static void do_sort_VEC () {
 	const Stackel vec = pop;
 	Melder_require (vec->which == Stackel_NUMERIC_VECTOR,
 		U"The argument of the function “sort#” should be a numeric vector, not ", vec->whichText(), U".");
-	autoVEC result = sort_VEC (vec->numericVector);
+	autoVEC result = sort_e_VEC (vec->numericVector);
+	pushNumericVector (result.move());
+}
+static void do_sort_removeUndefined_VEC () {
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	Melder_require (narg->number == 1,
+		U"The function “sort_removeUndefined#” requires one argument, namely a vector.");
+	const Stackel vec = pop;
+	Melder_require (vec->which == Stackel_NUMERIC_VECTOR,
+		U"The argument of the function “sort_removeUndefined#” should be a numeric vector, not ", vec->whichText(), U".");
+	autoVEC result = sort_removeUndefined_VEC (vec->numericVector);
 	pushNumericVector (result.move());
 }
 static void do_sort_STRVEC () {
@@ -5493,7 +5515,9 @@ static void do_numericVectorElement () {
 	Melder_require (ielement > 0,
 		U"In vector indexing, the element index should be positive.");
 	Melder_require (ielement <= vector->numericVectorValue.size,
-		U"Element index out of bounds.");
+		U"Element index out of bounds. Looking for element ", ielement,
+		U", but there are only ", vector->numericVectorValue.size, U" elements."
+	);
 	pushNumber (vector->numericVectorValue [ielement]);
 }
 static void do_numericMatrixElement () {
@@ -5507,7 +5531,9 @@ static void do_numericMatrixElement () {
 	Melder_require (icolumn > 0,
 		U"In matrix indexing, the column index should be positive.");
 	Melder_require (icolumn <= matrix->numericMatrixValue. ncol,
-		U"Column index out of bounds.");
+		U"Column index out of bounds. Looking for column ", icolumn,
+		U", but there are only ", matrix->numericMatrixValue. ncol, U" columns."
+	);
 	const Stackel row = pop;
 	Melder_require (row->which == Stackel_NUMBER,
 		U"In matrix indexing, the row index should be a number, not ", row->whichText(), U".");
@@ -5517,7 +5543,9 @@ static void do_numericMatrixElement () {
 	Melder_require (irow > 0,
 		U"In matrix indexing, the row index should be positive.");
 	Melder_require (irow <= matrix->numericMatrixValue. nrow,
-		U"Row index out of bounds.");
+		U"Row index out of bounds. Looking for row ", irow,
+		U", but there are only ", matrix->numericMatrixValue. nrow, U" rows."
+	);
 	pushNumber (matrix->numericMatrixValue [irow] [icolumn]);
 }
 static void do_stringVectorElement () {
@@ -5531,7 +5559,9 @@ static void do_stringVectorElement () {
 	Melder_require (ielement > 0,
 		U"In vector indexing, the element index should be positive.");
 	Melder_require (ielement <= vector->stringArrayValue.size,
-		U"Element index out of bounds.");
+		U"Element index out of bounds. Looking for element ", ielement,
+		U", but there are only ", vector->stringArrayValue.size, U" elements."
+	);
 	pushString (Melder_dup (vector->stringArrayValue [ielement].get()));
 }
 static void do_indexedNumericVariable () {
@@ -6480,7 +6510,12 @@ static void do_tensorLiteral () {
 	const Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
 	integer numberOfElements = Melder_iround (n->number);
-	Melder_assert (numberOfElements > 0);
+	Melder_assert (numberOfElements >= 0);
+	if (numberOfElements == 0) {
+		autoVEC result = raw_VEC (0);
+		pushNumericVector (result.move());
+		return;
+	}
 	/*
 		The type of the tensor can be a vector, or a matrix, or a tensor3...
 		This depends on whether the last element is a number, a vector, or a matrix...
@@ -8392,6 +8427,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case BETWEEN_BY_VEC_: { do_between_by_VEC ();
 } break; case BETWEEN_COUNT_VEC_: { do_between_count_VEC ();
 } break; case SORT_VEC_: { do_sort_VEC ();
+} break; case SORT_REMOVE_UNDEFINED_VEC_: { do_sort_removeUndefined_VEC ();
 } break; case SORT_STRVEC_: { do_sort_STRVEC ();
 } break; case SORT_NUMBER_AWARE_STRVEC_: { do_sort_numberAware_STRVEC ();
 } break; case SHUFFLE_VEC_: { do_shuffle_VEC ();

@@ -114,7 +114,7 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	if (endIsVisible && my endSelection != my startSelection)
 		my marker [++ my numberOfMarkers] = my endSelection;
 	my marker [++ my numberOfMarkers] = my endWindow;
-	sort_VEC_inout (VEC (& my marker [1], my numberOfMarkers));
+	sort_e_VEC_inout (VEC (& my marker [1], my numberOfMarkers));
 
 	/*
 		Update rectangles.
