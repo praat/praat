@@ -80,6 +80,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`chooseReadFile$` (%`title$`) – pops up a file selection window for opening (or appending to) an existing file
 , @`chooseWriteFile$` (%`title$`, %`defaultFilename$`) – pops up a file selection window for saving to a new file
 , @`clearinfo` – clear the Info window
+, @`col` – the columns number (of the current cell) in a Formula command
+, @`col$` [%`i`] – the name of column %i of an object
 , @`col#` (%`matrix##`, %`columnNumber`) - extract one column from a matrix
 , @`columnSums#` (%`matrix##`)
 , @`combine#` (...) - combine numbers, vectors and matrices into a new vector
@@ -114,6 +116,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`demoX` ( ) – the horizontal position of a mouse click in the Demo window
 , @`demoY` ( ) – the vertical position of a mouse click in the Demo window
 , @`differenceLimensToPhon` (%`x`) – from jnd-scale to perceptual loudness
+, @`dx` – the horizontal distance between cells (i.e. the distance between columns) of an object
+, @`dy` – the vertical distance between cells (i.e. the distance between rows) of an object
 , @`editor` (%`editor($)`) – enter the environment of an editor (by number or by name)
 , @`empty$#` (%`numberOfStrings`) – create an array of empty strings
 , @`endeditor` – leave the environment of an editor
@@ -196,10 +200,14 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`min` (%`x`, `...`) – minimum
 , @`minusObject` (`...`) – shrink the selection of objects in the list
 , @`mul##` (%`a##`, %`b##`) – matrix multiplication
+, @`ncol` – the number of columns of an object
+, @`nrow` – the number of rows of an object
 , @`number` (%`a$`) – interpret a string as a number
 , @`number#` (%`a$#`) – interpret strings as numbers
 , @`numberOfColumns` (%`matrix##`)
 , @`numberOfRows` (%`matrix##`)
+, @`nx` – the number of cells horizontally (i.e. the number of columns) of an object
+, @`ny` – the number of cells vertically (i.e. the number of rows) of an object
 , @`outer##` (%`a#`, %`b#`) – outer product, i.e. %%result__ij_% = %%a__i_%%%b__j_%
 , @`pauseScript` (`...`) – show a message in a simple @@pause window@
 , @`percent$` (%`number`, %`precision`) – format a number as a string,
@@ -268,6 +276,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`round` (%`x`) – nearest integer
 , @`round#` (%`vector#`) – nearest integer of each element of %`vector#`
 , @`round##` (%`matrix##`) – nearest integer of each cell of %`matrix##`
+, @`row` – the row number (of the current cell) in a Formula command
+, @`row$` [%`i`] – the name of row %i of an object
 , @`row#` (%`matrix##`, %`rowNumber`) - extract one row from a matrix
 , @`rowSums#` (%`matrix##`)
 , @`runScript` (%`filePath$`, `...`) – run a script with the given arguments
@@ -349,6 +359,12 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`writeFileLine` (%`filePath$`, `...`) – create a new text file, write texts, numbers, vectors and so on into it, followed by a newline
 , @`writeInfo` (`...`) – write texts, numbers, vectors and so on, to a clear Info window
 , @`writeInfoLine` (`...`) – write texts, numbers, vectors and so on, followed by a newline, to a clear Info window
+, @`x` – the horizontal place (in world coordinates) of the current cell in a Formula command
+, @`xmax` – the top of the horizontal domain of an object
+, @`xmin` – the bottom of the horizontal domain of an object
+, @`y` – the vertical place (in world coordinates) of the current cell in a Formula command
+, @`ymax` – the top of the vertical domain of an object
+, @`ymin` – the bottom of the vertical domain of an object
 , @`zero#` (%`n`) – vector with %`n` elements that are all 0
 , @`zero##` (%`nrow`, %`ncol`) – matrix with %`nrow` \xx %`ncol` elements that are all 0
 
@@ -1077,6 +1093,27 @@ Syntax and semantics
 : clear the @@Info window@.
 
 ################################################################################
+"`col`"
+© Paul Boersma 2024
+
+The column number (of the current cell) in a Formula command.
+
+See @@Formulas 1.7. Formulas for modification@.
+
+################################################################################
+"`col$`"
+© Paul Boersma 2024
+
+The name of a column of an object.
+
+Syntax and semantics
+====================
+#`col$` [%`i`]
+: the name of the %%i%th column of an object.
+
+See @@Formulas 8. Attributes of objects@.
+
+################################################################################
 "`col#`"
 © Paul Boersma 2024
 
@@ -1607,6 +1644,24 @@ Definition
 Related function
 ================
 #`differenceLimensToPhon` is the inverse of @`phonToDifferenceLimens`.
+
+################################################################################
+"`dx`"
+© Paul Boersma 2024
+
+The horizontal distance between cells (i.e. the distance between columns) of an object,
+in world coordinates.
+
+See @@Formulas 8. Attributes of objects@.
+
+################################################################################
+"`dy`"
+© Paul Boersma 2024
+
+The vertical distance between cells (i.e. the distance between rows) of an object,
+in world coordinates.
+
+See @@Formulas 8. Attributes of objects@.
 
 ################################################################################
 "`editor`"
@@ -2650,6 +2705,22 @@ Syntax and semantics
 : perform a matrix multiplication of the matrices %`a##` and %`b##`.
 
 ################################################################################
+"`ncol`"
+© Paul Boersma 2024
+
+The number of columns of an object.
+
+See @@Formulas 8. Attributes of objects@.
+
+################################################################################
+"`nrow`"
+© Paul Boersma 2024
+
+The number of rows of an object.
+
+See @@Formulas 8. Attributes of objects@.
+
+################################################################################
 "`number`"
 © Paul Boersma 2023,2024
 
@@ -2737,6 +2808,24 @@ Syntax and semantics
 ====================
 #`numberOfRows` (%`m##`)
 : return the number of rows of the matrix %`m##`.
+
+################################################################################
+"`nx`"
+© Paul Boersma 2024
+
+The number of cells horizontally (i.e. the number of columns) of an object.
+This is the same as @`ncol`.
+
+See @@Formulas 8. Attributes of objects@.
+
+################################################################################
+"`ny`"
+© Paul Boersma 2024
+
+The number of cells vertically (i.e. the number of rows) of an object.
+This is the same as @`nrow`.
+
+See @@Formulas 8. Attributes of objects@.
 
 ################################################################################
 "`outer##`"
@@ -3677,6 +3766,27 @@ Syntax and semantics
 ====================
 #`round##` (%`m##`)
 : round (@`round`) each cell of the matrix %`m##`.
+
+################################################################################
+"`row`"
+© Paul Boersma 2024
+
+The row number (of the current cell) in a Formula command.
+
+See @@Formulas 1.7. Formulas for modification@.
+
+################################################################################
+"`row$`"
+© Paul Boersma 2024
+
+The name of a row of an object.
+
+Syntax and semantics
+====================
+#`row$` [%`i`]
+: the name of the %%i%th row of an object.
+
+See @@Formulas 8. Attributes of objects@.
 
 ################################################################################
 "`row#`"
@@ -4711,6 +4821,54 @@ and moving the output cursor to the next line.
 
 Examples of use:
 ================
+
+################################################################################
+"`x`"
+© Paul Boersma 2024
+
+The horizontal place (in world coordinates) of the current cell in a Formula command.
+
+See @@Formulas 1.7. Formulas for modification@.
+
+################################################################################
+"`xmax`"
+© Paul Boersma 2024
+
+The top of the horizontal domain of an object, in world coordinates.
+
+See @@Formulas 8. Attributes of objects@.
+
+################################################################################
+"`xmin`"
+© Paul Boersma 2024
+
+The bottom of the horizontal domain of an object, in world coordinates.
+
+See @@Formulas 8. Attributes of objects@.
+
+################################################################################
+"`y`"
+© Paul Boersma 2024
+
+The vertical place (in world coordinates) of the current cell in a Formula command.
+
+See @@Formulas 1.7. Formulas for modification@.
+
+################################################################################
+"`ymax`"
+© Paul Boersma 2024
+
+The top of the vertical domain of an object, in world coordinates.
+
+See @@Formulas 8. Attributes of objects@.
+
+################################################################################
+"`ymin`"
+© Paul Boersma 2024
+
+The bottom of the vertical domain of an object, in world coordinates.
+
+See @@Formulas 8. Attributes of objects@.
 
 ################################################################################
 "`zero#`"
