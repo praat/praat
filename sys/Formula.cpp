@@ -152,6 +152,7 @@ enum { NO_SYMBOL_,
 		MAX_, MAX_E_, MAX_IGNORE_UNDEFINED_,
 		IMIN_, IMIN_E_, IMIN_IGNORE_UNDEFINED_,
 		IMAX_, IMAX_E_, IMAX_IGNORE_UNDEFINED_,
+		QUANTILE_,
 		NORM_,
 		LEFT_STR_, RIGHT_STR_, MID_STR_,
 		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_, SELECTED_STRVEC_,
@@ -286,7 +287,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"sum", U"mean", U"stdev", U"center",
 	U"evaluate", U"evaluate_nocheck", U"evaluate$", U"evaluate_nocheck$",
 	U"string$", U"vertical$", U"numbers#", U"sleep", U"unicode", U"unicode$",
-	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial", U"randomGamma",
+	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial",
+	U"randomGamma",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
@@ -306,6 +308,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"max", U"max_e", U"max_removeUndefined",
 	U"imin", U"imin_e", U"imin_removeUndefined",
 	U"imax", U"imax_e", U"imax_removeUndefined",
+	U"quantile",
 	U"norm",
 	U"left$", U"right$", U"mid$",
 	U"selected", U"selected$", U"numberOfSelected", U"selected#", U"selected$#",
@@ -4825,6 +4828,19 @@ static void do_imax_removeUndefined () {
 		Melder_throw (U"Cannot compute the imax of ", last->whichText(), U".");
 	}
 }
+static void do_quantile () {
+	const Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	Melder_require (n->number == 2,
+		U"The function “quantile” requires two arguments, not ", n->number, U".");
+	const Stackel quantile = pop;
+	Melder_require (quantile->which == Stackel_NUMBER,
+		U"The second argument to “quantile” should be a number, not ", quantile->which, U".");
+	const Stackel vec = pop;
+	Melder_require (vec->which == Stackel_NUMERIC_VECTOR,
+		U"The first argument to “quantile” should be a numeric vector, not ", vec->which, U".");
+	pushNumber (NUMquantile (vec->numericVector, quantile->number));
+}
 static void do_norm () {
 	const Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
@@ -8416,6 +8432,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case IMAX_: { do_imax ();
 } break; case IMAX_E_: { do_imax_e ();
 } break; case IMAX_IGNORE_UNDEFINED_: { do_imax_removeUndefined ();
+} break; case QUANTILE_: { do_quantile ();
 } break; case NORM_: { do_norm ();
 } break; case ZERO_VEC_: { do_zero_VEC ();
 } break; case ZERO_MAT_: { do_zero_MAT ();

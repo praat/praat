@@ -179,7 +179,8 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 						MelderString_appendCharacter (& lineBuffer, *paragraphPointer);
 					}
 				}
-				continue;
+				if (hasError)
+					continue;   // no longer show any graphics
 			}
 			if (paragraph -> height == 0.001)
 				continue;
