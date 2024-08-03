@@ -2576,7 +2576,7 @@ NORMAL (U"On Windows, you can open Praat with a sound file and a TextGrid file b
 CODE (U"\"C:\\Program Files\\Praat.exe\" --open data\\hello.wav data\\hello.TextGrid")
 NORMAL (U"or")
 CODE (U"\"C:\\Program Files\\Praat.exe\" --open data/hello.wav data/hello.TextGrid")
-NORMAL (U"at least if your current folder (see the Console's `cd` and `dir` commands) "
+NORMAL (U"at least if your current folder (see the Console’s `cd` and `dir` commands) "
 	"contains the folder `data` and that folder contains those two files. "
 	"Praat will start up, and shows the two files as a Sound and a TextGrid object in the list. "
 	"If Praat was already running when you typed the command, "
@@ -2762,7 +2762,7 @@ DEFINITION (U"Set the preferences folder to `/var/www/praat_plugins` (for instan
 	"This can come in handy if you require access to preference files and/or plugins that are not in your home folder.")
 TERM (U"##-8#, ##--utf8#")
 DEFINITION (U"Write the output (e.g. of $writeInfo$) in UTF-8 encoding. This is the default encoding on MacOS and Linux, "
-	"but on Windows the default is the Console's native UTF-16 Little Endian (i.e. the Console understands UTF-16 always, "
+	"but on Windows the default is the Console’s native UTF-16 Little Endian (i.e. the Console understands UTF-16 always, "
 	"whereas it understands UTF-8 only if you type `chcp 65001` first). "
 	"If you pipe to Windows programs that understand UTF-8 rather than UTF-16, "
 	"or if you want to redirect the output to a UTF-8 file, use this option.")
