@@ -904,7 +904,9 @@ static int32 bingeti32_shortened_direct (FILE *f, const uint32 mantissaLength) {
 	uint32 unsignedVersion = bingetu32_shortened_direct (f, mantissaLength + 1);   // a sign bit at the end
 	uint32 signBit = unsignedVersion & 1u;
 	uint32 absoluteValue = unsignedVersion >> 1;
-	return signBit ? - (int32) absoluteValue : + (int32) absoluteValue;   // assume one's complement; BUG: check
+	//return signBit ? - (int32) absoluteValue : + (int32) absoluteValue;   // assume one's complement; BUG: check
+	return signBit ? - (int32) absoluteValue - 1: + (int32) absoluteValue;   // assume two's complement; BUG: check
+	//return signBit ? (int32) ~ absoluteValue: (int32) absoluteValue;   // assume two's complement; BUG: check
 }
 
 static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
@@ -1025,7 +1027,7 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 			1111111111 -> 511
 		What we find after 00101 is 1100000000, meaning 256.
 	*/
-	const uint32 blockSize = bingetu32_shortened_indirect (f);
+	uint32 blockSize = bingetu32_shortened_indirect (f);   // the standard block size, until it's changed
 	trace (U"Block size: ", blockSize);
 	Melder_require (blockSize == 256,
 		U"Polyphone files should have a block size of 256, not ", blockSize, U".");
@@ -1086,8 +1088,10 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 			111.1111|101.11|00101.1100000000|100.1|100.1|100.1|0110|101|101|1
 			       7      1              256     0     0     0    6   1   1
 	*/
+	autovector <int32> sampleBuffer = newvectorzero <int32> (blockSize + 3);
 	constexpr uint32 COMMAND_DIFF0 = 0, COMMAND_DIFF1 = 1, COMMAND_DIFF2 = 2, COMMAND_DIFF3 = 3;
-	constexpr uint32 COMMAND_QUIT = 4, COMMAND_BITSHIFT = 6;
+	constexpr uint32 COMMAND_QUIT = 4, COMMAND_BLOCKSIZE = 5, COMMAND_BITSHIFT = 6;
+	integer numberOfSamplesRead = 0;
 	for (;;) {
 		uint32 command = bingetu32_shortened_direct (f, 2);
 		trace (U"Command ", command);
@@ -1099,13 +1103,48 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 		} else if (command >= COMMAND_DIFF0 && command <= COMMAND_DIFF3) {
 			uint32 mantissaLength = bingetu32_shortened_direct (f, 3);
 			trace (U"diff", command, U" length ", mantissaLength);
-			for (uint32 i = 1; i <= blockSize; i ++)
-				(void) bingeti32_shortened_direct (f, mantissaLength);
+			if (command == COMMAND_DIFF0)
+				for (uint32 i = 1; i <= blockSize; i ++)
+					sampleBuffer [i] = bingeti32_shortened_direct (f, mantissaLength);   // Robinson (1994), eq. 3
+			else if (command == COMMAND_DIFF1)
+				for (uint32 i = 1; i <= blockSize; i ++)
+					sampleBuffer [i + 1] = bingeti32_shortened_direct (f, mantissaLength)
+							+ sampleBuffer [i];   // Robinson (1994), eq. 4
+			else if (command == COMMAND_DIFF2)
+				for (uint32 i = 1; i <= blockSize; i ++)
+					sampleBuffer [i + 2] = bingeti32_shortened_direct (f, mantissaLength)
+							+ 2 * sampleBuffer [i + 1] - sampleBuffer [i];   // Robinson (1994), eq. 5
+			else if (command == COMMAND_DIFF3)
+				for (uint32 i = 1; i <= blockSize; i ++)
+					sampleBuffer [i + 3] = bingeti32_shortened_direct (f, mantissaLength)
+							+ 3 * (sampleBuffer [i + 2] - sampleBuffer [i + 1]) + sampleBuffer [i];   // Robinson (1994), eq. 6
+			for (uint32 i = 1; i <= 3; i ++)
+				sampleBuffer [i] = sampleBuffer [blockSize + i];   // move them here, waiting for the next block
+			for (uint32 i = 1; i <= blockSize; i ++) {
+				int32 value = sampleBuffer [i];
+				Melder_require (value >= -128,
+					U"Sample value is ", value, U" but should be at least -128.");
+				Melder_require (value <= +127,
+					U"Sample value is ", value, U" but should be at most +127.");
+				buffer [1] [++ numberOfSamplesRead] = alaw2linear [sampleBuffer [i] + 128] / 32768.0;
+			}
+		} else if (command == COMMAND_BLOCKSIZE) {
+			/*
+				This might often occur before the last block,
+				namely if the number of samples is not an integer multiple
+				of the earlier block sizes (which are typically 256).
+			*/
+			const uint32 newBlockSize = bingetu32_shortened_indirect (f);
+			Melder_require (newBlockSize <= blockSize,
+				U"Cannot grow block size from ", blockSize, U" to ", newBlockSize, U".");
+			blockSize = newBlockSize;
 		} else {
 			Melder_throw (U"Unknown command ", command);
 		}
 	}
-	Melder_throw (U"Polyphone sound files cannot yet be opened. Write to paul.boersma@uva.nl for more information.");
+	Melder_require (numberOfSamplesRead == buffer.ncol,
+		U"Expected ", buffer.ncol, U" samples but found ", numberOfSamplesRead, U".");
+	//Melder_throw (U"Polyphone sound files cannot yet be opened. Write to paul.boersma@uva.nl for more information.");
 }
 
 void Melder_readAudioToFloat (FILE *f, int encoding, MAT buffer) {
