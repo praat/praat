@@ -888,10 +888,28 @@ static uint32 readBits_u32 (FILE *f, const integer numberOfBits) {
 	Melder_assert (numberOfBits >= 0 && numberOfBits <= 32);
 	uint32 result = 0;
 	for (integer i = 1; i <= numberOfBits; i ++) {
-		uint32 bit = bingetb1 (f);
+		const uint32 bit = bingetb1 (f);
 		result = (result << 1) + bit;
 	}
 	return result;
+}
+
+static uint32 bingetu32_shortened_direct (FILE *f, const uint32 mantissaLength)
+{
+	uint32 numberOfLeadingZeroes = 0;
+	for (; bingetb1 (f) == 0; numberOfLeadingZeroes ++)
+		;
+	uint32 result = numberOfLeadingZeroes * (1u << mantissaLength);
+	for (uint32 i = 1; i <= mantissaLength; i ++)
+		if (bingetb1 (f) != 0)
+			result += 1u << (mantissaLength - i);
+	return result;
+}
+
+static uint32 bingetu32_shortened_indirect (FILE *stream)
+{
+	const uint32 mantissaLength = bingetu32_shortened_direct (stream, 2);
+	return bingetu32_shortened_direct (stream, mantissaLength);
 }
 
 static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
@@ -931,16 +949,154 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 		U"Can read only Shorten version 1, not ", version, U".");
 	integer numberOfDataBytesLeft = numberOfDataBytesInFile - 5;
 	trace (numberOfDataBytesLeft, U" data bytes left in file");
+	/*
+		The following six bytes are always 255 114 224 19 50 214.
+		In binary:
+			255 = 0b11111111
+			114 = 0b01110010
+			224 = 0b11100000
+			 19 = 0b00010011
+			 50 = 0b00110010
+			214 = 0b11010110
+		These contain several uint32 numbers in indirect shortened format.
+		This indirected format first encodes the length of the mantissa
+		of the uint32 number, in direct shortened format, with a mantissa of 2 bits.
+		According to the Shorten paper, the number of fours is given by the number
+		of leading zeroes, then there's a one to signal the end of the zeroes,
+		and finally there are the two bits of the mantissa, as follows:
+			100 -> 0
+			101 -> 1
+			110 -> 2
+			111 -> 3
+			0100 -> 4
+			0101 -> 5
+			0110 -> 6
+			0111 -> 7
+			00100 -> 8
+			00101 -> 9
+			00110 -> 10
+			00111 -> 11
+			000100 -> 12
+			000101 -> 13
+			000110 -> 14
+			000111 -> 15
+			0000100 -> 16
+			00000100 -> 20
+			000000100 -> 24
+			0000000100 -> 28
+		Now we have just only implemented the number of bits of the mantissa
+		of the whole number. Let's walk through the fixed bits.
+
+		The first mantissa length is encoded as 111 (the first 1+2 bits of 255
+		that follow the 0 zeroes), meaning 3. So the whole number is encoded
+		with a mantissa length of 3. The table for that is:
+			1000 -> 0
+			1001 -> 1
+			1111 -> 7
+			01000 -> 8
+		After the first 111 of 255 we find 0 zeroes, follow by 1+3 ones,
+		which means 7. This whole number has been encoded as 111.1111.
+	*/
+	const uint32 fileType = bingetu32_shortened_indirect (f);
+	trace (U"File type: ", fileType);
+	Melder_require (fileType == 7,
+		U"Polyphone files should have file type 7, not ", fileType, U".");
+	/*
+		The remainder of the bits is now found after the pipe:
+			111.1111|10111001011100000000100110011001011010110
+			       7
+		The next mantissa length code is 101, i.e. 1. So we need the following table:
+			10 -> 0
+			11 -> 1
+			010 -> 2
+			011 -> 3
+			0010 -> 4
+			0011 -> 5
+			00010 -> 6
+		What we find after 101 is 11, meaning 1.
+	*/
+	const uint32 numberOfChannels = bingetu32_shortened_indirect (f);
+	trace (U"Number of channels: ", numberOfChannels);
+	Melder_require (numberOfChannels == 1,
+		U"Polyphone files should have 1 channel (mono), not ", numberOfChannels);
+	/*
+		The remainder of the bits is now:
+			111.1111|101.11|001011100000000100110011001011010110
+			       7      1
+		The next mantissa length code is 00101, i.e. 9. So we need the following table:
+			1000000000 -> 0
+			1000000001 -> 1
+			1100000000 -> 256
+			1111111111 -> 511
+		What we find after 00101 is 1100000000, meaning 256.
+	*/
+	const uint32 blockSize = bingetu32_shortened_indirect (f);
+	trace (U"Block size: ", blockSize);
+	Melder_require (blockSize == 256,
+		U"Polyphone files should have a block size of 256, not ", blockSize, U".");
+	/*
+		The remainder of the bits is now:
+			111.1111|101.11|00101.1100000000|100110011001011010110
+			       7      1              256
+		The next mantissa length code is 100, i.e. 0. So we need the following table:
+			1 -> 0
+			01 -> 1
+			001 -> 2
+			0001 -> 3
+		What we find after 100 is 1, meaning 0.
+	*/
+	const uint32 numberOfLpcCoefficients = bingetu32_shortened_indirect (f);
+	trace (U"Number of LPC coefficients: ", numberOfLpcCoefficients);
+	Melder_require (numberOfLpcCoefficients == 0,
+		U"Polyphone files should not have LPC encoding.");
+	/*
+		The remainder of the bits is now:
+			111.1111|101.11|00101.1100000000|100.1|10011001011010110
+			       7      1              256     0
+		The next mantissa length code is again 100, i.e. 0.
+		What we find after 100 is 1, meaning 0 again.
+		This is only one of two zeroes:
+	*/
+	const uint32 dummy1 = bingetu32_shortened_indirect (f);
+	trace (U"dummy1: ", dummy1);
+	Melder_require (dummy1 == 0,
+		U"Polyphone files should have a “dummy1” of 0.");
+	const uint32 dummy2 = bingetu32_shortened_indirect (f);
+	trace (U"dummy2: ", dummy2);
+	Melder_require (dummy2 == 0,
+		U"Polyphone files should have a “dummy2” of 0.");
+	/*
+		The remainder of the bits is now:
+			111.1111|101.11|00101.1100000000|100.1|100.1|100.1|01101011011
+			       7      1              256     0     0     0
+		Note that we already appended the high two bits of the number,
+		which is always over 192.
+		The next mantissa length code is 0110, i.e. 6.
+		What we find after 0110 is 1011011, meaning 27.
+		So we have found:
+			111.1111|101.11|00101.1100000000|100.1|100.1|100.1|0110.1011011|
+			       7      1              256     0     0     0           27
+		Great. We stuffed 7 numbers into 6 bytes plus 2 bits,
+		instead of wasting 28 (or perhaps 14) bytes on it.
+
+		But... what is this 27?
+		We are supposed to see "commands", i.e. numbers between 0 and 8,
+		encoded as direct shortened numbers with a length-2 mantissa.
+		Thus, 0110 would actually represent the number 6, which means "bitshift",
+		which should be followed by the bitshift itself, which is also
+		mantissa-2-encoded, so the bitshift is 101, which means 1:
+			111.1111|101.11|00101.1100000000|100.1|100.1|100.1|0110|101|1011
+			       7      1              256     0     0     0    6   1
+		The next command then seems to be 101, which means 1 ("diff1"):
+			111.1111|101.11|00101.1100000000|100.1|100.1|100.1|0110|101|101|1
+			       7      1              256     0     0     0    6   1   1
+	*/
 	for (integer ibyte = 1; ibyte <= numberOfDataBytesLeft; ibyte ++) {
 		uint32 byte = readBits_u32 (f, 8);
 		trace (U"byte ", ibyte, U" is ", byte);
 		// 255 114 224 19 50   214 203 0 73 2
 		// 255 114 224 19 50   214 200 3 73 36
 		// 255 114 224 19 50   214 221 136 63 4
-		// 255 = 0b11111111
-		// 114 = 0b01110010 = 0111~ carry 0010 = 7 = mulaw, but Alaw in the case of Polyphone
-		// 224 = 0b11100000 = 00101110~ 00~ 0~ carry 0 = 46~0~0
-		// 19 = 0b00010011
 	}
 	Melder_throw (U"Polyphone sound files cannot yet be opened. Write to paul.boersma@uva.nl for more information.");
 }
