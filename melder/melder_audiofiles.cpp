@@ -884,18 +884,7 @@ static void Melder_readMp3File (FILE *f, MAT buffer) {
 		Melder_throw (U"Error decoding MP3 file.");
 }
 
-static uint32 readBits_u32 (FILE *f, const integer numberOfBits) {
-	Melder_assert (numberOfBits >= 0 && numberOfBits <= 32);
-	uint32 result = 0;
-	for (integer i = 1; i <= numberOfBits; i ++) {
-		const uint32 bit = bingetb1 (f);
-		result = (result << 1) + bit;
-	}
-	return result;
-}
-
-static uint32 bingetu32_shortened_direct (FILE *f, const uint32 mantissaLength)
-{
+static uint32 bingetu32_shortened_direct (FILE *f, const uint32 mantissaLength) {
 	uint32 numberOfLeadingZeroes = 0;
 	for (; bingetb1 (f) == 0; numberOfLeadingZeroes ++)
 		;
@@ -906,10 +895,16 @@ static uint32 bingetu32_shortened_direct (FILE *f, const uint32 mantissaLength)
 	return result;
 }
 
-static uint32 bingetu32_shortened_indirect (FILE *stream)
-{
+static uint32 bingetu32_shortened_indirect (FILE *stream) {
 	const uint32 mantissaLength = bingetu32_shortened_direct (stream, 2);
 	return bingetu32_shortened_direct (stream, mantissaLength);
+}
+
+static int32 bingeti32_shortened_direct (FILE *f, const uint32 mantissaLength) {
+	uint32 unsignedVersion = bingetu32_shortened_direct (f, mantissaLength + 1);   // a sign bit at the end
+	uint32 signBit = unsignedVersion & 1u;
+	uint32 absoluteValue = unsignedVersion >> 1;
+	return signBit ? - (int32) absoluteValue : + (int32) absoluteValue;   // assume one's complement; BUG: check
 }
 
 static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
@@ -932,19 +927,19 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 		The first four bytes are lower-case letters, namelu "ajkg";
 		"aj" seem to be Tony Robinson's initials.
 	*/
-	uint32 letter = readBits_u32 (f, 8);
+	uint32 letter = bingetu8 (f);
 	Melder_require (letter == 'a',
 		U"First letter of magic word “ajkg” is character ", letter, U" instead of “a”.");
-	letter = readBits_u32 (f, 8);
+	letter = bingetu8 (f);
 	Melder_require (letter == 'j',
 		U"Second letter of magic word “ajkg” is character ", letter, U" instead of “j”.");
-	letter = readBits_u32 (f, 8);
+	letter = bingetu8 (f);
 	Melder_require (letter == 'k',
 		U"Third letter of magic word “ajkg” is character ", letter, U" instead of “k”.");
-	letter = readBits_u32 (f, 8);
+	letter = bingetu8 (f);
 	Melder_require (letter == 'g',
 		U"Fourth letter of magic word “ajkg” is character ", letter, U" instead of “g”.");
-	const uint32 version = readBits_u32 (f, 8);
+	const uint32 version = bingetu8 (f);
 	Melder_require (version == 1,
 		U"Can read only Shorten version 1, not ", version, U".");
 	integer numberOfDataBytesLeft = numberOfDataBytesInFile - 5;
@@ -1091,12 +1086,24 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 			111.1111|101.11|00101.1100000000|100.1|100.1|100.1|0110|101|101|1
 			       7      1              256     0     0     0    6   1   1
 	*/
-	for (integer ibyte = 1; ibyte <= numberOfDataBytesLeft; ibyte ++) {
-		uint32 byte = readBits_u32 (f, 8);
-		trace (U"byte ", ibyte, U" is ", byte);
-		// 255 114 224 19 50   214 203 0 73 2
-		// 255 114 224 19 50   214 200 3 73 36
-		// 255 114 224 19 50   214 221 136 63 4
+	constexpr uint32 COMMAND_DIFF0 = 0, COMMAND_DIFF1 = 1, COMMAND_DIFF2 = 2, COMMAND_DIFF3 = 3;
+	constexpr uint32 COMMAND_QUIT = 4, COMMAND_BITSHIFT = 6;
+	for (;;) {
+		uint32 command = bingetu32_shortened_direct (f, 2);
+		trace (U"Command ", command);
+		if (command == COMMAND_QUIT)
+			break;
+		if (command == COMMAND_BITSHIFT) {
+			uint32 bitshift = bingetu32_shortened_direct (f, 2);
+			trace (U"bitshift ", bitshift);
+		} else if (command >= COMMAND_DIFF0 && command <= COMMAND_DIFF3) {
+			uint32 mantissaLength = bingetu32_shortened_direct (f, 3);
+			trace (U"diff", command, U" length ", mantissaLength);
+			for (uint32 i = 1; i <= blockSize; i ++)
+				(void) bingeti32_shortened_direct (f, mantissaLength);
+		} else {
+			Melder_throw (U"Unknown command ", command);
+		}
 	}
 	Melder_throw (U"Polyphone sound files cannot yet be opened. Write to paul.boersma@uva.nl for more information.");
 }
