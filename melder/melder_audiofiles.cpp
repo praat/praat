@@ -884,13 +884,26 @@ static void Melder_readMp3File (FILE *f, MAT buffer) {
 		Melder_throw (U"Error decoding MP3 file.");
 }
 
+static int bitsInReadBuffer = 0;
+static uint32 readOneBit (FILE *f) {
+	static uint8 readBuffer;
+	if (bitsInReadBuffer == 0) {
+		int externalValue = fgetc (f);
+		Melder_require (externalValue >= 0,
+			U"Could not read a bit.");
+		readBuffer = (uint8) externalValue;
+		bitsInReadBuffer = 8;
+	}
+	return (readBuffer >> -- bitsInReadBuffer) & 1;
+}
+
 static uint32 bingetu32_shortened_direct (FILE *f, const uint32 mantissaLength) {
 	uint32 numberOfLeadingZeroes = 0;
-	for (; bingetb1 (f) == 0; numberOfLeadingZeroes ++)
+	for (; readOneBit (f) == 0; numberOfLeadingZeroes ++)
 		;
 	uint32 result = numberOfLeadingZeroes * (1u << mantissaLength);
 	for (uint32 i = 1; i <= mantissaLength; i ++)
-		if (bingetb1 (f) != 0)
+		if (readOneBit (f) != 0)
 			result += 1u << (mantissaLength - i);
 	return result;
 }
@@ -994,6 +1007,7 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 		After the first 111 of 255 we find 0 zeroes, follow by 1+3 ones,
 		which means 7. This whole number has been encoded as 111.1111.
 	*/
+	bitsInReadBuffer = 0;   // flush
 	const uint32 fileType = bingetu32_shortened_indirect (f);
 	trace (U"File type: ", fileType);
 	Melder_require (fileType == 7,
