@@ -895,7 +895,7 @@ static uint32 readBits_u32 (FILE *f, const integer numberOfBits) {
 }
 
 static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
-	//TRACE
+	TRACE
 	Melder_require (buffer.nrow == 1,
 		U"Can read Polyphone files only if they are mono. Write to paul.boersma@uva.nl for more information.");
 	trace (U"expecting ", buffer.ncol, U" samples");
@@ -905,12 +905,38 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 	const integer numberOfDataBytesInFile = endOfData - startOfData;
 	trace (numberOfDataBytesInFile, U" data bytes in file");
 	fseek (f, startOfData, SEEK_SET);
-	for (integer ibyte = 1; ibyte <= numberOfDataBytesInFile; ibyte ++) {
+	/*
+		The format of Shorten files is described in:
+		Tony Robinson (1994): "Shorten: sample lossless and near-lossless waveform compression",
+			Technical report CUED/F-INFENG/TR.156,
+			Cambridge University Engineering Department.
+
+		The first four bytes are lower-case letters, namelu "ajkg";
+		"aj" seem to be Tony Robinson's initials.
+	*/
+	uint32 letter = readBits_u32 (f, 8);
+	Melder_require (letter == 'a',
+		U"First letter of magic word “ajkg” is character ", letter, U" instead of “a”.");
+	letter = readBits_u32 (f, 8);
+	Melder_require (letter == 'j',
+		U"Second letter of magic word “ajkg” is character ", letter, U" instead of “j”.");
+	letter = readBits_u32 (f, 8);
+	Melder_require (letter == 'k',
+		U"Third letter of magic word “ajkg” is character ", letter, U" instead of “k”.");
+	letter = readBits_u32 (f, 8);
+	Melder_require (letter == 'g',
+		U"Fourth letter of magic word “ajkg” is character ", letter, U" instead of “g”.");
+	const uint32 version = readBits_u32 (f, 8);
+	Melder_require (version == 1,
+		U"Can read only Shorten version 1, not ", version, U".");
+	integer numberOfDataBytesLeft = numberOfDataBytesInFile - 5;
+	trace (numberOfDataBytesLeft, U" data bytes left in file");
+	for (integer ibyte = 1; ibyte <= numberOfDataBytesLeft; ibyte ++) {
 		uint32 byte = readBits_u32 (f, 8);
 		trace (U"byte ", ibyte, U" is ", byte);
-		// 97 106 107 103 1   255 114 224 19 50   214 203 0 73 2
-		// 97 106 107 103 1   255 114 224 19 50   214 200 3 73 36
-		// 97 106 107 103 1   255 114 224 19 50   214 221 136 63 4
+		// 255 114 224 19 50   214 203 0 73 2
+		// 255 114 224 19 50   214 200 3 73 36
+		// 255 114 224 19 50   214 221 136 63 4
 		// 255 = 0b11111111
 		// 114 = 0b01110010 = 0111~ carry 0010 = 7 = mulaw, but Alaw in the case of Polyphone
 		// 224 = 0b11100000 = 00101110~ 00~ 0~ carry 0 = 46~0~0
