@@ -1,6 +1,6 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2008,2010-2019,2021-2023 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2008,2010-2019,2021-2024 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -328,7 +328,7 @@ void LongSound_readAudioToFloat (LongSound me, const MAT buffer, const integer f
 		_LongSound_MP3_process (me, firstSample, buffer.ncol);
 	} else {
 		_LongSound_FILE_seekSample (me, firstSample);
-		Melder_readAudioToFloat (my f, my encoding, buffer);
+		Melder_readAudioToFloat (& my file, my encoding, buffer);
 	}
 }
 

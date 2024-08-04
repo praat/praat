@@ -348,7 +348,10 @@ static short alaw2linear [] = {
 };
 
 /*
-	The following table was created by the previous table as follows:
+	The Shorten encoding employs Alaw, but because they use prediction,
+	they have to use *sorted* Alaw, so we provide the table here.
+
+	The table was created from the previous table as follows:
 	1. Copy all lines between the braces to a file `alawValues.txt`.
 	2. Remove all commas (with Replace in BBEdit).
 	3. Run the following script:
@@ -707,13 +710,21 @@ static int nistGetValue (const char *header, const char *object, double *rval, c
 static void Melder_checkNistFile (FILE *f, integer *numberOfChannels, int *encoding,
 	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
-	char header [1024], sval [100];
+	char header [2048+1], sval [100];
  	double rval = 0.0;
 	int numberOfBytesPerSamplePoint;
 	if (fread (header, 1, 1024, f) != 1024)
 		Melder_throw (U"Cannot read NISTheader.");
 	if (! strnequ (header, "NIST_1A", 7))
 		Melder_throw (U"Not a NIST sound file.");
+	if (strnequ (header + 7, "\n   1024", 8)) {
+		header [1024] = '\0';
+	} else if (strnequ (header + 7, "\n   2048", 8)) {
+		if (fread (header + 1024, 1, 1024, f) != 1024)
+			Melder_throw (U"Cannot read longer NISTheader.");
+		header [2048] = '\0';
+	} else
+		Melder_throw (U"Incomplete or too long NISTheader.");
 	*startOfData = atol (header + 9);
 	if (! nistGetValue (header, "sample_count", & rval, sval) || rval < 1.0)
 		Melder_throw (U"Incorrect number of samples in NIST file.");
@@ -1218,7 +1229,8 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 	//Melder_throw (U"Polyphone sound files cannot yet be opened. Write to paul.boersma@uva.nl for more information.");
 }
 
-void Melder_readAudioToFloat (FILE *f, int encoding, MAT buffer) {
+void Melder_readAudioToFloat (MelderFile file, int encoding, MAT buffer) {
+	FILE *f = file -> filePointer;
 	try {
 		integer numberOfChannels = buffer.nrow;
 		integer numberOfSamples = buffer.ncol;
@@ -1576,7 +1588,7 @@ void Melder_readAudioToFloat (FILE *f, int encoding, MAT buffer) {
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning (U"File too small (", numberOfChannels, U"-channel 8-bit " "-law).\nMissing samples set to zero.");
+					Melder_warning (U"File ", MelderFile_messageName (file), U" too small (", numberOfChannels, U"-channel 8-bit " "-law).\nMissing samples set to zero.");
 				}
 				break;
 			case Melder_ALAW:
@@ -1588,7 +1600,7 @@ void Melder_readAudioToFloat (FILE *f, int encoding, MAT buffer) {
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning (U"File too small (", numberOfChannels, U"-channel 8-bit A-law).\nMissing samples set to zero.");
+					Melder_warning (U"File ", MelderFile_messageName (file), U" too small (", numberOfChannels, U"-channel 8-bit A-law).\nMissing samples set to zero.");
 				}
 				break;
 			case Melder_FLAC_COMPRESSION_16:
