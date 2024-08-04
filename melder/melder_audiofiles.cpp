@@ -346,6 +346,29 @@ static short alaw2linear [] = {
      688,    656,    752,    720,    560,    528,    624,    592,
      944,    912,   1008,    976,    816,    784,    880,    848
 };
+
+/*
+	The following table was created by the previous table as follows:
+	1. Copy all lines between the braces to a file `alawValues.txt`.
+	2. Remove all commas (with Replace in BBEdit).
+	3. Run the following script:
+	{
+		matrix = Read Matrix from raw text file: "alawValues.txt"
+		matrix## = Get all values
+		vector# = sort#: combine# (matrix##)
+		writeInfo: ""
+		for i to 256
+			if i mod 8 = 1
+				appendInfo: newline$, "  "
+			else
+				appendInfo: " "
+			endif
+			value$ = string$ (vector# [i])
+			spaces$ = left$ ("         ", 6 - length (value$))
+			appendInfo: spaces$, value$, ","
+		endfor
+	}
+*/
 static short sortedAlawValues [] = {
   -32256, -31232, -30208, -29184, -28160, -27136, -26112, -25088,
   -24064, -23040, -22016, -20992, -19968, -18944, -17920, -16896,
@@ -956,7 +979,7 @@ static int32 bingeti32_shortened_direct (FILE *f, const uint32 mantissaLength) {
 }
 
 static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
-	TRACE
+	//TRACE
 	Melder_require (buffer.nrow == 1,
 		U"Can read Polyphone files only if they are mono. Write to paul.boersma@uva.nl for more information.");
 	trace (U"expecting ", buffer.ncol, U" samples");
@@ -1151,25 +1174,24 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 			uint32 mantissaLength = bingetu32_shortened_direct (f, 3);
 			trace (U"diff", command, U" length ", mantissaLength);
 			if (command == COMMAND_DIFF0)
-				for (uint32 i = 1; i <= blockSize; i ++)
+				for (uint32 i = 4; i <= blockSize + 3; i ++)
 					sampleBuffer [i] = bingeti32_shortened_direct (f, mantissaLength);   // Robinson (1994), eq. 3
 			else if (command == COMMAND_DIFF1)
-				for (uint32 i = 1; i <= blockSize; i ++)
-					sampleBuffer [i + 1] = bingeti32_shortened_direct (f, mantissaLength)
-							+ sampleBuffer [i];   // Robinson (1994), eq. 4
+				for (uint32 i = 4; i <= blockSize + 3; i ++)
+					sampleBuffer [i] = bingeti32_shortened_direct (f, mantissaLength)
+							+ sampleBuffer [i - 1];   // Robinson (1994), eq. 4
 			else if (command == COMMAND_DIFF2)
-				for (uint32 i = 1; i <= blockSize; i ++)
-					sampleBuffer [i + 2] = bingeti32_shortened_direct (f, mantissaLength)
-							+ (2 * sampleBuffer [i + 1] - sampleBuffer [i]);   // Robinson (1994), eq. 5
+				for (uint32 i = 4; i <= blockSize + 3; i ++)
+					sampleBuffer [i] = bingeti32_shortened_direct (f, mantissaLength)
+							+ 2 * sampleBuffer [i - 1] - sampleBuffer [i - 2];   // Robinson (1994), eq. 5
 			else if (command == COMMAND_DIFF3)
-				for (uint32 i = 1; i <= blockSize; i ++)
-					sampleBuffer [i + 3] = bingeti32_shortened_direct (f, mantissaLength)
-							+ 3 * (sampleBuffer [i + 2] - sampleBuffer [i + 1]) + sampleBuffer [i];   // Robinson (1994), eq. 6
+				for (uint32 i = 4; i <= blockSize + 3; i ++)
+					sampleBuffer [i] = bingeti32_shortened_direct (f, mantissaLength)
+							+ 3 * (sampleBuffer [i - 1] - sampleBuffer [i - 2]) + sampleBuffer [i - 3];   // Robinson (1994), eq. 6
 			for (uint32 i = 1; i <= 3; i ++)
 				sampleBuffer [i] = sampleBuffer [blockSize + i];   // move them here, waiting for the next block
-			for (uint32 i = 1; i <= blockSize; i ++) {
+			for (uint32 i = 4; i <= blockSize + 3; i ++) {
 				int32 value = sampleBuffer [i];
-				Melder_clip (-128, & value, +127);
 				Melder_require (value >= -128,
 					U"Sample value is ", value, U" but should be at least -128.");
 				Melder_require (value <= +127,
@@ -1185,6 +1207,7 @@ static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
 			const uint32 newBlockSize = bingetu32_shortened_indirect (f);
 			Melder_require (newBlockSize <= blockSize,
 				U"Cannot grow block size from ", blockSize, U" to ", newBlockSize, U".");
+			trace (newBlockSize);
 			blockSize = newBlockSize;
 		} else {
 			Melder_throw (U"Unknown command ", command);
