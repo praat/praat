@@ -74,15 +74,18 @@ autoSound Sound_readFromSoundFile (MelderFile file) {
 		int fileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate, & startOfData, & numberOfSamples);
 		if (fileType == 0)
 			Melder_throw (U"Not an audio file.");
-		if (fseek (file -> filePointer, startOfData, SEEK_SET) == EOF)   // start from beginning of Data Chunk
+		try {
+			MelderFile_seek (file, startOfData, SEEK_SET);   // start from beginning of Data Chunk
+		} catch (MelderError) {
 			Melder_throw (U"No data in audio file.");
+		}
 		if (numberOfSamples < 1)
 			Melder_throw (U"Audio file contains 0 samples.");
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / sampleRate, sampleRate);
 		Melder_assert (my z.ncol == numberOfSamples);
 		if (encoding == Melder_SHORTEN)
 			Melder_throw (U"Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
-		Melder_readAudioToFloat (file -> filePointer, encoding, my z.get());
+		Melder_readAudioToFloat (file, encoding, my z.get());
 		mfile.close ();
 		return me;
 	} catch (MelderError) {
@@ -397,14 +400,14 @@ autoDaata Sound_readFromAnyKayFile (MelderFile file) {
 autoSound Sound_readFromRawAlawFile (MelderFile file) {
 	try {
 		double sampleRate = 8000.0;
-		autofile f = Melder_fopen (file, "rb");
-		fseek (f, 0, SEEK_END);
-		integer numberOfSamples = ftell (f);
-		rewind (f);
-		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); 
+		autoMelderFile mfile = MelderFile_open (file);
+		MelderFile_seek (file, 0, SEEK_END);
+		integer numberOfSamples = MelderFile_tell (file);
+		MelderFile_rewind (file);
+		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);
 		Melder_assert (my z.ncol == numberOfSamples);
-		Melder_readAudioToFloat (f, Melder_ALAW, my z.get());
-		f.close (file);
+		Melder_readAudioToFloat (file, Melder_ALAW, my z.get());
+		mfile.close ();
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from raw A-law file ", file, U".");
