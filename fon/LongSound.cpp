@@ -339,7 +339,7 @@ void LongSound_readAudioToShort (LongSound me, int16 *buffer, const integer firs
 		_LongSound_MP3_readAudioToShort (me, buffer, firstSample, numberOfSamples);
 	} else {
 		_LongSound_FILE_seekSample (me, firstSample);
-		Melder_readAudioToShort (my f, my numberOfChannels, my encoding, buffer, numberOfSamples);
+		Melder_readAudioToShort (& my file, my numberOfChannels, my encoding, buffer, numberOfSamples);
 	}
 }
 
