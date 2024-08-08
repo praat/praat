@@ -29,6 +29,11 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.17# (8 August 2024)
+• Spectrogram: #Paint: solved a bug that could cause Praat to crash if the time domain was smaller than that of the Spectrogram.
+• ScriptEditor: ##Run selection# can call procedures outside the selected text.
+• Audio files: can open Polyphone (Shorten) files.
+
 ##6.4.16# (29 July 2024)
 • Windows: make command-line output visible (new on ARM64, was lost in 6.4.14 for Intel64 and Intel32).
 
