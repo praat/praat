@@ -71,7 +71,6 @@ void Spectrogram_paintInside (const constSpectrogram me, const Graphics g,
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	autoVEC dynamicFactors = zero_VEC (nt);
 	autoMAT part = part_MAT (my z.get(), ifmin, ifmax, itmin, itmax);
-	const integer itshift = itmin - 1;
 	const integer ifshift = ifmin - 1;
 	/*
 		Pre-emphasis in place; also compute maximum after pre-emphasis.
@@ -131,10 +130,10 @@ void Spectrogram_paintInside (const constSpectrogram me, const Graphics g,
 			part [ifreq] [itime] += dynamicFactors [itime];
 	}
 	Graphics_image (g, part.all(),
-		Matrix_columnToX (me, itmin + itshift - 0.5),
-		Matrix_columnToX (me, itmax + itshift + 0.5),
-		Matrix_rowToY (me, ifmin + ifshift - 0.5),
-		Matrix_rowToY (me, ifmax + ifshift + 0.5),
+		Matrix_columnToX (me, itmin - 0.5),
+		Matrix_columnToX (me, itmax + 0.5),
+		Matrix_rowToY (me, ifmin - 0.5),
+		Matrix_rowToY (me, ifmax + 0.5),
 		maximum - dynamic, maximum
 	);
 }
