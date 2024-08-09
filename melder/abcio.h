@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2011,2015,2017-2020,2022 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,11 +83,11 @@ void texputw32     (MelderFile file, conststring32 s,                       texp
 	The 42 routines are analogous to fgetc and fputc, who read or write one character:
 		int fgetc (FILE *f);   int fputc (int c, FILE *f);   // 0..255
 */
-unsigned int bingetu8 (FILE *f);   void binputu8 (unsigned int i, FILE *f);   // 0..255
+uint32 bingetu8 (FILE *f);   void binputu8 (uint32 i, FILE *f);   // 0..255
 uint16 bingetu16 (FILE *f);   void binputu16 (uint16 i, FILE *f);   // 0..65535
 uint32 bingetu32 (FILE *f);   void binputu32 (uint32 i, FILE *f);   // 0..4294967295
 
-int bingeti8 (FILE *f);   void binputi8 (int i, FILE *f);   /* -128..127 */
+int32 bingeti8 (FILE *f);   void binputi8 (int32 i, FILE *f);   /* -128..127 */
 int16 bingeti16 (FILE *f);   void binputi16 (int16 i, FILE *f);   // -32768..32767
 int32 bingeti24 (FILE *f);   void binputi24 (int32 i, FILE *f);   // -8388608..8388607
 int32 bingeti32 (FILE *f);   void binputi32 (int32 i, FILE *f);   // -2147483648..2147483647
@@ -108,30 +108,6 @@ uint32 bingetu32LE (FILE *f);   void binputu32LE (uint32 i, FILE *f);   // 0..42
 	Read or write signed or unsigned integers from or to 2 or 4 bytes in the stream 'f',
 	in little-endian byte order (least significant byte first).
 	This is the native integer format on Vax and IBM PC.
-*/
-
-unsigned int bingetb1 (FILE *f);   void binputb1 (unsigned int value, FILE *f);   // 0..1
-unsigned int bingetb2 (FILE *f);   void binputb2 (unsigned int value, FILE *f);   // 0..3
-unsigned int bingetb3 (FILE *f);   void binputb3 (unsigned int value, FILE *f);   // 0..7
-unsigned int bingetb4 (FILE *f);   void binputb4 (unsigned int value, FILE *f);   // 0..15
-unsigned int bingetb5 (FILE *f);   void binputb5 (unsigned int value, FILE *f);   // 0..31
-unsigned int bingetb6 (FILE *f);   void binputb6 (unsigned int value, FILE *f);   // 0..63
-unsigned int bingetb7 (FILE *f);   void binputb7 (unsigned int value, FILE *f);   // 0..127
-void bingetb (FILE *f);   void binputb (FILE *f);
-/*
-	Read or write an unsigned integer from or to a number of bits in the stream 'f'.
-	After an uninterrupted sequence of bingetbxxx or binputbxxx, call bingetb or binputb.
-	Not reentrant: uses a static one-byte buffer. Do not call from interrupt routines.
-	Example 1:
-		int hasTitle = bingetb1 (f);   // one bit
-		int category = bingetb3 (f);   // a number in the range 0..7
-		int sense = bingetb2 (f);   // a number in the range 0..3
-		bingetb (f);
-	Example 2:
-		binputb1 (hasTitle, f);   // one bit
-		binputb3 (category, f);   // a number in the range 0..7
-		binputb2 (sense, f);   // a number in the range 0..3
-		binputb (f);
 */
 
 int bingete8 (FILE *f, int min, int max, conststring32 type);
