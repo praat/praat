@@ -742,37 +742,41 @@ static void writeError (conststring32 text) {
 	Melder_throw (U"Error in file while trying to write ", text);
 }
 
-unsigned int bingetu8 (FILE *f) {
+uint32 bingetu8 (FILE *f) {
 	try {
-		int externalValue = getc (f);   // either -1 (EOF) or in the range 0..255
-		if (externalValue < 0) readError (f, U"a byte.");
-		return (unsigned int) externalValue;
+		int32 externalValue = getc (f);   // either -1 (EOF) or in the range 0..255
+		if (externalValue < 0)
+			readError (f, U"a byte.");
+		return (uint32) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned integer not read from 1 byte in binary file.");
 	}
 }
 
-void binputu8 (unsigned int u, FILE *f) {
+void binputu8 (uint32 u, FILE *f) {
 	try {
-		if (putc ((int) u, f) < 0) writeError (U"a byte.");
+		if (putc ((int32) u, f) < 0)
+			writeError (U"a byte.");
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned integer not written to 1 byte in binary file.");
 	}
 }
 
-int bingeti8 (FILE *f) {
+int32 bingeti8 (FILE *f) {
 	try {
-		int externalValue = getc (f);
-		if (externalValue < 0) readError (f, U"a byte.");
+		int32 externalValue = getc (f);
+		if (externalValue < 0)
+			readError (f, U"a byte.");
 		return (signed char) externalValue;   // this converts e.g. 200 to -56
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not read from 1 byte in binary file.");
 	}
 }
 
-void binputi8 (int u, FILE *f) {
+void binputi8 (int32 u, FILE *f) {
 	try {
-		if (putc (u, f) < 0) writeError (U"a byte.");
+		if (putc (u, f) < 0)
+			writeError (U"a byte.");
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 1 byte in binary file.");
 	}
@@ -780,8 +784,9 @@ void binputi8 (int u, FILE *f) {
 
 bool bingetbool8 (FILE *f) {
 	try {
-		int externalValue = getc (f);
-		if (externalValue < 0) readError (f, U"a byte.");
+		int32 externalValue = getc (f);
+		if (externalValue < 0)
+			readError (f, U"a byte.");
 		return (bool) externalValue;   // this converts e.g. 200 to true
 	} catch (MelderError) {
 		Melder_throw (U"Boolean not read from 1 byte in binary file.");
@@ -790,17 +795,19 @@ bool bingetbool8 (FILE *f) {
 
 void binputbool8 (bool value, FILE *f) {
 	try {
-		if (putc (value, f) < 0) writeError (U"a byte.");
+		if (putc (value, f) < 0)
+			writeError (U"a byte.");
 	} catch (MelderError) {
 		Melder_throw (U"Boolean not written to 1 byte in binary file.");
 	}
 }
 
-int bingete8 (FILE *f, int min, int max, conststring32 type) {
+int32 bingete8 (FILE *f, int min, int max, conststring32 type) {
 	try {
-		int externalValue = getc (f);
-		if (externalValue < 0) readError (f, U"a byte.");
-		int result = (signed char) externalValue;   // this converts e.g. 200 to -56, so the enumerated type is signed
+		int32 externalValue = getc (f);
+		if (externalValue < 0)
+			readError (f, U"a byte.");
+		int32 result = (signed char) externalValue;   // this converts e.g. 200 to -56, so the enumerated type is signed
 		if (result < min || result > max)
 			Melder_throw (result, U" is not a value of enumerated type <", type, U">.");
 		return result;
@@ -809,38 +816,14 @@ int bingete8 (FILE *f, int min, int max, conststring32 type) {
 	}
 }
 
-void binpute8 (int value, FILE *f) {
+void binpute8 (int32 value, FILE *f) {
 	try {
-		if (putc (value, f) < 0) writeError (U"a byte.");
+		if (putc (value, f) < 0)
+			writeError (U"a byte.");
 	} catch (MelderError) {
 		Melder_throw (U"Enumerated type not written to 1 byte in binary file.");
 	}
 }
-
-static int bitsInReadBuffer = 0;
-static unsigned char readBuffer;
-
-#define macro_bingetb(nbits) \
-unsigned int bingetb##nbits (FILE *f) { \
-	if (bitsInReadBuffer < nbits) { \
-		int externalValue = fgetc (f); \
-		if (externalValue < 0) readError (f, U"a bit."); \
-		readBuffer = (unsigned char) externalValue; \
-		bitsInReadBuffer = 8; \
-	} \
-	unsigned char result = (unsigned char) ((uint32) readBuffer << (8 - bitsInReadBuffer)); \
-	bitsInReadBuffer -= nbits; \
-	return result >> (8 - nbits); \
-}
-macro_bingetb (1)
-macro_bingetb (2)
-macro_bingetb (3)
-macro_bingetb (4)
-macro_bingetb (5)
-macro_bingetb (6)
-macro_bingetb (7)
-
-void bingetb (FILE *f) { (void) f; bitsInReadBuffer = 0; }
 
 int16 bingeti16 (FILE *f) {
 	try {
@@ -932,7 +915,7 @@ uint16 bingetu16LE (FILE *f) {
 	}
 }
 
-int bingete16 (FILE *f, int min, int max, conststring32 type) {
+int32 bingete16 (FILE *f, int min, int max, conststring32 type) {
 	try {
 		int16 result;
 		if (binario_16bitBE && ! (Melder_debug == 18)) {
@@ -947,7 +930,7 @@ int bingete16 (FILE *f, int min, int max, conststring32 type) {
 		}
 		if (result < min || result > max)
 			Melder_throw (result, U" is not a value of enumerated type \"", type, U"\".");
-		return (int) result;
+		return (int32) result;
 	} catch (MelderError) {
 		Melder_throw (U"Enumerated value not read from 2 bytes in binary file.");
 	}
@@ -1254,42 +1237,17 @@ double bingetr80 (FILE *f) {
 	}
 }
 
-static int bitsInWriteBuffer = 0;
-static unsigned char writeBuffer = 0;
-
-#define macro_binputb(nbits) \
-void binputb##nbits (unsigned int value, FILE *f) { \
-	if (bitsInWriteBuffer + nbits > 8) { \
-		if (fputc (writeBuffer, f) < 0) writeError (U"a bit."); \
-		bitsInWriteBuffer = 0; \
-		writeBuffer = 0; \
-	} \
-	writeBuffer |= (value << (8 - nbits)) >> bitsInWriteBuffer; \
-	bitsInWriteBuffer += nbits; \
-}
-macro_binputb (1)
-macro_binputb (2)
-macro_binputb (3)
-macro_binputb (4)
-macro_binputb (5)
-macro_binputb (6)
-macro_binputb (7)
-void binputb (FILE *f) {
-	if (bitsInWriteBuffer == 0) return;
-	if (fputc (writeBuffer, f) < 0) writeError (U"a bit.");   // flush
-	bitsInWriteBuffer = 0;
-	writeBuffer = 0;
-}
-
 void binputi16 (int16 i, FILE *f) {
 	try {
 		if (binario_16bitBE && ! (Melder_debug == 18)) {
-			if (fwrite (& i, sizeof (short), 1, f) != 1) writeError (U"a signed 16-bit integer.");
+			if (fwrite (& i, sizeof (short), 1, f) != 1)
+				writeError (U"a signed 16-bit integer.");
 		} else {
 			uint8 bytes [2];
 			bytes [0] = (uint8) (i >> 8);   // truncate
 			bytes [1] = (uint8) i;   // truncate
-			if (fwrite (bytes, sizeof (uint8), 2, f) != 2) writeError (U"two bytes.");
+			if (fwrite (bytes, sizeof (uint8), 2, f) != 2)
+				writeError (U"two bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 2 bytes in binary file.");
@@ -1299,12 +1257,14 @@ void binputi16 (int16 i, FILE *f) {
 void binputi16LE (int16 i, FILE *f) {
 	try {
 		if (binario_16bitLE && ! (Melder_debug == 18)) {
-			if (fwrite (& i, sizeof (short), 1, f) != 1) writeError (U"a signed 16-bit integer.");
+			if (fwrite (& i, sizeof (short), 1, f) != 1)
+				writeError (U"a signed 16-bit integer.");
 		} else {
 			uint8 bytes [2];
 			bytes [1] = (uint8) (i >> 8);   // truncate
 			bytes [0] = (uint8) i;   // truncate
-			if (fwrite (bytes, sizeof (uint8), 2, f) != 2) writeError (U"two bytes.");
+			if (fwrite (bytes, sizeof (uint8), 2, f) != 2)
+				writeError (U"two bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 2 bytes in binary file.");
@@ -1318,7 +1278,8 @@ void binputinteger16BE (integer i, FILE *f) {
 		uint8 bytes [2];
 		bytes [0] = (uint8) (i >> 8);   // truncate
 		bytes [1] = (uint8) i;   // truncate
-		if (fwrite (bytes, sizeof (uint8), 2, f) != 2) writeError (U"two bytes.");
+		if (fwrite (bytes, sizeof (uint8), 2, f) != 2)
+			writeError (U"two bytes.");
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 2 bytes in binary file.");
 	}
@@ -1327,12 +1288,14 @@ void binputinteger16BE (integer i, FILE *f) {
 void binputu16 (uint16 u, FILE *f) {
 	try {
 		if (binario_16bitBE && ! (Melder_debug == 18)) {
-			if (fwrite (& u, sizeof (uint16), 1, f) != 1) writeError (U"an unsigned 16-bit integer.");
+			if (fwrite (& u, sizeof (uint16), 1, f) != 1)
+				writeError (U"an unsigned 16-bit integer.");
 		} else {
 			uint8 bytes [2];
 			bytes [0] = (uint8) (u >> 8);   // truncate
 			bytes [1] = (uint8) u;   // truncate
-			if (fwrite (bytes, sizeof (uint8), 2, f) != 2) writeError (U"two bytes.");
+			if (fwrite (bytes, sizeof (uint8), 2, f) != 2)
+				writeError (U"two bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned integer not written to 2 bytes in binary file.");
@@ -1342,28 +1305,32 @@ void binputu16 (uint16 u, FILE *f) {
 void binputu16LE (uint16 u, FILE *f) {
 	try {
 		if (binario_16bitLE && ! (Melder_debug == 18)) {
-			if (fwrite (& u, sizeof (uint16), 1, f) != 1) writeError (U"an unsigned 16-bit integer.");
+			if (fwrite (& u, sizeof (uint16), 1, f) != 1)
+				writeError (U"an unsigned 16-bit integer.");
 		} else {
 			uint8 bytes [2];
 			bytes [1] = (uint8) (u >> 8);   // truncate
 			bytes [0] = (uint8) u;   // truncate
-			if (fwrite (bytes, sizeof (uint8), 2, f) != 2) writeError (U"two bytes.");
+			if (fwrite (bytes, sizeof (uint8), 2, f) != 2)
+				writeError (U"two bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned integer not written to 2 bytes in binary file.");
 	}
 }
 
-void binpute16 (int value, FILE *f) {
+void binpute16 (int32 value, FILE *f) {
 	try {
 		if (binario_16bitBE && ! (Melder_debug == 18)) {
 			short s = value;
-			if (fwrite (& s, sizeof (short), 1, f) != 1) writeError (U"a signed 16-bit integer");
+			if (fwrite (& s, sizeof (short), 1, f) != 1)
+				writeError (U"a signed 16-bit integer");
 		} else {
 			uint8 bytes [2];
 			bytes [0] = (uint8) (value >> 8);   // truncate
 			bytes [1] = (uint8) value;   // truncate
-			if (fwrite (bytes, sizeof (uint8), 2, f) != 2) writeError (U"two bytes.");
+			if (fwrite (bytes, sizeof (uint8), 2, f) != 2)
+				writeError (U"two bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Enumerated value not written to 2 bytes in binary file.");
@@ -1376,7 +1343,8 @@ void binputi24 (int32 i, FILE *f) {
 		bytes [0] = (uint8) (i >> 16);   // truncate
 		bytes [1] = (uint8) (i >> 8);   // truncate
 		bytes [2] = (uint8) i;   // truncate
-		if (fwrite (bytes, sizeof (uint8), 3, f) != 3) writeError (U"three bytes");
+		if (fwrite (bytes, sizeof (uint8), 3, f) != 3)
+			writeError (U"three bytes");
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 3 bytes in binary file.");
 	}
@@ -1388,7 +1356,8 @@ void binputi24LE (int32 i, FILE *f) {
 		bytes [2] = (uint8) (i >> 16);   // truncate
 		bytes [1] = (uint8) (i >> 8);   // truncate
 		bytes [0] = (uint8) i;   // truncate
-		if (fwrite (bytes, sizeof (uint8), 3, f) != 3) writeError (U"three bytes");
+		if (fwrite (bytes, sizeof (uint8), 3, f) != 3)
+			writeError (U"three bytes");
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 3 bytes in binary file.");
 	}
@@ -1397,14 +1366,16 @@ void binputi24LE (int32 i, FILE *f) {
 void binputi32 (int32 i, FILE *f) {
 	try {
 		if (binario_32bitBE && ! (Melder_debug == 18)) {
-			if (fwrite (& i, sizeof (int32), 1, f) != 1) writeError (U"a signed 32-bit integer.");
+			if (fwrite (& i, sizeof (int32), 1, f) != 1)
+				writeError (U"a signed 32-bit integer.");
 		} else {
 			uint8 bytes [4];
 			bytes [0] = (uint8) (i >> 24);   // truncate
 			bytes [1] = (uint8) (i >> 16);   // truncate
 			bytes [2] = (uint8) (i >> 8);   // truncate
 			bytes [3] = (uint8) i;   // truncate
-			if (fwrite (bytes, sizeof (uint8), 4, f) != 4) writeError (U"four bytes.");
+			if (fwrite (bytes, sizeof (uint8), 4, f) != 4)
+				writeError (U"four bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 4 bytes in binary file.");
@@ -1414,14 +1385,16 @@ void binputi32 (int32 i, FILE *f) {
 void binputi32LE (int32 i, FILE *f) {
 	try {
 		if (binario_32bitLE && ! (Melder_debug == 18)) {
-			if (fwrite (& i, sizeof (int32), 1, f) != 1) writeError (U"a signed 32-bit integer.");
+			if (fwrite (& i, sizeof (int32), 1, f) != 1)
+				writeError (U"a signed 32-bit integer.");
 		} else {
 			uint8 bytes [4];
 			bytes [3] = (uint8) (i >> 24);   // truncate
 			bytes [2] = (uint8) (i >> 16);   // truncate
 			bytes [1] = (uint8) (i >> 8);   // truncate
 			bytes [0] = (uint8) i;   // truncate
-			if (fwrite (bytes, sizeof (uint8), 4, f) != 4) writeError (U"four bytes.");
+			if (fwrite (bytes, sizeof (uint8), 4, f) != 4)
+				writeError (U"four bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 4 bytes in binary file.");
@@ -1446,14 +1419,16 @@ void binputinteger32BE (integer i, FILE *f) {
 void binputu32 (uint32 u, FILE *f) {
 	try {
 		if (binario_32bitBE && ! (Melder_debug == 18)) {
-			if (fwrite (& u, sizeof (uint32), 1, f) != 1) writeError (U"an unsigned 32-bit integer.");
+			if (fwrite (& u, sizeof (uint32), 1, f) != 1)
+				writeError (U"an unsigned 32-bit integer.");
 		} else {
 			uint8 bytes [4];
 			bytes [0] = (uint8) (u >> 24);   // truncate
 			bytes [1] = (uint8) (u >> 16);   // truncate
 			bytes [2] = (uint8) (u >> 8);   // truncate
 			bytes [3] = (uint8) u;   // truncate
-			if (fwrite (bytes, sizeof (uint8), 4, f) != 4) writeError (U"four bytes.");
+			if (fwrite (bytes, sizeof (uint8), 4, f) != 4)
+				writeError (U"four bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned integer not written to 4 bytes in binary file.");
@@ -1463,14 +1438,16 @@ void binputu32 (uint32 u, FILE *f) {
 void binputu32LE (uint32 u, FILE *f) {
 	try {
 		if (binario_32bitLE && ! (Melder_debug == 18)) {
-			if (fwrite (& u, sizeof (uint32), 1, f) != 1) writeError (U"an unsigned 32-bit integer.");
+			if (fwrite (& u, sizeof (uint32), 1, f) != 1)
+				writeError (U"an unsigned 32-bit integer.");
 		} else {
 			uint8 bytes [4];
 			bytes [3] = (uint8) (u >> 24);   // truncate
 			bytes [2] = (uint8) (u >> 16);  // truncate
 			bytes [1] = (uint8) (u >> 8);  // truncate
 			bytes [0] = (uint8) u;  // truncate
-			if (fwrite (bytes, sizeof (uint8), 4, f) != 4) writeError (U"four bytes.");
+			if (fwrite (bytes, sizeof (uint8), 4, f) != 4)
+				writeError (U"four bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned integer not written to 4 bytes in binary file.");
@@ -1481,16 +1458,22 @@ void binputr32 (double x, FILE *f) {
 	try {
 		if (binario_floatIEEE4msb && ! (Melder_debug == 18)) {
 			float x32 = (float) x;   // convert down, with loss of precision
-			if (fwrite (& x32, sizeof (float), 1, f) != 1) writeError (U"a 32-bit floating-point number.");
+			if (fwrite (& x32, sizeof (float), 1, f) != 1)
+				writeError (U"a 32-bit floating-point number.");
 		} else {
 			uint8 bytes [4];
 			int sign, exponent;
 			double fMantissa, fsMantissa;
 			uint32 mantissa;
-			if (x < 0.0) { sign = 0x0100; x *= -1.0; }
-			else sign = 0;
-			if (x == 0.0) { exponent = 0; mantissa = 0; }
-			else {
+			if (x < 0.0) {
+				sign = 0x0100;
+				x *= -1.0;
+			} else
+				sign = 0;
+			if (x == 0.0) {
+				exponent = 0;
+				mantissa = 0;
+			} else {
 				fMantissa = frexp (x, & exponent);
 				if ((exponent > 128) || ! (fMantissa < 1.0))   // Infinity or Not-a-Number
 					{ exponent = sign | 0x00FF; mantissa = 0; }   // Infinity
@@ -1510,7 +1493,8 @@ void binputr32 (double x, FILE *f) {
 			bytes [1] = (uint8) ((exponent << 7) | (mantissa >> 16));   // truncate
 			bytes [2] = (uint8) (mantissa >> 8);   // truncate
 			bytes [3] = (uint8) mantissa;   // truncate
-			if (fwrite (bytes, sizeof (uint8), 4, f) != 4) writeError (U"four bytes.");
+			if (fwrite (bytes, sizeof (uint8), 4, f) != 4)
+				writeError (U"four bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Floating-point number not written to 4 bytes in binary file.");
@@ -1521,16 +1505,22 @@ void binputr32LE (double x, FILE *f) {
 	try {
 		if (binario_floatIEEE4lsb && ! (Melder_debug == 18)) {
 			float x32 = (float) x;   // convert down, with loss of precision
-			if (fwrite (& x32, sizeof (float), 1, f) != 1) writeError (U"a 32-bit floating-point number.");
+			if (fwrite (& x32, sizeof (float), 1, f) != 1)
+				writeError (U"a 32-bit floating-point number.");
 		} else {
 			uint8 bytes [4];
 			int sign, exponent;
 			double fMantissa, fsMantissa;
 			uint32 mantissa;
-			if (x < 0.0) { sign = 0x0100; x *= -1.0; }
-			else sign = 0;
-			if (x == 0.0) { exponent = 0; mantissa = 0; }
-			else {
+			if (x < 0.0) {
+				sign = 0x0100;
+				x *= -1.0;
+			} else
+				sign = 0;
+			if (x == 0.0) {
+				exponent = 0;
+				mantissa = 0;
+			} else {
 				fMantissa = frexp (x, & exponent);
 				if ((exponent > 128) || ! (fMantissa < 1.0))   // Infinity or Not-a-Number
 					{ exponent = sign | 0x00FF; mantissa = 0; }   // Infinity
@@ -1550,7 +1540,8 @@ void binputr32LE (double x, FILE *f) {
 			bytes [2] = (uint8) ((exponent << 7) | (mantissa >> 16));
 			bytes [1] = (uint8) (mantissa >> 8);
 			bytes [0] = (uint8) mantissa;
-			if (fwrite (bytes, sizeof (uint8), 4, f) != 4) writeError (U"four bytes.");
+			if (fwrite (bytes, sizeof (uint8), 4, f) != 4)
+				writeError (U"four bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Floating-point number not written to 4 bytes in binary file.");
@@ -1560,7 +1551,8 @@ void binputr32LE (double x, FILE *f) {
 void binputr64 (double x, FILE *f) {
 	try {
 		if (binario_doubleIEEE8msb && ! (Melder_debug == 18) || Melder_debug == 181) {
-			if (fwrite (& x, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
+			if (fwrite (& x, sizeof (double), 1, f) != 1)
+				writeError (U"a 64-bit floating-point number.");
 		} else if (binario_doubleIEEE8lsb && ! (Melder_debug == 18)) {
 			union { double xx; uint8 bytes [8]; };
 			xx = x;
@@ -1568,16 +1560,23 @@ void binputr64 (double x, FILE *f) {
 			std::swap (bytes [1], bytes [6]);
 			std::swap (bytes [2], bytes [5]);
 			std::swap (bytes [3], bytes [4]);
-			if (fwrite (& xx, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
+			if (fwrite (& xx, sizeof (double), 1, f) != 1)
+				writeError (U"a 64-bit floating-point number.");
 		} else {
 			uint8 bytes [8];
 			int sign, exponent;
 			double fMantissa, fsMantissa;
 			uint32 highMantissa, lowMantissa;
-			if (x < 0.0) { sign = 0x0800; x *= -1.0; }
-			else sign = 0;
-			if (x == 0.0) { exponent = 0; highMantissa = 0; lowMantissa = 0; }
-			else {
+			if (x < 0.0) {
+				sign = 0x0800;
+				x *= -1.0;
+			} else
+				sign = 0;
+			if (x == 0.0) {
+				exponent = 0;
+				highMantissa = 0;
+				lowMantissa = 0;
+			} else {
 				fMantissa = frexp (x, & exponent);
 				if (/*(exponent > 1024) ||*/ ! (fMantissa < 1.0))   // Infinity or Not-a-Number
 					{ exponent = sign | 0x07FF; highMantissa = 0; lowMantissa = 0; }   // Infinity
@@ -1588,7 +1587,7 @@ void binputr64 (double x, FILE *f) {
 						exponent = 0;
 					}
 					exponent |= sign;
-					fMantissa = ldexp (fMantissa, 21);          
+					fMantissa = ldexp (fMantissa, 21);
 					fsMantissa = floor (fMantissa);
 					highMantissa = (uint32) fsMantissa & 0x000F'FFFF;
 					fMantissa = ldexp (fMantissa - fsMantissa, 32); 
@@ -1604,7 +1603,8 @@ void binputr64 (double x, FILE *f) {
 			bytes [5] = (uint8) (lowMantissa >> 16);
 			bytes [6] = (uint8) (lowMantissa >> 8);
 			bytes [7] = (uint8) lowMantissa;
-			if (fwrite (bytes, sizeof (uint8), 8, f) != 8) writeError (U"eight bytes.");
+			if (fwrite (bytes, sizeof (uint8), 8, f) != 8)
+				writeError (U"eight bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Floating-point number not written to 8 bytes in binary file.");
@@ -1614,7 +1614,8 @@ void binputr64 (double x, FILE *f) {
 void binputr64LE (double x, FILE *f) {
 	try {
 		if (binario_doubleIEEE8lsb && ! (Melder_debug == 18) || Melder_debug == 181) {
-			if (fwrite (& x, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
+			if (fwrite (& x, sizeof (double), 1, f) != 1)
+				writeError (U"a 64-bit floating-point number.");
 		} else if (binario_doubleIEEE8msb && ! (Melder_debug == 18)) {
 			union { double xx; uint8 bytes [8]; };
 			xx = x;
@@ -1622,16 +1623,23 @@ void binputr64LE (double x, FILE *f) {
 			std::swap (bytes [1], bytes [6]);
 			std::swap (bytes [2], bytes [5]);
 			std::swap (bytes [3], bytes [4]);
-			if (fwrite (& xx, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
+			if (fwrite (& xx, sizeof (double), 1, f) != 1)
+				writeError (U"a 64-bit floating-point number.");
 		} else {
 			uint8 bytes [8];
 			int sign, exponent;
 			double fMantissa, fsMantissa;
 			uint32 highMantissa, lowMantissa;
-			if (x < 0.0) { sign = 0x0800; x *= -1.0; }
-			else sign = 0;
-			if (x == 0.0) { exponent = 0; highMantissa = 0; lowMantissa = 0; }
-			else {
+			if (x < 0.0) {
+				sign = 0x0800;
+				x *= -1.0;
+			} else
+				sign = 0;
+			if (x == 0.0) {
+				exponent = 0;
+				highMantissa = 0;
+				lowMantissa = 0;
+			} else {
 				fMantissa = frexp (x, & exponent);
 				if (/*(exponent > 1024) ||*/ ! (fMantissa < 1.0))   // Infinity or Not-a-Number
 					{ exponent = sign | 0x07FF; highMantissa = 0; lowMantissa = 0; }   // Infinity
@@ -1658,7 +1666,8 @@ void binputr64LE (double x, FILE *f) {
 			bytes [2] = (uint8) (lowMantissa >> 16);
 			bytes [1] = (uint8) (lowMantissa >> 8);
 			bytes [0] = (uint8) lowMantissa;
-			if (fwrite (bytes, sizeof (uint8), 8, f) != 8) writeError (U"eight bytes.");
+			if (fwrite (bytes, sizeof (uint8), 8, f) != 8)
+				writeError (U"eight bytes.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Floating-point number not written to 8 bytes in binary file.");
@@ -1667,15 +1676,21 @@ void binputr64LE (double x, FILE *f) {
 
 void binputr80 (double x, FILE *f) {
 	try {
-		unsigned char bytes [10];
+		uint8 bytes [10];
 		Melder_assert (sizeof (int) > 2);
 		int sign, exponent;   // these should be uint16, but frexp() expects an int
 		double fMantissa, fsMantissa;
 		uint32 highMantissa, lowMantissa;
-		if (x < 0.0) { sign = 0x8000; x *= -1.0; }
-		else sign = 0;
-		if (x == 0.0) { exponent = 0; highMantissa = 0; lowMantissa = 0; }
-		else {
+		if (x < 0.0) {
+			sign = 0x8000;
+			x *= -1.0;
+		} else
+			sign = 0;
+		if (x == 0.0) {
+			exponent = 0;
+			highMantissa = 0;
+			lowMantissa = 0;
+		} else {
 			fMantissa = frexp (x, & exponent);
 			if ((exponent > 16384) || ! (fMantissa < 1.0))   // Infinity or Not-a-Number
 				{ exponent = sign | 0x7FFF; highMantissa = 0; lowMantissa = 0; }   // Infinity
@@ -1704,7 +1719,8 @@ void binputr80 (double x, FILE *f) {
 		bytes [7] = (uint8) (lowMantissa >> 16);
 		bytes [8] = (uint8) (lowMantissa >> 8);
 		bytes [9] = (uint8) lowMantissa;
-		if (fwrite (bytes, sizeof (uint8), 10, f) != 10) writeError (U"ten bytes.");
+		if (fwrite (bytes, sizeof (uint8), 10, f) != 10)
+			writeError (U"ten bytes.");
 	} catch (MelderError) {
 		Melder_throw (U"Floating-point number not written to 10 bytes in binary file.");
 	}
@@ -1756,7 +1772,7 @@ void binputc128 (dcomplex z, FILE *f) {
 
 autostring8 bingets8 (FILE *f) {
 	try {
-		unsigned int length = bingetu8 (f);
+		uint32 length = bingetu8 (f);
 		autostring8 result (length);
 		if (fread (result.get(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
@@ -1796,7 +1812,7 @@ autostring8 bingets32 (FILE *f) {
 autostring32 bingetw8 (FILE *f) {
 	try {
 		autostring32 result;
-		unsigned int length = bingetu8 (f);
+		uint32 length = bingetu8 (f);
 		if (length == 0xFF) {   // an escape for encoding
 			/*
 				UTF-16
@@ -1821,9 +1837,8 @@ autostring32 bingetw8 (FILE *f) {
 				ASCII
 			*/
 			result = autostring32 (length);
-			for (unsigned int i = 0; i < length; i ++) {
+			for (uint32 i = 0; i < length; i ++)
 				result [i] = bingetu8 (f);
-			}
 		}
 		result [length] = U'\0';
 		return result;
@@ -1860,9 +1875,8 @@ autostring32 bingetw16 (FILE *f) {
 				ASCII
 			*/
 			result = autostring32 (length);
-			for (unsigned short i = 0; i < length; i ++) {
+			for (uint16 i = 0; i < length; i ++)
 				result [i] = (char32) (char8) bingetu8 (f);
-			}
 		}
 		result [length] = U'\0';
 		return result;
@@ -1899,9 +1913,8 @@ autostring32 bingetw32 (FILE *f) {
 				ASCII
 			*/
 			result = autostring32 (length);
-			for (uint32 i = 0; i < length; i ++) {
+			for (uint32 i = 0; i < length; i ++)
 				result [i] = bingetu8 (f);
-			}
 		}
 		result [length] = U'\0';
 		return result;
@@ -1920,7 +1933,7 @@ void binputs8 (const char *s, FILE *f) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 255 characters.");
 				length = UINT8_MAX;
 			}
-			binputu8 (length, f);
+			binputu8 ((uint32) length, f);   // guarded conversion down (or not: `length` may be uint32 or uint64)
 			if (fwrite (s, sizeof (char), length, f) != length)
 				Melder_throw (U"Error in file while trying to write ", length, U" one-byte characters.");
 		}
@@ -1939,7 +1952,7 @@ void binputs16 (const char *s, FILE *f) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 65535 characters.");
 				length = UINT16_MAX;
 			}
-			binputu16 ((uint16) length, f);   // safe conversion down
+			binputu16 ((uint16) length, f);   // guarded conversion down
 			if (fwrite (s, sizeof (char), length, f) != length)
 				Melder_throw (U"Error in file while trying to write ", length, U" one-byte characters.");
 		}
@@ -1958,7 +1971,7 @@ void binputs32 (const char *s, FILE *f) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 4,294,967,295 characters.");
 				length = UINT32_MAX;
 			}
-			binputu32 (length, f);
+			binputu32 ((uint32) length, f);   // guarded conversion down (unless size_t is already uint32)
 			if (fwrite (s, sizeof (char), length, f) != length)
 				Melder_throw (U"Error in file while trying to write ", length, U" one-byte characters.");
 		}
@@ -1984,7 +1997,7 @@ void binputw8 (conststring32 s, FILE *f) {
 		if (! s) {
 			binputu8 (0, f);
 		} else {
-			uint32 length = Melder_length (s);
+			integer length = Melder_length (s);
 			if (length > UINT8_MAX - 1) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 254 characters.");
 				length = UINT8_MAX - 1;
@@ -1993,19 +2006,17 @@ void binputw8 (conststring32 s, FILE *f) {
 				/*
 					ASCII
 				*/
-				binputu8 (length, f);
-				for (size_t i = 0; i < length; i ++) {
-					binputu8 ((unsigned int) (char) s [i], f);
-				}
+				binputu8 ((uint32) length, f);   // guarded conversion down
+				for (integer i = 0; i < length; i ++)
+					binputu8 ((uint32) (uint8) s [i], f);   // guarded conversion down from char32 to uint8
 			} else {
 				/*
 					UTF-16
 				*/
 				binputu8 (0xFF, f);   // an escape for multibyte encoding
-				binputu8 (length, f);
-				for (size_t i = 0; i < length; i ++) {
+				binputu8 ((uint32) length, f);
+				for (integer i = 0; i < length; i ++)
 					binpututf16 (s [i], f);
-				}
 			}
 		}
 	} catch (MelderError) {
@@ -2018,7 +2029,7 @@ void binputw16 (conststring32 s, FILE *f) {
 		if (! s) {
 			binputu16 (0, f);
 		} else {
-			int64 length = Melder_length (s);
+			integer length = Melder_length (s);
 			if (length > UINT16_MAX - 1) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 65534 characters.");
 				length = UINT16_MAX - 1;
@@ -2027,19 +2038,17 @@ void binputw16 (conststring32 s, FILE *f) {
 				/*
 					ASCII
 				*/
-				binputu16 ((uint16) length, f);
-				for (int64 i = 0; i < length; i ++) {
-					binputu8 ((unsigned int) (char8) s [i], f);
-				}
+				binputu16 ((uint16) length, f);   // guarded conversion down
+				for (int64 i = 0; i < length; i ++)
+					binputu8 ((uint32) (uint8) s [i], f);   // guarded conversion down from char32 to uint8
 			} else {
 				/*
 					UTF-16
 				*/
 				binputu16 (0xFFFF, f);   // an escape for multibyte encoding
-				binputu16 ((uint16) length, f);
-				for (int64 i = 0; i < length; i ++) {
+				binputu16 ((uint16) length, f);   // guarded conversion down
+				for (int64 i = 0; i < length; i ++)
 					binpututf16 (s [i], f);
-				}
 			}
 		}
 	} catch (MelderError) {
@@ -2052,7 +2061,7 @@ void binputw32 (conststring32 s, FILE *f) {
 		if (! s) {
 			binputu32 (0, f);
 		} else {
-			int64 length = Melder_length (s);
+			integer length = Melder_length (s);   // on 32-bit systems the length cannot exceed 2^30 char32s, i.e. `length` must be positive
 			if (length > UINT32_MAX - 1) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 4,294,967,294 characters.");
 				length = UINT32_MAX - 1;
@@ -2061,19 +2070,17 @@ void binputw32 (conststring32 s, FILE *f) {
 				/*
 					ASCII
 				*/
-				binputu32 ((uint32) length, f);
-				for (int64 i = 0; i < length; i ++) {
-					binputu8 ((unsigned int) (char) s [i], f);
-				}
+				binputu32 ((uint32) length, f);   // guarded conversion down on 64-bit systems, and valid even on 32-bit systems
+				for (integer i = 0; i < length; i ++)
+					binputu8 ((uint32) (uint8) s [i], f);   // guarded conversion down from char32 to uint8
 			} else {
 				/*
 					UTF-16
 				*/
 				binputu32 (0xFFFF'FFFF, f);   // an escape for multibyte encoding
-				binputu32 ((uint32) length, f);
-				for (int64 i = 0; i < length; i ++) {
+				binputu32 ((uint32) length, f);   // guarded conversion down
+				for (integer i = 0; i < length; i ++)
 					binpututf16 (s [i], f);
-				}
 			}
 		}
 	} catch (MelderError) {
