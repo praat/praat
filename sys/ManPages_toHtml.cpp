@@ -172,8 +172,43 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 						if (hasError)
 							MelderString_append (buffer, U"<code style=\"color:red\">&nbsp;&nbsp;&nbsp;\n");
 						else
-							MelderString_append (buffer, U"<code>&nbsp;&nbsp;&nbsp;\n");
-						MelderString_append (buffer, lineBuffer.string, U"<br></code>\n");
+							MelderString_append (buffer, U"<code style=\"white-space:pre\">&nbsp;&nbsp;&nbsp;");
+						for (const char32 *plineBuffer = & lineBuffer.string [0]; *plineBuffer != U'\0'; plineBuffer ++) {
+							/*if (plineBuffer [0] == U' ' && plineBuffer [1] == U' ') {
+								MelderString_append (buffer, U" &nbsp;");
+								plineBuffer += 1;
+							} else*/
+							if (plineBuffer [0] == U' ') {
+								MelderString_append (buffer, U" ");
+							} else if (plineBuffer [0] == U'\\' && plineBuffer [1] == U'#' && plineBuffer [2] == U'{') {
+								inBold = true;
+								MelderString_append (buffer, U"<b>");
+								plineBuffer += 2;
+							} else if (plineBuffer [0] == U'\\' && plineBuffer [1] == U'%' && plineBuffer [2] == U'{') {
+								inItalic = true;
+								MelderString_append (buffer, U"<i>");
+								plineBuffer += 2;
+							} else if (plineBuffer [0] == U'}') {
+								if (inBold) {
+									inBold = false;
+									MelderString_append (buffer, U"</b>");
+								} else if (inItalic) {
+									inItalic = false;
+									MelderString_append (buffer, U"</i>");
+								} else
+									MelderString_appendCharacter (buffer, plineBuffer [0]);
+							} else
+								MelderString_appendCharacter (buffer, plineBuffer [0]);
+						}
+						if (inBold) {
+							inBold = false;
+							MelderString_append (buffer, U"</b>");
+						}
+						if (inItalic) {
+							inItalic = false;
+							MelderString_append (buffer, U"</i>");
+						}
+						MelderString_append (buffer, U"<br></code>\n");
 						MelderString_empty (& lineBuffer);
 					} else {
 						MelderString_appendCharacter (& lineBuffer, *paragraphPointer);
@@ -331,7 +366,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 					p += 3 + isBold;
 					if (isBold)
 						MelderString_append (buffer, U"<b>");
-					const bool isVerbatim = ( p [-2] == U'`');
+					const bool isVerbatim = ( p [-2] == U'`' );
 					static MelderString link, linkText;
 					MelderString_empty (& link);
 					if (isVerbatim)
