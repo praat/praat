@@ -155,6 +155,7 @@ enum { NO_SYMBOL_,
 		QUANTILE_,
 		NORM_,
 		LEFT_STR_, RIGHT_STR_, MID_STR_,
+		PAD_STR_, TRUNCATE_STR_, PAD_OR_TRUNCATE_STR_,
 		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_, SELECTED_STRVEC_,
 		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
 		BEGIN_PAUSE_,
@@ -311,6 +312,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"quantile",
 	U"norm",
 	U"left$", U"right$", U"mid$",
+	U"pad$", U"truncate$", U"padOrTruncate$",
 	U"selected", U"selected$", U"numberOfSelected", U"selected#", U"selected$#",
 	U"selectObject", U"plusObject", U"minusObject", U"removeObject",
 	U"beginPause", U"real", U"positive", U"integer", U"natural",
@@ -5776,6 +5778,45 @@ static void do_mid_STR () {
 		Melder_throw (U"The function “mid$” requires two or three arguments.");
 	}
 }
+static void do_pad_STR () {
+	const Stackel narg = pop;
+	if (narg-> number == 2) {
+		const Stackel arg2 = pop, arg1 = pop;
+		if (arg1->which == Stackel_STRING && arg2->which == Stackel_NUMBER)
+			pushString (pad_STR (arg1->getString(), Melder_iround (arg2->number)));
+		else if (arg1->which == Stackel_NUMBER && arg2->which == Stackel_STRING)
+			pushString (pad_STR (Melder_iround (arg1->number), arg2->getString()));
+		else
+			Melder_throw (U"The two arguments to “pad$” should be a string and a number (in either order).");
+	} else
+		Melder_throw (U"The function “pad$” requires two arguments (a string and a number, in either order).");
+}
+static void do_truncate_STR () {
+	const Stackel narg = pop;
+	if (narg-> number == 2) {
+		const Stackel arg2 = pop, arg1 = pop;
+		if (arg1->which == Stackel_STRING && arg2->which == Stackel_NUMBER)
+			pushString (truncate_STR (arg1->getString(), Melder_iround (arg2->number)));
+		else if (arg1->which == Stackel_NUMBER && arg2->which == Stackel_STRING)
+			pushString (truncate_STR (Melder_iround (arg1->number), arg2->getString()));
+		else
+			Melder_throw (U"The two arguments to “truncate$” should be a string and a number (in either order).");
+	} else
+		Melder_throw (U"The function “truncate$” requires two arguments (a string and a number, in either order).");
+}
+static void do_padOrTruncate_STR () {
+	const Stackel narg = pop;
+	if (narg-> number == 2) {
+		const Stackel arg2 = pop, arg1 = pop;
+		if (arg1->which == Stackel_STRING && arg2->which == Stackel_NUMBER)
+			pushString (padOrTruncate_STR (arg1->getString(), Melder_iround (arg2->number)));
+		else if (arg1->which == Stackel_NUMBER && arg2->which == Stackel_STRING)
+			pushString (padOrTruncate_STR (Melder_iround (arg1->number), arg2->getString()));
+		else
+			Melder_throw (U"The two arguments to “padOrTruncate$” should be a string and a number (in either order).");
+	} else
+		Melder_throw (U"The function “padOrTruncate$” requires two arguments (a string and a number, in either order).");
+}
 static void do_unicodeToBackslashTrigraphs_STR () {
 	const Stackel s = pop;
 	if (s->which == Stackel_STRING) {
@@ -8499,6 +8540,9 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case LEFT_STR_: { do_left_STR ();
 } break; case RIGHT_STR_: { do_right_STR ();
 } break; case MID_STR_: { do_mid_STR ();
+} break; case PAD_STR_: { do_pad_STR ();
+} break; case TRUNCATE_STR_: { do_truncate_STR ();
+} break; case PAD_OR_TRUNCATE_STR_: { do_padOrTruncate_STR ();
 } break; case UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_: { do_unicodeToBackslashTrigraphs_STR ();
 } break; case BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_: { do_backslashTrigraphsToUnicode_STR ();
 } break; case ENVIRONMENT_STR_: { do_environment_STR ();
