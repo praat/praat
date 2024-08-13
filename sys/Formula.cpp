@@ -4532,7 +4532,7 @@ static void do_max () {
 		for (integer i = size - 1; i > 0; i --) {
 			const Stackel element = pop;
 			Melder_require (element->which == Stackel_NUMBER,
-				U"The function “min_removeUndefined” cannot mix a numeric argument with ", element->whichText(), U".");
+				U"The function “max_removeUndefined” cannot mix a numeric argument with ", element->whichText(), U".");
 			numericVector [i] = element->number;
 		}
 		pushNumber (NUMmax_u (numericVector.get()));
