@@ -1,6 +1,6 @@
 /* melder_textencoding.cpp
  *
- * Copyright (C) 2007-2022 Paul Boersma
+ * Copyright (C) 2007-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -619,7 +619,8 @@ void Melder_32to8_fileSystem_inplace (conststring32 string, char *utf8) {
 		CFStringGetCString (cfpath2, (char *) utf8, kMelder_MAXPATH+1, kCFStringEncodingUTF8);   // Mac POSIX requires UTF-8
 		CFRelease (cfpath2);
 	#else
-		Melder_32to8_inplace (string, utf8);   // fallback; should work even on Windows if converted to W later (as in e.g. op_open_file 2021-12-16)
+		Melder_32to8_inplace (string, utf8);
+				// fallback; should work even on Windows if converted to W later (as in op_open_file 2021-12-16 and flac_fopen 2024-08-11)
 	#endif
 }
 conststring8 Melder_peek32to8_fileSystem (conststring32 string) {
