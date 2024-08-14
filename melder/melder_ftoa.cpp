@@ -623,7 +623,6 @@ conststring32 Melder_padOrTruncateLeft (const conststring32 string, const intege
 			// guarded subtraction (length cannot be negative, so no underflow or INTEGER_MIN, and width cannot be negative, so no overflow)
 	if (tooLong == 0)
 		return string;
-	Melder_assert (tooLong > 0);
 	if (tooLong < 0) {
 		Melder_assert (tooLong > INTEGER_MIN);
 		const integer tooShort = - tooLong;   // guarded integer sign flip
@@ -642,6 +641,7 @@ conststring32 Melder_padOrTruncateLeft (const conststring32 string, const intege
 		}
 		MelderString_append (& thePadBuffers [iPadBuffer], string);
 	} else {
+		Melder_assert (tooLong <= length);
 		MelderString_ncopy (& thePadBuffers [iPadBuffer], string + tooLong, width);
 	}
 	return thePadBuffers [iPadBuffer]. string;
@@ -675,6 +675,7 @@ conststring32 Melder_padOrTruncateRight (conststring32 string, integer width, co
 				ipad = 0;
 		}
 	} else {
+		Melder_assert (tooLong <= length);
 		MelderString_ncopy (& thePadBuffers [iPadBuffer], string, width);
 	}
 	return thePadBuffers [iPadBuffer]. string;

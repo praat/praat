@@ -1,6 +1,6 @@
 /* melder_error.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  */
 
 #include "melder.h"
+#include "praat_version.h"
 
 static void defaultErrorProc (conststring32 message) {
 	MelderConsole::write (str32str (message, U"You interrupted ") ? U"User interrupt: " : U"Error: ", true);
@@ -160,7 +161,7 @@ void Melder_assert_ (const char *pathName, int lineNumber, const char *condition
 	snprintf (lineNumberBuffer8,40, "%d", lineNumber);
 	Melder_8to32_inplace (lineNumberBuffer8, lineNumberBuffer, kMelder_textInputEncoding::UTF8);
 	MelderError::_append (crashMessage ());
-	MelderError::_append (U"Assertion failed in file \"");
+	MelderError::_append (U"Assertion failed in Praat " stringize (PRAAT_VERSION_STR) " in file \"");
 	MelderError::_append (fileName);
 	MelderError::_append (U"\" at line ");
 	MelderError::_append (lineNumberBuffer);

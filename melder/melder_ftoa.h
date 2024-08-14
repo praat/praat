@@ -149,7 +149,7 @@ conststring32 Melder_truncateLeft (conststring32 string, integer width);
 conststring32 Melder_truncateRight (conststring32 string, integer width);
 
 /*
-	Cut away, or append spaces to, the left of 'string' until the length of the result is 'width' (which must be non-negative).
+	Cut away, or prepend padding to, the left of 'string' until the length of the result is 'width' (which must be non-negative).
 	The resulting string will always have `width` characters.
 	The left edge of `pad` is left-aligned to the resulting string,
 	so that the result will look good if padding is used for visualizing columns.
@@ -157,7 +157,7 @@ conststring32 Melder_truncateRight (conststring32 string, integer width);
 conststring32 Melder_padOrTruncateLeft (conststring32 string, integer width, conststring32 pad = U" ");
 
 /*
-	Cut away, or append spaces to, the right of 'string' until the length of the result is 'width' (which must be non-negative).
+	Cut away, or append padding to, the right of 'string' until the length of the result is 'width' (which must be non-negative).
 	The resulting string will always have `width` characters.
 	The right edge of `pad` is right-aligned to the resulting string,
 	so that the result will look good if padding is used for visualizing columns.
