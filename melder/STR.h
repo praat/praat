@@ -24,11 +24,11 @@ autostring32 left_STR (conststring32 str, integer newLength = 1);
 
 autostring32 mid_STR (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1);
 
-autostring32 pad_STR (conststring32 str, integer width);
-autostring32 pad_STR (integer width, conststring32 str);
+autostring32 padLeft_STR (conststring32 str, integer width, conststring32 pad = U" ");
+autostring32 padRight_STR (conststring32 str, integer width, conststring32 pad = U" ");
 
-autostring32 padOrTruncate_STR (conststring32 str, integer width);
-autostring32 padOrTruncate_STR (integer width, conststring32 str);
+autostring32 padOrTruncateLeft_STR (conststring32 str, integer width, conststring32 pad = U" ");
+autostring32 padOrTruncateRight_STR (conststring32 str, integer width, conststring32 pad = U" ");
 
 autostring32 quote_doubleSTR (conststring32 str);
 
@@ -53,8 +53,8 @@ autostring32 replace_regex_STR (conststring32 string, regexp *search_compiled,
 
 autostring32 right_STR (conststring32 str, integer newLength = 1);
 
-autostring32 truncate_STR (conststring32 str, integer width);
-autostring32 truncate_STR (integer width, conststring32 str);
+autostring32 truncateLeft_STR (conststring32 str, integer width);
+autostring32 truncateRight_STR (conststring32 str, integer width);
 
 autostring8 unhex_STR8 (conststring8 str, uint64 key = 0);
 autostring32 unhex_STR (conststring32 str, uint64 key = 0);
