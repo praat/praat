@@ -70,18 +70,20 @@ autostring32 mid_STR (conststring32 str, integer startingPosition_1, integer num
 	return result;
 }
 
-autostring32 pad_STR (const conststring32 str, const integer width) {
-	return Melder_dup (Melder_pad (str, width));
-}
-autostring32 pad_STR (const integer width, const conststring32 str) {
-	return Melder_dup (Melder_pad (width, str));
+autostring32 padLeft_STR (const conststring32 str, const integer width, const conststring32 pad) {
+	return Melder_dup (Melder_padLeft (str, width, pad));
 }
 
-autostring32 padOrTruncate_STR (const conststring32 str, const integer width) {
-	return Melder_dup (Melder_padOrTruncate (str, width));
+autostring32 padOrTruncateLeft_STR (const conststring32 str, const integer width, const conststring32 pad) {
+	return Melder_dup (Melder_padOrTruncateLeft (str, width, pad));
 }
-autostring32 padOrTruncate_STR (const integer width, const conststring32 str) {
-	return Melder_dup (Melder_padOrTruncate (width, str));
+
+autostring32 padOrTruncateRight_STR (const conststring32 str, const integer width, const conststring32 pad) {
+	return Melder_dup (Melder_padOrTruncateRight (str, width, pad));
+}
+
+autostring32 padRight_STR (const conststring32 str, const integer width, const conststring32 pad) {
+	return Melder_dup (Melder_padRight (str, width, pad));
 }
 
 autostring32 quote_doubleSTR (conststring32 str) {
@@ -316,11 +318,11 @@ autostring32 right_STR (conststring32 str, integer newLength) {
 	return Melder_dup (str + length - newLength);
 }
 
-autostring32 truncate_STR (const conststring32 str, const integer width) {
-	return Melder_dup (Melder_truncate (str, width));
+autostring32 truncateLeft_STR (const conststring32 str, const integer width) {
+	return Melder_dup (Melder_truncateLeft (str, width));
 }
-autostring32 truncate_STR (const integer width, const conststring32 str) {
-	return Melder_dup (Melder_truncate (width, str));
+autostring32 truncateRight_STR (const conststring32 str, const integer width) {
+	return Melder_dup (Melder_truncateRight (str, width));
 }
 
 autostring8 unhex_STR8 (conststring8 str, uint64 key) {

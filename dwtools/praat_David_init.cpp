@@ -3355,16 +3355,16 @@ static void print_means (Table me) {
 		return;
 	}
 	MelderInfo_writeLine (
-		Melder_padOrTruncate (15, my columnHeaders [1]. label.get()), U"\t",
-		Melder_padOrTruncate (15, my columnHeaders [2]. label.get()), U"\t",
-		Melder_padOrTruncate (15, my columnHeaders [3]. label.get())
+		Melder_padOrTruncateLeft (my columnHeaders [1]. label.get(), 15), U"\t",
+		Melder_padOrTruncateLeft (my columnHeaders [2]. label.get(), 15), U"\t",
+		Melder_padOrTruncateLeft (my columnHeaders [3]. label.get(), 15)
 	);
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		const TableRow row = my rows.at [irow];
 		MelderInfo_writeLine (
-			Melder_padOrTruncate (15, row -> cells [1]. string.get()), U"\t",
-			Melder_padOrTruncate (15, Melder_double (row -> cells [2]. number)), U"\t",
-			Melder_padOrTruncate (15, Melder_double (row -> cells [3]. number))
+			Melder_padOrTruncateLeft (row -> cells [1]. string.get(), 15), U"\t",
+			Melder_padOrTruncateLeft (Melder_double (row -> cells [2]. number), 15), U"\t",
+			Melder_padOrTruncateLeft (Melder_double (row -> cells [3]. number), 15)
 		);
 	}
 }
