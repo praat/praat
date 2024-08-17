@@ -365,10 +365,6 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_Initialize(espeak_ng_ERROR_CONTEXT *con
 	int param;
 	int srate = 22050; // default sample rate 22050 Hz
 
-	// It seems that the wctype functions don't work until the locale has been set
-	// to something other than the default "C".  Then, not only Latin1 but also the
-	// other characters give the correct results with iswalpha() etc.
-
 	/*
 		(Paul Boersma 20240426:)
 		When using this library in an app, e.g. Praat,
@@ -380,8 +376,8 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_Initialize(espeak_ng_ERROR_CONTEXT *con
 		(The space is needed to be able to automatically determine that the name
 		 of the function does not appear in the present source file `speech.cpp`.)
 	*/
-	#define SET_LOCALE  setlocale   /* should normally contain a space between "set" and "locale" */
-	#define USE_SET_LOCALE_IN_THIS_LIBRARY  1   /* should normally be 0 */
+	#define SET_LOCALE  set locale   /* should normally contain a space between "set" and "locale" */
+	#define USE_SET_LOCALE_IN_THIS_LIBRARY  0   /* should normally be 0 */
 	#if USE_SET_LOCALE_IN_THIS_LIBRARY
 		if (SET_LOCALE(LC_CTYPE, "C.UTF-8") == NULL) {
 			if (SET_LOCALE(LC_CTYPE, "UTF-8") == NULL) {

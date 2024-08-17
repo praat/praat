@@ -118,7 +118,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststrin
 				my addString_copy (file. path);
 			}
 		}
-		setlocale (LC_ALL, "en_US");
+		setlocale (LC_ALL, "C");
 	#endif
 	return me;
 }
@@ -181,7 +181,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow optionalParent, conststring
 			Melder_8bitFileRepresentationToStr32_inplace (outfileName_utf8, file. path);   // BUG: unsafe buffer
 			outfileName = Melder_dup (file. path);
 		}
-		setlocale (LC_ALL, "en_US");
+		setlocale (LC_ALL, "C");
 	#endif
 	return outfileName;
 }
@@ -239,7 +239,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring3
 				folderName = Melder_dup (folder. path);
 			}
 		}
-		setlocale (LC_ALL, "en_US");
+		setlocale (LC_ALL, "C");
 	#endif
 	return folderName;
 }

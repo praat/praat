@@ -178,8 +178,8 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 	TRACE
 	try {
 		autoFileInMemory thee = Data_copy (me);
-		uint8 *myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		uint8 *thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		FILE *phondataf = fopen (Melder_peek32to8_fileSystem (my d_path.get()), "r");
 		Melder_assert (phondataf);
 		FILE *manifestf = fopen (Melder_peek32to8_fileSystem (manifest -> d_path.get()), "r");
@@ -317,8 +317,8 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
 	try {
 		autoFileInMemory thee = Data_copy (me);
-		uint8 *myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		uint8 *thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		integer numberOfPhonemeTables = myData [0];
 		integer index = 4; // skip first 4 bytes
 		for (integer itab = 1; itab <= numberOfPhonemeTables; itab ++) {
@@ -362,9 +362,9 @@ static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
 static autoFileInMemory phonindex_to_bigendian (FileInMemory me) {
 	try {
 		autoFileInMemory thee = Data_copy (me);
-		uint8 *myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		uint8 *thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		integer numberOfShorts = (my d_numberOfBytes - 4 - 1) / 2;
+		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		const integer numberOfShorts = (my d_numberOfBytes - 4) / 2;   // there used to be an extra "- 1" here (ppgb 20240817)
 		integer index = 4; // skip first 4 bytes
 		for (integer i = 0; i < numberOfShorts; i ++) {
 			SWAP_2 (index)

@@ -1038,8 +1038,8 @@ static bool tryToAttachToTheCommandLine ()
 static void setThePraatLocale () {
 	/*
 		We use only the "C" locale, because iswalpha works differently
-		on different platforms, even if UTF-8 is specified (e.g. try 0x0905),
-		which is an `alpha` on Windows but not on Mac and Linux.
+		on different platforms, even if UTF-8 is specified (e.g. try 0x0905,
+		which is an `alpha` on Windows but not on Mac and Linux).
 		We do have to replace everything from <wctype.h>:
 		- all iswalpha by iswalpha_portable
 		- all iswalnum by iswalnum_portable
