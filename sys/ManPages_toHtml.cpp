@@ -32,7 +32,7 @@ static const struct stylesInfo {
 /* LIST_ITEM: */ { U"<dd style=\"position:relative;padding-left:1em;text-indent:-2em\">", U"" },
 /* TERM: */ { U"<dt>", U"" },
 /* DEFINITION: */ { U"<dd>", U"" },
-/* CODE: */ { U"<code>&nbsp;&nbsp;&nbsp;", U"<br></code>" },
+/* CODE: */ { U"<code style=\"white-space:pre-wrap\">   ", U"<br></code>" },
 /* PROTOTYPE: */ { U"<p>", U"</p>" },
 /* EQUATION: */ { U"<table width=\"100%\"><tr><td align=middle>", U"</table>" },
 /* PICTURE: */ { U"<p>", U"</p>" },
@@ -46,11 +46,11 @@ static const struct stylesInfo {
 /* DEFINITION1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"" },
 /* DEFINITION2: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
 /* DEFINITION3: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
-/* CODE1: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
-/* CODE2: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
-/* CODE3: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
-/* CODE4: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
-/* CODE5: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
+/* CODE1: */ { U"<code style=\"white-space:pre-wrap\">      ", U"<br></code>" },
+/* CODE2: */ { U"<code style=\"white-space:pre-wrap\">         ", U"<br></code>" },
+/* CODE3: */ { U"<code style=\"white-space:pre-wrap\">            ", U"<br></code>" },
+/* CODE4: */ { U"<code style=\"white-space:pre-wrap\">               ", U"<br></code>" },
+/* CODE5: */ { U"<code style=\"white-space:pre-wrap\">                  ", U"<br></code>" },
 /* CAPTION: */ { U"<p style=\"position:relative;padding-left:4em;text-indent:-2em;font-size:86%\">", U"</font></p>" },
 /* QUOTE1: */ { U"<p style=\"position:relative;padding-left:4em;font-size:86%\">", U"</font></p>" },
 /* QUOTE2: */ { U"<p style=\"position:relative;padding-left:8em;font-size:86%\">", U"</font></p>" },
@@ -170,9 +170,9 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 							str32str (lineBuffer.string, U"**AN ERROR OCCURRED IN THIS CODE CHUNK:**") ||
 							str32str (lineBuffer.string, U"**ERROR** This code chunk was not run,");
 						if (hasError)
-							MelderString_append (buffer, U"<code style=\"color:red\">&nbsp;&nbsp;&nbsp;\n");
+							MelderString_append (buffer, U"<code style=\"color:red,white-space:pre-wrap\">   ");
 						else
-							MelderString_append (buffer, U"<code style=\"white-space:pre\">&nbsp;&nbsp;&nbsp;");
+							MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\">   ");
 						for (const char32 *plineBuffer = & lineBuffer.string [0]; *plineBuffer != U'\0'; plineBuffer ++) {
 							/*if (plineBuffer [0] == U' ' && plineBuffer [1] == U' ') {
 								MelderString_append (buffer, U" &nbsp;");
@@ -318,7 +318,8 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				MelderString_append (buffer, ul ? U"</ul>\n" : U"</dl>\n");
 				inList = ul = false;
 			}
-			MelderString_append (buffer, stylesInfo [(int) paragraph -> type]. htmlIn, U"\n");
+			MelderString_append (buffer, stylesInfo [(int) paragraph -> type]. htmlIn,
+					paragraphIsVerbatim ? U"" : U"");   // in a verbatim paragraph we would actually get a newline
 		}
 		/* mutable */ bool inTable = !! str32chr (p, U'\t');
 		/* mutable */ bool inPromptedTable = false;
@@ -332,12 +333,14 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 			}
 		}
 		/*
-			Leading spaces should be visible (mainly used in code fragments).
+			Leading spaces should be visible, so we convert them to a non-breaking space ("&nbsp;").
+			This is not needed in code fragments, because we have already have a "whitespace:pre-wrap" style there.
 		*/
-		while (*p == U' ') {
-			MelderString_append (buffer, U"&nbsp;");
-			p ++;
-		}
+		if (! paragraphIsVerbatim)
+			while (*p == U' ') {
+				MelderString_append (buffer, U"&nbsp;");
+				p ++;
+			}
 		if (paragraphIsVerbatim) {
 			while (*p != U'\0') {
 				if (*p == U'\\' && p [1] == U'#' && p [2] == U'{') {
@@ -486,7 +489,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				} else if (p [1] == U'`') {
 					p += 2;
 					MelderString_append (& link, U'`');
-					MelderString_append (& linkText, U"<b><code><font size=+1>");
+					MelderString_append (& linkText, U"<b><code style=\"white-space:pre-wrap\"><font size=+1>");
 					while (*p != U'`' && *p != U'\0') {
 						MelderString_append (& link, * p);
 						MelderString_append (& linkText, * p);
@@ -506,7 +509,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 			} else if (*p == U'%') {
 				if (p [1] == U'`') {
 					p += 2;
-					MelderString_append (buffer, U"<i><code><font size=+1>");
+					MelderString_append (buffer, U"<i><code style=\"white-space:pre-wrap\"><font size=+1>");
 					while (*p != U'`' && *p != U'\0')
 						MelderString_append (buffer, * p ++);
 					if (*p)
@@ -556,7 +559,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 			} else if (*p == U'#') {
 				if (p [1] == U'`') {
 					p += 2;
-					MelderString_append (buffer, U"<b><code><font size=+1>");
+					MelderString_append (buffer, U"<b><code style=\"white-space:pre-wrap\"><font size=+1>");
 					while (*p != U'`' && *p != U'\0')
 						MelderString_append (buffer, * p ++);
 					if (*p)
@@ -586,26 +589,26 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 					inCode = false;
 					p ++;
 				} else if (p [1] == U'$') {
-					MelderString_append (buffer, U"<code><font size=+1>");
+					MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1>");
 					inCode = true;
 					p += 2;
 				} else if (p [1] == U'%') {
-					MelderString_append (buffer, U"<code><font size=+1><i>");
+					MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1><i>");
 					wordCode = true;
 					wordItalic = true;
 					p += 2;
 				} else if (p [1] == U'#') {
-					MelderString_append (buffer, U"<code><font size=+1><b>");
+					MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1><b>");
 					wordCode = true;
 					wordBold = true;
 					p += 2;
 				} else {
-					MelderString_append (buffer, U"<code><font size=+1>");
+					MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1>");
 					wordCode = true;
 					p ++;
 				}
 			} else if (verbatimAware && *p == U'`') {
-				MelderString_append (buffer, U"<code><font size=+1>");
+				MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1>");
 				++ p;
 				while (*p != U'\0' && *p != U'`')
 					MelderString_append (buffer, *p ++);
@@ -806,7 +809,8 @@ static void writePageAsHtml (ManPages me, Interpreter optionalInterpreterReferen
 					MelderString_copy (& visibleTitle, title);
 					if (visibleTitle.string [visibleTitle.length - 1] == U'`')
 						visibleTitle.string [visibleTitle.length - 1] = U'\0';
-					MelderString_append (buffer, U".html\"><code><font size=+1>", & visibleTitle.string [1], U"</font></code></a>\n");
+					MelderString_append (buffer, U".html\"><code style=\"white-space:pre-wrap\"><font size=+1>",
+							& visibleTitle.string [1], U"</font></code></a>\n");
 				} else
 					MelderString_append (buffer, U".html\">", title, U"</a>\n");
 			}

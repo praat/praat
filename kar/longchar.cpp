@@ -700,8 +700,8 @@ char32 *Longchar_genericize (conststring32 native, char32 *g) {
 Longchar_Info Longchar_getInfo (char32 kar1, char32 kar2) {
 	if (! inited)
 		Longchar_init ();
-	short position = kar1 < 32 || kar1 > 126 || kar2 < 32 || kar2 > 126 ?
-		0 :   /* Return the 'space' character. */
+	const short position = kar1 < 32 || kar1 > 126 || kar2 < 32 || kar2 > 126 ?
+		0 :   // return the 'space' character
 		where [kar1 - 32] [kar2 - 32];
 	return & Longchar_database [position];
 }
