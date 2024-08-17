@@ -52,10 +52,9 @@ void espeakdata_praat_init () {
 		espeakdata_voices_propertiesTable = Table_createAsEspeakVoicesProperties ();
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_propertiesTable.get(), 2);
 		espeakdata_voices_names = Table_column_to_Strings (espeakdata_voices_propertiesTable.get(), 2);
-		const int test = 1;
-		if (* ((char *) & test) != 1) { // (too?) simple endian test
+		constexpr int test = 1;
+		if (* ((char *) & test) != 1)   // simple endian test
 			espeak_ng_data_to_bigendian ();
-		}
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata initialization not performed.");
 	}

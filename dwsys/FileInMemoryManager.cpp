@@ -426,7 +426,7 @@ char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FIL
 	if (startPos < fim -> d_numberOfBytes) {
 		integer i = 0, endPos = startPos + num;
 		endPos = endPos < fim -> d_numberOfBytes ? endPos : fim -> d_numberOfBytes;
-		const unsigned char * p = fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray () + startPos;
+		const unsigned char * p = fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray() + startPos;
 		char *p_str = str;
 		if (fim -> ungetChar > 0) {
 			/*
@@ -526,7 +526,7 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 			fim -> d_errno = EOF;
 		}
 		const integer numberOfBytes = count * size;
-		const unsigned char * p = fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray () + fim -> d_position;
+		const unsigned char * p = fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray() + fim -> d_position;
 		char * str = static_cast<char *> (ptr);
 		while (i < numberOfBytes)
 			str [i ++] = *p ++;

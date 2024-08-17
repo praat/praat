@@ -20,13 +20,13 @@
 	djmw 20171024
 */
 
-#include "espeak_io.h"   //ppgb
 #include "espeakdata_FileInMemory.h"
 #include "espeak_ng.h"
 #include "speech.h"
 #include "synthesize.h"
 #include "voice.h"
 #include <errno.h>
+#include "espeak_io.h"   //ppgb
 
 extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
 #define ESPEAK_FILEINMEMORYMANAGER espeak_ng_FileInMemoryManager.get()
@@ -147,45 +147,56 @@ int32_t get_set_int32_le (char *ch) {
 }
 
 /*
-	The espeak-ng data files have been written with little endian byte order. To be able to use these files on big endian hardware we have to change these files as if they were written on a big endian machine.
+	The espeak-ng data files have been written with little-endian byte order. To be able to use these files on big endian hardware
+	we have to change these files as if they were written on a big-endian machine.
 	The following routines were modeled after espeak-phonemedata.c by Jonathan Duddington.
 	A serious bug in his code for the phontab_to_bigendian procedure has been corrected.
 	A better solution would be:
 		espeak-ng should read a little endian int32 as 4 unsigned bytes:
 			int32 i = (ch[0]<<0) | (ch[1]<<8) | (ch[2]<<16) | (ch[3]<<24);
-		a int16 (short) as 2 unsigned bytes:
+		and an int16 (short) as 2 unsigned bytes:
 			int16 i = (ch[0]<<0) | (ch[1]<<8);
 		Then no conversion of data files would be necessary.
-
 */
 
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-	#define SWAP_2(i1) { integer i2 = i1 + 1; \
-		thy d_data [i1] = my d_data [i2]; \
-		thy d_data [i2] = my d_data [i1]; }
+	#define SWAP_2(i) { \
+		thyData [i] = myData [i + 1]; \
+		thyData [i + 1] = myData [i]; }
 
-	#define SWAP_4(i1) { integer i2 = i1 + 1, i3 = i1 + 2, i4 = i1 + 3; \
-		thy d_data [i1] = my d_data [i4]; \
-		thy d_data [i2] = my d_data [i3]; \
-		thy d_data [i3] = my d_data [i2]; \
-		thy d_data [i4] = my d_data [i1]; }
+	#define SWAP_4(i) { \
+		thyData [i] = myData [i + 3]; \
+		thyData [i + 1] = myData [i + 2]; \
+		thyData [i + 2] = myData [i + 1]; \
+		thyData [i + 3] = myData [i]; }
 #else
-	#define SWAP_2(i1)
-	#define SWAP_4(i1)
+	#define SWAP_2(i)
+	#define SWAP_4(i)
 #endif
 
 static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory manifest) {
+	TRACE
 	try {
 		autoFileInMemory thee = Data_copy (me);
+		uint8 *myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 *thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		FILE *phondataf = fopen (Melder_peek32to8_fileSystem (my d_path.get()), "r");
+		Melder_assert (phondataf);
 		FILE *manifestf = fopen (Melder_peek32to8_fileSystem (manifest -> d_path.get()), "r");
+		Melder_assert (manifestf);
 		char line [1024];
 		// copy 4 bytes: version number
 		// copy 4 bytes: sample rate
+		integer totalLengthOfComments = 0, totalLengthOfS = 0, totalLengthOfW = 0, totalLengthOfE = 0;
 		while (fgets (line, sizeof (line), manifestf)) {
-			if (! isupper (line [0])) continue;
+			trace (line [0]);
+			if (line [0] == '#') {   // comment
+				totalLengthOfComments += strlen (line);
+				continue;
+			}
 			unsigned int index;
-			sscanf(& line [2], "%x", & index);
+			sscanf (& line [2], "%x", & index);
+			trace (U"index ", index, U" (", Melder_hexadecimal (index, 8), U")");
 			fseek (phondataf, index, SEEK_SET);
 			integer i1 = index;
 			if (line [0] == 'S') { //
@@ -199,10 +210,12 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 				*/
 
 				SWAP_2 (i1)
-				index += 2; // skip the short length
-				integer numberOfFrames = (unsigned char) my d_data [index]; // unsigned char n_frames
-				index += 2; // skip the 2 unsigned char's n_frames & sqflags
-				
+				index += 2;   // skip the short length
+				const integer numberOfFrames = myData [index];   // unsigned char n_frames
+				trace (U"S ", numberOfFrames, U" frames");
+				index += 2;   // skip the 2 unsigned char's n_frames & sqflags
+				totalLengthOfS += 4;
+
 				for (integer n = 1; n <= numberOfFrames; n ++) {
 					/*
 						typedef struct { //64 bytes
@@ -240,26 +253,61 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 						i1 += 2;
 					}
 					/*
+						We will be stepping over a frame_t or frame_t2.
+						The code below assumes that one can step over such a structure by
+						progressing `sizeof (frame_t)` or `sizeof (frame_t2)` bytes,
+						but `sizeof` is about alignment, not about size per se,
+						so we check here that the two are equal. If they are ever different,
+						we will have to step by size instead of alignment
+						(we will be notified by Praat crashing at start-up; last checked 2024-08-16).
+					*/
+					Melder_assert (sizeof (frame_t) == 64);
+					Melder_assert (sizeof (frame_t2) == 44);
+					/*
 						frflags signals whether the frame is a Klatt frame or not
 						20231105 changed thy d_data [i1] to thy d_data [index + 1];
+						20240816 changed thy d_data to my d_data
 					*/
 					#define FRFLAG_KLATT 0x01
-					index += (thy d_data [index + 1] & FRFLAG_KLATT) ? sizeof (frame_t) : sizeof (frame_t2); // thy is essential!
-				}				
-			} else if (line [0] == 'W') { // Wave data
-				int length = my d_data [i1 + 1] * 256 + my d_data [i1]; //?
+					uint32 length = (myData [index] & FRFLAG_KLATT) ? sizeof (frame_t) : sizeof (frame_t2);
+					trace (U"S length ", length);
+					index += length;
+					totalLengthOfS += length;
+				}
+			} else if (line [0] == 'W') {  // Wave data
+				uint32 length = ((uint32) myData [i1 + 1] << 8) + (uint32) myData [i1];
 				index += 4;
-				index += length; // char wavedata[length]
-				index += index % 3;
+				index += length;   // char wavedata [length]
+				/*
+					Round up to a multiple of 4.
+				*/
+				const integer lengthW = 4 + length + (3 - (index - 1) % 4);
+				index += 3 - (index - 1) % 4;
+				trace (U"W length ", lengthW, U" (", length, U")");
+				totalLengthOfW += lengthW;
+				/*
+					Some W chunks, namely most of those for Myanmar and Vietnam,
+					are longer than this (in the manifest file), namely 3000 to 4000 bytes or so.
+				*/
 			} else if (line [0] == 'E') {
-				index += 128; // Envelope: skip 128 bytes
+				index += 128;   // Envelope: skip 128 bytes
+				totalLengthOfE += 128;
 			} else if (line [0] == 'Q') {
-				unsigned int length = (my d_data [index + 2] << 8) + my d_data [index + 3];
+				/*
+					The following code is probably incorrect as well,
+					but we never seem to reach it.
+				*/
+				uint32 length = ((uint32) myData [index + 2] << 8) + (uint32) myData [index + 1];   // NOT TESTABLE
 				length *= 4;
 				index += length;
-			}
-			Melder_require (index <= my d_numberOfBytes, U"Position ", index, U"is larger than file length (", my d_numberOfBytes, U")."); 
+			} else
+				Melder_fatal (U"Unknown tag ", line [0], U" in phondata_to_bigendian().");
+			Melder_require (index < my d_numberOfBytes ||1,
+				U"Position ", index + 1, U" is larger than file length (", my d_numberOfBytes, U").");
 		}
+		trace (U"Total length of W ", totalLengthOfW, U" S ", totalLengthOfS, U" E ", totalLengthOfE, U" comments ", totalLengthOfComments);
+		trace (U"Together ", totalLengthOfW + totalLengthOfS + totalLengthOfE + totalLengthOfComments,
+				U" in a file of ", my d_numberOfBytes, U" bytes.");   // they don't add up; see the comment at case 'W'
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"phondata not converted to bigendian.");
@@ -269,15 +317,17 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
 	try {
 		autoFileInMemory thee = Data_copy (me);
-		integer numberOfPhonemeTables = my d_data [0];
+		uint8 *myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 *thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		integer numberOfPhonemeTables = myData [0];
 		integer index = 4; // skip first 4 bytes
 		for (integer itab = 1; itab <= numberOfPhonemeTables; itab ++) {
-			integer numberOfPhonemes = thy d_data [index];
-			
+			integer numberOfPhonemes = thyData [index];
+
 			index += 4; // This is 8 (incorrect) in the original code of espeak.
 			
 			index += N_PHONEME_TAB_NAME; // skip the name
-			integer phonemeTableSizes = numberOfPhonemes * sizeof (PHONEME_TAB);
+			integer phonemeTableSizes = numberOfPhonemes * (integer) sizeof (PHONEME_TAB);
 			Melder_require (index + phonemeTableSizes <= my d_numberOfBytes, U"Too many tables to process. (table ", itab, U" from ", numberOfPhonemeTables, U").");
 			for (integer j = 1; j <= numberOfPhonemes; j ++) {
 				/*
@@ -312,6 +362,8 @@ static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
 static autoFileInMemory phonindex_to_bigendian (FileInMemory me) {
 	try {
 		autoFileInMemory thee = Data_copy (me);
+		uint8 *myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 *thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		integer numberOfShorts = (my d_numberOfBytes - 4 - 1) / 2;
 		integer index = 4; // skip first 4 bytes
 		for (integer i = 0; i < numberOfShorts; i ++) {
@@ -346,10 +398,10 @@ void espeak_ng_data_to_bigendian () {
 	MelderString_empty (& file);
 	MelderString_append (& file, Melder_peek8to32 (PATH_ESPEAK_DATA), U"/phontab");
 	index = FileInMemorySet_lookUp (my files.get(), file.string);
-	Melder_require (index > 0, U"phonindex not present.");
+	Melder_require (index > 0, U"phontab not present.");
 	FileInMemory phontab = (FileInMemory) my files -> at [index];
 
-	autoFileInMemory phontab_new = phontab_to_bigendian (phontab);	
+	autoFileInMemory phontab_new = phontab_to_bigendian (phontab);
 	my files -> replaceItem_move (phontab_new.move(), index);
 
 	MelderString_empty (& file);
@@ -358,7 +410,7 @@ void espeak_ng_data_to_bigendian () {
 	Melder_require (index > 0, U"phonindex not present.");
 	FileInMemory phonindex = (FileInMemory) my files -> at [index];
 
-	autoFileInMemory phonindex_new = phonindex_to_bigendian (phonindex);	
+	autoFileInMemory phonindex_new = phonindex_to_bigendian (phonindex);
 	my files -> replaceItem_move (phonindex_new.move(), index);
 }
 
