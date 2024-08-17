@@ -278,7 +278,7 @@ const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, inte
 	const FileInMemory fim = (FileInMemory) my at [index];
 	if (out_numberOfBytes)
 		*out_numberOfBytes = fim -> d_numberOfBytes;
-	return reinterpret_cast<const char *> (fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray ());
+	return reinterpret_cast<const char *> (fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray());
 }
 
 

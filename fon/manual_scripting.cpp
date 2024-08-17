@@ -2517,7 +2517,7 @@ MAN_END
 
 MAN_BEGIN (U"Scripting 6.8. Messages to the user", U"ppgb", 20230122)
 NORMAL (U"If the user makes a mistake (e.g. types conflicting settings into your form window), "
-	"you can use the #exitScript function (@@Scripting 5.9. Quitting|\\SS5.8@) "
+	"you can use the #exitScript function (@@Scripting 5.9. Quitting|\\SS5.9@) "
 	"to stop the execution of the script with an error message:")
 CODE (U"form: “My analysis”")
 	CODE1 (U"real: “Starting time (s)”, “0.0”")

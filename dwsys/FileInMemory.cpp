@@ -91,11 +91,11 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 			//my d_data.size = numberOfBytes + 1;
 			my _dontOwnData = false; // we can dispose of the data!
 			my d_data = newvectorraw <unsigned char> (numberOfBytes + 1);
-			memcpy (my d_data.asArgumentToFunctionThatExpectsZeroBasedArray (), data, (size_t) numberOfBytes + 1);
+			memcpy (my d_data.asArgumentToFunctionThatExpectsZeroBasedArray(), data, (size_t) numberOfBytes + 1);
 		} else {
 			my _dontOwnData = false;
 			my d_data = newvectorraw <unsigned char> (numberOfBytes + 1);
-			memcpy (my d_data.asArgumentToFunctionThatExpectsZeroBasedArray (), data, (size_t) numberOfBytes + 1);
+			memcpy (my d_data.asArgumentToFunctionThatExpectsZeroBasedArray(), data, (size_t) numberOfBytes + 1);
 		}
 		return me;
 	} catch (MelderError) {
