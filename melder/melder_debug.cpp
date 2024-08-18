@@ -95,16 +95,16 @@ the behaviour of Praat will temporarily change in the following ways:
 */
 
 /*
- * In order to make sure that Melder_casual() and trace() can be called from anywhere,
- * including e.g. from Melder_realloc() or Melder_free(),
- * they cannot use any Melder_xxx() functions.
- */
+	In order to make sure that Melder_casual() and trace() can be called from anywhere,
+	including e.g. from Melder_realloc() or Melder_free(),
+	they cannot use any Melder_xxx() functions.
+*/
 
 /*
- * peek32to8 substitutes for Melder_peek32to8(),
- * which can call Melder_realloc() and Melder_free();
- * also, we need no newline nativization, as Melder_32to8_inplace() does.
- */
+	peek32to8 substitutes for Melder_peek32to8(),
+	which can call Melder_realloc() and Melder_free();
+	also, we need no newline nativization, as Melder_32to8_inplace() does.
+*/
 conststring8 MelderTrace::_peek32to8 (conststring32 string) {
 	if (! string)
 		return "";
@@ -190,6 +190,15 @@ conststring16 MelderTrace::_peek32to16 (conststring32 string) {
 	return buffer;
 }
 #endif
+
+conststring32 MelderTrace::_peek8to32 (conststring8 string8) {
+	static MelderString buffers [19];
+	static int ibuffer = 0;
+	if (++ ibuffer == 19)
+		ibuffer = 0;
+	MelderString_8to32 (& buffers [ibuffer], string8);
+	return buffers [ibuffer].string;
+}
 
 /********** TRACE **********/
 

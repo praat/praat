@@ -1,13 +1,13 @@
 # Makefile of the library "melder"
-# Paul Boersma, 16 August 2024
+# Paul Boersma, 18 August 2024
 
 include ../makefile.defs
 
 CPPFLAGS = -I ../melder -I ../sys
 
 OBJECTS = melder.o complex.o melder_alloc.o melder_str32.o melder_colour.o \
-	melder_ftoa.o melder_console.o melder_textencoding.o melder_atof.o melder_files.o \
-	melder_sort.o melder_debug.o MelderFile.o melder_strings.o \
+	melder_ftoa.o melder_console.o melder_atof.o melder_files.o \
+	melder_sort.o MelderString.o melder_textencoding.o melder_debug.o MelderFile.o MelderCat.o \
 	melder_search.o \
 	melder_info.o melder_error.o melder_warning.o melder_progress.o \
 	melder_play.o melder_help.o melder_time.o \
