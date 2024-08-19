@@ -73,17 +73,17 @@
 #include "melder_colour.h"   // MelderColour (requires VEC)
 #include "melder_ftoa.h"   // Melder_double, Melder_padLeft (require dcomplex, conststring32, MelderColour)
 #include "melder_console.h"   // MelderConsole (requires conststring32)
-#include "melder_textencoding.h"   // Melder_length_utf8, Melder_32to8
 #include "melder_atof.h"
 #include "melder_files.h"   // Melder_fopen, MelderFile, MelderFolder
 #include "melder_strvec.h"   // STRVEC, autoSTRVEC (requires MelderArray)
 #include "melder_sort.h"   // sort_VEC_inout (requires VEC), sort_STRVEC_inout (requires STRVEC)
 
 #include "MelderArg.h"   // MelderArg (requires Melder_double, MelderFile, Melder_VEC)
-#include "melder_debug.h"   // trace (requires MelderFile, MelderArg), Melder_debug
-#include "MelderFile.h"   // MelderFile_open (requires MelderFile), MelderFile_write (requires MelderArg)
 #include "MelderString.h"   // MelderString_append (requires MelderArg)
-#include "melder_cat.h"   // Melder_cat (requires MelderArg)
+#include "melder_textencoding.h"   // Melder_length_utf8, Melder_32to8 (requires MelderString)
+#include "melder_debug.h"   // trace (requires MelderFile, MelderArg, MelderString), Melder_debug
+#include "MelderFile.h"   // MelderFile_open (requires MelderFile), MelderFile_write (requires MelderArg)
+#include "MelderCat.h"   // Melder_cat (requires MelderArg)
 #include "melder_sprint.h"   // Melder_sprint (requires MelderArg)
 #include "melder_search.h"
 #include "melder_casual.h"

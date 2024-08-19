@@ -536,7 +536,7 @@ autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, bool p
 				for (integer iinterval = tier -> intervals.size; iinterval >= 1; iinterval --) {
 					TextInterval interval = tier -> intervals.at [iinterval];
 					if (interval -> xmin >= tmax || interval -> xmax <= tmin) {
-						tier -> intervals.removeItem (iinterval);
+						tier -> intervals. removeItem (iinterval);
 					} else {
 						Melder_clipLeft (tmin, & interval -> xmin);
 						Melder_clipRight (& interval -> xmax, tmax);
@@ -569,7 +569,7 @@ static autoTextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
 		Tier tier = my at [itier];
 		autoIntervalTier intervalTier = IntervalTier_create (tmin, tmax);
 		thy tiers -> addItem_move (intervalTier.move());
-		intervalTier -> intervals.removeItem (1);
+		intervalTier -> intervals. removeItem (1);
 		for (integer iinterval = 1; iinterval <= tier->size; iinterval ++) {
 			Autosegment autosegment = tier->at [iinterval];
 			autoTextInterval textInterval = TextInterval_create (

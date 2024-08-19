@@ -1,6 +1,6 @@
-/* melder_strings.cpp
+/* MelderString.cpp
  *
- * Copyright (C) 2006-2012,2014-2023 Paul Boersma
+ * Copyright (C) 2006-2012,2014-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,7 +222,4 @@ int64 MelderString_deallocationSize () {
 	return totalDeallocationSize;
 }
 
-MelderString MelderCat::_buffers [MelderCat::_k_NUMBER_OF_BUFFERS] { };
-int MelderCat::_bufferNumber = 0;
-
-/* End of file melder_strings.cpp */
+/* End of file MelderString.cpp */

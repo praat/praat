@@ -1038,8 +1038,8 @@ static bool tryToAttachToTheCommandLine ()
 static void setThePraatLocale () {
 	/*
 		We use only the "C" locale, because iswalpha works differently
-		on different platforms, even if UTF-8 is specified (e.g. try 0x0905),
-		which is an `alpha` on Windows but not on Mac and Linux.
+		on different platforms, even if UTF-8 is specified (e.g. try 0x0905,
+		which is an `alpha` on Windows but not on Mac and Linux).
 		We do have to replace everything from <wctype.h>:
 		- all iswalpha by iswalpha_portable
 		- all iswalnum by iswalnum_portable
@@ -2270,7 +2270,8 @@ void praat_run () {
 		"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
 
 	/*
-		The type "integer" is defined as intptr_t, analogously to uinteger as uintptr_t.
+		The type "integer" is defined as intptr_t, analogously to uinteger as uintptr_t
+		(last checked 2024-08-18).
 		However, the usual definition of an integer type that has 32 bits on 32-bit platforms
 		and 64 bits on 64-bit platforms would be ptrdiff_t.
 		Check that these definitions are the same.
@@ -2286,6 +2287,55 @@ void praat_run () {
 		integer n1, n2;
 		sscanf ("456789 -12345", "%td%td", & n1, & n2);
 		Melder_assert (n1 == 456789 && n2 == -12345);
+	}
+
+	/*
+		Check some assumptions about non-argument-evaluation during void tracing,
+		and about the order of argument evaluation.
+	*/
+	{
+		TRACE
+		int i = 0;
+		trace (U"digits 1 to 9: ", ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i);
+		if (Melder_isTracingLocally || Melder_isTracingGlobally)
+			Melder_assert (i == 9);
+		else
+			Melder_assert (i == 0);
+		i = 0;
+		trace (U"digits 1 to 9: ", i ++, i ++, i ++, i ++, i ++, i ++, i ++, i ++, i ++);
+		if (Melder_isTracingLocally || Melder_isTracingGlobally)
+			Melder_assert (i == 9);
+		else
+			Melder_assert (i == 0);
+		char buffer [40];
+		i = 0;
+		snprintf (buffer,40, "digits 1 to 9: %d%d%d%d%d%d%d%d%d", ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i);
+		Melder_assert (i == 9);
+		trace (Melder_peek8to32 (buffer));
+		i = 0;
+		snprintf (buffer,40, "digits 1 to 9: %d%d%d%d%d%d%d%d%d", i ++, i ++, i ++, i ++, i ++, i ++, i ++, i ++, i ++);
+		Melder_assert (i == 9);
+		trace (Melder_peek8to32 (buffer));
+		/*
+			Results: trace and snprintf yield the same sequence as each other, on all systems we tested (last checked 2024-08-18)
+			Pre-incrementing gives:
+				123456789 on Xcode, Msys Clang ARM64/Intel64/Intel32
+					preliminary generalization: all Clang
+				999999999 on Msys Gcc Intel64/Intel32, Cygwin Gcc Intel64/Intel32, Orb Ubuntu Gcc ARM64/Intel64, Raspberry Pi Gcc ARMv7, LinuxONE Gcc s390x
+					preliminary generalization: all Gcc
+			Post-incrementing gives:
+				012345678 on Xcode, Msys Clang ARM64/Intel64/Intel32, Orb Ubuntu Gcc ARM64, Raspberry Pi Gcc ARMv7, LinuxONE Gcc s390x
+					preliminary generalization: all Clang, as well as all Gcc on anything else than Intel64/Intel32
+				876543210 on Msys Gcc Intel64/32, Cygwin Gcc Intel64/Intel32, Orb Ubuntu Gcc Intel64
+					preliminary generalization: all Gcc on Intel64/Intel32
+				000000000 on none yet
+			A pleasing degree of variation!
+			It's good to know that the order doesn't depend on whether the function is implemented in a recursive template (as trace)
+			or in the C library (as snprintf). For instance, this means that even though the recursive-template implementation
+			may look as though it evaluates from left to right, it doesn't necessarily do that.
+			The bottom line is that for a given variable you can use only a single pre-increment or a single post-increment
+			in any function call, even for the recursive templates of our own devising.
+		 */
 	}
 
 	if (Melder_batch) {

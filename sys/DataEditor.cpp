@@ -59,7 +59,7 @@ void structDataSubEditor :: v9_destroy () noexcept {
 	if (our root)
 		for (integer i = our root -> children.size; i > 0; i --)
 			if (our root -> children.at [i] == this)
-				our root -> children.subtractItem_ref (i);
+				our root -> children. subtractItem_ref (i);
 	DataSubEditor_Parent :: v9_destroy ();
 }
 
@@ -817,7 +817,7 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 			So first we make the parent forget the moribund child,
 			which prevents a dangling pointer:
 		*/
-		DataSubEditor child = my children.subtractItem_ref (i);
+		DataSubEditor child = my children. subtractItem_ref (i);
 		/*
 			That was fast, because subtracting the last item involves no shifting
 			of the remaining items.

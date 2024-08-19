@@ -87,13 +87,13 @@ int espeak_io_ungetc (int character, FILE * stream) {
 */
 int espeak_io_GetFileLength (const char *filename) {
 	FileInMemorySet me = ESPEAK_FILEINMEMORYMANAGER -> files.get();
-	integer index = FileInMemorySet_lookUp (me, Melder_peek8to32(filename));
+	integer index = FileInMemorySet_lookUp (me, Melder_peek8to32 (filename));
 	if (index > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my at [index]);
 		return fim -> d_numberOfBytes;
 	}
 	// Directory ??
-	if (FileInMemorySet_hasDirectory (me, Melder_peek8to32(filename))) {
+	if (FileInMemorySet_hasDirectory (me, Melder_peek8to32 (filename))) {
 		return -EISDIR;
 	}
 	return -1;
@@ -178,8 +178,8 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 	TRACE
 	try {
 		autoFileInMemory thee = Data_copy (me);
-		uint8 *myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		uint8 *thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		FILE *phondataf = fopen (Melder_peek32to8_fileSystem (my d_path.get()), "r");
 		Melder_assert (phondataf);
 		FILE *manifestf = fopen (Melder_peek32to8_fileSystem (manifest -> d_path.get()), "r");
@@ -266,7 +266,7 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 					/*
 						frflags signals whether the frame is a Klatt frame or not
 						20231105 changed thy d_data [i1] to thy d_data [index + 1];
-						20240816 changed thy d_data to my d_data
+						20240816 changed thy d_data to my d_data, and then to myData [index]
 					*/
 					#define FRFLAG_KLATT 0x01
 					uint32 length = (myData [index] & FRFLAG_KLATT) ? sizeof (frame_t) : sizeof (frame_t2);
@@ -315,20 +315,23 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 }
 
 static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
+	TRACE
 	try {
 		autoFileInMemory thee = Data_copy (me);
-		uint8 *myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		uint8 *thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		integer numberOfPhonemeTables = myData [0];
+		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		const integer numberOfPhonemeTables = myData [0];
+		trace (numberOfPhonemeTables, U" phoneme tables");
 		integer index = 4; // skip first 4 bytes
 		for (integer itab = 1; itab <= numberOfPhonemeTables; itab ++) {
 			integer numberOfPhonemes = thyData [index];
 
-			index += 4; // This is 8 (incorrect) in the original code of espeak.
-			
+			index += 4;   // this is 8 (incorrect) in the original code of eSpeak
+
 			index += N_PHONEME_TAB_NAME; // skip the name
-			integer phonemeTableSizes = numberOfPhonemes * (integer) sizeof (PHONEME_TAB);
-			Melder_require (index + phonemeTableSizes <= my d_numberOfBytes, U"Too many tables to process. (table ", itab, U" from ", numberOfPhonemeTables, U").");
+			const integer phonemeTableSizes = numberOfPhonemes * (integer) sizeof (PHONEME_TAB);
+			Melder_require (index + phonemeTableSizes <= my d_numberOfBytes,
+				U"Too many tables to process. (table ", itab, U" from ", numberOfPhonemeTables, U").");
 			for (integer j = 1; j <= numberOfPhonemes; j ++) {
 				/*
 					typedef struct { // 16 bytes
@@ -353,6 +356,8 @@ static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
 			}
 			Melder_require (index <= my d_numberOfBytes, U"Position ", index, U" is larger than file length (", my d_numberOfBytes, U").");
 		}
+		trace (U"Ending up at index ", index, U" in a file with ", my d_numberOfBytes, U" bytes.");
+		Melder_assert (index == my d_numberOfBytes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"phontab not converted to bigendian.");
@@ -360,17 +365,20 @@ static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
 }
 	
 static autoFileInMemory phonindex_to_bigendian (FileInMemory me) {
+	TRACE
 	try {
 		autoFileInMemory thee = Data_copy (me);
-		uint8 *myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		uint8 *thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		integer numberOfShorts = (my d_numberOfBytes - 4 - 1) / 2;
+		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		const integer numberOfShorts = (my d_numberOfBytes - 4) / 2;   // there used to be an extra "- 1" here (ppgb 20240817)
 		integer index = 4; // skip first 4 bytes
 		for (integer i = 0; i < numberOfShorts; i ++) {
 			SWAP_2 (index)
 			index += 2;
 			Melder_require (index <= my d_numberOfBytes, U"Position ", index, U" is larger than file length (", my d_numberOfBytes, U").");
 		}
+		trace (U"Ending up at index ", index, U" in a file with ", my d_numberOfBytes, U" bytes.");
+		Melder_assert (index == my d_numberOfBytes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"phonindex not converted to bigendian.");
@@ -393,7 +401,7 @@ void espeak_ng_data_to_bigendian () {
 	FileInMemory phondata = (FileInMemory) my files -> at [index];
 
 	autoFileInMemory phondata_new = phondata_to_bigendian (phondata, manifest);
-	my files -> replaceItem_move (phondata_new.move(), index);
+	Thing_swap (phondata, phondata_new.get());
 
 	MelderString_empty (& file);
 	MelderString_append (& file, Melder_peek8to32 (PATH_ESPEAK_DATA), U"/phontab");
@@ -402,7 +410,7 @@ void espeak_ng_data_to_bigendian () {
 	FileInMemory phontab = (FileInMemory) my files -> at [index];
 
 	autoFileInMemory phontab_new = phontab_to_bigendian (phontab);
-	my files -> replaceItem_move (phontab_new.move(), index);
+	Thing_swap (phontab, phontab_new.get());
 
 	MelderString_empty (& file);
 	MelderString_append (& file, Melder_peek8to32 (PATH_ESPEAK_DATA), U"/phonindex");
@@ -411,7 +419,7 @@ void espeak_ng_data_to_bigendian () {
 	FileInMemory phonindex = (FileInMemory) my files -> at [index];
 
 	autoFileInMemory phonindex_new = phonindex_to_bigendian (phonindex);
-	my files -> replaceItem_move (phonindex_new.move(), index);
+	Thing_swap (phonindex, phonindex_new.get());
 }
 
 /* End of file espeak_io.cpp */

@@ -113,7 +113,7 @@ void PairDistribution_removeZeroWeights (PairDistribution me) {
 	for (integer ipair = my pairs.size; ipair > 0; ipair --) {
 		PairProbability prob = my pairs.at [ipair];
 		if (prob -> weight <= 0.0) {
-			my pairs.removeItem (ipair);
+			my pairs. removeItem (ipair);
 		}
 	}
 }

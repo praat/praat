@@ -1242,7 +1242,7 @@ void GetVoices(const char *path, int len_path_voices, int is_language_file)
 #endif // ! DATA_FROM_SOURCECODE_FILES
 
 #pragma GCC visibility push(default)
-
+#if ! DATA_FROM_SOURCECODE_FILES
 ESPEAK_NG_API espeak_ng_STATUS espeak_ng_SetVoiceByFile(const char *filename)
 {
 	int ix;
@@ -1278,6 +1278,7 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_SetVoiceByFile(const char *filename)
 
 	return ENS_VOICE_NOT_FOUND;
 }
+#endif // ! DATA_FROM_SOURCECODE_FILES
 
 ESPEAK_NG_API espeak_ng_STATUS espeak_ng_SetVoiceByName(const char *name)
 {

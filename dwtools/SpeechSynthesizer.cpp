@@ -592,7 +592,7 @@ static void IntervalTier_removeVeryShortIntervals (IntervalTier me) {
 	while (iint <= my intervals.size) {
 		const TextInterval ti = my intervals.at [iint];
 		if (almost_equal (ti -> xmin, ti -> xmax))
-			my intervals.removeItem (iint);
+			my intervals. removeItem (iint);
 		else
 			iint ++;
 	}
