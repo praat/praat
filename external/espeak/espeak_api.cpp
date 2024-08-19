@@ -125,10 +125,12 @@ ESPEAK_API espeak_ERROR espeak_SetVoiceByName(const char *name)
 	return status_to_espeak_error(espeak_ng_SetVoiceByName(name));
 }
 
+#if ! DATA_FROM_SOURCECODE_FILES
 ESPEAK_API espeak_ERROR espeak_SetVoiceByFile(const char *filename)
 {
 	return status_to_espeak_error(espeak_ng_SetVoiceByFile(filename));
 }
+#endif // ! DATA_FROM_SOURCECODE_FILES
 
 ESPEAK_API espeak_ERROR espeak_SetVoiceByProperties(espeak_VOICE *voice_selector)
 {

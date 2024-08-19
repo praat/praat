@@ -782,7 +782,7 @@ void test_FileInMemoryManager_io (void) {
 	Melder_assert (fim -> d_position == 0);
 	const integer count = 8;
 	size_t nread0 = fread (buf0, 1, count, file0);
-	size_t nread1 =  FileInMemoryManager_fread (me.get(), buf1, 1, count, f1);
+	size_t nread1 = FileInMemoryManager_fread (me.get(), buf1, 1, count, f1);
 	MelderInfo_writeLine (U"\t\tRead ", nread0, U" and ", nread1, U" bytes");
 	
 	Melder_assert (nread0 == nread0);
