@@ -174,7 +174,7 @@ FILE *FileInMemoryManager_fopen (FileInMemoryManager me, const char *filename, c
 	try {
 		integer index = 0;
 		if (*mode == 'r') { // also covers mode == 'rb'
-			index = FileInMemorySet_lookUp (my files.get(), Melder_peek8to32(filename));
+			index = FileInMemorySet_lookUp (my files.get(), Melder_peek8to32 (filename));
 			if (index > 0) {
 				const FileInMemory fim = (FileInMemory) my files -> at [index];
 				if (fim -> d_position == 0) // not open
@@ -189,7 +189,7 @@ FILE *FileInMemoryManager_fopen (FileInMemoryManager me, const char *filename, c
 		}
 		return reinterpret_cast<FILE *> (index);
 	} catch (MelderError) {
-		Melder_throw (U"File ", Melder_peek8to32(filename), U" cannot be opened.");
+		Melder_throw (U"File ", Melder_peek8to32 (filename), U" cannot be opened.");
 	}
 }
 

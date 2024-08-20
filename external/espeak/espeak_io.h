@@ -2,7 +2,7 @@
 #define _espeak_io_h_
 
 /* espeak_io.h
- * Copyright (C) David Weenink 2017-2024, Paul Boersma 2024
+ * Copyright (C) 2017-2024 David Weenink, 2024 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
