@@ -1352,10 +1352,10 @@ static int WavegenFill2(void)
 			marker_type = q[0] >> 8;
 			trace (U"marker ", marker_type, U" ", q [1], U" ", q [2], U" ", q [3]);
 			if (marker_type == espeakEVENT_PHONEME) {
-				if (sizeof (intptr_t) == 4)
-					MarkerEvent(marker_type, q[1], q[2], q[3], out_ptr);
+				//if (sizeof (intptr_t) == 4)
+				//	MarkerEvent(marker_type, q[1], q[2], q[3], out_ptr);
 							// ppgb-espeak: q [3] spilled over when assigning to q [2]
-				else
+				//else
 					MarkerEvent(marker_type, q[1], * (int *) & q[2], * ((int *) & q[2] + 1), out_ptr);
 							// ppgb-espeak: split up q [2] into two ints
 			}
