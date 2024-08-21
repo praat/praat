@@ -75,6 +75,8 @@ The meaning of the names of binary files available on GitHub is as follows (edit
 - `praatXXXX_mac7.sit`: StuffIt archive with executable for MacOS 7
 
 ### 1.3. Linux binaries
+- **`praatXXXX_linux-s390x-barren.tar.gz`: gzipped tarred executable for s390x Linux, without GUI, sound and graphics**
+- **`praatXXXX_linux-s390x.tar.gz`: gzipped tarred executable for s390x Linux (GTK 3)**
 - **`praatXXXX_linux-arm64-barren.tar.gz`: gzipped tarred executable for ARM64 Linux, without GUI, sound and graphics**
 - **`praatXXXX_linux-arm64-nogui.tar.gz`: gzipped tarred executable for ARM64 Linux, without GUI and sound but with graphics (Cairo and Pango)**
 - **`praatXXXX_linux-arm64.tar.gz`: gzipped tarred executable for ARM64 Linux (GTK 3)**
@@ -98,7 +100,9 @@ The meaning of the names of binary files available on GitHub is as follows (edit
 - `praatXXXX_rpi_armv7.tar.gz`: gzipped tarred executable for (32-bit) ARMv7 Linux on the Raspberry Pi 4B (GTK 2 or 3)
 
 ### 1.6. Other Unix binaries (all obsolete)
-- `praatXXXX_solaris.tar.gz`: gzipped tarred executable for Solaris
+- `praatXXXX_solaris.tar.gz`: gzipped tarred executable for Sun Solaris
+- `praatXXXX_sgi.tar.gz`: gzipped tarred executable for Silicon Graphics Iris
+- `praatXXXX_hpux.tar.gz`: gzipped tarred executable for HP-UX (Hewlett-Packard Unix)
 
 ## 2. Compiling the source code
 
@@ -609,7 +613,49 @@ Thus, the cycle from editing Praat on the Mac to running it on your Raspberry Pi
 From clean sources this takes around 19 minutes (on a Raspberry Pi 4B),
 but if no header files change, then it can be done in approximately 20 seconds.
 
-### 4.6. Distributing Praat
+### 4.6. s390x development set-up on LinuxONE
+
+Once you have a (permanent) open-source LinuxONE account (https://community.ibm.com/zsystems/form/l1cc-oss-vm-request/),
+you will probably have an SSH key generated in a `*.pem` file,
+which you moved for instance to `~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem`.
+
+On your LinuxONE virtual machine, you create folders `~/praats` and `~/praatsb`,
+after which you can push the sources from your Mac to your LinuxONE VM with
+
+    # in Mac:~/.bash_profile
+    ORIGINAL_SOURCES="~/Praats/src"
+    EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*" --exclude="*kanweg*"'
+    alias praats-putone="rsync -rptvz -e \"ssh -i ~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem\" $EXCLUDES \
+        $ORIGINAL_SOURCES/ linux1@199.199.99.99:~/praats"
+
+where instead of `199.199.99.99` you use the IP address that the LinuxONE owners sent to you.
+In your LinuxONE VM, you define
+
+    # in LinuxONE:~/.bash_profile
+    alias praat-build="( cd ~/praats &&\
+        cp makefiles/makefile.defs.linux.s390.pulse makefile.defs &&\
+        make -j4 )"
+    alias praat="~/praats/praat"
+    alias praat-run="praat-build && praat"
+    alias praatb-build="( cd ~/praatsb &&\
+        cp makefiles/makefile.defs.linux.s390.barren makefile.defs &&\
+        make -j4 )"
+    alias praatb="~/praatsb/praat_barren"
+    alias praatb-run="praatb-build && praatb"
+
+after which you can build and run Praat with
+
+    # on Raspberry Pi command line
+    praat-run
+
+Thus, the cycle from editing Praat on the Mac to running it on your LinuxONE VM therefore takes three steps:
+
+1. edit and save the source code in Xcode on your Mac;
+2. type `praats-putone` on your Mac;
+3. type `praat-run` on your LinuxONE VM,
+   perhaps via `ssh -X -i ~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem linux1@199.199.99.99` in your Mac terminal.
+
+### 4.7. Distributing Praat
 
 If you want to distribute your version of Praat, you can do so on GitHub and/or on a website
 (at least, that’s how the main authors do it). Both of these venues require that you have
@@ -691,8 +737,8 @@ You can fetch the Raspberry Pi edition directly from your Raspberry Pi:
 and the s390x edition directly from your LinuxONE account:
 
     # on Mac command line
-    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/publish/.ssh-linuxONE/paulslinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praats/praat ~/Dropbox/Praats/bin/linux-s390x
-    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/publish/.ssh-linuxONE/paulslinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praatsb/praat_barren ~/Dropbox/Praats/bin/linux-s390x
+    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praats/praat ~/Dropbox/Praats/bin/linux-s390x
+    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praatsb/praat_barren ~/Dropbox/Praats/bin/linux-s390x
 
 When the folders under `~/Dropbox/Praats/bin`, namely `win-intel64`, `win-intel32`, `win-arm64`,
 `linux-intel64`, `linux-arm64`, `chrome-intel64`, `chrome-arm64` and `rpi-armv7`
