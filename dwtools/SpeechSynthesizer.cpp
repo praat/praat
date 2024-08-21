@@ -327,9 +327,8 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 			if (events -> type == espeakEVENT_MARK || events -> type == espeakEVENT_PLAY) {
 				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (events -> id.name));
 			} else {
-				// Ugly hack because id.string is not 0-terminated if 8 chars long!
 				memcpy (phoneme_name, events -> id.string, 8);
-				phoneme_name [8] = 0;   // ppgb-espeak
+				phoneme_name [8] = 0;   // because id.string is not 0-terminated if 8 chars long
 				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (phoneme_name));
 			}
 			Table_setNumericValue (my d_events.get(), irow, 9, events -> unique_identifier);

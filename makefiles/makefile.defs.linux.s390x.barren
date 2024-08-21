@@ -1,0 +1,27 @@
+# File: makefile.defs.linux.s390x.barren
+
+# System: Linux for s390x without GUI, network, graphics, and sound
+# Paul Boersma 2024-08-20
+
+CC ?= gcc
+CXX ?= g++
+LINK ?= $(CXX)
+
+COMMONFLAGS = -DNO_GRAPHICS -DNO_NETWORK -D_FILE_OFFSET_BITS=64 -DUNIX -Dlinux \
+	-DWORDS_BIGENDIAN \
+	-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
+
+CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
+
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
+
+EXECUTABLE = praat_barren
+
+LIBS = -lm -static -static-libgcc -static-libstdc++ -no-pie -lpthread
+
+AR = ar
+RANLIB = ls
+ICON =
+MAIN_ICON =
+
+INSTALL = cp ./praat_barren /usr/bin

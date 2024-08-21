@@ -170,7 +170,7 @@ int32_t get_set_int32_le (char *ch) {
 #endif
 
 static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory manifest) {
-	TRACE
+	//TRACE
 	try {
 		autoFileInMemory thee = Data_copy (me);
 		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
@@ -310,7 +310,7 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 }
 
 static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
-	TRACE
+	//TRACE
 	try {
 		autoFileInMemory thee = Data_copy (me);
 		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
@@ -360,7 +360,7 @@ static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
 }
 	
 static autoFileInMemory phonindex_to_bigendian (FileInMemory me) {
-	TRACE
+	//TRACE
 	try {
 		autoFileInMemory thee = Data_copy (me);
 		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
