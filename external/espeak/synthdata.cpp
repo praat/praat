@@ -28,7 +28,7 @@
 #include <string.h>
 
 #include "espeak_ng.h"
-#include "espeak_io.h"
+#include "espeak_io.h"   // include *after* system includes
 #include "speak_lib.h"
 #include "encoding.h"
 

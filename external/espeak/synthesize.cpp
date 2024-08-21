@@ -1035,7 +1035,7 @@ void DoPhonemeMarker(int type, int char_posn, int length, char *name)
 	if (WcmdqFree() > 5) {
 		wcmdq[wcmdq_tail][0] = WCMD_MARKER + (type << 8);
 		wcmdq[wcmdq_tail][1] = (char_posn & 0xffffff) | (length << 24);
-		memcpy(&wcmdq[wcmdq_tail][2], name, 8); // up to 8 bytes of UTF8 characters
+		memcpy(&wcmdq[wcmdq_tail][2], name, 8); // up to 8 bytes of UTF8 characters, either in 2 or in 2 and 3   // ppgb-espeak: potentially endian-specific
 		WcmdqInc();
 	}
 }

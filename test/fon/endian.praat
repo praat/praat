@@ -7,53 +7,53 @@ procedure do testCorrect
 	energyInAir = Get energy in air
 	assert "'energyInAir:11'" = "0.00008397361"
 
-if testCorrect
-	Read from file... test.Sound
-	energyInAir2 = Get energy in air
-	Remove
-	select Sound test
-	assert energyInAir2 = energyInAir   ; 'energyInAir2' 'energyInAir'
-
-	Write to WAV file... test2.wav
-	Remove
-	Read from file... test2.wav
-	energyInAir2 = Get energy in air
-	deleteFile ("test2.wav")
-	assert energyInAir2 = energyInAir
-
-	Write to AIFF file... test2.aiff
-	Remove
-	Read from file... test2.aiff
-	energyInAir2 = Get energy in air
-	deleteFile ("test2.aiff")
-	assert energyInAir2 = energyInAir
-
-	Write to FLAC file... test2.flac
-	Remove
-	Read from file... test2.flac
-	energyInAir2 = Get energy in air
-	deleteFile ("test2.flac")
-	assert energyInAir2 = energyInAir
-
-	Write to binary file... test2.bin
-	Remove
-	Read from file... test2.bin
-	energyInAir2 = Get energy in air
-	deleteFile ("test2.bin")
-	assert energyInAir2 = energyInAir
-
-	Write to Sesam file... test2.sdf
-	Remove
-	Read from file... test2.sdf
-	deleteFile ("test2.sdf")
-	energyInAir2 = Get energy in air
-	Write to Sesam file... test3.sdf
-	Remove
-	Read from file... test3.sdf
-	deleteFile ("test3.sdf")
-	energyInAir3 = Get energy in air
-	assert energyInAir3 = energyInAir2
-endif
+	if testCorrect
+		Read from file... test.Sound
+		energyInAir2 = Get energy in air
+		Remove
+		select Sound test
+		assert energyInAir2 = energyInAir   ; 'energyInAir2' 'energyInAir'
+	
+		Write to WAV file... test2.wav
+		Remove
+		Read from file... test2.wav
+		energyInAir2 = Get energy in air
+		deleteFile ("test2.wav")
+		assert energyInAir2 = energyInAir
+	
+		Write to AIFF file... test2.aiff
+		Remove
+		Read from file... test2.aiff
+		energyInAir2 = Get energy in air
+		deleteFile ("test2.aiff")
+		assert energyInAir2 = energyInAir
+	
+		Write to FLAC file... test2.flac
+		Remove
+		Read from file... test2.flac
+		energyInAir2 = Get energy in air
+		deleteFile ("test2.flac")
+		assert energyInAir2 = energyInAir
+	
+		Write to binary file... test2.bin
+		Remove
+		Read from file... test2.bin
+		energyInAir2 = Get energy in air
+		deleteFile ("test2.bin")
+		assert energyInAir2 = energyInAir
+	
+		Write to Sesam file... test2.sdf
+		Remove
+		Read from file... test2.sdf
+		deleteFile ("test2.sdf")
+		energyInAir2 = Get energy in air
+		Write to Sesam file... test3.sdf
+		Remove
+		Read from file... test3.sdf
+		deleteFile ("test3.sdf")
+		energyInAir3 = Get energy in air
+		assert energyInAir3 = energyInAir2
+	endif
 
 	Remove
 
@@ -76,7 +76,7 @@ endif
 		Save as FLAC file: "kanweg.flac"
 		t4 = stopwatch
 		keepFiles or deleteFile: "kanweg.flac"
-		printline 't1:2' 't2:2' 't3:2' 't4:2'
+		printline 't1:3' 't2:3' 't3:3' 't4:3'
 	endfor
 	Remove
 

@@ -709,17 +709,6 @@ void texputw32 (MelderFile file, conststring32 s, texput_UP_TO_NINE_NULLABLE_STR
  * NaN's, and denormalized numbers.
  */
 
-// QUESTION: do the following work correctly if a long is 64 bits?
-
-# define FloatToUnsigned(f)  \
-	 ((unsigned long)(((long)((f) - 2147483648.0)) + 2147483647L + 1))
-
-# define UnsignedToFloat(u)    \
-	  (((double)((long)((u) - 2147483647L - 1))) + 2147483648.0)
-
-//#define FloatToUnsigned(f) (uint32) (f)
-//#define UnsignedToFloat(u) (double) (u)
-
 /****************************************************************
  * Extended precision IEEE floating-point conversion routines.
  ****************************************************************/
@@ -1410,7 +1399,8 @@ void binputinteger32BE (integer i, FILE *f) {
 		bytes [1] = (uint8) (i >> 16);   // truncate
 		bytes [2] = (uint8) (i >> 8);   // truncate
 		bytes [3] = (uint8) i;   // truncate
-		if (fwrite (bytes, sizeof (uint8), 4, f) != 4) writeError (U"a signed 32-bit integer.");
+		if (fwrite (bytes, sizeof (uint8), 4, f) != 4)
+			writeError (U"a signed 32-bit integer.");
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 4 bytes in binary file.");
 	}
