@@ -2294,7 +2294,7 @@ void praat_run () {
 		and about the order of argument evaluation.
 	*/
 	{
-		TRACE
+		//TRACE
 		int i = 0;
 		trace (U"digits 1 to 9: ", ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i);
 		if (Melder_isTracingLocally || Melder_isTracingGlobally)

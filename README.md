@@ -272,8 +272,11 @@ install the necessary build tools as well as some graphics and sound packages:
 To set up your source tree for Linux, go to Praat's sources directory (where the folders `fon` and `sys` are)
 and type one of the four following commands:
 
-    # on Ubuntu command line
+    # on Ubuntu command line (Intel64 or ARM64 processor)
     cp makefiles/makefile.defs.linux.pulse ./makefile.defs
+
+    # on Ubuntu command line (s390x processor)
+    cp makefiles/makefile.defs.linux.s390x.pulse ./makefile.defs
 
     # on Chromebook command line
     cp makefiles/makefile.defs.chrome64 ./makefile.defs
@@ -293,6 +296,7 @@ gthread-2.0, rt, glib-2.0, asound, jack).
 When compiling Praat on an external supercomputer or so, you will not have sound.
 If you do have `libgtk-3-dev` (and its dependencies), do
 
+    # on Ubuntu command line (Intel64 or ARM64 processor)
     cp makefiles/makefile.defs.linux.silent ./makefile.defs
 
 Then type `make -j12` or so to build the program. If your Unix isn’t Linux,
@@ -302,12 +306,17 @@ freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0).
 
 When compiling Praat for use as a server for commands from your web pages, you may not need sound or a GUI. Do
 
+    # on Ubuntu command line (Intel64 or ARM64 processor)
     cp makefiles/makefile.defs.linux.nogui ./makefile.defs
 
 which creates the executable `praat_nogui`. If you don't need graphics (e.g. PNG files) either
 (i.e. you need only Praat's computation), you can create an even lighter edition:
 
+    # on Ubuntu command line (Intel64 or ARM64 processor)
     cp makefiles/makefile.defs.linux.barren ./makefile.defs
+
+    # on Ubuntu command line (s390x processor)
+    cp makefiles/makefile.defs.linux.s390x.barren ./makefile.defs
 
 which creates the executable `praat_barren`. Then type `make` or `make -j12` to build the program.
 If your Unix isn’t Linux, you may have to edit the library names in the makefile.
@@ -317,7 +326,7 @@ The above works exactly the same for Intel64 and ARM64 processors, with the same
 **Testing** on multiple platform versions can be done with virtual machines
 for e.g. Ubuntu 20.04, Ubuntu 22.04, Fedora 35, Fedora 37, Mint 20.2,
 Debian GNU Linux 10.10, CentOS 8.4, and CentOS Stream 9, 
-for instance on an Intel64 with Parallels Desktop.
+for instance on an Intel64 Mac with Parallels Desktop.
 On an ARM64 Mac, we test with virtual machines for Ubuntu 22.04, Fedora 38,
 and Debian GNU Linux 12 ARM64.
 
@@ -677,7 +686,13 @@ so that you can “upload” the four executables to the Mac with
 You can fetch the Raspberry Pi edition directly from your Raspberry Pi:
 
     # on Mac command line
-    rsync -tpvz pi@192.168.1.2:~/praats/praat ~/Dropbox/Praats/bin/rpi-armv7
+    rsync -tpvz -e ssh pi@192.168.1.2:~/praats/praat ~/Dropbox/Praats/bin/rpi-armv7
+
+and the s390x edition directly from your LinuxONE account:
+
+    # on Mac command line
+    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/publish/.ssh-linuxONE/paulslinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praats/praat ~/Dropbox/Praats/bin/linux-s390x
+    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/publish/.ssh-linuxONE/paulslinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praatsb/praat_barren ~/Dropbox/Praats/bin/linux-s390x
 
 When the folders under `~/Dropbox/Praats/bin`, namely `win-intel64`, `win-intel32`, `win-arm64`,
 `linux-intel64`, `linux-arm64`, `chrome-intel64`, `chrome-arm64` and `rpi-armv7`
@@ -724,5 +739,9 @@ you can issue the following commands to create the packages and install them in 
       tar cvf praat${PRAAT_VERSION}_rpi-armv7.tar praat &&\
       gzip praat${PRAAT_VERSION}_rpi-armv7.tar &&\
       mv praat${PRAAT_VERSION}_rpi-armv7.tar.gz $PRAAT_WWW )
+    ( cd ~/Dropbox/Praats/bin/linux-s390x &&\
+      tar cvf praat${PRAAT_VERSION}_linux-s390x.tar praat &&\
+      gzip praat${PRAAT_VERSION}_linux-s390x.tar &&\
+      mv praat${PRAAT_VERSION}_linux-s390x.tar.gz $PRAAT_WWW )
 
 Finally, you can update your website and/or create a new release on GitHub.

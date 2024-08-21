@@ -177,6 +177,10 @@ void praat_reportSystemProperties () {
 	#endif
 	#if defined (__aarch64__) || defined (_M_ARM64_)
 		MelderInfo_writeLine (U"Built for processor type: ", U"arm64");
+	#elif defined (__s390x__)
+		MelderInfo_writeLine (U"Built for processor type: ", U"s390x");
+	#elif defined (raspberrypi)
+		MelderInfo_writeLine (U"Built for processor type: ", U"armv7");
 	#else
 		MelderInfo_writeLine (U"Built for processor type: ", sizeof (void *) == 4 ? U"intel32" : U"intel64");
 	#endif
