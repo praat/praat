@@ -617,7 +617,7 @@ but if no header files change, then it can be done in approximately 20 seconds.
 
 Once you have a (permanent) open-source LinuxONE account (https://community.ibm.com/zsystems/form/l1cc-oss-vm-request/),
 you will probably have an SSH key generated in a `*.pem` file,
-which you moved for instance to `~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem`.
+which you moved for instance to `~/Dropbox/Praats/ssh/mylinux1key.pem`.
 
 On your LinuxONE virtual machine, you create folders `~/praats` and `~/praatsb`,
 after which you can push the sources from your Mac to your LinuxONE VM with
@@ -625,7 +625,7 @@ after which you can push the sources from your Mac to your LinuxONE VM with
     # in Mac:~/.bash_profile
     ORIGINAL_SOURCES="~/Praats/src"
     EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*" --exclude="*kanweg*"'
-    alias praats-putone="rsync -rptvz -e \"ssh -i ~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem\" $EXCLUDES \
+    alias praats-putone="rsync -rptvz -e \"ssh -i ~/Dropbox/Praats/ssh/mylinux1key.pem\" $EXCLUDES \
         $ORIGINAL_SOURCES/ linux1@199.199.99.99:~/praats"
 
 where instead of `199.199.99.99` you use the IP address that the LinuxONE owners sent to you.
@@ -645,7 +645,7 @@ In your LinuxONE VM, you define
 
 after which you can build and run Praat with
 
-    # on Raspberry Pi command line
+    # on LinuxONE command line
     praat-run
 
 Thus, the cycle from editing Praat on the Mac to running it on your LinuxONE VM therefore takes three steps:
@@ -653,7 +653,7 @@ Thus, the cycle from editing Praat on the Mac to running it on your LinuxONE VM 
 1. edit and save the source code in Xcode on your Mac;
 2. type `praats-putone` on your Mac;
 3. type `praat-run` on your LinuxONE VM,
-   perhaps via `ssh -X -i ~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem linux1@199.199.99.99` in your Mac terminal.
+   perhaps via `ssh -X -i ~/Dropbox/Praats/ssh/mylinux1key.pem linux1@199.199.99.99` in your Mac terminal.
 
 ### 4.7. Distributing Praat
 
@@ -737,8 +737,8 @@ You can fetch the Raspberry Pi edition directly from your Raspberry Pi:
 and the s390x edition directly from your LinuxONE account:
 
     # on Mac command line
-    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praats/praat ~/Dropbox/Praats/bin/linux-s390x
-    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/publish/ssh-linuxONE/mylinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praatsb/praat_barren ~/Dropbox/Praats/bin/linux-s390x
+    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/ssh/mylinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praats/praat ~/Dropbox/Praats/bin/linux-s390x
+    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/ssh/mylinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praatsb/praat_barren ~/Dropbox/Praats/bin/linux-s390x
 
 When the folders under `~/Dropbox/Praats/bin`, namely `win-intel64`, `win-intel32`, `win-arm64`,
 `linux-intel64`, `linux-arm64`, `chrome-intel64`, `chrome-arm64` and `rpi-armv7`
