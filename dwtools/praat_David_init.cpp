@@ -9015,11 +9015,11 @@ void praat_David_generics_new_init () {
 
 void praat_David_init ();
 void praat_David_init () {
-	
+
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
 	Data_recognizeFileType (oggFileRecognizer);
-	
+
 	Thing_recognizeClassesByName (classActivationList, classBarkFilter, classBarkSpectrogram,
 		classCategories, classCepstrum, classCCA,
 		classClassificationTable, classComplexSpectrogram, classConfusion,
@@ -9032,14 +9032,14 @@ void praat_David_init () {
 		classPatternList, classPCA, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
 		classSVD, classTextGridNavigator, classTextGridTierNavigator, nullptr);
-	
+
 	Thing_recognizeClassByOtherName (classExcitationList, U"Excitations");
 	Thing_recognizeClassByOtherName (classActivationList, U"Activation");
 	Thing_recognizeClassByOtherName (classPatternList, U"Pattern");
 	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
 
 	structVowelEditor  :: f_preferences ();
-	
+
 	espeakdata_praat_init ();
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0,
@@ -9065,7 +9065,7 @@ void praat_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Data sets from the literature", U"Create Table without column names...", 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Data sets from the literature", 2,
 			CREATE_ONE__Table_create_petersonBarney1952);
-	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Hillenbrand et al. 1995)", U"Data sets from the literature", 
+	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Hillenbrand et al. 1995)", U"Data sets from the literature",
 		GuiMenu_HIDDEN + GuiMenu_DEPTH_2,
 			CREATE_ONE__Table_create_hillenbrandEtAl1995);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Pols & Van Nierop 1973)", U"Create formant table (Peterson & Barney 1952)", 2,
@@ -9157,10 +9157,10 @@ void praat_David_init () {
 	praat_addAction1 (classBarkFilter, 0, U"To BarkSpectrogram", nullptr, 0,
 			CONVERT_EACH_TO_ONE__BarkFilter_to_BarkSpectrogram);
 
-	praat_addAction1 (classBarkSpectrogram, 0, U"BarkSpectrogram help", nullptr, 0, 
+	praat_addAction1 (classBarkSpectrogram, 0, U"BarkSpectrogram help", nullptr, 0,
 			HELP__BarkSpectrogram_help);
 	praat_BandFilterSpectrogram_draw_init (classBarkSpectrogram);
-	praat_addAction1 (classBarkSpectrogram, 0, U"Paint image...", nullptr, 1, 
+	praat_addAction1 (classBarkSpectrogram, 0, U"Paint image...", nullptr, 1,
 			GRAPHICS_EACH__BarkSpectrogram_paintImage);
 	praat_addAction1 (classBarkSpectrogram, 0, U"Draw Sekey-Hanson auditory filters...", nullptr, 1,
 			GRAPHICS_EACH__BarkSpectrogram_drawSekeyHansonAuditoryFilters);
@@ -9170,11 +9170,11 @@ void praat_David_init () {
 	praat_BandFilterSpectrogram_query_init (classBarkSpectrogram);
 	praat_addAction1 (classBarkSpectrogram, 0, U"Equalize intensities...", nullptr, 0, 
 			MODIFY_EACH__BandFilterSpectrogram_equalizeIntensities);
-	praat_addAction1 (classBarkSpectrogram, 0, U"To Intensity", nullptr, 0, 
+	praat_addAction1 (classBarkSpectrogram, 0, U"To Intensity", nullptr, 0,
 			CONVERT_EACH_TO_ONE__BandFilterSpectrogram_to_Intensity);
-	praat_addAction1 (classBarkSpectrogram, 0, U"To Matrix...", nullptr, 0, 
+	praat_addAction1 (classBarkSpectrogram, 0, U"To Matrix...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__BandFilterSpectrogram_to_Matrix);
-	praat_addAction1 (classBarkSpectrogram, 2, U"Cross-correlate...", nullptr, 0, 
+	praat_addAction1 (classBarkSpectrogram, 2, U"Cross-correlate...", nullptr, 0,
 			CONVERT_TWO_TO_ONE__BandFilterSpectrograms_crossCorrelate);
 	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", nullptr, 0,
 			CONVERT_TWO_TO_ONE__BandFilterSpectrograms_convolve);
@@ -9191,41 +9191,41 @@ void praat_David_init () {
 	praat_addAction1 (classCategories, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classCategories, 1, U"Append category... || Append 1 category...",
 			nullptr, 1, MODIFY_Categories_appendCategory);
-		praat_addAction1 (classCategories, 0, U"Permute items (in-place)", nullptr, 1, 
+		praat_addAction1 (classCategories, 0, U"Permute items (in-place)", nullptr, 1,
 			MODIFY_EACH__Categories_permuteItems_inplace);	
 	praat_addAction1 (classCategories, 0, U"Extract", nullptr, 0, nullptr);
-	praat_addAction1 (classCategories, 0, U"To unique Categories", nullptr, 0, 
+	praat_addAction1 (classCategories, 0, U"To unique Categories", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Categories_selectUniqueItems);
 	praat_addAction1 (classCategories, 0, U"Analyse", nullptr, 0, nullptr); // TODO name
-	praat_addAction1 (classCategories, 2, U"To Confusion", nullptr, 0, 
+	praat_addAction1 (classCategories, 2, U"To Confusion", nullptr, 0,
 			CONVERT_TWO_TO_ONE__Categories_to_Confusion);
 	praat_addAction1 (classCategories, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 2, U"Join", nullptr, 0, 
 			CONVERT_TWO_TO_ONE__Categories_join);
-	praat_addAction1 (classCategories, 0, U"Permute items", nullptr, 0, 
+	praat_addAction1 (classCategories, 0, U"Permute items", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Categories_permuteItems);
-	praat_addAction1 (classCategories, 0, U"To Strings", nullptr, 0, 
+	praat_addAction1 (classCategories, 0, U"To Strings", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Categories_to_Strings);
 
-	praat_addAction1 (classChebyshevSeries, 0, U"ChebyshevSeries help", nullptr, 0, 
+	praat_addAction1 (classChebyshevSeries, 0, U"ChebyshevSeries help", nullptr, 0,
 			HELP__ChebyshevSeries_help);
 	praat_FunctionSeries_init (classChebyshevSeries);
-	praat_addAction1 (classChebyshevSeries, 0, U"To Polynomial", U"Analyse", 0, 
+	praat_addAction1 (classChebyshevSeries, 0, U"To Polynomial", U"Analyse", 0,
 			CONVERT_EACH_TO_ONE__ChebyshevSeries_to_Polynomial);
 
-	praat_addAction1 (classCCA, 1, U"CCA help", nullptr, 0, 
+	praat_addAction1 (classCCA, 1, U"CCA help", nullptr, 0,
 			HELP__CCA_help);
-	praat_addAction1 (classCCA, 1, U"Draw eigenvector...", nullptr, 0, 
+	praat_addAction1 (classCCA, 1, U"Draw eigenvector...", nullptr, 0,
 			GRAPHICS_EACH__CCA_drawEigenvector);
-	praat_addAction1 (classCCA, 1, U"Get number of correlations", nullptr, 0, 
+	praat_addAction1 (classCCA, 1, U"Get number of correlations", nullptr, 0,
 		QUERY_ONE_FOR_INTEGER__CCA_getNumberOfCorrelations);
-	praat_addAction1 (classCCA, 1, U"Get correlation...", nullptr, 0, 
+	praat_addAction1 (classCCA, 1, U"Get correlation...", nullptr, 0,
 			QUERY_ONE_FOR_REAL__CCA_getCorrelation);
-	praat_addAction1 (classCCA, 1, U"Get eigenvector element...", nullptr, 0, 
+	praat_addAction1 (classCCA, 1, U"Get eigenvector element...", nullptr, 0,
 			QUERY_ONE_FOR_REAL__CCA_getEigenvectorElement);
-	praat_addAction1 (classCCA, 1, U"Get zero correlation probability...", nullptr, 0, 
+	praat_addAction1 (classCCA, 1, U"Get zero correlation probability...", nullptr, 0,
 			QUERY_ONE_FOR_REAL__CCA_getZeroCorrelationProbability);
-	praat_addAction1 (classCCA, 1, U"Extract Eigen...", nullptr, 0, 
+	praat_addAction1 (classCCA, 1, U"Extract Eigen...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__CCA_extractEigen);
 
 	praat_addAction2 (classCCA, 1, classTableOfReal, 1, U"To TableOfReal (scores)...", nullptr, 0,
@@ -9241,19 +9241,19 @@ void praat_David_init () {
 	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"Get redundancy (sl)...", nullptr, 0,
 			QUERY_ONE_AND_ONE_FOR_REAL__CCA_Correlation_getRedundancy_sl);
 
-	praat_addAction1 (classComplexSpectrogram, 0, U"ComplexSpectrogram help", nullptr, 0, 
+	praat_addAction1 (classComplexSpectrogram, 0, U"ComplexSpectrogram help", nullptr, 0,
 			HELP__ComplexSpectrogram_help);
 	praat_addAction1 (classComplexSpectrogram, 0, U"Draw -", nullptr, 0, nullptr);
-	praat_addAction1 (classComplexSpectrogram, 0, U"To Sound...", nullptr, 0, 
+	praat_addAction1 (classComplexSpectrogram, 0, U"To Sound...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ComplexSpectrogram_to_Sound);
-	praat_addAction1 (classComplexSpectrogram, 0, U"Down to Spectrogram", nullptr, 0, 
+	praat_addAction1 (classComplexSpectrogram, 0, U"Down to Spectrogram", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ComplexSpectrogram_downto_Spectrogram);
-	praat_addAction1 (classComplexSpectrogram, 0, U"To Spectrum (slice)...", nullptr, 0, 
+	praat_addAction1 (classComplexSpectrogram, 0, U"To Spectrum (slice)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ComplexSpectrogram_to_Spectrum_slice);
 	praat_addAction2 (classComplexSpectrogram, 1, classSpectrogram, 1, U"Replace amplitudes", nullptr, 0,
 			MODIFY_ComplexSpectrogram_Spectrogram_replaceAmplitudes);
 
-	praat_addAction1 (classConfusion, 0, U"Confusion help", nullptr, 0, 
+	praat_addAction1 (classConfusion, 0, U"Confusion help", nullptr, 0,
 			HELP__Confusion_help);
 	praat_TableOfReal_init2 (classConfusion);
 	praat_removeAction (classConfusion, nullptr, nullptr, U"Draw as numbers...");
@@ -9264,59 +9264,59 @@ void praat_David_init () {
 	praat_addAction1 (classConfusion, 1, U"Get value (labels)...", U"Get value...", 1, 
 			QUERY_ONE_FOR_REAL__Confusion_getValue_labels);
 	praat_addAction1 (classConfusion, 0, U"-- confusion statistics --", U"Get value (labels)...", 1, nullptr);
-	praat_addAction1 (classConfusion, 1, U"Get fraction correct", U"-- confusion statistics --", 1, 
+	praat_addAction1 (classConfusion, 1, U"Get fraction correct", U"-- confusion statistics --", 1,
 			QUERY_ONE_FOR_REAL__Confusion_getFractionCorrect);
-	praat_addAction1 (classConfusion, 1, U"Get stimulus sum...", U"Get fraction correct", 1, 
+	praat_addAction1 (classConfusion, 1, U"Get stimulus sum...", U"Get fraction correct", 1,
 			QUERY_ONE_FOR_REAL__Confusion_getStimulusSum);
 	praat_addAction1 (classConfusion, 1, U"Get row sum...", U"Get fraction correct", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL__TableOfReal_getRowSum);
-	praat_addAction1 (classConfusion, 1, U"Get response sum...", U"Get stimulus sum...", 1, 
+	praat_addAction1 (classConfusion, 1, U"Get response sum...", U"Get stimulus sum...", 1,
 			QUERY_ONE_FOR_REAL__Confusion_getResponseSum);
 	praat_addAction1 (classConfusion, 1, U"Get column sum...", U"Get row sum...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL__TableOfReal_getColumnSum);
-	praat_addAction1 (classConfusion, 1, U"Get grand sum", U"Get response sum...", 1, 
+	praat_addAction1 (classConfusion, 1, U"Get grand sum", U"Get response sum...", 1,
 			QUERY_ONE_FOR_REAL__TableOfReal_getGrandSum);
-	praat_addAction1 (classConfusion, 0, U"Increase...", U"Formula...", 1, 
+	praat_addAction1 (classConfusion, 0, U"Increase...", U"Formula...", 1,
 			MODIFY_Confusion_increase);
-	praat_addAction1 (classConfusion, 0, U"To TableOfReal (marginals)", U"To TableOfReal", 0, 
+	praat_addAction1 (classConfusion, 0, U"To TableOfReal (marginals)", U"To TableOfReal", 0,
 			CONVERT_EACH_TO_ONE__Confusion_to_TableOfReal_marginals);
 	praat_addAction1 (classConfusion, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classConfusion, 0, U"Condense...", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Confusion_condense);
-	praat_addAction1 (classConfusion, 0, U"Group...", nullptr, 0, 
+	praat_addAction1 (classConfusion, 0, U"Group...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Confusion_group);
-	praat_addAction1 (classConfusion, 0, U"Group stimuli...", nullptr, 0, 
+	praat_addAction1 (classConfusion, 0, U"Group stimuli...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Confusion_groupStimuli);
-	praat_addAction1 (classConfusion, 0, U"Group responses...", nullptr, 0, 
+	praat_addAction1 (classConfusion, 0, U"Group responses...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Confusion_groupResponses);
-	praat_addAction1 (classConfusion, 2, U"To difference matrix", nullptr, 0, 
+	praat_addAction1 (classConfusion, 2, U"To difference matrix", nullptr, 0,
 			CONVERT_TWO_TO_ONE__Confusion_difference); // TODO to_Matrix_difference ?
 
 	praat_addAction2 (classConfusion, 1, classClassificationTable, 1, U"Increase confusion count", nullptr, 0,
 			MODIFY_Confusion_ClassificationTable_increaseConfusionCount);
 
 	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw", nullptr, 0, nullptr);
-	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw confusion...", nullptr, 0, 
+	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw confusion...", nullptr, 0,
 			GRAPHICS_ONE_AND_ONE__Confusion_Matrix_draw);
 
-	praat_addAction1 (classCovariance, 0, U"Covariance help", nullptr, 0, 
+	praat_addAction1 (classCovariance, 0, U"Covariance help", nullptr, 0,
 			HELP__Covariance_help);
 	praat_SSCP_as_TableOfReal_init (classCovariance);
 	praat_SSCP_query_init (classCovariance);
 	praat_SSCP_extract_init (classCovariance);
-	praat_addAction1 (classCovariance, 1, U"Get probability at position...", U"Get value...", 1, 
+	praat_addAction1 (classCovariance, 1, U"Get probability at position...", U"Get value...", 1,
 			QUERY_ONE_FOR_REAL__Covariance_getProbabilityAtPosition);
-	praat_addAction1 (classCovariance, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1, 
+	praat_addAction1 (classCovariance, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1,
 			QUERY_ONE_FOR_REAL__SSCP_getDiagonality_bartlett);
-	praat_addAction1 (classCovariance, 1, U"Get significance of one mean...", U"Get diagonality (bartlett)...", 1, 
+	praat_addAction1 (classCovariance, 1, U"Get significance of one mean...", U"Get diagonality (bartlett)...", 1,
 			QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfOneMean);
-	praat_addAction1 (classCovariance, 1, U"Get significance of means difference...", U"Get significance of one mean...", 1, 
+	praat_addAction1 (classCovariance, 1, U"Get significance of means difference...", U"Get significance of one mean...", 1,
 			QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfMeansDifference);
 	praat_addAction1 (classCovariance, 1, U"Get significance of one variance...", U"Get significance of means difference...", 1,
 			QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfOneVariance);
 	praat_addAction1 (classCovariance, 1, U"Get significance of variances ratio...", U"Get significance of one variance...", 1,
 			QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfVariancesRatio);
-	praat_addAction1 (classCovariance, 1, U"Get fraction variance...", U"Get significance of variances ratio...", 1, 
+	praat_addAction1 (classCovariance, 1, U"Get fraction variance...", U"Get significance of variances ratio...", 1,
 			QUERY_ONE_FOR_REAL__Covariance_getFractionVariance);
 	praat_addAction1 (classCovariance, 2, U"Report multivariate mean difference...", U"Get fraction variance...", 1,
 			INFO_TWO__Covariances_reportMultivariateMeanDifference);
@@ -9324,23 +9324,23 @@ void praat_David_init () {
 			INFO_NONE__Covariances_reportEquality);
 	praat_addAction1 (classCovariance, 0, U"Report equality of covariances", U"Report multivariate mean difference...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			INFO_NONE__Covariances_reportEquality);
-	praat_addAction1 (classCovariance, 0, U"To TableOfReal (random sampling)...", nullptr, 0, 
+	praat_addAction1 (classCovariance, 0, U"To TableOfReal (random sampling)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Covariance_to_TableOfReal_randomSampling);
-	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, 
+	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Covariance_to_Correlation);
-	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, 
+	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Covariance_to_PCA);
-	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0, 
+	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0,
 			COMBINE_ALL_LISTED_TO_ONE__Covariances_pool);
-	praat_addAction1 (classCovariance, 0, U"To Covariance (between)", nullptr, 0, 
+	praat_addAction1 (classCovariance, 0, U"To Covariance (between)", nullptr, 0,
 			COMBINE_ALL_LISTED_TO_ONE__Covariances_to_Covariance_between);
-	praat_addAction1 (classCovariance, 0, U"To Covariance (within)", nullptr, 0, 
+	praat_addAction1 (classCovariance, 0, U"To Covariance (within)", nullptr, 0,
 			COMBINE_ALL_LISTED_TO_ONE__Covariances_to_Covariance_within);
 
 	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Covariance_TableOfReal_mahalanobis);
 	
-	praat_addAction1 (classClassificationTable, 0, U"ClassificationTable help", nullptr, 0, 
+	praat_addAction1 (classClassificationTable, 0, U"ClassificationTable help", nullptr, 0,
 			HELP__ClassificationTable_help);
 	praat_TableOfReal_init (classClassificationTable);
 	praat_addAction1 (classClassificationTable, 0, U"Get class index at maximum in row...", U"Get column index...", 1,
@@ -9379,37 +9379,37 @@ void praat_David_init () {
 			GRAPHICS_EACH__Discriminant_drawEigenvector);
 
 	praat_addAction1 (classDiscriminant, 0, U"-- sscps --", 0, 1, 0);
-	praat_addAction1 (classDiscriminant, 0, U"Draw sigma ellipses...", 0, 1, 
+	praat_addAction1 (classDiscriminant, 0, U"Draw sigma ellipses...", 0, 1,
 			GRAPHICS_EACH__Discriminant_drawSigmaEllipses);
-	praat_addAction1 (classDiscriminant, 0, U"Draw one sigma ellipse...", 0, 1, 
+	praat_addAction1 (classDiscriminant, 0, U"Draw one sigma ellipse...", 0, 1,
 			GRAPHICS_EACH__Discriminant_drawOneSigmaEllipse);
-	praat_addAction1 (classDiscriminant, 0, U"Draw confidence ellipses...", 0, 1, 
+	praat_addAction1 (classDiscriminant, 0, U"Draw confidence ellipses...", 0, 1,
 			GRAPHICS_EACH__Discriminant_drawConfidenceEllipses);
 
 	praat_addAction1 (classDiscriminant, 1, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classDiscriminant, 1, U"-- eigen structure --", nullptr, 1, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Get eigenvalue...", nullptr, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get eigenvalue...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__Discriminant_getEigenvalue);
-	praat_addAction1 (classDiscriminant, 1, U"Get sum of eigenvalues...", nullptr, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get sum of eigenvalues...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__Discriminant_getSumOfEigenvalues);
-	praat_addAction1 (classDiscriminant, 1, U"Get number of eigenvectors", nullptr, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get number of eigenvectors", nullptr, 1,
 		QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfEigenvectors);
-	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector dimension", nullptr, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector dimension", nullptr, 1,
 		QUERY_ONE_FOR_INTEGER__Discriminant_getEigenvectorDimension);
 	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector element...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__Discriminant_getEigenvectorElement);
 
 	praat_addAction1 (classDiscriminant, 1, U"-- discriminant --", 0, 1, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Get number of functions", 0, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get number of functions", 0, 1,
 		QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfFunctions);
-	praat_addAction1 (classDiscriminant, 1, U"Get dimension of functions", 0, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get dimension of functions", 0, 1,
 		QUERY_ONE_FOR_INTEGER__Discriminant_getDimensionOfFunctions);
-	praat_addAction1 (classDiscriminant, 1, U"Get number of groups", 0, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get number of groups", 0, 1,
 		QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfGroups);
-	praat_addAction1 (classDiscriminant, 1, U"Get number of observations...", 0, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get number of observations...", 0, 1,
 		QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfObservations);
 	praat_addAction1 (classDiscriminant, 1, U"-- tests --", 0, 1, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Get Wilks lambda...", 0, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get Wilks lambda...", 0, 1,
 			QUERY_ONE_FOR_REAL__Discriminant_getWilksLambda);
 	praat_addAction1 (classDiscriminant, 1, U"Get cumulative contribution of components...", 0, 1,
 			QUERY_ONE_FOR_REAL__Discriminant_getCumulativeContributionOfComponents);
@@ -9420,25 +9420,25 @@ void praat_David_init () {
 	praat_addAction1 (classDiscriminant, 1, U"Report equality of covariance matrices", 0, 1, 
 			INFO_ONE__Discriminant_reportEqualityOfCovarianceMatrices);
 	praat_addAction1 (classDiscriminant, 1, U"-- ellipses --", 0, 1, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Get sigma ellipse area...", 0, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get sigma ellipse area...", 0, 1,
 			QUERY_ONE_FOR_REAL__Discriminant_getSigmaEllipseArea);
 	praat_addAction1 (classDiscriminant, 1, U"Get confidence ellipse area...", 0, 1, 
 			QUERY_ONE_FOR_REAL__Discriminant_getConfidenceEllipseArea);
-	praat_addAction1 (classDiscriminant, 1, U"Get ln(determinant_group)...", 0, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get ln(determinant_group)...", 0, 1,
 			QUERY_ONE_FOR_REAL__Discriminant_getLnDeterminant_group);
-	praat_addAction1 (classDiscriminant, 1, U"Get ln(determinant_total)", 0, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Get ln(determinant_total)", 0, 1,
 			QUERY_ONE_FOR_REAL__Discriminant_getLnDeterminant_total);
 
 	praat_addAction1 (classDiscriminant, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classDiscriminant, 1, U"Invert eigenvector...", nullptr, 1, 
+	praat_addAction1 (classDiscriminant, 1, U"Invert eigenvector...", nullptr, 1,
 			MODIFY_Discriminant_invertEigenvector);
-	praat_addAction1 (classDiscriminant, 0, U"Align eigenvectors", nullptr, 1, 
+	praat_addAction1 (classDiscriminant, 0, U"Align eigenvectors", nullptr, 1,
 			MODIFY_ALL_Eigens_alignEigenvectors);
 
 	praat_addAction1 (classDiscriminant, 0, U"Extract -", nullptr, 0, 0);
-		praat_addAction1 (classDiscriminant, 0, U"Extract pooled within-groups SSCP", nullptr, 1, 
+		praat_addAction1 (classDiscriminant, 0, U"Extract pooled within-groups SSCP", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Discriminant_extractPooledWithinGroupsSSCP);
-		praat_addAction1 (classDiscriminant, 0, U"Extract within-group SSCP...", nullptr, 1, 
+		praat_addAction1 (classDiscriminant, 0, U"Extract within-group SSCP...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Discriminant_extractWithinGroupSSCP);
 		praat_addAction1 (classDiscriminant, 0, U"Extract between-groups SSCP", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Discriminant_extractBetweenGroupsSSCP);
@@ -9446,9 +9446,9 @@ void praat_David_init () {
 				CONVERT_EACH_TO_ONE__Discriminant_extractGroupCentroids);
 		praat_addAction1 (classDiscriminant, 0, U"Extract group standard deviations", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Discriminant_extractGroupStandardDeviations);
-		praat_addAction1 (classDiscriminant, 0, U"Extract group labels", nullptr, 1, 
+		praat_addAction1 (classDiscriminant, 0, U"Extract group labels", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Discriminant_extractGroupLabels);
-		praat_addAction1 (classDiscriminant, 0, U"Extract Eigen", nullptr, 1, 
+		praat_addAction1 (classDiscriminant, 0, U"Extract Eigen", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Discriminant_extractEigen);
 
 	praat_addAction1 (classDiscriminant , 0, U"& TableOfReal: To ClassificationTable?", nullptr, 0,
@@ -9464,13 +9464,13 @@ void praat_David_init () {
 
 	praat_addAction2 (classDiscriminant, 1, classPatternList, 1, U"To Categories...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Discriminant_PatternList_to_Categories);
-	praat_addAction2 (classDiscriminant, 1, classSSCP, 1, U"Project", nullptr, 0, 
+	praat_addAction2 (classDiscriminant, 1, classSSCP, 1, U"Project", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Eigen_SSCP_project);
 	praat_addAction2 (classDiscriminant, 1, classStrings, 1, U"Modify Discriminant", nullptr, 0, 0);
 	praat_addAction2 (classDiscriminant, 1, classStrings, 1, U"Set group labels", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__Discriminant_setGroupLabels);
 
-	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, 
+	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Discriminant_TableOfReal_to_Configuration);
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To ClassificationTable...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Discriminant_TableOfReal_to_ClassificationTable);
@@ -9479,71 +9479,71 @@ void praat_David_init () {
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis, all)...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Discriminant_TableOfReal_mahalanobis_all);
 
-	praat_addAction1 (classDTW, 0, U"DTW help", nullptr, 0, 
+	praat_addAction1 (classDTW, 0, U"DTW help", nullptr, 0,
 			HELP__DTW_help);
 	praat_addAction1 (classDTW, 0, U"Draw -", nullptr, 0, nullptr);
-	praat_addAction1 (classDTW, 0, U"Draw path...", nullptr, 1, 
+	praat_addAction1 (classDTW, 0, U"Draw path...", nullptr, 1,
 			GRAPHICS_EACH__DTW_drawPath);
-	praat_addAction1 (classDTW, 0, U"Paint distances...", nullptr, 1, 
+	praat_addAction1 (classDTW, 0, U"Paint distances...", nullptr, 1,
 			GRAPHICS_EACH__DTW_paintDistances);
-	praat_addAction1 (classDTW, 0, U"Draw warp (x)...", nullptr, 1, 
+	praat_addAction1 (classDTW, 0, U"Draw warp (x)...", nullptr, 1,
 			GRAPHICS_EACH__DTW_drawWarp_x);
-	praat_addAction1 (classDTW, 0, U"Draw warp (y)...", nullptr, 1, 
+	praat_addAction1 (classDTW, 0, U"Draw warp (y)...", nullptr, 1,
 			GRAPHICS_EACH__DTW_drawWarp_y);
 	praat_addAction1 (classDTW, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classDTW, 1, U"Query time domains", nullptr, 1, 0);
-	praat_addAction1 (classDTW, 1, U"Get start time (x)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get start time (x)", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getStartTime_x);
-	praat_addAction1 (classDTW, 1, U"Get end time (x)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get end time (x)", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getEndTime_x);
-	praat_addAction1 (classDTW, 1, U"Get total duration (x)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get total duration (x)", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getTotalDuration_x);
 	praat_addAction1 (classDTW, 1, U"-- time domain x from y separator --", nullptr, 2, 0);
-	praat_addAction1 (classDTW, 1, U"Get start time (y)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get start time (y)", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getStartTime_y);
-	praat_addAction1 (classDTW, 1, U"Get end time (y)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get end time (y)", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getEndTime_y);
-	praat_addAction1 (classDTW, 1, U"Get total duration (y)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get total duration (y)", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getTotalDuration_y);
 	praat_addAction1 (classDTW, 1, U"Query time samplings", nullptr, 1, 0);
-	praat_addAction1 (classDTW, 1, U"Get number of frames (x)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get number of frames (x)", nullptr, 2,
 		QUERY_ONE_FOR_INTEGER__DTW_getNumberOfFrames_x);
-	praat_addAction1 (classDTW, 1, U"Get time step (x)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get time step (x)", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getTimeStep_x);
-	praat_addAction1 (classDTW, 1, U"Get time from frame number (x)...", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get time from frame number (x)...", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getTimeFromFrameNumber_x);
-	praat_addAction1 (classDTW, 1, U"Get frame number from time (x)...", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get frame number from time (x)...", nullptr, 2,
 		QUERY_ONE_FOR_INTEGER__DTW_getFrameNumberFromTime_x);
 	praat_addAction1 (classDTW, 1, U"-- time sampling x from y separator --", nullptr, 2, 0);
-	praat_addAction1 (classDTW, 1, U"Get number of frames (y)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get number of frames (y)", nullptr, 2,
 		QUERY_ONE_FOR_INTEGER__DTW_getNumberOfFrames_y);
-	praat_addAction1 (classDTW, 1, U"Get time step (y)", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get time step (y)", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getTimeStep_y);
-	praat_addAction1 (classDTW, 1, U"Get time from frame number (y)...", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get time from frame number (y)...", nullptr, 2,
 			QUERY_ONE_FOR_REAL__DTW_getTimeFromFrameNumber_y);
-	praat_addAction1 (classDTW, 1, U"Get frame number from time (y)...", nullptr, 2, 
+	praat_addAction1 (classDTW, 1, U"Get frame number from time (y)...", nullptr, 2,
 		QUERY_ONE_FOR_INTEGER__DTW_getFrameNumberFromTime_y);
 
-	praat_addAction1 (classDTW, 1, U"Get y time from x time...", nullptr, 1, 
+	praat_addAction1 (classDTW, 1, U"Get y time from x time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__DTW_getYTimeFromXTime);
-	praat_addAction1 (classDTW, 1, U"Get x time from y time...", nullptr, 1, 
+	praat_addAction1 (classDTW, 1, U"Get x time from y time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__DTW_getXTimeFromYTime);
 	praat_addAction1 (classDTW, 1, U"Get y time...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			QUERY_ONE_FOR_REAL__DTW_getYTimeFromXTime);
 	praat_addAction1 (classDTW, 1, U"Get x time...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			QUERY_ONE_FOR_REAL__DTW_getXTimeFromYTime);
-	praat_addAction1 (classDTW, 1, U"Get maximum consecutive steps...", nullptr, 1, 
+	praat_addAction1 (classDTW, 1, U"Get maximum consecutive steps...", nullptr, 1,
 		QUERY_ONE_FOR_INTEGER__DTW_getMaximumConsecutiveSteps);
 	praat_addAction1 (classDTW, 1, U"Get time along path...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL__DTW_getPathY);
 	praat_addAction1 (classDTW, 1, U"-- distance queries --", nullptr, 1, 0);
-	praat_addAction1 (classDTW, 1, U"Get distance value...", nullptr, 1, 
+	praat_addAction1 (classDTW, 1, U"Get distance value...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__DTW_getDistanceValue);
-	praat_addAction1 (classDTW, 1, U"Get minimum distance", nullptr, 1, 
+	praat_addAction1 (classDTW, 1, U"Get minimum distance", nullptr, 1,
 			QUERY_ONE_FOR_REAL__DTW_getMinimumDistance);
-	praat_addAction1 (classDTW, 1, U"Get maximum distance", nullptr, 1, 
+	praat_addAction1 (classDTW, 1, U"Get maximum distance", nullptr, 1,
 			QUERY_ONE_FOR_REAL__DTW_getMaximumDistance);
-	praat_addAction1 (classDTW, 1, U"Get distance (weighted)", nullptr, 1, 
+	praat_addAction1 (classDTW, 1, U"Get distance (weighted)", nullptr, 1,
 			QUERY_ONE_FOR_REAL__DTW_getDistance_weighted);
 	praat_addAction1 (classDTW, 0, U"Modify -", nullptr, 0, nullptr);
 	praat_addAction1 (classDTW, 0, U"Formula (distances)...", nullptr, 1,
@@ -9554,31 +9554,31 @@ void praat_David_init () {
 	praat_addAction1 (classDTW, 0, U"Analyse", nullptr, 0, 0);
     praat_addAction1 (classDTW, 0, U"Find path...", nullptr, GuiMenu_HIDDEN,
 			MODIFY_DTW_findPath);
-    praat_addAction1 (classDTW, 0, U"Find path (band & slope)...", nullptr, 0, 
+    praat_addAction1 (classDTW, 0, U"Find path (band & slope)...", nullptr, 0,
 			MODIFY_DTW_findPath_bandAndSlope);
-    praat_addAction1 (classDTW, 0, U"To Polygon...", nullptr, 1, 
+    praat_addAction1 (classDTW, 0, U"To Polygon...", nullptr, 1,
 			CONVERT_EACH_TO_ONE__DTW_to_Polygon);
-	praat_addAction1 (classDTW, 0, U"To Matrix (distances)", nullptr, 0, 
+	praat_addAction1 (classDTW, 0, U"To Matrix (distances)", nullptr, 0,
 			CONVERT_EACH_TO_ONE__DTW_to_Matrix_distances);
-    praat_addAction1 (classDTW, 0, U"To Matrix (cum. distances)...", nullptr, 0, 
+    praat_addAction1 (classDTW, 0, U"To Matrix (cum. distances)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__DTW_to_Matrix_cumulativeDistances);
-	praat_addAction1 (classDTW, 0, U"Swap axes", nullptr, 0, 
+	praat_addAction1 (classDTW, 0, U"Swap axes", nullptr, 0,
 			CONVERT_EACH_TO_ONE__DTW_swapAxes);
 
-	praat_addAction2 (classDTW, 1, classMatrix, 1, U"Replace matrix", nullptr, 0, 
+	praat_addAction2 (classDTW, 1, classMatrix, 1, U"Replace matrix", nullptr, 0,
 			MODIFY_DTW_Matrix_replace);
-	praat_addAction2 (classDTW, 1, classTextGrid, 1, U"To TextGrid (warp times)", nullptr, 0, 
+	praat_addAction2 (classDTW, 1, classTextGrid, 1, U"To TextGrid (warp times)", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__DTW_TextGrid_to_TextGrid);
-	praat_addAction2 (classDTW, 1, classIntervalTier, 1, U"To Table (distances)", nullptr, 0, 
+	praat_addAction2 (classDTW, 1, classIntervalTier, 1, U"To Table (distances)", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__DTW_IntervalTier_to_Table);
 
-    praat_addAction2 (classDTW, 1, classPolygon, 1, U"Find path inside...", nullptr, 0, 
+    praat_addAction2 (classDTW, 1, classPolygon, 1, U"Find path inside...", nullptr, 0,
 			MODIFY_DTW_Polygon_findPathInside);
-    praat_addAction2 (classDTW, 1, classPolygon, 1, U"To Matrix (cum. distances)...", nullptr, 0, 
+    praat_addAction2 (classDTW, 1, classPolygon, 1, U"To Matrix (cum. distances)...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__DTW_Polygon_to_Matrix_cumulativeDistances);
-	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw...", nullptr, 0, 
+	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw...", nullptr, 0,
 			GRAPHICS_TWO_AND_ONE__DTW_Sounds_draw);
-	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw warp (x)...", nullptr, 0, 
+	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw warp (x)...", nullptr, 0,
 			GRAPHICS_TWO_AND_ONE__DTW_Sounds_drawWarp_x);
 
 	praat_addAction1 (classEditDistanceTable, 1, U"EditDistanceTable help", nullptr, 0, 
@@ -9598,11 +9598,11 @@ void praat_David_init () {
 		QUERY_ONE_FOR_INTEGER__EditCostsTable_getTargetIndex);
 	praat_addAction1 (classEditCostsTable, 1, U"Get source index...", nullptr, 1,
 		QUERY_ONE_FOR_INTEGER__EditCostsTable_getSourceIndex);
-	praat_addAction1 (classEditCostsTable, 1, U"Get insertion costs...", nullptr, 1, 
+	praat_addAction1 (classEditCostsTable, 1, U"Get insertion costs...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__EditCostsTable_getInsertionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Get insertion cost...", nullptr, GuiMenu_DEPRECATED_2017,
 			QUERY_ONE_FOR_REAL__EditCostsTable_getInsertionCosts);
-	praat_addAction1 (classEditCostsTable, 1, U"Get deletion costs...", nullptr, 1, 
+	praat_addAction1 (classEditCostsTable, 1, U"Get deletion costs...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__EditCostsTable_getDeletionCost);
 	praat_addAction1 (classEditCostsTable, 1, U"Get deletion cost...", nullptr, GuiMenu_DEPRECATED_2017,
 			QUERY_ONE_FOR_REAL__EditCostsTable_getDeletionCost);
@@ -9617,42 +9617,42 @@ void praat_David_init () {
 	praat_addAction1 (classEditCostsTable, 0, U"Modify -", nullptr, 0, nullptr);
 	praat_addAction1 (classEditCostsTable, 1, U"Set target symbol (index)...", nullptr, 1,
 			MODIFY_EditCostsTable_setTargetSymbol_index);
-	praat_addAction1 (classEditCostsTable, 1, U"Set source symbol (index)...", nullptr, 1, 
+	praat_addAction1 (classEditCostsTable, 1, U"Set source symbol (index)...", nullptr, 1,
 			MODIFY_EditCostsTable_setSourceSymbol_index);
-	praat_addAction1 (classEditCostsTable, 1, U"Set insertion costs...", nullptr, 1, 
+	praat_addAction1 (classEditCostsTable, 1, U"Set insertion costs...", nullptr, 1,
 			MODIFY_EditCostsTable_setInsertionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Set insertion cost...", nullptr, GuiMenu_DEPRECATED_2017,
 			MODIFY_EditCostsTable_setInsertionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Set deletion costs...", nullptr, 1,
 			MODIFY_EditCostsTable_setDeletionCosts);
-	praat_addAction1 (classEditCostsTable, 1, U"Set substitution costs...", nullptr, 1, 
+	praat_addAction1 (classEditCostsTable, 1, U"Set substitution costs...", nullptr, 1,
 			MODIFY_EditCostsTable_setSubstitutionCosts);
-	praat_addAction1 (classEditCostsTable, 1, U"Set costs (others)...", nullptr, 1, 
+	praat_addAction1 (classEditCostsTable, 1, U"Set costs (others)...", nullptr, 1,
 			MODIFY_EditCostsTable_setCosts_others);
-	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0, 
+	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0,
 			CONVERT_EACH_TO_ONE__EditCostsTable_to_TableOfReal);
-	
+
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP__Index_help);
 	praat_addAction1 (classStringsIndex, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classStringsIndex, 1, U"Get number of classes", nullptr, 1,
 				QUERY_ONE_FOR_INTEGER__Index_getNumberOfClasses);
-		praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 1, 
+		praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 1,
 				QUERY_ONE_FOR_STRING__StringsIndex_getClassLabelFromClassIndex);
-		praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 1, 
+		praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 1,
 				QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex);
-		praat_addAction1 (classStringsIndex, 1, U"Get item label...", nullptr, 1, 
+		praat_addAction1 (classStringsIndex, 1, U"Get item label...", nullptr, 1,
 				QUERY_ONE_FOR_STRING__StringsIndex_getItemLabelFromItemIndex);
 		praat_addAction1 (classStringsIndex, 1, U"Get class index from item index...", nullptr, 1,
 				QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex);
-		praat_addAction1 (classStringsIndex, 1, U"Get index...", nullptr, 1, 
+		praat_addAction1 (classStringsIndex, 1, U"Get index...", nullptr, 1,
 				QUERY_ONE_FOR_INTEGER__Index_getIndex);
 		praat_addAction1 (classStringsIndex, 1, U"List all classes", nullptr, 1,
 				QUERY_ONE_FOR_STRING_ARRAY__StringsIndex_listAllClasses);
 	praat_addAction1 (classStringsIndex, 1, U"To Strings", nullptr, 0,
 			CONVERT_EACH_TO_ONE__StringsIndex_to_Strings);
-	praat_addAction1 (classStringsIndex, 1, U"To Permutation...", nullptr, 0, 
+	praat_addAction1 (classStringsIndex, 1, U"To Permutation...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Index_to_Permutation);
-	praat_addAction1 (classStringsIndex, 1, U"Extract part...", nullptr, 0, 
+	praat_addAction1 (classStringsIndex, 1, U"Extract part...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Index_extractPart);
 
 	praat_addAction1 (classEigen, 0, U"Eigen help", nullptr, 0,
@@ -9664,35 +9664,35 @@ void praat_David_init () {
 			QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvalues);
 		praat_addAction1 (classEigen, 1, U"Get eigenvalue...", nullptr, 1, 
 				QUERY_ONE_FOR_REAL__Eigen_getEigenvalue);
-		praat_addAction1 (classEigen, 1, U"Get sum of eigenvalues...", nullptr, 1, 
+		praat_addAction1 (classEigen, 1, U"Get sum of eigenvalues...", nullptr, 1,
 				QUERY_ONE_FOR_REAL__Eigen_getSumOfEigenvalues);
 	praat_addAction1 (classEigen, 1, U"-- eigenvectors --", nullptr, 1, 0);
-		praat_addAction1 (classEigen, 1, U"Get number of eigenvectors", nullptr, 1, 
+		praat_addAction1 (classEigen, 1, U"Get number of eigenvectors", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvectors);
 		praat_addAction1 (classEigen, 1, U"Get eigenvector dimension", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__Eigen_getEigenvectorDimension);
-		praat_addAction1 (classEigen, 1, U"Get eigenvector element...", nullptr, 1, 
+		praat_addAction1 (classEigen, 1, U"Get eigenvector element...", nullptr, 1,
 				QUERY_ONE_FOR_REAL__Eigen_getEigenvectorElement);
 	praat_addAction1 (classEigen, 0, U"Modify -", nullptr, 0, nullptr);
-		praat_addAction1 (classEigen, 1, U"Invert eigenvector...", nullptr, 1, 
+		praat_addAction1 (classEigen, 1, U"Invert eigenvector...", nullptr, 1,
 				MODIFY_Eigen_invertEigenvector);
 	praat_addAction1 (classExcitation, 0, U"Synthesize", U"To Formant...", 0, 0);
-	praat_addAction1 (classExcitation, 0, U"To ExcitationList", U"Synthesize", 0, 
+	praat_addAction1 (classExcitation, 0, U"To ExcitationList", U"Synthesize", 0,
 			COMBINE_ALL_TO_ONE__Excitations_to_ExcitationList);
 	praat_addAction1 (classExcitation, 0, U"To Excitations", U"Synthesize", GuiMenu_DEPRECATED_2015,
 			COMBINE_ALL_TO_ONE__Excitations_to_ExcitationList);
 
 	praat_addAction1 (classExcitationList, 0, U"Modify", nullptr, 0, 0);
-	praat_addAction1 (classExcitationList, 0, U"Formula...", nullptr, 0, 
+	praat_addAction1 (classExcitationList, 0, U"Formula...", nullptr, 0,
 			MODIFY_ExcitationList_formula);
 	praat_addAction1 (classExcitationList, 0, U"Extract", nullptr, 0, 0);
-		praat_addAction1 (classExcitationList, 0, U"Extract Excitation...", nullptr, 0, 
+		praat_addAction1 (classExcitationList, 0, U"Extract Excitation...", nullptr, 0,
 				CONVERT_EACH_TO_ONE__ExcitationList_extractItem);
 	praat_addAction1 (classExcitationList, 0, U"Synthesize", nullptr, 0, 0);
-	praat_addAction1 (classExcitationList, 2, U"Append", nullptr, 0, 
+	praat_addAction1 (classExcitationList, 2, U"Append", nullptr, 0,
 			CONVERT_TWO_TO_ONE__ExcitationList_append);
 	praat_addAction1 (classExcitationList, 0, U"Convert", nullptr, 0, 0);
-	praat_addAction1 (classExcitationList, 0, U"To PatternList...", nullptr, 0, 
+	praat_addAction1 (classExcitationList, 0, U"To PatternList...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ExcitationList_to_PatternList);
 	praat_addAction1 (classExcitationList, 0, U"To Pattern...", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__ExcitationList_to_PatternList);
@@ -9744,7 +9744,7 @@ void praat_David_init () {
 	
 	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FileInMemoryManager_extractFiles);
-	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0, 
+	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FileInMemoryManager_downto_Table);
 	
 	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, GuiMenu_DEPRECATED_2015,
@@ -9773,19 +9773,19 @@ void praat_David_init () {
 			HELP__ISpline_help);
 	praat_Spline_init (classISpline);
 
-	praat_addAction1 (classKlattTable, 0, U"KlattTable help", nullptr, 0, 
+	praat_addAction1 (classKlattTable, 0, U"KlattTable help", nullptr, 0,
 			HELP__KlattTable_help);
-	praat_addAction1 (classKlattTable, 0, U"To Sound...", nullptr, 0, 
+	praat_addAction1 (classKlattTable, 0, U"To Sound...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__KlattTable_to_Sound);
-	praat_addAction1 (classKlattTable, 0, U"To KlattGrid...", nullptr, 0, 
+	praat_addAction1 (classKlattTable, 0, U"To KlattGrid...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__KlattTable_to_KlattGrid);
-	praat_addAction1 (classKlattTable, 0, U"To Table", nullptr, 0, 
+	praat_addAction1 (classKlattTable, 0, U"To Table", nullptr, 0,
 			CONVERT_EACH_TO_ONE__KlattTable_to_Table);
 
-	praat_addAction1 (classLegendreSeries, 0, U"LegendreSeries help", nullptr, 0, 
+	praat_addAction1 (classLegendreSeries, 0, U"LegendreSeries help", nullptr, 0,
 			HELP__LegendreSeries_help);
 	praat_FunctionSeries_init (classLegendreSeries);
-	praat_addAction1 (classLegendreSeries, 0, U"To Polynomial", U"Analyse", 0, 
+	praat_addAction1 (classLegendreSeries, 0, U"To Polynomial", U"Analyse", 0,
 			CONVERT_EACH_TO_ONE__LegendreSeries_to_Polynomial);
 	
 	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0,
@@ -9835,16 +9835,16 @@ void praat_David_init () {
 	praat_addAction1 (classMatrix, 0, U"Mathematical", U"Get standard deviation...", 1, nullptr);
 	praat_addAction1 (classMatrix, 0, U"Get norm...", U"Mathematical", 2,
 			QUERY_ONE_FOR_REAL__Matrix_getNorm);
-	
-	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0, 
+
+	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0,
 			CONVERT_EACH_TO_ONE__Matrix_transpose);
-	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0, 
+	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0,
 			CONVERT_EACH_TO_ONE__Matrix_solveEquation);
-	praat_addAction1 (classMatrix, 2, U"Solve matrix equation...", U"Solve equation...", 0, 
+	praat_addAction1 (classMatrix, 2, U"Solve matrix equation...", U"Solve equation...", 0,
 			CONVERT_TWO_TO_ONE__Matrix_solveMatrixEquation);
-	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve matrix equation...", 0, 
+	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve matrix equation...", 0,
 			CONVERT_EACH_TO_ONE__Matrix_to_PCA_byRows);
-	praat_addAction1 (classMatrix, 0, U"To PCA (by columns)", U"To PCA (by rows)", 0, 
+	praat_addAction1 (classMatrix, 0, U"To PCA (by columns)", U"To PCA (by rows)", 0,
 			CONVERT_EACH_TO_ONE__Matrix_to_PCA_byColumns);
 	praat_addAction1 (classMatrix, 0, U"To PatternList... || To Pattern...",
 			U"To VocalTract", 1, CONVERT_EACH_TO_ONE__Matrix_to_PatternList);
@@ -9862,10 +9862,10 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Matrix_to_NMF_is);
 	praat_addAction1 (classMatrix, 0, U"Eigen (complex)", U"Eigen", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_MULTIPLE_Matrix_eigen_complex);
-	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, 
+	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1,
 			CONVERT_TWO_TO_ONE__Matrices_to_DTW);
 
-	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, 
+	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Matrix_Categories_to_TableOfReal);
 
 	praat_addAction1 (classMelSpectrogram, 0, U"MelSpectrogram help", nullptr, 0,
@@ -9880,17 +9880,17 @@ void praat_David_init () {
 	praat_addAction1 (classMelSpectrogram, 0, U"Query -", nullptr, 0, nullptr);
 	praat_BandFilterSpectrogram_query_init (classMelSpectrogram);
 
-	praat_addAction1 (classMelSpectrogram, 0, U"Equalize intensities...", nullptr, 0, 
+	praat_addAction1 (classMelSpectrogram, 0, U"Equalize intensities...", nullptr, 0,
 			MODIFY_EACH__BandFilterSpectrogram_equalizeIntensities);
-	praat_addAction1 (classMelSpectrogram, 0, U"To MFCC...", nullptr, 0, 
+	praat_addAction1 (classMelSpectrogram, 0, U"To MFCC...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__MelSpectrogram_to_MFCC);
-	praat_addAction1 (classMelSpectrogram, 0, U"To Intensity", nullptr, 0, 
+	praat_addAction1 (classMelSpectrogram, 0, U"To Intensity", nullptr, 0,
 			CONVERT_EACH_TO_ONE__BandFilterSpectrogram_to_Intensity);
-	praat_addAction1 (classMelSpectrogram, 0, U"To Matrix...", nullptr, 0, 
+	praat_addAction1 (classMelSpectrogram, 0, U"To Matrix...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__BandFilterSpectrogram_to_Matrix);
-	praat_addAction1 (classMelSpectrogram, 2, U"Cross-correlate...", nullptr, 0, 
+	praat_addAction1 (classMelSpectrogram, 2, U"Cross-correlate...", nullptr, 0,
 			CONVERT_TWO_TO_ONE__BandFilterSpectrograms_crossCorrelate);
-	praat_addAction1 (classMelSpectrogram, 2, U"Convolve...", nullptr, 0, 
+	praat_addAction1 (classMelSpectrogram, 2, U"Convolve...", nullptr, 0,
 			CONVERT_TWO_TO_ONE__BandFilterSpectrograms_convolve);
 
 	praat_addAction1 (classMelFilter, 0, U"MelFilter help", nullptr, 0,
@@ -9911,7 +9911,7 @@ void praat_David_init () {
 	praat_CC_init (classMFCC);
 	praat_addAction1 (classMFCC, 0, U"To MelFilter...", nullptr, GuiMenu_DEPRECATED_2014,
 			CONVERT_EACH_TO_ONE__MFCC_to_MelFilter);
-	praat_addAction1 (classMFCC, 0, U"To MelSpectrogram...", nullptr, 0, 
+	praat_addAction1 (classMFCC, 0, U"To MelSpectrogram...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__MFCC_to_MelSpectrogram);
 	praat_addAction1 (classMFCC, 0, U"To TableOfReal...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__MFCC_to_TableOfReal);
@@ -9927,57 +9927,57 @@ void praat_David_init () {
 	praat_addAction1 (classMSpline, 0, U"MSpline help", nullptr, 0,
 			HELP__MSpline_help);
 	praat_Spline_init (classMSpline);
-	
-	praat_addAction1 (classNavigationContext, 0, U"Modify use criterion...", nullptr, 0, 
+
+	praat_addAction1 (classNavigationContext, 0, U"Modify use criterion...", nullptr, 0,
 			MODIFY_EACH__NavigationContext_modifyUseCriterion);
-	praat_addAction1 (classNavigationContext, 0, U"Modify Topic match criterion...", nullptr, 0, 
+	praat_addAction1 (classNavigationContext, 0, U"Modify Topic match criterion...", nullptr, 0,
 			MODIFY_EACH__NavigationContext_modifyTopicCriterion);
-	praat_addAction1 (classNavigationContext, 0, U"Modify Before match criterion...", nullptr, 0, 
+	praat_addAction1 (classNavigationContext, 0, U"Modify Before match criterion...", nullptr, 0,
 			MODIFY_EACH__NavigationContext_modifyBeforeCriterion);
-	praat_addAction1 (classNavigationContext, 0, U"Modify After match criterion...", nullptr, 0, 
+	praat_addAction1 (classNavigationContext, 0, U"Modify After match criterion...", nullptr, 0,
 			MODIFY_EACH__NavigationContext_modifyAfterCriterion);
 	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Replace Topic labels", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__NavigationContext_replaceTopicLabels);
-	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Replace Before labels", nullptr, 0, 
+	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Replace Before labels", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__NavigationContext_replaceBeforeLabels);
-	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Replace After labels", nullptr, 0, 
+	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Replace After labels", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__NavigationContext_replaceAfterLabels);
 
-	praat_addAction1 (classNMF, 0, U"NMF help", nullptr, 0, 
+	praat_addAction1 (classNMF, 0, U"NMF help", nullptr, 0,
 			HELP__NMF_help);
-	praat_addAction1 (classNMF, 0, U"Paint features...", nullptr, 0, 
+	praat_addAction1 (classNMF, 0, U"Paint features...", nullptr, 0,
 			GRAPHICS_EACH__NMF_paintFeatures);
-	praat_addAction1 (classNMF, 0, U"Paint weights...", nullptr, 0, 
+	praat_addAction1 (classNMF, 0, U"Paint weights...", nullptr, 0,
 			GRAPHICS_EACH__NMF_paintWeights);
-	praat_addAction1 (classNMF, 0, U"To Matrix", nullptr, 0, 
+	praat_addAction1 (classNMF, 0, U"To Matrix", nullptr, 0,
 			CONVERT_EACH_TO_ONE__NMF_to_Matrix);
-	
-	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Euclidean distance", nullptr, 0, 
+
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Euclidean distance", nullptr, 0,
 			QUERY_ONE_AND_ONE_FOR_REAL__NMF_Matrix_getEuclideanDistance);
-	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Itakura-Saito distance", nullptr, 0, 
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Get Itakura-Saito distance", nullptr, 0,
 			QUERY_ONE_AND_ONE_FOR_REAL__NMF_Matrix_getItakuraSaitoDivergence);
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (ALS)...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__NMF_Matrix_improveFactorization_als);
 	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (m.u.)...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__NMF_Matrix_improveFactorization_mu);
-	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (IS)...", nullptr, 0, 
+	praat_addAction2 (classNMF, 1, classMatrix, 1, U"Improve factorization (IS)...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__NMF_Matrix_improveFactorization_is);
-	
+
 	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0,
 			GRAPHICS_EACH__PatternList_draw);
 	praat_PatternList_query_init (classPatternList);
 	praat_addAction1 (classPatternList, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classPatternList, 0, U"Formula...", nullptr, 1, 
+	praat_addAction1 (classPatternList, 0, U"Formula...", nullptr, 1,
 			MODIFY_PatternList_formula);
-	praat_addAction1 (classPatternList, 0, U"Set value...", nullptr, 1, 
+	praat_addAction1 (classPatternList, 0, U"Set value...", nullptr, 1,
 			MODIFY_PatternList_setValue);
-	praat_addAction1 (classPatternList, 0, U"Get all values", nullptr, 0, 
+	praat_addAction1 (classPatternList, 0, U"Get all values", nullptr, 0,
 			NUMMAT_PatternList_getAllValues);
-	praat_addAction1 (classPatternList, 0, U"To Matrix", nullptr, 0, 
+	praat_addAction1 (classPatternList, 0, U"To Matrix", nullptr, 0,
 			CONVERT_EACH_TO_ONE__PatternList_to_Matrix);
 
-	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, 
+	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Matrix_Categories_to_TableOfReal);
 	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To Discriminant", nullptr, 0,
 			CONVERT_ONE_AND_ONE__TO_ONE_PatternList_Categories_to_Discriminant);
@@ -10000,18 +10000,18 @@ void praat_David_init () {
 	praat_addAction1 (classPCA, 2, U"Get angle between pc1-pc2 planes", nullptr, 1,
 			QUERY_TWO_FOR_REAL__PCAs_getAngleBetweenPc1Pc2Plane_degrees);
 	praat_addAction1 (classPCA, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classPCA, 1, U"Invert eigenvector...", nullptr, 1, 
+	praat_addAction1 (classPCA, 1, U"Invert eigenvector...", nullptr, 1,
 			MODIFY_PCA_invertEigenvector);
-	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1, 
+	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1,
 			MODIFY_ALL_Eigens_alignEigenvectors);
 	praat_addAction1 (classPCA, 0, U"Extract -", nullptr, 0, 0);
-		praat_addAction1 (classPCA, 0, U"Extract eigenvector...", nullptr, 1, 
+		praat_addAction1 (classPCA, 0, U"Extract eigenvector...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__PCA_extractEigenvector);
-		praat_addAction1 (classPCA, 0, U"Extract Eigen", nullptr, 1, 
+		praat_addAction1 (classPCA, 0, U"Extract Eigen", nullptr, 1,
 				CONVERT_EACH_TO_ONE__PCA_extractEigen);
-	praat_addAction1 (classPCA, 2, U"To Procrustes...", nullptr, 0, 
+	praat_addAction1 (classPCA, 2, U"To Procrustes...", nullptr, 0,
 			CONVERT_TWO_TO_ONE__PCAs_to_Procrustes);
-	praat_addAction1 (classPCA, 0, U"To TableOfReal (reconstruct 1)...", nullptr, 0, 
+	praat_addAction1 (classPCA, 0, U"To TableOfReal (reconstruct 1)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__PCA_to_TableOfReal_reconstruct1);
 
 	praat_addAction1 (classPCA, 0, U"& TableOfReal: To Configuration?",
@@ -10123,17 +10123,17 @@ void praat_David_init () {
 
 	praat_addAction1 (classPolygon, 0, U"Translate...", U"Modify -", 1,
 			MODIFY_EACH__Polygon_translate);
-	praat_addAction1 (classPolygon, 0, U"Rotate...", U"Translate...", 1, 
+	praat_addAction1 (classPolygon, 0, U"Rotate...", U"Translate...", 1,
 			MODIFY_EACH__Polygon_rotate);
 	praat_addAction1 (classPolygon, 0, U"Scale...", U"Rotate...", 1,
 			MODIFY_EACH__Polygon_scale);
-	praat_addAction1 (classPolygon, 0, U"Reverse X", U"Scale...", 1, 
+	praat_addAction1 (classPolygon, 0, U"Reverse X", U"Scale...", 1,
 			MODIFY_EACH__Polygon_reverseX);
-	praat_addAction1 (classPolygon, 0, U"Reverse Y", U"Reverse X", 1, 
+	praat_addAction1 (classPolygon, 0, U"Reverse Y", U"Reverse X", 1,
 			MODIFY_EACH__Polygon_reverseY);
 	praat_addAction1 (classPolygon, 0, U"Simplify", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Polygon_simplify);
-	praat_addAction1 (classPolygon, 0, U"Convex hull", nullptr, 0, 
+	praat_addAction1 (classPolygon, 0, U"Convex hull", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Polygon_convexHull);
 	praat_addAction1 (classPolygon, 0, U"Circular permutation...", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Polygon_circularPermutation);
@@ -10141,7 +10141,7 @@ void praat_David_init () {
 	praat_addAction2 (classPolygon, 1, classCategories, 1, U"Draw...", nullptr, 0,
 			GRAPHICS_ONE_AND_ONE__Polygon_Categories_draw);
 
-	praat_addAction1 (classPolynomial, 0, U"Polynomial help", nullptr, 0, 
+	praat_addAction1 (classPolynomial, 0, U"Polynomial help", nullptr, 0,
 			HELP__Polynomial_help);
 	praat_FunctionSeries_init (classPolynomial);
 	praat_addAction1 (classPolynomial, 0, U"-- area --", U"Get x of maximum...", 1, 0);
@@ -10152,46 +10152,46 @@ void praat_David_init () {
 	praat_addAction1 (classPolynomial, 0, U"-- monic --", U"Set coefficient...", 1, 0);
 	praat_addAction1 (classPolynomial, 0, U"Scale coefficients (monic)", U"-- monic --", 1, 
 			MODIFY_Polynomial_scaleCoefficients_monic);
-	praat_addAction1 (classPolynomial, 1, U"Divide (second order factor)...", U"Scale coefficients (monic)", 1, 
+	praat_addAction1 (classPolynomial, 1, U"Divide (second order factor)...", U"Scale coefficients (monic)", 1,
 			MODIFY_EACH__Polynomial_divide_secondOrderFactor);
 
-	praat_addAction1 (classPolynomial, 1, U"Get value (complex)...", U"Get value...", 1, 
+	praat_addAction1 (classPolynomial, 1, U"Get value (complex)...", U"Get value...", 1,
 			INFO_ONE__Polynomial_evaluate_z);
-	praat_addAction1 (classPolynomial, 1, U"Get derivatives at X...", U"Get value (complex)...", 1, 
+	praat_addAction1 (classPolynomial, 1, U"Get derivatives at X...", U"Get value (complex)...", 1,
 			INFO_ONE__Polynomial_getDerivativesAtX);
 	praat_addAction1 (classPolynomial, 1, U"Get one real root...", U"Get derivatives at X...", 1,
 			QUERY_ONE_FOR_REAL__Polynomial_getOneRealRoot);
-	praat_addAction1 (classPolynomial, 0, U"To Spectrum...", U"Analyse", 0, 
+	praat_addAction1 (classPolynomial, 0, U"To Spectrum...", U"Analyse", 0,
 			CONVERT_EACH_TO_ONE__Polynomial_to_Spectrum);
-	praat_addAction1 (classPolynomial, 0, U"To Roots", nullptr, 0, 
+	praat_addAction1 (classPolynomial, 0, U"To Roots", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Polynomial_to_Roots);
-	praat_addAction1 (classPolynomial, 0, U"To Polynomial (derivative)", nullptr, 0, 
+	praat_addAction1 (classPolynomial, 0, U"To Polynomial (derivative)", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Polynomial_getDerivative);
-	praat_addAction1 (classPolynomial, 0, U"To Polynomial (primitive)...", nullptr, 0, 
+	praat_addAction1 (classPolynomial, 0, U"To Polynomial (primitive)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Polynomial_getPrimitive);
-	praat_addAction1 (classPolynomial, 0, U"Scale x...", nullptr, 0, 
+	praat_addAction1 (classPolynomial, 0, U"Scale x...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Polynomial_scaleX);
-	praat_addAction1 (classPolynomial, 2, U"Multiply", nullptr, 0, 
+	praat_addAction1 (classPolynomial, 2, U"Multiply", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Polynomials_multiply);
-	praat_addAction1 (classPolynomial, 2, U"Divide...", nullptr, 0, 
+	praat_addAction1 (classPolynomial, 2, U"Divide...", nullptr, 0,
 			CONVERT_TWO_TO_MULTIPLE__Polynomials_divide);
 
-	praat_addAction1 (classRoots, 1, U"Roots help", nullptr, 0, 
+	praat_addAction1 (classRoots, 1, U"Roots help", nullptr, 0,
 			HELP__Roots_help);
-	praat_addAction1 (classRoots, 1, U"Draw...", nullptr, 0, 
+	praat_addAction1 (classRoots, 1, U"Draw...", nullptr, 0,
 			GRAPHICS_EACH__Roots_draw);
 	praat_addAction1 (classRoots, 1, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classRoots, 1, U"Get number of roots", nullptr, 1, 
+	praat_addAction1 (classRoots, 1, U"Get number of roots", nullptr, 1,
 		QUERY_ONE_FOR_INTEGER__Roots_getNumberOfRoots);
 	praat_addAction1 (classRoots, 1, U"-- roots --", nullptr, 1, 0);
-	praat_addAction1 (classRoots, 1, U"Get root...", nullptr, 1, 
+	praat_addAction1 (classRoots, 1, U"Get root...", nullptr, 1,
 			COMPLEX_Roots_getRoot);
-	praat_addAction1 (classRoots, 1, U"Get real part of root...", nullptr, 1, 
+	praat_addAction1 (classRoots, 1, U"Get real part of root...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__Roots_getRealPartOfRoot);
 	praat_addAction1 (classRoots, 1, U"Get imaginary part of root...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__Roots_getImaginaryPartOfRoot);
 	praat_addAction1 (classRoots, 1, U"Modify -", nullptr, 0, 0);
-	praat_addAction1 (classRoots, 1, U"Set root...", nullptr, 1, 
+	praat_addAction1 (classRoots, 1, U"Set root...", nullptr, 1,
 			MODIFY_EACH__Roots_setRoot);
 	praat_addAction1 (classRoots, 0, U"Analyse", nullptr, 0, 0);
 	praat_addAction1 (classRoots, 0, U"To Spectrum...", nullptr, 0,
@@ -10200,7 +10200,7 @@ void praat_David_init () {
 	praat_addAction2 (classRoots, 1, classPolynomial, 1, U"Polish roots", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__Roots_Polynomial_polish);
 
-	praat_addAction1 (classSound, 0, U"To TextGrid (silences)...", U"To IntervalTier", 1, 
+	praat_addAction1 (classSound, 0, U"To TextGrid (silences)...", U"To IntervalTier", 1,
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_detectSilences);
 	praat_addAction1 (classSound, 0, U"To TextGrid (speech activity)... || To TextGrid (voice activity)...", U"To IntervalTier", 1,
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_speechActivity);
@@ -10212,12 +10212,12 @@ void praat_David_init () {
 			PLAY_EACH__Sound_playAsFrequencyShifted);
 	praat_addAction1 (classSound, 0, U"Draw where...", U"Draw...", 1,
 			GRAPHICS_EACH__Sound_drawWhere);
-	praat_addAction1 (classSound, 0, U"Paint where...", U"Draw where...", 1, 
+	praat_addAction1 (classSound, 0, U"Paint where...", U"Draw where...", 1,
 			GRAPHICS_EACH__Sound_paintWhere);
-	praat_addAction1 (classSound, 2, U"Paint enclosed...", U"Paint where...", 1, 
+	praat_addAction1 (classSound, 2, U"Paint enclosed...", U"Paint where...", 1,
 			GRAPHICS_TWO__Sounds_paintEnclosed);
 
-	praat_addAction1 (classSound, 1, U"Get nearest level crossing...", U"Get nearest zero crossing...", 1, 
+	praat_addAction1 (classSound, 1, U"Get nearest level crossing...", U"Get nearest zero crossing...", 1,
 			QUERY_ONE_FOR_REAL__Sound_getNearestLevelCrossing);
 
 	praat_addAction1 (classSound, 0, U"To Pitch (shs)...", U"To Pitch (filtered cc)...", 1,
@@ -10257,7 +10257,7 @@ void praat_David_init () {
     praat_addAction1 (classSound, 2, U"To DTW...", U"Cross-correlate...", GuiMenu_DEPTH_1,
 			CONVERT_TWO_TO_ONE__Sounds_to_DTW);
 
-	praat_addAction1 (classSound, 1, U"Filter (gammatone)...", U"Filter (de-emphasis)...", 1, 
+	praat_addAction1 (classSound, 1, U"Filter (gammatone)...", U"Filter (de-emphasis)...", 1,
 			CONVERT_EACH_TO_ONE__Sound_filterByGammaToneFilter4);
 	praat_addAction1 (classSound, 0, U"Remove noise...", U"Filter (formula)...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_removeNoise);
@@ -10266,7 +10266,7 @@ void praat_David_init () {
 	praat_addAction1 (classSound, 0, U"To Sound (derivative)...", U"Filter (formula)...", GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Sound_to_Sound_derivative);
 
-	praat_addAction1 (classSound, 0, U"Change gender...", U"Deepen band modulation...", 1, 
+	praat_addAction1 (classSound, 0, U"Change gender...", U"Deepen band modulation...", 1,
 			CONVERT_EACH_TO_ONE__Sound_changeGender);
 
 	praat_addAction1 (classSound, 0, U"Change speaker...", U"Deepen band modulation...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
@@ -10275,21 +10275,21 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Sound_copyChannelRanges);
 	praat_addAction1 (classSound, 0 /* TODO produces 2N objects */, U"Trim silences...", U"Resample...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_trimSilences);
-	praat_addAction1 (classSound, 0, U"To KlattGrid (simple)...", U"To Manipulation...", 1, 
+	praat_addAction1 (classSound, 0, U"To KlattGrid (simple)...", U"To Manipulation...", 1,
 			CONVERT_EACH_TO_ONE__Sound_to_KlattGrid_simple);
 	praat_addAction2 (classSound, 1, classPitch, 1, U"To FormantFilter...", nullptr, GuiMenu_DEPRECATED_2014,
 			CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_to_FormantFilter);
 	praat_addAction2 (classSound, 1, classPitch, 1, U"To Spectrogram (pitch-dependent)...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_to_Spectrogram);
 
-	praat_addAction2 (classSound, 1, classPitch, 1, U"Change gender...", nullptr, 0, 
+	praat_addAction2 (classSound, 1, classPitch, 1, U"Change gender...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_changeGender);
 	praat_addAction2 (classSound, 1, classPitch, 1, U"Change speaker...", nullptr, GuiMenu_HIDDEN,
 			CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_changeSpeaker);
 	praat_addAction2 (classSound, 1, classIntervalTier, 1, U"Cut parts matching label...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Sound_IntervalTier_cutPartsMatchingLabel);
 
-	praat_addAction1 (classSpectrogram, 2, U"To DTW...", U"To Spectrum (slice)...", 1, 
+	praat_addAction1 (classSpectrogram, 2, U"To DTW...", U"To Spectrum (slice)...", 1,
 			CONVERT_TWO_TO_ONE__Spectrograms_to_DTW);
 	praat_addAction1 (classSpectrogram, 0, U"Draw long-term spectral flatness...", U"Paint...", GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			GRAPHICS_EACH__Spectrogram_drawLongtermSpectralFlatness);
@@ -10316,21 +10316,21 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Spectrum_compressFrequencyDomain);
 	praat_addAction1 (classSpectrum, 0, U"Resample...", U"Compress frequency domain...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Spectrum_resample);
-	praat_addAction1 (classSpectrum, 0, U"To Cepstrum", U"To Spectrogram", 1, 
+	praat_addAction1 (classSpectrum, 0, U"To Cepstrum", U"To Spectrogram", 1,
 			CONVERT_EACH_TO_ONE__Spectrum_to_Cepstrum);
 	praat_addAction1 (classSpectrum, 0, U"To PowerCepstrum", U"To Cepstrum", 1,
 			CONVERT_EACH_TO_ONE__Spectrum_to_PowerCepstrum);
 
 	praat_addAction1 (classSpeechSynthesizer, 0, U"SpeechSynthesizer help", nullptr, 0,
 			HELP__SpeechSynthesizer_help);
-	praat_addAction1 (classSpeechSynthesizer, 0, U"Play text...", nullptr, 0, 
+	praat_addAction1 (classSpeechSynthesizer, 0, U"Play text...", nullptr, 0,
 			PLAY_EACH__SpeechSynthesizer_playText);
-	praat_addAction1 (classSpeechSynthesizer, 0, U"To Sound...", nullptr, 0, 
+	praat_addAction1 (classSpeechSynthesizer, 0, U"To Sound...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__SpeechSynthesizer_to_Sound);
 	praat_addAction1 (classSpeechSynthesizer, 0, U"Query -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpeechSynthesizer, 1, U"Get language name", nullptr, 1, 
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get language name", nullptr, 1,
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getLanguageName);
-		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice name", nullptr, 1, 
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice name", nullptr, 1,
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get phoneme set name", nullptr, 1,
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName);
@@ -10340,7 +10340,7 @@ void praat_David_init () {
 				QUERY_ONE_FOR_AUTOSTRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, GuiMenu_DEPRECATED_2017,
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName);
-		
+
 	praat_addAction1 (classSpeechSynthesizer, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Modify phoneme set...", nullptr, GuiMenu_DEPTH_1,
 				MODIFY_EACH__SpeechSynthesizer_modifyPhonemeSet);
@@ -10355,7 +10355,7 @@ void praat_David_init () {
 
 	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__SpeechSynthesizer_TextGrid_to_Sound);
-	praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align)...", nullptr, 0, 
+	praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align)...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__SpeechSynthesizer_Sound_TextGrid_align);
     praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align,trim)...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__SpeechSynthesizer_Sound_TextGrid_align2);
@@ -10366,75 +10366,75 @@ void praat_David_init () {
 	praat_removeAction (classSSCP, nullptr, nullptr, U"Append");
 	praat_addAction1 (classSSCP, 0, U"Draw sigma ellipse...", U"Draw -", 1,
 			GRAPHICS_EACH__SSCP_drawSigmaEllipse);
-	praat_addAction1 (classSSCP, 0, U"Draw confidence ellipse...", U"Draw -", 1, 
+	praat_addAction1 (classSSCP, 0, U"Draw confidence ellipse...", U"Draw -", 1,
 			GRAPHICS_EACH__SSCP_drawConfidenceEllipse);
 	praat_SSCP_query_init (classSSCP);
-	praat_addAction1 (classSSCP, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1, 
+	praat_addAction1 (classSSCP, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1,
 			QUERY_ONE_FOR_REAL__SSCP_getDiagonality_bartlett);
-	praat_addAction1 (classSSCP, 1, U"Get total variance", U"Get diagonality (bartlett)...", 1, 
+	praat_addAction1 (classSSCP, 1, U"Get total variance", U"Get diagonality (bartlett)...", 1,
 			QUERY_ONE_FOR_REAL__SSCP_getTotalVariance);
 	praat_addAction1 (classSSCP, 1, U"Get sigma ellipse area...", U"Get total variance", 1,
 			QUERY_ONE_FOR_REAL__SSCP_getConcentrationEllipseArea);
-	praat_addAction1 (classSSCP, 1, U"Get confidence ellipse area...", U"Get sigma ellipse area...", 1, 
+	praat_addAction1 (classSSCP, 1, U"Get confidence ellipse area...", U"Get sigma ellipse area...", 1,
 			QUERY_ONE_FOR_REAL__SSCP_getConfidenceEllipseArea);
 	praat_addAction1 (classSSCP, 1, U"Get fraction variation...", U"Get confidence ellipse area...", 1,
 			QUERY_ONE_FOR_REAL__SSCP_getFractionVariation);
 	praat_SSCP_extract_init (classSSCP);
-	praat_addAction1 (classSSCP, 0, U"To PCA", nullptr, 0, 
+	praat_addAction1 (classSSCP, 0, U"To PCA", nullptr, 0,
 			CONVERT_EACH_TO_ONE__SSCP_to_PCA);
-	praat_addAction1 (classSSCP, 0, U"To Correlation", nullptr, 0, 
+	praat_addAction1 (classSSCP, 0, U"To Correlation", nullptr, 0,
 			CONVERT_EACH_TO_ONE__SSCP_to_Correlation);
-	praat_addAction1 (classSSCP, 0, U"To Covariance...", nullptr, 0, 
+	praat_addAction1 (classSSCP, 0, U"To Covariance...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__SSCP_to_Covariance);
 
-	praat_addAction1 (classStrings, 0, U"To Categories", nullptr, 0, 
+	praat_addAction1 (classStrings, 0, U"To Categories", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Strings_to_Categories);
-	praat_addAction1 (classStrings, 0, U"Append", nullptr, 0, 
+	praat_addAction1 (classStrings, 0, U"Append", nullptr, 0,
 			COMBINE_ALL_TO_ONE__Strings_append);
 	praat_addAction1 (classStrings, 0, U"Change...", U"Replace all...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Strings_change);
-	praat_addAction1 (classStrings, 0, U"Extract part...", U"Replace all...", 0, 
+	praat_addAction1 (classStrings, 0, U"Extract part...", U"Replace all...", 0,
 			CONVERT_EACH_TO_ONE__Strings_extractPart);
-	praat_addAction1 (classStrings, 0, U"To Permutation...", U"To Distributions", 0, 
+	praat_addAction1 (classStrings, 0, U"To Permutation...", U"To Distributions", 0,
 			CONVERT_EACH_TO_ONE__Strings_to_Permutation);
-	praat_addAction1 (classStrings, 2, U"To EditDistanceTable", U"To Distributions", 0, 
+	praat_addAction1 (classStrings, 2, U"To EditDistanceTable", U"To Distributions", 0,
 			CONVERT_TWO_TO_ONE__Strings_to_EditDistanceTable);
-	praat_addAction1 (classStrings, 0, U"To StringsIndex...", U"To Permutation...", GuiMenu_HIDDEN, 		
+	praat_addAction1 (classStrings, 0, U"To StringsIndex...", U"To Permutation...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Strings_to_StringsIndex);
-	praat_addAction1 (classSVD, 0, U"SVD help", nullptr, 0, 
+	praat_addAction1 (classSVD, 0, U"SVD help", nullptr, 0,
 			HELP__SVD_help);
 	praat_addAction1 (classSVD, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classSVD, 1, U"Get number of rows", nullptr, 1, 
 		QUERY_ONE_FOR_INTEGER__SVD_getNumberOfRows);
-	praat_addAction1 (classSVD, 1, U"Get number of columns", nullptr, 1, 
+	praat_addAction1 (classSVD, 1, U"Get number of columns", nullptr, 1,
 		QUERY_ONE_FOR_INTEGER__SVD_getNumberOfColumns);
-	praat_addAction1 (classSVD, 1, U"Get rank", nullptr, 1, 
+	praat_addAction1 (classSVD, 1, U"Get rank", nullptr, 1,
 			QUERY_ONE_FOR_REAL__SVD_getRank);
-	praat_addAction1 (classSVD, 1, U"Get condition number", nullptr, 1, 
+	praat_addAction1 (classSVD, 1, U"Get condition number", nullptr, 1,
 			QUERY_ONE_FOR_REAL__SVD_getConditionNumber);
 	praat_addAction1 (classSVD, 0, U"-- singular values ---", nullptr, 1, nullptr);
-	praat_addAction1 (classSVD, 1, U"Get singular value...", nullptr, 1, 
+	praat_addAction1 (classSVD, 1, U"Get singular value...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__SVD_getSingularValue);
-	praat_addAction1 (classSVD, 1, U"Get sum of singular values...", nullptr, 1, 
+	praat_addAction1 (classSVD, 1, U"Get sum of singular values...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__SVD_getSumOfSingularValues);
 	praat_addAction1 (classSVD, 1, U"Get sum of singular values (fraction)...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__SVD_getSumOfSingularValuesAsFractionOfTotal);
-	praat_addAction1 (classSVD, 1, U"Get minimum number of singular values...", nullptr, 1, 
+	praat_addAction1 (classSVD, 1, U"Get minimum number of singular values...", nullptr, 1,
 		QUERY_ONE_FOR_INTEGER__SVD_getMinimumNumberOfSingularValues);
-	praat_addAction1 (classSVD, 1, U"Get shrinkage parameter...", nullptr, 1, 
+	praat_addAction1 (classSVD, 1, U"Get shrinkage parameter...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__SVD_getShrinkageParameter);	
-	praat_addAction1 (classSVD, 1, U"Get effective degrees of freedom...", nullptr, 1, 
+	praat_addAction1 (classSVD, 1, U"Get effective degrees of freedom...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__SVD_getEffectiveDegreesOfFreedom);
-	
-	praat_addAction1 (classSVD, 0, U"To TableOfReal...", nullptr, 0, 
+
+	praat_addAction1 (classSVD, 0, U"To TableOfReal...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__SVD_to_TableOfReal);
-	praat_addAction1 (classSVD, 0, U"To Matrix...", nullptr, 0, 
+	praat_addAction1 (classSVD, 0, U"To Matrix...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__SVD_to_Matrix);
-	praat_addAction1 (classSVD, 0, U"Extract left singular vectors", nullptr, 0, 
+	praat_addAction1 (classSVD, 0, U"Extract left singular vectors", nullptr, 0,
 			CONVERT_EACH_TO_ONE__SVD_extractLeftSingularVectors);
-	praat_addAction1 (classSVD, 0, U"Extract right singular vectors", nullptr, 0, 
+	praat_addAction1 (classSVD, 0, U"Extract right singular vectors", nullptr, 0,
 			CONVERT_EACH_TO_ONE__SVD_extractRightSingularVectors);
-	praat_addAction1 (classSVD, 0, U"Extract singular values", nullptr, 0, 
+	praat_addAction1 (classSVD, 0, U"Extract singular values", nullptr, 0,
 			CONVERT_EACH_TO_ONE__SVD_extractSingularValues);
 		praat_addAction1 (classTable, 0, U"Draw ellipses...", U"Draw ellipse (standard deviation)...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_drawEllipses);
@@ -10449,17 +10449,16 @@ void praat_David_init () {
 		praat_addAction1 (classTable, 0, U"Lag plot...", U"Quantile-quantile plot (between levels)...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_lagPlot);
 		praat_addAction1 (classTable, 0, U"Bar plot...", U"Lag plot...", GuiMenu_DEPTH_1,
-					GRAPHICS_EACH__Table_barPlot);
+				GRAPHICS_EACH__Table_barPlot);
 		praat_addAction1 (classTable, 0, U"Line graph...", U"Bar plot...", GuiMenu_DEPTH_1,
-					GRAPHICS_EACH__Table_LineGraph);
+				GRAPHICS_EACH__Table_LineGraph);
 		praat_addAction1 (classTable, 0, U"Distribution plot...", U"Line graph...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_distributionPlot);
 		praat_addAction1 (classTable, 0, U"Horizontal error bars plot...", U"Distribution plot...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_horizontalErrorBarsPlot);
 		praat_addAction1 (classTable, 0, U"Vertical error bars plot...", U"Horizontal error bars plot...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_verticalErrorBarsPlot);
-		
-		
+
 		// The Draw_where's are deprecated 2023
 			praat_addAction1 (classTable, 0, U"Draw where", U"Vertical error bars plot...", GuiMenu_DEPRECATED_2023, nullptr);
 			praat_addAction1 (classTable, 0, U"Scatter plot where...", U"Draw where", GuiMenu_DEPRECATED_2023,
@@ -10487,7 +10486,7 @@ void praat_David_init () {
 			praat_addAction1 (classTable, 0, U"Vertical error bars plot where...", U"Horizontal error bars plot where...", GuiMenu_DEPRECATED_2023,
 					GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere);
 	// End of deprecated 2023
-			
+
 	praat_addAction1 (classTable, 1, U"List row numbers where...", U"Get number of rows", GuiMenu_DEPTH_1,
 			QUERY_ONE_FOR_REAL_VECTOR__Table_listRowNumbersWhere);
 	praat_addAction1 (classTable, 1, U"Get number of rows where...", U"Get number of rows", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
@@ -10504,19 +10503,18 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Table_extractRowsWhere);
 	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Table_extractRowsWhereMahalanobis);
-	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, 0);
+	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, nullptr);
 	praat_addAction1 (classTable, 0, U"Extract columns by number... || Extract column ranges...", U"-- Extract columns ----", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber);
 
 	praat_addAction1 (classTable, 0, U"To KlattTable", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Table_to_KlattTable);
-	praat_addAction1 (classTable, 1, U"Get median absolute deviation...", U"Get standard deviation...", 1, 
+	praat_addAction1 (classTable, 1, U"Get median absolute deviation...", U"Get standard deviation...", 1,
 			QUERY_ONE_FOR_REAL__Table_getMedianAbsoluteDeviation);
 	praat_addAction1 (classTable, 0, U"To StringsIndex (column)...", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Table_to_StringsIndex_column);
-	praat_addAction1 (classTableOfReal, 0, U"Multivariate tests -", U"Get column stdev (label)...", 1,
-		nullptr);
-		praat_addAction1 (classTableOfReal, 1, U"Report multivariate normality...", U"Multivariate tests -", 
+	praat_addAction1 (classTableOfReal, 0, U"Multivariate tests -", U"Get column stdev (label)...", 1, nullptr);
+		praat_addAction1 (classTableOfReal, 1, U"Report multivariate normality...", U"Multivariate tests -",
 			GuiMenu_DEPTH_2, INFO_ONE__TableOfReal_reportMultivariateNormality);
 		praat_addAction1 (classTableOfReal, 1, U"Report covariance sphericity...", U"Report multivariate normality...",
 			GuiMenu_DEPTH_2, INFO_ONE__TableOfReal_reportSphericityOfCovariance);
@@ -10528,8 +10526,8 @@ void praat_David_init () {
 			GuiMenu_DEPTH_2, INFO_TWO__TableOfReal_reportEqualityOfCovariances);
 	praat_addAction1 (classTableOfReal, 0, U"Append columns", U"Append", 1, 
 			COMBINE_ALL_LISTED_TO_ONE__TableOfReal_appendColumns);
-	praat_addAction1 (classTableOfReal, 0, U"Multivariate statistics -", nullptr, 0, 0);
-	praat_addAction1 (classTableOfReal, 0, U"To Discriminant", nullptr, 1, 
+	praat_addAction1 (classTableOfReal, 0, U"Multivariate statistics -", nullptr, 0, nullptr);
+	praat_addAction1 (classTableOfReal, 0, U"To Discriminant", nullptr, 1,
 			CONVERT_EACH_TO_ONE__TableOfReal_to_Discriminant);
 	praat_addAction1 (classTableOfReal, 0, U"To PCA", nullptr, 1,
 			CONVERT_EACH_TO_ONE__TableOfReal_to_PCA_byRows);
@@ -10545,9 +10543,9 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__TableOfReal_to_Correlation_rank);
 	praat_addAction1 (classTableOfReal, 0, U"To CCA...", nullptr, 1, 
 			CONVERT_EACH_TO_ONE__TableOfReal_to_CCA);
-	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (means by row labels)...", nullptr, 1, 
+	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (means by row labels)...", nullptr, 1,
 			CONVERT_EACH_TO_ONE__TableOfReal_meansByRowLabels);
-	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (medians by row labels)...", nullptr, 1, 
+	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (medians by row labels)...", nullptr, 1,
 			CONVERT_EACH_TO_ONE__TableOfReal_mediansByRowLabels);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (rank columns)...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__TableOfReal_to_TableOfReal_rankColumns);
@@ -10575,14 +10573,14 @@ void praat_David_init () {
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (cholesky)...", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__TableOfReal_choleskyDecomposition);
 
-	praat_addAction1 (classTableOfReal, 0, U"Draw as scalable squares...", U"Draw as squares...", 1, 
+	praat_addAction1 (classTableOfReal, 0, U"Draw as scalable squares...", U"Draw as squares...", 1,
 			GRAPHICS_EACH__TableOfReal_drawAsScalableSquares);
-	praat_addAction1 (classTableOfReal, 0, U"-- scatter plots --", U"Draw top and bottom lines...", 1, 0);
+	praat_addAction1 (classTableOfReal, 0, U"-- scatter plots --", U"Draw top and bottom lines...", 1, nullptr);
 	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot...", U"-- scatter plots --", 1,
 			GRAPHICS_EACH__TableOfReal_drawScatterPlot);
-	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot matrix...", U"Draw scatter plot...", 1, 
+	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot matrix...", U"Draw scatter plot...", 1,
 			GRAPHICS_EACH__TableOfReal_drawScatterPlotMatrix);
-	praat_addAction1 (classTableOfReal, 0, U"Draw box plots...", U"Draw scatter plot matrix...", 1, 
+	praat_addAction1 (classTableOfReal, 0, U"Draw box plots...", U"Draw scatter plot matrix...", 1,
 			GRAPHICS_EACH__TableOfReal_drawBoxPlots);
 	praat_addAction1 (classTableOfReal, 0, U"Draw biplot...", U"Draw box plots...", 1,
 			GRAPHICS_EACH__TableOfReal_drawBiplot);
@@ -10595,7 +10593,7 @@ void praat_David_init () {
 	praat_addAction1 (classTableOfReal, 1, U"Draw column as distribution...", U"Draw rows as histogram...", GuiMenu_DEPTH_1,
 			GRAPHICS_EACH__TableOfReal_drawColumnAsDistribution);
 
-	praat_addAction2 (classStrings, 1, classPermutation, 1, U"Permute strings", nullptr, 0, 
+	praat_addAction2 (classStrings, 1, classPermutation, 1, U"Permute strings", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Strings_Permutation_permuteStrings);
 
 	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, U"Permute rows", nullptr, 0,
@@ -10605,7 +10603,7 @@ void praat_David_init () {
 
 	praat_addAction1 (classTextGrid, 1, U"Get total duration of intervals where...", U"Count intervals where...", 2,
 			QUERY_ONE_FOR_REAL__TextGrid_getTotalDurationOfIntervalsWhere);
-	praat_addAction1 (classTextGrid, 0, U"Extend time...", U"Scale times...", 2, 
+	praat_addAction1 (classTextGrid, 0, U"Extend time...", U"Scale times...", 2,
 			MODIFY_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, U"Set tier name...", U"Remove tier...", 1,
 			MODIFY_EACH__TextGrid_setTierName);
@@ -10623,53 +10621,53 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__TextGrid_DurationTier_to_TextGrid);
-	
+
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0,
 			CONVERT_TWO_AND_ONE_TO_ONE__TextGrids_EditCostsTable_to_Table_textAlignment);
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridNavigator...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__TextGrid_and_NavigationContext_to_TextGridNavigator);
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridTierNavigator...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__TextGrid_and_NavigationContext_to_TextGridTierNavigator);
-	
-	praat_addAction1 (classTextGridNavigator, 0, U"TextGridNavigator help", nullptr, 0, 
+
+	praat_addAction1 (classTextGridNavigator, 0, U"TextGridNavigator help", nullptr, 0,
 			HELP__TextGridNavigator_help);
-	praat_addAction1 (classTextGridNavigator, 0, U"Find first", nullptr, 0, 
+	praat_addAction1 (classTextGridNavigator, 0, U"Find first", nullptr, 0,
 			MODIFY_EACH__TextGridNavigator_findFirst);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find last", nullptr, 0,
 			MODIFY_EACH__TextGridNavigator_findLast);
-	praat_addAction1 (classTextGridNavigator, 0, U"Find next", nullptr, 0, 
+	praat_addAction1 (classTextGridNavigator, 0, U"Find next", nullptr, 0,
 			MODIFY_EACH__TextGridNavigator_findNext);
-	praat_addAction1 (classTextGridNavigator, 0, U"Find next after time...", nullptr, 0, 
+	praat_addAction1 (classTextGridNavigator, 0, U"Find next after time...", nullptr, 0,
 			MODIFY_EACH__TextGridNavigator_findNextAfterTime);
-	praat_addAction1 (classTextGridNavigator, 0, U"Find previous", nullptr, 0, 
+	praat_addAction1 (classTextGridNavigator, 0, U"Find previous", nullptr, 0,
 			MODIFY_EACH__TextGridNavigator_findPrevious);
-	praat_addAction1 (classTextGridNavigator, 0, U"Find previous before time...", nullptr, 0, 
+	praat_addAction1 (classTextGridNavigator, 0, U"Find previous before time...", nullptr, 0,
 			MODIFY_EACH__TextGridNavigator_findPreviousBeforeTime);
-	
+
 	praat_addAction1 (classTextGridNavigator, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFunction_query_init (classTextGridNavigator); 
-		praat_addAction1 (classTextGridNavigator, 1, U"Get start time...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"Get start time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__TextGridNavigator_getStartTime);
-		praat_addAction1 (classTextGridNavigator, 1, U"Get label...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"Get label...", nullptr, 1,
 			QUERY_ONE_FOR_STRING__TextGridNavigator_getLabel);
-		praat_addAction1 (classTextGridNavigator, 1, U"Get end time...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"Get end time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__TextGridNavigator_getEndTime);
-		praat_addAction1 (classTextGridNavigator, 1, U"Get index...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"Get index...", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__TextGridNavigator_getIndex);
 		praat_addAction1 (classTextGridNavigator, 1, U"-- number of matches --", nullptr, 1, nullptr);
-		praat_addAction1 (classTextGridNavigator, 1, U"List indices...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"List indices...", nullptr, 1,
 			QUERY_ONE_FOR_REAL_VECTOR__TextGridNavigator_listIndices);
-		praat_addAction1 (classTextGridNavigator, 1, U"List start times...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"List start times...", nullptr, 1,
 			QUERY_ONE_FOR_REAL_VECTOR__TextGridNavigator_listStartTimes);
-		praat_addAction1 (classTextGridNavigator, 1, U"List labels...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"List labels...", nullptr, 1,
 			QUERY_ONE_FOR_STRING_ARRAY__TextGridNavigator_listLabels);
-		praat_addAction1 (classTextGridNavigator, 1, U"List end times...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"List end times...", nullptr, 1,
 			QUERY_ONE_FOR_REAL_VECTOR__TextGridNavigator_listEndTimes);
-		praat_addAction1 (classTextGridNavigator, 1, U"List domains...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"List domains...", nullptr, 1,
 			QUERY_ONE_FOR_MATRIX__TextGridNavigator_listDomains);
-		praat_addAction1 (classTextGridNavigator, 1, U"Get number of matches", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"Get number of matches", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfMatches);
-		praat_addAction1 (classTextGridNavigator, 1, U"Get number of Topic matches...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 1, U"Get number of Topic matches...", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfTopicMatches);
 		praat_addAction1 (classTextGridNavigator, 1, U"Get number of Before matches...", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfBeforeMatches);
@@ -10680,34 +10678,34 @@ void praat_David_init () {
 			MODIFY_EACH__TextGridNavigator_modifyTopicCriterion);
 		praat_addAction1 (classTextGridNavigator, 0, U"Modify Before match criterion...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyBeforeCriterion);
-		praat_addAction1 (classTextGridNavigator, 0, U"Modify After match criterion...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 0, U"Modify After match criterion...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyAfterCriterion);
-		praat_addAction1 (classTextGridNavigator, 0, U"Modify combination criterion...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 0, U"Modify combination criterion...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyCombinationCriterion);
-		praat_addAction1 (classTextGridNavigator, 0, U"Modify match domain...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 0, U"Modify match domain...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyMatchDomain);
 		praat_addAction1 (classTextGridNavigator, 0, U"Modify match domain alignment...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyMatchDomainAlignment);
 		praat_addAction1 (classTextGridNavigator, 0, U"-- search range extensions --", nullptr, 1, nullptr);
-		praat_addAction1 (classTextGridNavigator, 0, U"Modify Before range...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 0, U"Modify Before range...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyBeforeRange);
-		praat_addAction1 (classTextGridNavigator, 0, U"Modify After range...", nullptr, 1, 
+		praat_addAction1 (classTextGridNavigator, 0, U"Modify After range...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyAfterRange);
-	
+
 	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Replace navigation context...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceNavigationContext);
 	praat_addAction2 (classTextGridNavigator, 1, classTextGridTierNavigator, 1, U"Add TextGridTierNavigator...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addTextGridTierNavigator);
-	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Replace search tiers", nullptr, 0, 
+	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Replace search tiers", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceSearchTiers);
 	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Add search tier (topic only)...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly);
 	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Add search tier...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier);
-	
-	praat_addAction1 (classTextGridTierNavigator, 0, U"To TextGridNavigator", nullptr, 1, 
+
+	praat_addAction1 (classTextGridTierNavigator, 0, U"To TextGridNavigator", nullptr, 1,
 			CONVERT_EACH_TO_ONE__TextGridTierNavigator_to_TextGridNavigator);
-	
+
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)
 

@@ -2,6 +2,10 @@
 David Weenink 20120117, 20120124, 20151130, 20171004, 20211207, 20231009
 Paul Boersma 20240824: deleted compiledata.c from espeakfiles_c$
 
+This script is `generate/espeak/GENERATE.praat` in the Praat source distribution.
+It looks like a Praat notebook and can indeed be dry-run as such,
+but it is actually meant as a Praat script from which you copy–paste
+`bash` lines into a terminal window and run Praat chunks with "Run selection".
 
 1. Getting the eSpeak sources
 =============================
@@ -62,12 +66,13 @@ inside `src/generate/espeak`.
 
 As the license of eSpeak is GPL 3 or later, our derived FileInMemory objects are distributed under GPL 3 or later as well:
 {
-procedure saveFileInMemorySetAsCppFile: .cppFileName$
+procedure saveFileInMemorySetAsCppFile: .name$
+	.fileName$ = "create_" + .name$ + ".cpp"
 	.head$ =
-	... "/* " + .cppFileName$ + newline$ +
+	... "/* " + .fileName$ + newline$ +
 	... " *" + newline$ +
-	... " * This file was automatically created from files in the folder `generate/espeak-ng-data`" + newline$ +
-	... " * by the script `external/espeak/READ_ME.TXT` in the Praat source distribution." + newline$ +
+	... " * This file was automatically created from files in the folder `generate/espeak/espeak-ng-data`" + newline$ +
+	... " * by the script `generate/espeak/GENERATE.praat` in the Praat source distribution." + newline$ +
 	... " *" + newline$ +
 	... " * Espeak-ng version: 1.52-dev August 2023" + newline$ +
 	... " * File creation date: " + date$ () + newline$ +
@@ -88,10 +93,11 @@ procedure saveFileInMemorySetAsCppFile: .cppFileName$
 	... " *" + newline$ +
 	... " * You should have received a copy of the GNU General Public License" + newline$ +
 	... " * along with this program; if not, see: <http://www.gnu.org/licenses/>." + newline$ +
-	... " */" + newline$
-	.code$ = Show as code: .cppFileName$, 30
-	.tail$ = newline$ + "/* End of file " + .cppFileName$ + " */" + newline$
-	writeFile: .cppFileName$ + ".cpp", .head$, .code$, .tail$
+	... " */" + newline$ + newline$ +
+	... “#include "espeakdata_FileInMemory.h"” + newline$
+	.code$ = Show as code: .name$, 30
+	.tail$ = "/* End of file " + .fileName$ + " */" + newline$
+	writeFile: .fileName$, .head$, .code$, .tail$
 endproc
 }
 
@@ -182,11 +188,12 @@ We safely save these into the generation folder:
 {;
 	@generationFolders
 	selectObject: "FileInMemorySet russianDict"
-	@saveFileInMemorySetAsCppFile: "create_espeak_ng_FileInMemorySet__ru"
+	@saveFileInMemorySetAsCppFile: "espeak_ng_FileInMemorySet__ru"
 	selectObject: "FileInMemorySet everythingExceptRussianDict"
-	@saveFileInMemorySetAsCppFile: "create_espeak_ng_FileInMemorySet"
+	@saveFileInMemorySetAsCppFile: "espeak_ng_FileInMemorySet"
 }
-
+After some inspection for correctness, %move (not %copy, in order to save space)
+these files to 
 
 
 Go to the folder `src/generate/espeak` and run the following code:

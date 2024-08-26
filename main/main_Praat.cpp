@@ -47,10 +47,15 @@ static void logo (Graphics graphics) {
 
 int main (int argc, char *argv []) {
 	try {
+		//TRACE
 		praat_setLogo (130.0, 80.0, logo);
+		Melder_stopwatch ();
 		praat_init (U"Praat", argc, argv);
+		trace (Melder_stopwatch ());
 		INCLUDE_LIBRARY (praat_uvafon_init)
+		trace (Melder_stopwatch ());
 		praat_run ();
+		trace (Melder_stopwatch ());
 	} catch (MelderError) {
 		Melder_flushError (U"This error message percolated all the way to the top.");   // an attempt to catch Apache errors
 	}
