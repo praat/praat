@@ -156,8 +156,7 @@ autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_strin
 
 void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer numberOfBytesPerLine) {
 	autoMelderString one_fim;
-	MelderInfo_writeLine (U"#include \"FileInMemorySet.h\"");
-	MelderInfo_writeLine (U"#include \"melder.h\"\n");
+	MelderInfo_writeLine (U"#include \"FileInMemorySet.h\"\n");
 	MelderInfo_writeLine (U"autoFileInMemorySet create_", name, U" () {");
 	MelderInfo_writeLine (U"\ttry {");
 	MelderInfo_writeLine (U"\t\tautoFileInMemorySet me = FileInMemorySet_create ();");
@@ -171,15 +170,13 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer
 	MelderInfo_writeLine (U"\t} catch (MelderError) {");
 	MelderInfo_writeLine (U"\t\tMelder_throw (U\"FileInMemorySet not created.\");");
 	MelderInfo_writeLine (U"\t}");
-	MelderInfo_writeLine (U"}\n\n");
+	MelderInfo_writeLine (U"}\n");
 }
 
-void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, conststring32 name, integer numberOfBytesPerLine)
-{
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, conststring32 name, integer numberOfBytesPerLine) {
 	if (index < 1 || index > my size)
 		return;
-	MelderInfo_writeLine (U"#include \"FileInMemory.h\"");
-	MelderInfo_writeLine (U"#include \"melder.h\"\n");
+	MelderInfo_writeLine (U"#include \"FileInMemory.h\"\n");
 	MelderInfo_writeLine (U"static autoFileInMemory create_new_object () {");
 	MelderInfo_writeLine (U"\ttry {");
 	autoMelderString one_fim;
@@ -280,6 +277,5 @@ const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, inte
 		*out_numberOfBytes = fim -> d_numberOfBytes;
 	return reinterpret_cast<const char *> (fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray());
 }
-
 
 /* End of file FileInMemorySet.cpp */
