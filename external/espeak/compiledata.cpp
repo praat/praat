@@ -47,6 +47,7 @@
 #include "voice.h"                    // for LoadVoice, voice
 #include "wavegen.h"                  // for WavegenInit, WavegenSetVoice
 
+#if ! DATA_FROM_SOURCECODE_FILES
 static int CalculateSample(unsigned char c3, int c1);
 
 #define N_ITEM_STRING 256
@@ -2470,8 +2471,6 @@ espeak_ng_CompilePhonemeDataPath(long rate,
 	return static_cast <espeak_ng_STATUS> ((status != ENS_OK) ? status : res);
 }
 
-#pragma GCC visibility pop
-
 static const char *preset_tune_names[] = {
 	"s1", "c1", "q1", "e1", NULL
 };
@@ -2782,11 +2781,10 @@ espeak_ng_CompileIntonationPath(const char *source_path,
 	return static_cast <espeak_ng_STATUS> (res);
 }
 
-#pragma GCC visibility pop
-
 static int CalculateSample(unsigned char c3, int c1) {
 	int c2 = c3 << 24;
 	c2 = c2 >> 16; // sign extend
 
 	return (c1 & 0xff) + c2;
 }
+#endif ! DATA_FROM_SOURCECODE_FILES

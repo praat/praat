@@ -152,6 +152,7 @@ ESPEAK_API espeak_ERROR espeak_Terminate(void)
 	return status_to_espeak_error(espeak_ng_Terminate());
 }
 
+#if ! DATA_FROM_SOURCECODE_FILES
 ESPEAK_API void espeak_CompileDictionary(const char *path, FILE *log, int flags)
 {
 	espeak_ng_ERROR_CONTEXT context = NULL;
@@ -161,5 +162,6 @@ ESPEAK_API void espeak_CompileDictionary(const char *path, FILE *log, int flags)
 		espeak_ng_ClearErrorContext(&context);
 	}
 }
+#endif // ! DATA_FROM_SOURCECODE_FILES
 
 #pragma GCC visibility pop

@@ -187,10 +187,12 @@ espeak_ng_CompileMbrolaVoice(const char *path,
                              FILE *log,
                              espeak_ng_ERROR_CONTEXT *context);
 
+#if ! DATA_FROM_SOURCECODE_FILES
 ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_CompilePhonemeData(long rate,
                              FILE *log,
                              espeak_ng_ERROR_CONTEXT *context);
+#endif
 
 ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_CompileIntonation(FILE *log,
@@ -205,13 +207,15 @@ espeak_ng_CompileIntonationPath(const char *source_path,
 
 /* eSpeak NG 1.49.1 */
 
+#if ! DATA_FROM_SOURCECODE_FILES
 ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_CompilePhonemeDataPath(long rate,
                                  const char *source_path,
                                  const char *destination_path,
                                  FILE *log,
                                  espeak_ng_ERROR_CONTEXT *context);
-                                 
+#endif
+
 ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_SetOutputHooks(espeak_ng_OUTPUT_HOOKS* hooks);
 ESPEAK_NG_API espeak_ng_STATUS

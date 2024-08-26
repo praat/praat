@@ -737,8 +737,8 @@ You can fetch the Raspberry Pi edition directly from your Raspberry Pi:
 and the s390x edition directly from your LinuxONE account:
 
     # on Mac command line
-    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/ssh/mylinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praats/praat ~/Dropbox/Praats/bin/linux-s390x
-    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/ssh/mylinux1key.pem" linux1@xxx.xxx.xxx.xxx:~/praatsb/praat_barren ~/Dropbox/Praats/bin/linux-s390x
+    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/ssh/mylinux1key.pem" linux1@199.199.99.99:~/praats/praat ~/Dropbox/Praats/bin/linux-s390x
+    rsync -tpvz -e "ssh -i ~/Dropbox/Praats/ssh/mylinux1key.pem" linux1@199.199.99.99:~/praatsb/praat_barren ~/Dropbox/Praats/bin/linux-s390x
 
 When the folders under `~/Dropbox/Praats/bin`, namely `win-intel64`, `win-intel32`, `win-arm64`,
 `linux-intel64`, `linux-arm64`, `chrome-intel64`, `chrome-arm64` and `rpi-armv7`

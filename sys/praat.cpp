@@ -2142,7 +2142,7 @@ void praat_run () {
 	Melder_assert (isnan (0.0 / 0.0));
 	{
 		double x = sqrt (-10.0);
-		//if (! isnan (x)) printf ("sqrt (-10.0) = %g\n", x);   // -10.0 on Windows
+		Melder_assert (isundef (x));
 		x = NUMsqrt_u (-10.0);
 		Melder_assert (isundef (x));
 	}
@@ -2480,6 +2480,8 @@ void praat_run () {
 				Melder_flushError ();
 			}
 		}
+		TRACE
+		trace (U"Before main event loop: ", Melder_stopwatch ());
 
 		#if gtk
 			//gtk_widget_add_events (G_OBJECT (theCurrentPraatApplication -> topShell), GDK_ALL_EVENTS_MASK);
