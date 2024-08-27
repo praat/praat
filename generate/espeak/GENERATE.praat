@@ -10,6 +10,10 @@ but it is actually meant as a Praat script from which you copy–paste
 1. Getting the eSpeak sources
 =============================
 
+The espeak-ng program and its library are the successor of espeak 
+(espeak was maintained by Jonathan Duddington). Espeak-ng is a fork 
+maintained by Reece H. Dunn.
+
 If you download the eSpeak code for the first time, you can do this by downloading or cloning the sources from upstream,
 namely from `https://github.com/espeak-ng/espeak-ng`, in one of two ways.
 
@@ -58,11 +62,18 @@ If you have the Git version, you can establish updates via
 3. Copying eSpeak data to the Praat sources
 ===========================================
 
-Copy the files in `support/external/eSpeak/espeak-ng-data` to `src/generate/espeak/espeak-ng-data` and its subfolders `lang` and `voices`,
+Copy the files in `support/external/eSpeak/espeak-ng-1.52/espeak-ng-data`
+to `src/generate/espeak/espeak-ng-data` and its subfolders `lang` and `voices`,
 for instance by just copying the whole folder and deleting the subfolders `mbrola_ph` and `voices/mb`.
 
-Praat cannot handle external data files, so we convert the 360 data files into source code files that contain FileInMemory objects,
-inside `src/generate/espeak`.
+In espeak-ng, the espeak-ng-data directory is used to supply the 
+data the synthesizer needs. The synthesizer needs the location of 
+this directory to work correctly. The synthesizer's version and the 
+espeak-ng-data version have to match.
+This scheme is not acceptable in Praat since we cannot expect users to maintain
+a separate folder for the eSpeak data.
+Therefore we convert the 360 data files into source code files that contain FileInMemory objects,
+inside `src/generate/espeak`. The eSpeak source code will have to be converted to accomplish this.
 
 As the license of eSpeak is GPL 3 or later, our derived FileInMemory objects are distributed under GPL 3 or later as well:
 {
@@ -113,6 +124,7 @@ procedure generationFolders
 	generationDataFolder$ = generationFolder$ + "/espeak-ng-data"
 	generationLanguageFolder$ = generationDataFolder$ + "/lang"
 	generationVoicesFolder$ = generationDataFolder$ + "/voices/!v"
+	generationSourceFolder$ = generationFolder$ + "/src"
 endproc
 }
 
@@ -193,44 +205,90 @@ We safely save these into the generation folder:
 	@saveFileInMemorySetAsCppFile: "espeak_ng_FileInMemorySet"
 }
 After some inspection for correctness, %move (not %copy, in order to save space)
-these files to 
+these files into `src/external/espeak`.
 
+4. Copying eSpeak source code to the Praat sources
+==================================================
 
-Go to the folder `src/generate/espeak` and run the following code:
+The following files are in `support/external/eSpeak/espeak-ng-1.52/src`:
+{
+procedure sources
+	srcRootFolder$ = "../../../support/external/eSpeak/espeak-ng-1.52/src"
 
-#
-# This script is specific for my (David's) situation (although it can be adapted easily to 
-# any directory structure and non-Linux system).
-# My espeak-work/ has subdirectories espeak-ng-work, espeak-ng-current and espeak-ng-previous.
-# Into espeak-ng-work are copied from the original espeak-ng project only those *.c and *.h files 
-# that are needed for the praat version of the synthesizer.
-# The needed files are specified below in the variables:
-# .espeakfiles_h$, .espeakfiles_c$, .espeakfiles_include_h$, 
-# .espeakfiles_ucd_h$ and .espeakfiles_ucd_c$
-#
-# If the upstream espeak-ng has been modified then I follow the following procedure:
-#
-# First something like (base dir is espeak-work/):
-#		cp ../external/espeak/* espeak-ng-previous/ 
-#		rm espeak-ng-work/* rm espeak-ng-current/*
-#		use this script to cp the necessary *.c and *.h into espeak-ng-work,
-#			while renaming the *.c to *.cpp files.
+	sourceFolder$ = srcRootFolder$ + "/libespeak-ng"
+	sourceFiles$# = { "common.c", "compiledict.c", "compilembrola.c", "dictionary.c",
+	... "encoding.c", "error.c", "espeak_api.c", "espeak_command.c",
+	... "event.c", "fifo.c", "ieee80.c", "intonation.c",
+	... "klatt.c", "langopts.c", "mnemonics.c", "numbers.c", "phoneme.c", "phonemelist.c",
+	... "readclause.c", "setlengths.c", "soundicon.c", "spect.c", "speech.c", "ssml.c",
+	... "synthdata.c", "synthesize.c", "synth_mbrola.c", "translate.c", "translateword.c", "tr_languages.c",
+	... "voices.c", "wavegen.c" }
+	headerFiles$# = { "common.h", "compiledict.h", "dictionary.h",
+	... "error.h", "espeak_command.h", "event.h", "fifo.h", "intonation.h",
+	... "klatt.h", "langopts.h", "mnemonics.h", "mbrola.h", "numbers.h", "phoneme.h", "phonemelist.h",
+	... "readclause.h", "setlengths.h", "sintab.h", "soundicon.h", "spect.h", "speech.h", "ssml.h",
+	... "synthdata.h", "synthesize.h", "translate.h", "translateword.h",
+	... "voice.h", "wavegen.h" }
 
-# Given the following directories:
-#	A: ~/projects/praat/espeak-work/espeak-ng-work 
-#	B: ~/projects/praat/espeak-work/espeak-ng-current
-#	C: ~/projects/praat/external/espeak 
-#
+	includeFolder$ = srcRootFolder$ + "/include/espeak-ng"
+	includeFiles$# = { "encoding.h", "espeak_ng.h", "speak_lib.h" }
 
+	ucdSourceFolder$ = srcRootFolder$ + "/ucd-tools/src"
+	ucdSourceFiles$# = { "case.c", "categories.c", "proplist.c" }
 
-#	2. I copy the necessary *.c and *.h files from ~/projects/espeak-ng/src/... to espeak-work 
-#		by running this script with only the option "Copy_c_and_h_files" ON (the right version option).
-#		The *.c files are renamed as *.cpp files. Also a new file espeak-ng-version.h is created.
-#	3. Now my *.cpp and *.h are in synchrony with upstream and we copy all files from A to B.
-#	4. Generate the new dictionaries and language files in memory by running
-#		generate/espeak.createFileInMemorySets.praat.
-#	5. Move the files generate/create_espeak_ng_FileInMemorySet.cpp and generate/create_espeak_ng_FileInMemorySet__ru.cpp
-#		to external/espeak.
+	ucdHeaderFolder$ = srcRootFolder$ + "/ucd-tools/src/include/ucd"
+	ucdHeaderFiles$# = { "ucd.h" }
+endproc
+}
+All of these are moved to `generate/espeak/src`, without any recursion, while renaming `c` to `cpp` files:
+{;
+	@generationFolders
+	@sources
+	for i to size (sourceFiles$#)
+		text$ = readFile$: sourceFolder$ + "/" + sourceFiles$# [i]
+		writeFile: generationSourceFolder$ + "/" + sourceFiles$# [i] + "pp", text$
+	endfor
+	for i to size (headerFiles$#)
+		text$ = readFile$: sourceFolder$ + "/" + headerFiles$# [i]
+		writeFile: generationSourceFolder$ + "/" + headerFiles$# [i], text$
+	endfor
+	for i to size (includeFiles$#)
+		text$ = readFile$: includeFolder$ + "/" + includeFiles$# [i]
+		writeFile: generationSourceFolder$ + "/" + includeFiles$# [i], text$
+	endfor
+	for i to size (ucdSourceFiles$#)
+		text$ = readFile$: ucdSourceFolder$ + "/" + ucdSourceFiles$# [i]
+		writeFile: generationSourceFolder$ + "/" + ucdSourceFiles$# [i] + "pp", text$
+	endfor
+	for i to size (ucdHeaderFiles$#)
+		text$ = readFile$: ucdHeaderFolder$ + "/" + ucdHeaderFiles$# [i]
+		writeFile: generationSourceFolder$ + "/" + ucdHeaderFiles$# [i], text$
+	endfor
+}
+
+Also a new file espeak-ng-version.h is created [TO BE EDITED]:
+	# check version
+	.config$ = readFile$ ("~/projects/espeak-ng/config.h")
+	.version$ = extractWord$ (.config$, "#define VERSION """)
+	.version$ = replace$ (.version$, """", "", 0)
+	if .version$ <> espeak_version$
+		exitScript: "The given version (", espeak_version$, ") differs from package version ", .version$
+	endif
+
+	.version_define$ = "#define ESPEAK_NG_VERSION " + "U""" + espeak_version$ + """" + newline$
+		... + "#define ESPEAK_NG_VERSIONX " + espeak_version$ + newline$
+	writeFile: todir$ + "/espeak_ng_version.h", .version_define$
+
+5. Adapting eSpeak source code to Praat
+=======================================
+
+Many changes to the sources have to be made. If the original eSpeak sources don't change to much,
+this can be done by a visual `diff` between for instance `src/generate/espeak/src/speech.cpp` 
+and `src/external/espeak/speech.cpp`. The former is the one to be changed (in the way below).
+Once all the source and header files are fine, they can be moved over the ones in `src/external/espeak`.
+After this, the folder `src/generate/espeak/src` will be empty again.
+
+[TO BE EDITED]:
 #	6. In B:
 #		Change all includes eg <espeak-ng/something.h> to "something.h"
 #		Cast many return values and error values
@@ -245,88 +303,110 @@ Go to the folder `src/generate/espeak` and run the following code:
 #       Use listFileIO.praat to list the occurrences of these names in those five files.
 #	9. delete all "#pragma GCC visibility" lines
 
-# Function of this script:
-# Generates in espeak-ng-work
-# 	1. create_espeak_ng_FileInMemorySet.cpp
-# 	2. espeak-ng-version.h
-#
-# 	and
-#
-# 	3. Copies the necessary *.c(pp) and *.h from from_dir to to_dir
-#
+***** (only once)
 
-myscriptname$ = "espeak_ng_data_to_code.praat"
-date$ = date$()
-notify$ = "This file was created automatically on " + date$ + "."
-clearinfo
+Clone the git  repository 
+./autogen.sh
+CC=gcc CFLAGS="-Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized" ./configure --prefix=/usr
 
-form Espeakdata to code
-	word Espeak_version 1.52-dev
-	boolean Copy_c_and_h_files 0
-	boolean Show_cp_command 1
-	boolean Create_espeak_ng_version.h 1
-endform
+Now we can be up-to-date by pulling.
 
-fromdir$ = "/home/david/projects/espeak-ng"
-todir$ = "/home/david/projects/praat/espeak-work/espeak-ng-work"
+**** 
+We have replaced the file io based on fopen, fclose, fgets etc... with our own io (see espeak_io.cpp)
 
-# extract only the necesary files to espeak-ng-work.
-# Subsequent changes to these files have to be made in espeak-ng-current
+We inserted a number of explicit casts:
+static_cast<espeak_ng_STATUS> (errno)
 
-if copy_c_and_h_files || show_cp_command
-	@espeak_ng_copyfiles
-endif
+Adapted some of the header files.
 
-procedure espeak_ng_copyfiles
-	.espeakfiles_c$ = "common.c compiledict.c compilembrola.c dictionary.c"
-	... + " encoding.c error.c espeak_api.c espeak_command.c"
-	... + " event.c fifo.c ieee80.c intonation.c klatt.c langopts.c"
-	... + " mnemonics.c numbers.c phoneme.c phonemelist.c readclause.c setlengths.c"
-	... + " soundicon.c spect.c speech.c synthdata.c synthesize.c "
-	... + " ssml.c synth_mbrola.c translate.c translateword.c tr_languages.c voices.c wavegen.c"
+The overaching header file is `espeak_ng.h`,
+so any #defines that should be global to espeak should be defined in `espeak_ng.h`.
 
-	.espeakfiles_h$ = "common.h compiledict.h dictionary.h error.h espeak_command.h event.h fifo.h intonation.h"
-	... + " klatt.h langopts.h mbrola.h numbers.h phoneme.h phonemelist.h"
-	... + " readclause.h setlengths.h sintab.h spect.h speech.h"
-	... + " ssml.h synthdata.h synthesize.h translate.h translateword.h voice.h wavegen.h"
-	.espeakfiles_include_h$ = "speak_lib.h espeak_ng.h encoding.h"
-	.espeakfiles_ucd_h$ = "ucd.h"
-	.espeakfiles_ucd_c$ = "case.c categories.c proplist.c"
+In `espeak_ng.h`, we should ignore all the `dllexport` and `dllimport` labels:
+	//ppgb #if defined(_WIN32) || defined(_WIN64)
+	//ppgb #ifdef LIBESPEAK_NG_EXPORT
+	//ppgb #define ESPEAK_NG_API __declspec(dllexport)
+	//ppgb #else
+	//ppgb #define ESPEAK_NG_API __declspec(dllimport)
+	//ppgb #endif
+	//ppgb #else
+	#define ESPEAK_NG_API
+	//ppgb #endif
 
-	# check version
-	.config$ = readFile$ ("~/projects/espeak-ng/config.h")
-	.version$ = extractWord$ (.config$, "#define VERSION """)
-	.version$ = replace$ (.version$, """", "", 0)
-	if .version$ <> espeak_version$
-		exitScript: "The given version (", espeak_version$, ") differs from package version ", .version$
-	endif
+In `speak_ng.h`, we make sure that `DATA_FROM_SOURCECODE_FILES` is true by default:
+	//ppgb:
+	#ifndef DATA_FROM_SOURCECODE_FILES
+		#define DATA_FROM_SOURCECODE_FILES  1
+	#endif
+This is because the compilation in Praat should be the default,
+whereas compilation in the environment of actually existing data files
+should be restricted to special debugging cases
+(compile with `-DDATA_FROM_SOURCECODE_FILES=0` in that case).
 
-	# rename and cp files from espeak-ng to espeak-work
-	@copy_rename: fromdir$+"/src/libespeak-ng", .espeakfiles_c$, ".c", ".cpp"
-	@copy_rename: fromdir$+"/src/libespeak-ng", .espeakfiles_h$, ".h", ".h"
-	@copy_rename: fromdir$+"/src/include/espeak-ng", .espeakfiles_include_h$, ".h", ".h"
-	@copy_rename: fromdir$+"/src/ucd-tools/src", .espeakfiles_ucd_c$, ".c", ".cpp"
-	@copy_rename: fromdir$+"/src/ucd-tools/src/include/ucd", .espeakfiles_ucd_h$, ".h", ".h"
-	.version_define$ = "#define ESPEAK_NG_VERSION " + "U""" + espeak_version$ + """" + newline$
-		... + "#define ESPEAK_NG_VERSIONX " + espeak_version$ + newline$
-	if create_espeak_ng_version.h
-		writeFile: todir$ + "/espeak_ng_version.h", .version_define$
-	endif
-endproc
+In `speak_ng.h`, we replace the Windows-specific part
+	#define PLATFORM_WINDOWS  1
+	#define PATHSEP '\\'
+with
+	#if DATA_FROM_SOURCECODE_FILES
+		#define PLATFORM_WINDOWS  0
+		#define PATHSEP '/'
+	#else
+		#define PLATFORM_WINDOWS  1
+		#define PATHSEP '\\'
+	#endif
+#endif
+This is because David hard-coded the paths to the data files with forward slashes.
 
-procedure copy_rename: .fromdir$, .files$, .ext$, .newext$
-	.filelist$# = splitByWhitespace$# (.files$)
-	for .ifile to size (.filelist$#)
-		.name$ = .filelist$# [.ifile]
-		.newname$ = .name$ - .ext$ + .newext$
-		.command$ =  "cp " + .fromdir$ + "/" + .name$ + " " + todir$ + "/" + .newname$
-		appendInfoLine: .command$
-		if show_cp_command
-			appendInfoLine: .command$
-		endif
-		if copy_c_and_h_files
-			runSystem: .command$
-		endif
-	endfor
-endproc
+In `speech.cpp`, in the function `espeak_ng_Initialize`, we remove `setlocale`,
+because the locale of the entire program shouldn't be overwritten by a library:
+	/*
+		(Paul Boersma 20240426:)
+		When using this library in an app, e.g. Praat,
+		we should not set the locale, because it will interfere with the locale
+		that has been set in praat_init().
+		To nevertheless experiment with setting the locale here,
+		remove the space from "set locale" in the definition of SET_LOCALE
+		and set USE_SET_LOCALE_IN_THIS_LIBRARY to 1 instead of 0.
+		(The space is needed to be able to automatically determine that the name
+		 of the function does not appear in the present source file `speech.cpp`.)
+	*/
+	#define SET_LOCALE  set locale
+	#define USE_SET_LOCALE_IN_THIS_LIBRARY  0
+	#if USE_SET_LOCALE_IN_THIS_LIBRARY
+		if (SET_LOCALE(LC_CTYPE, "C.UTF-8") == NULL) {
+			if (SET_LOCALE(LC_CTYPE, "UTF-8") == NULL) {
+				if (SET_LOCALE(LC_CTYPE, "en_US.UTF-8") == NULL)
+					SET_LOCALE(LC_CTYPE, "");
+			}
+		}
+	#endif
+However, eSpeak does need Unicode knowledge to work correctly,
+so that iswalpha and all other isw* functions should be replaced
+with iswalpha_portable and so on.
+
+There is a bug in wavegen.cpp, where it reads
+	MarkerEvent(marker_type, q[1], q[2], q[3], out_ptr);
+The problem here is that q[2] and q[3] are of type intptr_t,
+whereas MarkerEvent expects int arguments. This is no problem
+on 32-bit systems, but on 64-bit systems the higher 4 bytes of q[2] are discarded.
+On little-endian systems, these higher 4 bytes are the last 4 bytes,
+and these rarely contain any relevant phoneme codes, so the problem rarely surfaces;
+however, on big-endian systems the higher 4 bytes are the first 4 bytes,
+so that all phoneme codes are in effect lost. A correct version is:
+	MarkerEvent(marker_type, q[1], * (int *) & q[2], * ((int *) & q[2] + 1), out_ptr);
+On 64-bit systems this splits up q[2] into two ints (in correct order),
+and on 32-bit systems * ((int *) & q[2] + 1) is actually q[3], which is also correct.
+MarkerEvent() itself pastes the two ints together again, in correct order.
+
+Finally, make sure not to include `<windows.h>` or `melder.h`
+after `espeak_ng.h`, because they may redefine `fopen`.
+
+#include "speak_lib.h"
+#include "encoding.h"
+#include "ucd.h"
+
+#undef INCLUDE_MBROLA
+#undef PLATFORM_POSIX
+#undef PLATFORM_WINDOWS
+#undef USE_NANOSLEEP
 
