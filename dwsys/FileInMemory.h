@@ -37,6 +37,5 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 
 void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine);
 
-
 /* End of file FileInMemory.h */
 #endif

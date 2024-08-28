@@ -1,6 +1,6 @@
 /* Collection.cpp
  *
- * Copyright (C) 1992-2012,2014-2022 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -227,6 +227,7 @@ _Collection_implement (Collection, CollectionOf, Thing, Daata, 0);
 _Collection_implement (Ordered, OrderedOf, Daata, Collection, 0);
 _Collection_implement (Sorted, SortedOf, Daata, Collection, 0);
 _Collection_implement (SortedSet, SortedSetOf, Daata, Sorted, 0);
+_Collection_implement (SortedSetOfString, SortedSetOfStringOf, SimpleString, SortedSet, 0);
 
 Thing_implement (StringList, Ordered, 0);
 Thing_implement (StringSet, SortedSet, 0);

@@ -18,30 +18,9 @@
 
 #include "FileInMemorySet.h"
 
-#include "oo_DESTROY.h"
-#include "FileInMemorySet_def.h"
-#include "oo_COPY.h"
-#include "FileInMemorySet_def.h"
-#include "oo_EQUAL.h"
-#include "FileInMemorySet_def.h"
-#include "oo_CAN_WRITE_AS_ENCODING.h"
-#include "FileInMemorySet_def.h"
-#include "oo_WRITE_TEXT.h"
-#include "FileInMemorySet_def.h"
-#include "oo_READ_TEXT.h"
-#include "FileInMemorySet_def.h"
-#include "oo_WRITE_BINARY.h"
-#include "FileInMemorySet_def.h"
-#include "oo_READ_BINARY.h"
-#include "FileInMemorySet_def.h"
-#include "oo_DESCRIPTION.h"
-#include "FileInMemorySet_def.h"
-
-
-Thing_implement (FileInMemorySet, SortedSet, 0);
+Thing_implement (FileInMemorySet, SortedSetOfString, 0);
 
 void structFileInMemorySet :: v1_info () {
-	FileInMemorySet_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Number of files: ", size);
 	MelderInfo_writeLine (U"Total number of bytes: ", FileInMemorySet_getTotalNumberOfBytes (this));
 }
@@ -53,15 +32,6 @@ integer FileInMemorySet_getTotalNumberOfBytes (FileInMemorySet me) {
 		numberOfBytes += fim -> d_numberOfBytes;
 	}
 	return numberOfBytes;
-}
-
-autoFileInMemorySet FileInMemorySet_create () {
-	try {
-		autoFileInMemorySet me = Thing_new (FileInMemorySet);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"FileInMemorySet not created.");
-	}
 }
 
 autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& list) {
