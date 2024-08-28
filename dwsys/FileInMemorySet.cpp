@@ -162,15 +162,7 @@ void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const
 }
 
 integer FileInMemorySet_lookUp (FileInMemorySet me, conststring32 path) {
-	integer index = 0;
-	for (integer i = 1; i <= my size; i ++) {
-		const FileInMemory fim = (FileInMemory) my at [i];
-		if (Melder_equ (path, fim -> string.get())) {
-			index = i;
-			break;
-		}
-	}
-	return index;
+	return my lookUp (path);
 }
 
 integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
