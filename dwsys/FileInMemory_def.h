@@ -1,6 +1,6 @@
 /* FileInMemory_def.h
  *
- * Copyright (C) 2017-2020 David Weenink
+ * Copyright (C) 2017-2020 David Weenink, 2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,8 @@
  */
 
 #define ooSTRUCT FileInMemory
-oo_DEFINE_CLASS (FileInMemory, Daata)
+oo_DEFINE_CLASS (FileInMemory, SimpleString)
 
-	oo_LSTRING (d_path)
-	oo_LSTRING (d_id)
 	oo_INTEGER (d_numberOfBytes)  // last byte is \0 byte
 	oo_INTEGER (d_position)
 	oo_INTEGER (d_errno)

@@ -2,7 +2,7 @@
 #define _SoundSet_h_
 /* SoundSet.h
  *
- * Copyright (C) 2019 Paul Boersma
+ * Copyright (C) 2019,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,5 +33,5 @@ autoMAT SoundSet_getRandomizedPatterns (SoundSet me, integer numberOfPatterns, i
 void SoundSet_Table_getRandomizedPatterns (SoundSet me, Table thee, conststring32 columnName, integer numberOfPatterns, integer inputSize, integer outputSize,
 	autoPatternList *out_inputs, autoPatternList *out_outputs);
 
-/* End of file Sound.h */
+/* End of file SoundSet.h */
 #endif

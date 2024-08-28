@@ -120,7 +120,7 @@ static integer _FileInMemoryManager_getIndexInOpenFiles (FileInMemoryManager me,
 		U": Invalid file index: ", filesIndex);
 
 	const FileInMemory fim = static_cast<FileInMemory> (my files -> at [filesIndex]);
-	const integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path.get());
+	const integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> string.get());
 	return openFilesIndex;
 }
 

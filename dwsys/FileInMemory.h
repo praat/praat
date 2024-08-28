@@ -2,7 +2,7 @@
 #define _FileInMemory_h_
 /* FileInMemory.h
  *
- * Copyright (C) 2011-2020 David Weenink, 2015,2018 Paul Boersma
+ * Copyright (C) 2011-2020 David Weenink, 2015,2018,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,8 @@ autoFileInMemory FileInMemory_create (MelderFile file);
 */
 autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, bool isStaticData, conststring32 path, conststring32 id);
 
-void FileInMemory_setId (FileInMemory me, conststring32 newId);
-
 void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine);
 
 
-#endif // _FileInMemory_h_
+/* End of file FileInMemory.h */
+#endif
