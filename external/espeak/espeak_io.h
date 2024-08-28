@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <cstdint>
 	
-#define PATH_ESPEAK_DATA "./espeak-ng-data"   /* a relative path */
+#define PATH_ESPEAK_DATA "./data"   /* a relative path */
 
 #define fopen(filename,mode) espeak_io_fopen (filename, mode)
 #define fclose(stream) espeak_io_fclose (stream)

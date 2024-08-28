@@ -20,11 +20,13 @@
 
 autoFileInMemoryManager create_espeak_ng_FileInMemoryManager () {
 	try{
-		autoFileInMemorySet espeak_ng_noRussian = create_espeak_ng_FileInMemorySet ();
-		autoFileInMemorySet espeak_ng_Russian = create_espeak_ng_FileInMemorySet__ru ();
 		OrderedOf <structFileInMemorySet> list;
-		list. addItem_move (espeak_ng_noRussian.move());
-		list. addItem_move (espeak_ng_Russian.move());
+		list. addItem_move (create_espeak_phon_FileInMemorySet ());
+		list. addItem_move (create_espeak_russianDict_FileInMemorySet ());
+		list. addItem_move (create_espeak_faroeseDict_FileInMemorySet ());
+		list. addItem_move (create_espeak_otherDicts_FileInMemorySet ());
+		list. addItem_move (create_espeak_languages_FileInMemorySet ());
+		list. addItem_move (create_espeak_voices_FileInMemorySet ());
 		autoFileInMemorySet espeak_ng = FileInMemorySets_merge (list);
 		autoFileInMemoryManager me = FileInMemoryManager_create (espeak_ng.get());
 		return me;
