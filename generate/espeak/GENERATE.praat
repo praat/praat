@@ -1,11 +1,12 @@
 "How to integrate eSpeak into Praat"
-David Weenink 20120117, 20120124, 20151130, 20171004, 20211207, 20231009
-Paul Boersma 20240824: deleted compiledata.c from espeakfiles_c$
+© 2012,2015,2017,2021,2023 David Weenink, 2024 Paul Boersma
 
 This script is `generate/espeak/GENERATE.praat` in the Praat source distribution.
-It looks like a Praat notebook and can indeed be dry-run as such,
-but it is actually meant as a Praat script from which you copy–paste
+It looks like a Praat %notebook and can indeed be dry-run as such,
+but it is actually meant as a Praat %script from which you copy–paste
 `bash` lines into a terminal window and run Praat chunks with "Run selection".
+
+All paths in this script are relative to where this script is.
 
 1. Getting the eSpeak sources
 =============================
@@ -19,20 +20,21 @@ namely from `https://github.com/espeak-ng/espeak-ng`, in one of two ways.
 
 If you just need the sources and don’t plan to send bug fixes to the eSpeak team,
 you can just download the ZIP file and unpack it,
-in e.g. `support/external/eSpeak`, giving a folder `support/external/eSpeak/espeak-ng-master`,
-which you then rename to the appropriate version number,
-which you can find in the second line of `support/external/eSpeak/espeak-ng-master/configure.ac`.
-If the eSpeak version number is 1.52,
-the resulting folder `support/external/eSpeak/espeak-ng/espeak-ng-1.52` takes up 66.5 MB.
+in e.g. `../../../support/external/eSpeak`, giving a folder `../../../support/external/eSpeak/espeak-ng`,
+to whose name you could then append the appropriate version number,
+(which you can find in the second line of `../../../support/external/eSpeak/espeak-ng/configure.ac`)
+or the download date (this is better, because versions changes much more often than the version number).
+If the eSpeak version number is `1.52-dev` and the download date is 2024-08-24,
+the resulting folder `../../../support/external/eSpeak/espeak-ng-20240824` takes up 66.5 MB.
 
 Alternatively, you %clone the Git repository:
 {;
-	cd support/external/eSpeak
+	cd ../../../support/external/eSpeak
 	git clone https://github.com/espeak-ng/espeak-ng.git
-	mv espeak-ng espeak-ng-1.52
+	mv espeak-ng espeak-ng-20240824
 }
-This way, the folder `support/external/eSpeak/espeak-ng/espeak-ng-1.52` will be 152.1 MB large.
-The difference between the two ways of creating the folder is due to the existance of the `.git` file,
+This way, the folder `../../../support/external/eSpeak/espeak-ng-20240824` will be 152.1 MB large.
+The difference between the two ways of creating the folder is due to the existence of the `.git` file,
 which takes up 85.7 MB.
 
 2. Building eSpeak language dictionaries
@@ -42,18 +44,19 @@ The eSpeak sources as downloaded above are not complete. We will have to build t
 If you can build Praat itself, you have already installed a compiler, and compiler tools (`make`, `pkg-config`).
 Also install `automake`, `autoconf` and `libtool`.
 {;
+	cd ../../../support/external/eSpeak/espeak-ng-20240824
 	./autogen.sh
 	./configure
 	make
 }
-This creates in `espeak-ng-data` the 117 files `XXX_dict` (the voices were already there),
+This creates in the subfolder `espeak-ng-data` the 117 files `XXX_dict` (the voices were already there),
 as well as `phontab`, `phondata`, `phondata-manifest`, `phonindex`, and `intonations`.
-Next to these 122 files in `espeak-ng-data`, there are 104 voices in the subfolder `voices/!v`,
-and 131 files in the subfolder `lang`, for a total of 360 files (version downloaded 2024-08-25).
+Next to these 122 files in `espeak-ng-data`, there are 104 voices in its subfolder `voices/!v`,
+and 131 files in its subfolder `lang`, for a total of 360 files (version downloaded 2024-08-24).
 
 If you have the Git version, you can establish updates via
 {;
-	cd support/external/eSpeak
+	cd ../../../support/external/eSpeak/espeak-ng-20240824
 	git pull https://github.com/espeak-ng/espeak-ng.git
 	make clean
 	make
@@ -62,8 +65,8 @@ If you have the Git version, you can establish updates via
 3. Copying eSpeak data to the Praat sources
 ===========================================
 
-Copy the files in `support/external/eSpeak/espeak-ng-1.52/espeak-ng-data`
-to `src/generate/espeak/espeak-ng-data` and its subfolders `lang` and `voices`,
+Copy the files in `../../../support/external/eSpeak/espeak-ng-20240824/espeak-ng-data`
+to `./data` and its subfolders `lang` and `voices`,
 for instance by just copying the whole folder and deleting the subfolders `mbrola_ph` and `voices/mb`.
 
 In espeak-ng, the espeak-ng-data directory is used to supply the 
@@ -73,7 +76,7 @@ espeak-ng-data version have to match.
 This scheme is not acceptable in Praat since we cannot expect users to maintain
 a separate folder for the eSpeak data.
 Therefore we convert the 360 data files into source code files that contain FileInMemory objects,
-inside `src/generate/espeak`. The eSpeak source code will have to be converted to accomplish this.
+inside the folder of this script. The eSpeak source code will have to be converted to accomplish this.
 
 As the license of eSpeak is GPL 3 or later, our derived FileInMemory objects are distributed under GPL 3 or later as well:
 {
@@ -82,10 +85,10 @@ procedure saveFileInMemorySetAsCppFile: .name$
 	.head$ =
 	... "/* " + .fileName$ + newline$ +
 	... " *" + newline$ +
-	... " * This file was automatically created from files in the folder `generate/espeak/espeak-ng-data`" + newline$ +
+	... " * This file was automatically created from files in the folder `generate/espeak/data`" + newline$ +
 	... " * by the script `generate/espeak/GENERATE.praat` in the Praat source distribution." + newline$ +
 	... " *" + newline$ +
-	... " * Espeak-ng version: 1.52-dev August 2023" + newline$ +
+	... " * Espeak-ng version: 1.52-dev, downloaded 2024-08-24T19:38Z from https://github.com/espeak-ng/espeak-ng" + newline$ +
 	... " * File creation date: " + date$ () + newline$ +
 	... " *" + newline$ +
 	... " * Copyright (C) 2005-2014 Jonathan Duddington (for eSpeak)" + newline$ +
@@ -119,9 +122,9 @@ into an absolute path, while `Create FileInMemorySet from directory contents...`
 retains the relative path, which is what we want.
 
 {
-procedure generationFolders
+procedure defineDataFolders
 	generationFolder$ = "."   ; the folder of this script, i.e. `generate/espeak` in the Praat sources
-	generationDataFolder$ = generationFolder$ + "/espeak-ng-data"
+	generationDataFolder$ = generationFolder$ + "/data"
 	generationLanguageFolder$ = generationDataFolder$ + "/lang"
 	generationVoicesFolder$ = generationDataFolder$ + "/voices/!v"
 	generationSourceFolder$ = generationFolder$ + "/src"
@@ -129,7 +132,7 @@ endproc
 }
 
 {;
-	@generationFolders
+	@defineDataFolders
 	fim1 = Create FileInMemorySet from directory contents: "fim1", generationDataFolder$, "*phondata"
 	fim2 = Create FileInMemorySet from directory contents: "fim2", generationDataFolder$, "*phonindex"
 	fim3 = Create FileInMemorySet from directory contents: "fim3", generationDataFolder$, "*phontab"
@@ -142,7 +145,7 @@ endproc
 }
 Create FileInMemory objects for the 117 dictionary files, with 23,013,656 bytes in total.
 {;
-	@generationFolders
+	@defineDataFolders
 	Create FileInMemorySet from directory contents: "dicts", generationDataFolder$, "*_dict"
 	numberOfDicts = Get number of files
 	assert numberOfDicts = 117
@@ -161,14 +164,14 @@ In order to ensure compilability with 32-bit compilers, split this set up into R
 Create FileInMemory objects for the 134 language files. Three language files are at the top level
 of the `lang` folder:
 {;
-	@generationFolders
+	@defineDataFolders
 	Create FileInMemorySet from directory contents: "languages", generationLanguageFolder$, "*"
 	numberOfLanguages = Get number of files
 	assert numberOfLanguages = 3
 }
 The remaining 134 language files are in subfolders:
 {;
-	@generationFolders
+	@defineDataFolders
 	languageFolders$# = folderNames$# (generationLanguageFolder$ + "/*")
 	for languageFolder to size (languageFolders$#)
 		languageFolder$ = languageFolders$# [languageFolder]
@@ -185,7 +188,7 @@ The remaining 134 language files are in subfolders:
 }
 Create FileInMemory objects for the 104 voice files.
 {;
-	@generationFolders
+	@defineDataFolders
 	Create FileInMemorySet from directory contents: "voices", generationVoicesFolder$, "*"
 	numberOfVoices = Get number of files
 	assert numberOfVoices = 104
@@ -198,7 +201,7 @@ Combine all FileInMemorySets, except Russian, into one:
 }
 We safely save these into the generation folder:
 {;
-	@generationFolders
+	@defineDataFolders
 	selectObject: "FileInMemorySet russianDict"
 	@saveFileInMemorySetAsCppFile: "espeak_ng_FileInMemorySet__ru"
 	selectObject: "FileInMemorySet everythingExceptRussianDict"
@@ -210,10 +213,10 @@ these files into `src/external/espeak`.
 4. Copying eSpeak source code to the Praat sources
 ==================================================
 
-The following files are in `support/external/eSpeak/espeak-ng-1.52/src`:
+The following files are in `support/external/eSpeak/espeak-ng-20240824/src`:
 {
-procedure sources
-	srcRootFolder$ = "../../../support/external/eSpeak/espeak-ng-1.52/src"
+procedure defineSourceFolders
+	srcRootFolder$ = "../../../support/external/eSpeak/espeak-ng-20240824/src"
 
 	sourceFolder$ = srcRootFolder$ + "/libespeak-ng"
 	sourceFiles$# = { "common.c", "compiledict.c", "compilembrola.c", "dictionary.c",
@@ -223,15 +226,17 @@ procedure sources
 	... "readclause.c", "setlengths.c", "soundicon.c", "spect.c", "speech.c", "ssml.c",
 	... "synthdata.c", "synthesize.c", "synth_mbrola.c", "translate.c", "translateword.c", "tr_languages.c",
 	... "voices.c", "wavegen.c" }
-	headerFiles$# = { "common.h", "compiledict.h", "dictionary.h",
+
+	privateHeaderFolder$ = sourceFolder$
+	privateHeaderFiles$# = { "common.h", "compiledict.h", "dictionary.h",
 	... "error.h", "espeak_command.h", "event.h", "fifo.h", "intonation.h",
 	... "klatt.h", "langopts.h", "mnemonics.h", "mbrola.h", "numbers.h", "phoneme.h", "phonemelist.h",
 	... "readclause.h", "setlengths.h", "sintab.h", "soundicon.h", "spect.h", "speech.h", "ssml.h",
 	... "synthdata.h", "synthesize.h", "translate.h", "translateword.h",
 	... "voice.h", "wavegen.h" }
 
-	includeFolder$ = srcRootFolder$ + "/include/espeak-ng"
-	includeFiles$# = { "encoding.h", "espeak_ng.h", "speak_lib.h" }
+	publicHeaderFolder$ = srcRootFolder$ + "/include/espeak-ng"
+	publicHeaderFiles$# = { "encoding.h", "espeak_ng.h", "speak_lib.h" }
 
 	ucdSourceFolder$ = srcRootFolder$ + "/ucd-tools/src"
 	ucdSourceFiles$# = { "case.c", "categories.c", "proplist.c" }
@@ -242,19 +247,18 @@ endproc
 }
 All of these are moved to `generate/espeak/src`, without any recursion, while renaming `c` to `cpp` files:
 {;
-	@generationFolders
-	@sources
+	@defineSourceFolders
 	for i to size (sourceFiles$#)
 		text$ = readFile$: sourceFolder$ + "/" + sourceFiles$# [i]
 		writeFile: generationSourceFolder$ + "/" + sourceFiles$# [i] + "pp", text$
 	endfor
-	for i to size (headerFiles$#)
-		text$ = readFile$: sourceFolder$ + "/" + headerFiles$# [i]
-		writeFile: generationSourceFolder$ + "/" + headerFiles$# [i], text$
+	for i to size (privateHeaderFiles$#)
+		text$ = readFile$: privateHeaderFolder$ + "/" + privateHeaderFiles$# [i]
+		writeFile: generationSourceFolder$ + "/" + privateHeaderFiles$# [i], text$
 	endfor
-	for i to size (includeFiles$#)
-		text$ = readFile$: includeFolder$ + "/" + includeFiles$# [i]
-		writeFile: generationSourceFolder$ + "/" + includeFiles$# [i], text$
+	for i to size (publicHeaderFiles$#)
+		text$ = readFile$: publicHeaderFolder$ + "/" + publicHeaderFiles$# [i]
+		writeFile: generationSourceFolder$ + "/" + publicHeaderFiles$# [i], text$
 	endfor
 	for i to size (ucdSourceFiles$#)
 		text$ = readFile$: ucdSourceFolder$ + "/" + ucdSourceFiles$# [i]
@@ -302,14 +306,6 @@ After this, the folder `src/generate/espeak/src` will be empty again.
 #		fseek, ftell, fgets, fread, fgetc, fprintf, ungetc, GetFileLength and GetVoices.
 #       Use listFileIO.praat to list the occurrences of these names in those five files.
 #	9. delete all "#pragma GCC visibility" lines
-
-***** (only once)
-
-Clone the git  repository 
-./autogen.sh
-CC=gcc CFLAGS="-Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized" ./configure --prefix=/usr
-
-Now we can be up-to-date by pulling.
 
 **** 
 We have replaced the file io based on fopen, fclose, fgets etc... with our own io (see espeak_io.cpp)
