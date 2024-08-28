@@ -115,7 +115,7 @@ autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_st
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
-			if (Melder_stringMatchesCriterion (fim -> d_path.get(), which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true)) {
 				autoFileInMemory item = Data_copy (fim);
 				thy addItem_move (item.move());
 			}
@@ -131,7 +131,7 @@ autoFileInMemorySet FileInMemorySet_removeFiles (FileInMemorySet me, kMelder_str
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
-			if (Melder_stringMatchesCriterion (fim -> d_path.get(), which, criterion, true))
+			if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
 				thy addItem_move (my subtractItem_move (ifile));
 		}
 		return thee;
@@ -145,7 +145,7 @@ autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_strin
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = static_cast<FileInMemory> (my at [ifile]);
-			if (Melder_stringMatchesCriterion (fim -> d_path.get(), which, criterion, true))
+			if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
 				thy addItem_ref (fim);
 		}
 		return thee;
@@ -191,23 +191,11 @@ void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const
 	MelderInfo_writeLine (U"autoFileInMemory ", name, U" = create_new_object ();");
 }
 
-integer FileInMemorySet_getIndexFromId (FileInMemorySet me, conststring32 id) {
-	integer index = 0;
-	for (integer i = 1; i <= my size; i ++) {
-		const FileInMemory fim = (FileInMemory) my at [i];
-		if (Melder_equ (id, fim -> d_id.get())) {
-			index = i;
-			break;
-		}
-	}
-	return index;
-}
-
 integer FileInMemorySet_lookUp (FileInMemorySet me, conststring32 path) {
 	integer index = 0;
 	for (integer i = 1; i <= my size; i ++) {
 		const FileInMemory fim = (FileInMemory) my at [i];
-		if (Melder_equ (path, fim -> d_path.get())) {
+		if (Melder_equ (path, fim -> string.get())) {
 			index = i;
 			break;
 		}
@@ -219,7 +207,7 @@ integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_st
 	integer numberOfMatches = 0;
 	for (integer ifile = 1; ifile <= my size; ifile ++) {
 		const FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
-		if (Melder_stringMatchesCriterion (fim -> d_path.get(), which, criterion, true))
+		if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
 			numberOfMatches ++;
 	}
 	return numberOfMatches;
@@ -231,7 +219,7 @@ bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name) {
 	MelderString_append (& searchString, U"/", name, U"/");
 	for (integer i = 1; i <= my size; i ++) {
 		const FileInMemory fim = (FileInMemory) my at [i];
-		if (str32str (fim -> d_path.get(), searchString.string)) {
+		if (str32str (fim -> string.get(), searchString.string)) {
 			match = true;
 			break;
 		}
@@ -239,43 +227,20 @@ bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name) {
 	return match;
 }
 
-autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me) {
+autoStrings FileInMemorySet_to_Strings_path (FileInMemorySet me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = autoSTRVEC (my size);
 		thy numberOfStrings = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = (FileInMemory) my at [ifile];
-			thy strings [ifile] = Melder_dup_f (fim -> d_id.get());
+			thy strings [ifile] = Melder_dup_f (fim -> string.get());
 			thy numberOfStrings ++;
 		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No Strings created from FilesinMemory.");
 	}
-}
-
-autovector<unsigned char> FileInMemorySet_getCopyOfData (FileInMemorySet me, conststring32 id) {
-	autovector<unsigned char> result;
-	integer index = FileInMemorySet_getIndexFromId (me, id);
-	if (index != 0) {
-		const FileInMemory fim = (FileInMemory) my at [index];
-		result = newvectorcopy (fim -> d_data.all());
-	}
-	return result;
-}
-
-const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, integer *out_numberOfBytes) {
-	if (out_numberOfBytes)
-		*out_numberOfBytes = 0;
-	const integer index = FileInMemorySet_getIndexFromId (me, id);
-	if (index == 0)
-		return nullptr;
-
-	const FileInMemory fim = (FileInMemory) my at [index];
-	if (out_numberOfBytes)
-		*out_numberOfBytes = fim -> d_numberOfBytes;
-	return reinterpret_cast<const char *> (fim -> d_data.asArgumentToFunctionThatExpectsZeroBasedArray());
 }
 
 /* End of file FileInMemorySet.cpp */

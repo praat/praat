@@ -1,6 +1,6 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2021 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2012-2021 David Weenink, 2017,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,7 @@ Thing_implement (FileInMemory, Daata, 0);
 
 void structFileInMemory :: v1_info () {
 	our structDaata :: v1_info ();
-	MelderInfo_writeLine (U"File name: ", our d_path.get());
-	MelderInfo_writeLine (U"Id: ", our d_id.get());
+	MelderInfo_writeLine (U"File name: ", our string.get());
 	MelderInfo_writeLine (U"Number of bytes: ", our d_numberOfBytes);
 }
 
@@ -56,8 +55,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 			U"File should not be empty.");
 		
 		autoFileInMemory me = Thing_new (FileInMemory);
-		my d_path = Melder_dup (file -> path);
-		my d_id = Melder_dup (MelderFile_name (file));
+		my string = Melder_dup (file -> path);
 		my d_numberOfBytes = length;
 		my _dontOwnData = false;
 		my d_data = newvectorzero <byte> (my d_numberOfBytes + 1);   // includes room for a final null byte in case the file happens to contain only text
@@ -77,8 +75,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, bool isStaticData, conststring32 path, conststring32 id) {
 	try {
 		autoFileInMemory me = Thing_new (FileInMemory);
-		my d_path = Melder_dup (path);
-		my d_id = Melder_dup (id);
+		my string = Melder_dup (path);
 		my d_numberOfBytes = numberOfBytes;
 		if (isStaticData) {
 			my _dontOwnData = true; // we cannot dispose of the data!
@@ -103,10 +100,6 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 	}
 }
 
-void FileInMemory_setId (FileInMemory me, conststring32 newId) {
-	my d_id = Melder_dup (newId);
-}
-
 void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine) {
 	if (numberOfBytesPerLine < 1)
 		numberOfBytesPerLine = 20;
@@ -118,8 +111,8 @@ void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numbe
 	}
 	MelderInfo_writeLine (U"0};");
 	MelderInfo_write (U"\t\tautoFileInMemory ", name, U" = FileInMemory_createWithData (");
-	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (&",
-		name, U"_data), true, \n\t\t\tU\"", my d_path.get(), U"\", \n\t\t\tU\"", my d_id.get(), U"\");");
+	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (& ",
+		name, U"_data), true, \n\t\t\tU\"", my string.get(), U"\");");
 }
 
 /* End of file FileInMemory.cpp */

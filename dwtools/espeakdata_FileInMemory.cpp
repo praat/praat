@@ -22,7 +22,6 @@
 
 #include "NUM2.h"
 #include "espeak_ng.h"
-#include "espeak_io.h"
 #include "FileInMemoryManager.h"
 #include "speech.h"
 #include "voice.h"
@@ -30,6 +29,9 @@
 #include "Table_and_Strings.h"
 
 #include "espeakdata_FileInMemory.h"
+
+#include "espeak_io.h"
+
 
 #if 0
 static integer Table_getRownumberOfStringInColumn (Table me, conststring32 string, integer icol) {
@@ -150,9 +152,9 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = (FileInMemory) my at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: CONTAINS, criterion, true)) {
+			if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
-				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
+				Table_setStringValue (thee.get(), irow, 1, str32rchr (fim -> string.get(), U'/') + 1);
 				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
 				// The first character of name must be upper case
 				if (name) {
@@ -162,7 +164,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 					*(capitalFirst. string) = capital;
 					Table_setStringValue (thee.get(), irow, 2, capitalFirst. string);
 				} else {
-					Table_setStringValue (thee.get(), irow, 2, fim -> d_id.get());
+					Table_setStringValue (thee.get(), irow, 2, str32rchr (fim -> string.get(), U'/') + 1);
 				}
 				Table_setNumericValue (thee.get(), irow, 3, ifile);
 				conststring32 word = get_wordAfterPrecursor_u8 (fim -> d_data.get(), U"gender");
@@ -192,11 +194,11 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = (FileInMemory) my at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: CONTAINS, criterion, true)) {
+			if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
-				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
+				Table_setStringValue (thee.get(), irow, 1, str32rchr (fim -> string.get(), U'/') + 1);
 				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
-				Table_setStringValue (thee.get(), irow, 2, ( word ? word : fim -> d_id.get() ));
+				Table_setStringValue (thee.get(), irow, 2, ( word ? word : str32rchr (fim -> string.get(), U'/') + 1 ));
 				Table_setNumericValue (thee.get(), irow, 3, ifile);
 			}
 		}

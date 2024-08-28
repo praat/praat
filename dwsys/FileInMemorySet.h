@@ -50,12 +50,10 @@ const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, inte
 
 integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, conststring32 criterion);
 
-integer FileInMemorySet_getIndexFromId (FileInMemorySet me, conststring32 id);
-
 integer FileInMemorySet_lookUp (FileInMemorySet me, conststring32 path);
 
 bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name);
 
-autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me);
+autoStrings FileInMemorySet_to_Strings_path (FileInMemorySet me);
 
 #endif // _FileInMemorySet_h_

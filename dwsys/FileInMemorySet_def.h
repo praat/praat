@@ -1,6 +1,6 @@
 /* FileInMemorySet_def.h
  *
- * Copyright (C) 2017 David Weenink
+ * Copyright (C) 2017 David Weenink, 2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ oo_DEFINE_CLASS (FileInMemorySet, SortedSet)
 	#if oo_DECLARING
 		static int s_compareHook (Daata f1, Daata f2) noexcept {
 			FileInMemory me = static_cast<FileInMemory> (f1), thee = static_cast<FileInMemory> (f2);
-			return Melder_cmp (my d_path.get(), thy d_path.get());
+			return Melder_cmp (my string.get(), thy string.get());
 		}
 		CompareHook v_getCompareHook () override { return s_compareHook; }
 

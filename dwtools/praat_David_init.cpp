@@ -2515,15 +2515,6 @@ FORM_READ (READ_ONE__FileInMemory_create, U"Create file in memory", nullptr, tru
 	READ_ONE_END
 }
 
-FORM (MODIFY_EACH__FileInMemory_setId, U"FileInMemory: Set id", nullptr) {
-	SENTENCE (newId, U"New id", U"New id")
-	OK
-DO
-	MODIFY_EACH (FileInMemory)
-		FileInMemory_setId (me, newId);
-	MODIFY_EACH_END
-}
-
 FORM (INFO_ONE__FileInMemory_showAsCode, U"FileInMemory: Show as code", nullptr) {
 	WORD (name, U"Name", U"example")
 	INTEGER (numberOfByterPerLine, U"Number of bytes per line", U"20")
@@ -2681,9 +2672,9 @@ DIRECT (COMBINE_ALL_TO_ONE__FileInMemorySets_merge) {
 	COMBINE_ALL_TO_ONE_END (U"merge");
 }
 
-DIRECT (CONVERT_EACH_TO_ONE__FileInMemorySet_to_Strings_id) {
+DIRECT (CONVERT_EACH_TO_ONE__FileInMemorySet_to_Strings_path) {
 	CONVERT_EACH_TO_ONE (FileInMemorySet)
-		autoStrings result = FileInMemorySet_to_Strings_id (me);
+		autoStrings result = FileInMemorySet_to_Strings_path (me);
 	CONVERT_EACH_TO_ONE_END (my name.get());
 }
 
@@ -9706,8 +9697,6 @@ void praat_David_init () {
 
 	praat_addAction1 (classFileInMemory, 1, U"Show as code...", nullptr, 0,
 			INFO_ONE__FileInMemory_showAsCode);
-	praat_addAction1 (classFileInMemory, 1, U"Set id...", nullptr, 0,
-			MODIFY_EACH__FileInMemory_setId);
 	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0,
 			COMBINE_ALL_TO_ONE__FilesInMemory_to_FileInMemorySet);
 	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, GuiMenu_DEPRECATED_2015,
@@ -9725,8 +9714,8 @@ void praat_David_init () {
 			INFO_ONE__FileInMemorySet_showOneFileAsCode);
 	praat_addAction1 (classFileInMemorySet, 0, U"Merge", nullptr, 0,
 			COMBINE_ALL_TO_ONE__FileInMemorySets_merge);
-	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0,
-			CONVERT_EACH_TO_ONE__FileInMemorySet_to_Strings_id);
+	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (path)", nullptr, 0,
+			CONVERT_EACH_TO_ONE__FileInMemorySet_to_Strings_path);
 	praat_addAction1 (classFileInMemorySet, 0, U"Extract files...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FileInMemorySet_extractFiles);
 	praat_addAction1 (classFileInMemorySet, 0, U"Remove files...", nullptr, 0,
