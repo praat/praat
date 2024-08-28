@@ -267,7 +267,7 @@ autoFileInMemorySet create_espeak_voices_FileInMemorySet () {
 		autoFileInMemory espeak_voices_FileInMemorySet7 = FileInMemory_createWithData (3858, reinterpret_cast<const char *> (&espeak_voices_FileInMemorySet7_data), true, 
 			U"./data/voices/!v/Demonic", 
 			U"Demonic");
-		my addItem_move (espeak_voices_FileInMemorySet7.move());
+		//my addItem_move (espeak_voices_FileInMemorySet7.move());
 
 		static unsigned char espeak_voices_FileInMemorySet8_data[306] = {
 			108,97,110,103,117,97,103,101,32,118,97,114,105,97,110,116,13,10,110,97,109,101,32,68,101,110,105,115,13,10,
