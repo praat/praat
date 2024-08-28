@@ -1,6 +1,7 @@
 # makefile for libespeak
 # djmw 20230912
-# ppgb 20240105  compatible with 32-bit compilers (split off __ru from create_espeak_ng_FileInMemorySet)
+# ppgb 20240105  compatible with 32-bit compilers (split off Russian)
+# ppgb 20240828  compatible with low-resource compilers (split off Faroese)
 
 include ../../makefile.defs
 
@@ -15,9 +16,10 @@ OBJECTS = case.o categories.o common.o compiledict.o \
 	ssml.o synthdata.o synthesize.o \
 	synth_mbrola.o tr_languages.o translate.o translateword.o voices.o wavegen.o \
 	create_espeak_ng_FileInMemoryManager.o \
-	create_espeak_ng_FileInMemorySet__ru.o create_espeak_ng_FileInMemorySet.o \
+	espeak_languages_FileInMemorySet.o espeak_voices_FileInMemorySet.o \
+	espeak_russianDict_FileInMemorySet.o espeak_faroeseDict_FileInMemorySet.o \
+	espeak_otherDicts_FileInMemorySet.o espeak_phon_FileInMemorySet.o \
 	espeak_io.o
-# not included from espeak: compiledata.o
 
 .PHONY: all clean
 

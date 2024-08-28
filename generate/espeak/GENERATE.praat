@@ -11,11 +11,11 @@ All paths in this script are relative to where this script is.
 1. Getting the eSpeak sources
 =============================
 
-The espeak-ng program and its library are the successor of espeak 
-(espeak was maintained by Jonathan Duddington). Espeak-ng is a fork 
+The eSpeak NG program and its library are the successor of eSpeak 
+(eSpeak was maintained by Jonathan Duddington); eSpeak NG is a fork 
 maintained by Reece H. Dunn.
 
-If you download the eSpeak code for the first time, you can do this by downloading or cloning the sources from upstream,
+If you download the eSpeak NG code for the first time, you can do this by downloading or cloning the sources from upstream,
 namely from `https://github.com/espeak-ng/espeak-ng`, in one of two ways.
 
 If you just need the sources and don’t plan to send bug fixes to the eSpeak team,
@@ -40,13 +40,14 @@ which takes up 85.7 MB.
 2. Building eSpeak language dictionaries
 ========================================
 
-The eSpeak sources as downloaded above are not complete. We will have to build the dictionaries.
+The eSpeak NG sources as downloaded above are not complete. We will have to build the dictionaries.
 If you can build Praat itself, you have already installed a compiler, and compiler tools (`make`, `pkg-config`).
 Also install `automake`, `autoconf` and `libtool`.
 {;
 	cd ../../../support/external/eSpeak/espeak-ng-20240824
 	./autogen.sh
 	./configure
+	# or: CC=gcc CFLAGS="-Wprototype..." ./configure prefix=/usr/local (or /usr)
 	make
 }
 This creates in the subfolder `espeak-ng-data` the 117 files `XXX_dict` (the voices were already there),
@@ -69,26 +70,25 @@ Copy the files in `../../../support/external/eSpeak/espeak-ng-20240824/espeak-ng
 to `./data` and its subfolders `lang` and `voices`,
 for instance by just copying the whole folder and deleting the subfolders `mbrola_ph` and `voices/mb`.
 
-In espeak-ng, the espeak-ng-data directory is used to supply the 
-data the synthesizer needs. The synthesizer needs the location of 
-this directory to work correctly. The synthesizer's version and the 
-espeak-ng-data version have to match.
-This scheme is not acceptable in Praat since we cannot expect users to maintain
-a separate folder for the eSpeak data.
+In the eSpeak NG app, the `espeak-ng-data` folder is used to supply the data the synthesizer needs.
+The synthesizer needs to know the location of this folder to work correctly;
+also, the synthesizer’s versions and the `espeak-ng-data` versions of the data files have to be synchronized.
+This scheme is not acceptable in Praat, since we cannot expect users to maintain
+a separate folder for the eSpeak NG data.
 Therefore we convert the 360 data files into source code files that contain FileInMemory objects,
 inside the folder of this script. The eSpeak source code will have to be converted to accomplish this.
 
 As the license of eSpeak is GPL 3 or later, our derived FileInMemory objects are distributed under GPL 3 or later as well:
 {
 procedure saveFileInMemorySetAsCppFile: .name$
-	.fileName$ = "create_" + .name$ + ".cpp"
+	.fileName$ = .name$ + ".cpp"
 	.head$ =
 	... "/* " + .fileName$ + newline$ +
 	... " *" + newline$ +
 	... " * This file was automatically created from files in the folder `generate/espeak/data`" + newline$ +
 	... " * by the script `generate/espeak/GENERATE.praat` in the Praat source distribution." + newline$ +
 	... " *" + newline$ +
-	... " * Espeak-ng version: 1.52-dev, downloaded 2024-08-24T19:38Z from https://github.com/espeak-ng/espeak-ng" + newline$ +
+	... " * eSpeak NG version: 1.52-dev, downloaded 2024-08-24T19:38Z from https://github.com/espeak-ng/espeak-ng" + newline$ +
 	... " * File creation date: " + date$ () + newline$ +
 	... " *" + newline$ +
 	... " * Copyright (C) 2005-2014 Jonathan Duddington (for eSpeak)" + newline$ +
@@ -156,10 +156,17 @@ In order to ensure compilability with 32-bit compilers, split this set up into R
 	Rename: "russianDict"
 	numberOfRussianDicts = Get number of files
 	assert numberOfRussianDicts = 1
+
 	selectObject: "FileInMemorySet dicts"
-	Rename: "nonRussianDicts"
-	numberOfNonRussianDicts = Get number of files
-	assert numberOfNonRussianDicts = 116
+	Remove files: "contains", "/fo_dict"   ; this extracts the removed dicts!!
+	Rename: "faroeseDict"
+	numberOfFaroeseDicts = Get number of files
+	assert numberOfFaroeseDicts = 1
+
+	selectObject: "FileInMemorySet dicts"
+	Rename: "remainingDicts"
+	numberOfRemainingDicts = Get number of files
+	assert numberOfRemainingDicts = 115
 }
 Create FileInMemory objects for the 134 language files. Three language files are at the top level
 of the `lang` folder:
@@ -193,19 +200,27 @@ Create FileInMemory objects for the 104 voice files.
 	numberOfVoices = Get number of files
 	assert numberOfVoices = 104
 }
-Combine all FileInMemorySets, except Russian, into one:
+Combine all FileInMemorySets, except Russian and Faroese, into one:
 {;
-	selectObject: "FileInMemorySet phon", "FileInMemorySet nonRussianDicts", "FileInMemorySet languages", "FileInMemorySet voices"
+	selectObject: "FileInMemorySet phon", "FileInMemorySet remainingDicts", "FileInMemorySet languages", "FileInMemorySet voices"
 	Merge
-	Rename: "everythingExceptRussianDict"
+	Rename: "everythingExceptRussianAndFaroeseDict"
 }
 We safely save these into the generation folder:
 {;
 	@defineDataFolders
+	selectObject: "FileInMemorySet phon"
+	@saveFileInMemorySetAsCppFile: "espeak_phon_FileInMemorySet"
 	selectObject: "FileInMemorySet russianDict"
-	@saveFileInMemorySetAsCppFile: "espeak_ng_FileInMemorySet__ru"
-	selectObject: "FileInMemorySet everythingExceptRussianDict"
-	@saveFileInMemorySetAsCppFile: "espeak_ng_FileInMemorySet"
+	@saveFileInMemorySetAsCppFile: "espeak_russianDict_FileInMemorySet"
+	selectObject: "FileInMemorySet faroeseDict"
+	@saveFileInMemorySetAsCppFile: "espeak_faroeseDict_FileInMemorySet"
+	selectObject: "FileInMemorySet remainingDicts"
+	@saveFileInMemorySetAsCppFile: "espeak_otherDicts_FileInMemorySet"
+	selectObject: "FileInMemorySet languages"
+	@saveFileInMemorySetAsCppFile: "espeak_languages_FileInMemorySet"
+	selectObject: "FileInMemorySet voices"
+	@saveFileInMemorySetAsCppFile: "espeak_voices_FileInMemorySet"
 }
 After some inspection for correctness, %move (not %copy, in order to save space)
 these files into `src/external/espeak`.
@@ -287,10 +302,11 @@ Also a new file espeak-ng-version.h is created [TO BE EDITED]:
 =======================================
 
 Many changes to the sources have to be made. If the original eSpeak sources don't change to much,
-this can be done by a visual `diff` between for instance `src/generate/espeak/src/speech.cpp` 
-and `src/external/espeak/speech.cpp`. The former is the one to be changed (in the way below).
-Once all the source and header files are fine, they can be moved over the ones in `src/external/espeak`.
-After this, the folder `src/generate/espeak/src` will be empty again.
+this can be done by a visual `diff` between for instance `./src/speech.cpp` (in the present generation folder)
+and `../../external/espeak/speech.cpp` (in the actual Praat sources).
+The former is the one to be changed (in the way described below).
+Once all the source and header files are fine, they can be moved over the ones in `../../external/espeak`.
+After this, the folder `./src` will be empty again.
 
 [TO BE EDITED]:
 #	6. In B:

@@ -22,8 +22,12 @@
 #include "FileInMemoryManager.h"
 #include "Table.h"
 
-autoFileInMemorySet create_espeak_ng_FileInMemorySet ();
-autoFileInMemorySet create_espeak_ng_FileInMemorySet__ru ();
+autoFileInMemorySet create_espeak_phon_FileInMemorySet ();
+autoFileInMemorySet create_espeak_russianDict_FileInMemorySet ();
+autoFileInMemorySet create_espeak_faroeseDict_FileInMemorySet ();
+autoFileInMemorySet create_espeak_otherDicts_FileInMemorySet ();
+autoFileInMemorySet create_espeak_languages_FileInMemorySet ();
+autoFileInMemorySet create_espeak_voices_FileInMemorySet ();
 
 autoFileInMemoryManager create_espeak_ng_FileInMemoryManager ();
 inline autoFileInMemoryManager espeak_ng_FileInMemoryManager;
