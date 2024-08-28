@@ -2,7 +2,7 @@
 #define _FileInMemorySet_h_
 /* FileInMemorySet.h
  *
- * Copyright (C) 2011-2024 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2011-2024 David Weenink, 2015,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,10 @@
 #include "Collection.h"
 #include "Strings_.h"
 
-#include "FileInMemorySet_def.h"
+Collection_define (FileInMemorySet, SortedSetOfStringOf, FileInMemory) {
+	void v1_info ()
+		override;
+};
 
 autoFileInMemorySet FileInMemorySet_create ();
 

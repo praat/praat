@@ -778,6 +778,8 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 
 };
 
+_Collection_declare (SortedSetOfString, SortedSetOfStringOf, SimpleString);
+
 
 #pragma mark - Collections of specific types
 
