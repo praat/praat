@@ -23,13 +23,6 @@
 #include "Collection.h"
 #include "Strings_.h"
 
-Collection_define (FileInMemorySet, SortedSetOfStringOf, FileInMemory) {
-	void v1_info ()
-		override;
-};
-
-autoFileInMemorySet FileInMemorySet_create ();
-
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 file);
 
 autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemory>& list);

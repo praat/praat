@@ -22,7 +22,7 @@
 /* 24 May 2011: C++ */
 /* 5 June 2015: char32 */
 
-#include "FileInMemoryManager.h"
+#include "FileInMemorySet.h"
 #include "Praat_tests.h"
 
 #include "Graphics.h"

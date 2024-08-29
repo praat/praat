@@ -87,7 +87,7 @@
 #include "Eigen_and_TableOfReal.h"
 #include "Excitations.h"
 #include "espeakdata_FileInMemory.h"
-#include "FileInMemoryManager.h"
+#include "FileInMemorySet.h"
 #include "FilterBank.h"
 #include "Formula.h"
 #include "FormantGridEditor.h"
@@ -2544,54 +2544,12 @@ DO
 	QUERY_ONE_FOR_BOOLEAN_END (U" (has directory?)")
 }
 
-
-
-/************************* FileInMemoryManager ***********************************/
-
-DIRECT (CREATE_ONE__FileInMemoryManager_create) {
-	CREATE_ONE
-		autoFileInMemoryManager result = Data_copy (espeak_ng_FileInMemoryManager.get());
-	CREATE_ONE_END (U"filesInMemory")
-}
-
-DIRECT (QUERY_ONE_FOR_INTEGER__FileInMemoryManager_getNumberOfFiles) {
-	QUERY_ONE_FOR_INTEGER (FileInMemoryManager)
-		const integer result = my files -> size;
-	QUERY_ONE_FOR_INTEGER_END (U" (number of files)")
-}
-
-DIRECT (QUERY_ONE_FOR_INTEGER__FileInMemoryManager_getNumberOfOpenFiles) {
-	QUERY_ONE_FOR_INTEGER (FileInMemoryManager)
-		const integer result = my openFiles -> size;
-	QUERY_ONE_FOR_INTEGER_END (U" (number of open files)")
-}
-
-FORM (QUERY_ONE_FOR_INTEGER__FileInMemoryManager_hasDirectory, U"FileInMemoryManager: Has directory?", nullptr) {
-	WORD (name, U"Name", U"aav")
-	OK
-DO
-	QUERY_ONE_FOR_INTEGER (FileInMemoryManager)
-		const bool result = FileInMemoryManager_hasDirectory (me, name);
-	QUERY_ONE_FOR_INTEGER_END (U" (has directory?)")
-}
-
-FORM (CONVERT_EACH_TO_ONE__FileInMemoryManager_extractFiles, U"FileInMemoryManager: Extract files", nullptr) {
-	COMMENT (U"Extract all files where the file name ")
-	OPTIONMENU_ENUM (kMelder_string, which, U"...", kMelder_string::CONTAINS)
-	SENTENCE (criterion, U"...the text", U"/voices/")
-	OK
-DO
-	CONVERT_EACH_TO_ONE (FileInMemoryManager)
-		autoFileInMemorySet result = FileInMemoryManager_extractFiles (me, which, criterion);
-	CONVERT_EACH_TO_ONE_END (my name.get())
-}
-
-FORM (CONVERT_EACH_TO_ONE__FileInMemoryManager_downto_Table, U"FileInMemoryManager: Down to Table", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__FileInMemorySet_downto_Table, U"FileInMemorySet: Down to Table", nullptr) {
 	BOOLEAN (openFilesOnly, U"Open files only?", false)
 	OK
 DO
-	CONVERT_EACH_TO_ONE (FileInMemoryManager)
-		autoTable result = FileInMemoryManager_downto_Table (me, openFilesOnly);
+	CONVERT_EACH_TO_ONE (FileInMemorySet)
+		autoTable result = FileInMemorySet_downto_Table (me, openFilesOnly);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -9016,7 +8974,7 @@ void praat_David_init () {
 		classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
-		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, 
+		classFileInMemory, classFileInMemorySet,
 		classFormantFilter,
 		classIndex, classKlattTable, classNMF,
 		classMelFilter, classMelSpectrogram, classNavigationContext,
@@ -9103,9 +9061,7 @@ void praat_David_init () {
 			CREATE_ONE__Polygon_createFromRandomPoints);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random points)...", nullptr, GuiMenu_HIDDEN,
 			CREATE_ONE__Polygon_createFromRandomPoints);
-	praat_addMenuCommand (U"Objects", U"New", U"FileInMemoryManager", nullptr, GuiMenu_HIDDEN, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemoryManager", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
-			CREATE_ONE__FileInMemoryManager_create);
+	praat_addMenuCommand (U"Objects", U"New", U"FileInMemory", nullptr, GuiMenu_HIDDEN, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			READ_ONE__FileInMemory_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
@@ -9705,9 +9661,10 @@ void praat_David_init () {
 	praat_addAction1 (classFileInMemorySet, 1, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__FileInMemorySet_getNumberOfFiles);
+	//praat_addAction1 (classFileInMemorySet, 1, U"Get number of open files", nullptr, 1,
+	//		QUERY_ONE_FOR_INTEGER__classFileInMemorySet_getNumberOfOpenFiles);
 	praat_addAction1 (classFileInMemorySet, 1, U"Has directory?", nullptr, 1,
 			QUERY_ONE_FOR_BOOLEAN__FileInMemorySet_hasDirectory);
-
 	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0,
 			INFO_ONE__FileInMemorySet_showAsCode);
 	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0,
@@ -9722,19 +9679,8 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__FileInMemorySet_removeFiles);
 	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__FileInMemorySet_addItemsToSet);
-
-	praat_addAction1 (classFileInMemoryManager, 1, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1,
-			QUERY_ONE_FOR_INTEGER__FileInMemoryManager_getNumberOfFiles);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of open files", nullptr, 1,
-			QUERY_ONE_FOR_INTEGER__FileInMemoryManager_getNumberOfOpenFiles);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Has directory?", nullptr, 1,
-			QUERY_ONE_FOR_INTEGER__FileInMemoryManager_hasDirectory);
-	
-	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0,
-			CONVERT_EACH_TO_ONE__FileInMemoryManager_extractFiles);
-	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0,
-			CONVERT_EACH_TO_ONE__FileInMemoryManager_downto_Table);
+	praat_addAction1 (classFileInMemorySet, 0, U"Down to Table...", nullptr, 0,
+			CONVERT_EACH_TO_ONE__FileInMemorySet_downto_Table);
 	
 	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, GuiMenu_DEPRECATED_2015,
 			HELP__FormantFilter_help);

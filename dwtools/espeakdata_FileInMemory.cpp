@@ -22,7 +22,7 @@
 
 #include "NUM2.h"
 #include "espeak_ng.h"
-#include "FileInMemoryManager.h"
+#include "FileInMemorySet.h"
 #include "speech.h"
 #include "voice.h"
 #include "Strings_extensions.h"
@@ -49,7 +49,7 @@ static integer Table_getRownumberOfStringInColumn (Table me, conststring32 strin
 #endif
 void espeakdata_praat_init () {
 	try {
-		espeak_ng_FileInMemoryManager = create_espeak_ng_FileInMemoryManager ();
+		espeak_ng_FileInMemorySet = create_espeak_ng_FileInMemorySet ();
 		espeakdata_languages_propertiesTable = Table_createAsEspeakLanguagesProperties ();
 		espeakdata_voices_propertiesTable = Table_createAsEspeakVoicesProperties ();
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_propertiesTable.get(), 2);
@@ -145,7 +145,7 @@ static conststring32 get_stringAfterPrecursor_u8 (constvector<unsigned char> con
 autoTable Table_createAsEspeakVoicesProperties () {
 	try {
 		constexpr conststring32 criterion = U"/voices/!v/";
-		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
+		FileInMemorySet me = espeak_ng_FileInMemorySet.get();
 		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
 		const conststring32 columnNames [] = { U"id", U"name", U"index", U"gender", U"age", U"variant" };
 		autoTable thee = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames));
@@ -186,19 +186,19 @@ autoTable Table_createAsEspeakVoicesProperties () {
 
 autoTable Table_createAsEspeakLanguagesProperties () {
 	try {
-		constexpr conststring32 criterion = U"/lang/";
-		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
+		constexpr conststring32 criterion = U"./data/lang/";   // 12 characters
+		FileInMemorySet me = espeak_ng_FileInMemorySet.get();
 		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
 		const conststring32 columnNames [] = { U"id", U"name", U"index" };
 		autoTable thee = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames)); // old: Default English
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
-			const FileInMemory fim = (FileInMemory) my at [ifile];
+			const FileInMemory fim = my at [ifile];
 			if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
-				Table_setStringValue (thee.get(), irow, 1, str32rchr (fim -> string.get(), U'/') + 1);
+				Table_setStringValue (thee.get(), irow, 1, & fim -> string [12]);
 				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
-				Table_setStringValue (thee.get(), irow, 2, ( word ? word : str32rchr (fim -> string.get(), U'/') + 1 ));
+				Table_setStringValue (thee.get(), irow, 2, ( word ? word : & fim -> string[12] ));
 				Table_setNumericValue (thee.get(), irow, 3, ifile);
 			}
 		}
