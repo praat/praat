@@ -250,7 +250,7 @@ void espeakdata_getIndices (conststring32 language_string, conststring32 voice_s
 		}
 		if (voiceIndex != *p_voiceIndex) {
 			*p_voiceIndex = voiceIndex;
-			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. Please use \"",
+			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. The same voice is now called \"",
 					espeakdata_voices_names -> strings [*p_voiceIndex].get(), U"\".");
 		} else {
 			// unknown voice, handled by interface
