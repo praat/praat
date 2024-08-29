@@ -132,7 +132,7 @@ static int dispatch_audio(short *outbuff, int length, espeak_EVENT *event)
 #if USE_LIBPCAUDIO
 				int error = audio_object_open(my_audio, AUDIO_OBJECT_FORMAT_S16LE, voice_samplerate, 1);
 				if (error != 0) {
-					FileInMemory_fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
+					fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 					err = ENS_AUDIO_ERROR;
 					return -1;
 				}
@@ -149,7 +149,7 @@ static int dispatch_audio(short *outbuff, int length, espeak_EVENT *event)
 		if (out_samplerate == 0) {
 			int error = audio_object_open(my_audio, AUDIO_OBJECT_FORMAT_S16LE, voice_samplerate, 1);
 			if (error != 0) {
-				FileInMemory_fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
+				fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 				err = ENS_AUDIO_ERROR;
 				return -1;
 			}
@@ -161,7 +161,7 @@ static int dispatch_audio(short *outbuff, int length, espeak_EVENT *event)
 		if (outbuff && length && a_wave_can_be_played) {
 			int error = audio_object_write(my_audio, (char *)outbuff, 2*length);
 			if (error != 0)
-				FileInMemory_fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
+				fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 		}
 #endif
 
@@ -591,7 +591,7 @@ espeak_ng_STATUS sync_espeak_Synth(unsigned int unique_identifier, const void *t
 		          ? audio_object_flush(my_audio)
 		          : audio_object_drain(my_audio);
 		if (error != 0)
-			FileInMemory_fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
+			fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 	}
 #endif
 

@@ -167,7 +167,7 @@ void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numbe
 	Otherwise, a null pointer is returned.
 	On most library implementations, the errno variable is also set to a system-specific error code on failure.
 */
-FILE *FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode) {
+FileInMemory FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode) {
 	//TRACE
 	trace (U"trying to open ", Melder_peek8to32 (fileName), U".");
 	try {
@@ -191,7 +191,7 @@ FILE *FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const cha
 		} else if (*mode == 'w') {
 			
 		}
-		return reinterpret_cast <FILE *> (result);
+		return result;
 	} catch (MelderError) {
 		Melder_throw (U"File ", Melder_peek8to32 (fileName), U" cannot be opened.");
 	}
@@ -217,8 +217,7 @@ FILE *FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const cha
 	Return Value
 	none
 */
-void FileInMemory_rewind (FILE *stream) {
-	FileInMemory me = reinterpret_cast <FileInMemory> (stream);
+void FileInMemory_rewind (FileInMemory me) {
 	my d_position = 0;
 	my d_errno = 0;
 	my ungetChar = -1;
@@ -245,8 +244,7 @@ void FileInMemory_rewind (FILE *stream) {
 	If the stream is successfully closed, a zero value is returned.
 	On failure, EOF is returned.
 */
-int FileInMemory_fclose (FILE *stream) {
-	FileInMemory me = reinterpret_cast <FileInMemory> (stream);
+int FileInMemory_fclose (FileInMemory me) {
 	my d_position = 0;
 	my d_errno = 0;
 	my ungetChar = -1;
@@ -276,8 +274,7 @@ int FileInMemory_fclose (FILE *stream) {
 	A non-zero value is returned in the case that the end-of-file indicator associated with the stream is set.
 	Otherwise, zero is returned.
 */
-int FileInMemory_feof (FILE *stream) {
-	FileInMemory me = reinterpret_cast <FileInMemory> (stream);
+int FileInMemory_feof (FileInMemory me) {
 	return my d_position >= my d_numberOfBytes ? 1 : 0;
 }
 
@@ -319,8 +316,7 @@ int FileInMemory_feof (FILE *stream) {
 	Otherwise, it returns non-zero value.
 	If a read or write error occurs, the error indicator (ferror) is set.
 */
-int FileInMemory_fseek (FILE *stream, integer offset, int origin) {
-	FileInMemory me = reinterpret_cast <FileInMemory> (stream);
+int FileInMemory_fseek (FileInMemory me, integer offset, int origin) {
 	my d_errno = 0;
 	integer newPosition = 0;
 	if (origin == SEEK_SET)
@@ -361,8 +357,7 @@ int FileInMemory_fseek (FILE *stream, integer offset, int origin) {
 	On success, the current value of the position indicator is returned.
 	On failure, -1L is returned, and errno is set to a system-specific positive value.
 */
-integer FileInMemory_ftell (FILE *stream) {
-	FileInMemory me = reinterpret_cast <FileInMemory> (stream);
+integer FileInMemory_ftell (FileInMemory me) {
 	return my d_position;   // FIXME: what about EBDF?
 }
 
@@ -395,8 +390,7 @@ integer FileInMemory_ftell (FILE *stream) {
 	If the end-of-file is encountered while attempting to read a character, the eof indicator is set (feof). If this happens before any characters could be read, the pointer returned is a null pointer (and the contents of str remain unchanged).
 	If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed). 
  */
-char *FileInMemory_fgets (char *str, int num, FILE *stream) {
-	FileInMemory me = reinterpret_cast <FileInMemory> (stream);
+char *FileInMemory_fgets (char *str, int num, FileInMemory me) {
 	char *result = nullptr;
 	// FIXME: test whether file is open?
 
@@ -451,10 +445,10 @@ char *FileInMemory_fgets (char *str, int num, FILE *stream) {
 	If the position indicator was at the end-of-file, the function returns EOF and sets the eof indicator (feof) of stream.
 	If some other reading error happens, the function also returns EOF, but sets its error indicator (ferror) instead.
 */
-int FileInMemory_fgetc (FILE *stream) {
+int FileInMemory_fgetc (FileInMemory me) {
 	char str [4];
-	(void) FileInMemory_fgets (str, 1, stream);
-	return FileInMemory_feof (stream) ? EOF : static_cast<int> (*str);
+	(void) FileInMemory_fgets (str, 1, me);
+	return FileInMemory_feof (me) ? EOF : static_cast<int> (*str);
 }
 
 /*
@@ -487,8 +481,7 @@ int FileInMemory_fgetc (FILE *stream) {
 	If either size or count is zero, the function returns zero and both the stream state and the content pointed by ptr remain unchanged.
 	size_t is an unsigned integral type. 
 */
-size_t FileInMemory_fread (void *ptr, size_t size, size_t count, FILE *stream) {
-	FileInMemory me = reinterpret_cast <FileInMemory> (stream);
+size_t FileInMemory_fread (void *ptr, size_t size, size_t count, FileInMemory me) {
 	size_t result = 0;
 	integer startPos = my d_position;
 	if (startPos < my d_numberOfBytes) {
@@ -543,8 +536,7 @@ size_t FileInMemory_fread (void *ptr, size_t size, size_t count, FILE *stream) {
 	If the operation fails, EOF is returned.
 */
 
-int FileInMemory_ungetc (int character, FILE *stream) {
-	FileInMemory me = reinterpret_cast <FileInMemory> (stream);
+int FileInMemory_ungetc (int character, FileInMemory me) {
 	int result = EOF;
 	if (character != EOF) {
 		-- my d_position;
@@ -647,19 +639,6 @@ int FileInMemory_ungetc (int character, FILE *stream) {
 
 	If a multibyte character encoding error occurs while writing wide characters, errno is set to EILSEQ and a negative number is returned.
 */
-int FileInMemory_fprintf (FILE *stream, const char *format, ... ) {
-	va_list args;
-	if (stream == Melder_stderr) {
-		va_start (args, format);
-		int sizeNeeded = vsnprintf (nullptr, 0, format, args); // find size of needed buffer (without final null byte)
-		const size_t bufferSize = sizeNeeded + 1;
-		va_end (args);
-		return bufferSize;
-	} else {
-		// ignore anything written to FileInMemory objects; FIXME: should throw
-	}
-	return -1;
-}
 
 void test_FileInMemoryManager_io (void) {
 	const conststring32 path1 = U"~/kanweg1.txt";
@@ -700,11 +679,11 @@ void test_FileInMemoryManager_io (void) {
 
 	// fopen test
 	MelderInfo_writeLine (U"\tOpen file ", file1 -> path);
-	FILE *f1 = FileInMemorySet_fopen (me.get(), Melder_peek32to8_fileSystem (file1 -> path), "r");
+	FileInMemory f1 = FileInMemorySet_fopen (me.get(), Melder_peek32to8_fileSystem (file1 -> path), "r");
 	MelderInfo_writeLine (U"\t\t ...opened");
 	
 	MelderInfo_writeLine (U"\tOpen file ", file2 -> path);
-	FILE *f2 = FileInMemorySet_fopen (me.get(), Melder_peek32to8_fileSystem (file2 -> path), "r");
+	FileInMemory f2 = FileInMemorySet_fopen (me.get(), Melder_peek32to8_fileSystem (file2 -> path), "r");
 	MelderInfo_writeLine (U"\t\t ...opened");
 	
 	FileInMemory_fclose (f2);

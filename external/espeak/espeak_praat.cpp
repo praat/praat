@@ -60,7 +60,7 @@ void espeak_praat_GetVoices (const char *path, int len_path_voices, int is_langu
 	autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
 	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
 		FileInMemory fim = fileList -> at [ifile];
-		FILE *f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
+		FileInMemory f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
 		conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
 		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
 		FileInMemory_fclose (f_voice);
@@ -106,9 +106,9 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 		autoFileInMemory thee = Data_copy (me);
 		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		FILE *phondataf = FileInMemorySet_fopen (theEspeakPraatFileInMemorySet(), Melder_peek32to8_fileSystem (my string.get()), "r");
+		FileInMemory phondataf = FileInMemorySet_fopen (theEspeakPraatFileInMemorySet(), Melder_peek32to8_fileSystem (my string.get()), "r");
 		Melder_assert (phondataf);
-		FILE *manifestf = FileInMemorySet_fopen (theEspeakPraatFileInMemorySet(), Melder_peek32to8_fileSystem (manifest -> string.get()), "r");
+		FileInMemory manifestf = FileInMemorySet_fopen (theEspeakPraatFileInMemorySet(), Melder_peek32to8_fileSystem (manifest -> string.get()), "r");
 		Melder_assert (manifestf);
 		char line [1024];
 		// copy 4 bytes: version number

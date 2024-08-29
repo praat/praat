@@ -286,7 +286,7 @@ int is_str_totally_null(const char* str, int size) {
 	return (*str == 0 && memcmp(str, str+1, size-1) == 0);
 }
 
-int Read4Bytes(FILE *f)
+int Read4Bytes(FileInMemory f)
 {
 	// Read 4 bytes (least significant first) into a word
 	int ix;
@@ -294,7 +294,7 @@ int Read4Bytes(FILE *f)
 
 	for (ix = 0; ix < 4; ix++) {
 		unsigned char c;
-		c = fgetc(f) & 0xff;
+		c = FileInMemory_fgetc(f) & 0xff;
 		acc += (c << (ix*8));
 	}
 	return acc;

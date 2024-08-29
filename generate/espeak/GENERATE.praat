@@ -349,6 +349,26 @@ Here we list all the (remaining) occurrences of those functions in those five fi
 		endfor
 	endfor
 }
+Perhaps we could even replace the very ugly `FILE *` with `FileInMemory`?
+{;
+	if 0
+		@defineSourceFolders
+		sourceFolder$ = generationSourceFolder$
+	else
+		sourceFolder$ = "../../external/espeak"
+	endif
+	sourceFiles$# = { "dictionary.cpp", "soundicon.cpp", "speech.cpp", "synthdata.cpp", "voices.cpp" }
+	writeInfo()
+	for file to size (sourceFiles$#)
+		lines$# = readLinesFromFile$#: sourceFolder$ + "/" + sourceFiles$# [file]
+		for line to size (lines$#)
+			line$ = lines$# [line]
+			if index_regex (line$, "FILE\W")
+				appendInfoLine: sourceFiles$# [file], " ", line, " ", line$
+			endif
+		endfor
+	endfor
+}
 
 #       Use listFileIO.praat to list the occurrences of these names in those five files.
 #	9. delete all "#pragma GCC visibility" lines

@@ -21,6 +21,7 @@
 #define ESPEAK_NG_VOICE_H
 
 #include "espeak_ng.h"
+#include "espeak_praat.h"
 
 #include "mnemonics.h"
 #include "translate.h"
@@ -205,7 +206,7 @@ void FreeVoiceList(void);
 extern int n_voices_list;
 #define N_VOICES_LIST  350
 extern espeak_VOICE *voices_list [N_VOICES_LIST];
-espeak_VOICE *ReadVoiceFile (FILE *f_in, const char *fname, int is_language_file);
+espeak_VOICE *ReadVoiceFile (FileInMemory f_in, const char *fname, int is_language_file);
 
 #ifdef __cplusplus
 }

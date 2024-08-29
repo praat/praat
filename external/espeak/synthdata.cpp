@@ -69,7 +69,7 @@ static espeak_ng_STATUS ReadPhFile(void **ptr, const char *fname, int *size, esp
 {
 	if (!ptr) return static_cast<espeak_ng_STATUS> (EINVAL);
 
-	FILE *f_in;
+	FileInMemory f_in;
 	int length;
 	char buf[sizeof(path_home)+40];
 
@@ -335,7 +335,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 const unsigned char *GetEnvelope(int index)
 {
 	if (index == 0) {
-		FileInMemory_fprintf(stderr, "espeak: No envelope\n");
+		fprintf(stderr, "espeak: No envelope\n");
 		return envelope_data[0]; // not found, use a default envelope
 	}
 	return (unsigned char *)&phondata_ptr[index];
@@ -406,7 +406,7 @@ int SelectPhonemeTableName(const char *name)
 static void InvalidInstn(PHONEME_TAB *ph, int instn)
 {
 	char buf[5];
-	FileInMemory_fprintf(stderr, "Invalid instruction %.4x for phoneme '%s'\n", instn, WordToString(buf, ph->mnemonic));
+	fprintf(stderr, "Invalid instruction %.4x for phoneme '%s'\n", instn, WordToString(buf, ph->mnemonic));
 }
 
 static bool StressCondition(Translator *tr, PHONEME_LIST *plist, int condition, int control)

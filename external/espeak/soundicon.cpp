@@ -46,10 +46,9 @@
 int n_soundicon_tab = 0;
 SOUND_ICON soundicon_tab[N_SOUNDICON_TAB];
 
-
 static espeak_ng_STATUS LoadSoundFile(const char *fname, int index, espeak_ng_ERROR_CONTEXT *context)
 {
-	FILE *f;
+	FileInMemory f;
 	unsigned char *p;
 	int length;
 	char fname_temp[100];

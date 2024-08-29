@@ -139,7 +139,7 @@ static void InitGroups(Translator *tr)
 	// a RULE_GROUP_END.
 	if (*p != RULE_GROUP_END) while (*p != 0) {
 		if (*p != RULE_GROUP_START) {
-			FileInMemory_fprintf(stderr, "Bad rules data in '%s_dict' at 0x%x (%c)\n", dictionary_name, (unsigned int)(p - tr->data_dictrules), *p);
+			fprintf(stderr, "Bad rules data in '%s_dict' at 0x%x (%c)\n", dictionary_name, (unsigned int)(p - tr->data_dictrules), *p);
 			break;
 		}
 		p++;
@@ -201,7 +201,7 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	char *p;
 	int *pw;
 	int length;
-	FILE *f;
+	FileInMemory f;
 	int size;
 	char fname[sizeof(path_home)+20];
 
@@ -224,7 +224,7 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	f = FileInMemorySet_fopen(theEspeakPraatFileInMemorySet(), fname, "rb");
 	if ((f == NULL) || (size <= 0)) {
 		if (no_error == 0)
-			FileInMemory_fprintf(stderr, "Can't read dictionary file: '%s'\n", fname);
+			fprintf(stderr, "Can't read dictionary file: '%s'\n", fname);
 		if (f != NULL)
 			FileInMemory_fclose(f);
 		return 1;
@@ -241,13 +241,13 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	length = Reverse4Bytes(pw[1]);
 
 	if (size <= (N_HASH_DICT + sizeof(int)*2)) {
-		FileInMemory_fprintf(stderr, "Empty _dict file: '%s\n", fname);
+		fprintf(stderr, "Empty _dict file: '%s\n", fname);
 		return 2;
 	}
 
 	if ((Reverse4Bytes(pw[0]) != N_HASH_DICT) ||
 	    (length <= 0) || (length > 0x8000000)) {
-		FileInMemory_fprintf(stderr, "Bad data: '%s' (%x length=%x)\n", fname, Reverse4Bytes(pw[0]), length);
+		fprintf(stderr, "Bad data: '%s' (%x length=%x)\n", fname, Reverse4Bytes(pw[0]), length);
 		return 2;
 	}
 	tr->data_dictrules = &(tr->data_dictlist[length]);
@@ -266,7 +266,7 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	}
 
 	if ((tr->dict_min_size > 0) && (size < (unsigned int)tr->dict_min_size))
-		FileInMemory_fprintf(stderr, "Full dictionary is not installed for '%s'\n", name);
+		fprintf(stderr, "Full dictionary is not installed for '%s'\n", name);
 
 	return 0;
 }
@@ -2027,7 +2027,7 @@ static void MatchRule(Translator *tr, char *word[], char *word_start, int group_
 					if (group_length > 1)
 						pts += 35; // to account for an extra letter matching
 					DecodePhonemes(match.phonemes, decoded_phonemes);
-					FileInMemory_fprintf(f_trans, "%3d\t%s [%s]\n", pts, DecodeRule(group_chars, group_length, rule_start, word_flags, output), decoded_phonemes);
+					fprintf(f_trans, "%3d\t%s [%s]\n", pts, DecodeRule(group_chars, group_length, rule_start, word_flags, output), decoded_phonemes);
 				}
 			}
 		}
@@ -2096,9 +2096,9 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 			wordbuf[ix1] = c;
 		wordbuf[ix1] = 0;
 		if (word_flags & FLAG_UNPRON_TEST)
-			FileInMemory_fprintf(f_trans, "Unpronouncable? '%s'\n", wordbuf);
+			fprintf(f_trans, "Unpronouncable? '%s'\n", wordbuf);
 		else
-			FileInMemory_fprintf(f_trans, "Translate '%s'\n", wordbuf);
+			fprintf(f_trans, "Translate '%s'\n", wordbuf);
 	}
 
 	p = p_start;
@@ -2272,7 +2272,7 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 			}
 
 			if ((option_phonemes & espeakPHONEMES_TRACE) && ((word_flags & FLAG_NO_TRACE) == 0))
-				FileInMemory_fprintf(f_trans, "\n");
+				fprintf(f_trans, "\n");
 
 			match1.end_type &= ~SUFX_UNPRON;
 
@@ -2625,7 +2625,7 @@ static const char *LookupDict2(Translator *tr, const char *word, const char *wor
 		if (phoneme_len == 0) {
 			if (option_phonemes & espeakPHONEMES_TRACE) {
 				print_dictionary_flags(flags, dict_flags_buf, sizeof(dict_flags_buf));
-				FileInMemory_fprintf(f_trans, "Flags:  %s  %s\n", word1, dict_flags_buf);
+				fprintf(f_trans, "Flags:  %s  %s\n", word1, dict_flags_buf);
 			}
 			return 0; // no phoneme translation found here, only flags. So use rules
 		}
@@ -2651,11 +2651,11 @@ static const char *LookupDict2(Translator *tr, const char *word, const char *wor
 					// (check for wtab prevents showing RULE_SPELLING byte when speaking individual letters)
 					memcpy(word_buf, word2, word_end-word2);
 					word_buf[word_end-word2-1] = 0;
-					FileInMemory_fprintf(f_trans, "Found: '%s %s\n", word1, word_buf);
+					fprintf(f_trans, "Found: '%s %s\n", word1, word_buf);
 				} else
-					FileInMemory_fprintf(f_trans, "Found: '%s", word1);
+					fprintf(f_trans, "Found: '%s", word1);
 				print_dictionary_flags(flags, dict_flags_buf, sizeof(dict_flags_buf));
-				FileInMemory_fprintf(f_trans, "' [%s]  %s\n", ph_decoded, dict_flags_buf);
+				fprintf(f_trans, "' [%s]  %s\n", ph_decoded, dict_flags_buf);
 			}
 		}
 
@@ -2807,7 +2807,7 @@ int LookupDictList(Translator *tr, char **wordptr, char *ph_out, unsigned int *f
 					len = found - word1;
 					memcpy(word, word1, len); // include multiple matching words
 					word[len] = 0;
-					FileInMemory_fprintf(f_trans, "Replace: %s  %s\n", word, *wordptr);
+					fprintf(f_trans, "Replace: %s  %s\n", word, *wordptr);
 				}
 			}
 
@@ -2978,7 +2978,7 @@ int RemoveEnding(Translator *tr, char *word, int end_type, char *word_copy)
 			utf8_out(tr->langopts.suffix_add_e, &word_end[1]);
 
 			if (option_phonemes & espeakPHONEMES_TRACE)
-				FileInMemory_fprintf(f_trans, "add e\n");
+				fprintf(f_trans, "add e\n");
 		}
 	}
 

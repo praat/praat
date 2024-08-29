@@ -85,7 +85,7 @@ static const char *const variant_lists[3] = { variants_either, variants_male, va
 static voice_t voicedata;
 voice_t *voice = &voicedata;
 
-static char *fgets_strip(char *buf, int size, FILE *f_in)
+static char *fgets_strip(char *buf, int size, FileInMemory f_in)
 {
 	// strip trailing spaces, and truncate lines at // comment
 	int len;
@@ -155,7 +155,7 @@ void ReadTonePoints(char *string, int *tone_pts)
 	       &tone_pts[8], &tone_pts[9]);
 }
 
-espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, int is_language_file)
+espeak_VOICE *ReadVoiceFile(FileInMemory f_in, const char *fname, int is_language_file)
 {
 	// Read a Voice file, allocate a VOICE_DATA and set data from the
 	// file's  language, gender, name  lines
@@ -211,7 +211,7 @@ espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, int is_language_file)
 		case V_GENDER:
 			sscanf(p, "%s %d", vgender, &age);
 			if (is_language_file)
-				FileInMemory_fprintf(stderr, "Error (%s): gender attribute specified on a language file\n", fname);
+				fprintf(stderr, "Error (%s): gender attribute specified on a language file\n", fname);
 			break;
 		case V_VARIANTS:
 			sscanf(p, "%d", &n_variants);
@@ -392,7 +392,7 @@ void ReadNumbers(char *p, int *flags, int maxValue,  const MNEM_TAB *keyword_tab
 			if (n < maxValue) {
 				*flags |= (1 << n);
 			} else {
-				FileInMemory_fprintf(stderr, "%s: Bad option number %d\n", LookupMnemName(keyword_table, key), n);
+				fprintf(stderr, "%s: Bad option number %d\n", LookupMnemName(keyword_table, key), n);
 			}
 		}
 	while (isalnum(*p)) p++;
@@ -409,7 +409,7 @@ voice_t *LoadVoice(const char *vname, int control)
         //                     load the phoneme table
         //          bit 16 1 = UNDOCUMENTED
 
-	FILE *f_voice = NULL;
+	FileInMemory f_voice = NULL;
 	char *p;
 	int key;
 	int ix;
@@ -693,7 +693,7 @@ voice_t *LoadVoice(const char *vname, int control)
             case V_STATUS:
                 break;
             default:
-                FileInMemory_fprintf(stderr, "Bad voice attribute: %s\n", buf);
+                fprintf(stderr, "Bad voice attribute: %s\n", buf);
                 break;
             }
         }
@@ -716,7 +716,7 @@ voice_t *LoadVoice(const char *vname, int control)
                          */
                         ix = 0;
                 } else if ((ix = SelectPhonemeTableName(phonemes_name)) < 0) {
-			FileInMemory_fprintf(stderr, "Unknown phoneme table: '%s'\n", phonemes_name);
+			fprintf(stderr, "Unknown phoneme table: '%s'\n", phonemes_name);
 			ix = 0;
 		}
 
@@ -1423,7 +1423,7 @@ static int AddToVoicesList(const char *fname, int len_path_voices, int is_langua
 		espeak_praat_GetVoices(fname, len_path_voices, is_language_file);
 	} else if (ftype > 0) {
 		// a regular file, add it to the voices list
-		FILE *f_voice;
+		FileInMemory f_voice;
 		if ((f_voice = FileInMemorySet_fopen(theEspeakPraatFileInMemorySet(), fname, "r")) == NULL)
 			return 1;
 
