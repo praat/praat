@@ -19,18 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "FileInMemorySet.h"
+#include "FileInMemory.h"
 #include "Table.h"
-
-autoFileInMemorySet create_espeak_phon_FileInMemorySet ();
-autoFileInMemorySet create_espeak_russianDict_FileInMemorySet ();
-autoFileInMemorySet create_espeak_faroeseDict_FileInMemorySet ();
-autoFileInMemorySet create_espeak_otherDicts_FileInMemorySet ();
-autoFileInMemorySet create_espeak_languages_FileInMemorySet ();
-autoFileInMemorySet create_espeak_voices_FileInMemorySet ();
-
-autoFileInMemorySet create_espeak_ng_FileInMemorySet ();
-inline autoFileInMemorySet espeak_ng_FileInMemorySet;
 
 inline autoStrings espeakdata_languages_names;
 inline autoStrings espeakdata_voices_names;

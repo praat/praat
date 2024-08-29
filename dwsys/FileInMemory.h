@@ -47,30 +47,59 @@ void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numbe
 	File open and read emulations. The FILE * is internally used as an index of the file in the Set.
 */
 
-FILE *FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode);
+FileInMemory FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode);
 
-void FileInMemory_rewind (FILE *stream);
+void FileInMemory_rewind (FileInMemory stream);
 
-int FileInMemory_fclose (FILE *stream);
+int FileInMemory_fclose (FileInMemory stream);
 
-int FileInMemory_feof (FILE *stream);
+int FileInMemory_feof (FileInMemory stream);
 
-integer FileInMemory_ftell (FILE *stream);
+integer FileInMemory_ftell (FileInMemory stream);
 
-int FileInMemory_fseek (FILE *stream, integer offset, int origin);
+int FileInMemory_fseek (FileInMemory stream, integer offset, int origin);
 
-char *FileInMemory_fgets (char *str, int num, FILE *stream);
+char *FileInMemory_fgets (char *str, int num, FileInMemory stream);
 
-size_t FileInMemory_fread (void *ptr, size_t size, size_t count, FILE *stream);
+size_t FileInMemory_fread (void *ptr, size_t size, size_t count, FileInMemory stream);
 
-int FileInMemory_fgetc (FILE *stream);
+int FileInMemory_fgetc (FileInMemory stream);
 
-int FileInMemory_fprintf (FILE *stream, const char *format, ... );
-/* only returns number of bytes that would have been written or -1 in case of failure */
+int FileInMemory_ungetc (int character, FileInMemory stream);
 
-int FileInMemory_ungetc (int character, FILE *stream);
+/*
+	FileInMemorySet bookkeeping.
+*/
 
+autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 file);
+
+autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemory>& list);
+
+autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion);
+autoFileInMemorySet FileInMemorySet_removeFiles  (FileInMemorySet me, kMelder_string which, conststring32 criterion);
+
+/* Only creates references to files in memory. Once me is deleted, the references are not valid any more!! */
+autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion);
+
+integer FileInMemorySet_getTotalNumberOfBytes (FileInMemorySet me);
+
+autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& list);
+
+void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer numberOfBytesPerLine);
+
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, conststring32 name, integer numberOfBytesPerLine);
+
+integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, conststring32 criterion);
+
+bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name);
+
+autoStrings FileInMemorySet_to_Strings_path (FileInMemorySet me);
+
+/*
+	Testing.
+*/
 void test_FileInMemorySet_io (void);
+
 
 /* End of file FileInMemory.h */
 #endif

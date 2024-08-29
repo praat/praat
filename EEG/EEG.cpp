@@ -259,35 +259,35 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 					const char32 kar = ( ibyte == 1 ? (value & mask) : (value & mask) >> 8 );
 					if (kar != U'\0' && kar != 20) {
 						MelderString_appendCharacter (& letters, kar);
-					} else if (letters. string [0] != U'\0') {
-						if (letters. string [0] == U'+') {
+					} else if (letters.string [0] != U'\0') {
+						if (letters.string [0] == U'+') {
 							if (isdefined (time)) {
 								try {
 									TextGrid_insertPoint (thee.get(), 1, time, U"");
 								} catch (MelderError) {
-									Melder_throw (U"Did not insert empty mark (", letters. string, U") on Mark tier.");
+									Melder_throw (U"Did not insert empty mark (", letters.string, U") on Mark tier.");
 								}
 								time = undefined;   // defensive
 							}
-							time = Melder_atof (& letters. string [1]);
+							time = Melder_atof (& letters.string [1]);
 							MelderString_empty (& letters);
 						} else {
 							if (isundef (time)) {
 								Melder_throw (U"Undefined time for label at sample ", i, U".");
 							}
 							try {
-								if (Melder_nequ (letters. string, U"Trigger-", 8)) {
+								if (Melder_nequ (letters.string, U"Trigger-", 8)) {
 									try {
-										TextGrid_insertPoint (thee.get(), 2, time, & letters. string [8]);
+										TextGrid_insertPoint (thee.get(), 2, time, & letters.string [8]);
 									} catch (MelderError) {
 										Melder_clearError ();
-										trace (U"Duplicate trigger at ", time, U" seconds: ", & letters. string [8]);
+										trace (U"Duplicate trigger at ", time, U" seconds: ", & letters.string [8]);
 									}
 								} else {
-									TextGrid_insertPoint (thee.get(), 1, time, & letters. string [0]);
+									TextGrid_insertPoint (thee.get(), 1, time, & letters.string [0]);
 								}
 							} catch (MelderError) {
-								Melder_throw (U"Did not insert mark (", letters. string, U") on Trigger tier.");
+								Melder_throw (U"Did not insert mark (", letters.string, U") on Trigger tier.");
 							}
 							time = undefined;   // crucial
 							MelderString_empty (& letters);

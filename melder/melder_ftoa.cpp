@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2023 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -551,7 +551,7 @@ conststring32 Melder_padLeft (const conststring32 string, const integer width, c
 			ipad = 0;
 	}
 	MelderString_append (& thePadBuffers [iPadBuffer], string);
-	return thePadBuffers [iPadBuffer]. string;
+	return thePadBuffers [iPadBuffer].string;
 }
 
 conststring32 Melder_padRight (const conststring32 string, const integer width, const conststring32 pad) {
@@ -577,7 +577,7 @@ conststring32 Melder_padRight (const conststring32 string, const integer width, 
 		if (++ ipad >= padLength)
 			ipad = 0;
 	}
-	return thePadBuffers [iPadBuffer]. string;
+	return thePadBuffers [iPadBuffer].string;
 }
 
 conststring32 Melder_truncateLeft (const conststring32 string, const integer width) {
@@ -593,7 +593,7 @@ conststring32 Melder_truncateLeft (const conststring32 string, const integer wid
 			// guarded subtraction (length cannot be negative, so no underflow, and width cannot be negative, so no overflow)
 	Melder_assert (tooLong > 0);
 	MelderString_ncopy (& thePadBuffers [iPadBuffer], string + tooLong, width);
-	return thePadBuffers [iPadBuffer]. string;
+	return thePadBuffers [iPadBuffer].string;
 }
 
 conststring32 Melder_truncateRight (const conststring32 string, const integer width) {
@@ -609,7 +609,7 @@ conststring32 Melder_truncateRight (const conststring32 string, const integer wi
 			// guarded subtraction (length cannot be negative, so no underflow, and width is nonnegative, so no overflow)
 	Melder_assert (tooLong > 0);
 	MelderString_ncopy (& thePadBuffers [iPadBuffer], string, width);
-	return thePadBuffers [iPadBuffer]. string;
+	return thePadBuffers [iPadBuffer].string;
 }
 
 conststring32 Melder_padOrTruncateLeft (const conststring32 string, const integer width, const conststring32 pad) {
@@ -644,7 +644,7 @@ conststring32 Melder_padOrTruncateLeft (const conststring32 string, const intege
 		Melder_assert (tooLong <= length);
 		MelderString_ncopy (& thePadBuffers [iPadBuffer], string + tooLong, width);
 	}
-	return thePadBuffers [iPadBuffer]. string;
+	return thePadBuffers [iPadBuffer].string;
 }
 
 conststring32 Melder_padOrTruncateRight (conststring32 string, integer width, const conststring32 pad) {
@@ -678,7 +678,7 @@ conststring32 Melder_padOrTruncateRight (conststring32 string, integer width, co
 		Melder_assert (tooLong <= length);
 		MelderString_ncopy (& thePadBuffers [iPadBuffer], string, width);
 	}
-	return thePadBuffers [iPadBuffer]. string;
+	return thePadBuffers [iPadBuffer].string;
 }
 
 /* End of file melder_ftoa.cpp */

@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2018,2020,2022,2023 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2018,2020,2022-2024 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,7 +174,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 		[[maybe_unused]] constexpr conststring32 canadian_syllabics_pe = U"\u142F";
 		[[maybe_unused]] constexpr conststring32 logical_or = U"\u2228";
 		MelderString_copy (& neatTitle, down_triangle, U" ", title);
-		//neatTitle. string [neatTitle.length - 1] = U' ';
+		//neatTitle.string [neatTitle.length - 1] = U' ';
 	} else {
 		MelderString_copy (& neatTitle, title);
 	}
@@ -190,18 +190,18 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 				my d_widget = gtk_check_menu_item_new_with_label (Melder_peek32to8 (title));
 			}
 		} else {
-			my d_widget = gtk_menu_item_new_with_label (Melder_peek32to8 (neatTitle. string));
+			my d_widget = gtk_menu_item_new_with_label (Melder_peek32to8 (neatTitle.string));
 		}
 		Melder_assert (menu -> d_widget);
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu -> d_widget), GTK_WIDGET (my d_widget));
 		_GuiObject_setUserData (my d_widget, me.get());
 	#elif motif
-		my d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (neatTitle. string),
+		my d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (neatTitle.string),
 				toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu -> d_widget, nullptr);
 		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		(void) toggle;   // no difference between toggling and normal menu items on Cocoa
-		NSString *string = (NSString *) Melder_peek32toCfstring (neatTitle. string);
+		NSString *string = (NSString *) Melder_peek32toCfstring (neatTitle.string);
 		GuiCocoaMenuItem *menuItem = [[GuiCocoaMenuItem alloc]
 			initWithTitle: string
 			action: nullptr

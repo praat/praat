@@ -29,7 +29,6 @@
 #include <assert.h>
 
 #include "espeak_ng.h"
-#include "espeak_io.h"
 #include "speak_lib.h"
 #include "encoding.h"
 
@@ -43,6 +42,8 @@
 #include "synthdata.h"                     // for PhonemeCode, InterpretPhoneme
 #include "synthesize.h"                    // for STRESS_IS_PRIMARY, phoneme...
 #include "translate.h"                     // for Translator, utf8_in, LANGU...
+
+#include "espeak_praat.h"
 
 static int LookupFlags(Translator *tr, const char *word, unsigned int flags_out[2]);
 static void DollarRule(char *word[], char *word_start, int consumed, int group_length, char *word_buf, Translator *tr, int command, int *failed, int *add_points);
@@ -200,7 +201,7 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	char *p;
 	int *pw;
 	int length;
-	FILE *f;
+	FileInMemory f;
 	int size;
 	char fname[sizeof(path_home)+20];
 
@@ -213,28 +214,28 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	// bytes 0-3:  offset to rules data
 	// bytes 4-7:  number of hash table entries
 	sprintf(fname, "%s%c%s_dict", path_home, PATHSEP, name);
-	size = GetFileLength(fname);
+	size = espeak_praat_GetFileLength(fname);
 
 	if (tr->data_dictlist != NULL) {
 		free(tr->data_dictlist);
 		tr->data_dictlist = NULL;
 	}
 
-	f = fopen(fname, "rb");
+	f = FileInMemorySet_fopen(theEspeakPraatFileInMemorySet(), fname, "rb");
 	if ((f == NULL) || (size <= 0)) {
 		if (no_error == 0)
 			fprintf(stderr, "Can't read dictionary file: '%s'\n", fname);
 		if (f != NULL)
-			fclose(f);
+			FileInMemory_fclose(f);
 		return 1;
 	}
 
 	if ((tr->data_dictlist = (char *) malloc(size)) == NULL) {
-		fclose(f);
+		FileInMemory_fclose(f);
 		return 3;
 	}
-	size = fread(tr->data_dictlist, 1, size, f);
-	fclose(f);
+	size = FileInMemory_fread(tr->data_dictlist, 1, size, f);
+	FileInMemory_fclose(f);
 
 	pw = (int *)(tr->data_dictlist);
 	length = Reverse4Bytes(pw[1]);

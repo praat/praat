@@ -45,7 +45,6 @@
 #endif
 
 #include "espeak_ng.h"
-#include "espeak_io.h"
 #include "speak_lib.h"
 #include "encoding.h"
 
@@ -65,6 +64,8 @@
 #include "translate.h"            // for p_decoder, InitText, translator
 #include "voice.h"                // for FreeVoiceList, VoiceReset, current_...
 #include "wavegen.h"              // for WavegenFill, WavegenInit, WcmdqUsed
+
+#include "espeak_praat.h"
 
 static unsigned char *outbuf = NULL;
 static int outbuf_size = 0;
@@ -252,14 +253,14 @@ static int check_data_path(const char *path, int allow_directory)
 	if (!path) return 0;
 
 	snprintf(path_home, sizeof(path_home), "%s/espeak-ng-data", path);
-	if (GetFileLength(path_home) == -EISDIR)
+	if (espeak_praat_GetFileLength(path_home) == -EISDIR)
 		return 1;
 
 	if (!allow_directory)
 		return 0;
 
 	snprintf(path_home, sizeof(path_home), "%s", path);
-	return GetFileLength(path_home) == -EISDIR;
+	return espeak_praat_GetFileLength(path_home) == -EISDIR;
 }
 
 #pragma GCC visibility push(default)

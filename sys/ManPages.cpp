@@ -664,7 +664,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				}
 				ManPage_Paragraph par = page -> paragraphs. append ();
 				par -> type = kManPage_type::CODE;
-				par -> text = Melder_dup (buffer_graphicalCode. string).transfer();
+				par -> text = Melder_dup (buffer_graphicalCode.string).transfer();
 			} while (1);
 			MelderString_empty (& buffer_graphical);   // this makes sure that no actual SCRIPT (or VERBATIM) paragraph will be added
 		} else if (numberOfLeadingSpaces == 0 && line [0] == U'{') {
@@ -709,7 +709,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					}
 					ManPage_Paragraph par = page -> paragraphs. append ();
 					par -> type = kManPage_type::CODE;
-					par -> text = Melder_dup (buffer_graphicalCode. string).transfer();
+					par -> text = Melder_dup (buffer_graphicalCode.string).transfer();
 				}
 				if (shouldShowOutput) {
 					/*
@@ -805,10 +805,10 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			MelderString_append (& buffer_graphical, line);
 		}
 		ManPage_Paragraph par = nullptr;
-		if (buffer_graphical. string [0] != U'\0') {
+		if (buffer_graphical.string [0] != U'\0') {
 			par = page -> paragraphs. append ();
 			par -> type = type;
-			par -> text = Melder_dup (buffer_graphical. string). transfer();
+			par -> text = Melder_dup (buffer_graphical.string). transfer();
 			par -> width = width;
 			par -> height = height;
 		}

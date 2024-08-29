@@ -22,16 +22,14 @@
 
 #include "NUM2.h"
 #include "espeak_ng.h"
-#include "FileInMemorySet.h"
+#include "FileInMemory.h"
 #include "speech.h"
 #include "voice.h"
 #include "Strings_extensions.h"
 #include "Table_and_Strings.h"
 
+#include "espeak_praat.h"
 #include "espeakdata_FileInMemory.h"
-
-#include "espeak_io.h"
-
 
 #if 0
 static integer Table_getRownumberOfStringInColumn (Table me, conststring32 string, integer icol) {
@@ -47,9 +45,17 @@ static integer Table_getRownumberOfStringInColumn (Table me, conststring32 strin
 	return row;
 }
 #endif
+
+FileInMemorySet theEspeakPraatFileInMemorySet() {
+	static autoFileInMemorySet singleton;
+	if (! singleton)
+		singleton = create_espeak_all_FileInMemorySet ();
+	return singleton.get();
+}
+
 void espeakdata_praat_init () {
 	try {
-		espeak_ng_FileInMemorySet = create_espeak_ng_FileInMemorySet ();
+		(void) theEspeakPraatFileInMemorySet();   // create the singleton now (not strictly necessary)
 		espeakdata_languages_propertiesTable = Table_createAsEspeakLanguagesProperties ();
 		espeakdata_voices_propertiesTable = Table_createAsEspeakVoicesProperties ();
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_propertiesTable.get(), 2);
@@ -145,13 +151,13 @@ static conststring32 get_stringAfterPrecursor_u8 (constvector<unsigned char> con
 autoTable Table_createAsEspeakVoicesProperties () {
 	try {
 		constexpr conststring32 criterion = U"/voices/!v/";
-		FileInMemorySet me = espeak_ng_FileInMemorySet.get();
+		FileInMemorySet me = theEspeakPraatFileInMemorySet();
 		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
 		const conststring32 columnNames [] = { U"id", U"name", U"index", U"gender", U"age", U"variant" };
 		autoTable thee = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames));
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
-			const FileInMemory fim = (FileInMemory) my at [ifile];
+			const FileInMemory fim = my at [ifile];
 			if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, str32rchr (fim -> string.get(), U'/') + 1);
@@ -160,9 +166,8 @@ autoTable Table_createAsEspeakVoicesProperties () {
 				if (name) {
 					autoMelderString capitalFirst;
 					MelderString_copy (& capitalFirst, name); // we cannot modify original
-					const char32 capital = Melder_toUpperCase (*name);
-					*(capitalFirst. string) = capital;
-					Table_setStringValue (thee.get(), irow, 2, capitalFirst. string);
+					capitalFirst.string [0] = Melder_toUpperCase (name [0]);
+					Table_setStringValue (thee.get(), irow, 2, capitalFirst.string);
 				} else {
 					Table_setStringValue (thee.get(), irow, 2, str32rchr (fim -> string.get(), U'/') + 1);
 				}
@@ -187,7 +192,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 autoTable Table_createAsEspeakLanguagesProperties () {
 	try {
 		constexpr conststring32 criterion = U"./data/lang/";   // 12 characters
-		FileInMemorySet me = espeak_ng_FileInMemorySet.get();
+		FileInMemorySet me = theEspeakPraatFileInMemorySet();
 		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
 		const conststring32 columnNames [] = { U"id", U"name", U"index" };
 		autoTable thee = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames)); // old: Default English
@@ -245,7 +250,7 @@ void espeakdata_getIndices (conststring32 language_string, conststring32 voice_s
 		}
 		if (voiceIndex != *p_voiceIndex) {
 			*p_voiceIndex = voiceIndex;
-			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. Please use \"",
+			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. The same voice is now called \"",
 					espeakdata_voices_names -> strings [*p_voiceIndex].get(), U"\".");
 		} else {
 			// unknown voice, handled by interface

@@ -29,7 +29,7 @@
 #include "TableOfReal.h"
 #include "Collection.h"
 #include "Categories.h"
-#include "FileInMemorySet.h"
+#include "FileInMemory.h"
 #include "Strings_.h"
 #include "SSCP.h"
 #include "Table.h"

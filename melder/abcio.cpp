@@ -334,7 +334,7 @@ static char32 * peekString (MelderReadText me) {
 		}
 		MelderString_appendCharacter (& buffer, c);
 	}
-	return buffer. string;
+	return buffer.string;
 }
 
 #include "enums_getText.h"
