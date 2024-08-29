@@ -45,7 +45,6 @@
 #endif
 
 #include "espeak_ng.h"
-#include "espeak_io.h"
 #include "speak_lib.h"
 #include "encoding.h"
 
@@ -65,6 +64,8 @@
 #include "translate.h"            // for p_decoder, InitText, translator
 #include "voice.h"                // for FreeVoiceList, VoiceReset, current_...
 #include "wavegen.h"              // for WavegenFill, WavegenInit, WcmdqUsed
+
+#include "espeak_praat.h"
 
 static unsigned char *outbuf = NULL;
 static int outbuf_size = 0;
@@ -131,7 +132,7 @@ static int dispatch_audio(short *outbuff, int length, espeak_EVENT *event)
 #if USE_LIBPCAUDIO
 				int error = audio_object_open(my_audio, AUDIO_OBJECT_FORMAT_S16LE, voice_samplerate, 1);
 				if (error != 0) {
-					fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
+					FileInMemory_fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 					err = ENS_AUDIO_ERROR;
 					return -1;
 				}
@@ -148,7 +149,7 @@ static int dispatch_audio(short *outbuff, int length, espeak_EVENT *event)
 		if (out_samplerate == 0) {
 			int error = audio_object_open(my_audio, AUDIO_OBJECT_FORMAT_S16LE, voice_samplerate, 1);
 			if (error != 0) {
-				fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
+				FileInMemory_fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 				err = ENS_AUDIO_ERROR;
 				return -1;
 			}
@@ -160,7 +161,7 @@ static int dispatch_audio(short *outbuff, int length, espeak_EVENT *event)
 		if (outbuff && length && a_wave_can_be_played) {
 			int error = audio_object_write(my_audio, (char *)outbuff, 2*length);
 			if (error != 0)
-				fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
+				FileInMemory_fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 		}
 #endif
 
@@ -252,14 +253,14 @@ static int check_data_path(const char *path, int allow_directory)
 	if (!path) return 0;
 
 	snprintf(path_home, sizeof(path_home), "%s/espeak-ng-data", path);
-	if (GetFileLength(path_home) == -EISDIR)
+	if (espeak_praat_GetFileLength(path_home) == -EISDIR)
 		return 1;
 
 	if (!allow_directory)
 		return 0;
 
 	snprintf(path_home, sizeof(path_home), "%s", path);
-	return GetFileLength(path_home) == -EISDIR;
+	return espeak_praat_GetFileLength(path_home) == -EISDIR;
 }
 
 #pragma GCC visibility push(default)
@@ -590,7 +591,7 @@ espeak_ng_STATUS sync_espeak_Synth(unsigned int unique_identifier, const void *t
 		          ? audio_object_flush(my_audio)
 		          : audio_object_drain(my_audio);
 		if (error != 0)
-			fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
+			FileInMemory_fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 	}
 #endif
 

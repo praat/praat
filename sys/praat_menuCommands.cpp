@@ -244,7 +244,7 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
 	integer positionOfSeparator = pSeparator - title;
 	static MelderString string;
 	MelderString_copy (& string, title);
-	char32 *pTitle = & string. string [0];
+	char32 *pTitle = & string.string [0];
 	GuiMenuItem result = nullptr;
 	do {
 		pTitle [positionOfSeparator] = U'\0';

@@ -2197,14 +2197,14 @@ void Interpreter_run (Interpreter me, char32 *text, const bool reuseVariables) {
 				char32 c0;
 				bool fail = false;
 				MelderString_copy (& command2, lines [lineNumber]);
-				c0 = command2. string [0];
+				c0 = command2.string [0];
 				if (c0 == U'\0')
 					continue;
 				/*
 					Substitute variables.
 				*/
 				trace (U"substituting variables");
-				for (char32 *p = & command2. string [0]; *p != U'\0'; p ++) if (*p == U'\'') {
+				for (char32 *p = & command2.string [0]; *p != U'\0'; p ++) if (*p == U'\'') {
 					/*
 						Found a left quote. Search for a matching right quote.
 					*/

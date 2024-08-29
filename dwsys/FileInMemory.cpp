@@ -39,6 +39,7 @@
 #include "FileInMemory_def.h"
 
 Thing_implement (FileInMemory, Daata, 0);
+Thing_implement (FileInMemorySet, SortedSetOfString, 0);
 
 void structFileInMemory :: v1_info () {
 	our structDaata :: v1_info ();
@@ -766,6 +767,182 @@ void test_FileInMemoryManager_io (void) {
 	MelderFile_delete (file2);
 	
 	MelderInfo_writeLine (U"test_FileInMemoryManager_io: OK");
+}
+
+void structFileInMemorySet :: v1_info () {
+	MelderInfo_writeLine (U"Number of files: ", size);
+	MelderInfo_writeLine (U"Total number of bytes: ", FileInMemorySet_getTotalNumberOfBytes (this));
+}
+
+integer FileInMemorySet_getTotalNumberOfBytes (FileInMemorySet me) {
+	integer numberOfBytes = 0;
+	for (integer ifile = 1; ifile <= my size; ifile ++) {
+		const FileInMemory fim = (FileInMemory) my at [ifile];
+		numberOfBytes += fim -> d_numberOfBytes;
+	}
+	return numberOfBytes;
+}
+
+autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& list) {
+	try {
+		autoFileInMemorySet thee = Data_copy (list.at [1]);
+		for (integer iset = 1; iset <= list.size; iset ++)
+			thy merge (list.at [iset]);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"FileInMemorySets not merged.");
+	}
+}
+
+autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 fileGlobber) {
+	try {
+		structMelderFolder parent { };
+		Melder_pathToFolder (dirpath, & parent);
+		autoStrings thee = Strings_createAsFileList (Melder_cat (dirpath, U"/", fileGlobber));
+		Melder_require (thy numberOfStrings > 0,
+			U"No files found.");
+
+		autoFileInMemorySet me = FileInMemorySet_create ();
+		for (integer i = 1; i <= thy numberOfStrings; i ++) {
+			structMelderFile file { };
+			MelderFolder_getFile (& parent, thy strings [i].get(), & file);
+			my addItem_move (FileInMemory_create (& file));
+		}
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"FileInMemorySet not created from directory \"", dirpath, U"\" for files that match \"", fileGlobber, U"\".");
+	}
+}
+
+autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemory>& list) {
+	try {
+		autoFileInMemorySet thee = FileInMemorySet_create ();
+		for (integer ifile = 1; ifile <= list.size; ifile ++)
+			thy addItem_move (Data_copy (list.at [ifile]));
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"FilesInMemory not collected in FileInMemorySet.");
+	}
+	
+}
+
+autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
+	try {
+		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
+			const FileInMemory fim = my at [ifile];
+			if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
+				thy addItem_move (Data_copy (fim));
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot extract files.");
+	}
+}
+
+autoFileInMemorySet FileInMemorySet_removeFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
+	try {
+		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
+			const FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
+			if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
+				thy addItem_move (my subtractItem_move (ifile));
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot extract files.");
+	}
+}
+
+autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
+	try {
+		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
+			const FileInMemory fim = static_cast<FileInMemory> (my at [ifile]);
+			if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
+				thy addItem_ref (fim);
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot extract files.");
+	}
+}
+
+void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer numberOfBytesPerLine) {
+	autoMelderString one_fim;
+	MelderInfo_writeLine (U"#include \"FileInMemorySet.h\"\n");
+	MelderInfo_writeLine (U"autoFileInMemorySet create_", name, U" () {");
+	MelderInfo_writeLine (U"\ttry {");
+	MelderInfo_writeLine (U"\t\tautoFileInMemorySet me = FileInMemorySet_create ();");
+	for (integer ifile = 1; ifile <= my size; ifile ++) {
+		const FileInMemory fim = (FileInMemory) my at [ifile];
+		MelderString_copy (& one_fim, name, ifile);
+		FileInMemory_showAsCode (fim, one_fim.string, numberOfBytesPerLine);
+		MelderInfo_writeLine (U"\t\tmy addItem_move (", one_fim.string, U".move());\n");
+	}
+	MelderInfo_writeLine (U"\t\treturn me;");
+	MelderInfo_writeLine (U"\t} catch (MelderError) {");
+	MelderInfo_writeLine (U"\t\tMelder_throw (U\"FileInMemorySet not created.\");");
+	MelderInfo_writeLine (U"\t}");
+	MelderInfo_writeLine (U"}\n");
+}
+
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, conststring32 name, integer numberOfBytesPerLine) {
+	if (index < 1 || index > my size)
+		return;
+	MelderInfo_writeLine (U"#include \"FileInMemory.h\"\n");
+	MelderInfo_writeLine (U"static autoFileInMemory create_new_object () {");
+	MelderInfo_writeLine (U"\ttry {");
+	autoMelderString one_fim;
+	const FileInMemory fim = (FileInMemory) my at [index];
+	MelderString_append (& one_fim, name, index);
+	FileInMemory_showAsCode (fim, U"me", numberOfBytesPerLine);
+	MelderInfo_writeLine (U"\t\treturn me;");
+	MelderInfo_writeLine (U"\t} catch (MelderError) {");
+	MelderInfo_writeLine (U"\t\tMelder_throw (U\"FileInMemory not created.\");");
+	MelderInfo_writeLine (U"\t}");
+	MelderInfo_writeLine (U"}\n\n");
+	MelderInfo_writeLine (U"autoFileInMemory ", name, U" = create_new_object ();");
+}
+
+integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
+	integer numberOfMatches = 0;
+	for (integer ifile = 1; ifile <= my size; ifile ++) {
+		const FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
+		if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
+			numberOfMatches ++;
+	}
+	return numberOfMatches;
+}
+
+bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name) {
+	bool match = false;
+	autoMelderString searchString;
+	MelderString_append (& searchString, U"/", name, U"/");
+	for (integer i = 1; i <= my size; i ++) {
+		const FileInMemory fim = (FileInMemory) my at [i];
+		if (str32str (fim -> string.get(), searchString.string)) {
+			match = true;
+			break;
+		}
+	}
+	return match;
+}
+
+autoStrings FileInMemorySet_to_Strings_path (FileInMemorySet me) {
+	try {
+		autoStrings thee = Thing_new (Strings);
+		thy strings = autoSTRVEC (my size);
+		thy numberOfStrings = 0;
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
+			const FileInMemory fim = (FileInMemory) my at [ifile];
+			thy strings [ifile] = Melder_dup_f (fim -> string.get());
+			thy numberOfStrings ++;
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"No Strings created from FilesinMemory.");
+	}
 }
 
 /* End of file FileInMemory.cpp */

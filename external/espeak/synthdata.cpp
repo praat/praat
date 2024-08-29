@@ -28,7 +28,6 @@
 #include <string.h>
 
 #include "espeak_ng.h"
-#include "espeak_io.h"   // include *after* system includes
 #include "speak_lib.h"
 #include "encoding.h"
 
@@ -42,6 +41,8 @@
 #include "synthesize.h"               // for PHONEME_LIST, frameref_t, PHONE...
 #include "translate.h"                // for Translator, LANGUAGE_OPTIONS
 #include "voice.h"                    // for ReadTonePoints, tone_points, voice
+
+#include "espeak_praat.h"   // added by Praat team
 
 int n_tunes = 0;
 TUNE *tunes = NULL;
@@ -73,11 +74,11 @@ static espeak_ng_STATUS ReadPhFile(void **ptr, const char *fname, int *size, esp
 	char buf[sizeof(path_home)+40];
 
 	sprintf(buf, "%s%c%s", path_home, PATHSEP, fname);
-	length = GetFileLength(buf);
+	length = espeak_praat_GetFileLength(buf);
 	if (length < 0) // length == -errno
 		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (-length), buf);
 
-	if ((f_in = fopen(buf, "rb")) == NULL)
+	if ((f_in = FileInMemorySet_fopen(theEspeakPraatFileInMemorySet(), buf, "rb")) == NULL)
 		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (errno), buf);
 
 	if (*ptr != NULL) {
@@ -91,18 +92,18 @@ static espeak_ng_STATUS ReadPhFile(void **ptr, const char *fname, int *size, esp
 	}
 
 	if ((*ptr = malloc(length)) == NULL) {
-		fclose(f_in);
+		FileInMemory_fclose(f_in);
 		return static_cast<espeak_ng_STATUS> (ENOMEM);
 	}
-	if (fread(*ptr, 1, length, f_in) != length) {
+	if (FileInMemory_fread(*ptr, 1, length, f_in) != length) {
 		int error = errno;
-		fclose(f_in);
+		FileInMemory_fclose(f_in);
 		free(*ptr);
 		*ptr = NULL;
 		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), buf);
 	}
 
-	fclose(f_in);
+	FileInMemory_fclose(f_in);
 	if (size != NULL)
 		*size = length;
 	return ENS_OK;
@@ -334,7 +335,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 const unsigned char *GetEnvelope(int index)
 {
 	if (index == 0) {
-		fprintf(stderr, "espeak: No envelope\n");
+		FileInMemory_fprintf(stderr, "espeak: No envelope\n");
 		return envelope_data[0]; // not found, use a default envelope
 	}
 	return (unsigned char *)&phondata_ptr[index];
@@ -405,7 +406,7 @@ int SelectPhonemeTableName(const char *name)
 static void InvalidInstn(PHONEME_TAB *ph, int instn)
 {
 	char buf[5];
-	fprintf(stderr, "Invalid instruction %.4x for phoneme '%s'\n", instn, WordToString(buf, ph->mnemonic));
+	FileInMemory_fprintf(stderr, "Invalid instruction %.4x for phoneme '%s'\n", instn, WordToString(buf, ph->mnemonic));
 }
 
 static bool StressCondition(Translator *tr, PHONEME_LIST *plist, int condition, int control)

@@ -449,7 +449,7 @@ conststring32 Melder_peek16to32 (conststring16 text) {
 	for (;;) {
 		char16 kar1 = *text ++;
 		if (kar1 == u'\0')
-			return buffers [bufferNumber]. string;
+			return buffers [bufferNumber].string;
 		if (kar1 < 0xD800) {
 			MelderString_appendCharacter (& buffers [bufferNumber], (char32) kar1);   // convert up without sign extension
 		} else if (kar1 < 0xDC00) {
@@ -558,7 +558,7 @@ conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines) {
 		for (int64 i = 0; i <= n; i ++)
 			MelderString16_appendCharacter (& buffers [bufferNumber], text [i]);
 	}
-	return buffers [bufferNumber]. string;
+	return buffers [bufferNumber].string;
 }
 conststring16 Melder_peek32to16 (conststring32 text) {
 	return Melder_peek32to16 (text, false);

@@ -318,8 +318,38 @@ After this, the folder `./src` will be empty again.
 #		#endif
 # 	7. in error.cpp replace writing to stderr with calls to Melder_throw()
 #	8. in dictionary.cpp, soundicon.cpp, speech.cpp, synthdata.cpp, voices.cpp
-#		#include "espeak_io.h", and prepend "espeak_io_" to all calls of fopen, fclose, feof,
-#		fseek, ftell, fgets, fread, fgetc, fprintf, ungetc, GetFileLength and GetVoices.
+#		#include "espeak_praat.h", and prepend:
+
+- prepend "FileInMemorySet_" to all calls of fopen, adding a first argument "theEspeakPraatFileInMemorySet()".
+- prepend "FileInMemory_" to all calls of fclose, feof, fseek, ftell, fgets, fread, fgetc, fprintf and ungetc;
+- prepend "espeak_praat_" to all calls of GetFileLength and GetVoices;
+
+Here we list all the (remaining) occurrences of those functions in those five files:
+{;
+	if 0
+		@defineSourceFolders
+		sourceFolder$ = generationSourceFolder$
+	else
+		sourceFolder$ = "../../external/espeak"
+	endif
+	sourceFiles$# = { "dictionary.cpp", "soundicon.cpp", "speech.cpp", "synthdata.cpp", "voices.cpp" }
+	targets$# = { "fopen", "fclose", "feof", "fseek", "ftell", "fgets", "fread", "fgetc", "fprintf", "ungetc",
+	... "GetFileLength", "GetVoices" }
+	writeInfo()
+	for file to size (sourceFiles$#)
+		lines$# = readLinesFromFile$#: sourceFolder$ + "/" + sourceFiles$# [file]
+		for line to size (lines$#)
+			line$ = lines$# [line]
+			for target to size (targets$#)
+				target$ = targets$# [target]
+				if index_regex (line$, "[^_]" + target$)
+					appendInfoLine: sourceFiles$# [file], " ", line, " ", line$
+				endif
+			endfor
+		endfor
+	endfor
+}
+
 #       Use listFileIO.praat to list the occurrences of these names in those five files.
 #	9. delete all "#pragma GCC visibility" lines
 

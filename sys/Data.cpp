@@ -65,13 +65,12 @@ MelderFile Data_createTextFile (Daata me, MelderFile file, bool verbose) {
 	file -> outputEncoding = (int) Melder_getOutputEncoding ();
 	if (file -> outputEncoding == (int) kMelder_textOutputEncoding::ASCII_THEN_UTF16)
 		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ASCII) ?
-			kMelder_textOutputEncoding_ASCII : (int) kMelder_textOutputEncoding::UTF16;
+				kMelder_textOutputEncoding_ASCII : (int) kMelder_textOutputEncoding::UTF16;
 	else if (file -> outputEncoding == (int) kMelder_textOutputEncoding::ISO_LATIN1_THEN_UTF16)
 		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ISO_LATIN1) ?
-			kMelder_textOutputEncoding_ISO_LATIN1 : (int) kMelder_textOutputEncoding::UTF16;
-	if (file -> outputEncoding == (int) kMelder_textOutputEncoding::UTF16) {
+				kMelder_textOutputEncoding_ISO_LATIN1 : (int) kMelder_textOutputEncoding::UTF16;
+	if (file -> outputEncoding == (int) kMelder_textOutputEncoding::UTF16)
 		binputu16 (0xfeff, file -> filePointer);
-	}
 	return mfile.transfer();
 }
 
@@ -90,12 +89,14 @@ static void _Data_writeToTextFile (Daata me, MelderFile file, bool verbose) {
 		Data_writeText (me, file);
 		MelderFile_writeCharacter (file, U'\n');
 		#ifndef _WIN32
-			if (file -> filePointer) funlockfile (file -> filePointer);
+			if (file -> filePointer)
+				funlockfile (file -> filePointer);
 		#endif
 		mfile.close ();
 	} catch (MelderError) {
 		#ifndef _WIN32
-			if (file -> filePointer) funlockfile (file -> filePointer);   // the file pointer is null before Data_createTextFile() and after mfile.close()
+			if (file -> filePointer)
+				funlockfile (file -> filePointer);   // the file pointer is null before Data_createTextFile() and after mfile.close()
 		#endif
 		throw;
 	}

@@ -70,7 +70,39 @@ int FileInMemory_fprintf (FILE *stream, const char *format, ... );
 
 int FileInMemory_ungetc (int character, FILE *stream);
 
+/*
+	FileInMemorySet bookkeeping.
+*/
+
+autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 file);
+
+autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemory>& list);
+
+autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion);
+autoFileInMemorySet FileInMemorySet_removeFiles  (FileInMemorySet me, kMelder_string which, conststring32 criterion);
+
+/* Only creates references to files in memory. Once me is deleted, the references are not valid any more!! */
+autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion);
+
+integer FileInMemorySet_getTotalNumberOfBytes (FileInMemorySet me);
+
+autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& list);
+
+void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer numberOfBytesPerLine);
+
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, conststring32 name, integer numberOfBytesPerLine);
+
+integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, conststring32 criterion);
+
+bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name);
+
+autoStrings FileInMemorySet_to_Strings_path (FileInMemorySet me);
+
+/*
+	Testing.
+*/
 void test_FileInMemorySet_io (void);
+
 
 /* End of file FileInMemory.h */
 #endif

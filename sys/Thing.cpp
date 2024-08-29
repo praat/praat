@@ -1,6 +1,6 @@
 /* Thing.cpp
  *
- * Copyright (C) 1992-2012,2014-2023 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ conststring32 Thing_messageName (constThing me) {
 		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U" “", my name.get(), U"”");
 	else
 		MelderString_copy (& buffers [ibuffer], my classInfo -> className);
-	return buffers [ibuffer]. string;
+	return buffers [ibuffer].string;
 }
 
 conststring32 Thing_messageNameAndAddress (Thing me) {
@@ -230,7 +230,7 @@ conststring32 Thing_messageNameAndAddress (Thing me) {
 	else
 		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U"-",
 			Melder_pointer (me));
-	return buffers [ibuffer]. string;
+	return buffers [ibuffer].string;
 }
 
 void Thing_setName (Thing me, conststring32 name /* cattable */) {

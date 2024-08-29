@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2005,2007-2022 Paul Boersma,
+ * Copyright (C) 1992-2005,2007-2024 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -561,11 +561,11 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 	my d_cascadeButton -> d_menu = me.get();
 	static MelderString neatTitle;
 	MelderString_copy (& neatTitle, title);
-	if (neatTitle. length >= 1 && neatTitle. string [neatTitle. length - 1] == U'-') {
+	if (neatTitle. length >= 1 && neatTitle.string [neatTitle. length - 1] == U'-') {
 		constexpr conststring32 narrowSpacesForPreciseAlignment =
 				UNITEXT_NARROW_NO_BREAK_SPACE  UNITEXT_NARROW_NO_BREAK_SPACE  U"   ";
 		MelderString_copy (& neatTitle, narrowSpacesForPreciseAlignment, title);
-		neatTitle. string [neatTitle. length - 1] = U' ';
+		neatTitle.string [neatTitle. length - 1] = U' ';
 		/*
 			bikeshed choices for the disclosure sign:
 				UNITEXT_GREATER_THAN_SIGN: the middle way
@@ -576,7 +576,7 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		MelderString_append (& neatTitle, UNITEXT_GREATER_THAN_SIGN);
 	}
 	#if gtk
-		my d_cascadeButton -> d_widget = gtk_button_new_with_label (Melder_peek32to8 (neatTitle. string));
+		my d_cascadeButton -> d_widget = gtk_button_new_with_label (Melder_peek32to8 (neatTitle.string));
 		my d_cascadeButton -> v_positionInForm (my d_cascadeButton -> d_widget, left, right, top, bottom, form);
 		gtk_widget_show (GTK_WIDGET (my d_cascadeButton -> d_widget));
 
@@ -594,9 +594,9 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 	#elif motif
 		my d_xmMenuBar = XmCreateMenuBar (form -> d_widget, "dynamicSubmenuBar", 0, 0);
 		form -> v_positionInForm (my d_xmMenuBar, left, right, top, bottom, form);
-		my d_cascadeButton -> d_widget = XmCreateCascadeButton (my d_xmMenuBar, Melder_peek32to8 (neatTitle. string), nullptr, 0);
+		my d_cascadeButton -> d_widget = XmCreateCascadeButton (my d_xmMenuBar, Melder_peek32to8 (neatTitle.string), nullptr, 0);
 		form -> v_positionInForm (my d_cascadeButton -> d_widget, 0, right - left - 4, 0, bottom - top, form);
-		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, Melder_peek32to8 (neatTitle. string), nullptr, 0);
+		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, Melder_peek32to8 (neatTitle.string), nullptr, 0);
 		XtVaSetValues (my d_cascadeButton -> d_widget, XmNsubMenuId, my d_widget, nullptr);
 		XtManageChild (my d_cascadeButton -> d_widget);
 		XtManageChild (my d_xmMenuBar);
@@ -613,7 +613,7 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		[my d_cocoaMenuButton   setImagePosition: NSImageAbove];   // this centers the text
 		[[my d_cocoaMenuButton cell]   setArrowPosition: NSPopUpNoArrow /*NSPopUpArrowAtBottom*/];
 
-        NSString *menuTitle = (NSString*) Melder_peek32toCfstring (neatTitle. string);
+        NSString *menuTitle = (NSString*) Melder_peek32toCfstring (neatTitle.string);
         my d_widget = my d_cocoaMenu = [[GuiCocoaMenu alloc] initWithTitle: menuTitle];
 		[my d_cocoaMenu   setAutoenablesItems: NO];
 		/*
@@ -627,7 +627,7 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		*/
 		[my d_cocoaMenuButton   setMenu: my d_cocoaMenu];   // the button will retain the menu...
 		[my d_cocoaMenu   release];   // ... so we can release the menu already (before even returning it!)
-		[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peek32toCfstring (neatTitle. string)];
+		[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peek32toCfstring (neatTitle.string)];
 	#endif
 
 	#if gtk

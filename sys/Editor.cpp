@@ -111,7 +111,7 @@ GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* ca
 	integer positionOfSeparator = pSeparator - itemTitle;
 	static MelderString string;
 	MelderString_copy (& string, itemTitle);
-	char32 *pTitle = & string. string [0];
+	char32 *pTitle = & string.string [0];
 	GuiMenuItem result = nullptr;
 	do {
 		pTitle [positionOfSeparator] = U'\0';

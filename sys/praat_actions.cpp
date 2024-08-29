@@ -198,7 +198,7 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 	integer positionOfSeparator = pSeparator - title;
 	static MelderString string;
 	MelderString_copy (& string, title);
-	char32 *pTitle = & string. string [0];
+	char32 *pTitle = & string.string [0];
 	do {
 		pTitle [positionOfSeparator] = U'\0';
 		praat_addAction4__ (class1, n1, class2, n2, class3, n3, class4, n4,

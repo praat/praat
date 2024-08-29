@@ -31,7 +31,6 @@
 #include <unistd.h>
 
 #include "espeak_ng.h"
-#include "espeak_io.h"
 #include "speak_lib.h"
 #include "encoding.h"
 #include "ucd.h"
@@ -41,6 +40,8 @@
 #include "error.h"                // for create_file_error_context
 #include "speech.h"                   // for path_home, PATHSEP
 #include "synthesize.h"                   // for samplerate
+
+#include "espeak_praat.h"
 
 int n_soundicon_tab = 0;
 SOUND_ICON soundicon_tab[N_SOUNDICON_TAB];
@@ -71,13 +72,13 @@ static espeak_ng_STATUS LoadSoundFile(const char *fname, int index, espeak_ng_ER
 	fname_temp[0] = 0;
 
 	f = NULL;
-	if ((f = fopen(fname, "rb")) != NULL) {
+	if ((f = FileInMemorySet_fopen(theEspeakPraatFileInMemorySet(), fname, "rb")) != NULL) {
 		int ix;
 		int header[3];
 
-		if (fseek(f, 20, SEEK_SET) == -1) {
+		if (FileInMemory_fseek(f, 20, SEEK_SET) == -1) {
 			int error = errno;
-			fclose(f);
+			FileInMemory_fclose(f);
 			return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
 		}
 
@@ -86,7 +87,7 @@ static espeak_ng_STATUS LoadSoundFile(const char *fname, int index, espeak_ng_ER
 
 		// if the sound file is not mono, 16 bit signed, at the correct sample rate, then convert it
 		if ((header[0] != 0x10001) || (header[1] != samplerate) || (header[2] != samplerate*2)) {
-			fclose(f);
+			FileInMemory_fclose(f);
 			f = NULL;
 
 #if HAVE_MKSTEMP
@@ -105,34 +106,34 @@ static espeak_ng_STATUS LoadSoundFile(const char *fname, int index, espeak_ng_ER
 	}
 
 	if (f == NULL) {
-		f = fopen(fname, "rb");
+		f = FileInMemorySet_fopen(theEspeakPraatFileInMemorySet(), fname, "rb");
 		if (f == NULL)
 			return create_file_error_context(context, static_cast<espeak_ng_STATUS> (errno), fname);
 	}
 
-	length = GetFileLength(fname);
+	length = espeak_praat_GetFileLength(fname);
 	if (length < 0) { // length == -errno
-		fclose(f);
+		FileInMemory_fclose(f);
 		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (-length), fname);
 	}
-	if (fseek(f, 0, SEEK_SET) == -1) {
+	if (FileInMemory_fseek(f, 0, SEEK_SET) == -1) {
 		int error = errno;
-		fclose(f);
+		FileInMemory_fclose(f);
 		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
 	}
 	if ((p = (unsigned char *) realloc(soundicon_tab[index].data, length)) == NULL) {
-		fclose(f);
+		FileInMemory_fclose(f);
 		return static_cast<espeak_ng_STATUS> (ENOMEM);
 	}
-	if (fread(p, 1, length, f) != length) {
+	if (FileInMemory_fread(p, 1, length, f) != length) {
 		int error = errno;
-		fclose(f);
+		FileInMemory_fclose(f);
 		if (fname_temp[0])
 			remove(fname_temp);
 		free(p);
 		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
 	}
-	fclose(f);
+	FileInMemory_fclose(f);
 	if (fname_temp[0])
 		remove(fname_temp);
 

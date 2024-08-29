@@ -87,7 +87,7 @@
 #include "Eigen_and_TableOfReal.h"
 #include "Excitations.h"
 #include "espeakdata_FileInMemory.h"
-#include "FileInMemorySet.h"
+#include "FileInMemory.h"
 #include "FilterBank.h"
 #include "Formula.h"
 #include "FormantGridEditor.h"

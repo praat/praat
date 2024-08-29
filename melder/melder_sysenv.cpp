@@ -1,6 +1,6 @@
 /* melder_sysenv.cpp
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2019,2023 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2019,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,7 +289,7 @@ static autostring32 runAny_STR (
 		CloseHandle (piProcInfo. hProcess);
 		CloseHandle (piProcInfo. hThread);
 	#endif
-	return Melder_dup (stdout_string. string);
+	return Melder_dup (stdout_string.string);
 }
 
 autostring32 runSystem_STR (conststring32 command) {

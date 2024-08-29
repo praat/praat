@@ -51,24 +51,24 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 			*/
 			autoMelderString searchDirectory, left, middle, right, filePath;
 			MelderString_copy (& searchDirectory, path);
-			char32 * const asterisk1 = str32chr (searchDirectory. string, U'*');
-			char32 * const asterisk2 = str32rchr (searchDirectory. string, U'*');
+			char32 * const asterisk1 = str32chr (searchDirectory.string, U'*');
+			char32 * const asterisk2 = str32rchr (searchDirectory.string, U'*');
 			if (asterisk1) {
 				/*
 					The path is a wildcarded path.
 				*/
 				*asterisk1 = U'\0';
 				*asterisk2 = U'\0';
-				searchDirectory. length = asterisk1 - searchDirectory. string;   // probably superfluous, but correct
-				char32 * lastSlash = str32rchr (searchDirectory. string, U'/');
+				searchDirectory. length = asterisk1 - searchDirectory.string;   // probably superfluous, but correct
+				char32 * lastSlash = str32rchr (searchDirectory.string, U'/');
 				if (! lastSlash)
-					lastSlash = str32rchr (searchDirectory. string, U'\\');
+					lastSlash = str32rchr (searchDirectory.string, U'\\');
 				if (lastSlash) {
 					*lastSlash = U'\0';   // this fixes searchDirectory
-					searchDirectory. length = lastSlash - searchDirectory. string;   // probably superfluous, but correct
+					searchDirectory. length = lastSlash - searchDirectory.string;   // probably superfluous, but correct
 					MelderString_copy (& left, lastSlash + 1);
 				} else {
-					MelderString_copy (& left, searchDirectory. string);   // quickly save...
+					MelderString_copy (& left, searchDirectory.string);   // quickly save...
 					MelderString_empty (& searchDirectory);   // ...before destruction
 				}
 				if (asterisk1 != asterisk2) {
@@ -82,9 +82,9 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 			}
 			WIN32_FIND_DATAW findData;
 			HANDLE searchHandle = FindFirstFileW (Melder_peek32toW_fileSystem (
-					Melder_cat (searchDirectory. string [0] ? searchDirectory. string : U".", U"/*")), & findData);
+					Melder_cat (searchDirectory.string [0] ? searchDirectory.string : U".", U"/*")), & findData);
 			if (searchHandle == INVALID_HANDLE_VALUE)
-				Melder_throw (U"Cannot open folder ", searchDirectory. string, U".");
+				Melder_throw (U"Cannot open folder ", searchDirectory.string, U".");
 			autoSTRVEC strings;
 			do {
 				if ((! wantDirectories && (findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
@@ -92,7 +92,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 				{
 					if (findData. cFileName [0] == L'.')
 						continue;
-					MelderString_copy (& filePath, searchDirectory. string [0] ? searchDirectory. string : U".");
+					MelderString_copy (& filePath, searchDirectory.string [0] ? searchDirectory.string : U".");
 					MelderString_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
 					char32 buffer32 [kMelder_MAXPATH+1];
 					Melder_sprint (buffer32,kMelder_MAXPATH+1, Melder_peekWto32 (findData. cFileName));
@@ -101,13 +101,13 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 					integer numberOfMatchedCharacters = 0;
 					bool doesTheLeftMatch = true;
 					if (left. length != 0) {
-						doesTheLeftMatch = str32nequ_optionallyCaseSensitive (buffer32, left. string, left. length, caseSensitive);
+						doesTheLeftMatch = str32nequ_optionallyCaseSensitive (buffer32, left.string, left. length, caseSensitive);
 						if (doesTheLeftMatch)
 							numberOfMatchedCharacters = left.length;
 					}
 					bool doesTheMiddleMatch = true;
 					if (middle. length != 0) {
-						const char32 * const position = str32str_optionallyCaseSensitive (buffer32 + numberOfMatchedCharacters, middle. string, caseSensitive);
+						const char32 * const position = str32str_optionallyCaseSensitive (buffer32 + numberOfMatchedCharacters, middle.string, caseSensitive);
 						doesTheMiddleMatch = !! position;
 						if (doesTheMiddleMatch)
 							numberOfMatchedCharacters = position - buffer32 + middle.length;
@@ -116,7 +116,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 					if (right. length != 0) {
 						const int64 startOfRight = length - right. length;
 						doesTheRightMatch = startOfRight >= numberOfMatchedCharacters &&
-							str32equ_optionallyCaseSensitive (buffer32 + startOfRight, right. string, caseSensitive);
+							str32equ_optionallyCaseSensitive (buffer32 + startOfRight, right.string, caseSensitive);
 					}
 					if (buffer32 [0] != U'.' && doesTheLeftMatch && doesTheMiddleMatch && doesTheRightMatch)
 						strings. append (buffer32);
@@ -141,22 +141,22 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 			*/
 			autoMelderString searchDirectory, left, middle, right, filePath;
 			MelderString_copy (& searchDirectory, path);
-			char32 * const asterisk1 = str32chr (searchDirectory. string, U'*');
-			char32 * const asterisk2 = str32rchr (searchDirectory. string, U'*');
+			char32 * const asterisk1 = str32chr (searchDirectory.string, U'*');
+			char32 * const asterisk2 = str32rchr (searchDirectory.string, U'*');
 			if (asterisk1) {
 				/*
 					The path is a wildcarded path.
 				*/
 				*asterisk1 = U'\0';
 				*asterisk2 = U'\0';
-				searchDirectory. length = asterisk1 - searchDirectory. string;   // probably superfluous, but correct
-				char32 * const lastSlash = str32rchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
+				searchDirectory. length = asterisk1 - searchDirectory.string;   // probably superfluous, but correct
+				char32 * const lastSlash = str32rchr (searchDirectory.string, Melder_DIRECTORY_SEPARATOR);
 				if (lastSlash) {
 					*lastSlash = U'\0';   // this fixes searchDirectory
-					searchDirectory. length = lastSlash - searchDirectory. string;   // probably superfluous, but correct
+					searchDirectory. length = lastSlash - searchDirectory.string;   // probably superfluous, but correct
 					MelderString_copy (& left, lastSlash + 1);
 				} else {
-					MelderString_copy (& left, searchDirectory. string);   // quickly save...
+					MelderString_copy (& left, searchDirectory.string);   // quickly save...
 					MelderString_empty (& searchDirectory);   // ...before destruction
 				}
 				if (asterisk1 != asterisk2) {
@@ -169,41 +169,41 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 				*/
 			}
 			char buffer8 [kMelder_MAXPATH+1];
-			Melder_32to8_fileSystem_inplace (searchDirectory. string, buffer8);
+			Melder_32to8_fileSystem_inplace (searchDirectory.string, buffer8);
 			d = opendir (buffer8 [0] ? buffer8 : ".");
 			if (! d)
-				Melder_throw (U"Cannot open folder ", searchDirectory. string, U".");
+				Melder_throw (U"Cannot open folder ", searchDirectory.string, U".");
 			//Melder_casual (U"opened");
 			autoSTRVEC strings;
 			struct dirent *entry;
 			while (!! (entry = readdir (d))) {
-				MelderString_copy (& filePath, searchDirectory. string [0] ? searchDirectory. string : U".");
+				MelderString_copy (& filePath, searchDirectory.string [0] ? searchDirectory.string : U".");
 				MelderString_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
 				char32 buffer32 [kMelder_MAXPATH+1];
 				Melder_8bitFileRepresentationToStr32_inplace (entry -> d_name, buffer32);
 				MelderString_append (& filePath, buffer32);
-				//Melder_casual (U"read ", filePath. string);
-				Melder_32to8_fileSystem_inplace (filePath. string, buffer8);
+				//Melder_casual (U"read ", filePath.string);
+				Melder_32to8_fileSystem_inplace (filePath.string, buffer8);
 				struct stat stats;
 				if (stat (buffer8, & stats) != 0) {
-					//Melder_throw (U"Cannot look at file ", filePath. string, U".");
+					//Melder_throw (U"Cannot look at file ", filePath.string, U".");
 					//stats. st_mode = -1L;
 				}
-				//Melder_casual (U"statted ", filePath. string);
-				//Melder_casual (U"file ", filePath. string, U" mode ", stats. st_mode / 4096);
+				//Melder_casual (U"statted ", filePath.string);
+				//Melder_casual (U"file ", filePath.string, U" mode ", stats. st_mode / 4096);
 				if ((! wantDirectories && S_ISREG (stats. st_mode)) || (wantDirectories && S_ISDIR (stats. st_mode))) {
 					Melder_8bitFileRepresentationToStr32_inplace (entry -> d_name, buffer32);
 					const int64 length = Melder_length (buffer32);
 					integer numberOfMatchedCharacters = 0;
 					bool doesTheLeftMatch = true;
 					if (left. length != 0) {
-						doesTheLeftMatch = str32nequ_optionallyCaseSensitive (buffer32, left. string, left. length, caseSensitive);
+						doesTheLeftMatch = str32nequ_optionallyCaseSensitive (buffer32, left.string, left. length, caseSensitive);
 						if (doesTheLeftMatch)
 							numberOfMatchedCharacters = left.length;
 					}
 					bool doesTheMiddleMatch = true;
 					if (middle. length != 0) {
-						const char32 * const position = str32str_optionallyCaseSensitive (buffer32 + numberOfMatchedCharacters, middle. string, caseSensitive);
+						const char32 * const position = str32str_optionallyCaseSensitive (buffer32 + numberOfMatchedCharacters, middle.string, caseSensitive);
 						doesTheMiddleMatch = !! position;
 						if (doesTheMiddleMatch)
 							numberOfMatchedCharacters = position - buffer32 + middle.length;
@@ -212,7 +212,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 					if (right. length != 0) {
 						const int64 startOfRight = length - right. length;
 						doesTheRightMatch = startOfRight >= numberOfMatchedCharacters &&
-							str32equ_optionallyCaseSensitive (buffer32 + startOfRight, right. string, caseSensitive);
+							str32equ_optionallyCaseSensitive (buffer32 + startOfRight, right.string, caseSensitive);
 					}
 					if (buffer32 [0] != U'.' && doesTheLeftMatch && doesTheMiddleMatch && doesTheRightMatch)
 						strings. append (buffer32);

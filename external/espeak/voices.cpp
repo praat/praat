@@ -36,7 +36,6 @@
 #endif
 
 #include "espeak_ng.h"
-#include "espeak_io.h"
 #include "speak_lib.h"
 #include "encoding.h"
 
@@ -52,6 +51,8 @@
 #include "synthesize.h"               // for SetSpeed, SPEED_FACTORS, speed
 #include "translate.h"                // for LANGUAGE_OPTIONS, DeleteTranslator
 #include "wavegen.h"                  // for InitBreath
+
+#include "espeak_praat.h"
 
 static int AddToVoicesList(const char *fname, int len_path_voices, int is_language_file);
 
@@ -90,7 +91,7 @@ static char *fgets_strip(char *buf, int size, FILE *f_in)
 	int len;
 	char *p;
 
-	if (fgets(buf, size, f_in) == NULL)
+	if (FileInMemory_fgets(buf, size, f_in) == NULL)
 		return NULL;
 
 	if (buf[0] == '#') {
@@ -210,7 +211,7 @@ espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, int is_language_file)
 		case V_GENDER:
 			sscanf(p, "%s %d", vgender, &age);
 			if (is_language_file)
-				fprintf(stderr, "Error (%s): gender attribute specified on a language file\n", fname);
+				FileInMemory_fprintf(stderr, "Error (%s): gender attribute specified on a language file\n", fname);
 			break;
 		case V_VARIANTS:
 			sscanf(p, "%d", &n_variants);
@@ -391,7 +392,7 @@ void ReadNumbers(char *p, int *flags, int maxValue,  const MNEM_TAB *keyword_tab
 			if (n < maxValue) {
 				*flags |= (1 << n);
 			} else {
-				fprintf(stderr, "%s: Bad option number %d\n", LookupMnemName(keyword_table, key), n);
+				FileInMemory_fprintf(stderr, "%s: Bad option number %d\n", LookupMnemName(keyword_table, key), n);
 			}
 		}
 	while (isalnum(*p)) p++;
@@ -450,7 +451,7 @@ voice_t *LoadVoice(const char *vname, int control)
 	strncpy0(voicename, vname, sizeof(voicename));
 	if (control & 0x10) {
 		strcpy(buf, vname);
-		if (GetFileLength(buf) <= 0)
+		if (espeak_praat_GetFileLength(buf) <= 0)
 			return NULL;
 	} else {
 		if (voicename[0] == 0 && !(control & 8)/*compiling phonemes*/)
@@ -460,13 +461,13 @@ voice_t *LoadVoice(const char *vname, int control)
 		sprintf(path_voices, "%s%cvoices%c", path_home, PATHSEP, PATHSEP);
 		sprintf(buf, "%s%s", path_voices, voicename); // look in the main voices directory
 
-		if (GetFileLength(buf) <= 0) {
+		if (espeak_praat_GetFileLength(buf) <= 0) {
 			sprintf(path_voices, "%s%clang%c", path_home, PATHSEP, PATHSEP);
 			sprintf(buf, "%s%s", path_voices, voicename); // look in the main languages directory
 		}
 	}
 
-	f_voice = fopen(buf, "r");
+	f_voice = FileInMemorySet_fopen(theEspeakPraatFileInMemorySet(), buf, "r");
 
         if (!(control & 8)/*compiling phonemes*/)
             language_type = ESPEAKNG_DEFAULT_VOICE; // default
@@ -668,7 +669,7 @@ voice_t *LoadVoice(const char *vname, int control)
                 espeak_ng_STATUS status = LoadMbrolaTable(name1, name2, &srate);
                 if (status != ENS_OK) {
                     espeak_ng_PrintStatusCodeMessage(status, stderr, NULL);
-                    fclose(f_voice);
+                    FileInMemory_fclose(f_voice);
                     return NULL;
                 }
                 else
@@ -692,13 +693,13 @@ voice_t *LoadVoice(const char *vname, int control)
             case V_STATUS:
                 break;
             default:
-                fprintf(stderr, "Bad voice attribute: %s\n", buf);
+                FileInMemory_fprintf(stderr, "Bad voice attribute: %s\n", buf);
                 break;
             }
         }
 	}
 	if (f_voice != NULL)
-		fclose(f_voice);
+		FileInMemory_fclose(f_voice);
 
 	if ((translator == NULL) && (!tone_only)) {
 		// not set by language attribute
@@ -715,7 +716,7 @@ voice_t *LoadVoice(const char *vname, int control)
                          */
                         ix = 0;
                 } else if ((ix = SelectPhonemeTableName(phonemes_name)) < 0) {
-			fprintf(stderr, "Unknown phoneme table: '%s'\n", phonemes_name);
+			FileInMemory_fprintf(stderr, "Unknown phoneme table: '%s'\n", phonemes_name);
 			ix = 0;
 		}
 
@@ -968,7 +969,7 @@ static int SetVoiceScores(espeak_VOICE *voice_select, espeak_VOICE **voices, int
 
 		char buf[sizeof(path_home)+80];
 		sprintf(buf, "%s/voices/%s", path_home, language);
-		if (GetFileLength(buf) == -EISDIR) {
+		if (espeak_praat_GetFileLength(buf) == -EISDIR) {
 			// A subdirectory name has been specified.  List all the voices in that subdirectory
 			language[lang_len++] = PATHSEP;
 			language[lang_len] = 0;
@@ -1373,10 +1374,10 @@ ESPEAK_API const espeak_VOICE **espeak_ListVoices(espeak_VOICE *voice_spec)
 	FreeVoiceList();
 
 	sprintf(path_voices, "%s%cvoices", path_home, PATHSEP);
-	GetVoices(path_voices, strlen(path_voices)+1, 0);
+	espeak_praat_GetVoices(path_voices, strlen(path_voices)+1, 0);
 
 	sprintf(path_voices, "%s%clang", path_home, PATHSEP);
-	GetVoices(path_voices, strlen(path_voices)+1, 1);
+	espeak_praat_GetVoices(path_voices, strlen(path_voices)+1, 1);
 
 	voices_list[n_voices_list] = NULL; // voices list terminator
 	espeak_VOICE **new_voices = (espeak_VOICE **)realloc(voices, sizeof(espeak_VOICE *)*(n_voices_list+1));
@@ -1415,21 +1416,21 @@ ESPEAK_API espeak_VOICE *espeak_GetCurrentVoice(void)
 #pragma GCC visibility pop
 
 static int AddToVoicesList(const char *fname, int len_path_voices, int is_language_file) {
-	int ftype = GetFileLength(fname);
+	int ftype = espeak_praat_GetFileLength(fname);
 
 	if (ftype == -EISDIR) {
 		// a sub-directory
-		GetVoices(fname, len_path_voices, is_language_file);
+		espeak_praat_GetVoices(fname, len_path_voices, is_language_file);
 	} else if (ftype > 0) {
 		// a regular file, add it to the voices list
 		FILE *f_voice;
-		if ((f_voice = fopen(fname, "r")) == NULL)
+		if ((f_voice = FileInMemorySet_fopen(theEspeakPraatFileInMemorySet(), fname, "r")) == NULL)
 			return 1;
 
 		// pass voice file name within the voices directory
 		espeak_VOICE *voice_data;
 		voice_data = ReadVoiceFile(f_voice, fname+len_path_voices, is_language_file);
-		fclose(f_voice);
+		FileInMemory_fclose(f_voice);
 
 		if (voice_data != NULL)
 			voices_list[n_voices_list++] = voice_data;

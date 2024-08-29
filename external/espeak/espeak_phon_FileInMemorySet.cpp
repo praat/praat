@@ -24,8 +24,7 @@
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
 
-#include "espeakdata_FileInMemory.h"
-#include "FileInMemorySet.h"
+#include "espeak_praat.h"
 
 autoFileInMemorySet create_espeak_phon_FileInMemorySet () {
 	try {
