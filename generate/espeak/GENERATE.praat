@@ -108,7 +108,7 @@ procedure saveFileInMemorySetAsCppFile: .name$
 	... " * You should have received a copy of the GNU General Public License" + newline$ +
 	... " * along with this program; if not, see: <http://www.gnu.org/licenses/>." + newline$ +
 	... " */" + newline$ + newline$ +
-	... “#include "espeakdata_FileInMemory.h"” + newline$
+	... “#include "espeak-praat.h"” + newline$
 	.code$ = Show as code: .name$, 30
 	.tail$ = "/* End of file " + .fileName$ + " */" + newline$
 	writeFile: .fileName$, .head$, .code$, .tail$

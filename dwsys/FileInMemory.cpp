@@ -870,7 +870,7 @@ autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_strin
 
 void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer numberOfBytesPerLine) {
 	autoMelderString one_fim;
-	MelderInfo_writeLine (U"#include \"FileInMemorySet.h\"\n");
+	MelderInfo_writeLine (U"#include \"FileInMemory.h\"\n");
 	MelderInfo_writeLine (U"autoFileInMemorySet create_", name, U" () {");
 	MelderInfo_writeLine (U"\ttry {");
 	MelderInfo_writeLine (U"\t\tautoFileInMemorySet me = FileInMemorySet_create ();");
