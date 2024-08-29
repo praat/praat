@@ -23,6 +23,12 @@
 
 #include "FileInMemory_def.h"
 
+Collection_define (FileInMemorySet, SortedSetOfStringOf, FileInMemory) {
+	void v1_info ()
+		override;
+	integer errorNumber;
+};
+
 autoFileInMemory FileInMemory_create (MelderFile file);
 
 /*
@@ -36,6 +42,35 @@ autoFileInMemory FileInMemory_create (MelderFile file);
 autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, bool isStaticData, conststring32 path, conststring32 id);
 
 void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine);
+
+/*
+	File open and read emulations. The FILE * is internally used as an index of the file in the Set.
+*/
+
+FILE *FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode);
+
+void FileInMemory_rewind (FILE *stream);
+
+int FileInMemory_fclose (FILE *stream);
+
+int FileInMemory_feof (FILE *stream);
+
+integer FileInMemory_ftell (FILE *stream);
+
+int FileInMemory_fseek (FILE *stream, integer offset, int origin);
+
+char *FileInMemory_fgets (char *str, int num, FILE *stream);
+
+size_t FileInMemory_fread (void *ptr, size_t size, size_t count, FILE *stream);
+
+int FileInMemory_fgetc (FILE *stream);
+
+int FileInMemory_fprintf (FILE *stream, const char *format, ... );
+/* only returns number of bytes that would have been written or -1 in case of failure */
+
+int FileInMemory_ungetc (int character, FILE *stream);
+
+void test_FileInMemorySet_io (void);
 
 /* End of file FileInMemory.h */
 #endif

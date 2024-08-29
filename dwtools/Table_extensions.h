@@ -29,7 +29,7 @@
 #include "TableOfReal.h"
 #include "Collection.h"
 #include "Categories.h"
-#include "FileInMemoryManager.h"
+#include "FileInMemorySet.h"
 #include "Strings_.h"
 #include "SSCP.h"
 #include "Table.h"
@@ -57,7 +57,7 @@ autoTable Table_create_keatingEsposito2006 ();
 
 autoTable Table_create_ganong1980 ();
 
-autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly);
+autoTable FileInMemorySet_downto_Table (FileInMemorySet me, bool openFilesOnly);
 
 double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber);
 

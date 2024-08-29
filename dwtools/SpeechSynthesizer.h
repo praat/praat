@@ -25,7 +25,7 @@
 #include "Sound.h"
 #include "TextGrid.h"
 #include "espeak_ng.h"
-#include "FileInMemoryManager.h"
+#include "FileInMemory.h"
 #include "speech.h"
 #include "synthesize.h"
 #include "voice.h"

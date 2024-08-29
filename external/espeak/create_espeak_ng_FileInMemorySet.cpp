@@ -1,4 +1,4 @@
-/* create_espeak_ng_FileInMemoryManager.cpp
+/* create_espeak_ng_FileInMemorySet.cpp
  *
  * Copyright (C) 2017 David Weenink, 2024 Paul Boersma
  *
@@ -18,7 +18,7 @@
 
 #include "espeakdata_FileInMemory.h"
 
-autoFileInMemoryManager create_espeak_ng_FileInMemoryManager () {
+autoFileInMemorySet create_espeak_ng_FileInMemorySet () {
 	try{
 		OrderedOf <structFileInMemorySet> list;
 		list. addItem_move (create_espeak_phon_FileInMemorySet ());
@@ -27,12 +27,10 @@ autoFileInMemoryManager create_espeak_ng_FileInMemoryManager () {
 		list. addItem_move (create_espeak_otherDicts_FileInMemorySet ());
 		list. addItem_move (create_espeak_languages_FileInMemorySet ());
 		list. addItem_move (create_espeak_voices_FileInMemorySet ());
-		autoFileInMemorySet espeak_ng = FileInMemorySets_merge (list);
-		autoFileInMemoryManager me = FileInMemoryManager_create (espeak_ng.get());
-		return me;
+		return FileInMemorySets_merge (list);
 	} catch (MelderError) {
-		Melder_throw (U"FileInMemoryManager for espeak-ng not created.");
+		Melder_throw (U"FileInMemorySet for espeak-ng not created.");
 	}
 }
 
-/* End of file create_espeak_ng_FileInMemoryManager.cpp */
+/* End of file create_espeak_ng_FileInMemorySet.cpp */

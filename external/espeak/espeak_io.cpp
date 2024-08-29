@@ -24,55 +24,55 @@
 #include <errno.h>
 #include "espeak_io.h"   // include *after* system includes
 
-extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
+extern autoFileInMemorySet espeak_ng_FileInMemorySet;
 
 FILE *espeak_io_fopen (const char * filename, const char * mode) {
-	return FileInMemoryManager_fopen (espeak_ng_FileInMemoryManager.get(), filename, mode);
+	return FileInMemorySet_fopen (espeak_ng_FileInMemorySet.get(), filename, mode);
 }
 
 void espeak_io_rewind (FILE *stream) {
-	FileInMemoryManager_rewind (espeak_ng_FileInMemoryManager.get(), stream);
+	FileInMemory_rewind (stream);
 }
 
 int espeak_io_fclose (FILE *stream) {
-	return FileInMemoryManager_fclose (espeak_ng_FileInMemoryManager.get(), stream);
+	return FileInMemory_fclose (stream);
 }
 
 int espeak_io_feof (FILE *stream) {
-	return FileInMemoryManager_feof (espeak_ng_FileInMemoryManager.get(), stream);
+	return FileInMemory_feof (stream);
 }
 
 long espeak_io_ftell (FILE *stream) {
-	return FileInMemoryManager_ftell (espeak_ng_FileInMemoryManager.get(), stream);
+	return FileInMemory_ftell (stream);
 }
 
 int espeak_io_fseek (FILE *stream, long offset, int origin) {
-	return FileInMemoryManager_fseek (espeak_ng_FileInMemoryManager.get(), stream, offset, origin);
+	return FileInMemory_fseek (stream, offset, origin);
 }
 
 char *espeak_io_fgets (char *str, int num, FILE *stream) {
-	return FileInMemoryManager_fgets (espeak_ng_FileInMemoryManager.get(), str, num, stream);
+	return FileInMemory_fgets (str, num, stream);
 }
 
 size_t espeak_io_fread (void *ptr, size_t size, size_t count, FILE *stream) {
-	return FileInMemoryManager_fread (espeak_ng_FileInMemoryManager.get(), ptr, size, count, stream);
+	return FileInMemory_fread (ptr, size, count, stream);
 }
 
 int espeak_io_fgetc (FILE *stream) {
-	return FileInMemoryManager_fgetc (espeak_ng_FileInMemoryManager.get(), stream);
+	return FileInMemory_fgetc (stream);
 }
 
 int espeak_io_fprintf (FILE * stream, ... ) {
 	va_list arg;
 	va_start (arg, stream);
 	char *format = static_cast<char *> (va_arg (arg, void*));
-	int result = FileInMemoryManager_fprintf (espeak_ng_FileInMemoryManager.get(), stream, format, arg);
+	int result = FileInMemory_fprintf (stream, format, arg);
 	va_end (arg);
 	return result;
 }
 
-int espeak_io_ungetc (int character, FILE * stream) {
-	return FileInMemoryManager_ungetc (espeak_ng_FileInMemoryManager.get(), character,stream);
+int espeak_io_ungetc (int character, FILE *stream) {
+	return FileInMemory_ungetc (character, stream);
 }
 
 /* 
@@ -81,10 +81,10 @@ int espeak_io_ungetc (int character, FILE * stream) {
 	If the filename is a directory it return -EISDIR
 */
 int espeak_io_GetFileLength (const char *filename) {
-	FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
-	integer index = FileInMemorySet_lookUp (me, Melder_peek8to32 (filename));
+	FileInMemorySet me = espeak_ng_FileInMemorySet.get();
+	integer index = my lookUp (Melder_peek8to32 (filename));
 	if (index > 0) {
-		FileInMemory fim = static_cast<FileInMemory> (my at [index]);
+		FileInMemory fim = my at [index];
 		return fim -> d_numberOfBytes;
 	}
 	// Directory ??
@@ -105,15 +105,15 @@ void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language
 		if is_languange_file == 0 then /voices/ else /lang/ 
 		We know our voices are in /voices/!v/ and our languages in /lang/
 	*/
-	FileInMemoryManager me = espeak_ng_FileInMemoryManager.get();
+	FileInMemorySet me = espeak_ng_FileInMemorySet.get();
 	conststring32 criterion = is_language_file ? U"/lang/" : U"/voices/";
-	autoFileInMemorySet fileList = FileInMemorySet_listFiles (my files.get(), kMelder_string :: CONTAINS, criterion);
+	autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
 	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
-		FileInMemory fim = static_cast<FileInMemory> (fileList -> at [ifile]);
-		FILE *f_voice = FileInMemoryManager_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
+		FileInMemory fim = fileList -> at [ifile];
+		FILE *f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
 		conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
 		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
-		FileInMemoryManager_fclose (me, f_voice);
+		FileInMemory_fclose (f_voice);
 		if (voice_data) {
 			voices_list [n_voices_list ++] = voice_data;
 		} /*else {
@@ -381,29 +381,29 @@ static autoFileInMemory phonindex_to_bigendian (FileInMemory me) {
 }
 
 void espeak_ng_data_to_bigendian () {
-	FileInMemoryManager me = espeak_ng_FileInMemoryManager.get();
+	FileInMemorySet me = espeak_ng_FileInMemorySet.get();
 
-	const integer manifestIndex = FileInMemorySet_lookUp (my files.get(), U"" PATH_ESPEAK_DATA "/phondata-manifest");
+	const integer manifestIndex = my lookUp (U"" PATH_ESPEAK_DATA "/phondata-manifest");
 	Melder_assert (manifestIndex > 0);
-	const FileInMemory manifest = (FileInMemory) my files -> at [manifestIndex];
+	const FileInMemory manifest = my at [manifestIndex];
 	// no conversion to big-endian is necessary, because `phondata-manifest` is a text file
 	// we do need manifest here, for converting phondata
 
-	const integer phondataIndex = FileInMemorySet_lookUp (my files.get(), U"" PATH_ESPEAK_DATA "/phondata");
+	const integer phondataIndex = my lookUp (U"" PATH_ESPEAK_DATA "/phondata");
 	Melder_assert (phondataIndex > 0);
-	const FileInMemory phondata = (FileInMemory) my files -> at [phondataIndex];
+	const FileInMemory phondata = my at [phondataIndex];
 	autoFileInMemory phondata_new = phondata_to_bigendian (phondata, manifest);
 	Thing_swap (phondata, phondata_new.get());   // not `my files -> replaceItem_move (...)`, so as not to dangle `my openFiles`!
 
-	const integer phontabIndex = FileInMemorySet_lookUp (my files.get(), U"" PATH_ESPEAK_DATA "/phontab");
+	const integer phontabIndex = my lookUp (U"" PATH_ESPEAK_DATA "/phontab");
 	Melder_assert (phontabIndex > 0);
-	const FileInMemory phontab = (FileInMemory) my files -> at [phontabIndex];
+	const FileInMemory phontab = my at [phontabIndex];
 	autoFileInMemory phontab_new = phontab_to_bigendian (phontab);
 	Thing_swap (phontab, phontab_new.get());
 
-	const integer phonindexIndex = FileInMemorySet_lookUp (my files.get(), U"" PATH_ESPEAK_DATA "/phonindex");
+	const integer phonindexIndex = my lookUp (U"" PATH_ESPEAK_DATA "/phonindex");
 	Melder_assert (phonindexIndex > 0);
-	const FileInMemory phonindex = (FileInMemory) my files -> at [phonindexIndex];
+	const FileInMemory phonindex = my at [phonindexIndex];
 	autoFileInMemory phonindex_new = phonindex_to_bigendian (phonindex);
 	Thing_swap (phonindex, phonindex_new.get());
 }

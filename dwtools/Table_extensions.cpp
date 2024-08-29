@@ -41,13 +41,13 @@
 #include "Covariance.h"
 #include "Table_extensions.h"
 
-autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly) {
+autoTable FileInMemorySet_downto_Table (FileInMemorySet me, bool openFilesOnly) {
 	try {
-		const integer numberOfRows = ( openFilesOnly ? my openFiles -> size : my files -> size );
+		const integer numberOfRows = my size;   // FIXME: try open files only
 		const conststring32 columnNames [] = { U"path", U"size", U"position" };
 		autoTable thee = Table_createWithColumnNames (numberOfRows, ARRAY_TO_STRVEC (columnNames));
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			const FileInMemory fim = static_cast <FileInMemory> (openFilesOnly ? my openFiles -> at [irow] : my files -> at [irow]);
+			const FileInMemory fim = my at [irow];   // FIXME: try open files only
 			Table_setStringValue (thee.get(), irow, 1, fim -> string.get());
 			Table_setNumericValue (thee.get(), irow, 2, fim -> d_numberOfBytes);
 			Table_setNumericValue (thee.get(), irow, 3, fim -> d_position);
