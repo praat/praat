@@ -21,7 +21,6 @@
 #define ESPEAK_NG_VOICE_H
 
 #include "espeak_ng.h"
-#include "espeak_praat.h"
 
 #include "mnemonics.h"
 #include "translate.h"
