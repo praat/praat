@@ -18,18 +18,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-	djmw 20111214
-*/
-
+#include "espeakdata_FileInMemory.h"
 #include "Sound.h"
 #include "TextGrid.h"
 #include "espeak_ng.h"
-#include "FileInMemory.h"
 #include "speech.h"
 #include "synthesize.h"
 #include "voice.h"
-#include "espeakdata_FileInMemory.h"
 
 #define SpeechSynthesizer_PHONEMECODINGS_IPA 2
 #define SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM 1

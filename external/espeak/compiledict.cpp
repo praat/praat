@@ -18,7 +18,7 @@
  *             <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
+#include "espeak__config.h"
 
 #include <ctype.h>
 #include <errno.h>

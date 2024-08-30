@@ -18,7 +18,7 @@
 
 // This source file is only used for asynchronous modes
 
-#include "config.h"
+#include "espeak__config.h"
 
 #include <assert.h>
 #include <errno.h>

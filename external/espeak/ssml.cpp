@@ -19,7 +19,7 @@
  */
 
 
-#include "config.h"
+#include "espeak__config.h"
 
 #include <ctype.h>
 #include <errno.h>
