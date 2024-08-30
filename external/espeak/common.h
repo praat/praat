@@ -21,7 +21,7 @@
 #define ESPEAK_NG_COMMON_H
 
 #include "espeak_ng.h"
-#include "espeak_praat.h"
+#include "FileInMemory.h"
 #include "translate.h"
 
 extern ESPEAK_NG_API int GetFileLength(const char *filename);

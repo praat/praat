@@ -25,6 +25,8 @@
 #include "mnemonics.h"
 #include "translate.h"
 
+#include "FileInMemory.h"
+
 #ifdef __cplusplus
 extern "C"
 {

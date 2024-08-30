@@ -19,7 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "espeak__config.h"
+#include "FileInMemory.h"
 
 autoFileInMemorySet create_espeak_all_FileInMemorySet ();
 autoFileInMemorySet create_espeak_phon_FileInMemorySet ();
