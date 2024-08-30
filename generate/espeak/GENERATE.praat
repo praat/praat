@@ -294,8 +294,7 @@ Also a new file espeak-ng-version.h is created [TO BE EDITED]:
 		exitScript: "The given version (", espeak_version$, ") differs from package version ", .version$
 	endif
 
-	.version_define$ = "#define ESPEAK_NG_VERSION " + "U""" + espeak_version$ + """" + newline$
-		... + "#define ESPEAK_NG_VERSIONX " + espeak_version$ + newline$
+	.version_define$ = “#define ESPEAK_NG_VERSION  "” + espeak_version$ + “"” + newline$
 	writeFile: todir$ + "/espeak_ng_version.h", .version_define$
 
 5. Adapting eSpeak source code to Praat

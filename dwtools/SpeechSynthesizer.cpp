@@ -380,7 +380,7 @@ static conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, conststring32 voiceName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
-		my d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
+		my d_synthesizerVersion = Melder_dup (U"" ESPEAK_NG_VERSION);
 		my d_languageName = Melder_dup (languageName);
 		(void) SpeechSynthesizer_getLanguageCode (me.get());  // existence check
 		my d_voiceName = Melder_dup (voiceName);
