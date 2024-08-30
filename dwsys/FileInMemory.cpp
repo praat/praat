@@ -116,85 +116,19 @@ void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numbe
 		name, U"_data), true, \n\t\t\tU\"", my string.get(), U"\");");
 }
 
-/*
-	File open and read emulations. The FILE * is internally used as a pointer to the index of the file in the Set.
-	List of open files has to contain per file: index, position, length (bytes), pointer to data
-*/
-
-/*
-	From http://www.cplusplus.com/reference/cstdio
-	FILE * fopen ( const char * filename, const char * mode );
-
-	Open file
-	Opens the file whose name is specified in the parameter filename and associates it with a stream that can be identified in future operations by the FILE pointer returned.
-
-	The operations that are allowed on the stream and how these are performed are defined by the mode parameter.
-
-	The returned stream is fully buffered by default if it is known to not refer to an interactive device (see setbuf).
-
-	The returned pointer can be disassociated from the file by calling fclose or freopen. All opened files are automatically closed on normal program termination.
-
-	The running environment supports at least FOPEN_MAX files open simultaneously.
-
-	Parameters
-
-	filename
-		C string containing the name of the file to be opened.
-		Its value shall follow the file name specifications of the running environment and can include a path (if supported by the system).
-	mode
-		C string containing a file access mode. It can be:
-		"r"	read: Open file for input operations. The file must exist.
-		"w"	write: Create an empty file for output operations. If a file with the same name already exists, its contents are discarded and the file is treated as a new empty file.
-		"a"	append: Open file for output at the end of a file. Output operations always write data at the end of the file, expanding it. Repositioning operations (fseek, fsetpos, rewind) are ignored. The file is created if it does not exist.
-		"r+"	read/update: Open a file for update (both for input and output). The file must exist.
-		"w+"	write/update: Create an empty file and open it for update (both for input and output). If a file with the same name already exists its contents are discarded and the file is treated as a new empty file.
-		"a+"	append/update: Open a file for update (both for input and output) with all output operations writing data at the end of the file. Repositioning operations (fseek, fsetpos, rewind) affects the next input operations, but output operations move the position back to the end of file. The file is created if it does not exist.
-		With the mode specifiers above the file is open as a text file. In order to open a file as a binary file, a "b" character has to be included in the mode string. This additional "b" character can either be appended at the end of the string (thus making the following compound modes: "rb", "wb", "ab", "r+b", "w+b", "a+b") or be inserted between the letter and the "+" sign for the mixed modes ("rb+", "wb+", "ab+").
-
-		The new C standard (C2011, which is not part of C++) adds a new standard subspecifier ("x"), that can be appended to any "w" specifier (to form "wx", "wbx", "w+x" or "w+bx"/"wb+x"). This subspecifier forces the function to fail if the file exists, instead of overwriting it.
-
-		If additional characters follow the sequence, the behavior depends on the library implementation: some implementations may ignore additional characters so that for example an additional "t" (sometimes used to explicitly state a text file) is accepted.
-
-		On some library implementations, opening or creating a text file with update mode may treat the stream instead as a binary file.
-
-
-	Text files are files containing sequences of lines of text. Depending on the environment where the application runs, some special character conversion may occur in input/output operations in text mode to adapt them to a system-specific text file format. Although on some environments no conversions occur and both text files and binary files are treated the same way, using the appropriate mode improves portability.
-
-	For files open for update (those which include a "+" sign), on which both input and output operations are allowed, the stream shall be flushed (fflush) or repositioned (fseek, fsetpos, rewind) before a reading operation that follows a writing operation. The stream shall be repositioned (fseek, fsetpos, rewind) before a writing operation that follows a reading operation (whenever that operation did not reach the end-of-file).
-
-	Return Value
-	If the file is successfully opened, the function returns a pointer to a FILE object that can be used to identify the stream on future operations.
-	Otherwise, a null pointer is returned.
-	On most library implementations, the errno variable is also set to a system-specific error code on failure.
-*/
 FileInMemory FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode) {
-	//TRACE
-	trace (U"trying to open ", Melder_peek8to32 (fileName), U".");
-	try {
-		FileInMemory result = nullptr;
-		if (*mode == 'r') {   // also covers mode "rb"
-			const integer index = my lookUp (Melder_peek8to32 (fileName));
-			//for (integer i = 1; i <= my size; i ++)
-			//	trace (i, U" ", my at [i] -> string.get());
-			if (index > 0) {
-				result = my at [index];
-				result -> d_position = 0;
-				result -> d_errno = 0;
-				result -> ungetChar = -1;
-			} else {
-				/*
-					This function should not throw.
-					Several eSpeak functions rely on fopen just returning NULL in case of an error.
-				*/
-				trace (U"File \"", Melder_peek8to32 (fileName), U"\" does not exist.");
-			}
-		} else if (*mode == 'w') {
-			
-		}
-		return result;
-	} catch (MelderError) {
-		Melder_throw (U"File ", Melder_peek8to32 (fileName), U" cannot be opened.");
+	Melder_assert (mode [0] == 'r');   // i.e. "r" or "rb"; only reading has been implemented; cannot write ('w') or append ('a')
+	const integer index = my lookUp (Melder_peek8to32 (fileName));
+	if (index == 0) {
+		errno = ENOENT;   // "no such file or directory"
+		return nullptr;
 	}
+	FileInMemory thee = my at [index];
+	thy d_position = 0;   // after opening, start at the beginning of the file
+	thy d_errno = 0;
+	thy ungetChar = -1;
+	thy isOpen = true;
+	return thee;
 }
 
 /*
@@ -204,7 +138,8 @@ FileInMemory FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, co
 	Set position of stream to the beginning
 	Sets the position indicator associated with stream to the beginning of the file.
 
-	The end-of-file and error internal indicators associated to the stream are cleared after a successful call to this function, and all effects from previous calls to ungetc on this stream are dropped.
+	The end-of-file and error internal indicators associated to the stream are cleared after a successful call to this function,
+	and all effects from previous calls to ungetc on this stream are dropped.
 
 	On streams open for update (read+write), a call to rewind allows to switch between reading and writing.
 
@@ -218,9 +153,10 @@ FileInMemory FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, co
 	none
 */
 void FileInMemory_rewind (FileInMemory me) {
-	my d_position = 0;
-	my d_errno = 0;
-	my ungetChar = -1;
+	Melder_assert (my isOpen);
+	my d_position = 0;   // this was successful...
+	my d_errno = 0;   // ...so we clear the end-of-file indicator and the error indicator
+	my ungetChar = -1;   // we also drop any effects from previous calls to `ungetc` on this stream
 }
 
 /*
@@ -230,7 +166,8 @@ void FileInMemory_rewind (FileInMemory me) {
 	Close file
 	Closes the file associated with the stream and disassociates it.
 
-	All internal buffers associated with the stream are disassociated from it and flushed: the content of any unwritten output buffer is written and the content of any unread input buffer is discarded.
+	All internal buffers associated with the stream are disassociated from it and flushed:
+	the content of any unwritten output buffer is written and the content of any unread input buffer is discarded.
 
 	Even if the call fails, the stream passed as parameter will no longer be associated with the file nor its buffers.
 
@@ -245,9 +182,11 @@ void FileInMemory_rewind (FileInMemory me) {
 	On failure, EOF is returned.
 */
 int FileInMemory_fclose (FileInMemory me) {
+	Melder_assert (my isOpen);
 	my d_position = 0;
 	my d_errno = 0;
 	my ungetChar = -1;
+	my isOpen = false;
 	return 0;
 }
 
@@ -275,7 +214,8 @@ int FileInMemory_fclose (FileInMemory me) {
 	Otherwise, zero is returned.
 */
 int FileInMemory_feof (FileInMemory me) {
-	return my d_position >= my d_numberOfBytes ? 1 : 0;
+	Melder_assert (my isOpen);
+	return my d_position >= my d_numberOfBytes;
 }
 
 /*
@@ -287,11 +227,14 @@ int FileInMemory_feof (FileInMemory me) {
 
 	For streams open in binary mode, the new position is defined by adding offset to a reference position specified by origin.
 
-	For streams open in text mode, offset shall either be zero or a value returned by a previous call to ftell, and origin shall necessarily be SEEK_SET.
+	For streams open in text mode, offset shall either be zero or a value returned by a previous call to ftell,
+	and origin shall necessarily be SEEK_SET.
 
-	If the function is called with other values for these arguments, support depends on the particular system and library implementation (non-portable).
+	If the function is called with other values for these arguments,
+	support depends on the particular system and library implementation (non-portable).
 
-	The end-of-file internal indicator of the stream is cleared after a successful call to this function, and all effects from previous calls to ungetc on this stream are dropped.
+	The end-of-file internal indicator of the stream is cleared after a successful call to this function,
+	and all effects from previous calls to ungetc on this stream are dropped.
 
 	On streams open for update (read+write), a call to fseek allows to switch between reading and writing.
 
@@ -317,7 +260,8 @@ int FileInMemory_feof (FileInMemory me) {
 	If a read or write error occurs, the error indicator (ferror) is set.
 */
 int FileInMemory_fseek (FileInMemory me, integer offset, int origin) {
-	my d_errno = 0;
+	Melder_assert (my isOpen);
+	my d_errno = 0;   // set the error indicator to nonzero only if there is an error
 	integer newPosition = 0;
 	if (origin == SEEK_SET)
 		newPosition = offset;
@@ -326,13 +270,13 @@ int FileInMemory_fseek (FileInMemory me, integer offset, int origin) {
 	else if (origin == SEEK_END)
 		newPosition = my d_numberOfBytes + offset;
 	else
-		my d_errno = EINVAL;   // FIXME: to boss? global? what about EBADF?
+		return errno = my d_errno = EINVAL;   // FIXME: to boss? global? what about EBADF?
 
 	if (newPosition < 0)   // > numberOfBytes is allowed
 		newPosition = 0;
 
-	my d_position = newPosition;
-	my ungetChar = -1;
+	my d_position = newPosition;   // FIXME: this may entail end-of-file (which is implementation-dependent)
+	my ungetChar = -1;   // drop all effects of previous calls to ungetc on this stream
 	return my d_errno;
 }
 
@@ -358,6 +302,7 @@ int FileInMemory_fseek (FileInMemory me, integer offset, int origin) {
 	On failure, -1L is returned, and errno is set to a system-specific positive value.
 */
 integer FileInMemory_ftell (FileInMemory me) {
+	Melder_assert (my isOpen);
 	return my d_position;   // FIXME: what about EBDF?
 }
 
@@ -372,7 +317,8 @@ integer FileInMemory_ftell (FileInMemory me) {
 
 	A terminating null character is automatically appended after the characters copied to str.
 
-	Notice that fgets is quite different from gets: not only fgets accepts a stream argument, but also allows to specify the maximum size of str and includes in the string any ending newline character.
+	Notice that fgets is quite different from gets: not only fgets accepts a stream argument,
+	but also allows to specify the maximum size of str and includes in the string any ending newline character.
 
 	Parameters
 
@@ -391,8 +337,8 @@ integer FileInMemory_ftell (FileInMemory me) {
 	If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed). 
  */
 char *FileInMemory_fgets (char *str, int num, FileInMemory me) {
+	Melder_assert (my isOpen);
 	char *result = nullptr;
-	// FIXME: test whether file is open?
 
 	integer startPos = my d_position;
 	if (startPos < my d_numberOfBytes) {
@@ -446,9 +392,10 @@ char *FileInMemory_fgets (char *str, int num, FileInMemory me) {
 	If some other reading error happens, the function also returns EOF, but sets its error indicator (ferror) instead.
 */
 int FileInMemory_fgetc (FileInMemory me) {
-	char str [4];
-	(void) FileInMemory_fgets (str, 1, me);
-	return FileInMemory_feof (me) ? EOF : static_cast<int> (*str);
+	Melder_assert (my isOpen);
+	char kar;
+	(void) FileInMemory_fgets (& kar, 1, me);
+	return FileInMemory_feof (me) ? EOF : (unsigned char) (kar);
 }
 
 /*
@@ -482,6 +429,7 @@ int FileInMemory_fgetc (FileInMemory me) {
 	size_t is an unsigned integral type. 
 */
 size_t FileInMemory_fread (void *ptr, size_t size, size_t count, FileInMemory me) {
+	Melder_assert (my isOpen);
 	size_t result = 0;
 	integer startPos = my d_position;
 	if (startPos < my d_numberOfBytes) {
@@ -537,6 +485,7 @@ size_t FileInMemory_fread (void *ptr, size_t size, size_t count, FileInMemory me
 */
 
 int FileInMemory_ungetc (int character, FileInMemory me) {
+	Melder_assert (my isOpen);
 	int result = EOF;
 	if (character != EOF) {
 		-- my d_position;
@@ -661,7 +610,7 @@ void structFileInMemorySet :: v1_info () {
 integer FileInMemorySet_getTotalNumberOfBytes (FileInMemorySet me) {
 	integer numberOfBytes = 0;
 	for (integer ifile = 1; ifile <= my size; ifile ++) {
-		const FileInMemory fim = (FileInMemory) my at [ifile];
+		const FileInMemory fim = my at [ifile];
 		numberOfBytes += fim -> d_numberOfBytes;
 	}
 	return numberOfBytes;
@@ -728,7 +677,7 @@ autoFileInMemorySet FileInMemorySet_removeFiles (FileInMemorySet me, kMelder_str
 	try {
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
-			const FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
+			const FileInMemory fim = my at [ifile];
 			if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
 				thy addItem_move (my subtractItem_move (ifile));
 		}
@@ -742,7 +691,7 @@ autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_strin
 	try {
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
-			const FileInMemory fim = static_cast<FileInMemory> (my at [ifile]);
+			const FileInMemory fim = my at [ifile];
 			if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
 				thy addItem_ref (fim);
 		}
@@ -759,7 +708,7 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer
 	MelderInfo_writeLine (U"\ttry {");
 	MelderInfo_writeLine (U"\t\tautoFileInMemorySet me = FileInMemorySet_create ();");
 	for (integer ifile = 1; ifile <= my size; ifile ++) {
-		const FileInMemory fim = (FileInMemory) my at [ifile];
+		const FileInMemory fim = my at [ifile];
 		MelderString_copy (& one_fim, name, ifile);
 		FileInMemory_showAsCode (fim, one_fim.string, numberOfBytesPerLine);
 		MelderInfo_writeLine (U"\t\tmy addItem_move (", one_fim.string, U".move());\n");
@@ -778,7 +727,7 @@ void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const
 	MelderInfo_writeLine (U"static autoFileInMemory create_new_object () {");
 	MelderInfo_writeLine (U"\ttry {");
 	autoMelderString one_fim;
-	const FileInMemory fim = (FileInMemory) my at [index];
+	const FileInMemory fim = my at [index];
 	MelderString_append (& one_fim, name, index);
 	FileInMemory_showAsCode (fim, U"me", numberOfBytesPerLine);
 	MelderInfo_writeLine (U"\t\treturn me;");
@@ -792,7 +741,7 @@ void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const
 integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
 	integer numberOfMatches = 0;
 	for (integer ifile = 1; ifile <= my size; ifile ++) {
-		const FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
+		const FileInMemory fim = my at [ifile];
 		if (Melder_stringMatchesCriterion (fim -> string.get(), which, criterion, true))
 			numberOfMatches ++;
 	}
@@ -800,17 +749,14 @@ integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_st
 }
 
 bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name) {
-	bool match = false;
 	autoMelderString searchString;
 	MelderString_append (& searchString, U"/", name, U"/");
 	for (integer i = 1; i <= my size; i ++) {
-		const FileInMemory fim = (FileInMemory) my at [i];
-		if (str32str (fim -> string.get(), searchString.string)) {
-			match = true;
-			break;
-		}
+		const FileInMemory fim = my at [i];
+		if (str32str (fim -> string.get(), searchString.string))
+			return true;
 	}
-	return match;
+	return false;
 }
 
 autoStrings FileInMemorySet_to_Strings_path (FileInMemorySet me) {
@@ -819,7 +765,7 @@ autoStrings FileInMemorySet_to_Strings_path (FileInMemorySet me) {
 		thy strings = autoSTRVEC (my size);
 		thy numberOfStrings = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
-			const FileInMemory fim = (FileInMemory) my at [ifile];
+			const FileInMemory fim = my at [ifile];
 			thy strings [ifile] = Melder_dup_f (fim -> string.get());
 			thy numberOfStrings ++;
 		}
