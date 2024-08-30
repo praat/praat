@@ -48,7 +48,7 @@
 #include "speak_lib.h"
 #include "encoding.h"
 
-#include "melder.h"
+#include "espeak_praat.h"
 
 #include "speech.h"
 #include "common.h"               // for GetFileLength
