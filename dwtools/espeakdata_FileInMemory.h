@@ -19,7 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "FileInMemory.h"
+#include "espeak_praat.h"
 #include "Table.h"
 
 inline autoStrings espeakdata_languages_names;

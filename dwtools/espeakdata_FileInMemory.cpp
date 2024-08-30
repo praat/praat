@@ -17,19 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// The glue between Praat and espeak
-
+#include "espeakdata_FileInMemory.h"
 
 #include "NUM2.h"
 #include "espeak_ng.h"
-#include "FileInMemory.h"
 #include "speech.h"
 #include "voice.h"
 #include "Strings_extensions.h"
 #include "Table_and_Strings.h"
-
-#include "espeak_praat.h"
-#include "espeakdata_FileInMemory.h"
 
 #if 0
 static integer Table_getRownumberOfStringInColumn (Table me, conststring32 string, integer icol) {

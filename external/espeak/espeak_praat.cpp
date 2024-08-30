@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
+#include "espeak_praat.h"
 
 #include "espeakdata_FileInMemory.h"
 #include "espeak_ng.h"

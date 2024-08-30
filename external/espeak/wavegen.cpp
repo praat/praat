@@ -20,7 +20,7 @@
 // this version keeps wavemult window as a constant fraction
 // of the cycle length - but that spreads out the HF peaks too much
 
-#include "config.h"
+#include "espeak__config.h"
 
 #include <math.h>
 #include <stdbool.h>

@@ -1,7 +1,7 @@
 #ifndef _espeak_praat_h_
 #define _espeak_praat_h_
 
-/* espeak_io.h
+/* espeak_praat.h
  * Copyright (C) 2017-2024 David Weenink, 2024 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "FileInMemory.h"
-	
-#define PATH_ESPEAK_DATA "./data"   /* a relative path */
+#include "espeak__config.h"
 
 autoFileInMemorySet create_espeak_all_FileInMemorySet ();
 autoFileInMemorySet create_espeak_phon_FileInMemorySet ();
