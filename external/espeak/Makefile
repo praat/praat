@@ -14,7 +14,7 @@ OBJECTS = case.o categories.o common.o compiledict.o \
 	numbers.o phonemelist.o proplist.o readclause.o \
 	setlengths.o soundicon.o speech.o \
 	ssml.o synthdata.o synthesize.o \
-	synth_mbrola.o tr_languages.o translate.o translateword.o voices.o wavegen.o \
+	tr_languages.o translate.o translateword.o voices.o wavegen.o \
 	espeak_all_FileInMemorySet.o \
 	espeak_languages_FileInMemorySet.o espeak_voices_FileInMemorySet.o \
 	espeak_russianDict_FileInMemorySet.o espeak_faroeseDict_FileInMemorySet.o \
