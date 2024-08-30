@@ -311,6 +311,26 @@ After this, the folder `./src` will be empty again.
 - Rename `config.h` to `espeak__config.h`, and simplify it strongly,
   reducing it to
 {;
+	/*
+		The config file typically contains lots of stuff that is specific to the machine on which eSpeak is compiled.
+		However, in Praat we relegate all of this to `melder.h`.
+	
+		This file should be included before any other include file, in order to prevent definition clashes.
+	
+		In the Praat sources, this file should be included only in `.cpp` files inside `src/external/espeak`.
+		Inclusion elsewhere in Praat can lead to clashes (e.g., `USE_ASYNC` undergoes an `#ifdef` in `mad`).
+	*/
+	
+	#define PACKAGE_VERSION  "1.52-dev"
+	
+	#define USE_ASYNC  0
+	#define USE_LIBPCAUDIO  0
+	
+	/*
+		Integration into Praat
+	*/
+	#define DATA_FROM_SOURCECODE_FILES  1
+	#define PATH_ESPEAK_DATA  "./data"   /* a relative path */
 }
 - Adapt the source files that include `config.h`.
 - Cast many return values and error values.
@@ -399,16 +419,6 @@ In `espeak_ng.h`, we should ignore all the `dllexport` and `dllimport` labels:
 	#define ESPEAK_NG_API
 	//ppgb #endif
 
-In `speak_ng.h`, we make sure that `DATA_FROM_SOURCECODE_FILES` is true by default:
-	//ppgb:
-	#ifndef DATA_FROM_SOURCECODE_FILES
-		#define DATA_FROM_SOURCECODE_FILES  1
-	#endif
-This is because the compilation in Praat should be the default,
-whereas compilation in the environment of actually existing data files
-should be restricted to special debugging cases
-(compile with `-DDATA_FROM_SOURCECODE_FILES=0` in that case).
-
 In `speak_ng.h`, we replace the Windows-specific part
 	#define PLATFORM_WINDOWS  1
 	#define PATHSEP '\\'
@@ -421,7 +431,7 @@ with
 		#define PATHSEP '\\'
 	#endif
 #endif
-This is because David hard-coded the paths to the data files with forward slashes.
+This is because we hard-coded the relative paths to the data files with forward slashes.
 
 In `speech.cpp`, in the function `espeak_ng_Initialize`, we remove `setlocale`,
 because the locale of the entire program shouldn't be overwritten by a library:
@@ -463,9 +473,6 @@ so that all phoneme codes are in effect lost. A correct version is:
 On 64-bit systems this splits up q[2] into two ints (in correct order),
 and on 32-bit systems * ((int *) & q[2] + 1) is actually q[3], which is also correct.
 MarkerEvent() itself pastes the two ints together again, in correct order.
-
-Finally, make sure not to include `<windows.h>` or `melder.h`
-after `espeak_ng.h`, because they may redefine `fopen`.
 
 #include "speak_lib.h"
 #include "encoding.h"
