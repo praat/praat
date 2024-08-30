@@ -53,9 +53,10 @@
 #include "speech.h"
 #include "common.h"               // for GetFileLength
 #include "dictionary.h"           // for GetTranslatedPhonemeString, strncpy0
-#include "espeak_command.h"       // for delete_espeak_command, SetParameter
+//ppgb #include "espeak_command.h"       // for delete_espeak_command, SetParameter, (ppgb:) sync_espeak_Char
+#include "setlengths.h"           //ppgb: for SetParameter (instead of espeak_command.h)
 #include "event.h"                // for event_declare, event_clear_all, eve...
-#include "fifo.h"                 // for fifo_add_command, fifo_add_commands
+//ppgb #include "fifo.h"                 // for fifo_add_command, fifo_add_commands
 #include "langopts.h"             // for LoadConfig
 #include "mbrola.h"               // for mbrola_delay
 #include "readclause.h"           // for PARAM_STACK, param_stack
@@ -615,6 +616,19 @@ espeak_ng_STATUS sync_espeak_Synth_Mark(unsigned int unique_identifier, const vo
 	return Synthesize(unique_identifier, text, flags | espeakSSML);
 }
 
+/*ppgb:*/ static   //ppgb: and put this function before sync_espeak_Key()
+espeak_ng_STATUS sync_espeak_Char(wchar_t character)
+{
+	// is there a system resource of character names per language?
+	char buf[80];
+	my_unique_identifier = 0;
+	my_user_data = NULL;
+
+	sprintf(buf, "<say-as interpret-as=\"tts:char\">&#%d;</say-as>", character);
+	return Synthesize(0, buf, espeakSSML);
+}
+
+/*ppgb:*/ static
 espeak_ng_STATUS sync_espeak_Key(const char *key)
 {
 	// symbolic name, symbolicname_character  - is there a system resource of symbolic names per language?
@@ -630,17 +644,7 @@ espeak_ng_STATUS sync_espeak_Key(const char *key)
 	return Synthesize(0, key, 0); // speak key as a text string
 }
 
-espeak_ng_STATUS sync_espeak_Char(wchar_t character)
-{
-	// is there a system resource of character names per language?
-	char buf[80];
-	my_unique_identifier = 0;
-	my_user_data = NULL;
-
-	sprintf(buf, "<say-as interpret-as=\"tts:char\">&#%d;</say-as>", character);
-	return Synthesize(0, buf, espeakSSML);
-}
-
+/*ppgb:*/ static
 void sync_espeak_SetPunctuationList(const wchar_t *punctlist)
 {
 	// Set the list of punctuation which are spoken for "some".

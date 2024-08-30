@@ -246,7 +246,7 @@ procedure defineSourceFolders
 	privateHeaderFiles$# = { "common.h", "compiledict.h", "dictionary.h",
 	... "error.h", "espeak_command.h", "event.h", "fifo.h", "intonation.h",
 	... "klatt.h", "langopts.h", "mnemonics.h", "mbrola.h", "numbers.h", "phoneme.h", "phonemelist.h",
-	... "readclause.h", "setlengths.h", "sintab.h", "soundicon.h", "spect.h", "speech.h", "ssml.h",
+	... "readclause.h", "setlengths.h", "sintab.h", "soundicon.h", "speech.h", "ssml.h",
 	... "synthdata.h", "synthesize.h", "translate.h", "translateword.h",
 	... "voice.h", "wavegen.h" }
 
@@ -294,8 +294,7 @@ Also a new file espeak-ng-version.h is created [TO BE EDITED]:
 		exitScript: "The given version (", espeak_version$, ") differs from package version ", .version$
 	endif
 
-	.version_define$ = "#define ESPEAK_NG_VERSION " + "U""" + espeak_version$ + """" + newline$
-		... + "#define ESPEAK_NG_VERSIONX " + espeak_version$ + newline$
+	.version_define$ = “#define ESPEAK_NG_VERSION  "” + espeak_version$ + “"” + newline$
 	writeFile: todir$ + "/espeak_ng_version.h", .version_define$
 
 5. Adapting eSpeak source code to Praat
@@ -308,23 +307,28 @@ The former is the one to be changed (in the way described below).
 Once all the source and header files are fine, they can be moved over the ones in `../../external/espeak`.
 After this, the folder `./src` will be empty again.
 
-[TO BE EDITED]:
-#	6. In B:
-#		Change all includes eg <espeak-ng/something.h> to "something.h"
-#		Cast many return values and error values
+- Simplify all includes, e.g. "espeak-ng/something.h" to "something.h"
+- Rename `config.h` to `espeak__config.h`, and simplify it strongly,
+  reducing it to
+{;
+}
+- Adapt the source files that include `config.h`.
+- Cast many return values and error values.
 #		Adapt the file reading parts: surround the definitions of the procedures GetFileLength()
 #		and GetVoices() with
 #		#if ! DATA_FROM_SOURCECODE_FILES
 #		#endif
 # 	7. in error.cpp replace writing to stderr with calls to Melder_throw()
-#	8. in dictionary.cpp, soundicon.cpp, speech.cpp, synthdata.cpp, voices.cpp
-#		#include "espeak_praat.h", and prepend:
 
-- prepend "FileInMemorySet_" to all calls of fopen, adding a first argument "theEspeakPraatFileInMemorySet()".
+In `dictionary.cpp`, `soundicon.cpp`, `speech.cpp`, `synthdata.cpp`, and `voices.cpp`:
+- replace `FILE *` with `FileInMemory` (also in `common.cpp`);
+- `#include "espeak_praat.h"`;
+- prepend "FileInMemorySet_" to all calls of fopen, adding a first argument `theEspeakPraatFileInMemorySet()`;
 - prepend "FileInMemory_" to all calls of fclose, feof, fseek, ftell, fgets, fread, fgetc, fprintf and ungetc;
-- prepend "espeak_praat_" to all calls of GetFileLength and GetVoices;
+- prepend "espeak_praat_" to all calls of `GetFileLength` and `GetVoices`;
 
-Here we list all the (remaining) occurrences of those functions in those five files:
+Here we list all the (remaining) occurrences of those functions in those five files
+(the definition of `GetFileLength` should stay in `common.cpp`; `fprintf` should stay if to `stderr` or `f_trans`):
 {;
 	if 0
 		@defineSourceFolders
@@ -332,7 +336,7 @@ Here we list all the (remaining) occurrences of those functions in those five fi
 	else
 		sourceFolder$ = "../../external/espeak"
 	endif
-	sourceFiles$# = { "dictionary.cpp", "soundicon.cpp", "speech.cpp", "synthdata.cpp", "voices.cpp" }
+	sourceFiles$# = { "dictionary.cpp", "soundicon.cpp", "speech.cpp", "synthdata.cpp", "voices.cpp", "common.cpp" }
 	targets$# = { "fopen", "fclose", "feof", "fseek", "ftell", "fgets", "fread", "fgetc", "fprintf", "ungetc",
 	... "GetFileLength", "GetVoices" }
 	writeInfo()
@@ -349,7 +353,7 @@ Here we list all the (remaining) occurrences of those functions in those five fi
 		endfor
 	endfor
 }
-Perhaps we could even replace the very ugly `FILE *` with `FileInMemory`?
+Replace `FILE *` with `FileInMemory` in the relevant files.
 {;
 	if 0
 		@defineSourceFolders
@@ -357,7 +361,7 @@ Perhaps we could even replace the very ugly `FILE *` with `FileInMemory`?
 	else
 		sourceFolder$ = "../../external/espeak"
 	endif
-	sourceFiles$# = { "dictionary.cpp", "soundicon.cpp", "speech.cpp", "synthdata.cpp", "voices.cpp" }
+	sourceFiles$# = { "dictionary.cpp", "soundicon.cpp", "speech.cpp", "synthdata.cpp", "voices.cpp", "common.cpp", "common.h" }
 	writeInfo()
 	for file to size (sourceFiles$#)
 		lines$# = readLinesFromFile$#: sourceFolder$ + "/" + sourceFiles$# [file]
@@ -369,17 +373,17 @@ Perhaps we could even replace the very ugly `FILE *` with `FileInMemory`?
 		endfor
 	endfor
 }
+In `speech.cpp`:
+- make `sync_espeak_Key`, `sync_espeak_Char`, `sync_espeak_SetPunctuationList` static, moving `sync_espeak_Char` first
+- uninclude "espeak_command.h" (because `delete_espeak_command` falls under `USE_ASYNC`, `SetParameter` is also in `setlengths.h`, and `sync_espeak_Char` has become static)
+- include "setlengths.h" (for `SetParameter`)
 
-#       Use listFileIO.praat to list the occurrences of these names in those five files.
+
+
 #	9. delete all "#pragma GCC visibility" lines
-
-**** 
-We have replaced the file io based on fopen, fclose, fgets etc... with our own io (see espeak_io.cpp)
 
 We inserted a number of explicit casts:
 static_cast<espeak_ng_STATUS> (errno)
-
-Adapted some of the header files.
 
 The overaching header file is `espeak_ng.h`,
 so any #defines that should be global to espeak should be defined in `espeak_ng.h`.

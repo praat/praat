@@ -1,6 +1,6 @@
 /* SpeechSynthesizer_def.h
  *
- * Copyright (C) 2011-2020 David Weenink
+ * Copyright (C) 2011-2020 David Weenink, 2024 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,10 +90,10 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
 			d_phonemeSet = Melder_dup (d_languageName.get());
-			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
+			d_synthesizerVersion = Melder_dup (U"" ESPEAK_NG_VERSION);
 			oo_INTEGER (d_wordsPerMinute)
 		oo_VERSION_ELSE
-			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION); // overwrite with current version
+			d_synthesizerVersion = Melder_dup (U"" ESPEAK_NG_VERSION); // overwrite with current version
 			oo_DOUBLE (d_wordsPerMinute)
 		oo_VERSION_END
 	#else
