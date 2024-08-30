@@ -19,7 +19,7 @@
 #define ooSTRUCT FileInMemory
 oo_DEFINE_CLASS (FileInMemory, SimpleString)
 
-	oo_INTEGER (d_numberOfBytes)  // last byte is \0 byte
+	oo_INTEGER (d_numberOfBytes)   // not including any final null byte
 	oo_INTEGER (d_position)
 	oo_INTEGER (d_errno)
 	oo_INT32 (ungetChar)
@@ -30,14 +30,15 @@ oo_DEFINE_CLASS (FileInMemory, SimpleString)
 	#else
 		oo_BYTEVEC (d_data, d_numberOfBytes + 1) // final null byte possible
 	#endif
-	oo_UBYTE (writable)
+	oo_UBYTE (isOpen)
 
 	#if oo_DECLARING || oo_DESCRIBING
 		oo_UBYTE (_dontOwnData)
 	#endif
 
 	#if oo_DECLARING
-		void v1_info () override; 
+		void v1_info ()
+			override;
 	#endif
 	
 oo_END_CLASS (FileInMemory)

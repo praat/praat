@@ -26,7 +26,7 @@ MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
 "Acknowledgments"
-© Paul Boersma 2002,2003,2005–2008,2010–2016,2020–2023
+© Paul Boersma 2002,2003,2005–2008,2010–2016,2020–2024
 
 The following people contributed source code to Praat:
 
@@ -56,8 +56,8 @@ We included the following freely available software libraries in Praat (sometime
 	contains AMD software by the same author (LGPL 2.1 or later).
 , PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs,
 	version 19.7.0 of April 2021 (CC-BY-like license).
-, Espeak(-NG): text-to-speech synthesizer by Jonathan Duddington and Reece Dunn,
-	development version 1.52 of August 2023 (GPL 3 or later).
+, eSpeak(-NG): text-to-speech synthesizer by Jonathan Duddington and Reece Dunn,
+	development version 1.52 of August 2023, with language and voice data of 2024-08-24T19:38Z (GPL 3 or later).
 , MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).
 , LAME: MP3 encoding by Mike Cheng, Mark Taylor, Takehiro Tominaga, Robert Hegemann, Gabriel Bouvigne, Alexander Leidinger,
 	Naoki Shibata, John Dahlstrom, Jonathan Dee, Rogério Brito,
