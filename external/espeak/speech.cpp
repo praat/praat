@@ -65,8 +65,6 @@
 #include "voice.h"                // for FreeVoiceList, VoiceReset, current_...
 #include "wavegen.h"              // for WavegenFill, WavegenInit, WcmdqUsed
 
-#include "espeak_praat.h"
-
 static unsigned char *outbuf = NULL;
 static int outbuf_size = 0;
 static unsigned char *out_start;

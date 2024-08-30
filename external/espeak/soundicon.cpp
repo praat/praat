@@ -41,8 +41,6 @@
 #include "speech.h"                   // for path_home, PATHSEP
 #include "synthesize.h"                   // for samplerate
 
-#include "espeak_praat.h"
-
 int n_soundicon_tab = 0;
 SOUND_ICON soundicon_tab[N_SOUNDICON_TAB];
 

@@ -1,4 +1,4 @@
-/* espeak_io.cpp
+/* espeak_praat.cpp
  *
 //  * Copyright (C) 2017-2021 David Weenink, 2024 Paul Boersma
  *
@@ -16,14 +16,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
+
 #include "espeakdata_FileInMemory.h"
 #include "espeak_ng.h"
 #include "speech.h"
 #include "synthesize.h"
 #include "voice.h"
 #include <errno.h>
-
-#include "espeak_praat.h"
 
 /*
 	espeak_praat_GetFileLength: mimics GetFileLength of espeak-ng
@@ -47,14 +47,10 @@ int espeak_praat_GetFileLength (const char *filename) {
 /* 
 	espeak_praat_GetVoices: mimics GetVoices of espeak-ng
 	If is_languange_file == 0 then /voices/ else /lang/ 
-	We know our voices are in /voices/ and our languages in /lang/
+	We know our voices are in /voices/ (actually in /voices/!v/) and our languages in /lang/
 */
 void espeak_praat_GetVoices (const char *path, int len_path_voices, int is_language_file) {
 	(void) path;
-	/*
-		if is_languange_file == 0 then /voices/ else /lang/ 
-		We know our voices are in /voices/!v/ and our languages in /lang/
-	*/
 	FileInMemorySet me = theEspeakPraatFileInMemorySet();
 	conststring32 criterion = is_language_file ? U"/lang/" : U"/voices/";
 	autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
@@ -339,4 +335,4 @@ void espeak_ng_data_to_bigendian () {
 	Thing_swap (phonindex, phonindex_new.get());
 }
 
-/* End of file espeak_io.cpp */
+/* End of file espeak_praat.cpp */

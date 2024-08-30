@@ -52,8 +52,6 @@
 #include "translate.h"                // for LANGUAGE_OPTIONS, DeleteTranslator
 #include "wavegen.h"                  // for InitBreath
 
-#include "espeak_praat.h"
-
 static int AddToVoicesList(const char *fname, int len_path_voices, int is_language_file);
 
 

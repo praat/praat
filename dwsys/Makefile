@@ -1,6 +1,6 @@
 # makefile for library "dwsys".
 # David Weenink 20240607
-# Paul Boersma 2018-08-10
+# Paul Boersma 20180810,20240830
 
 include ../makefile.defs
 
@@ -10,7 +10,7 @@ all: libdwsys.a
 
 OBJECTS = ChebyshevSeries.o Collection_extensions.o Command.o \
 	DoublyLinkedList.o Eigen.o \
-	FileInMemory.o FileInMemorySet.o FileInMemoryManager.o \
+	FileInMemory.o \
 	FunctionSeries.o \
 	Graphics_extensions.o Index.o \
 	LegendreSeries.o \
