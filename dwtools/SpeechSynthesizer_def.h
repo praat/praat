@@ -19,18 +19,18 @@
 
 #define ooSTRUCT EspeakVoice
 oo_DEFINE_CLASS (EspeakVoice, Daata)
-	oo_STRING (v_name) // maximum 39 characters + 1 0-byte
-	oo_STRING (language_name) // maximum 19 characters + 1 0-byte
+	oo_STRING (v_name)           // maximum 39 characters + 1 null-byte
+	oo_STRING (language_name)    // maximum 19 characters + 1 null-byte
 
 	oo_INTEGER (phoneme_tab_ix)  // phoneme table number
-	oo_INTEGER (pitch_base)    // Hz<<12
-	oo_INTEGER (pitch_range)   // standard = 0x1000
+	oo_INTEGER (pitch_base)      // Hz<<12
+	oo_INTEGER (pitch_range)     // standard = 0x1000
 
 	oo_INTEGER (speedf1)
 	oo_INTEGER (speedf2)
 	oo_INTEGER (speedf3)
 
-	oo_INTEGER (speed_percent)      // adjust the WPM speed by this percentage
+	oo_INTEGER (speed_percent)     // adjust the WPM speed by this percentage
 	oo_INTEGER (flutter)
 	oo_INTEGER (roughness)
 	oo_INTEGER (echo_delay)
@@ -38,36 +38,36 @@ oo_DEFINE_CLASS (EspeakVoice, Daata)
 	oo_INTEGER (n_harmonic_peaks)  // highest formant which is formed from adding harmonics
 	oo_INTEGER (peak_shape)        // alternative shape for formant peaks (0=standard 1=squarer)
 	oo_INTEGER (voicing)           // 100% = 64, level of formant-synthesized sound
-	oo_INTEGER (formant_factor)      // adjust nominal formant frequencies by this  because of the voice's pitch (256ths)
+	oo_INTEGER (formant_factor)    // adjust nominal formant frequencies by this  because of the voice's pitch (256ths)
 	oo_INTEGER (consonant_amp)     // amplitude of unvoiced consonants
 	oo_INTEGER (consonant_ampv)    // amplitude of the noise component of voiced consonants
-	oo_INTEGER (samplerate)			// sampling frequency as integer Hz
-	oo_INTEGER (numberOfKlattParameters) // default 8 
+	oo_INTEGER (samplerate)        // sampling frequency as integer Hz
+	oo_INTEGER (numberOfKlattParameters)   // default 8
 	oo_INTVEC (klattv, numberOfKlattParameters)
 
 	// parameters used by Wavegen
 	oo_INTEGER (numberOfFormants) // 9
-	oo_INTVEC (freq, numberOfFormants)		// (short) 100% = 256
-	oo_INTVEC (height, numberOfFormants)	// (short) 100% = 256
-	oo_INTVEC (width, numberOfFormants)		// (short) 100% = 256
-	oo_INTVEC (freqadd, numberOfFormants)	// (short) Hz
+	oo_INTVEC (freq, numberOfFormants)      // (short) 100% = 256
+	oo_INTVEC (height, numberOfFormants)    // (short) 100% = 256
+	oo_INTVEC (width, numberOfFormants)     // (short) 100% = 256
+	oo_INTVEC (freqadd, numberOfFormants)   // (short) Hz
 
 	// copies without temporary adjustments from embedded commands
-	oo_INTVEC (freq2, numberOfFormants)		// (short) 100% = 256
-	oo_INTVEC (height2, numberOfFormants)	// (short) 100% = 256
-	
+	oo_INTVEC (freq2, numberOfFormants)     // (short) 100% = 256
+	oo_INTVEC (height2, numberOfFormants)   // (short) 100% = 256
+
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
 			autoINTVEC saveWidth = copy_INTVEC (width.get());
-			oo_INTVEC (width, numberOfFormants)	// (short) 100% = 256   // this used to be width2, but this is now obsolete
+			oo_INTVEC (width, numberOfFormants)   // (short) 100% = 256   // this used to be width2, but this is now obsolete
 			width = saveWidth.move();
 		oo_VERSION_END
 	#endif
 	
-	oo_INTVEC (breath, numberOfFormants)	// (int64) amount of breath for each formant. breath [0] indicates whether any are set.
-	oo_INTVEC (breathw, numberOfFormants)	// width of each breath formant
-	oo_INTEGER (numberOfToneAdjusts)
-	oo_BYTEVEC (tone_adjust, numberOfToneAdjusts) //  8Hz steps * 1000 = 8kHz
+	oo_INTVEC (breath, numberOfFormants)    // (int64) amount of breath for each formant. breath [0] indicates whether any are set.
+	oo_INTVEC (breathw, numberOfFormants)   // width of each breath formant
+	oo_INTEGER (numberOfToneAdjusts)        // always N_TONE_ADJUST == 1000 (this is partially checked by static asserts)
+	oo_BYTEVEC (tone_adjust, numberOfToneAdjusts)   // 8-Hz steps * 1000 = 8kHz
 
 oo_END_CLASS (EspeakVoice)
 #undef ooSTRUCT

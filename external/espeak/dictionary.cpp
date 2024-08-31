@@ -205,6 +205,7 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	int size;
 	char fname[sizeof(path_home)+20];
 
+	Melder_assert (strlen(name) < 40);   //ppgb: otherwise no null byte might be appended
 	if (dictionary_name != name)
 		strncpy(dictionary_name, name, 40); // currently loaded dictionary name
 	if (tr->dictionary_name != name)

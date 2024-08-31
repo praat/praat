@@ -217,7 +217,7 @@ void espeakdata_getIndices (conststring32 language_string, conststring32 voice_s
 		if (languageIndex == 0) {
 			if (Melder_equ (language_string, U"Default") || Melder_equ (language_string, U"English")) {
 				languageIndex = Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
-				Melder_warning (U"Language \"", language_string, U"\" is deprecated. Please use \"",
+				Melder_warning (U"Language \"", language_string, U"\" is obsolete. The same language is now called \"",
 						espeakdata_languages_names -> strings [languageIndex].get(), U"\".");
 			} else {
 				languageIndex = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 1, language_string);
@@ -238,14 +238,13 @@ void espeakdata_getIndices (conststring32 language_string, conststring32 voice_s
 			} else {
 				// Try the bare file names
 				voiceIndex = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 1, voice_string);
-				if (voiceIndex == 0) {
-					Melder_throw (U"Voice variant ", voice_string, U" is not a valid option.");
-				}
+				if (voiceIndex == 0)
+					Melder_throw (U"Voice \"", voice_string, U"\" is not a valid option.");
 			}
 		}
 		if (voiceIndex != *p_voiceIndex) {
 			*p_voiceIndex = voiceIndex;
-			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. The same voice is now called \"",
+			Melder_casual (U"Voice \"", voice_string, U"\" is obsolete. The same voice is now called \"",
 					espeakdata_voices_names -> strings [*p_voiceIndex].get(), U"\".");
 		} else {
 			// unknown voice, handled by interface

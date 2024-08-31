@@ -409,6 +409,8 @@ voice_t *LoadVoice(const char *vname, int control)
         //                     load the phoneme table
         //          bit 16 1 = UNDOCUMENTED
 
+	//TRACE
+	trace (U"enter");
 	FileInMemory f_voice = NULL;
 	char *p;
 	int key;
@@ -448,6 +450,7 @@ voice_t *LoadVoice(const char *vname, int control)
 		return NULL;
 	}
 
+	trace (U"strncpy0... ", control, U" ", Melder_peek8to32 (vname), U".");
 	strncpy0(voicename, vname, sizeof(voicename));
 	if (control & 0x10) {
 		strcpy(buf, vname);
@@ -466,23 +469,27 @@ voice_t *LoadVoice(const char *vname, int control)
 			sprintf(buf, "%s%s", path_voices, voicename); // look in the main languages directory
 		}
 	}
+	trace (U"opening... ", Melder_peek8to32 (buf), U".");
 
 	f_voice = FileInMemorySet_fopen(theEspeakPraatFileInMemorySet(), buf, "r");
+	trace (U"opened");
 
-        if (!(control & 8)/*compiling phonemes*/)
-            language_type = ESPEAKNG_DEFAULT_VOICE; // default
-        else
-            language_type = "";
+	if (!(control & 8)/*compiling phonemes*/)
+		language_type = ESPEAKNG_DEFAULT_VOICE; // default
+	else
+		language_type = "";
 
 	if (f_voice == NULL) {
 		if (control & 3)
 			return NULL; // can't open file
 
+		trace (U"selecting phoneme table... ", Melder_peek8to32 (voicename), U".");
 		if (SelectPhonemeTableName(voicename) >= 0)
 			language_type = voicename;
 	}
 
 	if (!tone_only && (translator != NULL)) {
+		trace (U"deleting translator... ");
 		DeleteTranslator(translator);
 		translator = NULL;
 	}
@@ -492,6 +499,7 @@ voice_t *LoadVoice(const char *vname, int control)
 
 	if (!tone_only) {
 		voice = &voicedata;
+		trace (U"strncpy0... ", Melder_peek8to32 (vname), U".");
 		strncpy0(voice_identifier, vname, sizeof(voice_identifier));
 		voice_name[0] = 0;
 		voice_languages[0] = 0;
@@ -516,6 +524,7 @@ voice_t *LoadVoice(const char *vname, int control)
 		if (buf[0] == 0) continue;
 
 		key = LookupMnem(langopts_tab, buf);
+		trace (U"key ", key);
 
         if (key != 0) {
             LoadLanguageOptions(translator, key, p);
@@ -698,9 +707,11 @@ voice_t *LoadVoice(const char *vname, int control)
             }
         }
 	}
+	trace (U"closing...");
 	if (f_voice != NULL)
 		FileInMemory_fclose(f_voice);
 
+	trace (U"selecting translator... ", Melder_pointer (translator), U" ", tone_only, U" ", sizeof (Translator));
 	if ((translator == NULL) && (!tone_only)) {
 		// not set by language attribute
 		translator = SelectTranslator(translator_name);
@@ -724,8 +735,10 @@ voice_t *LoadVoice(const char *vname, int control)
 		translator->phoneme_tab_ix = ix;
 
 		if (!(control & 8/*compiling phonemes*/)) {
+			trace (U"Loading dictionary...");
 			LoadDictionary(translator, new_dictionary, control & 4);
 			if (dictionary_name[0] == 0) {
+				trace (U"Deleting translator...");
 				DeleteTranslator(translator);
 				return NULL; // no dictionary loaded
 			}
@@ -734,6 +747,7 @@ voice_t *LoadVoice(const char *vname, int control)
 		/* Terminate languages list with a zero-priority entry */
 		voice_languages[langix] = 0;
 	}
+	trace (U"return");
 
 	return voice;
 }
