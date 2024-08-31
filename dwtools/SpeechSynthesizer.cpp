@@ -176,6 +176,7 @@ autoEspeakVoice EspeakVoice_create () {
 
 		my breath = zero_INTVEC (my numberOfFormants);   // amount of breath for each formant. breath [0] indicates whether any are set.
 		my breathw = zero_INTVEC (my numberOfFormants);   // width of each breath formant
+		static_assert (N_TONE_ADJUST == 1000);
 		my numberOfToneAdjusts = 1000;   // equals N_TONE_ADJUST in voice.h
 		my tone_adjust = newvectorzero<unsigned char> (my numberOfToneAdjusts);
 		EspeakVoice_setDefaults (me.get());
@@ -225,6 +226,7 @@ void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voicet) {
 		my breath [i] = voicet -> breath [i - 1];
 		my breathw [i] = voicet -> breathw [i - 1];
 	}
+	static_assert (N_TONE_ADJUST == 1000);
 	my numberOfToneAdjusts = 1000;
 	for (integer i = 1; i <= my numberOfToneAdjusts; i ++)
 		my tone_adjust [i] = voicet -> tone_adjust [i - 1];
@@ -232,10 +234,18 @@ void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voicet) {
 
 void EspeakVoice_into_voice (EspeakVoice me, voice_t *voicet) {   // BUG unused (ppgb 20210307)
 
-	if (my v_name)
-		strncpy (voicet -> v_name, Melder_peek32to8 (my v_name.get()), 40);
-	if (my language_name)
-		strncpy (voicet -> language_name, Melder_peek32to8 (my language_name.get()), 20);
+	if (my v_name) {
+		const char *v_name8 = Melder_peek32to8 (my v_name.get());
+		static_assert (sizeof (voicet -> v_name) == 40);   // necessary, because this might change in a future version
+		Melder_assert (strlen (v_name8) < 40);   // necessary, because strncpy doesn't always copy the null byte
+		strncpy (voicet -> v_name, v_name8, 40);   // guarded strncpy
+	}
+	if (my language_name) {
+		const char *language_name8 = Melder_peek32to8 (my language_name.get());
+		static_assert (sizeof (voicet -> language_name) == 20);   // necessary, because this might change in a future version
+		Melder_assert (strlen (language_name8) < 20);   // necessary, because strncpy doesn't always copy the null byte
+		strncpy (voicet -> language_name, language_name8, 20);   // guarded strncpy
+	}
 	voicet -> phoneme_tab_ix = my phoneme_tab_ix;
 	voicet -> pitch_base = my pitch_base;
 	voicet -> pitch_range = my pitch_range;
