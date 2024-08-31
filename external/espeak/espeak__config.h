@@ -12,6 +12,10 @@
 
 #define USE_ASYNC  0
 #define USE_LIBPCAUDIO  0
+#define USE_SPEECHPLAYER  0
+
+#define USE_KLATT  1
+#define USE_MBROLA  0
 
 /*
 	Integration into Praat
