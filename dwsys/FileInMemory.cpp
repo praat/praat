@@ -52,9 +52,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		Melder_require (MelderFile_readable (file),
 			U"File is not readable.");
 		const integer length = MelderFile_length (file);
-		Melder_require (length > 0,
-			U"File should not be empty.");
-		
+
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my string = Melder_dup (file -> path);
 		my d_numberOfBytes = length;
