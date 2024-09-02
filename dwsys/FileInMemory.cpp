@@ -52,9 +52,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		Melder_require (MelderFile_readable (file),
 			U"File is not readable.");
 		const integer length = MelderFile_length (file);
-		Melder_require (length > 0,
-			U"File should not be empty.");
-		
+
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my string = Melder_dup (file -> path);
 		my d_numberOfBytes = length;
@@ -630,7 +628,7 @@ autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& li
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 fileGlobber) {
 	try {
 		structMelderFolder parent { };
-		Melder_pathToFolder (dirpath, & parent);
+		Melder_pathToFolder (dirpath, & parent);   // not Melder_relativePathToFolder! Because if dirpath is relative, so should be the fims
 		autoStrings thee = Strings_createAsFileList (Melder_cat (dirpath, U"/", fileGlobber));
 		Melder_require (thy numberOfStrings > 0,
 			U"No files found.");
@@ -638,7 +636,9 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 d
 		autoFileInMemorySet me = FileInMemorySet_create ();
 		for (integer i = 1; i <= thy numberOfStrings; i ++) {
 			structMelderFile file { };
-			MelderFolder_getFile (& parent, thy strings [i].get(), & file);
+			//MelderFolder_getFile (& parent, thy strings [i].get(), & file);   // this would convert forward to backward slashes on Windows
+			conststring32 filePath = Melder_cat (dirpath, U"/", thy strings [i].get());   // this conserves forward slashes, even on Windows
+			Melder_pathToFile (filePath, & file);   // this conserves forward slashes, even on Windows
 			my addItem_move (FileInMemory_create (& file));
 		}
 		return me;

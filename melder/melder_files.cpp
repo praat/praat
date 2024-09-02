@@ -146,6 +146,9 @@ conststring32 MelderFolder_name (MelderFolder folder) {
 }
 
 void Melder_pathToFolder (conststring32 path, MelderFolder folder) {
+	/*
+		FIXME: document that this function can be used to keep folder names relative and generic
+	*/
 	Melder_sprint (folder -> path,kMelder_MAXPATH+1, path);
 }
 
@@ -155,6 +158,8 @@ void Melder_pathToFile (conststring32 path, MelderFile file) {
 
 		Used if we know for sure that we have a complete path name,
 		i.e. if the program determined the name (fileselector, printing, prefs).
+
+		FIXME: document that this function can also be used to keep file names relative and generic
 	*/
 	Melder_sprint (file -> path,kMelder_MAXPATH+1, path);
 }
