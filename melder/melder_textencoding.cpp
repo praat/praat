@@ -513,7 +513,7 @@ conststring8 Melder_peek32to8 (conststring32 text) {
 	static int bufferNumber = 0;
 	if (++ bufferNumber == 19)
 		bufferNumber = 0;
-	constexpr int64 maximumNumberOfUTF8bytesPerUTF32point = 4;   // becausse we use only the lower 21 bits
+	constexpr int64 maximumNumberOfUTF8bytesPerUTF32point = 4;   // because we use only the lower 21 bits
 	const int64 numberOfUTF32points = Melder_length (text);
 	const int64 maximumNumberOfBytesNeeded = numberOfUTF32points * maximumNumberOfUTF8bytesPerUTF32point + 1;
 	if ((bufferSizes [bufferNumber] - maximumNumberOfBytesNeeded) * (integer) sizeof (char) >= 10'000) {

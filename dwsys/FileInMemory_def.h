@@ -21,7 +21,8 @@ oo_DEFINE_CLASS (FileInMemory, SimpleString)
 
 	oo_INTEGER (d_numberOfBytes)   // not including any final null byte
 	oo_INTEGER (d_position)
-	oo_INTEGER (d_errno)
+	oo_INT16 (d_errno)
+	oo_INT16 (d_eof)
 	oo_INT32 (ungetChar)
 	#if oo_DESTROYING
 		if (! _dontOwnData) {

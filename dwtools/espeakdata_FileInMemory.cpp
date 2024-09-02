@@ -189,6 +189,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		constexpr conststring32 criterion = U"./data/lang/";   // 12 characters
 		FileInMemorySet me = theEspeakPraatFileInMemorySet();
 		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
+		Melder_assert (numberOfMatches > 0);
 		const conststring32 columnNames [] = { U"id", U"name", U"index" };
 		autoTable thee = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames)); // old: Default English
 		integer irow = 0;
@@ -213,6 +214,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 
 void espeakdata_getIndices (conststring32 language_string, conststring32 voice_string, int *p_languageIndex, int *p_voiceIndex) {
 	if (p_languageIndex) {
+		Melder_assert (espeakdata_languages_names);
 		integer languageIndex = Strings_findString (espeakdata_languages_names.get(), language_string);
 		if (languageIndex == 0) {
 			if (Melder_equ (language_string, U"Default") || Melder_equ (language_string, U"English")) {
@@ -228,6 +230,7 @@ void espeakdata_getIndices (conststring32 language_string, conststring32 voice_s
 		*p_languageIndex = languageIndex;
 	}
 	if (p_voiceIndex) {
+		Melder_assert (espeakdata_voices_names);
 		integer voiceIndex = Strings_findString (espeakdata_voices_names.get(), voice_string);
 		*p_voiceIndex = voiceIndex;
 		if (voiceIndex == 0) {
