@@ -6283,10 +6283,12 @@ DO
 }
 
 FORM (CREATE_ONE__SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
+	Melder_assert (espeakdata_languages_names);
 	OPTIONMENUSTR (language_string, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
 		OPTION (espeakdata_languages_names -> strings [i].get());
 	}
+	Melder_assert (espeakdata_voices_names);
 	OPTIONMENUSTR (voice_string, U"Voice variant", (int) Strings_findString (espeakdata_voices_names.get(), U"Female1"))
 	for (integer i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
 		OPTION (espeakdata_voices_names -> strings [i].get());

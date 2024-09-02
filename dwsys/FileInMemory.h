@@ -98,7 +98,7 @@ autoStrings FileInMemorySet_to_Strings_path (FileInMemorySet me);
 /*
 	Testing.
 */
-void test_FileInMemorySet_io (void);
+void test_FileInMemory_io (void);
 
 
 /* End of file FileInMemory.h */
