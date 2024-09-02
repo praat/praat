@@ -55,6 +55,8 @@ int FileInMemory_fclose (FileInMemory stream);
 
 int FileInMemory_feof (FileInMemory stream);
 
+int FileInMemory_ferror (FileInMemory stream);
+
 integer FileInMemory_ftell (FileInMemory stream);
 
 int FileInMemory_fseek (FileInMemory stream, integer offset, int origin);

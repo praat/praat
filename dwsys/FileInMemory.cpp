@@ -224,6 +224,10 @@ int FileInMemory_feof (FileInMemory me) {
 	return my d_eof;
 }
 
+int FileInMemory_ferror (FileInMemory stream) {
+	return 0;
+}
+
 /*
 	From http://www.cplusplus.com/reference/cstdio 20171028
 	int fseek ( FILE * stream, long int offset, int origin );
@@ -298,7 +302,8 @@ int FileInMemory_fseek (FileInMemory me, integer offset, int origin) {
 
 	For binary streams, this is the number of bytes from the beginning of the file.
 
-	For text streams, the numerical value may not be meaningful but can still be used to restore the position to the same position later using fseek (if there are characters put back using ungetc still pending of being read, the behavior is undefined).
+	For text streams, the numerical value may not be meaningful but can still be used to restore the position to the same position later using fseek
+	(if there are characters put back using ungetc still pending of being read, the behavior is undefined).
 
 	Parameters
 
@@ -1095,57 +1100,103 @@ static void testOneFile (
 		*/
 		MelderInfo_writeLine (U"Testing fseek, ftell...");
 		//
-		int result = fseek (theTestFilePointer, 0, SEEK_SET);
-		long_not_integer position = ftell (theTestFilePointer);
-		Melder_require (result == 0,
+		int fresult = fseek (theTestFilePointer, 0, SEEK_SET);
+		long_not_integer fposition = ftell (theTestFilePointer);
+		Melder_require (fresult == 0,
 			U"fseek to position 0: result should be OK: the start of the file.");
-		Melder_require (position == 0,
-			U"fseek to position 0: position should be 0 (at the start of the file), not ", position, U".");
+		Melder_require (fposition == 0,
+			U"fseek to position 0: position should be 0 (at the start of the file), not ", fposition, U".");
+		int fimresult = FileInMemory_fseek (theTestFim, 0, SEEK_SET);
+		long_not_integer fimposition = FileInMemory_ftell (theTestFim);
+		Melder_require (fimresult == 0,
+			U"FIM_fseek to position 0: result should be OK: the start of the file.");
+		Melder_require (fimposition == 0,
+			U"FIM_fseek to position 0: position should be 0 (at the start of the file), not ", fimposition, U".");
 		//
-		result = fseek (theTestFilePointer, numberOfBytes, SEEK_SET);
-		position = ftell (theTestFilePointer);
-		Melder_require (result == 0,
+		fresult = fseek (theTestFilePointer, numberOfBytes, SEEK_SET);
+		fposition = ftell (theTestFilePointer);
+		Melder_require (fresult == 0,
 			U"fseek to the last position: result should be OK: the end of the file.");
-		Melder_require (position == numberOfBytes,
-			U"fseek to the last position: position should be ", numberOfBytes, U" (at the end of the file), not ", position, U".");
+		Melder_require (fposition == numberOfBytes,
+			U"fseek to the last position: position should be ", numberOfBytes, U" (at the end of the file), not ", fposition, U".");
+		fimresult = FileInMemory_fseek (theTestFim, numberOfBytes, SEEK_SET);
+		fimposition = FileInMemory_ftell (theTestFim);
+		Melder_require (fimresult == 0,
+			U"FIM_fseek to the last position: result should be OK: the end of the file.");
+		Melder_require (fimposition == numberOfBytes,
+			U"FIM_fseek to the last position: position should be ", numberOfBytes, U" (at the end of the file), not ", fimposition, U".");
 		//
-		result = fseek (theTestFilePointer, 14, SEEK_SET);
-		position = ftell (theTestFilePointer);
+		fresult = fseek (theTestFilePointer, 14, SEEK_SET);
+		fposition = ftell (theTestFilePointer);
 		if (numberOfBytes >= 14) {
-			Melder_require (result == 0,
+			Melder_require (fresult == 0,
 				U"fseek to position 14: result should be OK.");
-			Melder_require (position == 14,
+			Melder_require (fposition == 14,
 				U"fseek to position 14: position should be 14.");
 		} else {
-			Melder_require (result == 0,
-				U"fseek: result should be OK, even after seeking past the end.");
-			Melder_require (position == 14,
-				U"fseek: position should be at 14, although that is past the end of the file.");
+			Melder_require (fresult == 0,
+				U"fseek to position 14: result should be OK, even after seeking past the end.");
+			Melder_require (fposition == 14,
+				U"fseek to position 14: position should be at 14, although that is past the end of the file.");
+		}
+		fimresult = FileInMemory_fseek (theTestFim, 14, SEEK_SET);
+		fimposition = FileInMemory_ftell (theTestFim);
+		if (numberOfBytes >= 14) {
+			Melder_require (fimresult == 0,
+				U"FileInMemory_fseek to position 14: result should be OK.");
+			Melder_require (fimposition == 14,
+				U"FileInMemory_fseek to position 14: position should be 14.");
+		} else {
+			Melder_require (fimresult == 0,
+				U"FileInMemory_fseek to position 14: result should be OK, even after seeking past the end.");
+			Melder_require (fimposition == 14,
+				U"FileInMemory_fseek to position 14: position should be at 14, although that is past the end of the file.");
 		}
 		//
-		result = fseek (theTestFilePointer, 1000, SEEK_SET);
-		position = ftell (theTestFilePointer);
-		Melder_require (result == 0,
+		fresult = fseek (theTestFilePointer, 1000, SEEK_SET);
+		fposition = ftell (theTestFilePointer);
+		Melder_require (fresult == 0,
 			U"fseek to position 1000: result should be OK, even after seeking past the end.");
-		Melder_require (position == 1000,
+		Melder_require (fposition == 1000,
 			U"fseek to position 1000: position should be at 1000, although that is past the end of the file.");
+		fimresult = FileInMemory_fseek (theTestFim, 1000, SEEK_SET);
+		fimposition = FileInMemory_ftell (theTestFim);
+		Melder_require (fimresult == 0,
+			U"FileInMemory_fseek to position 1000: result should be OK, even after seeking past the end.");
+		Melder_require (fimposition == 1000,
+			U"FileInMemory_fseek to position 1000: position should be at 1000, although that is past the end of the file.");
 		/*
 			With a negative position argument, the internal position should not change.
 		*/
-		result = fseek (theTestFilePointer, -1000, SEEK_SET);
-		trace (result, U" ", ferror (theTestFilePointer));
-		position = ftell (theTestFilePointer);
-		Melder_require (result == -1,
+		fresult = fseek (theTestFilePointer, -1000, SEEK_SET);
+		trace (fresult, U" ", ferror (theTestFilePointer));
+		fposition = ftell (theTestFilePointer);
+		Melder_require (fresult == -1,
 			U"fseek to position -1000: result should be failure.");
-		Melder_require (position == 1000,
-			U"fseek to position -1000: position is at ", position, U" instead of still 1000.");
-		result = fseek (theTestFilePointer, -1, SEEK_SET);
-		trace (result, U" ", ferror (theTestFilePointer));
-		position = ftell (theTestFilePointer);
-		Melder_require (result == -1,
+		Melder_require (fposition == 1000,
+			U"fseek to position -1000: position is at ", fposition, U" instead of still 1000.");
+		fimresult = FileInMemory_fseek (theTestFim, -1000, SEEK_SET);
+		//trace (fimresult, U" ", FileInMemory_ferror (theTestFilePointer));
+		fimposition = FileInMemory_ftell (theTestFim);
+		Melder_require (fimresult == -1,
+			U"FileInMemory_fseek to position -1000: result should be failure.");
+		Melder_require (fimposition == 1000,
+			U"FileInMemory_fseek to position -1000: position is at ", fimposition, U" instead of still 1000.");
+		//
+		fresult = fseek (theTestFilePointer, -1, SEEK_SET);
+		trace (fresult, U" ", ferror (theTestFilePointer));
+		fposition = ftell (theTestFilePointer);
+		Melder_require (fresult == -1,
 			U"fseek to position -1: result should be failure.");
-		Melder_require (position == 1000,
-			U"fseek to position -1: position is at ", position, U" instead of still 1000.");
+		Melder_require (fposition == 1000,
+			U"fseek to position -1: position is at ", fposition, U" instead of still 1000.");
+		fimresult = FileInMemory_fseek (theTestFim, -1, SEEK_SET);
+		trace (fimresult, U" ", FileInMemory_ferror (theTestFim));
+		fimposition = FileInMemory_ftell (theTestFim);
+		Melder_require (fimresult == -1,
+			U"fseek to position -1: result should be failure.");
+		Melder_require (fimposition == 1000,
+			U"fseek to position -1: position is at ", fimposition, U" instead of still 1000.");
 
 		MelderInfo_writeLine (U"File \"", fileName, U"\" was handled correctly\n");
 	} catch (MelderError) {
