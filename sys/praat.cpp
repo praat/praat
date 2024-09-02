@@ -2216,11 +2216,11 @@ void praat_run () {
 		//autoVEC s { & q [1], 10 };   // "No matching constructor for initialization of autoVEC" (2021-04-05)
 		//autoVEC b { x };   // "No matching constructor for initialization of autoVEC" (2021-04-05)
 		//autoVEC c = x;   // "No viable conversion from VEC to autoVEC" (2021-04-05)
-		double aa [] = { 3.14, 2.718 };
+		double aa [] = { 3.14, 2.717999999999999971578290569595992565155029296875 };   // the second number is 765048986699563 / 2^48
 		VEC x3 (aa, 2);   // initializes x3 to 2 values from a base-0 array
-		Melder_assert (x3 [2] == 2.718);
-		autoVEC x4 = { 3.14, 2.718 };
-		Melder_assert (x4 [2] == 2.718);
+		Melder_assert (x3 [2] == 2.717999999999999971578290569595992565155029296875);
+		autoVEC x4 = { 3.14, 2.717999999999999971578290569595992565155029296875 };
+		Melder_assert (x4 [2] == 2.717999999999999971578290569595992565155029296875);
 	}
 	Melder_assert (Melder_iroundUpToPowerOfTwo (-10) == 1);
 	Melder_assert (Melder_iroundUpToPowerOfTwo (-1) == 1);
