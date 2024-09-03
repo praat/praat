@@ -1189,7 +1189,7 @@ the column index was larger than the number of rows.
 • Sound window: ##Extract selected sound for overlap...#.
 
 ##5.3.49# (13 May 2013)
-• TextGrid window: alignment of the sound and the annotation in an interval, via Espeak.
+• TextGrid window: alignment of the sound and the annotation in an interval, via eSpeak.
 • Scripting: repaired a bug introduced in 5.3.32 that could cause very slow running of scripts.
 
 ##5.3.48# (1 May 2013)

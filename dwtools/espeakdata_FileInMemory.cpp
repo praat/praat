@@ -180,7 +180,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 				autoSTRVEC ({ U"name" }).get());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Table with espeak-ng voice properties not created.");
+		Melder_throw (U"Table with eSpeak-NG voice properties not created.");
 	}
 }
 
@@ -208,7 +208,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 				autoSTRVEC ({ U"name" }).get());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Table with espeak-ng languages not created.");
+		Melder_throw (U"Table with eSpeak-NG languages not created.");
 	}
 }
 

@@ -778,7 +778,6 @@ static void testOneFile (
 	const integer lineLengths [5],   // the intended lengths of the (maximally) five lines
 	const bool endsInNewline
 ) {
-	TRACE
 	try {
 		static MelderString relativePath;
 		MelderString_copy (& relativePath, Melder_cat (theTestSubfolder, U"/", fileName));
@@ -1169,34 +1168,38 @@ static void testOneFile (
 			With a negative position argument, the internal position should not change.
 		*/
 		fresult = fseek (theTestFilePointer, -1000, SEEK_SET);
-		trace (fresult, U" ", ferror (theTestFilePointer));
 		fposition = ftell (theTestFilePointer);
 		Melder_require (fresult == -1,
 			U"fseek to position -1000: result should be failure.");
 		Melder_require (fposition == 1000,
 			U"fseek to position -1000: position is at ", fposition, U" instead of still 1000.");
+		Melder_require (! ferror (theTestFilePointer),
+			U"fseek to position -1000 should not be an error.");
 		fimresult = FileInMemory_fseek (theTestFim, -1000, SEEK_SET);
-		//trace (fimresult, U" ", FileInMemory_ferror (theTestFilePointer));
 		fimposition = FileInMemory_ftell (theTestFim);
 		Melder_require (fimresult == -1,
 			U"FileInMemory_fseek to position -1000: result should be failure.");
 		Melder_require (fimposition == 1000,
 			U"FileInMemory_fseek to position -1000: position is at ", fimposition, U" instead of still 1000.");
+		Melder_require (! FileInMemory_ferror (theTestFim),
+			U"FileInMemory_fseek to position -1000 should not be an error.");
 		//
 		fresult = fseek (theTestFilePointer, -1, SEEK_SET);
-		trace (fresult, U" ", ferror (theTestFilePointer));
 		fposition = ftell (theTestFilePointer);
 		Melder_require (fresult == -1,
 			U"fseek to position -1: result should be failure.");
 		Melder_require (fposition == 1000,
 			U"fseek to position -1: position is at ", fposition, U" instead of still 1000.");
+		Melder_require (! ferror (theTestFilePointer),
+			U"fseek to position -1 should not be an error.");
 		fimresult = FileInMemory_fseek (theTestFim, -1, SEEK_SET);
-		trace (fimresult, U" ", FileInMemory_ferror (theTestFim));
 		fimposition = FileInMemory_ftell (theTestFim);
 		Melder_require (fimresult == -1,
 			U"fseek to position -1: result should be failure.");
 		Melder_require (fimposition == 1000,
 			U"fseek to position -1: position is at ", fimposition, U" instead of still 1000.");
+		Melder_require (! FileInMemory_ferror (theTestFim),
+			U"FileInMemory_fseek to position -1 should not be an error.");
 
 		MelderInfo_writeLine (U"File \"", fileName, U"\" was handled correctly\n");
 	} catch (MelderError) {

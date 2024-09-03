@@ -2650,7 +2650,7 @@ NORMAL (U"Suppose we have a sample #%x = (%x__1_, %x__2_,...%x__n_) and wish to 
 MAN_END
 
 MAN_BEGIN (U"Kirshenbaum phonetic encoding", U"djmw", 20120413)
-INTRO (U"The Kirshenbaum phonetic encoding represents International Phonetic Alphabet symbols using ascii characters. See: http://www.kirshenbaum.net/IPA/ascii-ipa.pdf. The @@espeak@ speech synthesizer on which our synthesizer is based accepts this encoding as text input. ")
+INTRO (U"The Kirshenbaum phonetic encoding represents International Phonetic Alphabet symbols using ascii characters. See: http://www.kirshenbaum.net/IPA/ascii-ipa.pdf. The @@eSpeak@ speech synthesizer on which our synthesizer is based accepts this encoding as text input. ")
 MAN_END
 
 MAN_BEGIN (U"LAPACK", U"djmw", 20200131)
@@ -4741,7 +4741,7 @@ DEFINITION (U"the number of neighbouring frequency points that are used in the c
 MAN_END
 
 MAN_BEGIN (U"SpeechSynthesizer", U"djmw", 20190811)
-INTRO (U"The SpeechSynthesizer is one of the @@types of objects@ in Praat. It creates a speech sound from text. The actual text-to-speech synthesis is performed by the @@Espeak|eSpeak NG@ speech synthsizer and therefore our SpeechSynthsizer is merely an interface to Espeak.")
+INTRO (U"The SpeechSynthesizer is one of the @@types of objects@ in Praat. It creates a speech sound from text. The actual text-to-speech synthesis is performed by the @@eSpeak|eSpeak NG@ speech synthsizer and therefore our SpeechSynthsizer is merely an interface to Espeak.")
 ENTRY (U"Commands")
 NORMAL (U"Creation:")
 LIST_ITEM (U"\\bu @@Create SpeechSynthesizer...@")
@@ -4754,7 +4754,7 @@ LIST_ITEM (U"\\bu @@SpeechSynthesizer: Speech output settings...|Speech output s
 MAN_END
 
 MAN_BEGIN (U"Create SpeechSynthesizer...", U"djmw", 20171101)
-INTRO (U"Creates the @@Espeak|eSpeak NG@ speech synthesizer.")
+INTRO (U"Creates the @@eSpeak|eSpeak NG@ speech synthesizer.")
 ENTRY (U"Settings")
 TERM (U"##Language#")
 DEFINITION (U"determines the language of the synthesizer.")

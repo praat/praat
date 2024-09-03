@@ -40,7 +40,7 @@ The following people contributed source code to Praat:
 , David Weenink:
 	@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC,
 	@VowelEditor,
-	and adaptation of GSL, LAPACK, fftpack, regular expressions, Espeak, Ogg Vorbis, Opus and LAME.
+	and adaptation of GSL, LAPACK, fftpack, regular expressions, eSpeak, Ogg Vorbis, Opus and LAME.
 , Stefan de Konink and Franz Brauße: major help in port to GTK.
 , Tom Naughton: major help in port to Cocoa.
 , Erez Volk: adaptation of FLAC and MAD.

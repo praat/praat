@@ -29,7 +29,7 @@ autoFileInMemorySet create_espeak_all_FileInMemorySet () {
 		list. addItem_move (create_espeak_voices_FileInMemorySet ());
 		return FileInMemorySets_merge (list);
 	} catch (MelderError) {
-		Melder_throw (U"FileInMemorySet for espeak-ng not created.");
+		Melder_throw (U"FileInMemorySet for eSpeak-NG not created.");
 	}
 }
 

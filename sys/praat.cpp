@@ -2480,7 +2480,7 @@ void praat_run () {
 				Melder_flushError ();
 			}
 		}
-		TRACE
+		//TRACE
 		trace (U"Before main event loop: ", Melder_stopwatch ());
 
 		#if gtk
