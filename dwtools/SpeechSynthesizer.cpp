@@ -49,8 +49,6 @@
 #include "oo_DESCRIPTION.h"
 #include "SpeechSynthesizer_def.h"
 
-#define espeak_SAMPLINGFREQUENCY 22050.h""
-
 #include "UnicodeData.h"
 
 extern int option_phoneme_events;   // BUG: external declaration outside header file (ppgb 20210307)
