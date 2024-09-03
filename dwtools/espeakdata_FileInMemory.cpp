@@ -56,7 +56,7 @@ void espeakdata_praat_init () {
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_propertiesTable.get(), 2);
 		espeakdata_voices_names = Table_column_to_Strings (espeakdata_voices_propertiesTable.get(), 2);
 		constexpr int test = 1;
-		//if (* ((char *) & test) != 1)   // simple endian test
+		if (* ((char *) & test) != 1)   // simple endian test
 			espeak_ng_data_to_bigendian ();
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata initialization not performed.");
@@ -180,7 +180,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 				autoSTRVEC ({ U"name" }).get());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Table with espeak-ng voice properties not created.");
+		Melder_throw (U"Table with eSpeak-NG voice properties not created.");
 	}
 }
 
@@ -199,7 +199,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, & fim -> string [12]);
 				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
-				Table_setStringValue (thee.get(), irow, 2, ( word ? word : & fim -> string[12] ));
+				Table_setStringValue (thee.get(), irow, 2, ( word ? word : & fim -> string [12] ));
 				Table_setNumericValue (thee.get(), irow, 3, ifile);
 			}
 		}
@@ -208,7 +208,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 				autoSTRVEC ({ U"name" }).get());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Table with espeak-ng languages not created.");
+		Melder_throw (U"Table with eSpeak-NG languages not created.");
 	}
 }
 

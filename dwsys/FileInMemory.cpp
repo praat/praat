@@ -77,17 +77,9 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 		my string = Melder_dup (path);
 		my d_numberOfBytes = numberOfBytes;
 		if (isStaticData) {
-			my _dontOwnData = true; // we cannot dispose of the data!
-			/*
-				djmw 20200226:
-				We changed d_data from type vector to autovector and cannot share the data anynmore.
-				Therefore make an explicit copy until we find a solution.
-			*/
-			//my d_data.at = reinterpret_cast<unsigned char *> (const_cast<char *> (data))-1; // ... just a link
-			//my d_data.size = numberOfBytes + 1;
-			my _dontOwnData = false; // we can dispose of the data!
-			my d_data = newvectorraw <unsigned char> (numberOfBytes + 1);
-			memcpy (my d_data.asArgumentToFunctionThatExpectsZeroBasedArray(), data, (size_t) numberOfBytes + 1);
+			my _dontOwnData = true;   // we cannot dispose of the data!
+			my d_data.cells = reinterpret_cast<unsigned char *> (const_cast<char *> (data));    // just a link
+			my d_data.size = numberOfBytes + 1;   // ... and the `_capacity` stays at zero!
 		} else {
 			my _dontOwnData = false;
 			my d_data = newvectorraw <unsigned char> (numberOfBytes + 1);
@@ -630,7 +622,6 @@ autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemo
 	} catch (MelderError) {
 		Melder_throw (U"FilesInMemory not collected in FileInMemorySet.");
 	}
-	
 }
 
 autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
@@ -778,7 +769,6 @@ static void testOneFile (
 	const integer lineLengths [5],   // the intended lengths of the (maximally) five lines
 	const bool endsInNewline
 ) {
-	TRACE
 	try {
 		static MelderString relativePath;
 		MelderString_copy (& relativePath, Melder_cat (theTestSubfolder, U"/", fileName));
@@ -1169,34 +1159,38 @@ static void testOneFile (
 			With a negative position argument, the internal position should not change.
 		*/
 		fresult = fseek (theTestFilePointer, -1000, SEEK_SET);
-		trace (fresult, U" ", ferror (theTestFilePointer));
 		fposition = ftell (theTestFilePointer);
 		Melder_require (fresult == -1,
 			U"fseek to position -1000: result should be failure.");
 		Melder_require (fposition == 1000,
 			U"fseek to position -1000: position is at ", fposition, U" instead of still 1000.");
+		Melder_require (! ferror (theTestFilePointer),
+			U"fseek to position -1000 should not be an error.");
 		fimresult = FileInMemory_fseek (theTestFim, -1000, SEEK_SET);
-		//trace (fimresult, U" ", FileInMemory_ferror (theTestFilePointer));
 		fimposition = FileInMemory_ftell (theTestFim);
 		Melder_require (fimresult == -1,
 			U"FileInMemory_fseek to position -1000: result should be failure.");
 		Melder_require (fimposition == 1000,
 			U"FileInMemory_fseek to position -1000: position is at ", fimposition, U" instead of still 1000.");
+		Melder_require (! FileInMemory_ferror (theTestFim),
+			U"FileInMemory_fseek to position -1000 should not be an error.");
 		//
 		fresult = fseek (theTestFilePointer, -1, SEEK_SET);
-		trace (fresult, U" ", ferror (theTestFilePointer));
 		fposition = ftell (theTestFilePointer);
 		Melder_require (fresult == -1,
 			U"fseek to position -1: result should be failure.");
 		Melder_require (fposition == 1000,
 			U"fseek to position -1: position is at ", fposition, U" instead of still 1000.");
+		Melder_require (! ferror (theTestFilePointer),
+			U"fseek to position -1 should not be an error.");
 		fimresult = FileInMemory_fseek (theTestFim, -1, SEEK_SET);
-		trace (fimresult, U" ", FileInMemory_ferror (theTestFim));
 		fimposition = FileInMemory_ftell (theTestFim);
 		Melder_require (fimresult == -1,
 			U"fseek to position -1: result should be failure.");
 		Melder_require (fimposition == 1000,
 			U"fseek to position -1: position is at ", fimposition, U" instead of still 1000.");
+		Melder_require (! FileInMemory_ferror (theTestFim),
+			U"FileInMemory_fseek to position -1 should not be an error.");
 
 		MelderInfo_writeLine (U"File \"", fileName, U"\" was handled correctly\n");
 	} catch (MelderError) {

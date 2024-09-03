@@ -26,7 +26,6 @@
 Collection_define (FileInMemorySet, SortedSetOfStringOf, FileInMemory) {
 	void v1_info ()
 		override;
-	integer errorNumber;
 };
 
 autoFileInMemory FileInMemory_create (MelderFile file);

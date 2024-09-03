@@ -755,7 +755,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 		espeak_ng_ERROR_CONTEXT context = { 0 };
 		espeak_ng_STATUS status = espeak_ng_Initialize (& context);
 		Melder_require (status == ENS_OK,
-			U"Internal espeak error. ", status);
+			U"Internal eSpeak error. ", status);
 		if (my d_inputTextFormat == SpeechSynthesizer_INPUT_TAGGEDTEXT)
 			synth_flags |= espeakSSML;
 		if (my d_inputTextFormat != SpeechSynthesizer_INPUT_TEXTONLY)
@@ -779,7 +779,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 		const conststring32 voiceCode = SpeechSynthesizer_getVoiceCode (me);
 		
 		espeak_ng_SetVoiceByName (Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
-		const int wordGap_10ms = my d_wordGap * 100;   // espeak word gap is in units of 10 ms
+		const int wordGap_10ms = my d_wordGap * 100;   // eSpeak word gap is in units of 10 ms
 		espeak_ng_SetParameter (espeakWORDGAP, wordGap_10ms, 0);
 		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_ng_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);

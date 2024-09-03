@@ -20,16 +20,35 @@
 
 autoFileInMemorySet create_espeak_all_FileInMemorySet () {
 	try{
-		OrderedOf <structFileInMemorySet> list;
-		list. addItem_move (create_espeak_phon_FileInMemorySet ());
-		list. addItem_move (create_espeak_russianDict_FileInMemorySet ());
-		list. addItem_move (create_espeak_faroeseDict_FileInMemorySet ());
-		list. addItem_move (create_espeak_otherDicts_FileInMemorySet ());
-		list. addItem_move (create_espeak_languages_FileInMemorySet ());
-		list. addItem_move (create_espeak_voices_FileInMemorySet ());
-		return FileInMemorySets_merge (list);
+		autoFileInMemorySet me = FileInMemorySet_create ();
+
+		FileInMemorySet set = create_espeak_phon_FileInMemorySet ().releaseToAmbiguousOwner();
+		for (integer ifim = 1; ifim <= set->size; ifim ++)
+			my addItem_ref (set->at [ifim]);
+
+		set = create_espeak_russianDict_FileInMemorySet ().releaseToAmbiguousOwner();
+		for (integer ifim = 1; ifim <= set->size; ifim ++)
+			my addItem_ref (set->at [ifim]);
+
+		set = create_espeak_faroeseDict_FileInMemorySet ().releaseToAmbiguousOwner();
+		for (integer ifim = 1; ifim <= set->size; ifim ++)
+			my addItem_ref (set->at [ifim]);
+
+		set = create_espeak_otherDicts_FileInMemorySet ().releaseToAmbiguousOwner();
+		for (integer ifim = 1; ifim <= set->size; ifim ++)
+			my addItem_ref (set->at [ifim]);
+
+		set = create_espeak_languages_FileInMemorySet ().releaseToAmbiguousOwner();
+		for (integer ifim = 1; ifim <= set->size; ifim ++)
+			my addItem_ref (set->at [ifim]);
+
+		set = create_espeak_voices_FileInMemorySet ().releaseToAmbiguousOwner();
+		for (integer ifim = 1; ifim <= set->size; ifim ++)
+			my addItem_ref (set->at [ifim]);
+
+		return me;
 	} catch (MelderError) {
-		Melder_throw (U"FileInMemorySet for espeak-ng not created.");
+		Melder_throw (U"FileInMemorySet for eSpeak-NG not created.");
 	}
 }
 

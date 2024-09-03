@@ -721,7 +721,10 @@ void Table_checkSpecifiedColumnNumbersWithinRange (Table me, constINTVECVU const
 void Table_columns_checkExist (Table me, constSTRVEC columnNames) {
 	for (integer i = 1; i <= columnNames.size; i ++)
 		if (Table_columnNameToNumber_0 (me, columnNames [i]) == 0)
-			Melder_throw (me, U": column “", columnNames [i], U"” does not exist.");
+			if (Melder_isHorizontalOrVerticalSpace (columnNames [i] [0]))
+				Melder_throw (me, U": column “", columnNames [i], U"” does not exist (note: it starts with a space)");
+			else
+				Melder_throw (me, U": column “", columnNames [i], U"” does not exist.");
 }
 
 static void Table_columns_checkCrossSectionEmpty (Table me, constINTVECVU factors, constINTVECVU vars) {
@@ -1134,7 +1137,10 @@ void Table_sortRows (Table me, constSTRVEC columnNames) {
 		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 			columns [icol] = Table_columnNameToNumber_0 (me, columnNames [icol]);
 			if (columns [icol] == 0)
-				Melder_throw (U"Column \"", columnNames [icol], U"\" does not exist.");
+				if (Melder_isHorizontalOrVerticalSpace (columnNames [icol] [0]))
+					Melder_throw (U"Column \"", columnNames [icol], U"\" does not exist (note: it starts with a space).");
+				else
+					Melder_throw (U"Column \"", columnNames [icol], U"\" does not exist.");
 		}
 		Table_sortRows_a (me, columns.get());
 	} catch (MelderError) {

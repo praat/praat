@@ -8911,7 +8911,6 @@ void praat_SSCP_as_TableOfReal_init (ClassInfo klas) {
 			CONVERT_EACH_TO_ONE__TableOfReal_to_TableOfReal);
 }
 
-
 void praat_TableOfReal_init2 (ClassInfo klas) {
 	praat_TableOfReal_init (klas);
 	praat_addAction1 (klas, 0, U"To TableOfReal", U"To Matrix", 1, 
@@ -8991,7 +8990,12 @@ void praat_David_init () {
 
 	structVowelEditor  :: f_preferences ();
 
-	espeakdata_praat_init ();
+	{// scope
+		TRACE
+		double t = Melder_clock ();
+		espeakdata_praat_init ();
+		trace (U"initializing eSpeak data took ", Melder_fixed (1000 * (Melder_clock () - t), 3), U" milliseconds");
+	}
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0,
 			INFO_NONE__Praat_ReportFloatingPointProperties);

@@ -42,11 +42,13 @@
 //	for (int _i = 0; _i <= (int) setType::MAX; _i ++) thy x [_i] = our x [_i];
 
 #define oo_STRINGx(storage, x)  \
-	if (our x) thy x = Melder_dup (our x.get());
+	if (our x) \
+		thy x = Melder_dup (our x.get());
 
 #define oo_STRINGx_SET(storage, x, setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) { \
-		if (our x [_i]) thy x [_i] = Melder_dup (our x [_i].get()); \
+		if (our x [_i]) \
+			thy x [_i] = Melder_dup (our x [_i].get()); \
 	}
 
 #define oo_STRINGx_VECTOR(storage, x, n)  \
@@ -94,11 +96,13 @@
 	thy x._ownItems = our x._ownItems; \
 	thy x._ownershipInitialized = our x._ownershipInitialized; \
 	for (integer _i = 1; _i <= our x.size; _i ++) { \
-		if (our x.at [_i]) thy x.at [_i] = Data_copy (our x.at [_i]).releaseToAmbiguousOwner(); \
+		if (our x.at [_i]) \
+			thy x.at [_i] = Data_copy (our x.at [_i]).releaseToAmbiguousOwner(); \
 	}
 
 #define oo_COLLECTION(Class, x, ItemClass, version)  \
-	if (our x) thy x = Data_copy (our x.get());
+	if (our x) \
+		thy x = Data_copy (our x.get());
 
 #define oo_TRANSIENT_FILE(x)  \
 	MelderFile_copy (& our x, & thy x);

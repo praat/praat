@@ -30,7 +30,7 @@ Erase all
 selectObject: asSpectrum.sound
 Select outer viewport: 0, 6, 0, 4
 Draw: 0, 0, 0, 0, "yes", "poles" 
-Text top: "no", "espeak version 1.47.04"
+Text top: "no", "eSpeak version 1.47.04"
 selectObject: asSpectrum.spectrum
 Select outer viewport: 0, 6, 4, 8
 Draw: 0, 0, 0, 0, "yes"
