@@ -21,15 +21,14 @@
 
 #include "FileInMemory.h"
 
-autoFileInMemorySet create_espeak_all_FileInMemorySet ();
-autoFileInMemorySet create_espeak_phon_FileInMemorySet ();
-autoFileInMemorySet create_espeak_russianDict_FileInMemorySet ();
-autoFileInMemorySet create_espeak_faroeseDict_FileInMemorySet ();
-autoFileInMemorySet create_espeak_otherDicts_FileInMemorySet ();
-autoFileInMemorySet create_espeak_languages_FileInMemorySet ();
-autoFileInMemorySet create_espeak_voices_FileInMemorySet ();
+FileInMemorySet theEspeakPraatFileInMemorySet();   // accessor to a singleton, which is created if it doesn't exist yet
 
-FileInMemorySet theEspeakPraatFileInMemorySet();   // accessor to a singleton
+void espeak_praat_FileInMemorySet_addPhon (FileInMemorySet me);
+void espeak_praat_FileInMemorySet_addRussianDict (FileInMemorySet me);
+void espeak_praat_FileInMemorySet_addFaroeseDict (FileInMemorySet me);
+void espeak_praat_FileInMemorySet_addOtherDicts (FileInMemorySet me);
+void espeak_praat_FileInMemorySet_addLanguages (FileInMemorySet me);
+void espeak_praat_FileInMemorySet_addVoices (FileInMemorySet me);
 
 int espeak_praat_GetFileLength (const char *filename);
 

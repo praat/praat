@@ -2587,13 +2587,13 @@ DO
 }
 
 FORM (INFO_ONE__FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
-	WORD (name, U"Name", U"example")
+	WORD (functionName, U"Function name", U"example_FileInMemorySet_add_examples")
 	INTEGER (numberOfBytesPerLine, U"Number of bytes per line", U"20")
 	OK
 DO
 	INFO_ONE (FileInMemorySet)
 		MelderInfo_open ();
-		FileInMemorySet_showAsCode (me, name, numberOfBytesPerLine);
+		FileInMemorySet_showAsCode (me, functionName, numberOfBytesPerLine);
 		MelderInfo_close ();
 	INFO_ONE_END
 }

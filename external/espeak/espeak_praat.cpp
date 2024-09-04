@@ -26,6 +26,20 @@
 #include "voice.h"
 #include <errno.h>
 
+FileInMemorySet theEspeakPraatFileInMemorySet() {
+	static autoFileInMemorySet me;
+	if (! me) {
+		me = FileInMemorySet_create ();
+		espeak_praat_FileInMemorySet_addPhon (me.get());
+		espeak_praat_FileInMemorySet_addRussianDict (me.get());
+		espeak_praat_FileInMemorySet_addFaroeseDict (me.get());
+		espeak_praat_FileInMemorySet_addOtherDicts (me.get());
+		espeak_praat_FileInMemorySet_addLanguages (me.get());
+		espeak_praat_FileInMemorySet_addVoices (me.get());
+	}
+	return me.get();
+}
+
 /*
 	espeak_praat_GetFileLength: mimics GetFileLength of espeak-ng
 	Returns the number of bytes in the file.
