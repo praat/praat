@@ -2212,7 +2212,7 @@ static void INFO_DATA__voiceReport (SoundAnalysisArea me, EDITOR_ARGS) {
 					"the raw cross-correlation analysis method to optimize for voice research.\n"
 				);
 			else
-				MelderInfo_writeLine (U"WARNING: several of the following measurements will be incorrect,\n"
+				MelderInfo_writeLine (U"WARNING: several of the following measurements, especially those on harmonicity, will be incorrect,\n"
 					"because they are based on a sound from which higher frequencies have been filtered out.\n"
 					"For more correctness, go to “Pitch settings” and choose\n"
 					"the raw cross-correlation analysis method to optimize for voice research.\n"
@@ -2224,6 +2224,19 @@ static void INFO_DATA__voiceReport (SoundAnalysisArea me, EDITOR_ARGS) {
 			my instancePref_pulses_maximumPeriodFactor(), my instancePref_pulses_maximumAmplitudeFactor(),
 			my dynamic_instancePref_pitch_silenceThreshold(), my dynamic_instancePref_pitch_voicingThreshold()
 		);
+		if (my instancePref_pitch_method() != kSoundAnalysisArea_pitch_analysisMethod::RAW_CROSS_CORRELATION) {
+			if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::RAW_AUTOCORRELATION)
+				MelderInfo_writeLine (U"\nWARNING: some of the above measurements may be imprecise.\n"
+					"For more precision, go to “Pitch settings” and choose\n"
+					"the raw cross-correlation analysis method to optimize for voice research.\n"
+				);
+			else
+				MelderInfo_writeLine (U"WARNING: several of the above measurements, especially those on harmonicity, will be incorrect,\n"
+					"because they are based on a sound from which higher frequencies have been filtered out.\n"
+					"For more correctness, go to “Pitch settings” and choose\n"
+					"the raw cross-correlation analysis method to optimize for voice research.\n"
+				);
+		}
 		MelderInfo_close ();
 	INFO_DATA_END
 }

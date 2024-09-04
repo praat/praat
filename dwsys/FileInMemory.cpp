@@ -71,14 +71,14 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 	}
 }
 
-autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, bool isStaticData, conststring32 path, conststring32 id) {
+autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const uint8 *data, bool isStaticData, conststring32 path) {
 	try {
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my string = Melder_dup (path);
 		my d_numberOfBytes = numberOfBytes;
 		if (isStaticData) {
 			my _dontOwnData = true;   // we cannot dispose of the data!
-			my d_data.cells = reinterpret_cast<unsigned char *> (const_cast<char *> (data));    // just a link
+			my d_data.cells = const_cast <uint8 *> (data);    // just a link; FIXME: should be a constVEC instead of a VEC
 			my d_data.size = numberOfBytes + 1;   // ... and the `_capacity` stays at zero!
 		} else {
 			my _dontOwnData = false;
@@ -96,15 +96,14 @@ void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numbe
 	if (numberOfBytesPerLine < 1)
 		numberOfBytesPerLine = 20;
 
-	MelderInfo_write (U"\t\tstatic unsigned char ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
+	MelderInfo_write (U"\t\tstatic uint8 ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
 	for (integer i = 1; i <= my d_numberOfBytes; i ++) {
 		const unsigned char number = my d_data [i];
 		MelderInfo_write (( i % numberOfBytesPerLine == 1 ? U"\n\t\t\t" : U"" ), number, U",");
 	}
 	MelderInfo_writeLine (U"0};");
 	MelderInfo_write (U"\t\tautoFileInMemory ", name, U" = FileInMemory_createWithData (");
-	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (& ",
-		name, U"_data), true, \n\t\t\tU\"", my string.get(), U"\");");
+	MelderInfo_writeLine (my d_numberOfBytes, U", ", name, U"_data, true, U\"", my string.get(), U"\");");
 }
 
 FileInMemory FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode) {
@@ -666,21 +665,19 @@ autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_strin
 	}
 }
 
-void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer numberOfBytesPerLine) {
-	autoMelderString one_fim;
+void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 functionName, integer numberOfBytesPerLine) {
+	autoMelderString fimName;
 	MelderInfo_writeLine (U"#include \"FileInMemory.h\"\n");
-	MelderInfo_writeLine (U"autoFileInMemorySet create_", name, U" () {");
+	MelderInfo_writeLine (U"void ", functionName, U" (FileInMemorySet me) {");
 	MelderInfo_writeLine (U"\ttry {");
-	MelderInfo_writeLine (U"\t\tautoFileInMemorySet me = FileInMemorySet_create ();");
 	for (integer ifile = 1; ifile <= my size; ifile ++) {
 		const FileInMemory fim = my at [ifile];
-		MelderString_copy (& one_fim, name, ifile);
-		FileInMemory_showAsCode (fim, one_fim.string, numberOfBytesPerLine);
-		MelderInfo_writeLine (U"\t\tmy addItem_move (", one_fim.string, U".move());\n");
+		MelderString_copy (& fimName, U"fim", ifile);
+		FileInMemory_showAsCode (fim, fimName.string, numberOfBytesPerLine);
+		MelderInfo_writeLine (U"\t\tmy addItem_move (", fimName.string, U".move());\n");
 	}
-	MelderInfo_writeLine (U"\t\treturn me;");
 	MelderInfo_writeLine (U"\t} catch (MelderError) {");
-	MelderInfo_writeLine (U"\t\tMelder_throw (U\"FileInMemorySet not created.\");");
+	MelderInfo_writeLine (U"\t\tMelder_throw (U\"Not everything was added to the FileInMemorySet.\");");
 	MelderInfo_writeLine (U"\t}");
 	MelderInfo_writeLine (U"}\n");
 }

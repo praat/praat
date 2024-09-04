@@ -41,13 +41,6 @@ static integer Table_getRownumberOfStringInColumn (Table me, conststring32 strin
 }
 #endif
 
-FileInMemorySet theEspeakPraatFileInMemorySet() {
-	static autoFileInMemorySet singleton;
-	if (! singleton)
-		singleton = create_espeak_all_FileInMemorySet ();
-	return singleton.get();
-}
-
 void espeakdata_praat_init () {
 	try {
 		(void) theEspeakPraatFileInMemorySet();   // create the singleton now (not strictly necessary)

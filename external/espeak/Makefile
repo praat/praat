@@ -15,10 +15,9 @@ OBJECTS = case.o categories.o common.o compiledict.o \
 	setlengths.o soundicon.o speech.o \
 	ssml.o synthdata.o synthesize.o \
 	tr_languages.o translate.o translateword.o voices.o wavegen.o \
-	espeak_all_FileInMemorySet.o \
-	espeak_languages_FileInMemorySet.o espeak_voices_FileInMemorySet.o \
-	espeak_russianDict_FileInMemorySet.o espeak_faroeseDict_FileInMemorySet.o \
-	espeak_otherDicts_FileInMemorySet.o espeak_phon_FileInMemorySet.o \
+	espeak_praat_FileInMemorySet_addLanguages.o espeak_praat_FileInMemorySet_addVoices.o \
+	espeak_praat_FileInMemorySet_addRussianDict.o espeak_praat_FileInMemorySet_addFaroeseDict.o \
+	espeak_praat_FileInMemorySet_addOtherDicts_FileInMemorySet.o espeak_praat_FileInMemorySet_addPhon.o \
 	espeak_praat.o
 
 .PHONY: all clean

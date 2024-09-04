@@ -38,7 +38,10 @@ autoFileInMemory FileInMemory_create (MelderFile file);
 	implementation, because _dontOwnData is default-initialised as false.
 	Only if we create a FileInMemory object from data we have to be explicit about ownership.
 */
-autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, bool isStaticData, conststring32 path, conststring32 id);
+autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const uint8 *data, bool isStaticData, conststring32 path);
+inline autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, bool isStaticData, conststring32 path) {
+	return FileInMemory_createWithData(numberOfBytes,(const uint8*)data,isStaticData,path);
+}
 
 void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine);
 
