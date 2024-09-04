@@ -300,6 +300,9 @@
 #define SET_BOOLEAN(booleanVariable, booleanValue)  \
 			UiForm_setBoolean (_dia_.get(), & booleanVariable, booleanValue);
 
+#define SET_OPTION(optionVariable, optionValue)  \
+			UiForm_setOption (_dia_.get(), & optionVariable, optionValue);
+
 #define SET_STRING(stringVariable, stringValue)  \
 			UiForm_setString (_dia_.get(), & stringVariable, stringValue);
 
