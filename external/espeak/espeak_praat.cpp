@@ -26,63 +26,6 @@
 #include "voice.h"
 #include <errno.h>
 
-FileInMemorySet theEspeakPraatFileInMemorySet() {
-	static autoFileInMemorySet me;
-	if (! me) {
-		me = FileInMemorySet_create ();
-		espeak_praat_FileInMemorySet_addPhon (me.get());
-		espeak_praat_FileInMemorySet_addRussianDict (me.get());
-		espeak_praat_FileInMemorySet_addFaroeseDict (me.get());
-		espeak_praat_FileInMemorySet_addOtherDicts (me.get());
-		espeak_praat_FileInMemorySet_addLanguages (me.get());
-		espeak_praat_FileInMemorySet_addVoices (me.get());
-	}
-	return me.get();
-}
-
-/*
-	espeak_praat_GetFileLength: mimics GetFileLength of espeak-ng
-	Returns the number of bytes in the file.
-	If the filename is a directory it return -EISDIR
-*/
-int espeak_praat_GetFileLength (const char *filename) {
-	FileInMemorySet me = theEspeakPraatFileInMemorySet();
-	integer index = my lookUp (Melder_peek8to32 (filename));
-	if (index > 0) {
-		FileInMemory fim = my at [index];
-		return fim -> d_numberOfBytes;
-	}
-	// Directory ??
-	if (FileInMemorySet_hasDirectory (me, Melder_peek8to32 (filename))) {
-		return -EISDIR;
-	}
-	return -1;
-}
-
-/* 
-	espeak_praat_GetVoices: mimics GetVoices of espeak-ng
-	If is_languange_file == 0 then /voices/ else /lang/ 
-	We know our voices are in /voices/ (actually in /voices/!v/) and our languages in /lang/
-*/
-void espeak_praat_GetVoices (const char *path, int len_path_voices, int is_language_file) {
-	(void) path;
-	FileInMemorySet me = theEspeakPraatFileInMemorySet();
-	conststring32 criterion = is_language_file ? U"/lang/" : U"/voices/";
-	autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
-	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
-		FileInMemory fim = fileList -> at [ifile];
-		FileInMemory f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
-		conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
-		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
-		FileInMemory_fclose (f_voice);
-		if (voice_data) {
-			voices_list [n_voices_list ++] = voice_data;
-		} /*else {
-			Melder_warning (U"Voice data for ", fname, U" could not be gathered.");
-		}*/
-	}
-}
-
 /*
 	The espeak-ng data files have been written with little-endian byte order. To be able to use these files on big endian hardware
 	we have to change these files as if they were written on a big-endian machine.
@@ -322,7 +265,7 @@ static autoFileInMemory phonindex_to_bigendian (FileInMemory me) {
 	}
 }
 
-void espeak_ng_data_to_bigendian () {
+static void espeak_praat_FileInMemorySet_makeNativeEndian () {
 	FileInMemorySet me = theEspeakPraatFileInMemorySet();
 
 	const integer manifestIndex = my lookUp (U"" PATH_ESPEAK_DATA "/phondata-manifest");
@@ -348,6 +291,66 @@ void espeak_ng_data_to_bigendian () {
 	const FileInMemory phonindex = my at [phonindexIndex];
 	autoFileInMemory phonindex_new = phonindex_to_bigendian (phonindex);
 	Thing_swap (phonindex, phonindex_new.get());
+}
+
+FileInMemorySet theEspeakPraatFileInMemorySet() {
+	static autoFileInMemorySet me;
+	if (! me) {
+		me = FileInMemorySet_create ();
+		espeak_praat_FileInMemorySet_addPhon (me.get());
+		espeak_praat_FileInMemorySet_addRussianDict (me.get());
+		espeak_praat_FileInMemorySet_addFaroeseDict (me.get());
+		espeak_praat_FileInMemorySet_addOtherDicts (me.get());
+		espeak_praat_FileInMemorySet_addLanguages (me.get());
+		espeak_praat_FileInMemorySet_addVoices (me.get());
+		constexpr int test = 1;
+		//if (* ((char *) & test) != 1)   // simple endian test
+			espeak_praat_FileInMemorySet_makeNativeEndian ();
+	}
+	return me.get();
+}
+
+/*
+	espeak_praat_GetFileLength: mimics GetFileLength of espeak-ng
+	Returns the number of bytes in the file.
+	If the filename is a directory it return -EISDIR
+*/
+int espeak_praat_GetFileLength (const char *filename) {
+	FileInMemorySet me = theEspeakPraatFileInMemorySet();
+	integer index = my lookUp (Melder_peek8to32 (filename));
+	if (index > 0) {
+		FileInMemory fim = my at [index];
+		return fim -> d_numberOfBytes;
+	}
+	// Directory ??
+	if (FileInMemorySet_hasDirectory (me, Melder_peek8to32 (filename))) {
+		return -EISDIR;
+	}
+	return -1;
+}
+
+/* 
+	espeak_praat_GetVoices: mimics GetVoices of espeak-ng
+	If is_languange_file == 0 then /voices/ else /lang/ 
+	We know our voices are in /voices/ (actually in /voices/!v/) and our languages in /lang/
+*/
+void espeak_praat_GetVoices (const char *path, int len_path_voices, int is_language_file) {
+	(void) path;
+	FileInMemorySet me = theEspeakPraatFileInMemorySet();
+	conststring32 criterion = is_language_file ? U"/lang/" : U"/voices/";
+	autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
+	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
+		FileInMemory fim = fileList -> at [ifile];
+		FileInMemory f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
+		conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
+		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
+		FileInMemory_fclose (f_voice);
+		if (voice_data) {
+			voices_list [n_voices_list ++] = voice_data;
+		} /*else {
+			Melder_warning (U"Voice data for ", fname, U" could not be gathered.");
+		}*/
+	}
 }
 
 /* End of file espeak_praat.cpp */

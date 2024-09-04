@@ -39,7 +39,5 @@ int espeak_praat_GetFileLength (const char *filename);
 
 void espeak_praat_GetVoices (const char *path, int len_path_voices, int is_language_file);
 
-void espeak_ng_data_to_bigendian (void);
-
 /* End of file espeak_praat.h */
 #endif
