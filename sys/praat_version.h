@@ -1,5 +1,5 @@
-#define PRAAT_VERSION_STR 6.4.18
-#define PRAAT_VERSION_NUM 6418
+#define PRAAT_VERSION_STR 6.4.19
+#define PRAAT_VERSION_NUM 6419
 #define PRAAT_YEAR 2024
-#define PRAAT_MONTH August
-#define PRAAT_DAY 21
+#define PRAAT_MONTH September
+#define PRAAT_DAY 4

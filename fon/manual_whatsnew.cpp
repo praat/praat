@@ -29,10 +29,14 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.19# (4 September 2024)
+• Repaired many bugs in the eSpeak part of Praat.
+
 ##6.4.18# (21 August 2024)
 • SpeechSynthesizer and TextGrid alignment: solved an eSpeak-internal bug that caused some
   rare long phoneme codes to be handled incorrectly.
 • Scripting: `padLeft$`(), `truncateLeft$`() and `padOrTruncateLeft$`(), and their `Right` counterparts.
+• s390x edition for Linux.
 
 ##6.4.17# (8 August 2024)
 • Spectrogram: #Paint: solved a bug that could cause Praat to crash if the time domain was smaller than that of the Spectrogram.
