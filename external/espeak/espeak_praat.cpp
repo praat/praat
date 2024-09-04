@@ -40,11 +40,11 @@
 */
 
 static /*constexpr*/ bool nativeIsBigEndian () {   // FIXME: C++-20 will have a constexpr functin for this
-	constexpr int test = 1;
+	const int test = 1;
 	if /*constexpr*/ (* ((char *) & test) == 1)
-		return true;
-	else
 		return false;
+	else
+		return true;
 }
 
 static void littleEndian2ToNativeEndian (uint8 *twoBytes) {
