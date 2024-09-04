@@ -6306,7 +6306,7 @@ DO
 }
 
 FORM (MODIFY_EACH__SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify phoneme set", nullptr) {
-	OPTIONMENU (phoneneSetIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
+	OPTIONMENU (phonemeSetIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
 			OPTION (espeakdata_languages_names -> strings [i].get());
 	}
@@ -6319,7 +6319,7 @@ FORM (MODIFY_EACH__SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modi
 	SET_OPTION (phoneneSetIndex, prefPhonemeSet)*/
 DO
 	MODIFY_EACH (SpeechSynthesizer)
-		my d_phonemeSet = Melder_dup (espeakdata_languages_names -> strings [phoneneSetIndex].get());
+		my d_phonemeSet = Melder_dup (espeakdata_languages_names -> strings [phonemeSetIndex].get());
 	MODIFY_EACH_END
 }
 

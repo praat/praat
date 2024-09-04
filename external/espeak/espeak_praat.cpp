@@ -39,27 +39,30 @@
 		Then no conversion of data files would be necessary.
 */
 
-#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-	#define SWAP_2(i) { \
-		thyData [i] = myData [i + 1]; \
-		thyData [i + 1] = myData [i]; }
+static /*constexpr*/ bool nativeIsBigEndian () {   // FIXME: C++-20 will have a constexpr functin for this
+	constexpr int test = 1;
+	if /*constexpr*/ (* ((char *) & test) == 1)
+		return true;
+	else
+		return false;
+}
 
-	#define SWAP_4(i) { \
-		thyData [i] = myData [i + 3]; \
-		thyData [i + 1] = myData [i + 2]; \
-		thyData [i + 2] = myData [i + 1]; \
-		thyData [i + 3] = myData [i]; }
-#else
-	#define SWAP_2(i)
-	#define SWAP_4(i)
-#endif
+static void littleEndian2ToNativeEndian (uint8 *twoBytes) {
+	if (nativeIsBigEndian ())
+		std::swap (twoBytes [0], twoBytes [1]);
+}
 
-static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory manifest) {
+static void littleEndian4ToNativeEndian (uint8 *fourBytes) {
+	if (nativeIsBigEndian ()) {
+		std::swap (fourBytes [0], fourBytes [3]);
+		std::swap (fourBytes [1], fourBytes [2]);
+	}
+}
+
+static void phondata_makeNativeEndian (FileInMemory me, FileInMemory manifest) {
 	//TRACE
 	try {
-		autoFileInMemory thee = Data_copy (me);
-		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 * const data = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		FileInMemory phondataf = FileInMemorySet_fopen (theEspeakPraatFileInMemorySet(), Melder_peek32to8_fileSystem (my string.get()), "r");
 		Melder_assert (phondataf);
 		FileInMemory manifestf = FileInMemorySet_fopen (theEspeakPraatFileInMemorySet(), Melder_peek32to8_fileSystem (manifest -> string.get()), "r");
@@ -89,9 +92,9 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 					} SPECT_SEQ;
 				*/
 
-				SWAP_2 (i1)
+				littleEndian2ToNativeEndian (& data [i1]);
 				index += 2;   // skip the short length
-				const integer numberOfFrames = myData [index];   // unsigned char n_frames
+				const integer numberOfFrames = data [index];   // unsigned char n_frames
 				trace (U"S ", numberOfFrames, U" frames");
 				index += 2;   // skip the 2 unsigned char's n_frames & sqflags
 				totalLengthOfS += 4;
@@ -129,7 +132,7 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 					*/
 					i1 = index;
 					for (integer i = 1; i <= 8; i ++) {
-						SWAP_2 (i1)
+						littleEndian2ToNativeEndian (& data [i1]);
 						i1 += 2;
 					}
 					/*
@@ -149,13 +152,13 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 						20240816 changed thy d_data to my d_data, and then to myData [index]
 					*/
 					#define FRFLAG_KLATT 0x01
-					uint32 length = (myData [index] & FRFLAG_KLATT) ? sizeof (frame_t) : sizeof (frame_t2);
+					uint32 length = (data [index] & FRFLAG_KLATT) ? sizeof (frame_t) : sizeof (frame_t2);
 					trace (U"S length ", length);
 					index += length;
 					totalLengthOfS += length;
 				}
 			} else if (line [0] == 'W') {  // Wave data
-				uint32 length = ((uint32) myData [i1 + 1] << 8) + (uint32) myData [i1];
+				uint32 length = ((uint32) data [i1 + 1] << 8) + (uint32) data [i1];
 				index += 4;
 				index += length;   // char wavedata [length]
 				/*
@@ -177,7 +180,7 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 					The following code is probably incorrect as well,
 					but we never seem to reach it.
 				*/
-				uint32 length = ((uint32) myData [index + 2] << 8) + (uint32) myData [index + 1];   // NOT TESTABLE
+				uint32 length = ((uint32) data [index + 2] << 8) + (uint32) data [index + 1];   // NOT TESTABLE
 				length *= 4;
 				index += length;
 			} else
@@ -188,23 +191,20 @@ static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory man
 		trace (U"Total length of W ", totalLengthOfW, U" S ", totalLengthOfS, U" E ", totalLengthOfE, U" comments ", totalLengthOfComments);
 		trace (U"Together ", totalLengthOfW + totalLengthOfS + totalLengthOfE + totalLengthOfComments,
 				U" in a file of ", my d_numberOfBytes, U" bytes.");   // they don't add up; see the comment at case 'W'
-		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"phondata not converted to bigendian.");
 	}
 }
 
-static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
+static void phontab_makeNativeEndian (FileInMemory me) {
 	//TRACE
 	try {
-		autoFileInMemory thee = Data_copy (me);
-		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		const integer numberOfPhonemeTables = myData [0];
+		uint8 * const data = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		const integer numberOfPhonemeTables = data [0];
 		trace (numberOfPhonemeTables, U" phoneme tables");
 		integer index = 4; // skip first 4 bytes
 		for (integer itab = 1; itab <= numberOfPhonemeTables; itab ++) {
-			integer numberOfPhonemes = thyData [index];
+			integer numberOfPhonemes = data [index];
 
 			index += 4;   // this is 8 (incorrect) in the original code of eSpeak
 
@@ -227,39 +227,35 @@ static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
 					} PHONEME_TAB;
 				*/
 				integer i1 = index;
-				SWAP_4 (i1)				
+				littleEndian4ToNativeEndian (& data [i1]);   // `mnemonic`
 				i1 += 4;
-				SWAP_4 (i1);
+				littleEndian4ToNativeEndian (& data [i1]);   // `phflags`
 				i1 += 4;
-				SWAP_2 (i1)
+				littleEndian2ToNativeEndian (& data [i1]);   // `program`
 				index += sizeof (PHONEME_TAB);
 			}
 			Melder_require (index <= my d_numberOfBytes, U"Position ", index, U" is larger than file length (", my d_numberOfBytes, U").");
 		}
 		trace (U"Ending up at index ", index, U" in a file with ", my d_numberOfBytes, U" bytes.");
 		Melder_assert (index == my d_numberOfBytes);
-		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"phontab not converted to bigendian.");
 	}
 }
 	
-static autoFileInMemory phonindex_to_bigendian (FileInMemory me) {
+static void phonindex_makeNativeEndian (FileInMemory me) {
 	//TRACE
 	try {
-		autoFileInMemory thee = Data_copy (me);
-		const uint8 * const myData = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
-		uint8 * const thyData = thy d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 * const data = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		const integer numberOfShorts = (my d_numberOfBytes - 4) / 2;   // there used to be an extra "- 1" here (ppgb 20240817)
 		integer index = 4; // skip first 4 bytes
 		for (integer i = 0; i < numberOfShorts; i ++) {
-			SWAP_2 (index)
+			littleEndian2ToNativeEndian (& data [index]);
 			index += 2;
 			Melder_require (index <= my d_numberOfBytes, U"Position ", index, U" is larger than file length (", my d_numberOfBytes, U").");
 		}
 		trace (U"Ending up at index ", index, U" in a file with ", my d_numberOfBytes, U" bytes.");
 		Melder_assert (index == my d_numberOfBytes);
-		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"phonindex not converted to bigendian.");
 	}
@@ -277,20 +273,17 @@ static void espeak_praat_FileInMemorySet_makeNativeEndian () {
 	const integer phondataIndex = my lookUp (U"" PATH_ESPEAK_DATA "/phondata");
 	Melder_assert (phondataIndex > 0);
 	const FileInMemory phondata = my at [phondataIndex];
-	autoFileInMemory phondata_new = phondata_to_bigendian (phondata, manifest);
-	Thing_swap (phondata, phondata_new.get());   // not `my files -> replaceItem_move (...)`, so as not to dangle `my openFiles`!
+	phondata_makeNativeEndian (phondata, manifest);
 
 	const integer phontabIndex = my lookUp (U"" PATH_ESPEAK_DATA "/phontab");
 	Melder_assert (phontabIndex > 0);
 	const FileInMemory phontab = my at [phontabIndex];
-	autoFileInMemory phontab_new = phontab_to_bigendian (phontab);
-	Thing_swap (phontab, phontab_new.get());
+	phontab_makeNativeEndian (phontab);
 
 	const integer phonindexIndex = my lookUp (U"" PATH_ESPEAK_DATA "/phonindex");
 	Melder_assert (phonindexIndex > 0);
 	const FileInMemory phonindex = my at [phonindexIndex];
-	autoFileInMemory phonindex_new = phonindex_to_bigendian (phonindex);
-	Thing_swap (phonindex, phonindex_new.get());
+	phonindex_makeNativeEndian (phonindex);
 }
 
 FileInMemorySet theEspeakPraatFileInMemorySet() {
@@ -303,8 +296,7 @@ FileInMemorySet theEspeakPraatFileInMemorySet() {
 		espeak_praat_FileInMemorySet_addOtherDicts (me.get());
 		espeak_praat_FileInMemorySet_addLanguages (me.get());
 		espeak_praat_FileInMemorySet_addVoices (me.get());
-		constexpr int test = 1;
-		//if (* ((char *) & test) != 1)   // simple endian test
+		if (nativeIsBigEndian ())   // OPTIMIZATION: 1 ms less start-up time
 			espeak_praat_FileInMemorySet_makeNativeEndian ();
 	}
 	return me.get();

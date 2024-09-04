@@ -44,39 +44,14 @@ static integer Table_getRownumberOfStringInColumn (Table me, conststring32 strin
 void espeakdata_praat_init () {
 	try {
 		(void) theEspeakPraatFileInMemorySet();   // create the singleton now (not strictly necessary)
-		espeakdata_languages_propertiesTable = Table_createAsEspeakLanguagesProperties ();
-		espeakdata_voices_propertiesTable = Table_createAsEspeakVoicesProperties ();
+		espeakdata_languages_propertiesTable = Table_createAsEspeakLanguageProperties ();
+		espeakdata_voices_propertiesTable = Table_createAsEspeakVoiceProperties ();
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_propertiesTable.get(), 2);
 		espeakdata_voices_names = Table_column_to_Strings (espeakdata_voices_propertiesTable.get(), 2);
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata initialization not performed.");
 	}
 }
-
-#define ESPEAK_ISSPACE(c) (c == ' ' || c == '\t' || c == '\r' || c == '\n')
-
-// imitates fgets_strip for file in memory
-const char * espeakdata_get_voicedata (const char *data, integer ndata, char *buf, integer nbuf, integer *index) {
-	if (ndata <= 0 || nbuf <= 0 || *index >= ndata)
-		return 0;
-
-	integer i = 0;
-	while (i < nbuf && *index < ndata && ((buf [i] = data [i]) != '\n')) {
-		i ++;
-		(*index) ++;
-	}
-	(*index) ++;   // ppgb 20151020 fix
-	const integer idata = i + 1;
-	buf [i] = '\0';
-	while (-- i >= 0 && ESPEAK_ISSPACE (buf [i]))
-		buf [i] = 0;
-
-	char *p = strstr (buf, "//");
-	if (p)
-		*p = '\0';
-	return & data [idata];
-}
-
 
 static conststring32 get_wordAfterPrecursor_u8 (constvector<unsigned char> const& text8, conststring32 precursor) {
 	static char32 word [100];
@@ -133,7 +108,7 @@ static conststring32 get_stringAfterPrecursor_u8 (constvector<unsigned char> con
 	return p;
 }
 
-autoTable Table_createAsEspeakVoicesProperties () {
+autoTable Table_createAsEspeakVoiceProperties () {
 	try {
 		constexpr conststring32 criterion = U"/voices/!v/";
 		FileInMemorySet me = theEspeakPraatFileInMemorySet();
@@ -174,7 +149,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 	}
 }
 
-autoTable Table_createAsEspeakLanguagesProperties () {
+autoTable Table_createAsEspeakLanguageProperties () {
 	try {
 		constexpr conststring32 criterion = U"./data/lang/";   // 12 characters
 		FileInMemorySet me = theEspeakPraatFileInMemorySet();
