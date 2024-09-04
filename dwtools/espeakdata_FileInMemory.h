@@ -27,27 +27,13 @@ inline autoStrings espeakdata_voices_names;
 inline autoTable espeakdata_languages_propertiesTable;
 inline autoTable espeakdata_voices_propertiesTable;
 
-void espeakdata_praat_init ();
 /*
-	Creates the FileInMemoryManager espeak_ng_FileInMemoryManager ;
-	Creates Strings espeakdata_languages_names & espeakdata_voices_names
+	Create the espeak_praat_FileInMemorySet and the four objects mentioned above.
 */
+void espeakdata_praat_init ();
 
-autoTable Table_createAsEspeakLanguagesProperties ();
-autoTable Table_createAsEspeakVoicesProperties ();
-
-integer Table_findStringInColumn (Table me, conststring32 string, integer icol);
-
-const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, long nbuf, long *index);
-
-autoTable espeakdata_to_Table (FileInMemorySet me);
-
-autoStrings espeakdata_getNames (Table me, long column);
-
-// mask the char / char32
-char * espeakdata_get_dict_data (const char *name, unsigned int *size);
-
-const char * espeakdata_get_voice (const char *vname, long *numberOfBytes);
+autoTable Table_createAsEspeakLanguageProperties ();
+autoTable Table_createAsEspeakVoiceProperties ();
 
 void espeakdata_getIndices (conststring32 language_string, conststring32 voice_string, int *p_languageIndex, int *p_voiceIndex);
 

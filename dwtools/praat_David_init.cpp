@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2023 David Weenink, 2015,2023 Paul Boersma
+ * Copyright (C) 1993-2023 David Weenink, 2015,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -6286,12 +6286,12 @@ FORM (CREATE_ONE__SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Creat
 	Melder_assert (espeakdata_languages_names);
 	OPTIONMENUSTR (language_string, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-		OPTION (espeakdata_languages_names -> strings [i].get());
+		OPTION (espeakdata_languages_names -> strings [i].get())
 	}
 	Melder_assert (espeakdata_voices_names);
 	OPTIONMENUSTR (voice_string, U"Voice variant", (int) Strings_findString (espeakdata_voices_names.get(), U"Female1"))
 	for (integer i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
-		OPTION (espeakdata_voices_names -> strings [i].get());
+		OPTION (espeakdata_voices_names -> strings [i].get())
 	}
 	OK
 DO
@@ -6305,22 +6305,40 @@ DO
     CREATE_ONE_END (espeakdata_languages_names -> strings [languageIndex].get(), U"_", espeakdata_voices_names -> strings [voiceIndex].get())
 }
 
-FORM (MODIFY_EACH__SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify phoneme set", nullptr) {
-	OPTIONMENU (phoneneSetIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-			OPTION (espeakdata_languages_names -> strings [i].get());
-	}
-	OK
-/*	Does not work because me is not defined here.
-	int prefPhonemeSet = (int) Strings_findString (espeakdata_languages_names.get(), my d_phonemeSet);
-	if (prefPhonemeSet == 0) {
-		prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
-	}
-	SET_OPTION (phoneneSetIndex, prefPhonemeSet)*/
+FORM (WINDOW_SpeechSynthesizer_viewAndEdit, U"View & Edit SpeechSynthesizer", nullptr) {
+	OPTIONMENU (languageIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
+	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++)
+		OPTION (espeakdata_languages_names -> strings [i].get());
+
+	OPTIONMENU (voiceIndex, U"Voice", (int) Strings_findString (espeakdata_voices_names.get(), U"Female1"))
+	for (integer i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++)
+		OPTION (espeakdata_voices_names -> strings [i].get());
+
+	OPTIONMENU (phonemeSetIndex, U"Phoneme set", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
+	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++)
+		OPTION (espeakdata_languages_names -> strings [i].get());
+OK
+	FIND_ONE (SpeechSynthesizer)
+		int currentLanguageIndex = (int) Strings_findString (espeakdata_languages_names.get(), my d_languageName.get());
+		if (currentLanguageIndex == 0)
+			currentLanguageIndex = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+		SET_OPTION (languageIndex, currentLanguageIndex)
+
+		int currentVoiceIndex = (int) Strings_findString (espeakdata_voices_names.get(), my d_voiceName.get());
+		if (currentVoiceIndex == 0)
+			currentVoiceIndex = (int) Strings_findString (espeakdata_voices_names.get(), U"Female1");
+		SET_OPTION (voiceIndex, currentVoiceIndex)
+
+		int currentPhonemeSetIndex = (int) Strings_findString (espeakdata_languages_names.get(), my d_phonemeSet.get());
+		if (currentPhonemeSetIndex == 0)
+			currentPhonemeSetIndex = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+		SET_OPTION (phonemeSetIndex, currentPhonemeSetIndex)
 DO
-	MODIFY_EACH (SpeechSynthesizer)
-		my d_phonemeSet = Melder_dup (espeakdata_languages_names -> strings [phoneneSetIndex].get());
-	MODIFY_EACH_END
+	FIND_ONE (SpeechSynthesizer)
+		my d_languageName = Melder_dup (espeakdata_languages_names -> strings [languageIndex].get());
+		my d_voiceName = Melder_dup (espeakdata_voices_names -> strings [voiceIndex].get());
+		my d_phonemeSet = Melder_dup (espeakdata_languages_names -> strings [phonemeSetIndex].get());
+	END_NO_NEW_DATA
 }
 
 FORM (PLAY_EACH__SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
@@ -10283,8 +10301,8 @@ void praat_David_init () {
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName);
 
 	praat_addAction1 (classSpeechSynthesizer, 0, U"Modify -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpeechSynthesizer, 0, U"Modify phoneme set...", nullptr, GuiMenu_DEPTH_1,
-				MODIFY_EACH__SpeechSynthesizer_modifyPhonemeSet);
+		praat_addAction1 (classSpeechSynthesizer, 1, U"View & Edit...", nullptr, 1,
+				WINDOW_SpeechSynthesizer_viewAndEdit);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1,
 				MODIFY_EACH__SpeechSynthesizer_setTextInputSettings);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Speech output settings...", nullptr, 1,
