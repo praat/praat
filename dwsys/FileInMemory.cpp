@@ -71,14 +71,14 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 	}
 }
 
-autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const uint8 *data, bool isStaticData, conststring32 path) {
+autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, uint8 *data, bool isStaticData, conststring32 path) {
 	try {
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my string = Melder_dup (path);
 		my d_numberOfBytes = numberOfBytes;
 		if (isStaticData) {
 			my _dontOwnData = true;   // we cannot dispose of the data!
-			my d_data.cells = const_cast <uint8 *> (data);    // just a link; FIXME: should be a constVEC instead of a VEC
+			my d_data.cells = data;
 			my d_data.size = numberOfBytes + 1;   // ... and the `_capacity` stays at zero!
 		} else {
 			my _dontOwnData = false;
