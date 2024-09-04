@@ -17,7 +17,7 @@ OBJECTS = case.o categories.o common.o compiledict.o \
 	tr_languages.o translate.o translateword.o voices.o wavegen.o \
 	espeak_praat_FileInMemorySet_addLanguages.o espeak_praat_FileInMemorySet_addVoices.o \
 	espeak_praat_FileInMemorySet_addRussianDict.o espeak_praat_FileInMemorySet_addFaroeseDict.o \
-	espeak_praat_FileInMemorySet_addOtherDicts_FileInMemorySet.o espeak_praat_FileInMemorySet_addPhon.o \
+	espeak_praat_FileInMemorySet_addOtherDicts.o espeak_praat_FileInMemorySet_addPhon.o \
 	espeak_praat.o
 
 .PHONY: all clean
