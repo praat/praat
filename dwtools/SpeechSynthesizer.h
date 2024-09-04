@@ -2,7 +2,7 @@
 #define _SpeechSynthesizer_h_
 /* SpeechSynthesizer.h
  *
- * Copyright (C) 2011-2013, 2015-2023 David Weenink, 2015,2023 Paul Boersma
+ * Copyright (C) 2011-2013, 2015-2023 David Weenink, 2015,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,6 @@
 #define SpeechSynthesizer_INPUT_TAGGEDTEXT 3
 
 #include "SpeechSynthesizer_def.h"
-
-autoEspeakVoice EspeakVoice_create ();
-
-void EspeakVoice_setDefaults (EspeakVoice me);
-
-void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voice);
 
 void SpeechSynthesizer_initEspeak ();
 

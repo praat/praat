@@ -16,7 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "espeak_ng_version.h"
 #include "espeak_ng.h"
 #include "espeakdata_FileInMemory.h"
 
@@ -26,7 +25,6 @@
 #include "synthdata.h"
 #include "encoding.h"
 #include "dictionary.h"
-#include "string.h"
 #include "translate.h"
 #include "voice.h"
 
@@ -52,9 +50,6 @@
 #include "UnicodeData.h"
 
 extern int option_phoneme_events;   // BUG: external declaration outside header file (ppgb 20210307)
-
-Thing_implement (EspeakVoice, Daata, 1);
-
 
 static autostring8 ipa_to_kirshenbaum (conststring32 text) {
 	const struct ipaksymbol {
@@ -153,138 +148,10 @@ static autostring8 ipa_to_kirshenbaum (conststring32 text) {
 	
 }
 
-
-
-
-
-autoEspeakVoice EspeakVoice_create () {
-	try {
-		autoEspeakVoice me = Thing_new (EspeakVoice);
-		my numberOfFormants = 9;   // equals N_PEAKS
-		my numberOfKlattParameters = 8;
-		my klattv = zero_INTVEC (my numberOfKlattParameters);
-		my freq = zero_INTVEC (my numberOfFormants);
-		my height = zero_INTVEC (my numberOfFormants);   // 100% = 256
-		my width = zero_INTVEC (my numberOfFormants);   // 100% = 256
-		my freqadd = zero_INTVEC (my numberOfFormants);   // Hz
-
-		// copies without temporary adjustments from embedded commands
-		my freq2 = zero_INTVEC (my numberOfFormants);   // 100% = 256
-		my height2 = zero_INTVEC (my numberOfFormants);   // 100% = 256
-
-		my breath = zero_INTVEC (my numberOfFormants);   // amount of breath for each formant. breath [0] indicates whether any are set.
-		my breathw = zero_INTVEC (my numberOfFormants);   // width of each breath formant
-		static_assert (N_TONE_ADJUST == 1000);
-		my numberOfToneAdjusts = 1000;   // equals N_TONE_ADJUST in voice.h
-		my tone_adjust = newvectorzero<unsigned char> (my numberOfToneAdjusts);
-		EspeakVoice_setDefaults (me.get());
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"EspeakVoice not created.");
-	}
-}
-
-void EspeakVoice_setDefaults (EspeakVoice me) {
-	(void) me;
-}
-
-void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voicet) {
-	my v_name = Melder_dup (Melder_peek8to32 (voicet -> v_name));
-
-	my phoneme_tab_ix = voicet -> phoneme_tab_ix;
-	my pitch_base = voicet -> pitch_base;
-	my pitch_range = voicet -> pitch_range;
-
-	my speedf1 = voicet -> speedf1;
-	my speedf2 = voicet -> speedf2;
-	my speedf3 = voicet -> speedf3;
-
-	my speed_percent = voicet -> speed_percent;
-	my flutter = voicet -> flutter;
-	my roughness = voicet -> roughness;
-	my echo_delay = voicet -> echo_delay;
-	my echo_amp = voicet -> echo_amp;
-	my n_harmonic_peaks = voicet -> n_harmonic_peaks;
-	my peak_shape = voicet -> peak_shape;
-	my voicing = voicet -> voicing;
-	my formant_factor = voicet -> formant_factor;
-	my consonant_amp = voicet -> consonant_amp;
-	my consonant_ampv = voicet -> consonant_ampv;
-	my samplerate = voicet -> samplerate;
-	my numberOfKlattParameters = 8;
-	for (integer i = 1; i <= my numberOfKlattParameters; i ++)
-		my klattv [i] = voicet -> klattv [i - 1];
-	for (integer i = 1; i <= my numberOfFormants; i ++) {
-		my freq [i] = voicet -> freq [i - 1];
-		my height [i] = voicet -> height [i - 1];
-		my width [i] = voicet -> width [i - 1];
-		my freqadd [i] = voicet -> freqadd [i - 1];
-		my freq2 [i] = voicet -> freq2 [i - 1];
-		my height2 [i] = voicet -> height2 [i - 1];
-		my breath [i] = voicet -> breath [i - 1];
-		my breathw [i] = voicet -> breathw [i - 1];
-	}
-	static_assert (N_TONE_ADJUST == 1000);
-	my numberOfToneAdjusts = 1000;
-	for (integer i = 1; i <= my numberOfToneAdjusts; i ++)
-		my tone_adjust [i] = voicet -> tone_adjust [i - 1];
-}
-
-void EspeakVoice_into_voice (EspeakVoice me, voice_t *voicet) {   // BUG unused (ppgb 20210307)
-
-	if (my v_name) {
-		const char *v_name8 = Melder_peek32to8 (my v_name.get());
-		static_assert (sizeof (voicet -> v_name) == 40);   // necessary, because this might change in a future version
-		Melder_assert (strlen (v_name8) < 40);   // necessary, because strncpy doesn't always copy the null byte
-		strncpy (voicet -> v_name, v_name8, 40);   // guarded strncpy
-	}
-	if (my language_name) {
-		const char *language_name8 = Melder_peek32to8 (my language_name.get());
-		static_assert (sizeof (voicet -> language_name) == 20);   // necessary, because this might change in a future version
-		Melder_assert (strlen (language_name8) < 20);   // necessary, because strncpy doesn't always copy the null byte
-		strncpy (voicet -> language_name, language_name8, 20);   // guarded strncpy
-	}
-	voicet -> phoneme_tab_ix = my phoneme_tab_ix;
-	voicet -> pitch_base = my pitch_base;
-	voicet -> pitch_range = my pitch_range;
-
-	voicet -> speedf1 = my speedf1;
-	voicet -> speedf2 = my speedf2;
-	voicet -> speedf3 = my speedf3;
-
-	voicet -> speed_percent = my speed_percent;
-	voicet -> flutter = my flutter;
-	voicet -> roughness = my roughness;
-	voicet -> echo_delay = my echo_delay;
-	voicet -> echo_amp = my echo_amp;
-	voicet -> n_harmonic_peaks = my n_harmonic_peaks;
-	voicet -> peak_shape = my peak_shape;
-	voicet -> voicing = my voicing;
-	voicet -> formant_factor = my formant_factor;
-	voicet -> consonant_amp = my consonant_amp;
-	voicet -> consonant_ampv = my consonant_ampv;
-	voicet -> samplerate = my samplerate;
-	for (integer i = 1; i <= my numberOfKlattParameters; i ++)
-		voicet -> klattv [i - 1] = my klattv [i];
-	for (integer i = 1; i <= my numberOfFormants; i ++) {
-		voicet -> freq [i - 1] = my freq [i];
-		voicet -> height [i - 1] = my height [i];
-		voicet -> width [i - 1] = my width [i];
-		voicet -> freqadd [i - 1] = my freqadd [i];
-		voicet -> freq2 [i - 1] = my freq2 [i];
-		voicet -> height2 [i - 1] = my height2 [i];
-		voicet -> breath [i - 1] = my breath [i];
-		voicet -> breathw [i - 1] = my breathw [i];
-	}
-	for (integer i = 1; i <= my numberOfToneAdjusts; i ++)
-		voicet -> tone_adjust [i - 1] = voicet -> tone_adjust [i];
-}
-
 Thing_implement (SpeechSynthesizer, Daata, 1);
 
 void structSpeechSynthesizer :: v1_info () {
 	SpeechSynthesizer_Parent :: v1_info ();
-	MelderInfo_writeLine (U"Synthesizer version: espeak-ng ", our d_synthesizerVersion.get());
 	MelderInfo_writeLine (U"Language: ", our d_languageName.get());
 	MelderInfo_writeLine (U"Voice: ", our d_voiceName.get());
 	MelderInfo_writeLine (U"Phoneme set: ", our d_phonemeSet.get());
@@ -388,7 +255,6 @@ static conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, conststring32 voiceName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
-		my d_synthesizerVersion = Melder_dup (U"" ESPEAK_NG_VERSION);
 		my d_languageName = Melder_dup (languageName);
 		(void) SpeechSynthesizer_getLanguageCode (me.get());  // existence check
 		my d_voiceName = Melder_dup (voiceName);
@@ -860,12 +726,8 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 			thee = Sound_resample (thee.get(), my d_samplingFrequency, 50);
 		my d_numberOfSamples = 0; // re-use the wav-buffer
 		if (tg) {
-			double xmin = Table_getNumericValue_a (my d_events.get(), 1, 1);
-			if (xmin > thy xmin)
-				xmin = thy xmin;
-			double xmax = Table_getNumericValue_a (my d_events.get(), my d_events -> rows.size, 1);
-			if (xmax < thy xmax)
-				xmax = thy xmax;
+			const double xmin = Melder_clippedRight (Table_getNumericValue_a (my d_events.get(), 1, 1), thy xmin);   // !
+			const double xmax = Melder_clippedLeft (thy xmax, Table_getNumericValue_a (my d_events.get(), my d_events -> rows.size, 1));   // !
 			autoTextGrid tg1 = Table_to_TextGrid (my d_events.get(), text, xmin, xmax);
 			*tg = TextGrid_extractPart (tg1.get(), thy xmin, thy xmax, 0);
 		}
