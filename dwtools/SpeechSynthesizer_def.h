@@ -17,67 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#define ooSTRUCT EspeakVoice
-oo_DEFINE_CLASS (EspeakVoice, Daata)
-	oo_STRING (v_name)           // maximum 39 characters + 1 null-byte
-	oo_STRING (language_name)    // maximum 19 characters + 1 null-byte
-
-	oo_INTEGER (phoneme_tab_ix)  // phoneme table number
-	oo_INTEGER (pitch_base)      // Hz<<12
-	oo_INTEGER (pitch_range)     // standard = 0x1000
-
-	oo_INTEGER (speedf1)
-	oo_INTEGER (speedf2)
-	oo_INTEGER (speedf3)
-
-	oo_INTEGER (speed_percent)     // adjust the WPM speed by this percentage
-	oo_INTEGER (flutter)
-	oo_INTEGER (roughness)
-	oo_INTEGER (echo_delay)
-	oo_INTEGER (echo_amp)
-	oo_INTEGER (n_harmonic_peaks)  // highest formant which is formed from adding harmonics
-	oo_INTEGER (peak_shape)        // alternative shape for formant peaks (0=standard 1=squarer)
-	oo_INTEGER (voicing)           // 100% = 64, level of formant-synthesized sound
-	oo_INTEGER (formant_factor)    // adjust nominal formant frequencies by this  because of the voice's pitch (256ths)
-	oo_INTEGER (consonant_amp)     // amplitude of unvoiced consonants
-	oo_INTEGER (consonant_ampv)    // amplitude of the noise component of voiced consonants
-	oo_INTEGER (samplerate)        // sampling frequency as integer Hz
-	oo_INTEGER (numberOfKlattParameters)   // default 8
-	oo_INTVEC (klattv, numberOfKlattParameters)
-
-	// parameters used by Wavegen
-	oo_INTEGER (numberOfFormants) // 9
-	oo_INTVEC (freq, numberOfFormants)      // (short) 100% = 256
-	oo_INTVEC (height, numberOfFormants)    // (short) 100% = 256
-	oo_INTVEC (width, numberOfFormants)     // (short) 100% = 256
-	oo_INTVEC (freqadd, numberOfFormants)   // (short) Hz
-
-	// copies without temporary adjustments from embedded commands
-	oo_INTVEC (freq2, numberOfFormants)     // (short) 100% = 256
-	oo_INTVEC (height2, numberOfFormants)   // (short) 100% = 256
-
-	#if oo_READING
-		oo_VERSION_UNTIL (1)
-			autoINTVEC saveWidth = copy_INTVEC (width.get());
-			oo_INTVEC (width, numberOfFormants)   // (short) 100% = 256   // this used to be width2, but this is now obsolete
-			width = saveWidth.move();
-		oo_VERSION_END
-	#endif
-	
-	oo_INTVEC (breath, numberOfFormants)    // (int64) amount of breath for each formant. breath [0] indicates whether any are set.
-	oo_INTVEC (breathw, numberOfFormants)   // width of each breath formant
-	oo_INTEGER (numberOfToneAdjusts)        // always N_TONE_ADJUST == 1000 (this is partially checked by static asserts)
-	oo_BYTEVEC (tone_adjust, numberOfToneAdjusts)   // 8-Hz steps * 1000 = 8kHz
-
-oo_END_CLASS (EspeakVoice)
-#undef ooSTRUCT
-
-
 #define ooSTRUCT SpeechSynthesizer
 oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 
 	oo_FROM (1)
-		oo_STRING (d_synthesizerVersion)
+		oo_STRING (dummySynthesizerVersion)   // no longer used (was already overwritten at reading time)
 	oo_ENDFROM
 
 	// sythesizers language /voice
@@ -90,10 +34,8 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
 			d_phonemeSet = Melder_dup (d_languageName.get());
-			d_synthesizerVersion = Melder_dup (U"" ESPEAK_NG_VERSION);
 			oo_INTEGER (d_wordsPerMinute)
 		oo_VERSION_ELSE
-			d_synthesizerVersion = Melder_dup (U"" ESPEAK_NG_VERSION); // overwrite with current version
 			oo_DOUBLE (d_wordsPerMinute)
 		oo_VERSION_END
 	#else

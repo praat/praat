@@ -16,12 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20020313 GPL
- djmw 20130620 Latest modification
-*/
-
-#include "espeak_ng_version.h"
 #include "ManPagesM.h"
 #include "Sound_extensions.h"
 #include "TableOfReal_extensions.h"

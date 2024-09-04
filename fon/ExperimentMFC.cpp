@@ -167,9 +167,7 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 static void permuteRandomly (ExperimentMFC me, integer first, integer last) {
 	for (integer itrial = first; itrial < last; itrial ++) {
 		integer jtrial = NUMrandomInteger (itrial, last);
-		integer dummy = my stimuli [jtrial];
-		my stimuli [jtrial] = my stimuli [itrial];
-		my stimuli [itrial] = dummy;
+		std::swap (my stimuli [itrial], my stimuli [jtrial]);
 	}
 }
 
