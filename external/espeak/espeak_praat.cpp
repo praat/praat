@@ -39,7 +39,7 @@
 		Then no conversion of data files would be necessary.
 */
 
-static /*constexpr*/ bool nativeIsBigEndian () {   // FIXME: C++-20 will have a constexpr functin for this
+static /*constexpr*/ bool nativeIsBigEndian () {   // FIXME: C++-20 will have a constexpr function for this
 	const int test = 1;
 	if /*constexpr*/ (* ((char *) & test) == 1)
 		return false;
@@ -92,11 +92,11 @@ static void phondata_makeNativeEndian (FileInMemory me, FileInMemory manifest) {
 					} SPECT_SEQ;
 				*/
 
-				littleEndian2ToNativeEndian (& data [i1]);
-				index += 2;   // skip the short length
-				const integer numberOfFrames = data [index];   // unsigned char n_frames
+				littleEndian2ToNativeEndian (& data [i1]);   // nativize `short length`
+				index += 2;   // skip `short length`
+				const integer numberOfFrames = data [index];   // interpret `unsigned char n_frames`
 				trace (U"S ", numberOfFrames, U" frames");
-				index += 2;   // skip the 2 unsigned char's n_frames & sqflags
+				index += 2;   // skip `unsigned char n_frames` and `unsigned char sqflags`
 				totalLengthOfS += 4;
 
 				for (integer n = 1; n <= numberOfFrames; n ++) {
@@ -130,10 +130,11 @@ static void phondata_makeNativeEndian (FileInMemory me, FileInMemory manifest) {
 						} frame_t2;
 						Both frame_t and frame_t2 start with 8 short's.
 					*/
-					i1 = index;
+					i1 = index;   // both `i1` and `index` now point to the start of a `frame_t`
+					const short frflags = (int16) (uint16) (((uint32) data [i1 + 1] << 8) + (uint32) data [i1]);   // save before swapping!
 					for (integer i = 1; i <= 8; i ++) {
-						littleEndian2ToNativeEndian (& data [i1]);
-						i1 += 2;
+						littleEndian2ToNativeEndian (& data [i1]);   // nativize `short frflags` and the seven `short ffreq`s
+						i1 += 2;   // skip `short frflags` and the seven `short ffreq`s
 					}
 					/*
 						We will be stepping over a frame_t or frame_t2.
@@ -150,9 +151,13 @@ static void phondata_makeNativeEndian (FileInMemory me, FileInMemory manifest) {
 						frflags signals whether the frame is a Klatt frame or not
 						20231105 changed thy d_data [i1] to thy d_data [index + 1];
 						20240816 changed thy d_data to my d_data, and then to myData [index]
+						20240904 changed myData [index] to data [index] (in order to do the byteswapping in place;
+						         however, as `index` still pointed to the start of the frame, where `frflags` was,
+						         this was a bug, because `frflags` had already been byteswapped;
+						         so we changed data [index] to a saved version of frflags.
 					*/
 					#define FRFLAG_KLATT 0x01
-					uint32 length = (data [index] & FRFLAG_KLATT) ? sizeof (frame_t) : sizeof (frame_t2);
+					uint32 length = (frflags & FRFLAG_KLATT) ? sizeof (frame_t) : sizeof (frame_t2);
 					trace (U"S length ", length);
 					index += length;
 					totalLengthOfS += length;
@@ -227,11 +232,11 @@ static void phontab_makeNativeEndian (FileInMemory me) {
 					} PHONEME_TAB;
 				*/
 				integer i1 = index;
-				littleEndian4ToNativeEndian (& data [i1]);   // `mnemonic`
+				littleEndian4ToNativeEndian (& data [i1]);   // `unsigned int mnemonic`
 				i1 += 4;
-				littleEndian4ToNativeEndian (& data [i1]);   // `phflags`
+				littleEndian4ToNativeEndian (& data [i1]);   // `unsigned int phflags`
 				i1 += 4;
-				littleEndian2ToNativeEndian (& data [i1]);   // `program`
+				littleEndian2ToNativeEndian (& data [i1]);   // `unsigned short program`
 				index += sizeof (PHONEME_TAB);
 			}
 			Melder_require (index <= my d_numberOfBytes, U"Position ", index, U" is larger than file length (", my d_numberOfBytes, U").");
