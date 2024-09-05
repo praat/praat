@@ -63,11 +63,7 @@ static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS) {
 
 static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Search for page", nullptr)
-		static ManPages manPages;   // BUG: why?
-		static constSTRVEC pages;
-		manPages = my manPages();
-		pages = ManPages_getTitles (manPages);
-		LIST (page, U"Page", pages, 1)
+		LIST (page, U"Page", ManPages_getTitles (my manPages()), 1)
 	EDITOR_OK
 	EDITOR_DO
 		HyperPage_goToPage_number (me, page);

@@ -43,5 +43,23 @@ void SpeechSynthesizer_playText (SpeechSynthesizer me, conststring32 text);
 
 autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces);
 
+/*
+	For general use.
+*/
+STRVEC theSpeechSynthesizerLanguageNames();
+STRVEC theSpeechSynthesizerVoiceNames();
+
+/*
+	For developers mainly.
+*/
+Table theSpeechSynthesizerLanguagePropertiesTable();
+Table theSpeechSynthesizerVoicePropertiesTable();
+
+/*
+	Create the eSpeak-Praat-FileInMemorySet and the four other objects mentioned above.
+*/
+void espeak_praat_init ();
+
+
 /* End of file SpeechSynthesizer.h */
 #endif

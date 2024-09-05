@@ -37,23 +37,6 @@ void espeak_praat_FileInMemorySet_addLanguages (FileInMemorySet me);
 void espeak_praat_FileInMemorySet_addVoices (FileInMemorySet me);
 
 /*
-	For general use.
-*/
-STRVEC theEspeakPraatLanguageNames();
-STRVEC theEspeakPraatVoiceNames();
-
-/*
-	For developers mainly.
-*/
-Table theEspeakPraatLanguagePropertiesTable();
-Table theEspeakPraatVoicePropertiesTable();
-
-/*
-	Create the eSpeak-Praat-FileInMemorySet and the four other objects mentioned above.
-*/
-void espeakdata_praat_init ();
-
-/*
 	Drop-in replacements for GetFileLength and GetVoices (using FileInMemory instead of FILE*).
 */
 int espeak_praat_GetFileLength (const char *filename);
