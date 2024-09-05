@@ -6198,9 +6198,11 @@ DEFINITION (U"Show the vowel marks in the editor from a fixed set of vowel inven
 TERM (U"##Show vowel marks from Table file...#")
 DEFINITION (U"Put your own marks in the editor. The Table needs to have at least three mandatory columns "
 	"labeled \"Vowel\", \"F1\" and  \"F2\" and "
-	" two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
+	"two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
 	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
-	"the font size of the vowel markers, while the Colour column contains the @@Colour|colour@ specification of each vowel.")
+	"the font size of the vowel markers, while the Colour column contains the @@Colour|colour@ specification of each vowel. "
+	"The Table has to be in tab-separated format (or saved in Praat as a binary or text Table file)."
+)
 TERM (U"##Show trajectory time markers every...")
 DEFINITION (U"Shows time markers as small bars orthogonal to the trajectory. ")
 ENTRY (U"File menu")
@@ -6215,13 +6217,14 @@ TERM (U"##Draw trajectory...")
 DEFINITION (U"Draws the trajectory in the picture window.")
 MAN_END
 
-MAN_BEGIN (U"VowelEditor: Show vowel marks from Table file...", U"djmw", 20200403)
+MAN_BEGIN (U"VowelEditor: Show vowel marks from Table file...", U"djmw", 20200403)  // ppgb 2024
 INTRO (U"A command in the @@VowelEditor@ that lets you set your own vowel marks. ")
 ENTRY (U"Layout of the Table")
 NORMAL (U"The Table needs at least three mandatory columns labeled \"Vowel\", \"F1\" and  \"F2\" and "
 	"two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
 	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
 	"the font size of the vowel markers, while the Colour column contains the @@Colour|colour@ specification of each vowel.")
+NORMAL (U"The Table has to be in tab-separated format (or saved in Praat as a binary or text Table file).")
 MAN_END
 
 /********************** GSL ********************************************/
