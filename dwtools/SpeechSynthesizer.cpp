@@ -17,7 +17,7 @@
  */
 
 #include "espeak_ng.h"
-#include "espeakdata_FileInMemory.h"
+#include "espeak_praat.h"
 
 #include "SpeechSynthesizer.h"
 #include "Strings_extensions.h"
@@ -221,10 +221,10 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 
 static conststring32 SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 	try {
-		const integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_languageName.get());
+		const integer irow = Table_searchColumn (theEspeakPraatLanguagePropertiesTable(), 2, my d_languageName.get());
 		Melder_require (irow != 0,
 			U"Cannot find language \"", my d_languageName.get(), U"\".");
-		return Table_getStringValue_a (espeakdata_languages_propertiesTable.get(), irow, 1);
+		return Table_getStringValue_a (theEspeakPraatLanguagePropertiesTable(), irow, 1);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find language code.");
 	}
@@ -232,10 +232,10 @@ static conststring32 SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 
 static conststring32 SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
 	try {
-		const integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_phonemeSet.get());
+		const integer irow = Table_searchColumn (theEspeakPraatLanguagePropertiesTable(), 2, my d_phonemeSet.get());
 		Melder_require (irow != 0,
 			U"Cannot find phoneme set \"", my d_phonemeSet.get(), U"\".");
-		return Table_getStringValue_a (espeakdata_languages_propertiesTable.get(), irow, 1);
+		return Table_getStringValue_a (theEspeakPraatLanguagePropertiesTable(), irow, 1);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find phoneme code.");
 	}
@@ -243,10 +243,10 @@ static conststring32 SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
 
 static conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
-		const integer irow = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 2, my d_voiceName.get());
+		const integer irow = Table_searchColumn (theEspeakPraatVoicePropertiesTable(), 2, my d_voiceName.get());
 		Melder_require (irow != 0,
 			U": Cannot find voice variant \"", my d_voiceName.get(), U"\".");
-		return Table_getStringValue_a (espeakdata_voices_propertiesTable.get(), irow, 1);
+		return Table_getStringValue_a (theEspeakPraatVoicePropertiesTable(), irow, 1);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find voice code.");
 	}

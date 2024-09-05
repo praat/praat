@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2012,2014-2019,2021-2023 Paul Boersma
+ * Copyright (C) 2002-2012,2014-2019,2021-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +132,8 @@ bool Table_isCellNumeric_ErrorFalse (Table me, integer rowNumber, integer column
 bool Table_isColumnNumeric_ErrorFalse (Table me, integer columnNumber);
 
 conststring32 Table_messageColumn (Table me, integer column);
+
+autoSTRVEC Table_getColumn (Table me, integer columnNumber);
 
 /* End of file Table.h */
 #endif

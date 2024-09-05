@@ -44,12 +44,14 @@
 #define your  you ->
 #define his  him ->
 #define her  she ->
+#define their  they ->
 #define iam(klas)  klas me = (klas) void_me
 #define optional_my  optional_me ->
 #define optional_thy  optional_thee ->
 #define optional_your  optional_you ->
 #define optional_his  optional_him ->
 #define optional_her  optional_she ->
+#define optional_their  optional_they ->
 
 #define stringize(s)  stringize_helper(s)
 #define stringize_helper(s)  #s

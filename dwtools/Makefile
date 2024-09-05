@@ -1,10 +1,11 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 18 July 2024
+# 5 September 2024
 
 include ../makefile.defs
 
-CPPFLAGS = -I . -I ../kar -I ../melder -I ../LPC -I ../fon -I ../foned -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG -I ../external/vorbis -I ../external/opusfile
+CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../fon -I ../foned -I ../LPC -I ../EEG \
+	-I ../external/clapack -I ../external/vorbis -I ../external/opusfile -I ../external/portaudio -I ../external/espeak
 
 OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Categories.o CategoriesEditor.o \
@@ -21,7 +22,6 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
-	espeakdata_FileInMemory.o \
 	FilterBank.o FormantGrid_extensions.o \
 	GaussianMixture.o  \
 	HMM.o \
@@ -53,7 +53,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Spectrum_and_AnalyticSound.o Spectrum_and_MultiSampledSpectrogram.o \
 	SSCP.o Strings_extensions.o \
 	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o \
-	Table_and_Strings.o Table_extensions.o Table_dataSets.o TableOfReal_and_SVD.o \
+	Table_extensions.o Table_dataSets.o TableOfReal_and_SVD.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Discriminant.o TableOfReal_and_Permutation.o \
 	TextGrid_and_DurationTier.o TextGrid_and_PitchTier.o TextGrid_extensions.o \
@@ -75,5 +75,5 @@ libdwtools.a: $(OBJECTS)
 	$(AR) cq libdwtools.a $(OBJECTS)
 	$(RANLIB) libdwtools.a
 
-$(OBJECTS): *.h ../kar/*.h ../melder/*.h ../sys/*.h ../fon/*.h ../foned/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../external/espeak/*.h
-
+$(OBJECTS): *.h ../kar/*.h ../melder/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../fon/*.h ../foned/*.h ../LPC/*.h ../EEG/*.h \
+	../external/clapack/*.h../external/vorbis/*.h ../external/opusfile/*.h ../external/portaudio/*.h ../external/espeak/*.h

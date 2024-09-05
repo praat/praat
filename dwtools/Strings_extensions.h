@@ -40,8 +40,6 @@ autoStrings Strings_createAsCharacters (conststring32 string);
 
 autoStrings Strings_createAsTokens (conststring32 string, conststring32 separators);
 
-integer Strings_findString (Strings me, conststring32 string);
-
 autoStrings Strings_append (OrderedOf<structStrings>* me);
 
 autoStrings Strings_change (Strings me, conststring32 search, conststring32 replace,

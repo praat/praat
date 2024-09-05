@@ -2304,4 +2304,16 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 	}
 }
 
+autoSTRVEC Table_getColumn (Table me, integer columnNumber) {
+	try {
+		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
+		autoSTRVEC strings (my rows.size);
+		for (integer irow = 1; irow <= my rows.size; irow ++)
+			strings [irow] = Melder_dup (Table_getStringValue_a (me, irow, columnNumber));
+		return strings;
+	} catch (MelderError) {
+		Melder_throw (U"A string array could not be created from the column in the Table.");
+	}
+}
+
 /* End of file Table.cpp */

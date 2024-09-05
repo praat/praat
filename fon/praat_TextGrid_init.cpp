@@ -18,6 +18,7 @@
 
 #include "Pitch_AnyTier_to_PitchTier.h"
 #include "SpectrumEditor.h"
+#include "espeak_praat.h"
 #include "SpeechSynthesizer.h"
 #include "SpellingChecker.h"
 #include "Strings_extensions.h"
@@ -536,9 +537,9 @@ DO
 FORM (MODIFY_TextGrid_Sound_alignInterval, U"TextGrid & Sound: Align interval", nullptr) {
 	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
 	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
-	OPTIONMENUSTR (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++)
-		OPTION ((conststring32) espeakdata_languages_names -> strings [i].get());
+	OPTIONMENUSTR (language, U"Language", (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
+	for (integer i = 1; i <= theEspeakPraatLanguageNames().size; i ++)
+		OPTION (theEspeakPraatLanguageNames() [i]);
 	BOOLEAN (includeWords,    U"Include words",    true)
 	BOOLEAN (includePhonemes, U"Include phonemes", true)
 	OK
