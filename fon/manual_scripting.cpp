@@ -1966,7 +1966,7 @@ LIST_ITEM (U"@@Scripting 6.8. Messages to the user@ (exitScript, assert, nowarn,
 LIST_ITEM (U"@@Scripting 6.9. Calling from the command line")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20230129)
+MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20230129) // 2024
 NORMAL (U"You can cause a Praat script to prompt for arguments. The file `playSine.praat` may contain the following:")
 CODE (U"\\#{form}: \"Play a sine wave\"")
 	CODE1 (U"\\#{positive}: \"Sine frequency (Hz)\", \"377.0\"")
@@ -2016,7 +2016,12 @@ DEFINITION (U"a check box will be shown; to switch it on, "
 TERM (U"#choice: %%variable\\$ %, %initialValue")
 DEFINITION (U"a multiple-choice box (or “radio box”) will be shown; the value is 1 or higher. This is followed by a series of:")
 TERM (U"#option: %%text\\$ %")
-DEFINITION (U"an option button in a multiple-choice box.")
+DEFINITION (U"an option button in a multiple-choice box (see example below).")
+TERM (U"#optionmenu: %%variable\\$ %, %initialValue")
+DEFINITION (U"a multiple-choice menu header will be shown; the value is 1 or higher. "
+	"Just as `choice`, this is followed by:")
+TERM (U"#option: %%text\\$ %")
+DEFINITION (U"an option in a multiple-choice menu (see example below).")
 TERM (U"#comment: %%text\\$ %")
 DEFINITION (U"a line with any text.")
 TERM (U"#infile: %%variable\\$ %, %%initialValue\\$ %")

@@ -7527,12 +7527,34 @@ static void do_boolean () {
 	Melder_require (n->number == 2,
 		U"The function “boolean” requires 2 arguments (a label text and a default value), not ", n->number, U".");
 	const Stackel defaultValue = pop;
-	Melder_require (defaultValue->which == Stackel_NUMBER,
-		U"The second argument of “boolean” (the default value) should be a number (0 or 1), not ", defaultValue->whichText(), U".");
+	double defaultNumber = undefined;
+	if (defaultValue->which == Stackel_STRING) {
+		conststring32 defaultString = defaultValue->getString();
+		if (
+			str32equ (defaultString, U"on") || str32equ (defaultString, U"yes") ||
+			str32equ (defaultString, U"ON") || str32equ (defaultString, U"YES") ||
+			str32equ (defaultString, U"On") || str32equ (defaultString, U"Yes")
+		)
+			defaultNumber = 1;
+		else if (
+			str32equ (defaultString, U"off") || str32equ (defaultString, U"no") ||
+			str32equ (defaultString, U"OFF") || str32equ (defaultString, U"NO") ||
+			str32equ (defaultString, U"Off") || str32equ (defaultString, U"No")
+		)
+			defaultNumber = 0;
+		else
+			Melder_throw (U"If the second argument of “boolean” is a string, it can only be "
+					"“yes”, “no”, “on”, or “off”, not “", defaultString, U"”.");
+	} else if (defaultValue->which == Stackel_NUMBER) {
+		defaultNumber = defaultValue->number;
+	} else {
+		Melder_throw (U"The second argument of “boolean” (the default value) should be a number (0 or 1) "
+				"or a string (“yes”, “no”, “on”, “off”), not ", defaultValue->whichText(), U".");
+	}
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
 		U"The first argument of “boolean” (the label text) should be a string, not ", label->whichText(), U".");
-	UiPause_boolean (label->getString(), defaultValue->number != 0.0);
+	UiPause_boolean (label->getString(), defaultNumber != 0.0);
 	pushNumber (1);
 }
 static void do_choice () {
