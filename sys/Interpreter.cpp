@@ -606,7 +606,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 						Melder_throw (U"Only “choice”, “optionmenu” and “boolean” fields can take a number:\n", startOfLine);
 					}
 					const integer value = Melder_atoi (p);
-					if (type == Interpreter_CHOICE)
+					if (type == Interpreter_CHOICE || type == Interpreter_OPTIONMENU)
 						MelderString_append (& string, value);
 					else
 						MelderString_appendCharacter (& string, value != 0 ? U'1' : U'0');
@@ -618,7 +618,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
 						Melder_throw (U"Missing opening quote after comma in form field:\n", startOfLine);
 					}
-					if (type == Interpreter_CHOICE) {
+					if (type == Interpreter_CHOICE || type == Interpreter_OPTIONMENU) {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
 						Melder_throw (U"A “choice” field can take only a number, not a string:\n", startOfLine);
 					}
