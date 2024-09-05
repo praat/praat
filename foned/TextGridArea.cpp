@@ -18,6 +18,7 @@
 
 #include "TextGridArea.h"
 #include "TextGrid_Sound.h"
+#include "espeak_praat.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
 #include "LongSoundArea.h"   // for drawing TextGrid and Sound, or for aligning TextGrid to Sound
 #include "SoundAnalysisArea.h"   // for drawing TextGrid and Pitch
@@ -1364,23 +1365,23 @@ static void menu_cb_AlignInterval (TextGridArea me, EDITOR_ARGS) {
 }
 static void menu_cb_AlignmentSettings (TextGridArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Alignment settings", nullptr)
-		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-		for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-			OPTION ((conststring32) espeakdata_languages_names -> strings [i].get());
+		OPTIONMENU (language, U"Language", (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
+		for (integer i = 1; i <= theEspeakPraatLanguageNames().size; i ++) {
+			OPTION (theEspeakPraatLanguageNames() [i]);
 		}
 		BOOLEAN (includeWords,    U"Include words",    my default_align_includeWords ())
 		BOOLEAN (includePhonemes, U"Include phonemes", my default_align_includePhonemes ())
 		BOOLEAN (allowSilences,   U"Allow silences",   my default_align_allowSilences ())
 	EDITOR_OK
-		int prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), my instancePref_align_language());
+		int prefVoice = (int) NUMfindFirst (theEspeakPraatLanguageNames(), my instancePref_align_language());
 		if (prefVoice == 0)
-			prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+			prefVoice = (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)");
 		SET_OPTION (language, prefVoice)
 		SET_BOOLEAN (includeWords, my instancePref_align_includeWords())
 		SET_BOOLEAN (includePhonemes, my instancePref_align_includePhonemes())
 		SET_BOOLEAN (allowSilences, my instancePref_align_allowSilences())
 	EDITOR_DO
-		my setInstancePref_align_language (espeakdata_languages_names -> strings [language].get());
+		my setInstancePref_align_language (theEspeakPraatLanguageNames() [language]);
 		my setInstancePref_align_includeWords (includeWords);
 		my setInstancePref_align_includePhonemes (includePhonemes);
 		my setInstancePref_align_allowSilences (allowSilences);

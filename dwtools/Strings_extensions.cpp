@@ -100,13 +100,6 @@ autoStrings Strings_createAsTokens (conststring32 token_string, conststring32 se
 	}
 }
 
-integer Strings_findString (Strings me, conststring32 string) {
-	for (integer i = 1; i <= my numberOfStrings; i ++)
-		if (Melder_equ (my strings [i].get(), string))
-			return i;
-	return 0;
-}
-
 autoStrings Strings_append (OrderedOf<structStrings>* me) {
 	try {
 		integer index = 1, numberOfStrings = 0;

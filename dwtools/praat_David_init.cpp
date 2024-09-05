@@ -86,7 +86,6 @@
 #include "Eigen_and_SSCP.h"
 #include "Eigen_and_TableOfReal.h"
 #include "Excitations.h"
-#include "espeakdata_FileInMemory.h"
 #include "FileInMemory.h"
 #include "FilterBank.h"
 #include "Formula.h"
@@ -149,6 +148,8 @@
 #include "praat_Matrix.h"
 #include "praat_TableOfReal.h"
 #include "praat_uvafon_init.h"
+
+#include "espeak_praat.h"
 
 void praat_TableOfReal_init2 (ClassInfo klas);
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
@@ -6267,77 +6268,77 @@ DIRECT (HELP__SpeechSynthesizer_help) {
 FORM (CREATE_ONE__SpeechSynthesizer_extractEspeakData, U"SpeechSynthesizer: Extract espeak data", nullptr) {
 	OPTIONMENU (which, U"Data", 1)
 		OPTION (U"language properties")
-		OPTION (U"voices properties")
+		OPTION (U"voice properties")
 	OK
 DO
 	CREATE_ONE
 		autoTable result;
 		conststring32 name = U"languages";
 		if (which == 1) {
-			result = Data_copy (espeakdata_languages_propertiesTable.get());
+			result = Data_copy (theEspeakPraatLanguagePropertiesTable());
 		} else if (which == 2) {
-			result = Data_copy (espeakdata_voices_propertiesTable.get());
+			result = Data_copy (theEspeakPraatVoicePropertiesTable());
 			name = U"voices";
 		}
 	CREATE_ONE_END (name)
 }
 
 FORM (CREATE_ONE__SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
-	Melder_assert (espeakdata_languages_names);
-	OPTIONMENUSTR (language_string, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-		OPTION (espeakdata_languages_names -> strings [i].get())
+	OPTIONMENUSTR (language_string, U"Language", (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
+	for (integer i = 1; i <= theEspeakPraatLanguageNames().size; i ++) {
+		OPTION (theEspeakPraatLanguageNames() [i])
 	}
-	Melder_assert (espeakdata_voices_names);
-	OPTIONMENUSTR (voice_string, U"Voice variant", (int) Strings_findString (espeakdata_voices_names.get(), U"Female1"))
-	for (integer i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
-		OPTION (espeakdata_voices_names -> strings [i].get())
+	OPTIONMENUSTR (voice_string, U"Voice", (int) NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1"))
+	for (integer i = 1; i <= theEspeakPraatVoiceNames().size; i ++) {
+		OPTION (theEspeakPraatVoiceNames() [i])
 	}
 	OK
 DO
 	CREATE_ONE
 		int languageIndex, voiceIndex;
 		espeakdata_getIndices (language_string, voice_string, & languageIndex, & voiceIndex);
+		Melder_assert (languageIndex != 0);
+		Melder_assert (voiceIndex != 0);
 		autoSpeechSynthesizer result = SpeechSynthesizer_create (
-			espeakdata_languages_names -> strings [languageIndex].get(),
-			espeakdata_voices_names -> strings [voiceIndex].get()
+			theEspeakPraatLanguageNames() [languageIndex],
+			theEspeakPraatVoiceNames() [voiceIndex]
 		);
-    CREATE_ONE_END (espeakdata_languages_names -> strings [languageIndex].get(), U"_", espeakdata_voices_names -> strings [voiceIndex].get())
+    CREATE_ONE_END (theEspeakPraatLanguageNames() [languageIndex], U"_", theEspeakPraatVoiceNames() [voiceIndex])
 }
 
 FORM (WINDOW_SpeechSynthesizer_viewAndEdit, U"View & Edit SpeechSynthesizer", nullptr) {
-	OPTIONMENU (languageIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++)
-		OPTION (espeakdata_languages_names -> strings [i].get());
+	OPTIONMENU (languageIndex, U"Language", (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
+	for (integer i = 1; i <= theEspeakPraatLanguageNames().size; i ++)
+		OPTION (theEspeakPraatLanguageNames() [i]);
 
-	OPTIONMENU (voiceIndex, U"Voice", (int) Strings_findString (espeakdata_voices_names.get(), U"Female1"))
-	for (integer i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++)
-		OPTION (espeakdata_voices_names -> strings [i].get());
+	OPTIONMENU (voiceIndex, U"Voice", (int) NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1"))
+	for (integer i = 1; i <= theEspeakPraatVoiceNames().size; i ++)
+		OPTION (theEspeakPraatVoiceNames() [i]);
 
-	OPTIONMENU (phonemeSetIndex, U"Phoneme set", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++)
-		OPTION (espeakdata_languages_names -> strings [i].get());
+	OPTIONMENU (phonemeSetIndex, U"Phoneme set", (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
+	for (integer i = 1; i <= theEspeakPraatLanguageNames().size; i ++)
+		OPTION (theEspeakPraatLanguageNames() [i]);
 OK
 	FIND_ONE (SpeechSynthesizer)
-		int currentLanguageIndex = (int) Strings_findString (espeakdata_languages_names.get(), my d_languageName.get());
+		int currentLanguageIndex = (int) NUMfindFirst (theEspeakPraatLanguageNames(), my d_languageName.get());
 		if (currentLanguageIndex == 0)
-			currentLanguageIndex = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+			currentLanguageIndex = (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)");
 		SET_OPTION (languageIndex, currentLanguageIndex)
 
-		int currentVoiceIndex = (int) Strings_findString (espeakdata_voices_names.get(), my d_voiceName.get());
+		int currentVoiceIndex = (int) NUMfindFirst (theEspeakPraatVoiceNames(), my d_voiceName.get());
 		if (currentVoiceIndex == 0)
-			currentVoiceIndex = (int) Strings_findString (espeakdata_voices_names.get(), U"Female1");
+			currentVoiceIndex = (int) NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1");
 		SET_OPTION (voiceIndex, currentVoiceIndex)
 
-		int currentPhonemeSetIndex = (int) Strings_findString (espeakdata_languages_names.get(), my d_phonemeSet.get());
+		int currentPhonemeSetIndex = (int) NUMfindFirst (theEspeakPraatLanguageNames(), my d_phonemeSet.get());
 		if (currentPhonemeSetIndex == 0)
-			currentPhonemeSetIndex = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+			currentPhonemeSetIndex = (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)");
 		SET_OPTION (phonemeSetIndex, currentPhonemeSetIndex)
 DO
 	FIND_ONE (SpeechSynthesizer)
-		my d_languageName = Melder_dup (espeakdata_languages_names -> strings [languageIndex].get());
-		my d_voiceName = Melder_dup (espeakdata_voices_names -> strings [voiceIndex].get());
-		my d_phonemeSet = Melder_dup (espeakdata_languages_names -> strings [phonemeSetIndex].get());
+		my d_languageName = Melder_dup (theEspeakPraatLanguageNames() [languageIndex]);
+		my d_voiceName = Melder_dup (theEspeakPraatVoiceNames() [voiceIndex]);
+		my d_phonemeSet = Melder_dup (theEspeakPraatLanguageNames() [phonemeSetIndex]);
 	END_NO_NEW_DATA
 }
 

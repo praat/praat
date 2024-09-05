@@ -20,6 +20,7 @@
  */
 
 #include "FileInMemory.h"
+#include "Table.h"
 
 FileInMemorySet theEspeakPraatFileInMemorySet();   // accessor to a singleton, which is created if it doesn't exist yet
 
@@ -35,8 +36,29 @@ void espeak_praat_FileInMemorySet_addOtherDicts (FileInMemorySet me);
 void espeak_praat_FileInMemorySet_addLanguages (FileInMemorySet me);
 void espeak_praat_FileInMemorySet_addVoices (FileInMemorySet me);
 
-int espeak_praat_GetFileLength (const char *filename);
+/*
+	For general use.
+*/
+STRVEC theEspeakPraatLanguageNames();
+STRVEC theEspeakPraatVoiceNames();
 
+/*
+	For developers mainly.
+*/
+Table theEspeakPraatLanguagePropertiesTable();
+Table theEspeakPraatVoicePropertiesTable();
+
+/*
+	Create the eSpeak-Praat-FileInMemorySet and the four other objects mentioned above.
+*/
+void espeakdata_praat_init ();
+
+void espeakdata_getIndices (conststring32 language_string, conststring32 voice_string, int *p_languageIndex, int *p_voiceIndex);
+
+/*
+	Drop-in replacements for GetFileLength and GetVoices (using FileInMemory instead of FILE*).
+*/
+int espeak_praat_GetFileLength (const char *filename);
 void espeak_praat_GetVoices (const char *path, int len_path_voices, int is_language_file);
 
 /* End of file espeak_praat.h */
