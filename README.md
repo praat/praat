@@ -121,10 +121,12 @@ a place where you can also get to by just typing http://praat.org.
 
 Most of the source code of Praat is distributed on GitHub under the General Public License,
 [version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) or later.
-However, as Praat includes the above software written by others,
+However, as Praat includes software written by others,
 the whole of Praat is distributed under the General Public License,
 [version 3](https://www.fon.hum.uva.nl/praat/manual/General_Public_License__version_3.html) or later.
-Of course, any improvements are welcomed by the authors.
+See [Acknowledgments](https://www.fon.hum.uva.nl/praat/manual/Acknowledgments.html) for details on the licenses
+of software libraries by others that are included in Praat.
+Of course, any improvements in the Praat source code are welcomed by the authors.
 
 ### 2.2. Downloading the archive
 
