@@ -3,7 +3,7 @@
 
 appendInfoLine: "test_SpeechSynthesizer.praat"
 
-voiceslist = Extract espeak data: "Voice properties"
+voiceslist = Extract espeak data: "Voices properties"
 numberOfVoices = Get number of rows
 
 appendInfoLine: tab$, "Languages:"

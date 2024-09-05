@@ -267,9 +267,15 @@
 		UiForm_addList (_dia_.get(), & integerVariable, nullptr, U"" #integerVariable, \
 				labelText, strings, defaultOptionNumber);
 
-#define LISTSTR(stringVariable, labelText, numberOfStrings, strings, defaultOptionNumber)  \
-		static char32 *stringVariable; \
+#define LISTSTR(stringVariable, labelText, strings, defaultOptionNumber)  \
+		static conststring32 stringVariable; \
 		UiForm_addList (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
+				labelText, strings, defaultOptionNumber);
+
+#define LISTNUMSTR(integerVariable, stringVariable, labelText, strings, defaultOptionNumber)  \
+		static integer integerVariable; \
+		static conststring32 stringVariable; \
+		UiForm_addList (_dia_.get(), & integerVariable, & stringVariable, U"" #stringVariable, \
 				labelText, strings, defaultOptionNumber);
 
 #define FILE_IN(labelText)  \

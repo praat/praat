@@ -6268,7 +6268,7 @@ DIRECT (HELP__SpeechSynthesizer_help) {
 FORM (CREATE_ONE__SpeechSynthesizer_extractEspeakData, U"SpeechSynthesizer: Extract espeak data", nullptr) {
 	OPTIONMENU (which, U"Data", 1)
 		OPTION (U"language properties")
-		OPTION (U"voice properties")
+		OPTION (U"voices properties")
 	OK
 DO
 	CREATE_ONE
@@ -6284,26 +6284,36 @@ DO
 }
 
 FORM (CREATE_ONE__SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
-	OPTIONMENUSTR (language_string, U"Language", (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
-	for (integer i = 1; i <= theEspeakPraatLanguageNames().size; i ++) {
-		OPTION (theEspeakPraatLanguageNames() [i])
-	}
-	OPTIONMENUSTR (voice_string, U"Voice", (int) NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1"))
-	for (integer i = 1; i <= theEspeakPraatVoiceNames().size; i ++) {
-		OPTION (theEspeakPraatVoiceNames() [i])
-	}
+	LISTNUMSTR (languageIndex, languageName, U"Language", theEspeakPraatLanguageNames(), NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
+	LISTNUMSTR (voiceIndex, voiceName, U"Voice", theEspeakPraatVoiceNames(), (int) NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1"))
 	OK
 DO
 	CREATE_ONE
-		int languageIndex, voiceIndex;
-		espeakdata_getIndices (language_string, voice_string, & languageIndex, & voiceIndex);
+		if (languageIndex == 0) {
+			if (Melder_equ (languageName, U"Default") || Melder_equ (languageName, U"English")) {
+				languageIndex = NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)");
+				Melder_warning (U"Language “", languageName, U"” is obsolete. The same language is now called “",
+						theEspeakPraatLanguageNames() [languageIndex], U"”.");
+			} else
+				Melder_throw (U"Language “", languageName, U"” is not a valid option.");
+		}
+		if (voiceIndex == 0) {
+			if (Melder_equ (voiceName, U"default")) {
+				voiceIndex = NUMfindFirst (theEspeakPraatVoiceNames(), U"Male1");
+				Melder_warning (U"Voice “default” is obsolete. The same voice is now called “Male1”.");
+			} else if (Melder_equ (voiceName, U"f1")) {
+				voiceIndex = NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1");
+				Melder_warning (U"Voice “f1” is obsolete. The same voice is now called “Female1”.");
+			} else
+				Melder_throw (U"Voice “", voiceName, U"” is not a valid option.");
+		}
 		Melder_assert (languageIndex != 0);
 		Melder_assert (voiceIndex != 0);
 		autoSpeechSynthesizer result = SpeechSynthesizer_create (
 			theEspeakPraatLanguageNames() [languageIndex],
 			theEspeakPraatVoiceNames() [voiceIndex]
 		);
-    CREATE_ONE_END (theEspeakPraatLanguageNames() [languageIndex], U"_", theEspeakPraatVoiceNames() [voiceIndex])
+	CREATE_ONE_END (theEspeakPraatLanguageNames() [languageIndex], U"_", theEspeakPraatVoiceNames() [voiceIndex])
 }
 
 FORM (WINDOW_SpeechSynthesizer_viewAndEdit, U"View & Edit SpeechSynthesizer", nullptr) {

@@ -431,47 +431,6 @@ Table theEspeakPraatLanguagePropertiesTable() {
 	return me.get();;
 }
 
-void espeakdata_getIndices (conststring32 languageName, conststring32 voiceName, int *p_languageIndex, int *p_voiceIndex) {
-	if (p_languageIndex) {
-		integer languageIndex = NUMfindFirst (theEspeakPraatLanguageNames(), languageName);
-		if (languageIndex == 0) {
-			if (Melder_equ (languageName, U"Default") || Melder_equ (languageName, U"English")) {
-				languageIndex = NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)");
-				Melder_warning (U"Language “", languageName, U"” is obsolete. The same language is now called “",
-						theEspeakPraatLanguageNames() [languageIndex], U"”.");
-			} else {
-				languageIndex = Table_searchColumn (theEspeakPraatLanguagePropertiesTable(), 1, languageName);
-				if (languageIndex == 0)
-					Melder_throw (U"Language “", languageName, U"” is not a valid option.");
-			}
-		}
-		*p_languageIndex = languageIndex;
-	}
-	if (p_voiceIndex) {
-		integer voiceIndex = NUMfindFirst (theEspeakPraatVoiceNames(), voiceName);
-		*p_voiceIndex = voiceIndex;
-		if (voiceIndex == 0) {
-			if (Melder_equ (voiceName, U"default")) {
-				voiceIndex = NUMfindFirst (theEspeakPraatVoiceNames(), U"Male1");
-			} else if (Melder_equ (voiceName, U"f1")) {
-				voiceIndex = NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1");
-			} else {
-				// Try the bare file names
-				voiceIndex = Table_searchColumn (theEspeakPraatVoicePropertiesTable(), 1, voiceName);
-				if (voiceIndex == 0)
-					Melder_throw (U"Voice “", voiceName, U"” is not a valid option.");
-			}
-		}
-		if (voiceIndex != *p_voiceIndex) {
-			*p_voiceIndex = voiceIndex;
-			Melder_casual (U"Voice “", voiceName, U"” is obsolete. The same voice is now called “",
-					theEspeakPraatVoiceNames() [*p_voiceIndex], U"”.");   // FIXME: this can crash
-		} else {
-			// unknown voice, handled by interface
-		}
-	}
-}
-
 STRVEC theEspeakPraatLanguageNames() {
 	static autoSTRVEC list;   // singleton
 	if (! list)

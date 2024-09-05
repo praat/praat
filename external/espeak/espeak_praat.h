@@ -53,8 +53,6 @@ Table theEspeakPraatVoicePropertiesTable();
 */
 void espeakdata_praat_init ();
 
-void espeakdata_getIndices (conststring32 language_string, conststring32 voice_string, int *p_languageIndex, int *p_voiceIndex);
-
 /*
 	Drop-in replacements for GetFileLength and GetVoices (using FileInMemory instead of FILE*).
 */
