@@ -2196,13 +2196,24 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			for (; i <= my strings.size; i ++)
 				if (str32equ (arg -> getString(), my strings [i]))
 					break;
-			if (i > my strings.size)
-				Melder_throw (U"List argument “", my name.get(), U"” cannot have the value “", arg -> getString(), U"”.");
-			my integerValue = i;
-			if (my integerVariable)
+			if (i > my strings.size) {
+				/*
+					Not found. If the result should be only a number or only a string, it's an error.
+					If the result should be both a number and a string, then the number can be 0 (signalling "not found")
+					and the string provides a out-of-list alternative that could be translated to an existing one.
+				*/
+				if (!! my integerVariable != !! my stringVariable)
+					Melder_throw (U"List argument “", my name.get(), U"” cannot have the value “", arg -> getString(), U"”.");
+				my integerValue = 0;
 				*my integerVariable = my integerValue;
-			if (my stringVariable)
-				*my stringVariable = (char32 *) my strings [my integerValue];
+				*my stringVariable = arg -> getString();   // FIXME: is the lifetime of arg long enough?
+			} else {
+				my integerValue = i;
+				if (my integerVariable)
+					*my integerVariable = my integerValue;
+				if (my stringVariable)
+					*my stringVariable = (char32 *) my strings [my integerValue];   // FIXME: const problem
+			}
 		}
 		break;
 		case _kUiField_type::COLOUR_:

@@ -262,14 +262,29 @@
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
 			UiForm_addOption (_dia_.get(), EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
+/*
+	LIST will throw if the supplied string is not in the list.
+*/
 #define LIST(integerVariable, labelText, strings, defaultOptionNumber)  \
 		static integer integerVariable; \
 		UiForm_addList (_dia_.get(), & integerVariable, nullptr, U"" #integerVariable, \
 				labelText, strings, defaultOptionNumber);
 
-#define LISTSTR(stringVariable, labelText, numberOfStrings, strings, defaultOptionNumber)  \
-		static char32 *stringVariable; \
+/*
+	LISTSTR will throw if the supplied string is not in the list.
+*/
+#define LISTSTR(stringVariable, labelText, strings, defaultOptionNumber)  \
+		static conststring32 stringVariable; \
 		UiForm_addList (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
+				labelText, strings, defaultOptionNumber);
+
+/*
+	If the supplied string is not in the list, LISTSTR will return 0 as well as the supplied string, for later handling.
+*/
+#define LISTNUMSTR(integerVariable, stringVariable, labelText, strings, defaultOptionNumber)  \
+		static integer integerVariable; \
+		static conststring32 stringVariable; \
+		UiForm_addList (_dia_.get(), & integerVariable, & stringVariable, U"" #stringVariable, \
 				labelText, strings, defaultOptionNumber);
 
 #define FILE_IN(labelText)  \

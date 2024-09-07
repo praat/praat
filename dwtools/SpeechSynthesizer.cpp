@@ -17,7 +17,7 @@
  */
 
 #include "espeak_ng.h"
-#include "espeak_praat.h"
+#include "espeak_praat.h"    // for theEspeakPraatFileInMemorySet
 
 #include "SpeechSynthesizer.h"
 #include "Strings_extensions.h"
@@ -154,7 +154,7 @@ void structSpeechSynthesizer :: v1_info () {
 	SpeechSynthesizer_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Language: ", our d_languageName.get());
 	MelderInfo_writeLine (U"Voice: ", our d_voiceName.get());
-	MelderInfo_writeLine (U"Phoneme set: ", our d_phonemeSet.get());
+	MelderInfo_writeLine (U"Phoneme set: ", our d_phonemeSetName.get());
 	MelderInfo_writeLine (U"Input text format: ", (our d_inputTextFormat == SpeechSynthesizer_INPUT_TEXTONLY ? U"text only" :
 		d_inputTextFormat == SpeechSynthesizer_INPUT_PHONEMESONLY ? U"phonemes only" : U"tagged text"));
 	MelderInfo_writeLine (U"Input phoneme coding: ", (our d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : U"???"));
@@ -221,32 +221,32 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 
 static conststring32 SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 	try {
-		const integer irow = Table_searchColumn (theEspeakPraatLanguagePropertiesTable(), 2, my d_languageName.get());
+		const integer irow = Table_searchColumn (theSpeechSynthesizerLanguagePropertiesTable(), 1, my d_languageName.get());
 		Melder_require (irow != 0,
 			U"Cannot find language \"", my d_languageName.get(), U"\".");
-		return Table_getStringValue_a (theEspeakPraatLanguagePropertiesTable(), irow, 1);
+		return Table_getStringValue_a (theSpeechSynthesizerLanguagePropertiesTable(), irow, 2);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find language code.");
 	}
 }
 
-static conststring32 SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
+static conststring32 SpeechSynthesizer_getPhonemeSetCode (SpeechSynthesizer me) {
 	try {
-		const integer irow = Table_searchColumn (theEspeakPraatLanguagePropertiesTable(), 2, my d_phonemeSet.get());
+		const integer irow = Table_searchColumn (theSpeechSynthesizerLanguagePropertiesTable(), 1, my d_phonemeSetName.get());
 		Melder_require (irow != 0,
-			U"Cannot find phoneme set \"", my d_phonemeSet.get(), U"\".");
-		return Table_getStringValue_a (theEspeakPraatLanguagePropertiesTable(), irow, 1);
+			U"Cannot find phoneme set \"", my d_phonemeSetName.get(), U"\".");
+		return Table_getStringValue_a (theSpeechSynthesizerLanguagePropertiesTable(), irow, 2);
 	} catch (MelderError) {
-		Melder_throw (me, U": Cannot find phoneme code.");
+		Melder_throw (me, U": Cannot find phoneme set code.");
 	}
 }
 
 static conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
-		const integer irow = Table_searchColumn (theEspeakPraatVoicePropertiesTable(), 2, my d_voiceName.get());
+		const integer irow = Table_searchColumn (theSpeechSynthesizerVoicePropertiesTable(), 1, my d_voiceName.get());
 		Melder_require (irow != 0,
-			U": Cannot find voice variant \"", my d_voiceName.get(), U"\".");
-		return Table_getStringValue_a (theEspeakPraatVoicePropertiesTable(), irow, 1);
+			U": Cannot find voice \"", my d_voiceName.get(), U"\".");
+		return Table_getStringValue_a (theSpeechSynthesizerVoicePropertiesTable(), irow, 5);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find voice code.");
 	}
@@ -259,7 +259,7 @@ autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, cons
 		(void) SpeechSynthesizer_getLanguageCode (me.get());  // existence check
 		my d_voiceName = Melder_dup (voiceName);
 		(void) SpeechSynthesizer_getVoiceCode (me.get());  // existence check
-		my d_phonemeSet = Melder_dup (languageName);
+		my d_phonemeSetName = Melder_dup (languageName);
 		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TAGGEDTEXT, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100.0, 0.01, 1.0, 1.0, 175.0, SpeechSynthesizer_PHONEMECODINGS_IPA);
 		SpeechSynthesizer_setEstimateSpeechRateFromSpeech (me.get(), true);
@@ -650,9 +650,9 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 
 		status = espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
 		espeak_SetSynthCallback (synthCallback);
-		if (! Melder_equ (my d_phonemeSet.get(), my d_languageName.get())) {
-			const conststring32 phonemeCode = SpeechSynthesizer_getPhonemeCode (me);
-			const int index_phon_table_list = LookupPhonemeTable (Melder_peek32to8 (phonemeCode));
+		if (! Melder_equ (my d_phonemeSetName.get(), my d_languageName.get())) {
+			const conststring32 phonemeSetCode = SpeechSynthesizer_getPhonemeSetCode (me);
+			const int index_phon_table_list = LookupPhonemeTable (Melder_peek32to8 (phonemeSetCode));
 			if (index_phon_table_list > 0) {
 				voice -> phoneme_tab_ix = index_phon_table_list;
 				(void) DoVoiceChange(voice);
@@ -740,6 +740,154 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 	} catch (MelderError) {
 		espeak_Terminate ();
 		Melder_throw (U"SpeechSynthesizer: text not converted to Sound.");
+	}
+}
+
+static conststring32 get_wordAfterPrecursor_u8 (constvector<unsigned char> const& text8, conststring32 precursor) {
+	static char32 word [100];
+	/*
+		1. Find (first occurrence of) 'precursor' at the start of a line (with optional leading whitespace).
+		2. Get the words after 'precursor' (skip leading and trailing whitespace).
+	*/
+	autoMelderString regex;
+	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8.asArgumentToFunctionThatExpectsZeroBasedArray()));
+	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
+	char32 *p = nullptr;
+	const char32 *pmatch = strstr_regexp (text, regex.string);
+	if (pmatch) {
+		pmatch += Melder_length (precursor); // skip 'precursor'
+		while (*pmatch == U' ' || *pmatch == U'\t')
+			pmatch ++; // skip whitespace after 'precursor'
+		p = word;
+		char32 *p_end = p + 99;
+		while ((*p = *pmatch ++) && *p != U' ' && *p != U'\t' && *p != U'\n' && *p != U'\r' && p < p_end)
+			p ++;
+		*p = U'\0';
+		p = word;
+	}
+	return p;
+}
+
+static conststring32 get_stringAfterPrecursor_u8 (constvector<unsigned char> const& text8, conststring32 precursor) {
+	static char32 word [100];
+	/*
+		1. Find (first occurrence of) 'precursor' at the start of a line (with optional leading whitespace).
+		2. Get the words after 'precursor' (skip leading and trailing whitespace).
+	*/
+	autoMelderString regex;
+	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8.asArgumentToFunctionThatExpectsZeroBasedArray()));
+	//const conststring32 text = Melder_peek8to32 ((const char *) & (text8.cells[1]));
+	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
+	char32 *p = nullptr;
+	const char32 *pmatch = strstr_regexp (text, regex.string);
+	if (pmatch) {
+		pmatch += Melder_length (precursor); // skip 'precursor'
+		while (*pmatch == U' ' || *pmatch == U'\t')
+			pmatch ++; // skip whitespace after 'precursor'
+		//pmatch --;
+		p = word;
+		char32 *p_end = p + 99;
+		// also discard text after comment '//'
+		while ((*p = *pmatch ++) && *p != U'\n' && *p != U'\r' && *p != U'/' && *(p+1) != U'/' && p < p_end)
+			p ++; // copy to end of line
+		while (*p == U' ' || *p == U'\t' || *p == U'\n' || *p == U'\r')
+			p --; // remove trailing white space
+		*(++ p) = U'\0';
+		p = word;
+	}
+	return p;
+}
+
+Table theSpeechSynthesizerVoicePropertiesTable() {
+	static autoTable me;   // singleton
+	if (! me) {
+		constexpr conststring32 criterion = U"/voices/!v/";
+		FileInMemorySet they = theEspeakPraatFileInMemorySet();
+		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (they, kMelder_string :: CONTAINS, criterion);
+		const conststring32 columnNames [] = { U"voice name", U"gender", U"age", U"variant", U"(internal name)", U"(internal index)" };
+		me = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames));
+		integer irow = 0;
+		for (integer ifile = 1; ifile <= their size; ifile ++) {
+			const FileInMemory fim = their at [ifile];
+			if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
+				irow ++;
+				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
+				// The first character of name must be upper case
+				if (name) {
+					autoMelderString capitalFirst;
+					MelderString_copy (& capitalFirst, name); // we cannot modify original
+					capitalFirst.string [0] = Melder_toUpperCase (name [0]);
+					Table_setStringValue (me.get(), irow, 1, capitalFirst.string);
+				} else {
+					Table_setStringValue (me.get(), irow, 1, str32rchr (fim -> string.get(), U'/') + 1);
+				}
+				conststring32 word = get_wordAfterPrecursor_u8 (fim -> d_data.get(), U"gender");
+				Table_setStringValue (me.get(), irow, 2, (word ? word : U"0"));
+				word = get_wordAfterPrecursor_u8 (fim -> d_data.get(), U"age");
+				Table_setStringValue (me.get(), irow, 3, (word ? word : U"0"));
+				word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"variant");
+				Table_setStringValue (me.get(), irow, 4, (word ? word : U"0"));
+				Table_setStringValue (me.get(), irow, 5, str32rchr (fim -> string.get(), U'/') + 1);
+				Table_setNumericValue (me.get(), irow, 6, ifile);
+			}
+		}
+		Melder_assert (irow == numberOfMatches);
+		Table_sortRows (me.get(),
+				autoSTRVEC ({ U"voice name" }).get());
+	}
+	return me.get();
+}
+
+Table theSpeechSynthesizerLanguagePropertiesTable() {
+	static autoTable me;   // singleton
+	if (! me) {
+		constexpr conststring32 criterion = U"./data/lang/";   // 12 characters
+		FileInMemorySet they = theEspeakPraatFileInMemorySet();
+		Melder_assert (they);
+		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (they, kMelder_string :: CONTAINS, criterion);
+		Melder_assert (numberOfMatches > 0);
+		const conststring32 columnNames [] = { U"language name", U"ISO 639 family/language code", U"(internal index)" };
+		me = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames)); // old: Default English
+		integer irow = 0;
+		for (integer ifile = 1; ifile <= their size; ifile ++) {
+			const FileInMemory fim = their at [ifile];
+			if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
+				irow ++;
+				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
+				Table_setStringValue (me.get(), irow, 1, ( word ? word : & fim -> string [12] ));
+				Table_setStringValue (me.get(), irow, 2, & fim -> string [12]);
+				Table_setNumericValue (me.get(), irow, 3, ifile);
+			}
+		}
+		Melder_assert (irow == numberOfMatches);
+		Table_sortRows (me.get(), autoSTRVEC ({ U"language name" }).get());
+	}
+	return me.get();;
+}
+
+STRVEC theSpeechSynthesizerLanguageNames() {
+	static autoSTRVEC list;   // singleton
+	if (! list)
+		list = Table_getColumn (theSpeechSynthesizerLanguagePropertiesTable(), 1);
+	return list.get();
+}
+
+STRVEC theSpeechSynthesizerVoiceNames() {
+	static autoSTRVEC list;   // singleton
+	if (! list)
+		list = Table_getColumn (theSpeechSynthesizerVoicePropertiesTable(), 1);
+	return list.get();
+}
+
+void espeak_praat_init () {
+	try {
+		(void) theEspeakPraatFileInMemorySet();   // create the singleton now (not strictly necessary)
+		(void) theSpeechSynthesizerLanguagePropertiesTable();
+		(void) theSpeechSynthesizerVoicePropertiesTable();
+		(void) theSpeechSynthesizerLanguageNames();
+		(void) theSpeechSynthesizerVoiceNames();
+	} catch (MelderError) {
+		Melder_throw (U"eSpeak-Praat initialization not performed.");
 	}
 }
 

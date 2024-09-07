@@ -247,6 +247,7 @@ int sync_espeak_terminated_msg(uint32_t unique_identifier, void *user_data)
 
 #endif
 
+#if 0   /* ppgb: not used in Praat */
 static int check_data_path(const char *path, int allow_directory)
 {
 	if (!path) return 0;
@@ -261,6 +262,7 @@ static int check_data_path(const char *path, int allow_directory)
 	snprintf(path_home, sizeof(path_home), "%s", path);
 	return espeak_praat_GetFileLength(path_home) == -EISDIR;
 }
+#endif
 
 #pragma GCC visibility push(default)
 
@@ -305,9 +307,13 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_InitializeOutput(espeak_ng_OUTPUT_MODE 
 	return ENS_OK;
 }
 
-
+/* ppgb: in Praat always called with path == nullptr */
 ESPEAK_NG_API void espeak_ng_InitializePath(const char *path)
 {
+#if 1   /* ppgb: in Praat we should ignore everything that eSpeak is trying to do here: registries, environment variables... */
+	Melder_assert (! path);
+	strcpy(path_home, PATH_ESPEAK_DATA);
+#else
 	if (check_data_path(path, 1))
 		return;
 
@@ -339,6 +345,7 @@ ESPEAK_NG_API void espeak_ng_InitializePath(const char *path)
 #endif
 
 	strcpy(path_home, PATH_ESPEAK_DATA);
+#endif   /* ppgb */
 }
 
 const int param_defaults[N_SPEECH_PARAM] = {

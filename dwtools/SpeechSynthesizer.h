@@ -2,7 +2,7 @@
 #define _SpeechSynthesizer_h_
 /* SpeechSynthesizer.h
  *
- * Copyright (C) 2011-2013, 2015-2023 David Weenink, 2015,2023,2024 Paul Boersma
+ * Copyright (C) 2011-2013,2015-2023 David Weenink, 2015,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,7 @@
  */
 
 #include "Sound.h"
-#include "TextGrid.h"
-#include "espeak_ng.h"
-#include "speech.h"
-#include "synthesize.h"
-#include "voice.h"
+#include "TextGrid.h"   // also for Table
 
 #define SpeechSynthesizer_PHONEMECODINGS_IPA 2
 #define SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM 1
@@ -33,11 +29,7 @@
 
 #include "SpeechSynthesizer_def.h"
 
-void SpeechSynthesizer_initEspeak ();
-
 autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, conststring32 voiceName);
-
-void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me);
 
 void SpeechSynthesizer_setTextInputSettings (SpeechSynthesizer me, int inputTextFormat, int inputPhonemeCoding);
 
@@ -50,6 +42,23 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 void SpeechSynthesizer_playText (SpeechSynthesizer me, conststring32 text);
 
 autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces);
+
+/*
+	For general use.
+*/
+STRVEC theSpeechSynthesizerLanguageNames();
+STRVEC theSpeechSynthesizerVoiceNames();
+
+/*
+	For developers mainly.
+*/
+Table theSpeechSynthesizerLanguagePropertiesTable();
+Table theSpeechSynthesizerVoicePropertiesTable();
+
+/*
+	Create the eSpeak-Praat-FileInMemorySet and the four other objects mentioned above.
+*/
+void espeak_praat_init ();
 
 /* End of file SpeechSynthesizer.h */
 #endif

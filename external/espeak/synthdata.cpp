@@ -42,7 +42,7 @@
 #include "translate.h"                // for Translator, LANGUAGE_OPTIONS
 #include "voice.h"                    // for ReadTonePoints, tone_points, voice
 
-#include "espeak_praat.h"             // for espeak_praat_GetFileLength
+#include "espeak_praat.h"             // for theEspeakPraatFileInMemorySet
 
 int n_tunes = 0;
 TUNE *tunes = NULL;

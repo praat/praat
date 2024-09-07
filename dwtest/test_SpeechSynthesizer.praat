@@ -3,21 +3,21 @@
 
 appendInfoLine: "test_SpeechSynthesizer.praat"
 
-voiceslist = Extract espeak data: "Voice properties"
+voiceList = Tabulate SpeechSynthesizer voice properties
 numberOfVoices = Get number of rows
 
 appendInfoLine: tab$, "Languages:"
-languageslist = Extract espeak data: "Language properties"
+languageList = Tabulate SpeechSynthesizer language properties
 numberOfLanguages = Get number of rows
 
 numberOfSounds = 0
 for ilang to numberOfLanguages
-	selectObject: languageslist
-	language$ = Get value: ilang, "name"
+	selectObject: languageList
+	language$ = Get value: ilang, "language name"
 	appendInfo: tab$, tab$, language$, ":"
 	for ivoice to 3
-		selectObject: voiceslist
-		voice$ = Get value: randomInteger (1, numberOfVoices), "name"
+		selectObject: voiceList
+		voice$ = Get value: randomInteger (1, numberOfVoices), "voice name"
 		appendInfo:  " ", voice$
 		ss = Create SpeechSynthesizer: language$, voice$
 		sound = To Sound: "a e u", "no"
@@ -51,6 +51,6 @@ textoutWithSpaces$ = Get phonemes from text (space-separated): text$
 assert phonemesWithSpaces$ = textoutWithSpaces$
 appendInfoLine: tab$, "Get phonemes from text: OK"
 
-removeObject: voiceslist, languageslist, ss, ss2,  ss3, ss4
+removeObject: voiceList, languageList, ss, ss2,  ss3, ss4
 
 appendInfoLine: "test_SpeechSynthesizer.praat OK"

@@ -149,8 +149,6 @@
 #include "praat_TableOfReal.h"
 #include "praat_uvafon_init.h"
 
-#include "espeak_praat.h"
-
 void praat_TableOfReal_init2 (ClassInfo klas);
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
 
@@ -6265,80 +6263,65 @@ DIRECT (HELP__SpeechSynthesizer_help) {
 	HELP (U"SpeechSynthesizer")
 }
 
-FORM (CREATE_ONE__SpeechSynthesizer_extractEspeakData, U"SpeechSynthesizer: Extract espeak data", nullptr) {
-	OPTIONMENU (which, U"Data", 1)
-		OPTION (U"language properties")
-		OPTION (U"voice properties")
-	OK
-DO
+DIRECT (CREATE_ONE__TabulateSpeechSynthesizerLanguageProperties) {
 	CREATE_ONE
-		autoTable result;
-		conststring32 name = U"languages";
-		if (which == 1) {
-			result = Data_copy (theEspeakPraatLanguagePropertiesTable());
-		} else if (which == 2) {
-			result = Data_copy (theEspeakPraatVoicePropertiesTable());
-			name = U"voices";
-		}
-	CREATE_ONE_END (name)
+		autoTable result = Data_copy (theSpeechSynthesizerLanguagePropertiesTable());
+	CREATE_ONE_END (U"theSpeechSynthesizerLanguageProperties")
+}
+
+DIRECT (CREATE_ONE__TabulateSpeechSynthesizerVoiceProperties) {
+	CREATE_ONE
+		autoTable result = Data_copy (theSpeechSynthesizerVoicePropertiesTable());
+	CREATE_ONE_END (U"theSpeechSynthesizerVoiceProperties")
 }
 
 FORM (CREATE_ONE__SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
-	OPTIONMENUSTR (language_string, U"Language", (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
-	for (integer i = 1; i <= theEspeakPraatLanguageNames().size; i ++) {
-		OPTION (theEspeakPraatLanguageNames() [i])
-	}
-	OPTIONMENUSTR (voice_string, U"Voice", (int) NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1"))
-	for (integer i = 1; i <= theEspeakPraatVoiceNames().size; i ++) {
-		OPTION (theEspeakPraatVoiceNames() [i])
-	}
+	LISTNUMSTR (languageIndex, languageName, U"Language", theSpeechSynthesizerLanguageNames(), NUMfindFirst (theSpeechSynthesizerLanguageNames(), U"English (Great Britain)"))
+	LISTNUMSTR (voiceIndex, voiceName, U"Voice", theSpeechSynthesizerVoiceNames(), (int) NUMfindFirst (theSpeechSynthesizerVoiceNames(), U"Female1"))
 	OK
 DO
 	CREATE_ONE
-		int languageIndex, voiceIndex;
-		espeakdata_getIndices (language_string, voice_string, & languageIndex, & voiceIndex);
+		if (languageIndex == 0) {
+			if (Melder_equ (languageName, U"Default") || Melder_equ (languageName, U"English")) {
+				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), U"English (Great Britain)");
+				Melder_warning (U"Language “", languageName, U"” is obsolete. The same language is now called “",
+						theSpeechSynthesizerLanguageNames() [languageIndex], U"”.");
+			} else
+				Melder_throw (U"Language “", languageName, U"” is not a valid option.");
+		}
+		if (voiceIndex == 0) {
+			if (Melder_equ (voiceName, U"default")) {
+				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), U"Male1");
+				Melder_warning (U"Voice “default” is obsolete. The same voice is now called “Male1”.");
+			} else if (Melder_equ (voiceName, U"f1")) {
+				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), U"Female1");
+				Melder_warning (U"Voice “f1” is obsolete. The same voice is now called “Female1”.");
+			} else
+				Melder_throw (U"Voice “", voiceName, U"” is not a valid option.");
+		}
 		Melder_assert (languageIndex != 0);
 		Melder_assert (voiceIndex != 0);
 		autoSpeechSynthesizer result = SpeechSynthesizer_create (
-			theEspeakPraatLanguageNames() [languageIndex],
-			theEspeakPraatVoiceNames() [voiceIndex]
+			theSpeechSynthesizerLanguageNames() [languageIndex],
+			theSpeechSynthesizerVoiceNames() [voiceIndex]
 		);
-    CREATE_ONE_END (theEspeakPraatLanguageNames() [languageIndex], U"_", theEspeakPraatVoiceNames() [voiceIndex])
+	CREATE_ONE_END (theSpeechSynthesizerLanguageNames() [languageIndex], U"_", theSpeechSynthesizerVoiceNames() [voiceIndex])
 }
 
 FORM (WINDOW_SpeechSynthesizer_viewAndEdit, U"View & Edit SpeechSynthesizer", nullptr) {
-	OPTIONMENU (languageIndex, U"Language", (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
-	for (integer i = 1; i <= theEspeakPraatLanguageNames().size; i ++)
-		OPTION (theEspeakPraatLanguageNames() [i]);
-
-	OPTIONMENU (voiceIndex, U"Voice", (int) NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1"))
-	for (integer i = 1; i <= theEspeakPraatVoiceNames().size; i ++)
-		OPTION (theEspeakPraatVoiceNames() [i]);
-
-	OPTIONMENU (phonemeSetIndex, U"Phoneme set", (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)"))
-	for (integer i = 1; i <= theEspeakPraatLanguageNames().size; i ++)
-		OPTION (theEspeakPraatLanguageNames() [i]);
+	LIST (languageIndex, U"Language", theSpeechSynthesizerLanguageNames(), NUMfindFirst (theSpeechSynthesizerLanguageNames(), U"English (Great Britain)"))
+	LIST (voiceIndex, U"Voice", theSpeechSynthesizerVoiceNames(), NUMfindFirst (theSpeechSynthesizerVoiceNames(), U"Female1"))
+	LIST (phonemeSetIndex, U"Phoneme set", theSpeechSynthesizerLanguageNames(), (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), U"English (Great Britain)"))
 OK
 	FIND_ONE (SpeechSynthesizer)
-		int currentLanguageIndex = (int) NUMfindFirst (theEspeakPraatLanguageNames(), my d_languageName.get());
-		if (currentLanguageIndex == 0)
-			currentLanguageIndex = (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)");
-		SET_OPTION (languageIndex, currentLanguageIndex)
-
-		int currentVoiceIndex = (int) NUMfindFirst (theEspeakPraatVoiceNames(), my d_voiceName.get());
-		if (currentVoiceIndex == 0)
-			currentVoiceIndex = (int) NUMfindFirst (theEspeakPraatVoiceNames(), U"Female1");
-		SET_OPTION (voiceIndex, currentVoiceIndex)
-
-		int currentPhonemeSetIndex = (int) NUMfindFirst (theEspeakPraatLanguageNames(), my d_phonemeSet.get());
-		if (currentPhonemeSetIndex == 0)
-			currentPhonemeSetIndex = (int) NUMfindFirst (theEspeakPraatLanguageNames(), U"English (Great Britain)");
-		SET_OPTION (phonemeSetIndex, currentPhonemeSetIndex)
+		SET_INTEGER (languageIndex, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_languageName.get()))
+		SET_INTEGER (voiceIndex, (int) NUMfindFirst (theSpeechSynthesizerVoiceNames(), my d_voiceName.get()))
+		SET_INTEGER (phonemeSetIndex, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSetName.get()))
 DO
 	FIND_ONE (SpeechSynthesizer)
-		my d_languageName = Melder_dup (theEspeakPraatLanguageNames() [languageIndex]);
-		my d_voiceName = Melder_dup (theEspeakPraatVoiceNames() [voiceIndex]);
-		my d_phonemeSet = Melder_dup (theEspeakPraatLanguageNames() [phonemeSetIndex]);
+		my d_languageName = Melder_dup (theSpeechSynthesizerLanguageNames() [languageIndex]);
+		my d_voiceName = Melder_dup (theSpeechSynthesizerVoiceNames() [voiceIndex]);
+		my d_phonemeSetName = Melder_dup (theSpeechSynthesizerLanguageNames() [phonemeSetIndex]);
 	END_NO_NEW_DATA
 }
 
@@ -6384,7 +6367,7 @@ DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName) {
 
 DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName) {
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		conststring32 result = my d_phonemeSet.get();
+		conststring32 result = my d_phonemeSetName.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -9012,7 +8995,7 @@ void praat_David_init () {
 	{// scope
 		//TRACE
 		double t = Melder_clock ();
-		espeakdata_praat_init ();
+		espeak_praat_init ();
 		trace (U"initializing eSpeak data took ", Melder_fixed (1000 * (Melder_clock () - t), 3), U" milliseconds");
 	}
 
@@ -9033,9 +9016,24 @@ void praat_David_init () {
 			CREATION_WINDOW__VowelEditor_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TextGridNavigator...", U"Create Corpus...", GuiMenu_HIDDEN,
 			CREATE_ONE__TextGridNavigator_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Text-to-speech synthesis", U"Create Vocal Tract from phone...", 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Text-to-speech synthesis", 1,
+
+	/*
+		The `New/SpeechSynthesizer` commands don't require us to supply the `after` argument,
+		because `praat_David_init()` is called between `praat_uvafon_Artsynth_init()` and `praat_uvafon_gram_init()`.
+		(last checked 20240907)
+	 */
+	praat_addMenuCommand (U"Objects", U"New", U"Text-to-speech synthesis", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"SpeechSynthesizer help", nullptr, 1,
+			HELP__SpeechSynthesizer_help);
+	praat_addMenuCommand (U"Objects", U"New", U"    (more info)", nullptr, 1, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Tabulate SpeechSynthesizer language properties", nullptr, 2,
+			CREATE_ONE__TabulateSpeechSynthesizerLanguageProperties);
+	praat_addMenuCommand (U"Objects", U"New", U"Tabulate SpeechSynthesizer voice properties", nullptr, 2,
+			CREATE_ONE__TabulateSpeechSynthesizerVoiceProperties);
+	praat_addMenuCommand (U"Objects", U"New", U"-- new SpeechSynthesizer --", nullptr, 1, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", nullptr, 1,
 			CREATE_ONE__SpeechSynthesizer_create);
+
 	praat_addMenuCommand (U"Objects", U"New", U"Data sets from the literature", U"Create Table without column names...", 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Data sets from the literature", 2,
 			CREATE_ONE__Table_create_petersonBarney1952);
@@ -9091,8 +9089,6 @@ void praat_David_init () {
 			READ_ONE__FileInMemory_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			CREATE_ONE__FileInMemorySet_createFromDirectoryContents);
-	praat_addMenuCommand (U"Objects", U"New", U"Extract espeak data...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
-			CREATE_ONE__SpeechSynthesizer_extractEspeakData);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, 
 			READ_ONE__Sound_readFromRawFileLE);

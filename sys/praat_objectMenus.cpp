@@ -619,9 +619,7 @@ DO
 }
 
 FORM (PRAAT__GoToManualPage, U"Go to manual page", nullptr) {
-	static constSTRVEC pages;
-	pages = ManPages_getTitles (theCurrentPraatApplication -> manPages);
-	LIST (goToPageNumber, U"Page", pages, 1)
+	LIST (goToPageNumber, U"Page", ManPages_getTitles (theCurrentPraatApplication -> manPages), 1)
 	OK
 DO
 	PRAAT

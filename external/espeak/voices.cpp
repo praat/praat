@@ -40,10 +40,10 @@
 #include "encoding.h"
 
 #include "voice.h"                    // for voice_t, DoVoiceChange, N_PEAKS
-#include "common.h"                    // for GetFileLength, strncpy0
+#include "common.h"                   // for GetFileLength, strncpy0
 #include "dictionary.h"               // for LoadDictionary
 #include "langopts.h"                 // for LoadLanguageOptions
-#include "mnemonics.h"               // for LookupMnemName, MNEM_TAB
+#include "mnemonics.h"                // for LookupMnemName, MNEM_TAB
 #include "phoneme.h"                  // for REPLACE_PHONEMES, n_replace_pho...
 #include "speech.h"                   // for PATHSEP
 #include "mbrola.h"                   // for LoadMbrolaTable
@@ -52,7 +52,7 @@
 #include "translate.h"                // for LANGUAGE_OPTIONS, DeleteTranslator
 #include "wavegen.h"                  // for InitBreath
 
-#include "espeak_praat.h"             // for espeak_praat_GetFileLength
+#include "espeak_praat.h"             // for theEspeakPraatFileInMemorySet
 
 static int AddToVoicesList(const char *fname, int len_path_voices, int is_language_file);
 

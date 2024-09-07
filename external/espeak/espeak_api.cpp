@@ -48,6 +48,7 @@ static espeak_ERROR status_to_espeak_error(espeak_ng_STATUS status)
 
 #pragma GCC visibility push(default)
 
+#if 0   /* not called in Praat */
 ESPEAK_API int espeak_Initialize(espeak_AUDIO_OUTPUT output_type, int buf_length, const char *path, int options)
 {
 	espeak_ng_InitializePath(path);
@@ -80,6 +81,7 @@ ESPEAK_API int espeak_Initialize(espeak_AUDIO_OUTPUT output_type, int buf_length
 
 	return espeak_ng_GetSampleRate();
 }
+#endif
 
 ESPEAK_API espeak_ERROR espeak_Synth(const void *text, size_t size,
                                      unsigned int position,
