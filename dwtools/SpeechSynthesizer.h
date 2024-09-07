@@ -2,7 +2,7 @@
 #define _SpeechSynthesizer_h_
 /* SpeechSynthesizer.h
  *
- * Copyright (C) 2011-2013, 2015-2023 David Weenink, 2015,2023,2024 Paul Boersma
+ * Copyright (C) 2011-2013,2015-2023 David Weenink, 2015,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,6 @@ Table theSpeechSynthesizerVoicePropertiesTable();
 	Create the eSpeak-Praat-FileInMemorySet and the four other objects mentioned above.
 */
 void espeak_praat_init ();
-
 
 /* End of file SpeechSynthesizer.h */
 #endif

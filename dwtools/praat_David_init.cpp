@@ -6263,22 +6263,16 @@ DIRECT (HELP__SpeechSynthesizer_help) {
 	HELP (U"SpeechSynthesizer")
 }
 
-FORM (CREATE_ONE__SpeechSynthesizer_extractEspeakData, U"SpeechSynthesizer: Extract espeak data", nullptr) {
-	OPTIONMENU (which, U"Data", 1)
-		OPTION (U"language properties")
-		OPTION (U"voices properties")
-	OK
-DO
+DIRECT (CREATE_ONE__TabulateSpeechSynthesizerLanguageProperties) {
 	CREATE_ONE
-		autoTable result;
-		conststring32 name = U"languages";
-		if (which == 1) {
-			result = Data_copy (theSpeechSynthesizerLanguagePropertiesTable());
-		} else if (which == 2) {
-			result = Data_copy (theSpeechSynthesizerVoicePropertiesTable());
-			name = U"voices";
-		}
-	CREATE_ONE_END (name)
+		autoTable result = Data_copy (theSpeechSynthesizerLanguagePropertiesTable());
+	CREATE_ONE_END (U"theSpeechSynthesizerLanguageProperties")
+}
+
+DIRECT (CREATE_ONE__TabulateSpeechSynthesizerVoiceProperties) {
+	CREATE_ONE
+		autoTable result = Data_copy (theSpeechSynthesizerVoicePropertiesTable());
+	CREATE_ONE_END (U"theSpeechSynthesizerVoiceProperties")
 }
 
 FORM (CREATE_ONE__SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
@@ -6322,12 +6316,12 @@ OK
 	FIND_ONE (SpeechSynthesizer)
 		SET_INTEGER (languageIndex, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_languageName.get()))
 		SET_INTEGER (voiceIndex, (int) NUMfindFirst (theSpeechSynthesizerVoiceNames(), my d_voiceName.get()))
-		SET_INTEGER (phonemeSetIndex, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSet.get()))
+		SET_INTEGER (phonemeSetIndex, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSetName.get()))
 DO
 	FIND_ONE (SpeechSynthesizer)
 		my d_languageName = Melder_dup (theSpeechSynthesizerLanguageNames() [languageIndex]);
 		my d_voiceName = Melder_dup (theSpeechSynthesizerVoiceNames() [voiceIndex]);
-		my d_phonemeSet = Melder_dup (theSpeechSynthesizerLanguageNames() [phonemeSetIndex]);
+		my d_phonemeSetName = Melder_dup (theSpeechSynthesizerLanguageNames() [phonemeSetIndex]);
 	END_NO_NEW_DATA
 }
 
@@ -6373,7 +6367,7 @@ DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName) {
 
 DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName) {
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		conststring32 result = my d_phonemeSet.get();
+		conststring32 result = my d_phonemeSetName.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -9022,9 +9016,24 @@ void praat_David_init () {
 			CREATION_WINDOW__VowelEditor_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TextGridNavigator...", U"Create Corpus...", GuiMenu_HIDDEN,
 			CREATE_ONE__TextGridNavigator_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Text-to-speech synthesis", U"Create Vocal Tract from phone...", 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Text-to-speech synthesis", 1,
+
+	/*
+		The `New/SpeechSynthesizer` commands don't require us to supply the `after` argument,
+		because `praat_David_init()` is called between `praat_uvafon_Artsynth_init()` and `praat_uvafon_gram_init()`.
+		(last checked 20240907)
+	 */
+	praat_addMenuCommand (U"Objects", U"New", U"Text-to-speech synthesis", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"SpeechSynthesizer help", nullptr, 1,
+			HELP__SpeechSynthesizer_help);
+	praat_addMenuCommand (U"Objects", U"New", U"    (more info)", nullptr, 1, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Tabulate SpeechSynthesizer language properties", nullptr, 2,
+			CREATE_ONE__TabulateSpeechSynthesizerLanguageProperties);
+	praat_addMenuCommand (U"Objects", U"New", U"Tabulate SpeechSynthesizer voice properties", nullptr, 2,
+			CREATE_ONE__TabulateSpeechSynthesizerVoiceProperties);
+	praat_addMenuCommand (U"Objects", U"New", U"-- new SpeechSynthesizer --", nullptr, 1, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", nullptr, 1,
 			CREATE_ONE__SpeechSynthesizer_create);
+
 	praat_addMenuCommand (U"Objects", U"New", U"Data sets from the literature", U"Create Table without column names...", 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Data sets from the literature", 2,
 			CREATE_ONE__Table_create_petersonBarney1952);
@@ -9080,8 +9089,6 @@ void praat_David_init () {
 			READ_ONE__FileInMemory_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			CREATE_ONE__FileInMemorySet_createFromDirectoryContents);
-	praat_addMenuCommand (U"Objects", U"New", U"Extract espeak data...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
-			CREATE_ONE__SpeechSynthesizer_extractEspeakData);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, 
 			READ_ONE__Sound_readFromRawFileLE);

@@ -29,11 +29,11 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	oo_STRING (d_voiceName)
 
 	oo_FROM (1)
-		oo_STRING (d_phonemeSet)
+		oo_STRING (d_phonemeSetName)
 	oo_ENDFROM
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
-			d_phonemeSet = Melder_dup (d_languageName.get());
+			d_phonemeSetName = Melder_dup (d_languageName.get());
 			oo_INTEGER (d_wordsPerMinute)
 		oo_VERSION_ELSE
 			oo_DOUBLE (d_wordsPerMinute)
