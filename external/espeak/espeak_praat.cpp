@@ -323,6 +323,8 @@ int espeak_praat_GetFileLength (const char *filename) {
 	}
 	// Directory ??
 	if (FileInMemorySet_hasDirectory (me, Melder_peek8to32 (filename))) {
+		//TRACE
+		trace (U"Folder!: Melder_peek8to32 (filename)");
 		return -EISDIR;
 	}
 	return -1;

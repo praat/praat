@@ -20,14 +20,13 @@
  */
 
 #include "FileInMemory.h"
-#include "Table.h"
 
 FileInMemorySet theEspeakPraatFileInMemorySet();   // accessor to a singleton, which is created if it doesn't exist yet
 
 /*
 	The following six functions aren't here because they should be exported;
-	they are here only because they each is so big that it has to be in its own file.
-	Had they been smaller, the woul dhave been included as local functions in espeak_praat.cpp.
+	they are here only because each of them is so big that it has to be in its own file.
+	Had they been smaller, they would have been included as local functions in espeak_praat.cpp.
 */
 void espeak_praat_FileInMemorySet_addPhon (FileInMemorySet me);
 void espeak_praat_FileInMemorySet_addRussianDict (FileInMemorySet me);
