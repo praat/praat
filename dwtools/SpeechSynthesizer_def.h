@@ -24,16 +24,23 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		oo_STRING (dummySynthesizerVersion)   // no longer used (was already overwritten at reading time)
 	oo_ENDFROM
 
-	// sythesizers language /voice
+	/*
+		Three language and voice settings.
+	*/
 	oo_STRING (d_languageName)
 	oo_STRING (d_voiceName)
-
 	oo_FROM (1)
 		oo_STRING (d_phonemeSetName)
 	oo_ENDFROM
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
 			d_phonemeSetName = Melder_dup (d_languageName.get());
+		oo_VERSION_END
+		SpeechSynthesizer_repairLanguageAndVoiceNames (this);
+	#endif
+
+	#if oo_READING
+		oo_VERSION_UNTIL (1)
 			oo_INTEGER (d_wordsPerMinute)
 		oo_VERSION_ELSE
 			oo_DOUBLE (d_wordsPerMinute)

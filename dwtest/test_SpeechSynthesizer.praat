@@ -1,5 +1,6 @@
 # test_SpeechSynthesizer.praat
 # djmw 20120130, 20120522, 20160524, 20171103
+# ppgb 20240908
 
 appendInfoLine: "test_SpeechSynthesizer.praat"
 
@@ -37,6 +38,94 @@ ss2 = Read from file: "kanweg.SpeechSynthesizer"
 appendInfoLine: tab$, "Writing and reading: OK"
 
 appendInfoLine: tab$, "Compatibility:"
+
+Create SpeechSynthesizer: "Aragonese", "Andrea"
+languageName$ = Get language name
+voiceName$ = Get voice name
+phonemeSetName$ = Get phoneme set name
+assert languageName$ = "Aragonese"
+assert voiceName$ = "Andrea"
+assert phonemeSetName$ = "Aragonese"
+Remove
+
+Create SpeechSynthesizer: "armenian (West Armenia)", "Shelby"
+languageName$ = Get language name
+voiceName$ = Get voice name
+phonemeSetName$ = Get phoneme set name
+assert languageName$ = "Armenian (West Armenia)"
+assert voiceName$ = "Shelby"
+assert phonemeSetName$ = "Armenian (West Armenia)"
+Remove
+
+Create SpeechSynthesizer: "Assamese", "steph2"
+languageName$ = Get language name
+voiceName$ = Get voice name
+phonemeSetName$ = Get phoneme set name
+assert languageName$ = "Assamese"
+assert voiceName$ = "Steph2"
+assert phonemeSetName$ = "Assamese"
+Remove
+
+asserterror The language “ffsd” is unknown.
+Create SpeechSynthesizer: "ffsd", "steph2"
+
+asserterror The voice “sfdhj” is unknown.
+Create SpeechSynthesizer: "Assamese", "sfdhj"
+
+Create SpeechSynthesizer: "Default", "Andy"
+languageName$ = Get language name
+voiceName$ = Get voice name
+phonemeSetName$ = Get phoneme set name
+assert languageName$ = "English (Great Britain)"
+assert voiceName$ = "Andy"
+assert phonemeSetName$ = "English (Great Britain)"
+Remove
+
+Create SpeechSynthesizer: "English", "Alicia"
+languageName$ = Get language name
+voiceName$ = Get voice name
+phonemeSetName$ = Get phoneme set name
+assert languageName$ = "English (Great Britain)"
+assert voiceName$ = "Alicia"
+assert phonemeSetName$ = "English (Great Britain)"
+Remove
+
+Create SpeechSynthesizer: "English", "f4"
+languageName$ = Get language name
+voiceName$ = Get voice name
+phonemeSetName$ = Get phoneme set name
+assert languageName$ = "English (Great Britain)"
+assert voiceName$ = "Female4"
+assert phonemeSetName$ = "English (Great Britain)"
+Remove
+
+Create SpeechSynthesizer: "English", "default"
+languageName$ = Get language name
+voiceName$ = Get voice name
+phonemeSetName$ = Get phoneme set name
+assert languageName$ = "English (Great Britain)"
+assert voiceName$ = "Male1"
+assert phonemeSetName$ = "English (Great Britain)"
+Remove
+
+Create SpeechSynthesizer: "gmw/nl", "Andrea"
+languageName$ = Get language name
+voiceName$ = Get voice name
+phonemeSetName$ = Get phoneme set name
+assert languageName$ = "Dutch"
+assert voiceName$ = "Andrea"
+assert phonemeSetName$ = "Dutch"
+Remove
+
+Create SpeechSynthesizer: "de", "Steph2"
+languageName$ = Get language name
+voiceName$ = Get voice name
+phonemeSetName$ = Get phoneme set name
+assert languageName$ = "German"
+assert voiceName$ = "Steph2"
+assert phonemeSetName$ = "German"
+Remove
+
 ss3 = Create SpeechSynthesizer: "Default", "default"
 ss4 = Create SpeechSynthesizer: "English", "f1"
 appendInfoLine: tab$, "Compatibility: OK"
