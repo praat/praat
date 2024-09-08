@@ -255,11 +255,16 @@ static conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, conststring32 voiceName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
+
 		my d_languageName = Melder_dup (languageName);
-		(void) SpeechSynthesizer_getLanguageCode (me.get());  // existence check
 		my d_voiceName = Melder_dup (voiceName);
-		(void) SpeechSynthesizer_getVoiceCode (me.get());  // existence check
 		my d_phonemeSetName = Melder_dup (languageName);
+		SpeechSynthesizer_repairLanguageAndVoiceNames (me.get());
+		if (Melder_equ (my d_languageName.get(), U"unknown"))
+			Melder_throw (U"The language “", languageName, U"” is unknown.");
+		if (Melder_equ (my d_voiceName.get(), U"unknown"))
+			Melder_throw (U"The voice “", voiceName, U"” is unknown.");
+
 		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TAGGEDTEXT, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100.0, 0.01, 1.0, 1.0, 175.0, SpeechSynthesizer_PHONEMECODINGS_IPA);
 		SpeechSynthesizer_setEstimateSpeechRateFromSpeech (me.get(), true);
@@ -888,6 +893,163 @@ void espeak_praat_init () {
 		(void) theSpeechSynthesizerVoiceNames();
 	} catch (MelderError) {
 		Melder_throw (U"eSpeak-Praat initialization not performed.");
+	}
+}
+
+void SpeechSynthesizer_repairLanguageAndVoiceNames (SpeechSynthesizer me) {
+	const bool languageAndPhonemeSetAreIdentical = Melder_equ (my d_languageName.get(), my d_phonemeSetName.get());
+
+	/*
+		Changes to the language name.
+	*/
+	{// scope
+		bool languageNameHasBeenRepaired = false;
+		integer languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_languageName.get());
+		if (languageIndex == 0) {   // not found
+			if (my d_languageName [0] >= U'a' && my d_languageName [0] <= U'z') {   // lower case?
+				my d_languageName [0] -= 32;   // try upper case instead
+				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_languageName.get());
+				if (languageIndex > 0) {   // FOUND
+					languageNameHasBeenRepaired = true;
+					if (languageAndPhonemeSetAreIdentical)
+						my d_phonemeSetName [0] -= 32;   // make the same change to the phoneme set name as to the language name
+				} else
+					my d_languageName [0] += 32;   // revert to lower case
+			} else if (my d_languageName [0] >= U'A' && my d_languageName [0] <= U'Z') {   // upper case?
+				my d_languageName [0] += 32;   // try lower case instead
+				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_languageName.get());
+				if (languageIndex > 0) {   // FOUND
+					languageNameHasBeenRepaired = true;
+					if (languageAndPhonemeSetAreIdentical)
+						my d_phonemeSetName [0] += 32;   // make the same change to the phoneme set name as to the language name
+				} else
+					my d_languageName [0] -= 32;   // revert to upper case
+			}
+			if (! languageNameHasBeenRepaired) {   // the case change didn't help
+				/*
+					The user could have tried an eSpeak-internal family/language code, or just a language code without family.
+				*/
+				Table table = theSpeechSynthesizerLanguagePropertiesTable ();
+				for (integer irow = 1; irow <= table -> rows.size; irow ++) {
+					conststring32 familyLanguageCode = Table_getStringValue_a (table, irow, 2);
+					const char32 *slashPosition = str32rchr (familyLanguageCode, U'/');
+					conststring32 languageCode = ( slashPosition ? slashPosition + 1 : familyLanguageCode );
+					if (Melder_equ (my d_languageName.get(), familyLanguageCode) || Melder_equ (my d_languageName.get(), languageCode)) {   // FOUND
+						my d_languageName = Melder_dup (Table_getStringValue_a (table, irow, 1));
+						languageNameHasBeenRepaired = true;
+						if (languageAndPhonemeSetAreIdentical)
+							my d_phonemeSetName = Melder_dup (my d_languageName.get());
+						break;
+					}
+				}
+			}
+			if (! languageNameHasBeenRepaired) {   // neither the case change nor the (family/)language code helped
+				if (Melder_equ (my d_languageName.get(), U"Default") || Melder_equ (my d_languageName.get(), U"English")) {
+					my d_languageName = Melder_dup (U"English (Great Britain)");
+					languageNameHasBeenRepaired = true;
+					if (languageAndPhonemeSetAreIdentical)
+						my d_phonemeSetName = Melder_dup (my d_languageName.get());
+				}
+			}
+			if (! languageNameHasBeenRepaired) {   // nothing helped: no repair; do signal the problem
+				my d_languageName = Melder_dup (U"unknown");
+				if (languageAndPhonemeSetAreIdentical)
+					my d_phonemeSetName = Melder_dup (U"unknown");
+			}
+		}
+	}
+
+	/*
+		Changes to the voice name.
+	*/
+	{// scope
+		bool voiceNameHasBeenRepaired = false;
+		integer voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), my d_voiceName.get());
+		if (voiceIndex == 0) {   // not found
+			if (my d_voiceName [0] >= U'a' && my d_voiceName [0] <= U'z') {   // lower case?
+				my d_voiceName [0] -= 32;   // try upper case instead
+				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), my d_voiceName.get());
+				if (voiceIndex > 0) {   // FOUND
+					voiceNameHasBeenRepaired = true;
+				} else
+					my d_voiceName [0] += 32;   // revert to lower case
+			} else if (my d_voiceName [0] >= U'A' && my d_voiceName [0] <= U'Z') {   // upper case?
+				my d_voiceName [0] += 32;   // try lower case instead
+				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), my d_voiceName.get());
+				if (voiceIndex > 0) {   // FOUND
+					voiceNameHasBeenRepaired = true;
+				} else
+					my d_voiceName [0] -= 32;   // revert to upper case
+			}
+			if (! voiceNameHasBeenRepaired) {   // neither the case change nor the (family/)language code helped
+				if (Melder_equ (my d_voiceName.get(), U"default")) {
+					my d_voiceName = Melder_dup (U"Male1");   // as in a very early version of eSpeak
+					voiceNameHasBeenRepaired = true;
+				} else if (my d_voiceName [0] == U'f' && my d_voiceName [1] >= U'1' && my d_voiceName [1] <= '5' && my d_voiceName [2] == U'\0') {
+					my d_voiceName = Melder_dup (Melder_cat (U"Female", my d_voiceName [1]));   // e.g. change "f1" to "Female1"
+					voiceNameHasBeenRepaired = true;
+				}
+			}
+			if (! voiceNameHasBeenRepaired)   // nothing helped: no repair; do signal the problem
+				my d_voiceName = Melder_dup (U"unknown");
+		}
+	}
+
+	/*
+		If language name and phoneme set name were identical to start with,
+		then any change in the language name have already been applied to the phoneme set name.
+		So we have to change the phoneme set name only if it is independent from the language name.
+	*/
+	if (languageAndPhonemeSetAreIdentical)
+		return;
+
+	/*
+		Changes to the phoneme set name.
+	*/
+	{// scope
+		bool phonemeSetNameHasBeenRepaired = false;
+		integer languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSetName.get());
+		if (languageIndex == 0) {   // not found
+			if (my d_phonemeSetName [0] >= U'a' && my d_phonemeSetName [0] <= U'z') {   // lower case?
+				my d_phonemeSetName [0] -= 32;   // try upper case instead
+				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSetName.get());
+				if (languageIndex > 0) {   // FOUND
+					phonemeSetNameHasBeenRepaired = true;
+				} else
+					my d_phonemeSetName [0] += 32;   // revert to lower case
+			} else if (my d_phonemeSetName [0] >= U'A' && my d_phonemeSetName [0] <= U'Z') {   // upper case?
+				my d_phonemeSetName [0] += 32;   // try lower case instead
+				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSetName.get());
+				if (languageIndex > 0) {   // FOUND
+					phonemeSetNameHasBeenRepaired = true;
+				} else
+					my d_phonemeSetName [0] -= 32;   // revert to upper case
+			}
+			if (! phonemeSetNameHasBeenRepaired) {   // the case change didn't help
+				/*
+					The user could have tried an eSpeak-internal family/language code.
+				*/
+				Table table = theSpeechSynthesizerLanguagePropertiesTable ();
+				for (integer irow = 1; irow <= table -> rows.size; irow ++) {
+					conststring32 familyLanguageCode = Table_getStringValue_a (table, irow, 2);
+					const char32 *slashPosition = str32rchr (familyLanguageCode, U'/');
+					conststring32 languageCode = ( slashPosition ? slashPosition + 1 : familyLanguageCode );
+					if (Melder_equ (my d_phonemeSetName.get(), familyLanguageCode) || Melder_equ (my d_phonemeSetName.get(), languageCode)) {   // FOUND
+						my d_phonemeSetName = Melder_dup (Table_getStringValue_a (table, irow, 1));
+						phonemeSetNameHasBeenRepaired = true;
+						break;
+					}
+				}
+			}
+			if (! phonemeSetNameHasBeenRepaired) {   // neither the case change nor the (family/)language code helped
+				if (Melder_equ (my d_phonemeSetName.get(), U"Default") || Melder_equ (my d_phonemeSetName.get(), U"English")) {
+					my d_phonemeSetName = Melder_dup (U"English (Great Britain)");
+					phonemeSetNameHasBeenRepaired = true;
+				}
+			}
+			if (! phonemeSetNameHasBeenRepaired)   // nothing helped: no repair; do signal the problem
+				my d_phonemeSetName = Melder_dup (U"unknown");
+		}
 	}
 }
 

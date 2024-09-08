@@ -6281,31 +6281,10 @@ FORM (CREATE_ONE__SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Creat
 	OK
 DO
 	CREATE_ONE
-		if (languageIndex == 0) {
-			if (Melder_equ (languageName, U"Default") || Melder_equ (languageName, U"English")) {
-				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), U"English (Great Britain)");
-				Melder_warning (U"Language “", languageName, U"” is obsolete. The same language is now called “",
-						theSpeechSynthesizerLanguageNames() [languageIndex], U"”.");
-			} else
-				Melder_throw (U"Language “", languageName, U"” is not a valid option.");
-		}
-		if (voiceIndex == 0) {
-			if (Melder_equ (voiceName, U"default")) {
-				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), U"Male1");
-				Melder_warning (U"Voice “default” is obsolete. The same voice is now called “Male1”.");
-			} else if (Melder_equ (voiceName, U"f1")) {
-				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), U"Female1");
-				Melder_warning (U"Voice “f1” is obsolete. The same voice is now called “Female1”.");
-			} else
-				Melder_throw (U"Voice “", voiceName, U"” is not a valid option.");
-		}
-		Melder_assert (languageIndex != 0);
-		Melder_assert (voiceIndex != 0);
-		autoSpeechSynthesizer result = SpeechSynthesizer_create (
-			theSpeechSynthesizerLanguageNames() [languageIndex],
-			theSpeechSynthesizerVoiceNames() [voiceIndex]
-		);
-	CREATE_ONE_END (theSpeechSynthesizerLanguageNames() [languageIndex], U"_", theSpeechSynthesizerVoiceNames() [voiceIndex])
+		autoSpeechSynthesizer result = SpeechSynthesizer_create (languageName, voiceName);
+		languageName = result -> d_languageName.get();   // save before moving
+		voiceName = result -> d_voiceName.get();   // save before moving
+	CREATE_ONE_END (languageName, U"_", voiceName)   // the names may have been "repaired"
 }
 
 FORM (WINDOW_SpeechSynthesizer_viewAndEdit, U"View & Edit SpeechSynthesizer", nullptr) {
@@ -6322,6 +6301,7 @@ DO
 		my d_languageName = Melder_dup (theSpeechSynthesizerLanguageNames() [languageIndex]);
 		my d_voiceName = Melder_dup (theSpeechSynthesizerVoiceNames() [voiceIndex]);
 		my d_phonemeSetName = Melder_dup (theSpeechSynthesizerLanguageNames() [phonemeSetIndex]);
+		SpeechSynthesizer_repairLanguageAndVoiceNames (me);
 	END_NO_NEW_DATA
 }
 

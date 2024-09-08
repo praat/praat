@@ -60,5 +60,22 @@ Table theSpeechSynthesizerVoicePropertiesTable();
 */
 void espeak_praat_init ();
 
+/*
+	Try to change the language name, the voice name and/or the phoneme set name if any of these are not in the list.
+	This also translates ISO 639 language codes (or family/language combinations),
+	and fixes capitalization of the first letter.
+	Examples of language names:
+		en -> English (Great Britain)         // obsolete
+		gmw/nl -> Dutch                       // ISO 639 family/language code (if identical to the eSpeak-internal code)
+		nl -> Dutch                           // ISO 639 language code
+	Examples of voice names:
+		f1 -> Female1                         // obsolete
+		female1 -> Female1                    // capitalization
+	The following "centric" ones are obsolete nowadays in eSpeak, but will still map in case any ancient Praat scripts use them:
+		Default -> English (Great Britain)    // obsolete
+		default -> Male1                      // obsolete
+*/
+void SpeechSynthesizer_repairLanguageAndVoiceNames (SpeechSynthesizer me);
+
 /* End of file SpeechSynthesizer.h */
 #endif
