@@ -36,7 +36,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		oo_VERSION_UNTIL (1)
 			d_phonemeSetName = Melder_dup (d_languageName.get());
 		oo_VERSION_END
-		SpeechSynthesizer_repairLanguageAndVoiceNames (this);
+		SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (this);
 	#endif
 
 	#if oo_READING

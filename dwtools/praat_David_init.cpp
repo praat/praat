@@ -6301,7 +6301,7 @@ DO
 		my d_languageName = Melder_dup (theSpeechSynthesizerLanguageNames() [languageIndex]);
 		my d_voiceName = Melder_dup (theSpeechSynthesizerVoiceNames() [voiceIndex]);
 		my d_phonemeSetName = Melder_dup (theSpeechSynthesizerLanguageNames() [phonemeSetIndex]);
-		SpeechSynthesizer_repairLanguageAndVoiceNames (me);
+		SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (me);
 	END_NO_NEW_DATA
 }
 
