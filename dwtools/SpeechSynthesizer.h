@@ -75,7 +75,7 @@ void espeak_praat_init ();
 		Default -> English (Great Britain)    // obsolete
 		default -> Male1                      // obsolete
 */
-void SpeechSynthesizer_repairLanguageAndVoiceNames (SpeechSynthesizer me);
+void SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (SpeechSynthesizer me);
 
 /* End of file SpeechSynthesizer.h */
 #endif

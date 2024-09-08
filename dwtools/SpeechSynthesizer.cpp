@@ -259,11 +259,7 @@ autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, cons
 		my d_languageName = Melder_dup (languageName);
 		my d_voiceName = Melder_dup (voiceName);
 		my d_phonemeSetName = Melder_dup (languageName);
-		SpeechSynthesizer_repairLanguageAndVoiceNames (me.get());
-		if (Melder_equ (my d_languageName.get(), U"unknown"))
-			Melder_throw (U"The language “", languageName, U"” is unknown.");
-		if (Melder_equ (my d_voiceName.get(), U"unknown"))
-			Melder_throw (U"The voice “", voiceName, U"” is unknown.");
+		SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (me.get());
 
 		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TAGGEDTEXT, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100.0, 0.01, 1.0, 1.0, 175.0, SpeechSynthesizer_PHONEMECODINGS_IPA);
@@ -896,7 +892,7 @@ void espeak_praat_init () {
 	}
 }
 
-void SpeechSynthesizer_repairLanguageAndVoiceNames (SpeechSynthesizer me) {
+void SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (SpeechSynthesizer me) {
 	const bool languageAndPhonemeSetAreIdentical = Melder_equ (my d_languageName.get(), my d_phonemeSetName.get());
 
 	/*
@@ -951,11 +947,9 @@ void SpeechSynthesizer_repairLanguageAndVoiceNames (SpeechSynthesizer me) {
 						my d_phonemeSetName = Melder_dup (my d_languageName.get());
 				}
 			}
-			if (! languageNameHasBeenRepaired) {   // nothing helped: no repair; do signal the problem
-				my d_languageName = Melder_dup (U"unknown");
-				if (languageAndPhonemeSetAreIdentical)
-					my d_phonemeSetName = Melder_dup (U"unknown");
-			}
+			if (! languageNameHasBeenRepaired)   // nothing helped
+				Melder_throw (U"Unknown language “", my d_languageName.get(), U"”.\n"
+						"If you think that Praat should know this language, write to the authors (paul.boersma@uva.nl).");
 		}
 	}
 
@@ -981,17 +975,18 @@ void SpeechSynthesizer_repairLanguageAndVoiceNames (SpeechSynthesizer me) {
 				} else
 					my d_voiceName [0] -= 32;   // revert to upper case
 			}
-			if (! voiceNameHasBeenRepaired) {   // neither the case change nor the (family/)language code helped
+			if (! voiceNameHasBeenRepaired) {   // the case change didn't help
 				if (Melder_equ (my d_voiceName.get(), U"default")) {
 					my d_voiceName = Melder_dup (U"Male1");   // as in a very early version of eSpeak
 					voiceNameHasBeenRepaired = true;
 				} else if (my d_voiceName [0] == U'f' && my d_voiceName [1] >= U'1' && my d_voiceName [1] <= '5' && my d_voiceName [2] == U'\0') {
-					my d_voiceName = Melder_dup (Melder_cat (U"Female", my d_voiceName [1]));   // e.g. change "f1" to "Female1"
+					my d_voiceName = Melder_dup (Melder_cat (U"Female", my d_voiceName [1]));   // e.g. change "f4" to "Female4"
 					voiceNameHasBeenRepaired = true;
 				}
 			}
-			if (! voiceNameHasBeenRepaired)   // nothing helped: no repair; do signal the problem
-				my d_voiceName = Melder_dup (U"unknown");
+			if (! voiceNameHasBeenRepaired)   // nothing helped
+				Melder_throw (U"Unknown voice “", my d_voiceName.get(), U"”.\n"
+						"If you think that Praat should know this voice, write to the authors (paul.boersma@uva.nl).");
 		}
 	}
 
@@ -1047,8 +1042,9 @@ void SpeechSynthesizer_repairLanguageAndVoiceNames (SpeechSynthesizer me) {
 					phonemeSetNameHasBeenRepaired = true;
 				}
 			}
-			if (! phonemeSetNameHasBeenRepaired)   // nothing helped: no repair; do signal the problem
-				my d_phonemeSetName = Melder_dup (U"unknown");
+			if (! phonemeSetNameHasBeenRepaired)   // nothing helped
+				Melder_throw (U"Unknown language “", my d_phonemeSetName.get(), U"”.\n"
+						"If you think that Praat should know this language, write to the authors (paul.boersma@uva.nl).");
 		}
 	}
 }

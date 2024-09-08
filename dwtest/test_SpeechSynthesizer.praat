@@ -66,11 +66,18 @@ assert voiceName$ = "Steph2"
 assert phonemeSetName$ = "Assamese"
 Remove
 
-asserterror The language “ffsd” is unknown.
+asserterror Unknown language “ffsd”.'newline$'
+...If you think that Praat should know this language, write to the authors
 Create SpeechSynthesizer: "ffsd", "steph2"
 
-asserterror The voice “sfdhj” is unknown.
+asserterror Unknown voice “sfdhj”.'newline$'
+...If you think that Praat should know this voice, write to the authors
 Create SpeechSynthesizer: "Assamese", "sfdhj"
+
+asserterror Unknown voice “sfdhj”.'newline$'
+...If you think that Praat should know this voice, write to the authors
+Create SpeechSynthesizer... Assamese sfdhj
+		# (pre-2014 syntax should also understand "not found")
 
 Create SpeechSynthesizer: "Default", "Andy"
 languageName$ = Get language name
