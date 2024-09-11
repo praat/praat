@@ -23,7 +23,14 @@ integer Melder8_length (conststring8 stringOrNull);   // can assert on 32-bit pl
 integer Melder16_length (conststring16 stringOrNull) noexcept;
 mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept;
 
-integer Melder_length (conststring32 stringOrNull) noexcept;
+integer constexpr Melder_length (const conststring32 stringOrNull) noexcept {
+	if (! stringOrNull)
+		return 0;
+	const char32 *p = & stringOrNull [0];
+	while (*p != U'\0')
+		++ p;
+	return p - stringOrNull;
+}
 mutablestring32 str32cpy (mutablestring32 target, conststring32 source) noexcept;
 mutablestring32 str32cat (mutablestring32 target, conststring32 source) noexcept;
 char32 * stp32cpy (mutablestring32 target, conststring32 source) noexcept;

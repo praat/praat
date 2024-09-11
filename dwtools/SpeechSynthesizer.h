@@ -46,19 +46,19 @@ autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, consts
 /*
 	For general use.
 */
-STRVEC theSpeechSynthesizerLanguageNames();
-STRVEC theSpeechSynthesizerVoiceNames();
+extern STRVEC theSpeechSynthesizerLanguageNames;
+extern STRVEC theSpeechSynthesizerVoiceNames;
 
 /*
 	For developers mainly.
 */
-Table theSpeechSynthesizerLanguagePropertiesTable();
-Table theSpeechSynthesizerVoicePropertiesTable();
+extern Table theSpeechSynthesizerLanguagePropertiesTable;
+extern Table theSpeechSynthesizerVoicePropertiesTable;
 
 /*
 	Create the eSpeak-Praat-FileInMemorySet and the four other objects mentioned above.
 */
-void espeak_praat_init ();
+void classSpeechSynthesizer_initClass ();
 
 /*
 	Try to change the language name, the voice name and/or the phoneme set name if any of these are not in the list.

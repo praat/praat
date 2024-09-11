@@ -309,27 +309,6 @@ FileInMemorySet theEspeakPraatFileInMemorySet() {
 	return me.get();
 }
 
-/*
-	espeak_praat_GetFileLength: mimics GetFileLength of espeak-ng
-	Returns the number of bytes in the file.
-	If the filename is a directory it return -EISDIR
-*/
-int espeak_praat_GetFileLength (const char *filename) {
-	FileInMemorySet me = theEspeakPraatFileInMemorySet();
-	integer index = my lookUp (Melder_peek8to32 (filename));
-	if (index > 0) {
-		FileInMemory fim = my at [index];
-		return fim -> d_numberOfBytes;
-	}
-	// Directory ??
-	if (FileInMemorySet_hasDirectory (me, Melder_peek8to32 (filename))) {
-		//TRACE
-		trace (U"Folder!: Melder_peek8to32 (filename)");
-		return -EISDIR;
-	}
-	return -1;
-}
-
 /* 
 	espeak_praat_GetVoices: mimics GetVoices of espeak-ng
 	If is_languange_file == 0 then /voices/ else /lang/ 

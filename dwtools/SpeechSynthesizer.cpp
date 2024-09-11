@@ -221,10 +221,10 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 
 static conststring32 SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 	try {
-		const integer irow = Table_searchColumn (theSpeechSynthesizerLanguagePropertiesTable(), 1, my d_languageName.get());
+		const integer irow = Table_searchColumn (theSpeechSynthesizerLanguagePropertiesTable, 1, my d_languageName.get());
 		Melder_require (irow != 0,
 			U"Cannot find language \"", my d_languageName.get(), U"\".");
-		return Table_getStringValue_a (theSpeechSynthesizerLanguagePropertiesTable(), irow, 2);
+		return Table_getStringValue_a (theSpeechSynthesizerLanguagePropertiesTable, irow, 2);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find language code.");
 	}
@@ -232,10 +232,10 @@ static conststring32 SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 
 static conststring32 SpeechSynthesizer_getPhonemeSetCode (SpeechSynthesizer me) {
 	try {
-		const integer irow = Table_searchColumn (theSpeechSynthesizerLanguagePropertiesTable(), 1, my d_phonemeSetName.get());
+		const integer irow = Table_searchColumn (theSpeechSynthesizerLanguagePropertiesTable, 1, my d_phonemeSetName.get());
 		Melder_require (irow != 0,
 			U"Cannot find phoneme set \"", my d_phonemeSetName.get(), U"\".");
-		return Table_getStringValue_a (theSpeechSynthesizerLanguagePropertiesTable(), irow, 2);
+		return Table_getStringValue_a (theSpeechSynthesizerLanguagePropertiesTable, irow, 2);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find phoneme set code.");
 	}
@@ -243,10 +243,10 @@ static conststring32 SpeechSynthesizer_getPhonemeSetCode (SpeechSynthesizer me) 
 
 static conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
-		const integer irow = Table_searchColumn (theSpeechSynthesizerVoicePropertiesTable(), 1, my d_voiceName.get());
+		const integer irow = Table_searchColumn (theSpeechSynthesizerVoicePropertiesTable, 1, my d_voiceName.get());
 		Melder_require (irow != 0,
 			U": Cannot find voice \"", my d_voiceName.get(), U"\".");
-		return Table_getStringValue_a (theSpeechSynthesizerVoicePropertiesTable(), irow, 5);
+		return Table_getStringValue_a (theSpeechSynthesizerVoicePropertiesTable, irow, 5);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find voice code.");
 	}
@@ -799,96 +799,103 @@ static conststring32 get_stringAfterPrecursor_u8 (constvector<unsigned char> con
 	return p;
 }
 
-Table theSpeechSynthesizerVoicePropertiesTable() {
-	static autoTable me;   // singleton
-	if (! me) {
-		constexpr conststring32 criterion = U"/voices/!v/";
-		FileInMemorySet they = theEspeakPraatFileInMemorySet();
-		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (they, kMelder_string :: CONTAINS, criterion);
-		const conststring32 columnNames [] = { U"voice name", U"gender", U"age", U"variant", U"(internal name)", U"(internal index)" };
-		me = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames));
-		integer irow = 0;
-		for (integer ifile = 1; ifile <= their size; ifile ++) {
-			const FileInMemory fim = their at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
-				irow ++;
-				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
-				// The first character of name must be upper case
-				if (name) {
-					autoMelderString capitalFirst;
-					MelderString_copy (& capitalFirst, name); // we cannot modify original
-					capitalFirst.string [0] = Melder_toUpperCase (name [0]);
-					Table_setStringValue (me.get(), irow, 1, capitalFirst.string);
-				} else {
-					Table_setStringValue (me.get(), irow, 1, str32rchr (fim -> string.get(), U'/') + 1);
-				}
-				conststring32 word = get_wordAfterPrecursor_u8 (fim -> d_data.get(), U"gender");
-				Table_setStringValue (me.get(), irow, 2, (word ? word : U"0"));
-				word = get_wordAfterPrecursor_u8 (fim -> d_data.get(), U"age");
-				Table_setStringValue (me.get(), irow, 3, (word ? word : U"0"));
-				word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"variant");
-				Table_setStringValue (me.get(), irow, 4, (word ? word : U"0"));
-				Table_setStringValue (me.get(), irow, 5, str32rchr (fim -> string.get(), U'/') + 1);
-				Table_setNumericValue (me.get(), irow, 6, ifile);
-			}
-		}
-		Melder_assert (irow == numberOfMatches);
-		Table_sortRows (me.get(),
-				autoSTRVEC ({ U"voice name" }).get());
-	}
-	return me.get();
-}
+/*
+	Four global singleton-references.
+	The four singletons that they refer to contain data,
+	are to be initialized once during start-up (i.e. during some `praat_xxx_init()`),
+	and are kept throughout program execution.
+*/
+Table theSpeechSynthesizerVoicePropertiesTable;
+Table theSpeechSynthesizerLanguagePropertiesTable;
+STRVEC theSpeechSynthesizerLanguageNames;
+STRVEC theSpeechSynthesizerVoiceNames;
 
-Table theSpeechSynthesizerLanguagePropertiesTable() {
-	static autoTable me;   // singleton
-	if (! me) {
-		constexpr conststring32 criterion = U"./data/lang/";   // 12 characters
-		FileInMemorySet they = theEspeakPraatFileInMemorySet();
-		Melder_assert (they);
-		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (they, kMelder_string :: CONTAINS, criterion);
-		Melder_assert (numberOfMatches > 0);
-		const conststring32 columnNames [] = { U"language name", U"ISO 639 family/language code", U"(internal index)" };
-		me = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames)); // old: Default English
-		integer irow = 0;
-		for (integer ifile = 1; ifile <= their size; ifile ++) {
-			const FileInMemory fim = their at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
-				irow ++;
-				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
-				Table_setStringValue (me.get(), irow, 1, ( word ? word : & fim -> string [12] ));
-				Table_setStringValue (me.get(), irow, 2, & fim -> string [12]);
-				Table_setNumericValue (me.get(), irow, 3, ifile);
-			}
-		}
-		Melder_assert (irow == numberOfMatches);
-		Table_sortRows (me.get(), autoSTRVEC ({ U"language name" }).get());
-	}
-	return me.get();;
-}
-
-STRVEC theSpeechSynthesizerLanguageNames() {
-	static autoSTRVEC list;   // singleton
-	if (! list)
-		list = Table_getColumn (theSpeechSynthesizerLanguagePropertiesTable(), 1);
-	return list.get();
-}
-
-STRVEC theSpeechSynthesizerVoiceNames() {
-	static autoSTRVEC list;   // singleton
-	if (! list)
-		list = Table_getColumn (theSpeechSynthesizerVoicePropertiesTable(), 1);
-	return list.get();
-}
-
-void espeak_praat_init () {
+void classSpeechSynthesizer_initClass () {
 	try {
+		/*
+			Initialization is to take place only once.
+		*/
+		Melder_assert (! theSpeechSynthesizerVoicePropertiesTable);
+		Melder_assert (! theSpeechSynthesizerLanguagePropertiesTable);
+		Melder_assert (! theSpeechSynthesizerLanguageNames);
+		Melder_assert (! theSpeechSynthesizerVoiceNames);
+
 		(void) theEspeakPraatFileInMemorySet();   // create the singleton now (not strictly necessary)
-		(void) theSpeechSynthesizerLanguagePropertiesTable();
-		(void) theSpeechSynthesizerVoicePropertiesTable();
-		(void) theSpeechSynthesizerLanguageNames();
-		(void) theSpeechSynthesizerVoiceNames();
+		{// scope
+			static autoTable me;   // singleton
+			constexpr conststring32 criterion = U"./data/lang/";   // 12 characters
+			constexpr integer criterionLength = Melder_length (criterion);
+			FileInMemorySet they = theEspeakPraatFileInMemorySet();
+			Melder_assert (they);
+			const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (they, kMelder_string :: CONTAINS, criterion);
+			Melder_assert (numberOfMatches > 0);
+			const conststring32 columnNames [] = { U"language name", U"ISO 639 family/language code", U"(internal index)" };
+			me = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames)); // old: Default English
+			integer irow = 0;
+			for (integer ifile = 1; ifile <= their size; ifile ++) {
+				const FileInMemory fim = their at [ifile];
+				if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
+					irow ++;
+					const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
+					Table_setStringValue (me.get(), irow, 1, ( word ? word : & fim -> string [criterionLength] ));
+					Table_setStringValue (me.get(), irow, 2, & fim -> string [criterionLength]);
+					Table_setNumericValue (me.get(), irow, 3, ifile);
+				}
+			}
+			Melder_assert (irow == numberOfMatches);
+			const conststring32 sorters [] = { U"language name" };
+			Table_sortRows (me.get(), ARRAY_TO_STRVEC (sorters));
+			theSpeechSynthesizerLanguagePropertiesTable = me.get();
+		}
+		{// scope
+			static autoTable me;   // singleton
+			constexpr conststring32 criterion = U"/voices/!v/";
+			FileInMemorySet they = theEspeakPraatFileInMemorySet();
+			const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (they, kMelder_string :: CONTAINS, criterion);
+			const conststring32 columnNames [] = { U"voice name", U"gender", U"age", U"variant", U"(internal name)", U"(internal index)" };
+			me = Table_createWithColumnNames (numberOfMatches, ARRAY_TO_STRVEC (columnNames));
+			integer irow = 0;
+			for (integer ifile = 1; ifile <= their size; ifile ++) {
+				const FileInMemory fim = their at [ifile];
+				if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: CONTAINS, criterion, true)) {
+					irow ++;
+					const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"name");
+					// The first character of name must be upper case
+					if (name) {
+						autoMelderString capitalFirst;
+						MelderString_copy (& capitalFirst, name); // we cannot modify original
+						capitalFirst.string [0] = Melder_toUpperCase (name [0]);
+						Table_setStringValue (me.get(), irow, 1, capitalFirst.string);
+					} else {
+						Table_setStringValue (me.get(), irow, 1, str32rchr (fim -> string.get(), U'/') + 1);
+					}
+					conststring32 word = get_wordAfterPrecursor_u8 (fim -> d_data.get(), U"gender");
+					Table_setStringValue (me.get(), irow, 2, (word ? word : U"0"));
+					word = get_wordAfterPrecursor_u8 (fim -> d_data.get(), U"age");
+					Table_setStringValue (me.get(), irow, 3, (word ? word : U"0"));
+					word = get_stringAfterPrecursor_u8 (fim -> d_data.get(), U"variant");
+					Table_setStringValue (me.get(), irow, 4, (word ? word : U"0"));
+					Table_setStringValue (me.get(), irow, 5, str32rchr (fim -> string.get(), U'/') + 1);
+					Table_setNumericValue (me.get(), irow, 6, ifile);
+				}
+			}
+			Melder_assert (irow == numberOfMatches);
+			const conststring32 sorters [] = { U"voice name" };
+			Table_sortRows (me.get(), ARRAY_TO_STRVEC (sorters));
+			theSpeechSynthesizerVoicePropertiesTable = me.get();
+		}
+		{// scope
+			static autoSTRVEC list;   // singleton
+			list = Table_getColumn (theSpeechSynthesizerLanguagePropertiesTable, 1);
+			theSpeechSynthesizerLanguageNames = list.get();
+		}
+		{// scope
+			static autoSTRVEC list;   // singleton
+			list = Table_getColumn (theSpeechSynthesizerVoicePropertiesTable, 1);
+			theSpeechSynthesizerVoiceNames = list.get();
+		}
 	} catch (MelderError) {
-		Melder_throw (U"eSpeak-Praat initialization not performed.");
+		Melder_fatal (U"eSpeak-Praat initialization not performed.");
 	}
 }
 
@@ -900,11 +907,11 @@ void SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (SpeechSynthesizer me
 	*/
 	{// scope
 		bool languageNameHasBeenRepaired = false;
-		integer languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_languageName.get());
+		integer languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames, my d_languageName.get());
 		if (languageIndex == 0) {   // not found
 			if (my d_languageName [0] >= U'a' && my d_languageName [0] <= U'z') {   // lower case?
 				my d_languageName [0] -= 32;   // try upper case instead
-				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_languageName.get());
+				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames, my d_languageName.get());
 				if (languageIndex > 0) {   // FOUND
 					languageNameHasBeenRepaired = true;
 					if (languageAndPhonemeSetAreIdentical)
@@ -913,7 +920,7 @@ void SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (SpeechSynthesizer me
 					my d_languageName [0] += 32;   // revert to lower case
 			} else if (my d_languageName [0] >= U'A' && my d_languageName [0] <= U'Z') {   // upper case?
 				my d_languageName [0] += 32;   // try lower case instead
-				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_languageName.get());
+				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames, my d_languageName.get());
 				if (languageIndex > 0) {   // FOUND
 					languageNameHasBeenRepaired = true;
 					if (languageAndPhonemeSetAreIdentical)
@@ -925,7 +932,7 @@ void SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (SpeechSynthesizer me
 				/*
 					The user could have tried an eSpeak-internal family/language code, or just a language code without family.
 				*/
-				Table table = theSpeechSynthesizerLanguagePropertiesTable ();
+				Table table = theSpeechSynthesizerLanguagePropertiesTable;
 				for (integer irow = 1; irow <= table -> rows.size; irow ++) {
 					conststring32 familyLanguageCode = Table_getStringValue_a (table, irow, 2);
 					const char32 *slashPosition = str32rchr (familyLanguageCode, U'/');
@@ -958,18 +965,18 @@ void SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (SpeechSynthesizer me
 	*/
 	{// scope
 		bool voiceNameHasBeenRepaired = false;
-		integer voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), my d_voiceName.get());
+		integer voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames, my d_voiceName.get());
 		if (voiceIndex == 0) {   // not found
 			if (my d_voiceName [0] >= U'a' && my d_voiceName [0] <= U'z') {   // lower case?
 				my d_voiceName [0] -= 32;   // try upper case instead
-				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), my d_voiceName.get());
+				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames, my d_voiceName.get());
 				if (voiceIndex > 0) {   // FOUND
 					voiceNameHasBeenRepaired = true;
 				} else
 					my d_voiceName [0] += 32;   // revert to lower case
 			} else if (my d_voiceName [0] >= U'A' && my d_voiceName [0] <= U'Z') {   // upper case?
 				my d_voiceName [0] += 32;   // try lower case instead
-				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames(), my d_voiceName.get());
+				voiceIndex = NUMfindFirst (theSpeechSynthesizerVoiceNames, my d_voiceName.get());
 				if (voiceIndex > 0) {   // FOUND
 					voiceNameHasBeenRepaired = true;
 				} else
@@ -1003,18 +1010,18 @@ void SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (SpeechSynthesizer me
 	*/
 	{// scope
 		bool phonemeSetNameHasBeenRepaired = false;
-		integer languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSetName.get());
+		integer languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames, my d_phonemeSetName.get());
 		if (languageIndex == 0) {   // not found
 			if (my d_phonemeSetName [0] >= U'a' && my d_phonemeSetName [0] <= U'z') {   // lower case?
 				my d_phonemeSetName [0] -= 32;   // try upper case instead
-				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSetName.get());
+				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames, my d_phonemeSetName.get());
 				if (languageIndex > 0) {   // FOUND
 					phonemeSetNameHasBeenRepaired = true;
 				} else
 					my d_phonemeSetName [0] += 32;   // revert to lower case
 			} else if (my d_phonemeSetName [0] >= U'A' && my d_phonemeSetName [0] <= U'Z') {   // upper case?
 				my d_phonemeSetName [0] += 32;   // try lower case instead
-				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSetName.get());
+				languageIndex = NUMfindFirst (theSpeechSynthesizerLanguageNames, my d_phonemeSetName.get());
 				if (languageIndex > 0) {   // FOUND
 					phonemeSetNameHasBeenRepaired = true;
 				} else
@@ -1024,7 +1031,7 @@ void SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (SpeechSynthesizer me
 				/*
 					The user could have tried an eSpeak-internal family/language code.
 				*/
-				Table table = theSpeechSynthesizerLanguagePropertiesTable ();
+				Table table = theSpeechSynthesizerLanguagePropertiesTable;
 				for (integer irow = 1; irow <= table -> rows.size; irow ++) {
 					conststring32 familyLanguageCode = Table_getStringValue_a (table, irow, 2);
 					const char32 *slashPosition = str32rchr (familyLanguageCode, U'/');

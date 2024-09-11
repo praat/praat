@@ -6265,19 +6265,19 @@ DIRECT (HELP__SpeechSynthesizer_help) {
 
 DIRECT (CREATE_ONE__TabulateSpeechSynthesizerLanguageProperties) {
 	CREATE_ONE
-		autoTable result = Data_copy (theSpeechSynthesizerLanguagePropertiesTable());
+		autoTable result = Data_copy (theSpeechSynthesizerLanguagePropertiesTable);
 	CREATE_ONE_END (U"theSpeechSynthesizerLanguageProperties")
 }
 
 DIRECT (CREATE_ONE__TabulateSpeechSynthesizerVoiceProperties) {
 	CREATE_ONE
-		autoTable result = Data_copy (theSpeechSynthesizerVoicePropertiesTable());
+		autoTable result = Data_copy (theSpeechSynthesizerVoicePropertiesTable);
 	CREATE_ONE_END (U"theSpeechSynthesizerVoiceProperties")
 }
 
 FORM (CREATE_ONE__SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
-	LISTNUMSTR (languageIndex, languageName, U"Language", theSpeechSynthesizerLanguageNames(), NUMfindFirst (theSpeechSynthesizerLanguageNames(), U"English (Great Britain)"))
-	LISTNUMSTR (voiceIndex, voiceName, U"Voice", theSpeechSynthesizerVoiceNames(), (int) NUMfindFirst (theSpeechSynthesizerVoiceNames(), U"Female1"))
+	LISTNUMSTR (languageIndex, languageName, U"Language", theSpeechSynthesizerLanguageNames, NUMfindFirst (theSpeechSynthesizerLanguageNames, U"English (Great Britain)"))
+	LISTNUMSTR (voiceIndex, voiceName, U"Voice", theSpeechSynthesizerVoiceNames, (int) NUMfindFirst (theSpeechSynthesizerVoiceNames, U"Female1"))
 	OK
 DO
 	CREATE_ONE
@@ -6288,19 +6288,19 @@ DO
 }
 
 FORM (WINDOW_SpeechSynthesizer_viewAndEdit, U"View & Edit SpeechSynthesizer", nullptr) {
-	LIST (languageIndex, U"Language", theSpeechSynthesizerLanguageNames(), NUMfindFirst (theSpeechSynthesizerLanguageNames(), U"English (Great Britain)"))
-	LIST (voiceIndex, U"Voice", theSpeechSynthesizerVoiceNames(), NUMfindFirst (theSpeechSynthesizerVoiceNames(), U"Female1"))
-	LIST (phonemeSetIndex, U"Phoneme set", theSpeechSynthesizerLanguageNames(), (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), U"English (Great Britain)"))
+	LIST (languageIndex, U"Language", theSpeechSynthesizerLanguageNames, NUMfindFirst (theSpeechSynthesizerLanguageNames, U"English (Great Britain)"))
+	LIST (voiceIndex, U"Voice", theSpeechSynthesizerVoiceNames, NUMfindFirst (theSpeechSynthesizerVoiceNames, U"Female1"))
+	LIST (phonemeSetIndex, U"Phoneme set", theSpeechSynthesizerLanguageNames, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames, U"English (Great Britain)"))
 OK
 	FIND_ONE (SpeechSynthesizer)
-		SET_INTEGER (languageIndex, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_languageName.get()))
-		SET_INTEGER (voiceIndex, (int) NUMfindFirst (theSpeechSynthesizerVoiceNames(), my d_voiceName.get()))
-		SET_INTEGER (phonemeSetIndex, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), my d_phonemeSetName.get()))
+		SET_INTEGER (languageIndex, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames, my d_languageName.get()))
+		SET_INTEGER (voiceIndex, (int) NUMfindFirst (theSpeechSynthesizerVoiceNames, my d_voiceName.get()))
+		SET_INTEGER (phonemeSetIndex, (int) NUMfindFirst (theSpeechSynthesizerLanguageNames, my d_phonemeSetName.get()))
 DO
 	FIND_ONE (SpeechSynthesizer)
-		my d_languageName = Melder_dup (theSpeechSynthesizerLanguageNames() [languageIndex]);
-		my d_voiceName = Melder_dup (theSpeechSynthesizerVoiceNames() [voiceIndex]);
-		my d_phonemeSetName = Melder_dup (theSpeechSynthesizerLanguageNames() [phonemeSetIndex]);
+		my d_languageName = Melder_dup (theSpeechSynthesizerLanguageNames [languageIndex]);
+		my d_voiceName = Melder_dup (theSpeechSynthesizerVoiceNames [voiceIndex]);
+		my d_phonemeSetName = Melder_dup (theSpeechSynthesizerLanguageNames [phonemeSetIndex]);
 		SpeechSynthesizer_checkAndRepairLanguageAndVoiceNames (me);
 	END_NO_NEW_DATA
 }
@@ -8970,12 +8970,12 @@ void praat_David_init () {
 	Thing_recognizeClassByOtherName (classPatternList, U"Pattern");
 	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
 
-	structVowelEditor  :: f_preferences ();
+	structVowelEditor :: f_preferences ();
 
 	{// scope
-		//TRACE
+		TRACE
 		double t = Melder_clock ();
-		espeak_praat_init ();
+		classSpeechSynthesizer_initClass ();
 		trace (U"initializing eSpeak data took ", Melder_fixed (1000 * (Melder_clock () - t), 3), U" milliseconds");
 	}
 
@@ -9001,7 +9001,7 @@ void praat_David_init () {
 		The `New/SpeechSynthesizer` commands don't require us to supply the `after` argument,
 		because `praat_David_init()` is called between `praat_uvafon_Artsynth_init()` and `praat_uvafon_gram_init()`.
 		(last checked 20240907)
-	 */
+	*/
 	praat_addMenuCommand (U"Objects", U"New", U"Text-to-speech synthesis", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"SpeechSynthesizer help", nullptr, 1,
 			HELP__SpeechSynthesizer_help);

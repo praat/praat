@@ -536,9 +536,9 @@ DO
 FORM (MODIFY_TextGrid_Sound_alignInterval, U"TextGrid & Sound: Align interval", nullptr) {
 	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
 	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
-	OPTIONMENUSTR (language, U"Language", (int) NUMfindFirst (theSpeechSynthesizerLanguageNames(), U"English (Great Britain)"))
-	for (integer i = 1; i <= theSpeechSynthesizerLanguageNames().size; i ++)
-		OPTION (theSpeechSynthesizerLanguageNames() [i]);
+	OPTIONMENUSTR (language, U"Language", (int) NUMfindFirst (theSpeechSynthesizerLanguageNames, U"English (Great Britain)"))
+	for (integer i = 1; i <= theSpeechSynthesizerLanguageNames.size; i ++)
+		OPTION (theSpeechSynthesizerLanguageNames [i]);
 	BOOLEAN (includeWords,    U"Include words",    true)
 	BOOLEAN (includePhonemes, U"Include phonemes", true)
 	OK

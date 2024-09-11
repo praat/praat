@@ -314,12 +314,38 @@ After this, the folder `./src` will be empty again.
 	#define DATA_FROM_SOURCECODE_FILES  1
 	#define PATH_ESPEAK_DATA  "./data"   /* a relative path */
 }
-- Adapt the source files that include `config.h`.
+- Adapt the source files that include `config.h` to including `espeak__config.h`.
 - Cast many return values and error values.
-#		Adapt the file reading parts: surround the definitions of the procedures GetFileLength()
-#		and GetVoices() with
-#		#if ! DATA_FROM_SOURCECODE_FILES
-#		#endif
+
+- Adapt GetFileLength() in `common.cpp`:
+{;
+	#if DATA_FROM_SOURCECODE_FILES   /* ppgb: whole function adapted to Praat */
+		FileInMemorySet me = theEspeakPraatFileInMemorySet();
+		integer index = my lookUp (Melder_peek8to32 (filename));
+		if (index > 0) {
+			FileInMemory fim = my at [index];
+			return fim -> d_numberOfBytes;
+		}
+		// Directory ??
+		if (FileInMemorySet_hasDirectory (me, Melder_peek8to32 (filename))) {
+			//TRACE
+			trace (U"Folder!: Melder_peek8to32 (filename)");
+			return -EISDIR;
+		}
+		return -1;
+	#else   /* ppgb: the original code, which uses `stat`: */
+		struct stat statbuf;
+
+		if (stat(filename, &statbuf) != 0)
+			return -errno;
+
+		if (S_ISDIR(statbuf.st_mode))
+			return -EISDIR;
+
+		return statbuf.st_size;
+	#endif   /* DATA_FROM_SOURCECODE_FILES */
+}
+- Adapt GetVoices()
 # 	7. in error.cpp replace writing to stderr with calls to Melder_throw()
 
 In `dictionary.cpp`, `soundicon.cpp`, `speech.cpp`, `synthdata.cpp`, and `voices.cpp`:
@@ -327,7 +353,7 @@ In `dictionary.cpp`, `soundicon.cpp`, `speech.cpp`, `synthdata.cpp`, and `voices
 - `#include "espeak_praat.h"`;
 - prepend "FileInMemorySet_" to all calls of fopen, adding a first argument `theEspeakPraatFileInMemorySet()`;
 - prepend "FileInMemory_" to all calls of fclose, feof, fseek, ftell, fgets, fread, fgetc, fprintf and ungetc;
-- prepend "espeak_praat_" to all calls of `GetFileLength` and `GetVoices`;
+- prepend "espeak_praat_" to all calls of `GetVoices`;
 
 Here we list all the (remaining) occurrences of those functions in those five files
 (the definition of `GetFileLength` should stay in `common.cpp`; `fprintf` should stay if to `stderr` or `f_trans`):

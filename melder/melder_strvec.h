@@ -36,6 +36,7 @@ public:
 			return _stringvector<T> ();
 		return _stringvector (our elements + (firstPosition - 1), newSize);
 	}
+	explicit operator bool () const noexcept { return !! our elements; }
 	T* *begin () const { return & our operator[] (1); }
 	T* *end () const { return & our operator[] (our size + 1); }
 };
@@ -65,6 +66,7 @@ public:
 			return _conststringvector<T> ();
 		return _conststringvector (our elements + (firstPosition - 1), newSize);
 	}
+	explicit operator bool () const noexcept { return !! our elements; }
 	T* *begin () const { return & our operator[] (1); }
 	T* *end () const { return & our operator[] (our size + 1); }
 };
@@ -81,6 +83,7 @@ public:
 	_autostring <T> & operator[] (integer i) const {
 		return our elements [i - 1];
 	}
+	explicit operator bool () const noexcept { return !! our elements; }
 };
 
 template <typename T>
