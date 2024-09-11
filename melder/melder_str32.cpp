@@ -52,14 +52,6 @@ mutablestring16 str16cpy (const mutablestring16 target, /*mut*/ conststring16 so
 
 #pragma mark - ...and the remainder are 32-bit string functions
 
-integer Melder_length (const conststring32 stringOrNull) noexcept {
-	if (! stringOrNull)
-		return 0;
-	const char32 *p = & stringOrNull [0];
-	while (*p != U'\0')
-		++ p;
-	return p - stringOrNull;
-}
 mutablestring32 str32cpy (const mutablestring32 target, /*mut*/ conststring32 source) noexcept {
 	char32 *p = & target [0];
 	while (* source != U'\0')
