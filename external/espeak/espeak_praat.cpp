@@ -309,28 +309,4 @@ FileInMemorySet theEspeakPraatFileInMemorySet() {
 	return me.get();
 }
 
-/* 
-	espeak_praat_GetVoices: mimics GetVoices of espeak-ng
-	If is_languange_file == 0 then /voices/ else /lang/ 
-	We know our voices are in /voices/ (actually in /voices/!v/) and our languages in /lang/
-*/
-void espeak_praat_GetVoices (const char *path, int len_path_voices, int is_language_file) {
-	(void) path;
-	FileInMemorySet me = theEspeakPraatFileInMemorySet();
-	conststring32 criterion = is_language_file ? U"/lang/" : U"/voices/";
-	autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
-	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
-		FileInMemory fim = fileList -> at [ifile];
-		FileInMemory f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
-		conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
-		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
-		FileInMemory_fclose (f_voice);
-		if (voice_data) {
-			voices_list [n_voices_list ++] = voice_data;
-		} /*else {
-			Melder_warning (U"Voice data for ", fname, U" could not be gathered.");
-		}*/
-	}
-}
-
 /* End of file espeak_praat.cpp */

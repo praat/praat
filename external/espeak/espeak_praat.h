@@ -35,10 +35,5 @@ void espeak_praat_FileInMemorySet_addOtherDicts (FileInMemorySet me);
 void espeak_praat_FileInMemorySet_addLanguages (FileInMemorySet me);
 void espeak_praat_FileInMemorySet_addVoices (FileInMemorySet me);
 
-/*
-	Drop-in replacement for GetVoices (using FileInMemory instead of FILE*).
-*/
-void espeak_praat_GetVoices (const char *path, int len_path_voices, int is_language_file);
-
 /* End of file espeak_praat.h */
 #endif

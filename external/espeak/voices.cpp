@@ -1200,9 +1200,30 @@ char const *SelectVoice(espeak_VOICE *voice_select, int *found)
 	return vp->identifier;
 }
 
-#if ! DATA_FROM_SOURCECODE_FILES
-void GetVoices(const char *path, int len_path_voices, int is_language_file)
+static void GetVoices(const char *path, int len_path_voices, int is_language_file)
 {
+#if DATA_FROM_SOURCECODE_FILES   /* ppgb: whole function adapted to Praat */
+	/*
+		If is_languange_file == 0 then /voices/ else /lang/.
+		We know that our voices are in /voices/ (actually in /voices/!v/) and our languages in /lang/.
+	*/
+	(void) path;
+	FileInMemorySet me = theEspeakPraatFileInMemorySet();
+	conststring32 criterion = is_language_file ? U"/lang/" : U"/voices/";
+	autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
+	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
+		FileInMemory fim = fileList -> at [ifile];
+		FileInMemory f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
+		conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
+		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
+		FileInMemory_fclose (f_voice);
+		if (voice_data) {
+			voices_list [n_voices_list ++] = voice_data;
+		} /*else {
+			Melder_warning (U"Voice data for ", fname, U" could not be gathered.");
+		}*/
+	}
+#else   /* ppgb: the original code, which uses opendir: */
 	char fname[sizeof(path_home)+100];
 
 #if PLATFORM_WINDOWS
@@ -1232,29 +1253,23 @@ void GetVoices(const char *path, int len_path_voices, int is_language_file)
 #else
 	DIR *dir;
 	struct dirent *ent;
-
 	if ((dir = opendir((char *)path)) == NULL) // note: (char *) is needed for WINCE
 		return;
-
 	while ((ent = readdir(dir)) != NULL) {
 		if (n_voices_list >= (N_VOICES_LIST-2)) {
 			fprintf(stderr, "Warning: maximum number %d of (N_VOICES_LIST = %d - 1) reached\n", n_voices_list + 1, N_VOICES_LIST);
 			break; // voices list is full
 		}
-
 		if (ent->d_name[0] == '.')
 			continue;
-
-			 sprintf(fname, "%s%c%s", path, PATHSEP, ent->d_name);
-			if (AddToVoicesList(fname, len_path_voices, is_language_file) != 0) {
-				continue;
-			}
-
+		sprintf(fname, "%s%c%s", path, PATHSEP, ent->d_name);
+		if (AddToVoicesList(fname, len_path_voices, is_language_file) != 0)
+			continue;
 	}
 	closedir(dir);
 #endif
+#endif   /* DATA_FROM_SOURCECODE_FILES */
 }
-#endif // ! DATA_FROM_SOURCECODE_FILES
 
 #pragma GCC visibility push(default)
 #if ! DATA_FROM_SOURCECODE_FILES
@@ -1388,10 +1403,10 @@ ESPEAK_API const espeak_VOICE **espeak_ListVoices(espeak_VOICE *voice_spec)
 	FreeVoiceList();
 
 	sprintf(path_voices, "%s%cvoices", path_home, PATHSEP);
-	espeak_praat_GetVoices(path_voices, strlen(path_voices)+1, 0);
+	GetVoices(path_voices, strlen(path_voices)+1, 0);
 
 	sprintf(path_voices, "%s%clang", path_home, PATHSEP);
-	espeak_praat_GetVoices(path_voices, strlen(path_voices)+1, 1);
+	GetVoices(path_voices, strlen(path_voices)+1, 1);
 
 	voices_list[n_voices_list] = NULL; // voices list terminator
 	espeak_VOICE **new_voices = (espeak_VOICE **)realloc(voices, sizeof(espeak_VOICE *)*(n_voices_list+1));
@@ -1434,7 +1449,7 @@ static int AddToVoicesList(const char *fname, int len_path_voices, int is_langua
 
 	if (ftype == -EISDIR) {
 		// a sub-directory
-		espeak_praat_GetVoices(fname, len_path_voices, is_language_file);
+		GetVoices(fname, len_path_voices, is_language_file);
 	} else if (ftype > 0) {
 		// a regular file, add it to the voices list
 		FileInMemory f_voice;
