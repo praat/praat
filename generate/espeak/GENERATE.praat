@@ -317,46 +317,60 @@ After this, the folder `./src` will be empty again.
 - Adapt the source files that include `config.h` to including `espeak__config.h`.
 - Cast many return values and error values.
 
-- Adapt GetFileLength() in `common.cpp`:
+- Adapt `GetVoices()` in `voices.cpp`:
 {;
 	#if DATA_FROM_SOURCECODE_FILES   /* ppgb: whole function adapted to Praat */
+		/*
+			If is_languange_file == 0 then /voices/ else /lang/.
+			We know that our voices are in /voices/ (actually in /voices/!v/) and our languages in /lang/.
+		*/
+		(void) path;
 		FileInMemorySet me = theEspeakPraatFileInMemorySet();
-		integer index = my lookUp (Melder_peek8to32 (filename));
-		if (index > 0) {
-			FileInMemory fim = my at [index];
-			return fim -> d_numberOfBytes;
+		conststring32 criterion = ( is_language_file ? U"/lang/" : U"/voices/" );
+		autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
+		for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
+			FileInMemory fim = fileList -> at [ifile];
+			FileInMemory f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
+			conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
+			espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
+			FileInMemory_fclose (f_voice);
+			if (voice_data) {
+				voices_list [n_voices_list ++] = voice_data;
+			} /*else {
+				Melder_warning (U"Voice data for ", fname, U" could not be gathered.");
+			}*/
 		}
-		// Directory ??
-		if (FileInMemorySet_hasDirectory (me, Melder_peek8to32 (filename))) {
-			//TRACE
-			trace (U"Folder!: Melder_peek8to32 (filename)");
-			return -EISDIR;
+	#else   /* ppgb: the original code, which uses opendir: */
+		char fname[sizeof(path_home)+100];
+		DIR *dir;
+		struct dirent *ent;
+		if ((dir = opendir((char *)path)) == NULL) // note: (char *) is needed for WINCE
+			return;
+		while ((ent = readdir(dir)) != NULL) {
+			if (n_voices_list >= (N_VOICES_LIST-2)) {
+				fprintf(stderr, "Warning: maximum number %d of (N_VOICES_LIST = %d - 1) reached\n", n_voices_list + 1, N_VOICES_LIST);
+				break; // voices list is full
+			}
+			if (ent->d_name[0] == '.')
+				continue;
+			sprintf(fname, "%s%c%s", path, PATHSEP, ent->d_name);
+			if (AddToVoicesList(fname, len_path_voices, is_language_file) != 0)
+				continue;
 		}
-		return -1;
-	#else   /* ppgb: the original code, which uses `stat`: */
-		struct stat statbuf;
-
-		if (stat(filename, &statbuf) != 0)
-			return -errno;
-
-		if (S_ISDIR(statbuf.st_mode))
-			return -EISDIR;
-
-		return statbuf.st_size;
+		closedir(dir);
 	#endif   /* DATA_FROM_SOURCECODE_FILES */
 }
-- Adapt GetVoices()
+
 # 	7. in error.cpp replace writing to stderr with calls to Melder_throw()
 
 In `dictionary.cpp`, `soundicon.cpp`, `speech.cpp`, `synthdata.cpp`, and `voices.cpp`:
 - replace `FILE *` with `FileInMemory` (also in `common.cpp`);
 - `#include "espeak_praat.h"`;
-- prepend "FileInMemorySet_" to all calls of fopen, adding a first argument `theEspeakPraatFileInMemorySet()`;
+- prepend "FileInMemorySet_" to all calls of stat and fopen, adding a first argument `theEspeakPraatFileInMemorySet()`;
 - prepend "FileInMemory_" to all calls of fclose, feof, fseek, ftell, fgets, fread, fgetc, fprintf and ungetc;
-- prepend "espeak_praat_" to all calls of `GetVoices`;
 
 Here we list all the (remaining) occurrences of those functions in those five files
-(the definition of `GetFileLength` should stay in `common.cpp`; `fprintf` should stay if to `stderr` or `f_trans`):
+(`fprintf` should stay if to `stderr` or `f_trans`):
 {;
 	if 0
 		@defineSourceFolders
@@ -365,8 +379,7 @@ Here we list all the (remaining) occurrences of those functions in those five fi
 		sourceFolder$ = "../../external/espeak"
 	endif
 	sourceFiles$# = { "dictionary.cpp", "soundicon.cpp", "speech.cpp", "synthdata.cpp", "voices.cpp", "common.cpp" }
-	targets$# = { "fopen", "fclose", "feof", "fseek", "ftell", "fgets", "fread", "fgetc", "fprintf", "ungetc",
-	... "GetFileLength", "GetVoices" }
+	targets$# = { "stat", "fopen", "fclose", "feof", "fseek", "ftell", "fgets", "fread", "fgetc", "fprintf", "ungetc" }
 	writeInfo()
 	for file to size (sourceFiles$#)
 		lines$# = readLinesFromFile$#: sourceFolder$ + "/" + sourceFiles$# [file]
@@ -403,10 +416,22 @@ Replace `FILE *` with `FileInMemory` in the relevant files.
 }
 In `speech.cpp`:
 - make `sync_espeak_Key`, `sync_espeak_Char`, `sync_espeak_SetPunctuationList` static, moving `sync_espeak_Char` first
-- uninclude "espeak_command.h" (because `delete_espeak_command` falls under `USE_ASYNC`, `SetParameter` is also in `setlengths.h`, and `sync_espeak_Char` has become static)
+- uninclude "espeak_command.h" (because `delete_espeak_command` falls under `USE_ASYNC`,
+  `SetParameter` is also in `setlengths.h`, and `sync_espeak_Char` has become static)
 - include "setlengths.h" (for `SetParameter`)
 
-
+- `GetFileLength()` in `common.cpp` will simply end up like this (remove the Windows-specific stuff):
+{;
+	int GetFileLength(const char *filename)
+	{
+		struct stat statbuf;
+		if (FileInMemorySet_stat(theEspeakPraatFileInMemorySet(), filename, &statbuf) != 0)
+			return -errno;
+		if (S_ISDIR(statbuf.st_mode))
+			return -EISDIR;
+		return statbuf.st_size;
+	}
+}
 
 #	9. delete all "#pragma GCC visibility" lines
 

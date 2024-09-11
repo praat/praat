@@ -18,6 +18,7 @@
 
 #include "FileInMemory.h"
 #include "Strings_.h"
+#include <sys/stat.h>
 
 #include "oo_DESTROY.h"
 #include "FileInMemory_def.h"
@@ -563,6 +564,22 @@ int FileInMemory_ungetc (int character, FileInMemory me) {
 		result = my ungetChar = character;
 	}
 	return result;
+}
+
+int FileInMemorySet_stat (FileInMemorySet me, const char *path, struct stat *buf) {
+	conststring32 path32 = Melder_peek8to32 (path);
+	integer position = my lookUp (path32);
+	if (position > 0) {
+		buf -> st_mode = S_IFREG;
+		buf -> st_size = my at [position] -> d_numberOfBytes;
+		return 0;
+	}
+	if (FileInMemorySet_hasDirectory (me, path32)) {
+		buf -> st_mode = S_IFDIR;
+		buf -> st_size = 0;
+	}
+	errno = ENOENT;
+	return 1;
 }
 
 void structFileInMemorySet :: v1_info () {

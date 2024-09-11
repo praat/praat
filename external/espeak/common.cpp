@@ -44,31 +44,12 @@
 
 int GetFileLength(const char *filename)
 {
-#if DATA_FROM_SOURCECODE_FILES   /* ppgb: whole function adapted to Praat */
-	FileInMemorySet me = theEspeakPraatFileInMemorySet();
-	integer index = my lookUp (Melder_peek8to32 (filename));
-	if (index > 0) {
-		FileInMemory fim = my at [index];
-		return fim -> d_numberOfBytes;
-	}
-	// Directory ??
-	if (FileInMemorySet_hasDirectory (me, Melder_peek8to32 (filename))) {
-		//TRACE
-		trace (U"Folder!: Melder_peek8to32 (filename)");
-		return -EISDIR;
-	}
-	return -1;
-#else   /* ppgb: the original code, which uses `stat`: */
 	struct stat statbuf;
-
-	if (stat(filename, &statbuf) != 0)
+	if (FileInMemorySet_stat(theEspeakPraatFileInMemorySet(), filename, &statbuf) != 0)
 		return -errno;
-
 	if (S_ISDIR(statbuf.st_mode))
 		return -EISDIR;
-
 	return statbuf.st_size;
-#endif   /* DATA_FROM_SOURCECODE_FILES */
 }
 
 void strncpy0(char *to, const char *from, int size)
@@ -104,7 +85,6 @@ int utf8_in(int *c, const char *buf)
 	 */
 	return utf8_in2(c, buf, 0);
 }
-#pragma GCC visibility pop
 
 int utf8_out(unsigned int c, char *buf)
 {

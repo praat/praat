@@ -68,6 +68,8 @@ int FileInMemory_fgetc (FileInMemory stream);
 
 int FileInMemory_ungetc (int character, FileInMemory stream);
 
+int FileInMemorySet_stat (FileInMemorySet me, const char *path, struct stat *buf);
+
 /*
 	FileInMemorySet bookkeeping.
 */
