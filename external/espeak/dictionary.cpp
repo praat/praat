@@ -43,7 +43,7 @@
 #include "synthesize.h"                    // for STRESS_IS_PRIMARY, phoneme...
 #include "translate.h"                     // for Translator, utf8_in, LANGU...
 
-#include "espeak_praat.h"             // for espeak_praat_GetFileLength, theEspeakPraatFileInMemorySet
+#include "espeak_praat.h"             // for theEspeakPraatFileInMemorySet
 
 static int LookupFlags(Translator *tr, const char *word, unsigned int flags_out[2]);
 static void DollarRule(char *word[], char *word_start, int consumed, int group_length, char *word_buf, Translator *tr, int command, int *failed, int *add_points);
@@ -215,7 +215,7 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	// bytes 0-3:  offset to rules data
 	// bytes 4-7:  number of hash table entries
 	sprintf(fname, "%s%c%s_dict", path_home, PATHSEP, name);
-	size = espeak_praat_GetFileLength(fname);
+	size = GetFileLength(fname);
 
 	if (tr->data_dictlist != NULL) {
 		free(tr->data_dictlist);

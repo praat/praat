@@ -110,7 +110,7 @@ static espeak_ng_STATUS LoadSoundFile(const char *fname, int index, espeak_ng_ER
 			return create_file_error_context(context, static_cast<espeak_ng_STATUS> (errno), fname);
 	}
 
-	length = espeak_praat_GetFileLength(fname);
+	length = GetFileLength(fname);
 	if (length < 0) { // length == -errno
 		FileInMemory_fclose(f);
 		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (-length), fname);

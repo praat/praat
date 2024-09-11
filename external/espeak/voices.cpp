@@ -454,7 +454,7 @@ voice_t *LoadVoice(const char *vname, int control)
 	strncpy0(voicename, vname, sizeof(voicename));
 	if (control & 0x10) {
 		strcpy(buf, vname);
-		if (espeak_praat_GetFileLength(buf) <= 0)
+		if (GetFileLength(buf) <= 0)
 			return NULL;
 	} else {
 		if (voicename[0] == 0 && !(control & 8)/*compiling phonemes*/)
@@ -464,7 +464,7 @@ voice_t *LoadVoice(const char *vname, int control)
 		sprintf(path_voices, "%s%cvoices%c", path_home, PATHSEP, PATHSEP);
 		sprintf(buf, "%s%s", path_voices, voicename); // look in the main voices directory
 
-		if (espeak_praat_GetFileLength(buf) <= 0) {
+		if (GetFileLength(buf) <= 0) {
 			sprintf(path_voices, "%s%clang%c", path_home, PATHSEP, PATHSEP);
 			sprintf(buf, "%s%s", path_voices, voicename); // look in the main languages directory
 		}
@@ -983,7 +983,7 @@ static int SetVoiceScores(espeak_VOICE *voice_select, espeak_VOICE **voices, int
 
 		char buf[sizeof(path_home)+80];
 		sprintf(buf, "%s/voices/%s", path_home, language);
-		if (espeak_praat_GetFileLength(buf) == -EISDIR) {
+		if (GetFileLength(buf) == -EISDIR) {
 			// A subdirectory name has been specified.  List all the voices in that subdirectory
 			language[lang_len++] = PATHSEP;
 			language[lang_len] = 0;
@@ -1430,7 +1430,7 @@ ESPEAK_API espeak_VOICE *espeak_GetCurrentVoice(void)
 #pragma GCC visibility pop
 
 static int AddToVoicesList(const char *fname, int len_path_voices, int is_language_file) {
-	int ftype = espeak_praat_GetFileLength(fname);
+	int ftype = GetFileLength(fname);
 
 	if (ftype == -EISDIR) {
 		// a sub-directory
