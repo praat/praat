@@ -135,10 +135,14 @@ procedure test_exponential
 	appendInfoLine: tab$, "Test exponential"
 	.table = Create Table with column names: "exponential", 20, "x y"
 	Formula: "x", ~ randomUniform (-1, 1)
-	par# = {  0.6, 1.7 }
+	par# = {  -0.6, 1.7 }
 	Formula: "y", ~ par#[1] * exp (par# [2] * self ["x"])
 	Sort rows: "x"
-	.dm = To DataModeler: -1, 1, "x", "y", "", "Exponential", 3	
+	.dm1 = To DataModeler: -1, 1, "x", "y", "", "Exponential", 3
+	.dm1p1 = Get parameter value: 1
+	.dm1p2 = Get parameter value: 2
+	assert abs(.dm1p1 - par# [1]) < 1e-5	; '.p1'
+	assert abs(.dm1p2 - par# [2]) < 1e-5	; '.p2'
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
 
@@ -155,8 +159,16 @@ procedure test_exponential
 	assert rSquared > 0.999
 	appendInfoLine: " OK"
 
+	# 
+	selectObject: .table
+	Formula: "y", ~ -self
+	.dm2 = To DataModeler: -1, 1, "x", "y", "", "Exponential", 3
+	.dm2p1 = Get parameter value: 1
+	.dm2p2 = Get parameter value: 2
+	assert .dm2p1 = - .dm1p1
+	assert .dm2p2 = .dm1p2
 	appendInfoLine: tab$, "Test exponential OK"
-	removeObject: .dm, .table
+	removeObject: .dm2, .dm1, .table
 endproc
 
 procedure test_exponential_plus_constant
