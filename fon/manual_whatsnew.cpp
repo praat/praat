@@ -29,6 +29,11 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.20# (18 September 2024)
+• Linux: repaired a major bug whereby Praat could crash when trying to draw to a hidden Picture window.
+• Scripting: just like normal forms, pause forms now also accept “yes” and “off” (and the like) instead of just 1 and 0.
+• Scripting: repaired a minor bug whereby `optionmenu` in forms would show an incorrect default value.
+
 ##6.4.19# (4 September 2024)
 • Repaired many bugs in the eSpeak part of Praat.
 

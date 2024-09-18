@@ -8973,7 +8973,7 @@ void praat_David_init () {
 	structVowelEditor :: f_preferences ();
 
 	{// scope
-		TRACE
+		//TRACE
 		double t = Melder_clock ();
 		classSpeechSynthesizer_initClass ();
 		trace (U"initializing eSpeak data took ", Melder_fixed (1000 * (Melder_clock () - t), 3), U" milliseconds");
