@@ -545,9 +545,16 @@ void Melder_getParentPreferencesFolder (MelderFolder preferencesFolder) {
 		Melder_sprint (preferencesFolder -> path,kMelder_MAXPATH+1, homeFolder. path, U"/Library/Preferences");
 	#elif defined (UNIX)
 		/*
-			Preferences files go into the home folder.
+			Preferences files go into ${XDG_CONFIG_HOME}.
 		*/
-		Melder_getHomeDir (preferencesFolder);
+		structMelderFolder homeFolder { };
+		char *xdgConfigHome = getenv ("XDG_CONFIG_HOME");
+		if (!xdgConfigHome) {
+			Melder_getHomeDir (& homeFolder);
+			Melder_sprint (preferencesFolder -> path,kMelder_MAXPATH+1, homeFolder. path, U"/.config");
+		} else {
+			Melder_sprint (preferencesFolder -> path,kMelder_MAXPATH+1, Melder_peek8to32 (xdgConfigHome));
+		}
 	#elif defined (_WIN32)
 		/*
 			On Windows 95, preferences files went into the Windows folder.
