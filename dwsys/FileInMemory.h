@@ -43,8 +43,10 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, uint8 *data
 void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine);
 
 /*
-	File open and read emulations. The FILE * is internally used as an index of the file in the Set.
+	File open and read emulations.
 */
+
+FileInMemory FileInMemory_fopen (FileInMemory me, const char *mode);
 
 FileInMemory FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode);
 

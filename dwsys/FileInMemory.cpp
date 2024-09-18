@@ -107,20 +107,23 @@ void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numbe
 	MelderInfo_writeLine (my d_numberOfBytes, U", ", name, U"_data, true, U\"", my string.get(), U"\");");
 }
 
-FileInMemory FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode) {
+FileInMemory FileInMemory_fopen (FileInMemory me, const char *mode) {
 	Melder_assert (mode [0] == 'r');   // i.e. "r" or "rb"; only reading has been implemented; cannot write ('w') or append ('a')
+	my d_position = 0;   // after opening, start at the beginning of the file
+	my d_errno = 0;
+	my d_eof = false;
+	my ungetChar = -1;
+	my isOpen = true;
+	return me;
+}
+
+FileInMemory FileInMemorySet_fopen (FileInMemorySet me, const char *fileName, const char *mode) {
 	const integer index = my lookUp (Melder_peek8to32 (fileName));
 	if (index == 0) {
 		errno = ENOENT;   // "no such file or directory"
 		return nullptr;
 	}
-	FileInMemory thee = my at [index];
-	thy d_position = 0;   // after opening, start at the beginning of the file
-	thy d_errno = 0;
-	thy d_eof = false;
-	thy ungetChar = -1;
-	thy isOpen = true;
-	return thee;
+	return FileInMemory_fopen (my at [index], mode);
 }
 
 /*
