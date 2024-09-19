@@ -185,6 +185,7 @@ and a `mingw32` toolchain (for Praat’s Intel32 edition) are already available.
 To also install a `clangarm64` toolchain (for Praat’s ARM64 edition),
 run `clangarm64.exe` to get a `clangarm64` shell. In that shell, run `pacman -Suy` to update and
 `pacman -S mingw-w64-clang-aarch64-clang` to install the build tools package.
+Make sure you have installed at least `make`, `gcc`, `g++` and `pkg-config`.
 
 Move the Praat sources folders somewhere in your `/home/yourname` tree,
 perhaps even in three places, e.g. as `/home/yourname/praats-arm64`,
@@ -210,7 +211,8 @@ If you want to build Praat’s Intel32 edition, start the shell `mingw32` and ty
     make -j12
 
 (With Cygwin, you would install the Devel package mingw64-x86_64-gcc-g++
-for Praat’s Intel64 edition and mingw64-i686-gcc-g++ for Praat’s Intel32 edition.)
+for Praat’s Intel64 edition and mingw64-i686-gcc-g++ for Praat’s Intel32 edition,
+plus perhaps `make` and `pkg-config` if you dont’t have those yet.)
 
 **Testing** on multiple platform versions can be done with virtual machines
 for Windows 7 (64-bit), Windows 8.1 (64-bit), 64-bit Windows 10 (1507, 1803, 22H2) and Windows 11,

@@ -1202,55 +1202,26 @@ char const *SelectVoice(espeak_VOICE *voice_select, int *found)
 
 static void GetVoices(const char *path, int len_path_voices, int is_language_file)
 {
+	/* ppgb: deleted the Windows-specific file handling from this function */
 #if DATA_FROM_SOURCECODE_FILES   /* ppgb: whole function adapted to Praat */
-	/*
-		If is_languange_file == 0 then /voices/ else /lang/.
-		We know that our voices are in /voices/ (actually in /voices/!v/) and our languages in /lang/.
-	*/
-	(void) path;
 	FileInMemorySet me = theEspeakPraatFileInMemorySet();
-	conststring32 criterion = is_language_file ? U"/lang/" : U"/voices/";
-	autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
-	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
-		FileInMemory fim = fileList -> at [ifile];
-		FileInMemory f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
-		conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
-		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
-		FileInMemory_fclose (f_voice);
-		if (voice_data) {
-			voices_list [n_voices_list ++] = voice_data;
-		} /*else {
-			Melder_warning (U"Voice data for ", fname, U" could not be gathered.");
-		}*/
+	static MelderString criterion;
+	MelderString_copy (& criterion, Melder_peek8to32 (path));
+	MelderString_appendCharacter (& criterion, PATHSEP);
+	Melder_assert (criterion.length == len_path_voices);   // sanity check
+	for (long ifile = 1; ifile <= my size; ifile ++) {
+		FileInMemory fim = my at [ifile];
+		if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: STARTS_WITH, criterion.string, true)) {
+			FileInMemory f_voice = FileInMemory_fopen (fim, "r");
+			conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
+			espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
+			FileInMemory_fclose (f_voice);
+			if (voice_data)
+				voices_list [n_voices_list ++] = voice_data;
+		}
 	}
 #else   /* ppgb: the original code, which uses opendir: */
 	char fname[sizeof(path_home)+100];
-
-#if PLATFORM_WINDOWS
-	WIN32_FIND_DATAA FindFileData;
-	HANDLE hFind = INVALID_HANDLE_VALUE;
-
-	#undef UNICODE // we need FindFirstFileA() which takes an 8-bit c-string
-	sprintf(fname, "%s\\*", path);
-	hFind = FindFirstFileA(fname, &FindFileData);
-	if (hFind == INVALID_HANDLE_VALUE)
-		return;
-
-	do {
-		if (n_voices_list >= (N_VOICES_LIST-2)) {
-			fprintf(stderr, "Warning: maximum number %d of (N_VOICES_LIST = %d - 1) reached\n", n_voices_list + 1, N_VOICES_LIST);
-			break; // voices list is full
-		}
-
-		if (FindFileData.cFileName[0] != '.') {
-			sprintf(fname, "%s%c%s", path, PATHSEP, FindFileData.cFileName);
-			if (AddToVoicesList(fname, len_path_voices, is_language_file) != 0) {
-				continue;
-			}
-		}
-	} while (FindNextFileA(hFind, &FindFileData) != 0);
-	FindClose(hFind);
-#else
 	DIR *dir;
 	struct dirent *ent;
 	if ((dir = opendir((char *)path)) == NULL) // note: (char *) is needed for WINCE
@@ -1263,11 +1234,12 @@ static void GetVoices(const char *path, int len_path_voices, int is_language_fil
 		if (ent->d_name[0] == '.')
 			continue;
 		sprintf(fname, "%s%c%s", path, PATHSEP, ent->d_name);
-		if (AddToVoicesList(fname, len_path_voices, is_language_file) != 0)
+		if (AddToVoicesList(fname, len_path_voices, is_language_file) != 0) {
+			// ppgb: there should probably be a warning here
 			continue;
+		}
 	}
 	closedir(dir);
-#endif
 #endif   /* DATA_FROM_SOURCECODE_FILES */
 }
 
@@ -1449,7 +1421,7 @@ static int AddToVoicesList(const char *fname, int len_path_voices, int is_langua
 
 	if (ftype == -EISDIR) {
 		// a sub-directory
-		GetVoices(fname, len_path_voices, is_language_file);
+		GetVoices(fname, len_path_voices, is_language_file);   // ppgb comment: recurse
 	} else if (ftype > 0) {
 		// a regular file, add it to the voices list
 		FileInMemory f_voice;

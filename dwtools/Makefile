@@ -4,7 +4,7 @@
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../fon -I ../foned -I ../LPC -I ../EEG \
+CPPFLAGS = -I . -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../fon -I ../LPC -I ../foned -I ../EEG \
 	-I ../external/clapack -I ../external/vorbis -I ../external/opusfile -I ../external/portaudio -I ../external/espeak
 
 OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
@@ -76,4 +76,4 @@ libdwtools.a: $(OBJECTS)
 	$(RANLIB) libdwtools.a
 
 $(OBJECTS): *.h ../kar/*.h ../melder/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../fon/*.h ../foned/*.h ../LPC/*.h ../EEG/*.h \
-	../external/clapack/*.h../external/vorbis/*.h ../external/opusfile/*.h ../external/portaudio/*.h ../external/espeak/*.h
+	../external/clapack/*.h ../external/vorbis/*.h ../external/opusfile/*.h ../external/portaudio/*.h ../external/espeak/*.h
