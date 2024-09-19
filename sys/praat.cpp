@@ -1405,100 +1405,15 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 	return false;   // the default
 }
 
-void praat_init (conststring32 title, int argc, char **argv)
-{
-	setThePraatLocale ();
-	Melder_init ();
-	const bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
-	MelderConsole_init ();
-
-	/*
-		Construct a main-window title like "Praat".
-	*/
-	praatP.title = Melder_dup (title && title [0] != U'\0' ? title : U"Praat");
-	/*
-		Construct a program name like "praat" for file and folder names.
-	*/
-	str32cpy (programName, praatP.title.get());
-	programName [0] = Melder_toLowerCase (programName [0]);
-	/*
-		Get the home folder, e.g. "/home/miep/", or "/Users/miep/", or just "/".
-	*/
-	Melder_getHomeDir (& homeDir);
-	/*
-		Get the program's preferences folder (if not yet set by the --pref-dir option):
-			"/home/miep/.praat-dir" (Unix)
-			"/Users/miep/Library/Preferences/Praat Prefs" (Mac)
-			"C:\Users\Miep\Praat" (Windows)
-		and construct a preferences-file name and a script-buttons-file name like
-			/home/miep/.praat-dir/prefs5
-			/home/miep/.praat-dir/buttons5
-		or
-			/Users/miep/Library/Preferences/Praat Prefs/Prefs5
-			/Users/miep/Library/Preferences/Praat Prefs/Buttons5
-		or
-			C:\Users\Miep\Praat\Preferences5.ini
-			C:\Users\Miep\Praat\Buttons5.ini
-		Also create names for message and tracing files.
-	*/
-	if (MelderFolder_isNull (& Melder_preferencesFolder)) {   // not yet set by the --pref-dir option?
-		structMelderFolder parentPreferencesFolder { };   // folder under which to store our preferences folder
-		Melder_getParentPreferencesFolder (& parentPreferencesFolder);
-
-		/*
-			Make sure that the program's preferences folder exists.
-		*/
-		char32 subfolderName [256];
-		#if defined (UNIX)
-			Melder_sprint (subfolderName,256, U".", programName, U"-dir");   // for example .praat-dir
-		#elif defined (macintosh)
-			Melder_sprint (subfolderName,256, praatP.title.get(), U" Prefs");   // for example Praat Prefs
-		#elif defined (_WIN32)
-			Melder_sprint (subfolderName,256, praatP.title.get());   // for example Praat
-		#endif
-		try {
-			#if defined (UNIX) || defined (macintosh)
-				Melder_createDirectory (& parentPreferencesFolder, subfolderName, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-			#else
-				Melder_createDirectory (& parentPreferencesFolder, subfolderName, 0);
-			#endif
-			MelderFolder_getSubfolder (& parentPreferencesFolder, subfolderName, & Melder_preferencesFolder);
-		} catch (MelderError) {
-			/*
-				If we arrive here, the directory could not be created,
-				and all the files are null. Praat should nevertheless start up.
-			*/
-			Melder_clearError ();
-		}
-	}
-	if (! MelderFolder_isNull (& Melder_preferencesFolder)) {
-		#if defined (UNIX)
-			MelderFolder_getFile (& Melder_preferencesFolder, U"prefs5", & prefsFile);
-			MelderFolder_getFile (& Melder_preferencesFolder, U"buttons5", & buttonsFile);
-			MelderFolder_getFile (& Melder_preferencesFolder, U"pid", & pidFile);
-			MelderFolder_getFile (& Melder_preferencesFolder, U"message", & messageFile);
-			MelderFolder_getFile (& Melder_preferencesFolder, U"tracing", & tracingFile);
-		#elif defined (_WIN32)
-			MelderFolder_getFile (& Melder_preferencesFolder, U"Preferences5.ini", & prefsFile);
-			MelderFolder_getFile (& Melder_preferencesFolder, U"Buttons5.ini", & buttonsFile);
-			MelderFolder_getFile (& Melder_preferencesFolder, U"Message.txt", & messageFile);
-			MelderFolder_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
-		#elif defined (macintosh)
-			MelderFolder_getFile (& Melder_preferencesFolder, U"Prefs5", & prefsFile);
-			MelderFolder_getFile (& Melder_preferencesFolder, U"Buttons5", & buttonsFile);
-			MelderFolder_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
-		#endif
-		Melder_tracingToFile (& tracingFile);
-	}
+/*
+	This function translates the command-line arguments to fields in `praatP`.
+	It doesn't do too much by itself, because many of the relevant entities (such as preferences folder and tracing file)
+	haven't been set yet (because setting these entities depends on the command-line arguments).
+*/
+static void interpretCommandLineArguments (bool weWereStartedFromTheCommandLine, conststring32 title, int argc, char **argv) {
+	//TRACE   // the tracing file may not have been set yet, so this will probably go to stderr
 	for (int iarg = 0; iarg < argc; iarg ++)
 		trace (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
-
-	/*
-		Remember the current directory. Useful only for scripts run from batch.
-	*/
-	Melder_rememberShellDirectory ();
-
-	installPraatShellPreferences ();
 
 	praatP.argc = argc;
 	praatP.argv = argv;
@@ -1744,6 +1659,103 @@ void praat_init (conststring32 title, int argc, char **argv)
 		Melder_assert (! praatP.userWantsToOpen);
 		Melder_assert (! praatP.userWantsExistingInstance);
 	}
+}
+
+void praat_init (conststring32 title, int argc, char **argv)
+{
+	setThePraatLocale ();
+	Melder_init ();
+	const bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
+	MelderConsole_init ();
+
+	/*
+		Construct a main-window title like "Praat".
+	*/
+	praatP.title = Melder_dup (title && title [0] != U'\0' ? title : U"Praat");
+	/*
+		Construct a program name like "praat" for file and folder names.
+	*/
+	str32cpy (programName, praatP.title.get());
+	programName [0] = Melder_toLowerCase (programName [0]);
+	/*
+		Get the home folder, e.g. "/home/miep/", or "/Users/miep/", or just "/".
+	*/
+	Melder_getHomeDir (& homeDir);
+
+	interpretCommandLineArguments (weWereStartedFromTheCommandLine, title, argc, argv);
+
+	/*
+		Get the program's preferences folder (if not yet set by the --pref-dir option):
+			"/home/miep/.praat-dir" (Unix)
+			"/Users/miep/Library/Preferences/Praat Prefs" (Mac)
+			"C:\Users\Miep\Praat" (Windows)
+		and construct a preferences-file name and a script-buttons-file name like
+			/home/miep/.praat-dir/prefs5
+			/home/miep/.praat-dir/buttons5
+		or
+			/Users/miep/Library/Preferences/Praat Prefs/Prefs5
+			/Users/miep/Library/Preferences/Praat Prefs/Buttons5
+		or
+			C:\Users\Miep\Praat\Preferences5.ini
+			C:\Users\Miep\Praat\Buttons5.ini
+		Also create names for message and tracing files.
+	*/
+	if (MelderFolder_isNull (& Melder_preferencesFolder)) {   // not yet set by the --pref-dir option?
+		structMelderFolder parentPreferencesFolder { };   // folder under which to store our preferences folder
+		Melder_getParentPreferencesFolder (& parentPreferencesFolder);
+
+		/*
+			Make sure that the program's preferences folder exists.
+		*/
+		char32 subfolderName [256];
+		#if defined (UNIX)
+			Melder_sprint (subfolderName,256, U".", programName, U"-dir");   // for example .praat-dir
+		#elif defined (macintosh)
+			Melder_sprint (subfolderName,256, praatP.title.get(), U" Prefs");   // for example Praat Prefs
+		#elif defined (_WIN32)
+			Melder_sprint (subfolderName,256, praatP.title.get());   // for example Praat
+		#endif
+		try {
+			#if defined (UNIX) || defined (macintosh)
+				Melder_createDirectory (& parentPreferencesFolder, subfolderName, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			#else
+				Melder_createDirectory (& parentPreferencesFolder, subfolderName, 0);
+			#endif
+			MelderFolder_getSubfolder (& parentPreferencesFolder, subfolderName, & Melder_preferencesFolder);
+		} catch (MelderError) {
+			/*
+				If we arrive here, the directory could not be created,
+				and all the files are null. Praat should nevertheless start up.
+			*/
+			Melder_clearError ();
+		}
+	}
+	if (! MelderFolder_isNull (& Melder_preferencesFolder)) {
+		#if defined (UNIX)
+			MelderFolder_getFile (& Melder_preferencesFolder, U"prefs5", & prefsFile);
+			MelderFolder_getFile (& Melder_preferencesFolder, U"buttons5", & buttonsFile);
+			MelderFolder_getFile (& Melder_preferencesFolder, U"pid", & pidFile);
+			MelderFolder_getFile (& Melder_preferencesFolder, U"message", & messageFile);
+			MelderFolder_getFile (& Melder_preferencesFolder, U"tracing", & tracingFile);
+		#elif defined (_WIN32)
+			MelderFolder_getFile (& Melder_preferencesFolder, U"Preferences5.ini", & prefsFile);
+			MelderFolder_getFile (& Melder_preferencesFolder, U"Buttons5.ini", & buttonsFile);
+			MelderFolder_getFile (& Melder_preferencesFolder, U"Message.txt", & messageFile);
+			MelderFolder_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
+		#elif defined (macintosh)
+			MelderFolder_getFile (& Melder_preferencesFolder, U"Prefs5", & prefsFile);
+			MelderFolder_getFile (& Melder_preferencesFolder, U"Buttons5", & buttonsFile);
+			MelderFolder_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
+		#endif
+		Melder_tracingToFile (& tracingFile);
+	}
+
+	/*
+		Remember the current directory. Useful only for scripts run from batch.
+	*/
+	Melder_rememberShellDirectory ();
+
+	installPraatShellPreferences ();
 
 	theCurrentPraatApplication -> batch = Melder_batch;
 
