@@ -567,7 +567,7 @@ static void praat_exit (int exit_code) {
 			try {
 				autoMelderString buffer;
 				MelderString_append (& buffer, U"# Buttons (1).\n");
-				MelderString_append (& buffer, U"# This file is generated automatically when you quit the ", Melder_titleCaseAppName(), U" program.\n");
+				MelderString_append (& buffer, U"# This file is generated automatically when you quit the ", Melder_upperCaseAppName(), U" program.\n");
 				MelderString_append (& buffer, U"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
 				MelderString_append (& buffer, U"# and the buttons that you hid or showed.\n\n");
 				praat_saveAddedMenuCommands (& buffer);
@@ -868,12 +868,12 @@ FORM (DO_Quit, U"Confirm Quit", U"Quit") {
 	char32 prompt [300];
 	if (ScriptEditors_dirty () || NotebookEditors_dirty ()) {
 		if (theCurrentPraatObjects -> n)
-			Melder_sprint (prompt,300, U"You have objects and unsaved scripts or notebooks! Do you still want to quit ", Melder_titleCaseAppName(), U"?");
+			Melder_sprint (prompt,300, U"You have objects and unsaved scripts or notebooks! Do you still want to quit ", Melder_upperCaseAppName(), U"?");
 		else
-			Melder_sprint (prompt,300, U"You have unsaved scripts or notebooks! Do you still want to quit ", Melder_titleCaseAppName(), U"?");
+			Melder_sprint (prompt,300, U"You have unsaved scripts or notebooks! Do you still want to quit ", Melder_upperCaseAppName(), U"?");
 		SET_STRING (label, prompt)
 	} else if (theCurrentPraatObjects -> n) {
-		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", Melder_titleCaseAppName(), U"?");
+		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", Melder_upperCaseAppName(), U"?");
 		SET_STRING (label, prompt)
 	} else {
 		praat_exit (0);
@@ -993,7 +993,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		try {
 			praat_executeScriptFromText (message);
 		} catch (MelderError) {
-			Melder_flushError (Melder_titleCaseAppName(), U": message not completely handled.");
+			Melder_flushError (Melder_upperCaseAppName(), U": message not completely handled.");
 		}
 		return 0;
 	}
@@ -1830,7 +1830,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 
 		trace (U"creating and installing the Objects window");
 		char32 objectWindowTitle [100];
-		Melder_sprint (objectWindowTitle,100, Melder_titleCaseAppName(), U" Objects");
+		Melder_sprint (objectWindowTitle,100, Melder_upperCaseAppName(), U" Objects");
 		double x, y;
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		Gui_getWindowPositioningBounds (& x, & y, nullptr, nullptr);
@@ -1906,7 +1906,7 @@ static void executeStartUpFile (MelderFolder startUpDirectory, conststring32 fil
 		try {
 			praat_executeScriptFromFile (& startUp, nullptr, nullptr);
 		} catch (MelderError) {
-			Melder_flushError (Melder_titleCaseAppName(), U": start-up file ", & startUp, U" not completed.");
+			Melder_flushError (Melder_upperCaseAppName(), U": start-up file ", & startUp, U" not completed.");
 		}
 	}
 }
@@ -2012,7 +2012,7 @@ void praat_run () {
 					try {
 						praat_executeScriptFromFile (& plugin, nullptr, nullptr);
 					} catch (MelderError) {
-						Melder_flushError (Melder_titleCaseAppName(), U": plugin ", & plugin, U" contains an error.");
+						Melder_flushError (Melder_upperCaseAppName(), U": plugin ", & plugin, U" contains an error.");
 					}
 					Melder_backgrounding = false;
 				}
@@ -2356,15 +2356,15 @@ void praat_run () {
 				praat_executeScriptFromText (thePraatStandAloneScriptText);
 				praat_exit (0);
 			} catch (MelderError) {
-				Melder_flushError (Melder_titleCaseAppName(), U": stand-alone script session interrupted.");
+				Melder_flushError (Melder_upperCaseAppName(), U": stand-alone script session interrupted.");
 				praat_exit (-1);
 			}
 		} else if (praatP.hasCommandLineInput) {
 			try {
-				praat_executeCommandFromStandardInput (Melder_titleCaseAppName());
+				praat_executeCommandFromStandardInput (Melder_upperCaseAppName());
 				praat_exit (0);
 			} catch (MelderError) {
-				Melder_flushError (Melder_titleCaseAppName(), U": command line session interrupted.");
+				Melder_flushError (Melder_upperCaseAppName(), U": command line session interrupted.");
 				praat_exit (-1);
 			}
 		} else {
@@ -2423,7 +2423,7 @@ void praat_run () {
 				#endif
 				praat_exit (0);
 			} catch (MelderError) {
-				Melder_flushError (Melder_titleCaseAppName(), U": script command <<",
+				Melder_flushError (Melder_upperCaseAppName(), U": script command <<",
 					theCurrentPraatApplication -> batchName.string, U">> not completed.");
 				praat_exit (-1);
 			}

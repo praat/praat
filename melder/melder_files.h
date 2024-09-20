@@ -191,9 +191,5 @@ void Melder_fwrite32to8 (conststring32 string, FILE *f);
 void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutputEncoding outputEncoding);
 void MelderFile_appendText (MelderFile file, conststring32 text);
 
-void Melder_setAppName (conststring32 title);
-conststring32 Melder_titleCaseAppName();
-conststring32 Melder_lowerCaseAppName();
-
 /* End of file melder_files.h */
 #endif
