@@ -552,13 +552,13 @@ MelderFolder Melder_preferencesFolder5 () {
 		Melder_getHomeDir (& homeFolder);
 		#if defined (macintosh)
 			Melder_sprint (thePreferencesFolder5. path,kMelder_MAXPATH+1, homeFolder. path,
-					U"/Library/Preferences/", Melder_titleCaseAppName(), U" Prefs");
+					U"/Library/Preferences/", Melder_upperCaseAppName(), U" Prefs");
 		#elif defined (UNIX)
 			Melder_sprint (thePreferencesFolder5. path,kMelder_MAXPATH+1, homeFolder. path,
 					U"/.", Melder_lowerCaseAppName(), U"-dir");
 		#elif defined (_WIN32)
 			Melder_sprint (thePreferencesFolder5. path,kMelder_MAXPATH+1, homeFolder. path,
-					U"\\", Melder_titleCaseAppName());
+					U"\\", Melder_upperCaseAppName());
 		#endif
 	}
 	return & thePreferencesFolder5;
@@ -570,13 +570,13 @@ MelderFolder Melder_preferencesFolder7 () {
 		Melder_getHomeDir (& homeFolder);
 		#if defined (macintosh)
 			Melder_sprint (thePreferencesFolder7. path,kMelder_MAXPATH+1, homeFolder. path,
-					U"/Library/Preferences/", Melder_titleCaseAppName());
+					U"/Library/Preferences/", Melder_upperCaseAppName());
 		#elif defined (UNIX)
 			Melder_sprint (thePreferencesFolder7. path,kMelder_MAXPATH+1, homeFolder. path,
 					U"/.config/", Melder_lowerCaseAppName());
 		#elif defined (_WIN32)
 			Melder_sprint (thePreferencesFolder7. path,kMelder_MAXPATH+1, homeFolder. path,
-					U"\\AppData\\Roaming\\", Melder_titleCaseAppName());
+					U"\\AppData\\Roaming\\", Melder_upperCaseAppName());
 		#endif
 	}
 	return & thePreferencesFolder7;
@@ -1320,19 +1320,6 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 		}
 		f2.close (file);
 	}
-}
-
-static autostring32 theTitleCaseAppName, theLowerCaseAppName;
-void Melder_setAppName (conststring32 title) {
-	theTitleCaseAppName = Melder_dup (title);
-	theLowerCaseAppName = Melder_dup (title);
-	theLowerCaseAppName [0] = Melder_toLowerCase (theLowerCaseAppName [0]);
-}
-conststring32 Melder_titleCaseAppName() {
-	return theTitleCaseAppName.get();
-}
-conststring32 Melder_lowerCaseAppName() {
-	return theLowerCaseAppName.get();
 }
 
 /* End of file melder_files.cpp */

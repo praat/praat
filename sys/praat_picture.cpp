@@ -1713,7 +1713,7 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 			y = screenY + 0;
 			width += margin * 2;
 		#endif
-		thePictureWindow = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (Melder_titleCaseAppName(), U" Picture"), nullptr, nullptr, 0);
+		thePictureWindow = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (Melder_upperCaseAppName(), U" Picture"), nullptr, nullptr, 0);
 		GuiWindow_addMenuBar (thePictureWindow);
 	}
 	if (! theCurrentPraatApplication -> batch) {
@@ -1927,7 +1927,7 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 	praat_addMenuCommand (U"Picture", U"Help", U"Phonetic symbols", nullptr, 0, HELP_PhoneticSymbols);
 	praat_addMenuCommand (U"Picture", U"Help", U"-- manual --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Help",
-		Melder_cat (U"Search ", Melder_titleCaseAppName(), U" manual..."),
+		Melder_cat (U"Search ", Melder_upperCaseAppName(), U" manual..."),
 		nullptr, 'M', HELP_SearchManual_Picture);
 
 	if (! theCurrentPraatApplication -> batch) {

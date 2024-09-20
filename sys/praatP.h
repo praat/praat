@@ -155,6 +155,7 @@ void praat_statistics_prefsChanged ();   // after reading prefs file
 void praat_statistics_exit ();   // at exit time
 void praat_reportMemoryUse ();
 void praat_reportSystemProperties ();
+void praat_reportAppProperties ();
 void praat_reportGraphicalProperties ();
 void praat_reportIntegerProperties ();
 void praat_reportTextProperties ();

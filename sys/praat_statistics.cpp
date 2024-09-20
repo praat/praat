@@ -211,6 +211,13 @@ void praat_reportSystemProperties () {
 	MelderInfo_close ();
 }
 
+void praat_reportAppProperties () {
+	MelderInfo_open ();
+	MelderInfo_writeLine (U"Upper-case app name: ", Melder_upperCaseAppName());
+	MelderInfo_writeLine (U"Lower-case app name: ", Melder_lowerCaseAppName());
+	MelderInfo_close ();
+}
+
 void praat_reportGraphicalProperties () {
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Graphical properties of this edition of Praat on this computer:\n");

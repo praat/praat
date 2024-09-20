@@ -1,8 +1,8 @@
-#ifndef _melder_sysenv_h_
-#define _melder_sysenv_h_
-/* melder_sysenv.h
+#ifndef _melder_app_h_
+#define _melder_app_h_
+/* melder_app.h
  *
- * Copyright (C) 1992-2018,2023 Paul Boersma
+ * Copyright (C) 2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-conststring32 Melder_getenv (conststring32 variableName);
+void Melder_setAppName (conststring32 title);
+conststring32 Melder_upperCaseAppName();
+conststring32 Melder_lowerCaseAppName();
 
-autostring32 runSystem_STR (conststring32 command);
-	// spawn a system command, capturing the stdout output
-
-void Melder_runSystem (conststring32 command);
-	// spawn a system command
-
-autostring32 runSubprocess_STR (conststring32 executableFileName, integer narg, char32 ** args);
-	// spawn a subprocess, capturing the stdout output
-
-void Melder_runSubprocess (conststring32 executableFileName, integer narg, char32 **args);
-	// spawn a subprocess
-
-/* End of file melder_sysenv.h */
+/* End of file melder_app.h */
 #endif
