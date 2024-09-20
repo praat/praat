@@ -165,6 +165,8 @@ enum { NO_SYMBOL_,
 		INFILE_, OUTFILE_, FOLDER_,
 		REALVECTOR_, POSITIVEVECTOR_, INTEGERVECTOR_, NATURALVECTOR_,
 		HEADING_, COMMENT_, END_PAUSE_,
+		LOWER_CASE_APP_NAME_STR_, UPPER_CASE_APP_NAME_STR_,
+		APP_VERSION_, APP_VERSION_STR_, APP_YEAR_, APP_MONTH_, APP_MONTH_STR_, APP_DAY_,
 		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_FOLDER_STR_, CHOOSE_DIRECTORY_STR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
@@ -321,6 +323,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"infile", U"outfile", U"folder",
 	U"realvector", U"positivevector", U"integervector", U"naturalvector",
 	U"heading", U"comment", U"endPause",
+	U"lowerCaseAppName$", U"upperCaseAppName$",
+	U"appVersion", U"appVersion$", U"appYear", U"appMonth", U"appMonth$", U"appDay",
 	U"chooseReadFile$", U"chooseWriteFile$", U"chooseFolder$", U"chooseDirectory$",
 	U"demoWindowTitle", U"demoShow", U"demoWaitForInput", U"demoPeekInput", U"demoInput", U"demoClickedIn",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
@@ -7662,6 +7666,54 @@ static void do_endPause () {
 	//Melder_casual (U"Button ", buttonClicked);
 	pushNumber (buttonClicked);
 }
+static void do_lowerCaseAppNameStr () {
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “lowerCaseAppName$” requires 0 arguments, not ", n->number, U".");
+	return pushString (Melder_dup (Melder_lowerCaseAppName()));
+}
+static void do_upperCaseAppNameStr () {
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “upperCaseAppName$” requires 0 arguments, not ", n->number, U".");
+	return pushString (Melder_dup (Melder_upperCaseAppName()));
+}
+static void do_appVersion () {
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “appVersion” requires 0 arguments, not ", n->number, U".");
+	return pushNumber (Melder_appVersion());
+}
+static void do_appVersionStr () {
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “appVersion$” requires 0 arguments, not ", n->number, U".");
+	return pushString (Melder_dup (Melder_appVersionSTR()));
+}
+static void do_appYear () {
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “appYear” requires 0 arguments, not ", n->number, U".");
+	return pushNumber (Melder_appYear());
+}
+static void do_appMonth () {
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “appMonth” requires 0 arguments, not ", n->number, U".");
+	return pushNumber (Melder_appMonth());
+}
+static void do_appMonthStr () {
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “appMonth$” requires 0 arguments, not ", n->number, U".");
+	return pushString (Melder_dup (Melder_appMonthSTR()));
+}
+static void do_appDay () {
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “appDay” requires 0 arguments, not ", n->number, U".");
+	return pushNumber (Melder_appDay());
+}
 static void do_chooseReadFileStr () {
 	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “chooseReadFile$” is not available inside manuals.");
@@ -8737,6 +8789,14 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case HEADING_: { do_heading ();
 } break; case COMMENT_: { do_comment ();
 } break; case END_PAUSE_: { do_endPause ();
+} break; case LOWER_CASE_APP_NAME_STR_: { do_lowerCaseAppNameStr ();
+} break; case UPPER_CASE_APP_NAME_STR_: { do_upperCaseAppNameStr ();
+} break; case APP_VERSION_: { do_appVersion ();
+} break; case APP_VERSION_STR_: { do_appVersionStr ();
+} break; case APP_YEAR_: { do_appYear ();
+} break; case APP_MONTH_: { do_appMonth ();
+} break; case APP_MONTH_STR_: { do_appMonthStr ();
+} break; case APP_DAY_: { do_appDay ();
 } break; case CHOOSE_READ_FILE_STR_: { do_chooseReadFileStr ();
 } break; case CHOOSE_WRITE_FILE_STR_: { do_chooseWriteFileStr ();
 } break; case CHOOSE_FOLDER_STR_: { do_chooseFolder_STR ();

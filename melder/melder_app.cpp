@@ -101,4 +101,41 @@ conststring32 Melder_lowerCaseAppName() {
 	return theLowerCaseAppName.get();
 }
 
+static autostring32 theAppVersionText;
+static integer theAppVersionNumber;
+void Melder_setAppVersion (conststring32 versionText, integer versionNumber) {
+	theAppVersionText = Melder_dup (versionText);
+	theAppVersionNumber = versionNumber;
+}
+conststring32 Melder_appVersionSTR() {
+	return theAppVersionText.get();
+}
+integer Melder_appVersion() {
+	return theAppVersionNumber;
+}
+
+static integer theAppYear, theAppMonth, theAppDay;
+void Melder_setAppDate (integer year, integer month, integer day) {
+	theAppYear = year;
+	theAppMonth = month;
+	theAppDay = day;
+}
+integer Melder_appYear() {
+	return theAppYear;
+}
+integer Melder_appMonth() {
+	return theAppMonth;
+}
+conststring32 Melder_appMonthSTR() {
+	static conststring32 monthNames [12] = {
+		U"January", U"February", U"March", U"April", U"May", U"June",
+		U"July", U"August", U"September", U"October", U"November", U"December"
+	};
+	Melder_assert (theAppMonth > 0 && theAppMonth <= 12);
+	return monthNames [theAppMonth-1];
+}
+integer Melder_appDay() {
+	return theAppDay;
+}
+
 /* End of file melder_app.cpp */

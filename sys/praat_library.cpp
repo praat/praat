@@ -1,6 +1,6 @@
 /* praat_library.cpp
  *
- * Copyright (C) 2016,2018,2021 Paul Boersma
+ * Copyright (C) 2016,2018,2021,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "praatP.h"
-#include "praat_version.h"
 
 void praat_library_createC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI, bool includeSaveAPI,
 	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
@@ -45,7 +44,7 @@ void praat_library_createC (bool isInHeaderFile, bool includeCreateAPI, bool inc
 		MelderInfo_writeLine (U" * along with this work. If not, see <http://www.gnu.org/licenses/>.");
 		MelderInfo_writeLine (U" */");
 
-		MelderInfo_writeLine (U"/* C API, version ", U"" stringize(PRAAT_MONTH), U" ", PRAAT_DAY, U", ", PRAAT_YEAR, U" */");
+		MelderInfo_writeLine (U"/* C API, version ", Melder_appMonthSTR(), U" ", Melder_appDay(), U", ", Melder_appYear(), U" */");
 
 		praat_menuCommands_writeC (true, includeCreateAPI, includeReadAPI,
 			includeRecordAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI);

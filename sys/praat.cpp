@@ -37,7 +37,6 @@
 #include "praatP.h"
 #include "praatM.h"
 #include "praat_script.h"
-#include "praat_version.h"
 #include "site.h"
 #include "machine.h"
 #include "Printer.h"
@@ -1210,7 +1209,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 					"so Praat is probably not running yet. We are process ", pidOfCurrentPraat, U".");
 			return false;
 		}
-		constexpr integer versionOfCurrentPraat = PRAAT_VERSION_NUM;
+		constexpr integer versionOfCurrentPraat = Melder_appVersion();
 		if (versionOfRunningPraat != versionOfCurrentPraat) {
 			trace (U"The current version of Praat differs from the version of the Praat that may already be running, "
 					"so we cannot be sure it would respond as we would.");
@@ -1409,7 +1408,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 	It doesn't do too much by itself, because many of the relevant entities (such as preferences folder and tracing file)
 	haven't been set yet (because setting these entities depends on the command-line arguments).
 */
-static void interpretCommandLineArguments (bool weWereStartedFromTheCommandLine, conststring32 title, int argc, char **argv) {
+static void interpretCommandLineArguments (bool weWereStartedFromTheCommandLine, int argc, char **argv) {
 	//TRACE   // the tracing file may not have been set yet, so this will probably go to stderr
 	for (int iarg = 0; iarg < argc; iarg ++)
 		trace (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
@@ -1452,7 +1451,8 @@ static void interpretCommandLineArguments (bool weWereStartedFromTheCommandLine,
 			Melder_setPreferencesFolder (Melder_peek8to32 (argv [praatP.argumentNumber] + 11));
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--version")) {
-			Melder_information (title, U" " stringize(PRAAT_VERSION_STR) " (" stringize(PRAAT_MONTH) " ", PRAAT_DAY, U" ", PRAAT_YEAR, U")");
+			Melder_information (Melder_upperCaseAppName(), U" ", Melder_appVersionSTR(),
+					U" (", Melder_appMonthSTR(), U" ", Melder_appDay(), U" ", Melder_appYear(), U")");
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "--trace")) {
 			Melder_setTracing (true);
@@ -1669,17 +1669,23 @@ static void setPreferencesFolder () {
 				"C:\Users\Miep\Praat" (Windows)
 			in Praat 7:
 				$XDG_CONFIG_HOME/praat or else "/home/miep/.config/praat" (Linux)
-				"/Users/miep/Library/Preferences/Praat" (Mac)
+				"/Users/miep/Library/Application Support/Praat" (Mac)
 				"C:\Users\Miep\AppData\Roaming\Praat" (Windows)
 		and construct a preferences-file name and a script-buttons-file name like
 			/home/miep/.praat-dir/prefs5
 			/home/miep/.praat-dir/buttons5
+			/home/miep/.config/praat/Preferences.txt
+			/home/miep/.config/praat/Buttons.txt
 		or
 			/Users/miep/Library/Preferences/Praat Prefs/Prefs5
 			/Users/miep/Library/Preferences/Praat Prefs/Buttons5
+			/Users/miep/Library/Application Support/Praat/Preferences.txt
+			/Users/miep/Library/Application Support/Praat/Buttons.txt
 		or
 			C:\Users\Miep\Praat\Preferences5.ini
 			C:\Users\Miep\Praat\Buttons5.ini
+			C:\Users\Miep\AppData\Roaming\Praat\Preferences.txt
+			C:\Users\Miep\AppData\Roaming\Praat\Buttons.txt
 		Also create names for message and tracing files.
 
 		Platform-dependently preferred cache location:
@@ -1708,27 +1714,40 @@ static void setPreferencesFolder () {
 		}
 	}
 	if (! MelderFolder_isNull (Melder_preferencesFolder())) {
-		#if defined (UNIX)
-			MelderFolder_getFile (Melder_preferencesFolder(), U"prefs5", & prefsFile);
-			MelderFolder_getFile (Melder_preferencesFolder(), U"buttons5", & buttonsFile);
-			MelderFolder_getFile (Melder_preferencesFolder(), U"pid", & pidFile);
-			MelderFolder_getFile (Melder_preferencesFolder(), U"message", & messageFile);
-			MelderFolder_getFile (Melder_preferencesFolder(), U"tracing", & tracingFile);
-		#elif defined (_WIN32)
-			MelderFolder_getFile (Melder_preferencesFolder(), U"Preferences5.ini", & prefsFile);
-			MelderFolder_getFile (Melder_preferencesFolder(), U"Buttons5.ini", & buttonsFile);
-			MelderFolder_getFile (Melder_preferencesFolder(), U"Message.txt", & messageFile);
+		#if 0
+			MelderFolder_getFile (Melder_preferencesFolder(), U"Preferences.txt", & prefsFile);
+			MelderFolder_getFile (Melder_preferencesFolder(), U"Buttons.txt", & buttonsFile);
 			MelderFolder_getFile (Melder_preferencesFolder(), U"Tracing.txt", & tracingFile);
-		#elif defined (macintosh)
-			MelderFolder_getFile (Melder_preferencesFolder(), U"Prefs5", & prefsFile);
-			MelderFolder_getFile (Melder_preferencesFolder(), U"Buttons5", & buttonsFile);
-			MelderFolder_getFile (Melder_preferencesFolder(), U"Tracing.txt", & tracingFile);
+			#if defined (UNIX)
+				MelderFolder_getFile (Melder_preferencesFolder(), U"pid.txt", & pidFile);
+			#endif
+			#if defined (UNIX) || defined (_WIN32)
+				MelderFolder_getFile (Melder_preferencesFolder(), U"Message.txt", & messageFile);
+			#endif
+		#else
+			#if defined (UNIX)
+				MelderFolder_getFile (Melder_preferencesFolder(), U"prefs5", & prefsFile);
+				MelderFolder_getFile (Melder_preferencesFolder(), U"buttons5", & buttonsFile);
+				MelderFolder_getFile (Melder_preferencesFolder(), U"pid", & pidFile);
+				MelderFolder_getFile (Melder_preferencesFolder(), U"message", & messageFile);
+				MelderFolder_getFile (Melder_preferencesFolder(), U"tracing", & tracingFile);
+			#elif defined (_WIN32)
+				MelderFolder_getFile (Melder_preferencesFolder(), U"Preferences5.ini", & prefsFile);
+				MelderFolder_getFile (Melder_preferencesFolder(), U"Buttons5.ini", & buttonsFile);
+				MelderFolder_getFile (Melder_preferencesFolder(), U"Message.txt", & messageFile);
+				MelderFolder_getFile (Melder_preferencesFolder(), U"Tracing.txt", & tracingFile);
+			#elif defined (macintosh)
+				MelderFolder_getFile (Melder_preferencesFolder(), U"Prefs5", & prefsFile);
+				MelderFolder_getFile (Melder_preferencesFolder(), U"Buttons5", & buttonsFile);
+				MelderFolder_getFile (Melder_preferencesFolder(), U"Tracing.txt", & tracingFile);
+			#endif
 		#endif
 		Melder_tracingToFile (& tracingFile);
 	}
 }
 
-void praat_init (conststring32 title, int argc, char **argv)
+void praat_init (conststring32 title, conststring32 versionText, integer versionNumber,
+		integer year, integer month, integer day, int argc, char **argv)
 {
 	setThePraatLocale ();
 	Melder_init ();
@@ -1740,13 +1759,15 @@ void praat_init (conststring32 title, int argc, char **argv)
 		Construct an app name like "praat" for file and folder names.
 	*/
 	Melder_setAppName (title && title [0] != U'\0' ? title : U"Praat");
+	Melder_setAppVersion (versionText, versionNumber);
+	Melder_setAppDate (year, month, day);
 
 	/*
 		Get the home folder, e.g. "/home/miep/", or "/Users/miep/", or just "/".
 	*/
 	Melder_getHomeDir (& homeDir);
 
-	interpretCommandLineArguments (weWereStartedFromTheCommandLine, title, argc, argv);
+	interpretCommandLineArguments (weWereStartedFromTheCommandLine, argc, argv);
 
 	setPreferencesFolder ();
 
@@ -1788,7 +1809,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			*/
 			try {
 				autofile f = Melder_fopen (& pidFile, "w");
-				fprintf (f, "%td %td", integer (getpid ()), integer (PRAAT_VERSION_NUM));
+				fprintf (f, "%td %td", integer (getpid ()), integer (Melder_appVersion()));
 				f.close (& pidFile);
 			} catch (MelderError) {
 				Melder_clearError ();

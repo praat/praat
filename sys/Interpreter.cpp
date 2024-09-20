@@ -20,7 +20,6 @@
 #include "praatP.h"
 #include "praat_script.h"
 #include "Formula.h"
-#include "praat_version.h"
 #include "../kar/UnicodeData.h"
 
 #include "../fon/Vector.h"
@@ -2175,8 +2174,8 @@ void Interpreter_run (Interpreter me, char32 *text, const bool reuseVariables) {
 			Interpreter_addNumericVariable (me, U"stereo", 2);   // deprecated 2010 (Praat 5.2.06)
 			Interpreter_addNumericVariable (me, U"all", 0);   // deprecated 2010 (Praat 5.2.06)
 			Interpreter_addNumericVariable (me, U"average", 0);   // deprecated 2010 (Praat 5.2.06)
-			Interpreter_addStringVariable (me, U"praatVersion$", U"" stringize(PRAAT_VERSION_STR));
-			Interpreter_addNumericVariable (me, U"praatVersion", PRAAT_VERSION_NUM);
+			Interpreter_addStringVariable (me, U"praatVersion$", Melder_appVersionSTR());
+			Interpreter_addNumericVariable (me, U"praatVersion", Melder_appVersion());
 		}
 		/*
 			Execute commands.

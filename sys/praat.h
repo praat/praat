@@ -58,7 +58,8 @@ To make any class string-readable, use Thing_recognizeClassesByName ().
 String-readable classes are known by Thing_newFromClassName () and can therefore
 be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 */
-void praat_init (conststring32 title, int argc, char **argv);
+void praat_init (conststring32 title, conststring32 versionText, integer versionNumber,
+		integer year, integer month, integer day, int argc, char **argv);
 void praat_run ();
 void praat_setStandAloneScriptText (conststring32 text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 extern "C" void praatlib_init ();   // for use in an application that uses Praatlib

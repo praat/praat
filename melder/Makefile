@@ -1,5 +1,5 @@
 # Makefile of the library "melder"
-# Paul Boersma, 18 August 2024
+# Paul Boersma, 20 September 2024
 
 include ../makefile.defs
 
@@ -12,7 +12,7 @@ OBJECTS = melder.o complex.o melder_alloc.o melder_str32.o melder_colour.o \
 	melder_info.o melder_error.o melder_warning.o melder_progress.o \
 	melder_play.o melder_help.o melder_time.o \
 	melder_audio.o melder_audiofiles.o melder_quantity.o MelderReadText.o melder_tensorio.o \
-	abcio.o melder_sysenv.o regularExp.o \
+	abcio.o melder_sysenv.o melder_app.o regularExp.o \
 	NUMmath.o \
 	NUMspecfunc.o NUMear.o NUMinterpol.o NUMmetrics.o NUMrandom.o NUMfilter.o NUMlinprog.o \
 	NUM.o STR.o VEC.o MAT.o STRVEC.o

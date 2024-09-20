@@ -1,6 +1,4 @@
-#ifndef _melder_app_h_
-#define _melder_app_h_
-/* melder_app.h
+/* main_Praat.h
  *
  * Copyright (C) 2024 Paul Boersma
  *
@@ -18,19 +16,18 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-void Melder_setAppName (conststring32 title);
-conststring32 Melder_upperCaseAppName();
-conststring32 Melder_lowerCaseAppName();
 
-void Melder_setAppVersion (conststring32 versionText, integer versionNumber);
-conststring32 Melder_appVersionSTR();
-integer Melder_appVersion();
+/*
+	These things have to be #defines so that they can be used in an automated `praat.plist`.
+	To achieve this automation, go to `Build Settings` -> `Packaging` in the Praat Xcode project,
+	and then set `Preprocess Info.plist File` to `Yes`
+	and `Info.plist Preprocessor Prefix File` to `sys/praat_version.h`.
+*/
+#define PRAAT_NAME  Praat
+#define PRAAT_VERSION_STR  6.4.21alpha3
+#define PRAAT_VERSION_NUM  6420
+#define PRAAT_YEAR  2024
+#define PRAAT_MONTH  9
+#define PRAAT_DAY  20
 
-void Melder_setAppDate (integer year, integer month, integer day);
-integer Melder_appYear();
-integer Melder_appMonth();
-conststring32 Melder_appMonthSTR();
-integer Melder_appDay();
-
-/* End of file melder_app.h */
-#endif
+/* End of file main_Praat.h */

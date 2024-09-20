@@ -18,7 +18,6 @@
 
 #include "praatP.h"
 #include "praat_script.h"
-#include "praat_version.h"
 #include "../kar/longchar.h"
 #include "machine.h"
 #include "GuiP.h"
@@ -879,7 +878,7 @@ static bool actionIsToBeIncluded (Praat_Command command, bool deprecated, bool i
 	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
 	bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
 {
-	const bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2017) );
+	const bool obsolete = ( deprecated && (command -> deprecationYear < Melder_appYear() - 10 || command -> deprecationYear < 2017) );
 	const bool hiddenByDefault = ( command -> hidden != command -> toggled );
 	const bool explicitlyHidden = hiddenByDefault && ! deprecated;
 	const bool hidden = explicitlyHidden || ! command -> callback || command -> noApi || obsolete ||

@@ -570,7 +570,7 @@ MelderFolder Melder_preferencesFolder7 () {
 		Melder_getHomeDir (& homeFolder);
 		#if defined (macintosh)
 			Melder_sprint (thePreferencesFolder7. path,kMelder_MAXPATH+1, homeFolder. path,
-					U"/Library/Preferences/", Melder_upperCaseAppName());
+					U"/Library/Application Support/", Melder_upperCaseAppName());
 		#elif defined (UNIX)
 			Melder_sprint (thePreferencesFolder7. path,kMelder_MAXPATH+1, homeFolder. path,
 					U"/.config/", Melder_lowerCaseAppName());
