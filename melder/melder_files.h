@@ -73,8 +73,8 @@ void MelderFolder_getSubfolder (MelderFolder parentFolder, conststring32 subfold
 void Melder_rememberShellDirectory ();
 conststring32 Melder_getShellDirectory ();
 void Melder_getHomeDir (MelderFolder homeDir);
-inline structMelderFolder Melder_preferencesFolder { };
-void Melder_getParentPreferencesFolder (MelderFolder prefDir);
+MelderFolder Melder_preferencesFolder5 (), Melder_preferencesFolder7 (), Melder_preferencesFolder ();
+void Melder_setPreferencesFolder (conststring32 path);
 void Melder_getTempDir (MelderFolder tempDir);
 
 bool MelderFile_exists (MelderFile file);
@@ -190,6 +190,10 @@ autostring32 MelderFile_readText (MelderFile file, autostring8 *string8 = nullpt
 void Melder_fwrite32to8 (conststring32 string, FILE *f);
 void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutputEncoding outputEncoding);
 void MelderFile_appendText (MelderFile file, conststring32 text);
+
+void Melder_setAppName (conststring32 title);
+conststring32 Melder_titleCaseAppName();
+conststring32 Melder_lowerCaseAppName();
 
 /* End of file melder_files.h */
 #endif

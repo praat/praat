@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2007,2009-2022 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,7 +193,6 @@ inline struct PraatP {
 	bool dontUsePictureWindow;   // see praat_dontUsePictureWindow ()
 	bool ignorePreferenceFiles, ignorePlugins;
 	bool hasCommandLineInput;
-	autostring32 title;
 	GuiWindow menuBar;
 	int phase;
 } praatP;
