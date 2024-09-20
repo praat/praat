@@ -1,6 +1,6 @@
 /* manual_formulas.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "ManPagesM.h"
-#include "praat_version.h"
 
 void manual_formulas_init (ManPages me);
 void manual_formulas_init (ManPages me) {

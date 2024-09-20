@@ -18,7 +18,6 @@
 
 #include "praatP.h"
 #include "Picture.h"
-#include "praat_version.h"
 
 static void logo_defaultDraw (Graphics g) {
 	Graphics_setColour (g, Melder_MAGENTA);
@@ -34,7 +33,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_text (g, 0.5, 0.6, Melder_upperCaseAppName());
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
-	Graphics_text (g, 0.5, 0.25, U"\\s{Built on the} %%Praat shell%\\s{,© Paul Boersma, 1992-2022");
+	Graphics_text (g, 0.5, 0.25, U"\\s{Built on the} %%Praat shell%\\s{,© Paul Boersma, 1992-2024");
 }
 
 static struct {

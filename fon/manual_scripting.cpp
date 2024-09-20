@@ -1,6 +1,6 @@
 /* manual_scripting.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "ManPagesM.h"
-#include "praat_version.h"
 
 void manual_scripting_init (ManPages me);
 void manual_scripting_init (ManPages me) {
@@ -1280,7 +1279,7 @@ NORMAL (U"Some predefined ##numeric variables# are `macintosh`, `windows`, and `
 	"More precisely, we have `praat_intel32`, `praat_intel64` and `praat_arm64`, one of which is 1 (and the others 0) "
 	"depending on whether the type of processor chip that your edition of Praat was made for is "
 	"32-bit Intel (= x86, i386, i686), or 64-bit Intel (= AMD64), or ARM64 (= Aarch64). "
-	"Another predefined numeric variable is `praatVersion`, which is e.g. " stringize(PRAAT_VERSION_NUM) " for the current version of Praat.")
+	"Another predefined numeric variable is `praatVersion`, which is something like 6421.")
 NORMAL (U"Some ##predefined string variables# are `newline$`, `tab$`, and `shellDirectory$`. "
 	"The last one specifies the folder that was the default folder when Praat started up; "
 	"you can use it in scripts that run from the Unix or Windows command line. "
@@ -1289,7 +1288,7 @@ NORMAL (U"Some ##predefined string variables# are `newline$`, `tab$`, and `shell
 	"(which is where you log in), the Praat @@preferences folder@, and a folder for saving temporary files; "
 	"if you want to know what they are on your computer, try to write them into a script window. "
 	"The variable `defaultDirectory$` is available for formulas in scripts; it is the folder that contains the script file. "
-	"Finally, we have `praatVersion$`, which is “" stringize(PRAAT_VERSION_STR) "” for the current version of Praat.")
+	"Finally, we have `praatVersion$`, which is something like “6.4.21”.")
 ENTRY (U"Functions that handle variables")
 NORMAL (U"To check whether a variable exists, you can use the function")
 CODE (U"variableExists (variableName$)")
