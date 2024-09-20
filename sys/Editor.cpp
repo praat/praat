@@ -386,7 +386,7 @@ void structEditor :: v_nameChanged () {
 static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS) {
 	if (my data()) {
 		structMelderFile file { };
-		MelderFolder_getFile (& Melder_preferencesFolder, U"praat_backToCaller.Data", & file);
+		MelderFolder_getFile (Melder_preferencesFolder(), U"praat_backToCaller.Data", & file);
 		Data_writeToTextFile (my data(), & file);
 		sendsocket (Melder_peek32to8 (my callbackSocket.get()), Melder_peek32to8 (my data() -> name.get()));
 	}

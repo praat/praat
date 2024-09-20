@@ -476,7 +476,7 @@ int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpret
 		return 0;
 	if (commandFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		const conststring32 scriptPath = commandFound -> script.get();
-		const conststring32 preferencesFolderPath = Melder_folderToPath (& Melder_preferencesFolder);
+		const conststring32 preferencesFolderPath = Melder_folderToPath (Melder_preferencesFolder());
 		const bool scriptIsInPlugin = Melder_startsWith (scriptPath, preferencesFolderPath);
 		Melder_throw (
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
@@ -508,7 +508,7 @@ int praat_doMenuCommand (conststring32 title, integer narg, Stackel args, Interp
 		return 0;
 	if (commandFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		const conststring32 scriptPath = commandFound -> script.get();
-		const conststring32 preferencesFolderPath = Melder_folderToPath (& Melder_preferencesFolder);
+		const conststring32 preferencesFolderPath = Melder_folderToPath (Melder_preferencesFolder());
 		const bool scriptIsInPlugin = Melder_startsWith (scriptPath, preferencesFolderPath);
 		Melder_throw (
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",

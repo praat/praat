@@ -2135,7 +2135,7 @@ void Interpreter_run (Interpreter me, char32 *text, const bool reuseVariables) {
 				structMelderFolder folder { };
 				Melder_getCurrentFolder (& folder);
 				Interpreter_addStringVariable (me, U"defaultDirectory$", Melder_folderToPath (& folder));
-				Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_folderToPath (& Melder_preferencesFolder));
+				Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_folderToPath (Melder_preferencesFolder()));
 				Melder_getHomeDir (& folder);
 				Interpreter_addStringVariable (me, U"homeDirectory$", Melder_folderToPath (& folder));
 				Melder_getTempDir (& folder);
