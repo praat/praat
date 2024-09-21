@@ -129,9 +129,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-void praat_sensors_init ();
-
-void praat_sensors_init () {
+void praat_uvafon_sensors_init () {
 	Thing_recognizeClassesByName (classElectroglottogram, classEMA, classEMArawData, nullptr);
 
 	Data_recognizeFileType (CarstensEMA50xV3PosFileRecognizer);
