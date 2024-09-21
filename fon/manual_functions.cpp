@@ -31,6 +31,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`abs` (%`x`) – absolute value
 , @`abs#` (%`vector#`) – absolute value of each element of %`vector#`
 , @`abs##` (%`matrix##`) – absolute value of each cell of %`matrix##`
+, @`appDay` ( ) – the month day at which the present version of Praat was built
 , @`appendFile` (%`filePath$`, `...`) – write texts, numbers, vectors and so on
 	at the end of an existing file (create such a file if it does not exist yet)
 , @`appendFileLine` (%`filePath$`, `...`) – write texts, numbers, vectors and so on,
@@ -40,6 +41,11 @@ A growing list of functions that you can use in @formulas and @scripting...
 	to the Info window
 , @`appendInfoLine` (`...`) – write texts, numbers, vectors and so on,
 	followed by a newline, to the Info window
+, @`appMonth` ( ) – the month in which the present version of Praat was built (between 1 and 12)
+, @`appMonth$` ( ) – the name of the month (in English) in which the present version of Praat was built
+, @`appVersion` ( ) – the number of the present version of Praat
+, @`appVersion$` ( ) – the present version of Praat, as text
+, @`appYear` ( ) – the year in which the present version of Praat was built
 , @`arccos` (%`x`) – inverse cosine
 , @`arccos#` (%`vector#`) – inverse cosine of each element of %`vector#`
 , @`arccos##` (%`matrix##`) – inverse cosine of each cell of %`matrix##`
@@ -194,6 +200,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`log10` (%x) – logarithm, base 10
 , @`log10#` (%`vector#`) – base-10 logarithm of each element of %`vector#`
 , @`log10##` (%`matrix##`) – base-10 logarithm of each cell of %`matrix##`
+, @`lowerCaseAppName$` ( ) – the name of the app in lower snake case, e.g. `praat` or `praat_for_hospitals`
 , @`max` (%`x`, `...`) – maximum
 , @`mean` (%`v#`) – average of the elements of a vector
 , @`melToHertz` (%`x`) – from mel to acoustic frequency
@@ -360,6 +367,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`unicode` (%`c$`) – the Unicode codepoint number that corresponds to character %`c$`
 , @`unicode$` (%`n`) – the character that corresponds to Unicode codepoint %`n`
 , @`unicodeToBackslashTrigraphs$` (%`string$`) – convert e.g. \ct to \bsct
+, @`upperCaseAppName$` ( ) – the name of the app in upper camel case, e.g. `Praat` or `PraatForHospitals`
 , @`variableExists` (%`variableName$`) – does the variable %`variableName$` exist?
 , @`vertical$` (%`stringArray$#`) – format a string array vertically
 , @`writeFile` (%`filePath$`, `...`) – create a new text file, and write texts, numbers, vectors and so on into it
@@ -430,6 +438,24 @@ Examples
 }
 
 ################################################################################
+"`appDay`"
+© Paul Boersma 2024
+
+A function that can be used in @@Formulas@. The month day on which the present version of Praat was built
+(a number between 1 and 31).
+
+Syntax and semantics
+====================
+#`appDay` ( )
+: give the month day of the creation of the present version of Praat.
+
+Examples
+========
+{
+	writeInfoLine: \#{appDay} ( )
+}
+
+################################################################################
 "`appendFile`"
 © Paul Boersma 2023
 
@@ -476,6 +502,92 @@ Syntax and semantics
 #`appendInfoLine` (%`filePath$`, `...`)
 : write texts, numbers, vectors and so on, followed by a newline,
 	to the end of the Info window
+
+################################################################################
+"`appMonth`"
+© Paul Boersma 2024
+
+A function that can be used in @@Formulas@. The number of the month in which the present version of Praat was built
+(a number between 1 and 12).
+
+Syntax and semantics
+====================
+#`appMonth` ( )
+: give the month of the creation of the present version of Praat, as a number.
+
+Examples
+========
+{
+	writeInfoLine: \#{appMonth} ( )
+}
+
+################################################################################
+"`appMonth$`"
+© Paul Boersma 2024
+
+A function that can be used in @@Formulas@. The name of the month in which the present version of Praat was built.
+
+Syntax and semantics
+====================
+#`appMonth$` ( )
+: give the month of the creation of the present version of Praat, as text.
+
+Examples
+========
+{
+	writeInfoLine: \#{appMonth$} ( )
+}
+
+################################################################################
+"`appVersion`"
+© Paul Boersma 2024
+
+A function that can be used in @@Formulas@. The present version of Praat, as a number.
+
+Syntax and semantics
+====================
+#`appVersion` ( )
+: give the present version of Praat, as a number.
+
+Examples
+========
+{
+	writeInfoLine: \#{appVersion} ( )
+}
+
+################################################################################
+"`appVersion$`"
+© Paul Boersma 2024
+
+A function that can be used in @@Formulas@. The present version of Praat, as text.
+
+Syntax and semantics
+====================
+#`appVersion$` ( )
+: give the present version of Praat, as text.
+
+Examples
+========
+{
+	writeInfoLine: \#{appVersion$} ( )
+}
+
+################################################################################
+"`appYear`"
+© Paul Boersma 2024
+
+A function that can be used in @@Formulas@. The year in which the present version of Praat was built.
+
+Syntax and semantics
+====================
+#`appYear` ( )
+: give the year of the creation of the present version of Praat.
+
+Examples
+========
+{
+	writeInfoLine: \#{appYear} ( )
+}
 
 ################################################################################
 "`arccos`"
@@ -2672,6 +2784,24 @@ Syntax and semantics
 ====================
 #`log10##` (%`m##`)
 : compute the base-10 logarithm (@`log10`) of each cell of the matrix %`m##`.
+
+################################################################################
+"`lowerCaseAppName$`"
+© Paul Boersma 2024
+
+A function that can be used in @@Formulas@. The name of the present app,
+in lower snake case, such as `praat` or `praat_for_hospitals`.
+
+Syntax and semantics
+====================
+#`lowerCaseAppName$` ( )
+: give the name of the present app, in lower snake case.
+
+Examples
+========
+{
+	writeInfoLine: \#{lowerCaseAppName$} ( )
+}
 
 ################################################################################
 "`max`"
@@ -5015,6 +5145,24 @@ Syntax and semantics
 #`unicodeToBackslashTrigraphs$` (%`string$`)
 : convert from unicode characters to backslash trigraphs,
 e.g. from “\ct” to “\bsct”.
+
+################################################################################
+"`upperCaseAppName$`"
+© Paul Boersma 2024
+
+A function that can be used in @@Formulas@. The name of the present app,
+in upper camel case, such as `Praat` or `PraatForHospitals`.
+
+Syntax and semantics
+====================
+#`upperCaseAppName$` ( )
+: give the name of the present app, in upper camel case.
+
+Examples
+========
+{
+	writeInfoLine: \#{upperCaseAppName$} ( )
+}
 
 ################################################################################
 "`variableExists`"
