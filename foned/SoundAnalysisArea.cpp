@@ -2423,7 +2423,7 @@ void structSoundAnalysisArea :: v_createMenus () {
 				INFO_DATA__pitchListing, this);
 		FunctionAreaMenu_addCommand (menu, U"Get pitch", GuiMenu_F5 | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getPitch, this);
-		FunctionAreaMenu_addCommand (menu, U"Get minimum pitch", GuiMenu_F5 | GuiMenu_COMMAND | GuiMenu_DEPTH_1,
+		FunctionAreaMenu_addCommand (menu, U"Get minimum pitch", GuiMenu_F5 | GuiMenu_OPTION | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getMinimumPitch, this);
 		FunctionAreaMenu_addCommand (menu, U"Get maximum pitch", GuiMenu_F5 | GuiMenu_SHIFT | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getMaximumPitch, this);
@@ -2453,7 +2453,7 @@ void structSoundAnalysisArea :: v_createMenus () {
 				INFO_DATA__intensityListing, this);
 		FunctionAreaMenu_addCommand (menu, U"Get intensity", GuiMenu_F8 | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getIntensity, this);
-		FunctionAreaMenu_addCommand (menu, U"Get minimum intensity", GuiMenu_F8 | GuiMenu_COMMAND | GuiMenu_DEPTH_1,
+		FunctionAreaMenu_addCommand (menu, U"Get minimum intensity", GuiMenu_F8 | GuiMenu_OPTION | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getMinimumIntensity, this);
 		FunctionAreaMenu_addCommand (menu, U"Get maximum intensity", GuiMenu_F8 | GuiMenu_SHIFT | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getMaximumIntensity, this);

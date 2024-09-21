@@ -36,11 +36,11 @@
 // File main_Sybil.cpp: //
 int main (int argc, char **argv)
 {
-	praat_init (U"Praat_Sybil", argc, argv);   // Obligatory.
-	INCLUDE_LIBRARY (praat_Fon_init)   // Optional: inherit phonetic stuff.
-	INCLUDE_LIBRARY (praat_Sybil_init)   // Optional: add Sybil's things.
+	praat_init (U"Praat_Sybil", U"6.4.20", 6420, 2024, 9, 18, argc, argv);   // obligatory
+	INCLUDE_LIBRARY (praat_uvafon_init)   // optional: inherit phonetic stuff
+	INCLUDE_LIBRARY (praat_Sybil_init)   // optional: add Sybil's things
 	INCLUDE_MANPAGES (manual_Sybil)
-	praat_run ();   // Obligatory.
+	praat_run ();   // obligatory
 }
 // File praat_Sybil.cpp: //
 void praat_Sybil (void)
