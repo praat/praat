@@ -381,15 +381,30 @@ If the preferences folder does not exist, it will automatically be created when 
 
 Windows
 =======
-If you are user #Miep, your Praat preferences folder will be `C:\Users\Miep\Praat\`.
+If you are user #Miep, your Praat preferences folder will be `C:\Users\Miep\Praat` in Praat 6.xx,
+and `C:\Users\Miep\AppData\Roaming\Praat` in Praat 7.xx.
+
+To see what’s in there, open a File Explorer window, switch on `View` \-> `Show` \-> `Hidden items`,
+and `navigate to `Local Disk` \-> `Users` \-> your name \-> `AppData` \-> `Roaming` \-> `Praat`.
 
 Macintosh
 =========
-If you are user #miep, your Praat preferences folder will be `/Users/miep/Library/Preferences/Praat Prefs/`.
+If you are user #miep, your Praat preferences folder will be `/Users/miep/Library/Preferences/Praat Prefs` in Praat 6.xx,
+and `/Users/miep/Library/Application Support/Praat` in Praat 7.xx.
+
+To see what’s in there, go to the Finder, choose Go \-> Library, and navigate to `Application Support` \-> `Praat`.
 
 Linux
 =====
-If your home folder is #`/home/miep/`, your Praat preferences folder will be `/home/miep/.praat-dir/`.
+If your home folder is #`/home/miep/`, your Praat preferences folder will be `/home/miep/.praat-dir` in Praat 6.xx,
+and `/home/miep/.config/praat` in Praat 7.xx.
+
+To see what’s in there, open a Terminal window and type `ls -al ~/.config/praat`.
+
+(If the environment variable `XDG_CONFIG_HOME` is set, then the `praat` folder will be there instead.)
+
+If your app isn’t called Praat, but e.g. PraatForHospitals (Praat’s extra safe edition available from version 7 on),
+then the preferences folder isn’t called `Praat` or `praat`, but `PraatForHospitals` or `praat_for_hospitals` instead.
 
 ################################################################################
 "preferences file"   (into 2003 “Preferences file”)
