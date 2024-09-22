@@ -930,7 +930,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 				try {
 					praat_executeScriptFromFile (& messageFile, nullptr, nullptr);
 				} catch (MelderError) {
-					Melder_flushError (praatP.title.get(), U": message not completely handled.");
+					Melder_flushError (Melder_upperCaseAppName(), U": message not completely handled.");
 				}
 			}
 			if (narg != 0 && pid != 0)
@@ -944,7 +944,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		try {
 			praat_executeScriptFromFile (& messageFile, nullptr, nullptr);
 		} catch (MelderError) {
-			Melder_flushError (praatP.title.get(), U": message not completely handled.");
+			Melder_flushError (Melder_upperCaseAppName(), U": message not completely handled.");
 		}
 		return 0;
 	}
@@ -956,7 +956,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			while Praat is already running.
 		*/
 		Melder_sprint (text,500, U"Read from file: ~", file -> path);
-		sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, Melder_peek32to8 (text));
+		sendpraat (nullptr, Melder_peek32to8 (Melder_upperCaseAppName()), 0, Melder_peek32to8 (text));
 	}
 	static void cb_finishedOpeningDocuments () {
 		praat_updateSelection ();
@@ -1794,7 +1794,7 @@ void praat_init (conststring32 title, conststring32 versionText, integer version
 	#if defined (macintosh)
 		NSApplication *theApp = [GuiCocoaApplication sharedApplication];   // initialize, so that our bundle identifier exists even if we started from outside Xcode
 	#elif defined (_WIN32)
-		theWinApplicationWindow = GuiWin_initialize1 (praatP.title.get());
+		theWinApplicationWindow = GuiWin_initialize1 (Melder_upperCaseAppName());
 	#endif
 	if (praatP.userWantsExistingInstance)
 		if (tryToSwitchToRunningPraat (praatP.userWantsToOpen, praatP.userWantsToSend))
