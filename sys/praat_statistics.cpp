@@ -211,6 +211,19 @@ void praat_reportSystemProperties () {
 	MelderInfo_close ();
 }
 
+void praat_reportAppProperties () {
+	MelderInfo_open ();
+	MelderInfo_writeLine (U"Upper-case app name: ", Melder_upperCaseAppName());
+	MelderInfo_writeLine (U"Lower-case app name: ", Melder_lowerCaseAppName());
+	MelderInfo_writeLine (U"App version (as a number): ", Melder_appVersion());
+	MelderInfo_writeLine (U"App version (as text): ", Melder_appVersionSTR());
+	MelderInfo_writeLine (U"App year: ", Melder_appYear());
+	MelderInfo_writeLine (U"App month (as a number): ", Melder_appMonth());
+	MelderInfo_writeLine (U"App month (as text): ", Melder_appMonthSTR());
+	MelderInfo_writeLine (U"App day: ", Melder_appDay());
+	MelderInfo_close ();
+}
+
 void praat_reportGraphicalProperties () {
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Graphical properties of this edition of Praat on this computer:\n");

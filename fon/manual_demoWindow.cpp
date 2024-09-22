@@ -301,7 +301,7 @@ If you do not want to see this message, you should make sure that the user can r
 pressing the \-> key on the last page. To make sure the user sees that the script has ended, you could end it with #`demo Erase all`.
 
 Your demo can save its preferences in a folder of your choice,
-e.g. in #`'preferencesDirectory$'/../GuineaPigAnalyzer` if your demo is called GuineaPigAnalyzer.
+e.g. in #`preferencesDirectory$ + “/../GuineaPigAnalyzer”` if your demo is called GuineaPigAnalyzer.
 If you want to be less conspicuous and like to use the Praat preferences folder instead,
 please use the #`apps` subfolder, in this way:
 {;

@@ -538,24 +538,48 @@ void Melder_getHomeDir (MelderFolder homeDir) {
 	#endif
 }
 
-void Melder_getParentPreferencesFolder (MelderFolder preferencesFolder) {
-	#if defined (macintosh)
+static structMelderFolder thePreferencesFolder;
+void Melder_setPreferencesFolder (conststring32 path) {
+	Melder_pathToFolder (path, & thePreferencesFolder);
+}
+MelderFolder Melder_preferencesFolder() {
+	return & thePreferencesFolder;
+}
+MelderFolder Melder_preferencesFolder5 () {
+	static structMelderFolder thePreferencesFolder5;
+	if (MelderFolder_isNull (& thePreferencesFolder5)) {
 		structMelderFolder homeFolder { };
 		Melder_getHomeDir (& homeFolder);
-		Melder_sprint (preferencesFolder -> path,kMelder_MAXPATH+1, homeFolder. path, U"/Library/Preferences");
-	#elif defined (UNIX)
-		/*
-			Preferences files go into the home folder.
-		*/
-		Melder_getHomeDir (preferencesFolder);
-	#elif defined (_WIN32)
-		/*
-			On Windows 95, preferences files went into the Windows folder.
-			On shared systems (NT, 2000, XP), preferences files go into the home folder.
-			TODO: at some point, these files should be moved to HOME\AppData\Roaming\Praat.
-		*/
-		Melder_getHomeDir (preferencesFolder);
-	#endif
+		#if defined (macintosh)
+			Melder_sprint (thePreferencesFolder5. path,kMelder_MAXPATH+1, homeFolder. path,
+					U"/Library/Preferences/", Melder_upperCaseAppName(), U" Prefs");
+		#elif defined (UNIX)
+			Melder_sprint (thePreferencesFolder5. path,kMelder_MAXPATH+1, homeFolder. path,
+					U"/.", Melder_lowerCaseAppName(), U"-dir");
+		#elif defined (_WIN32)
+			Melder_sprint (thePreferencesFolder5. path,kMelder_MAXPATH+1, homeFolder. path,
+					U"\\", Melder_upperCaseAppName());
+		#endif
+	}
+	return & thePreferencesFolder5;
+}
+MelderFolder Melder_preferencesFolder7 () {
+	static structMelderFolder thePreferencesFolder7;
+	if (MelderFolder_isNull (& thePreferencesFolder7)) {
+		structMelderFolder homeFolder { };
+		Melder_getHomeDir (& homeFolder);
+		#if defined (macintosh)
+			Melder_sprint (thePreferencesFolder7. path,kMelder_MAXPATH+1, homeFolder. path,
+					U"/Library/Application Support/", Melder_upperCaseAppName());
+		#elif defined (UNIX)
+			Melder_sprint (thePreferencesFolder7. path,kMelder_MAXPATH+1, homeFolder. path,
+					U"/.config/", Melder_lowerCaseAppName());
+		#elif defined (_WIN32)
+			Melder_sprint (thePreferencesFolder7. path,kMelder_MAXPATH+1, homeFolder. path,
+					U"\\AppData\\Roaming\\", Melder_upperCaseAppName());
+		#endif
+	}
+	return & thePreferencesFolder7;
 }
 
 void Melder_getTempDir (MelderFolder temporaryFolder) {
@@ -949,6 +973,11 @@ void MelderFolder_create (MelderFolder folder) {
 	#else
 		#error Unsupported operating system.
 	#endif
+}
+void Melder_createFolder (conststring32 path) {
+	structMelderFolder folder { };
+	Melder_relativePathToFolder (path, & folder);
+	MelderFolder_create (& folder);
 }
 
 static size_t fread_multi (char *buffer, size_t numberOfBytes, FILE *f) {

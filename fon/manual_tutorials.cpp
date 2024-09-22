@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,126 +17,185 @@
  */
 
 #include "ManPagesM.h"
-#include "praat_version.h"
 
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"Praat menu", U"ppgb", 20161227)
-INTRO (U"The first menu in the @@Objects window@. "
-	"In macOS, this menu is in the main menu bar along the top of the screen.")
-MAN_END
+MAN_PAGES_BEGIN R"~~~(
+################################################################################
+"Praat menu"
+© Paul Boersma 2016-12-27
 
-MAN_BEGIN (U"Analyses menu", U"ppgb", 20221202)
-INTRO (U"A menu in the @SoundEditor or @TextGridEditor.")
-MAN_END
+The first menu in the @@Objects window@.
+In macOS, this menu is in the main menu bar along the top of the screen.
 
-MAN_BEGIN (U"Copy...", U"ppgb", 20111018)
-INTRO (U"One of the fixed buttons in the @@Objects window@.")
-ENTRY (U"Availability")
-NORMAL (U"You can choose this command after selecting one object of any type.")
-ENTRY (U"Behaviour")
-NORMAL (U"The Objects window copies the selected object, and all the data it contains, "
-	"to a new object, which will appear at the bottom of the List of Objects.")
-ENTRY (U"Example")
-NORMAL (U"If you select “Sound hallo” and click ##Copy...#, "
-	"a command window will appear, which prompts you for a name; "
-	"after you click #OK, a new object will appear in the list, bearing that name.")
-MAN_END
+################################################################################
+"Analyses menu"
+© Paul Boersma 2022-12-02
 
-MAN_BEGIN (U"Draw menu", U"ppgb", 20010417)
-INTRO (U"A menu that occurs in the @@Dynamic menu@ for many objects.")
-NORMAL (U"This menu contains commands for drawing the object to the @@Picture window@, "
-	"which will allow you to print the drawing or to copy it to your word processor.")
-MAN_END
+A menu in the @SoundEditor or @TextGridEditor.
 
-MAN_BEGIN (U"Dynamic menu", U"ppgb", 20110131)  // 2023-06-08
-INTRO (U"A column of buttons in the right-hand part of the @@Objects window@, "
-	"plus the @@Save menu@ in the Objects window.")
-NORMAL (U"If you select one or more @objects in the list, "
-	"the possible actions that you can perform with the selected objects "
-	"will appear in the dynamic menu. "
-	"These actions can include viewing & editing, saving, drawing, "
-	"conversions to other types (including analysis and synthesis), and more.")
-ENTRY (U"Example of analysis:")
-NORMAL (U"Record a Sound, select it, and click ##To Pitch...#. "
-	"This will create a new Pitch object and put it in the list of objects. "
-	"You can then edit, write, and draw this Pitch object.")
-ENTRY (U"Example of synthesis:")
-NORMAL (U"Create a Speaker, create and edit an Artword, and click ##To Sound...#.")
-MAN_END
+################################################################################
+"Copy..."
+© Paul Boersma 2011-10-18
 
-MAN_BEGIN (U"View & Edit", U"ppgb", 20110128)
-INTRO (U"A command in the @@Dynamic menu@ of several types of @objects.")
-NORMAL (U"This command puts an @@Editors|editor@ window on the screen, which shows the contents of the selected object. "
-	"This window will allow your to view and modify the contents of this object.")
-MAN_END
+One of the fixed buttons in the @@Objects window@.
 
-MAN_BEGIN (U"Extract visible formant contour", U"ppgb", 20030316)
-INTRO (U"One of the commands in the Formant menu of the @SoundEditor and the @TextGridEditor.")
-NORMAL (U"See @@Intro 5. Formant analysis@")
-MAN_END
+Availability
+============
 
-MAN_BEGIN (U"Extract visible intensity contour", U"ppgb", 20030316)
-INTRO (U"One of the commands in the Intensity menu of the @SoundEditor and the @TextGridEditor.")
-NORMAL (U"See @@Intro 6. Intensity analysis@")
-MAN_END
+You can choose this command after selecting one object of any type.
 
-MAN_BEGIN (U"Extract visible pitch contour", U"ppgb", 20030316)
-INTRO (U"One of the commands in the Pitch menu of the @SoundEditor and the @TextGridEditor.")
-NORMAL (U"See @@Intro 4. Pitch analysis@")
-MAN_END
+Behaviour
+=========
 
-MAN_BEGIN (U"Extract visible spectrogram", U"ppgb", 20030316)
-INTRO (U"One of the commands in the Spectrogram menu of the @SoundEditor and the @TextGridEditor.")
-NORMAL (U"See @@Intro 3. Spectral analysis@")
-MAN_END
+The Objects window copies the selected object, and all the data it contains,
+to a new object, which will appear at the bottom of the List of Objects.
 
-MAN_BEGIN (U"FAQ (Frequently Asked Questions)", U"ppgb", 20071210)
-LIST_ITEM (U"@@FAQ: How to cite Praat")
-LIST_ITEM (U"@Unicode")
-LIST_ITEM (U"@@FAQ: Formant analysis")
-LIST_ITEM (U"@@FAQ: Pitch analysis")
-LIST_ITEM (U"@@FAQ: Spectrograms")
-LIST_ITEM (U"@@FAQ: Scripts")
-/* Hardware */
-/* Pitch: octave errors */
-MAN_END
+Example
+=======
 
-MAN_BEGIN (U"FAQ: Formant analysis", U"ppgb", 20030916)
-NORMAL (U"#Problem: I get different formant values if I choose to analyse 3 formants "
-	"than if I choose to analyse 4 formants.")
-NORMAL (U"Solution: the “number of formants” in formant analysis determines the "
-	"number of peaks with which the %entire spectrum is modelled. For an average "
-	"female voice, you should choose to analyse 5 formants in the region up to 5500 Hz, "
-	"even if you are interested only in the first three formants.")
-NORMAL (U"")
-NORMAL (U"#Problem: I often get only 1 formant in a region where I see clearly 2 formants "
-	"in the spectrogram.")
-NORMAL (U"This occurs mainly in back vowels (F1 and F2 close together) for male voices, "
-	"if the “maximum formant” is set to the standard of 5500 Hz, which is appropriate "
-	"for female voices. Set the “maximum formant” down to 5000 Hz. "
-	"No, Praat comes without a guarantee: the formant analysis is based on LPC, "
-	"and this comes with several assumptions as to what a speech spectrum is like.")
-NORMAL (U"")
-NORMAL (U"#Question: what algorithm is used for formant analysis?")
-NORMAL (U"Answer: see @@Sound: To Formant (burg)...@.")
-MAN_END
+If you select “Sound hallo” and click ##Copy...#,
+a command window will appear, which prompts you for a name;
+after you click #OK, a new object will appear in the list, bearing that name.
 
-MAN_BEGIN (U"FAQ: How to cite Praat", U"ppgb", 20140826)
-NORMAL (U"#Question: how do I cite Praat in my articles?")
-NORMAL (U"Answer: nowadays most journals allow you to cite computer programs and web sites. "
-	"The style approved by the American Psychological Association, "
-	"and therefore by many journals, is like the following "
-	"(change the dates and version number as needed):")
-NORMAL (U"Boersma, Paul & Weenink, David (" stringize(PRAAT_YEAR) "). "
-	"Praat: doing phonetics by computer [Computer program]. "
-	"Version " stringize(PRAAT_VERSION_STR) ", retrieved " stringize(PRAAT_DAY) " " stringize(PRAAT_MONTH) " " stringize(PRAAT_YEAR) " from http://www.praat.org/")
-NORMAL (U"If the journal does not allow you to cite a web site, then try:")
-NORMAL (U"Boersma, Paul (2001). Praat, a system for doing phonetics by computer. "
-	"%%Glot International% ##5:9/10#, 341-345.")
-NORMAL (U"This paper can be downloaded from Boersma's website.")
-MAN_END
+################################################################################
+"Draw menu"
+© Paul Boersma 2001-04-17
+
+A menu that occurs in the @@Dynamic menu@ for many objects.
+
+This menu contains commands for drawing the object to the @@Picture window@,
+which will allow you to print the drawing or to copy it to your word processor.
+
+################################################################################
+"Dynamic menu"
+© Paul Boersma 20110131  // 2023-06-08
+
+A column of buttons in the right-hand part of the @@Objects window@,
+plus the @@Save menu@ in the Objects window.
+
+If you select one or more @objects in the list,
+the possible actions that you can perform with the selected objects
+will appear in the dynamic menu.
+These actions can include viewing & editing, saving, drawing,
+conversions to other types (including analysis and synthesis), and more.
+
+Example of analysis:
+====================
+
+Record a Sound, select it, and click ##To Pitch...#.
+This will create a new Pitch object and put it in the list of objects.
+You can then edit, write, and draw this Pitch object.
+
+Example of synthesis:
+=====================
+
+Create a Speaker, create and edit an Artword, and click ##To Sound...#.
+
+################################################################################
+"View & Edit"
+© Paul Boersma 2011-01-28
+
+A command in the @@Dynamic menu@ of several types of @objects.
+
+This command puts an @@Editors|editor@ window on the screen, which shows the contents of the selected object.
+This window will allow your to view and modify the contents of this object.
+
+################################################################################
+"Extract visible formant contour"
+© Paul Boersma 2003-03-16
+
+One of the commands in the Formant menu of the @SoundEditor and the @TextGridEditor.
+
+See @@Intro 5. Formant analysis@
+
+################################################################################
+"Extract visible intensity contour"
+© Paul Boersma 2003-03-16
+
+One of the commands in the Intensity menu of the @SoundEditor and the @TextGridEditor.
+
+See @@Intro 6. Intensity analysis@
+
+################################################################################
+"Extract visible pitch contour"
+© Paul Boersma 2003-03-16
+
+One of the commands in the Pitch menu of the @SoundEditor and the @TextGridEditor.
+
+See @@Intro 4. Pitch analysis@
+
+################################################################################
+"Extract visible spectrogram"
+© Paul Boersma 2003-03-16
+
+One of the commands in the Spectrogram menu of the @SoundEditor and the @TextGridEditor.
+
+See @@Intro 3. Spectral analysis@
+
+################################################################################
+"FAQ (Frequently Asked Questions)"
+© Paul Boersma 2007-12-10
+
+,	@@FAQ: How to cite Praat
+,	@Unicode
+,	@@FAQ: Formant analysis
+,	@@FAQ: Pitch analysis
+,	@@FAQ: Spectrograms
+,	@@FAQ: Scripts
+
+// Hardware
+// Pitch: octave errors */
+
+################################################################################
+"FAQ: Formant analysis"
+© Paul Boersma 2003-09-16
+
+#Problem: I get different formant values if I choose to analyse 3 formants
+than if I choose to analyse 4 formants.
+
+Solution: the “number of formants” in formant analysis determines the
+number of peaks with which the %entire spectrum is modelled. For an average
+female voice, you should choose to analyse 5 formants in the region up to 5500 Hz,
+even if you are interested only in the first three formants.
+
+#Problem: I often get only 1 formant in a region where I see clearly 2 formants
+in the spectrogram.
+
+This occurs mainly in back vowels (F1 and F2 close together) for male voices,
+if the “maximum formant” is set to the standard of 5500 Hz, which is appropriate
+for female voices. Set the “maximum formant” down to 5000 Hz.
+No, Praat comes without a guarantee: the formant analysis is based on LPC,
+and this comes with several assumptions as to what a speech spectrum is like.
+
+#Question: what algorithm is used for formant analysis?
+
+Answer: see @@Sound: To Formant (burg)...@.
+
+################################################################################
+"FAQ: How to cite Praat"
+© Paul Boersma 2014-08-26
+
+#Question: how do I cite Praat in my articles?
+
+Answer: nowadays most journals allow you to cite computer programs and web sites.
+The style approved by the American Psychological Association,
+and therefore by many journals, is like the following
+(change the dates and version number as needed):
+{-
+	writeInfoLine: “Boersma, Paul & Weenink, David (”, appYear(),
+	... “). Praat: doing phonetics by computer [Computer program]. Version ”, appVersion$(),
+	... “, retrieved ”, appDay(), “ ”, appMonth$(), “ ”, appYear(), “ from http://www.praat.org/”
+}
+If the journal does not allow you to cite a web site, then try:
+
+Boersma, Paul (2001). Praat, a system for doing phonetics by computer.
+%%Glot International% ##5:9/10#, 341-345.
+
+This paper can be downloaded from Boersma’s website.
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"FAQ: Pitch analysis", U"ppgb", 20231115)   // 20221202 2024
 NORMAL (U"Please also consult @@how to choose a pitch analysis method@.")

@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2007,2009-2022 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,6 +155,7 @@ void praat_statistics_prefsChanged ();   // after reading prefs file
 void praat_statistics_exit ();   // at exit time
 void praat_reportMemoryUse ();
 void praat_reportSystemProperties ();
+void praat_reportAppProperties ();
 void praat_reportGraphicalProperties ();
 void praat_reportIntegerProperties ();
 void praat_reportTextProperties ();
@@ -193,7 +194,6 @@ inline struct PraatP {
 	bool dontUsePictureWindow;   // see praat_dontUsePictureWindow ()
 	bool ignorePreferenceFiles, ignorePlugins;
 	bool hasCommandLineInput;
-	autostring32 title;
 	GuiWindow menuBar;
 	int phase;
 } praatP;

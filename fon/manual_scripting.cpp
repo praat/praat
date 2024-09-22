@@ -1,6 +1,6 @@
 /* manual_scripting.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "ManPagesM.h"
-#include "praat_version.h"
 
 void manual_scripting_init (ManPages me);
 void manual_scripting_init (ManPages me) {
@@ -1180,125 +1179,174 @@ Example: doing something to every selected Sound
 }
 
 ################################################################################
-)~~~"
-MAN_PAGES_END
+"Scripting 5. Language elements reference"
+© Paul Boersma 2017-07-18
 
-MAN_BEGIN (U"Scripting 5. Language elements reference", U"ppgb", 20170718)
-NORMAL (U"In a Praat script, you can use variables, expressions, and functions, of numeric as well as string type, "
-	"and most of the control structures known from other procedural computer languages. "
-	"The way the distinction between numbers and strings is made, may remind you of the programming language Basic.")
-LIST_ITEM (U"@@Scripting 5.1. Variables@ (numeric, string)")
-LIST_ITEM (U"@@Scripting 5.2. Expressions@ (numeric, string)")
-LIST_ITEM (U"@@Scripting 5.3. Jumps@ (if, then, elsif, else, endif)")
-LIST_ITEM (U"@@Scripting 5.4. Loops@ (for/endfor, while/endwhile, repeat/until)")
-LIST_ITEM (U"@@Scripting 5.5. Procedures@ (\\@ , procedure)")
-LIST_ITEM (U"@@Scripting 5.6. Arrays and dictionaries@")
-LIST_ITEM (U"@@Scripting 5.7. Vectors and matrices")
-LIST_ITEM (U"@@Scripting 5.8. Including other scripts@")
-LIST_ITEM (U"@@Scripting 5.9. Quitting@ (exit)")
-MAN_END
+In a Praat script, you can use variables, expressions, and functions, of numeric as well as string type,
+and most of the control structures known from other procedural computer languages.
+The way the distinction between numbers and strings is made, may remind you of the programming language Basic.
 
-MAN_BEGIN (U"Scripting 5.1. Variables", U"ppgb", 20201229;20230416;20240103)
-INTRO (U"A %variable is a location in your computer’s memory that has a name and where you can store something, "
-	"as explained in @@Scripting 3.2. Numeric variables|\\SS3.2@ and @@Scripting 3.4. String variables|\\SS3.4@. "
-	"In a Praat script, you can store numbers and texts, i.e. you can use %%numeric variables% and %%string variables%.")
-ENTRY (U"Numeric variables")
-NORMAL (U"Numeric variables can hold integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
-	"or real numbers between -10^^308^ and +10^^308^. The smallest numbers lie near -10^^-308^ and +10^^-308^.")
-NORMAL (U"You use numeric variables in your script like this:")
-CODE (U"length = 10")
-CODE (U"Draw line: 0, length, 1, 1")
-NORMAL (U"This draws a line in the Picture window from position (0, 10) to position (1, 1). "
-	"In the first line, you assign the value 10 to the variable called $%length, "
-	"and in the second line you use the value of $%length as the second argument to the command ##Draw line...#.")
-NORMAL (U"Names of numeric variables must start with a lower-case letter, optionally followed by a sequence "
-	"of letters, digits, and underscores.")
-ENTRY (U"String variables")
-NORMAL (U"You use string variables, which contain text, as follows:")
-CODE (U"title$ = “Dutch nasal place assimilation”")
-CODE (U"Text top: “yes”, title$")
-NORMAL (U"This writes the text \"Dutch nasal place assimilation\" above your drawing.")
-NORMAL (U"As in the programming language Basic, the names of string variables end in a dollar sign.")
-ENTRY (U"Making numeric variables visible")
-NORMAL (U"You can write the content of numeric variables directly to the info window:")
-CODE (U"x = 2.0")
-CODE (U"root = sqrt (x)")
-CODE (U"\\#`{writeInfoLine}: \"The square root of \", x, \" is \", root, \".\"")
-NORMAL (U"This will write the following text to the Info window:")
-CODE (U"The square root of 2 is 1.4142135623730951.")
-/*@praat
+,	@@Scripting 5.1. Variables@ (numeric, string)
+,	@@Scripting 5.2. Expressions@ (numeric, string)
+,	@@Scripting 5.3. Jumps@ (if, then, elsif, else, endif)
+,	@@Scripting 5.4. Loops@ (for/endfor, while/endwhile, repeat/until)
+,	@@Scripting 5.5. Procedures@ (\@ , procedure)
+,	@@Scripting 5.6. Arrays and dictionaries@
+,	@@Scripting 5.7. Vectors and matrices
+,	@@Scripting 5.8. Including other scripts@
+,	@@Scripting 5.9. Quitting@ (exit)
+
+################################################################################
+"Scripting 5.1. Variables"
+© Paul Boersma 2020-12-29,2024
+
+A %variable is a location in your computer’s memory that has a name and where you can store something,
+as explained in @@Scripting 3.2. Numeric variables|\\SS3.2@ and @@Scripting 3.4. String variables|\\SS3.4@.
+In a Praat script, you can store numbers and texts, i.e. you can use %%numeric variables% and %%string variables%.
+
+Numeric variables
+=================
+
+Numeric variables can hold integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000
+or real numbers between -10^^308^ and +10^^308^. The smallest numbers lie near -10^^-308^ and +10^^-308^.
+
+You use numeric variables in your script like this:
+{ 4x2
+	length = 10
+	Axes: 0, 100, 0, 100
+	Draw line: 0, 50, length, 50
+	Draw inner box
+}
+This draws a line in the Picture window from position (0, 50) to position (%`length`, 50).
+In the first line, you assign the value 10 to the variable called %`length`,
+and in the third line you use the value of %`length` as the third argument to the command ##Draw line...#.
+
+Names of numeric variables must start with a lower-case letter, optionally followed by a sequence
+of letters, digits, and underscores.
+
+String variables
+================
+
+You use string variables, which contain text, as follows:
+{ 4x2
+	title$ = “Dutch nasal place assimilation”
+	Text top: “no”, title$
+	Draw inner box
+}
+This writes the text “Dutch nasal place assimilation” above your drawing.
+
+As in the programming language Basic, the names of string variables end in a dollar sign.
+
+Making numeric variables visible
+================================
+
+You can write the content of numeric variables directly to the info window:
+{;
+	x = 2.0
+	root = sqrt (x)
+	\#`{writeInfoLine}: “The square root of ”, x, “ is ”, root, “.”
+}
+When you try this out, this will write the following text to the Info window:
+`
+	The square root of 2 is 1.4142135623730951.
+`
+{-;
 	assert string$ (sqrt (2)) = "1.4142135623730951"
-@*/
-NORMAL (U"You can fix the number of digits after the decimal point by use of the #`fixed$` function:")
-CODE (U"x = 2.0")
-CODE (U"root = sqrt (x)")
-CODE (U"writeInfoLine: \"The square root of \", \\#`{fixed$} (x, 3), \" is approximately \", \\#`{fixed$} (root, 3), \".\"")
-NORMAL (U"This will write the following text to the Info window:")
-CODE (U"The square root of 2.000 is approximately 1.414.")
-/*@praat
+}
+
+You can fix the number of digits after the decimal point by use of the @`fixed$` function:
+{
+	x = 2.0
+	root = sqrt (x)
+	\`{writeInfoLine}: “The square root of ”, \#`{fixed$} (x, 3), “ is approximately ”, \#`{fixed$} (root, 3), “.”
+}
+{-;
 	assert fixed$ (sqrt (2), 3) = "1.414"
-@*/
-NORMAL (U"By using 0 decimal digits, you round to whole values:")
-CODE (U"root = sqrt (2)")
-CODE (U"writeInfoLine: \"The square root of 2 is very approximately \", fixed$ (root, 0), \".\"")
-NORMAL (U"This will write the following text to the Info window:")
-CODE (U"The square root of 2 is very approximately 1.")
-/*@praat
+}
+
+By using 0 decimal digits, you round to whole values:
+{
+	root = sqrt (2)
+	\`{writeInfoLine}: “The square root of 2 is very approximately ”, fixed$ (root, 0), “.”
+}
+{-;
 	assert fixed$ (sqrt (2), 0) = "1"
-@*/
-NORMAL (U"By using the `percent$` function, you give the result in a percent format:")
-CODE (U"jitter = 0.0156789")
-CODE (U"writeInfoLine: \"The jitter is \", \\#`{percent$} (jitter, 3), \".\"")
-NORMAL (U"This will write the following text to the Info window:")
-CODE (U"The jitter is 1.568%.")
-/*@praat
+}
+
+By using the `percent$` function, you give the result in a percent format:
+{
+	jitter = 0.0156789
+	\`{writeInfoLine}: “The jitter is ”, \#`{percent$} (jitter, 3), “.”
+}
+{-;
 	jitter = 0.0156789
 	assert percent$ (jitter, 3) = "1.568%"
 	jitter = -0.0156789
 	assert percent$ (jitter, 3) = "-1.568%"
-@*/
-NORMAL (U"The number 0, however, will always be written as 0, and for small numbers the number of "
-	"significant digits will never be less than 1:")
-CODE (U"jitter = 0.000000156789")
-CODE (U"writeInfoLine: \"The jitter is \", percent$ (jitter, 3), \".\"")
-NORMAL (U"This will write the following text to the Info window:")
-CODE (U"The jitter is 0.00002%.")
-/*@praat
+}
+
+The number 0, however, will always be written as 0, and for small numbers the number of
+significant digits will never be less than 1:
+{
+	jitter = 0.000000156789
+	\`{writeInfoLine}: “The jitter is ”, percent$ (jitter, 3), “.”
+}
+{-;
 	assert percent$ (0, 3) = "0"
 	jitter = 0.000000156789
 	assert percent$ (jitter, 3) = "0.00002%"
 	jitter *= -1
 	assert percent$ (jitter, 3) = "-0.00002%"
-@*/
-ENTRY (U"Predefined variables")
-NORMAL (U"All of the variables you saw earlier in this tutorial were defined at the first moment a value was assigned to them. "
-	"Some variables, however, are already defined implicitly at the start of your script.")
-NORMAL (U"Some predefined ##numeric variables# are `macintosh`, `windows`, and `unix`, which are 1 if your edition of Praat "
-	"was built for the Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero. "
-	"Likewise, we have `praat_32bit` and `praat_64bit`, of which one is 1 and the other 0, "
-	"depending on whether your edition of Praat was built for 32-bit or 64-bit computers. "
-	"More precisely, we have `praat_intel32`, `praat_intel64` and `praat_arm64`, one of which is 1 (and the others 0) "
-	"depending on whether the type of processor chip that your edition of Praat was made for is "
-	"32-bit Intel (= x86, i386, i686), or 64-bit Intel (= AMD64), or ARM64 (= Aarch64). "
-	"Another predefined numeric variable is `praatVersion`, which is e.g. " stringize(PRAAT_VERSION_NUM) " for the current version of Praat.")
-NORMAL (U"Some ##predefined string variables# are `newline$`, `tab$`, and `shellDirectory$`. "
-	"The last one specifies the folder that was the default folder when Praat started up; "
-	"you can use it in scripts that run from the Unix or Windows command line. "
-	"Likewise, there exist the predefined string variables `homeDirectory$`, "
-	"`preferencesDirectory$`, and `temporaryDirectory$`. These three refer to your home folder "
-	"(which is where you log in), the Praat @@preferences folder@, and a folder for saving temporary files; "
-	"if you want to know what they are on your computer, try to write them into a script window. "
-	"The variable `defaultDirectory$` is available for formulas in scripts; it is the folder that contains the script file. "
-	"Finally, we have `praatVersion$`, which is “" stringize(PRAAT_VERSION_STR) "” for the current version of Praat.")
-ENTRY (U"Functions that handle variables")
-NORMAL (U"To check whether a variable exists, you can use the function")
-CODE (U"variableExists (variableName$)")
-/*@praat
+}
+
+Predefined variables
+====================
+
+All of the variables you saw earlier in this tutorial were defined at the first moment a value was assigned to them.
+Some variables, however, are already defined implicitly at the start of your script.
+
+Some predefined ##numeric variables# are `macintosh`, `windows`, and `unix`, which are 1 if your edition of Praat
+was built for the Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero.
+Likewise, we have `praat_32bit` and `praat_64bit`, of which one is 1 and the other 0,
+depending on whether your edition of Praat was built for 32-bit or 64-bit computers.
+More precisely, we have `praat_intel32`, `praat_intel64` and `praat_arm64`, one of which is 1 (and the others 0)
+depending on whether the type of processor chip that your edition of Praat was made for is
+32-bit Intel (= x86, i386, i686), or 64-bit Intel (= AMD64), or ARM64 (= Aarch64).
+Another predefined numeric variable is `praatVersion`, which is something like 6421.
+
+Some ##predefined string variables# are `newline$`, `tab$`, and `shellDirectory$`.
+The last one specifies the folder that was the default folder when Praat started up;
+you can use it in scripts that run from the Unix or Windows command line.
+Likewise, there exist the predefined string variables `homeDirectory$`,
+`preferencesDirectory$`, and `temporaryDirectory$`. These three refer to your home folder
+(which is where you log in), the Praat @@preferences folder@, and a folder for saving temporary files;
+if you want to know what they are on your computer, try to write them into a script window.
+The variable `defaultDirectory$` is available for formulas in scripts; it is the folder that contains the script file.
+Finally, we have `praatVersion$`, which is something like “6.4.21”."
+
+A disadvantage of predefined variables is that they can be changed. For this reason you are advised to use
+functions instead, if they exist:
+- @`appVersion`() instead of `praatVersion`
+- @`appVersion$`() instead of `praatVersion$`
+
+Functions that handle variables
+===============================
+
+To check whether a variable exists, you can use the function
+{;
+	variableExists (variableName$)
+}
+as in
+{
 	fgh = 567
 	assert variableExists ("fgh")
 	assert not variableExists ("jhfwbfejfgcds")
-@*/
-MAN_END
+}
+
+################################################################################
+)~~~"
+MAN_PAGES_END
+
 /*
 form Convert from WAV to AIFF
    text fileName hello.wav

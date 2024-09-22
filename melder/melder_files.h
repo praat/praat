@@ -73,8 +73,8 @@ void MelderFolder_getSubfolder (MelderFolder parentFolder, conststring32 subfold
 void Melder_rememberShellDirectory ();
 conststring32 Melder_getShellDirectory ();
 void Melder_getHomeDir (MelderFolder homeDir);
-inline structMelderFolder Melder_preferencesFolder { };
-void Melder_getParentPreferencesFolder (MelderFolder prefDir);
+MelderFolder Melder_preferencesFolder5 (), Melder_preferencesFolder7 (), Melder_preferencesFolder ();
+void Melder_setPreferencesFolder (conststring32 path);
 void Melder_getTempDir (MelderFolder tempDir);
 
 bool MelderFile_exists (MelderFile file);

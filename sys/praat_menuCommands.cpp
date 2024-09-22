@@ -18,7 +18,6 @@
 
 #include "praatP.h"
 #include "praat_script.h"
-#include "praat_version.h"
 #include "GuiP.h"
 
 static OrderedOf <structPraat_Command> theCommands;
@@ -476,7 +475,7 @@ int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpret
 		return 0;
 	if (commandFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		const conststring32 scriptPath = commandFound -> script.get();
-		const conststring32 preferencesFolderPath = Melder_folderToPath (& Melder_preferencesFolder);
+		const conststring32 preferencesFolderPath = Melder_folderToPath (Melder_preferencesFolder());
 		const bool scriptIsInPlugin = Melder_startsWith (scriptPath, preferencesFolderPath);
 		Melder_throw (
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
@@ -508,7 +507,7 @@ int praat_doMenuCommand (conststring32 title, integer narg, Stackel args, Interp
 		return 0;
 	if (commandFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		const conststring32 scriptPath = commandFound -> script.get();
-		const conststring32 preferencesFolderPath = Melder_folderToPath (& Melder_preferencesFolder);
+		const conststring32 preferencesFolderPath = Melder_folderToPath (Melder_preferencesFolder());
 		const bool scriptIsInPlugin = Melder_startsWith (scriptPath, preferencesFolderPath);
 		Melder_throw (
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
@@ -542,7 +541,7 @@ void praat_addCommandsToEditor (Editor me) {
 static bool commandIsToBeIncluded (Praat_Command command, bool deprecated, bool includeCreateAPI, bool includeReadAPI,
 	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
 {
-	const bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2023) );
+	const bool obsolete = ( deprecated && (command -> deprecationYear < Melder_appYear() - 10 || command -> deprecationYear < 2023) );
 	const bool hiddenByDefault = ( command -> hidden != command -> toggled );
 	const bool explicitlyHidden = hiddenByDefault && ! deprecated;
 	const bool hidden = explicitlyHidden || ! command -> callback || command -> noApi || obsolete ||

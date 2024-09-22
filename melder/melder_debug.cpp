@@ -21,7 +21,6 @@
 	#include "../sys/GuiP.h"
 #endif
 #include <time.h>
-#include "../sys/praat_version.h"
 #ifdef _WIN32
 	#include "../kar/UnicodeData.h"
 	#include <windows.h>
@@ -255,7 +254,7 @@ void Melder_setTracing (bool tracing) {
 	time_t today = time (nullptr);
 	if (! tracing)
 		trace (U"switch tracing off"
-			U" in Praat version ", Melder_peek8to32 (stringize(PRAAT_VERSION_STR)),
+			U" in Praat version ", Melder_appVersionSTR(),
 			U" at ", Melder_peek8to32 (ctime (& today))
 		);
 	Melder_isTracingGlobally = tracing;
@@ -274,7 +273,7 @@ void Melder_setTracing (bool tracing) {
 	#endif
 	if (tracing)
 		trace (U"switch tracing on"
-			U" in Praat version ", Melder_peek8to32 (stringize(PRAAT_VERSION_STR)),
+			U" in Praat version ", Melder_appVersionSTR(),
 			U" at ", Melder_peek8to32 (ctime (& today))
 		);
 }

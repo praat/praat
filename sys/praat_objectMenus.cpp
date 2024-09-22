@@ -398,9 +398,9 @@ FORM (SETTINGS__debug, U"Set debugging options", nullptr) {
 	COMMENT (U"information about what goes on in Praat")
 	structMelderFile file;
 	#ifdef UNIX
-		MelderFolder_getFile (& Melder_preferencesFolder, U"tracing", & file);
+		MelderFolder_getFile (Melder_preferencesFolder(), U"tracing", & file);
 	#else
-		MelderFolder_getFile (& Melder_preferencesFolder, U"Tracing.txt", & file);
+		MelderFolder_getFile (Melder_preferencesFolder(), U"Tracing.txt", & file);
 	#endif
 	COMMENT (Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
 	BOOLEAN (tracing, U"Tracing", false)
@@ -449,6 +449,12 @@ DO
 DIRECT (INFO_NONE__reportSystemProperties) {
 	INFO_NONE
 		praat_reportSystemProperties ();
+	INFO_NONE_END
+}
+
+DIRECT (INFO_NONE__reportAppProperties) {
+	INFO_NONE
+		praat_reportAppProperties ();
 	INFO_NONE_END
 }
 
@@ -783,7 +789,7 @@ void praat_addMenus (GuiWindow window) {
 		helpMenu = GuiMenu_createInWindow (window, U"Help", 0);
 	}
 	
-	MelderString_append (& itemTitle_about, U"About ", praatP.title.get());
+	MelderString_append (& itemTitle_about, U"About ", Melder_upperCaseAppName());
 	praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, GuiMenu_UNHIDABLE,
 			PRAAT__About);
 	#ifdef macintosh
@@ -859,6 +865,8 @@ void praat_addMenus (GuiWindow window) {
 			nullptr, 0, INFO_NONE__reportIntegerProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report system properties",
 			nullptr, 0, INFO_NONE__reportSystemProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report app properties",
+			nullptr, 0, INFO_NONE__reportAppProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report graphical properties",
 			nullptr, 0, INFO_NONE__reportGraphicalProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties",
@@ -894,7 +902,7 @@ void praat_addMenus2 () {
 			nullptr, 0, PRAAT__GoToManualPage);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Save manual to HTML folder...",
 			nullptr, GuiMenu_HIDDEN, HELP_SaveManualToHtmlFolder);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", Melder_cat (U"Search ", praatP.title.get(), U" manual..."),
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", Melder_cat (U"Search ", Melder_upperCaseAppName(), U" manual..."),
 			nullptr, 'M' | GuiMenu_NO_API, PRAAT__SearchManual);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", itemTitle_about.string,
 			nullptr, GuiMenu_UNHIDABLE, PRAAT__About);

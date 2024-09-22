@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include "praat_version.h"
 
 static void defaultErrorProc (conststring32 message) {
 	MelderConsole::write (str32str (message, U"You interrupted ") ? U"User interrupt: " : U"Error: ", true);
@@ -64,7 +63,7 @@ bool Melder_hasError (conststring32 partialError) {
 
 static conststring32 crashMessage () {
 	static char32 crashMessageBuffer [1000];
-	str32cpy (crashMessageBuffer, U"Praat");   // TODO: make dependent on app name
+	str32cpy (crashMessageBuffer, Melder_upperCaseAppName());
 	str32cat (crashMessageBuffer, CRASH_SEMAPHORE);
 	str32cat (crashMessageBuffer, U"paul.boersma@uva.nl");   // TODO: make dependent on author email address
 	str32cat (crashMessageBuffer, U") with all of the following information");
@@ -161,7 +160,9 @@ void Melder_assert_ (const char *pathName, int lineNumber, const char *condition
 	snprintf (lineNumberBuffer8,40, "%d", lineNumber);
 	Melder_8to32_inplace (lineNumberBuffer8, lineNumberBuffer, kMelder_textInputEncoding::UTF8);
 	MelderError::_append (crashMessage ());
-	MelderError::_append (U"Assertion failed in Praat " stringize (PRAAT_VERSION_STR) " in file \"");
+	MelderError::_append (U"Assertion failed in Praat ");
+	MelderError::_append (Melder_appVersionSTR());
+	MelderError::_append (U" in file \"");
 	MelderError::_append (fileName);
 	MelderError::_append (U"\" at line ");
 	MelderError::_append (lineNumberBuffer);
