@@ -211,10 +211,10 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 		events++;
 	}
 	if (me) {
-		my d_wav.resize (my d_numberOfSamples + numsamples);
+		my d_wav. resize (my d_numberOfSamples + numsamples);
+		my d_numberOfSamples = my d_wav.size;   // maintain invariant
 		for (integer i = 1; i <= numsamples; i++)
 			my d_wav [my d_numberOfSamples + i] = wav [i - 1];
-		my d_numberOfSamples += numsamples;
 	}
 	return 0;
 }
@@ -683,6 +683,12 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 
 autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces) {
 	try {
+		/*
+			Clear the wave buffer.
+		*/
+		my d_wav. resize (0);
+		my d_numberOfSamples = my d_wav.size;   // maintain invariant
+
 		SpeechSynthesizer_generateSynthesisData (me, text);
 		const double dt = 1.0 / my d_internalSamplingFrequency;
 		const double tmin = 0.0, tmax = my d_wav.size * dt;
@@ -712,6 +718,7 @@ autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, consts
 			} else
 				MelderString_append (& phonemes, phonemeLabel, (iint < numberOfIntervals ? phonemeSeparator : U"") );
 		}
+		//my d_events. reset();   // ppgb: this was not in the code, but is this in fact superflous?
 		return Melder_dup (phonemes.string);   // TODO: implement MelderString_move()
 	} catch (MelderError) {
 		Melder_throw (U"Phonemes not generated.");
@@ -720,12 +727,17 @@ autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, consts
 
 autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, autoTextGrid *tg, autoTable *events) {
 	try {
+		/*
+			Clear the wave buffer.
+		*/
+		my d_wav.resize (0);
+		my d_numberOfSamples = my d_wav.size;   // maintain invariant
+
 		SpeechSynthesizer_generateSynthesisData (me, text);
 		autoSound thee = buffer_to_Sound (my d_wav.get(), my d_internalSamplingFrequency);
 
 		if (my d_samplingFrequency != my d_internalSamplingFrequency)
 			thee = Sound_resample (thee.get(), my d_samplingFrequency, 50);
-		my d_numberOfSamples = 0; // re-use the wav-buffer
 		if (tg) {
 			const double xmin = Melder_clippedRight (Table_getNumericValue_a (my d_events.get(), 1, 1), thy xmin);   // !
 			const double xmax = Melder_clippedLeft (thy xmax, Table_getNumericValue_a (my d_events.get(), my d_events -> rows.size, 1));   // !
