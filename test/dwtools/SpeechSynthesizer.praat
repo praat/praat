@@ -1,4 +1,6 @@
-if 0
+writeInfoLine: "testing SpeechSynthesizer..."
+if 1
+	appendInfoLine: "testing French..."
 	my.SpeechSynthesizer = Create SpeechSynthesizer: "French (France)", "Female1"
 	text$ = "voici les clés de ton bonheur"
 	phonemes$ = Get phonemes from text: text$
@@ -9,7 +11,8 @@ if 0
 	Remove
 endif
 
-if 0
+if 1
+	appendInfoLine: "testing Hindi..."
 	my.SpeechSynthesizer = Create SpeechSynthesizer: "Hindi", "Female1"
 	text$ = "अवग्रहः"
 	phonemes$ = Get phonemes from text: text$
@@ -22,7 +25,8 @@ endif
 # bug solved on 2024-09-23: too long sound after "Get phonemes from text"
 # (wav-buffer was cleared late instead of at the beginning)
 #
-if 0
+if 1
+	appendInfoLine: "testing clearing of buffer..."
 	my.SpeechSynthesizer = Create SpeechSynthesizer: "English (Great Britain)", "Female1"
 	text$ = "This is some text."
 	my.Sound = To Sound: text$, "no"
@@ -49,6 +53,7 @@ endif
 # Still existing on 2024-09-23.
 #
 if 1
+	appendInfoLine: "testing appearance of clause and word tiers..."
 	my.SpeechSynthesizer = Create SpeechSynthesizer: "English (Great Britain)", "Female1"
 	Speech output settings: 44100, 0.01, 1, 1, 130, "IPA" 
 	To Sound: "This is some text.", "yes"
@@ -98,8 +103,8 @@ if 1
 	#
 	# The following crashed in 6.4.17.
 	#
-	selectObject: my.Sound, my.TextGrid
-	View & Edit
+	;selectObject: my.Sound, my.TextGrid
+	;View & Edit
 	#
 	# Clean up.
 	#
