@@ -730,7 +730,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		/*
 			Clear the wave buffer.
 		*/
-		my d_wav.resize (0);
+		my d_wav. resize (0);
 		my d_numberOfSamples = my d_wav.size;   // maintain invariant
 
 		SpeechSynthesizer_generateSynthesisData (me, text);

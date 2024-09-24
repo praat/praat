@@ -663,7 +663,7 @@ autoTextGrid SpeechSynthesizer_Sound_IntervalTier_align (SpeechSynthesizer me, S
 		for (integer iint = istart; iint <= iend; iint ++) {
 			const TextInterval ti = his intervals.at [iint];
 			if (ti -> text && ti -> text [0] != U'\0') {
-				autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape::RECTANGULAR, 1, true);
+				autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax, kSound_windowShape::RECTANGULAR, 1, true);
 				autoTextGrid grid = SpeechSynthesizer_Sound_TextInterval_align (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
 				textgrids. addItem_move (grid.move());
 			}
