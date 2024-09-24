@@ -1209,7 +1209,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 					"so Praat is probably not running yet. We are process ", pidOfCurrentPraat, U".");
 			return false;
 		}
-		constexpr integer versionOfCurrentPraat = Melder_appVersion();
+		const integer versionOfCurrentPraat = Melder_appVersion();
 		if (versionOfRunningPraat != versionOfCurrentPraat) {
 			trace (U"The current version of Praat differs from the version of the Praat that may already be running, "
 					"so we cannot be sure it would respond as we would.");
