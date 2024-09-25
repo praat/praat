@@ -4,7 +4,7 @@
 sources = '''
 	ChebyshevSeries.cpp Collection_extensions.cpp Command.cpp
 	DoublyLinkedList.cpp Eigen.cpp
-	FileInMemory.cpp FileInMemorySet.cpp FileInMemoryManager.cpp
+	FileInMemory.cpp
 	FunctionSeries.cpp
 	Graphics_extensions.cpp Index.cpp
 	LegendreSeries.cpp
