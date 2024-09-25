@@ -1,19 +1,19 @@
 # meson.build of the external library "espeak"
-# David Weenink, 6 January 2024
+# David Weenink, 5 September 2024
 
 sources = '''
-	case.cpp categories.cpp
-	create_espeak_ng_FileInMemoryManager.cpp
-	create_espeak_ng_FileInMemorySet.cpp create_espeak_ng_FileInMemorySet__ru.cpp
-	espeak_io.cpp
-	common.cpp compiledata.cpp compiledict.cpp
+	case.cpp categories.cpp common.cpp compiledict.cpp
 	dictionary.cpp
 	encoding.cpp error.cpp espeak_api.cpp
 	intonation.cpp klatt.cpp langopts.cpp mnemonics.cpp
 	numbers.cpp phonemelist.cpp proplist.cpp readclause.cpp
 	setlengths.cpp soundicon.cpp speech.cpp
 	ssml.cpp synthdata.cpp synthesize.cpp
-	synth_mbrola.cpp tr_languages.cpp translate.cpp translateword.cpp voices.cpp wavegen.cpp'''.split()
+	tr_languages.cpp translate.cpp translateword.cpp voices.cpp wavegen.cpp
+	espeak_praat_FileInMemorySet_addLanguages.cpp espeak_praat_FileInMemorySet_addVoices.cpp
+	espeak_praat_FileInMemorySet_addRussianDict.cpp espeak_praat_FileInMemorySet_addFaroeseDict.cpp
+	espeak_praat_FileInMemorySet_addOtherDicts.cpp espeak_praat_FileInMemorySet_addPhon.cpp
+	espeak_praat.cpp'''.split()
 
 libespeak = static_library (
 	'espeak',

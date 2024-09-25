@@ -1,5 +1,5 @@
 # meson.build of the library "dwtools"
-# David Weenink, 25 May 2024
+# David Weenink, 5 September 2024
 
 sources = '''
 	ActivationList.cpp AffineTransform.cpp AnalyticSound.cpp
@@ -17,7 +17,6 @@ sources = '''
 	Eigen_and_Matrix.cpp Eigen_and_Procrustes.cpp
 	Eigen_and_TableOfReal.cpp
 	Eigen_and_SSCP.cpp Excitations.cpp
-	espeakdata_FileInMemory.cpp
 	FilterBank.cpp FormantGrid_extensions.cpp
 	GaussianMixture.cpp
 	HMM.cpp
@@ -49,7 +48,7 @@ sources = '''
 	Spectrum_and_AnalyticSound.cpp Spectrum_and_MultiSampledSpectrogram.cpp
 	SSCP.cpp Strings_extensions.cpp
 	SpeechSynthesizer.cpp SpeechSynthesizer_and_TextGrid.cpp
-	Table_and_Strings.cpp Table_extensions.cpp Table_dataSets.cpp TableOfReal_and_SVD.cpp
+	Table_extensions.cpp Table_dataSets.cpp TableOfReal_and_SVD.cpp
 	TableOfReal_extensions.cpp
 	TableOfReal_and_Discriminant.cpp TableOfReal_and_Permutation.cpp
 	TextGrid_and_DurationTier.cpp TextGrid_and_PitchTier.cpp TextGrid_extensions.cpp
