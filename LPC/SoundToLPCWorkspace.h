@@ -109,7 +109,7 @@ autoSoundAndLPCToLPCRobustWorkspace SoundAndLPCToLPCRobustWorkspace_createSkelet
 	constSound input, constLPC otherInput, mutableLPC output
 );
 
-autoSoundAndLPCToLPCRobustWorkspace SoundAndLPCToLPCRobustWorkspace_create (constSound input, constLPC otherInput, mutableLPC output, 
+autoSoundAndLPCToLPCRobustWorkspace SoundAndLPCToLPCRobustWorkspace_create (constSound input, constLPC otherInput, mutableLPC output,
 	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev,
 	integer itermax, double tol, double location, bool wantlocation
 );
@@ -118,7 +118,7 @@ autoSoundAndLPCToLPCRobustWorkspace SoundAndLPCToLPCRobustWorkspace_create (cons
 
 void SoundToLPCRobustWorkspace_init (SoundToLPCRobustWorkspace me,
 	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape,
-	integer maxnCoefficients,	double k_stdev,	integer itermax, double tol, double location, bool wantlocation
+	integer maxnCoefficients, double k_stdev, integer itermax, double tol, double location, bool wantlocation
 );
 
 autoSoundToLPCRobustWorkspace SoundToLPCRobustWorkspace_createSkeleton (constSound input, mutableLPC output);

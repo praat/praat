@@ -659,6 +659,7 @@ bool structSoundAndLPCToLPCRobustWorkspace :: inputFrameToOutputFrame () {
 	if (currentPredictionOrder == 0) // is empty frame ?
 		return true;
 	LPC_Frame thee = outputLPCFrameRef;
+	outputLPCFrameRef -> gain = otherInputLPCFrameRef -> gain;
 	
 	VEC inout_a = thy a.part (1, currentPredictionOrder);
 	iter = 0;
