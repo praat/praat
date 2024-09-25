@@ -63,7 +63,7 @@ void structDataModeler :: v1_info () {
 	MelderInfo_writeLine (U"      Number of data points: ", numberOfDataPoints);
 	MelderInfo_writeLine (U"      Number of parameters: ", numberOfParameters);
 	MelderInfo_writeLine (U"      Each data point has ",
-		(weighData == kDataModelerWeights::EQUAL_WEIGHTS ? U" the same weight (estimated)." :
+		(weighData == kDataModelerWeights::EQUAL_WEIGHTS ? U"the same weight (estimated)." :
 		( weighData == kDataModelerWeights::ONE_OVER_SIGMA ? U"a different weight (sigmaY)." : 
 		( weighData == kDataModelerWeights::RELATIVE_ ? U"a different relative weight (Y_value/sigmaY)." :
 		U"a different weight (SQRT(sigmaY))." ) ) ));
@@ -375,10 +375,10 @@ static void exponential_fit (DataModeler me) {
 		integer index = 0;
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 			if (my data [k].status != kDataModelerData::INVALID) {
-				const double sizeWeight = fabs (my data [k].y);
-				design [++ index] [1] = 1.0 * sizeWeight * weights [k];
-				design [index] [2] = (my data [k].x - xtr) * sizeWeight * weights [k];
-				yEstimate [index] = log (sign * my data [k].y) * sizeWeight * weights [k];
+				const double sizeWeight = fabs (my data [k].y) * weights [k];
+				design [++ index] [1] = /* 1.0 * */ sizeWeight;
+				design [index] [2] = (my data [k].x - xtr) * sizeWeight;
+				yEstimate [index] = log (sign * my data [k].y) * sizeWeight;
 			}
 		}
 		Melder_require (index > 0,
@@ -412,24 +412,22 @@ static void linear_exponent_evaluateBasisFunctions (DataModeler me, double xin, 
 
 static void exponential_plus_constant_fit (DataModeler me) {
 	Melder_assert (my numberOfParameters == 3);
+	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_ && my parameters [2].status == kDataModelerParameterStatus::FIXED_ &&
+		my parameters [3].status == kDataModelerParameterStatus::FIXED_)
+			return;
 	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_) {
-		if (my parameters [2].status == kDataModelerParameterStatus::FIXED_ &&
-			my parameters [3].status == kDataModelerParameterStatus::FIXED_)
-				return;
 		/*
 			With fixed 'a', the model y(x) = a + b*exp(c*x) reduces to the exponential model:
-				z(x) = b * exp (c * x), where z(x) = y(x) - a, which has only 2 parameter to fit.
+				z(x) = b * exp (c * x), where z(x) = y(x) - a, which has only 2 parameters to fit.
+			Create the new model and let it do all the checks.
 		*/
 		autoDataModeler thee = DataModeler_create (my xmin, my xmax, my numberOfDataPoints, my numberOfParameters - 1,
 			kDataModelerFunction::EXPONENTIAL);
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 			thy data [k] = my data [k];
-			if (my data [k]. status != kDataModelerData::INVALID)
-				thy data [k]. y -= my parameters [1]. value;
+			if (thy data [k]. status != kDataModelerData::INVALID)
+				thy data [k]. y -= my parameters [1]. value; // yes, do it for valid and invalid data
 		}
-		/*
-			The checks for the  validness of y[i]-a, which should all have the same sign, are performed by DataModeler_fit().
-		*/
 		DataModeler_fit (thee.get());
 		my parameters [2]. value = thy parameters [1]. value;
 		my parameters [3]. value = thy parameters [2]. value;
@@ -447,21 +445,22 @@ static void exponential_plus_constant_fit (DataModeler me) {
 			my parameters [1]. value = 0.0;
 			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 				thy data [k] = my data [k];
-				if (thy data [k]. status != kDataModelerData::INVALID) {
+				if (thy data [k]. status != kDataModelerData::INVALID)
 					thy data [k]. y -= my f_evaluate (me, thy data [k]. x, my parameters.get());   // z(x) = y(x) - b * exp(c * x)
-				}
 			}
 			DataModeler_fit (thee.get());
 			my parameters [1]. value = thy parameters [1]. value;
 		} else {
 			/*
 				Model: z(x) = a + b * f(x), where f(x) = exp (c * x).
-				Fit as linear model with the third parameter fixed!
-				We need the third parameter for the 'linear_exponent_evaluateBasisFunctions'
-				We therefore extend the parameters struct with one element without increasing the
+				TRICK: fit as linear model with the third parameter 'c' fixed!
+				We need the value of the third parameter to calculate f(x) in 'linear_exponent_evaluateBasisFunctions'.
+				We therefore extend only the parameters struct with one element without increasing the
 				numberofParameters value which stays at 2!
 			*/
-			autoDataModeler thee = DataModeler_createFromDataModeler (me, 2, kDataModelerFunction::LINEAR);
+			autoDataModeler thee = DataModeler_create (my xmin, my xmax, my numberOfDataPoints, 2, kDataModelerFunction::LINEAR);
+			for (integer k = 1; k <= my numberOfDataPoints; k ++)
+				thy data [k] = my data [k];
 			thy parameters.resize (thy numberOfParameters + 1);
 			thy parameters [thy numberOfParameters + 1]. value = my parameters [3]. value;
 			thy parameters [thy numberOfParameters + 1]. status = kDataModelerParameterStatus::FIXED_EXTRA;
@@ -473,57 +472,76 @@ static void exponential_plus_constant_fit (DataModeler me) {
 		}
 	} else {
 		/*
-			Parameter 1 (a) and 3 (c) are FREE
+			Parameter 1 'a' and 3 'c' are not FIXED_.
 			First we determine c.
 			Model: z(x) = A * f1(x) + B * f2(x), where z(x) = y(x) - y [1], f1(x) = x - x [1], f2(x) = integral (x1, x, y(x)dx)
 			A = - a * c, B = c
+			It can be written as y[k]-y[1] = A(x[k]-x[1]) + B*S[k], where
+				S[k] = S[k-1] + 0.5(y[k]+y[k-1])*(x[k]-x[k-1]) with S[1] = 0;
+				The approximation S[k] = integral (x[1], x[k], y(x)dx) works best if the differences between
+				y[k] and y[k-1] are not too big!
 		*/
 		autoMAT design = zero_MAT (my numberOfDataPoints, 2);
 		autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
 		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData, true);
-		const longdouble x1 = my data [1].x, y1 = my data [1].y;
 		/*
-			First row of design has only zero's, skip it.
+			First row of design has only zero's, we skip it.
+			No need to scale the x[k]'s (as x[k]-(xmax+xmin)/2) because they always occur as a difference in the calculations below.
 		*/
+		integer kstart = 0;
+		while (++ kstart <= my numberOfDataPoints && my data [kstart].status == kDataModelerData::INVALID);
+		const longdouble x1 = my data [kstart].x, y1 = my data [kstart].y;
 		longdouble xkm1 = x1, ykm1 = y1, sk = 0.0;
-		integer index = 1; // TODO ?? or 0
-		for (integer k = 2; k <= my numberOfDataPoints; k ++) {
-			if (my data [k] .status != kDataModelerData::INVALID) {
-				const longdouble xk = my data [k].x, yk = my data [k].y;
+		integer index = 0;
+		for (integer k = kstart; k <= my numberOfDataPoints; k ++) {
+			if (my data [k].status != kDataModelerData::INVALID) {
+				const longdouble xk = my data [k].x;
+				const longdouble yk = my data [k].y;
+				const longdouble wk = weights [k];
 				sk += 0.5 * (yk + ykm1) * (xk - xkm1); // Jacquelin, Eq. (7)
-				design [++ index] [1] = double (xk - x1) * weights [k];   // Jacquelin, Eq. (9)
-				design [index] [2] = double (sk) * weights [k];
-				yEstimate [index] = double (yk - y1) * weights [k];
+				design [++ index] [1] = double ((xk - x1) * wk);   // Jacquelin, Eq. (9)
+				design [index] [2] = double (sk * wk);
+				yEstimate [index] = double ((yk - y1) * wk);
 				xkm1 = xk;
 				ykm1 = yk;
 			}
 		}
+		Melder_require (index > 0,
+			U"Not enough valid data points to fit y=a+b*exp(c*x).");
 		design.resize (index, 2);
 		yEstimate.resize (index);
 		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
 		const double c = solution [2];
+		const double a = -solution [1] / solution [2];
 		my parameters [3]. value = c;
-		if (my parameters [2]. status == kDataModelerParameterStatus::FIXED_) {
+		/*
+			We now have only one parameter 'b' to determine.
+			According to Jacquelet it works better if we optimise a model with two parameters 'a' and 'b', with only 'c' fixed:
+			This results a linear model with two terms:
+				y(x) = a + b * f(x), where f(x) = exp(c*x)
+		*/		
+		if (my parameters [2].status == kDataModelerParameterStatus::FIXED_) {
 			/*
 				Model: z(x)= a, where z(x) = y(x) - b * exp(c * x)
 			*/
-			autoDataModeler thee = DataModeler_createFromDataModeler (me, 1, kDataModelerFunction::LINEAR);
+			autoDataModeler thee = DataModeler_create (my xmin, my xmax, my numberOfDataPoints, 1, kDataModelerFunction::LINEAR);
 			thy f_evaluate = constant_evaluate;
 			thy f_evaluateBasisFunctions = constant_evaluateBasisFunctions;
-			my parameters [1]. value = 0.0;
+			my parameters [1]. value = 0.0;  // set a = 0 for the function evaluation
 			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
-				if (thy data [k]. status != kDataModelerData::INVALID) {
-					thy data [k]. y -= my f_evaluate (me, thy data [k]. x, my parameters.get());// z(x) = y(x) - b * exp(c * x)
-				}
+				thy data [k] = my data [k];
+				if (thy data [k].status != kDataModelerData::INVALID)
+					thy data [k].y -= my f_evaluate (me, thy data [k].x, my parameters.get()); // z(x) = y(x) - b * exp(c * x)
 			}
 			DataModeler_fit (thee.get());
 			my parameters [1]. value = thy parameters [1]. value;
 		} else {
 			/*
-				As if c were fixed
-				Model: y(x) = a + b * f(x), where f(x) = exp (c * x).
+				Model: y(x) = a + b * f(x), where f(x) = exp (c * x) and c is fixed
 			*/
-			autoDataModeler thee = DataModeler_createFromDataModeler (me, 2, kDataModelerFunction::LINEAR);
+			autoDataModeler thee = DataModeler_create (my xmin, my xmax, my numberOfDataPoints, 2, kDataModelerFunction::LINEAR);
+			for (integer k = 1; k <= my numberOfDataPoints; k ++)
+				thy data [k] = my data [k];		
 			thy parameters.resize (thy numberOfParameters + 1);
 			thy parameters [thy numberOfParameters + 1]. value = c;
 			thy parameters [thy numberOfParameters + 1]. status = kDataModelerParameterStatus::FIXED_EXTRA;
