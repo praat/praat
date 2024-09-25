@@ -29,6 +29,13 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.21# (21 September 2024)
+• SpeechSynthesizer: repaired an old bug whereby ##Get phonemes from text...# could increase the duration
+  of a subsequent ##Play# (or ##To Sound...#).
+• SpeechSynthesizer and TextGrid alignment: repaired a bug (existing since 6.4.18) whereby #clause and #word tiers would be empty.
+• TextGrid window: disambiguated Command-F5 (now Option-F5 for ##Get minimum pitch#; likewise, Option-F8 for ##Get minimum intensity#).
+• Calling Praat from command line: reenabled `--pref-dir=` option.
+
 ##6.4.20# (18 September 2024)
 • Linux: repaired a major bug whereby Praat could crash when trying to draw to a hidden Picture window.
 • Scripting: just like normal forms, pause forms now also accept “yes” and “off” (and the like) instead of just 1 and 0.

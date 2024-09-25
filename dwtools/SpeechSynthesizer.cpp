@@ -212,9 +212,9 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	}
 	if (me) {
 		my d_wav. resize (my d_numberOfSamples + numsamples);
-		my d_numberOfSamples = my d_wav.size;   // maintain invariant
 		for (integer i = 1; i <= numsamples; i++)
 			my d_wav [my d_numberOfSamples + i] = wav [i - 1];
+		my d_numberOfSamples = my d_wav.size;   // maintain invariant, *after* copy of content
 	}
 	return 0;
 }
