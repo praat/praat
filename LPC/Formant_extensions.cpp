@@ -140,6 +140,7 @@ autoFormant Formant_readFromHTKParameterFile (MelderFile file) {
 
 autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax, kSlopeCurve curveType) {
 	integer itmin, itmax;
+	Function_bidirectionalAutowindow (me, & tmin, & tmax);
 	Melder_require (Function_intersectRangeWithDomain (me, & tmin, & tmax),
 		U"The requested time range should be within the domain of the Formant.");
 	integer numberOfParameters = 3, numberOfSlopeParameters = 7;
@@ -164,11 +165,12 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 		const Formant_Frame frame = & my frames [iframe];
 		const integer numberOfFormants = frame -> numberOfFormants;
 		const double frequency = frame -> formant [iformant]. frequency;
-		if (iformant > numberOfFormants || ! isdefined (frequency))
+		const double bandwidth = frame -> formant [iformant]. bandwidth;
+		if (iformant > numberOfFormants || ! isdefined (frequency) || ! isdefined (bandwidth))
 			continue;
 		dm -> data [++ numberOfDataPoints].x = Sampled_indexToX (me, iframe);
 		dm -> data [numberOfDataPoints].y = frequency;
-		dm -> data [numberOfDataPoints] .sigmaY = frame -> formant [iformant]. bandwidth;
+		dm -> data [numberOfDataPoints] .sigmaY = bandwidth;
 		dm -> data [numberOfDataPoints] .status = kDataModelerData::VALID;
 	}
 	Melder_require (numberOfDataPoints >= numberOfParameters,
