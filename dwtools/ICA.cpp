@@ -337,7 +337,8 @@ static void NUMcrossCorrelate_rows (constMAT x, integer icol1, integer icol2, in
 	Melder_assert (inout_cc.nrow == inout_cc.ncol && inout_cc.nrow == x.nrow);
 	lag = integer_abs (lag);
 	const integer nsamples = icol2 - icol1 + 1 + lag;
-	Melder_require (nsamples > 0, U"Not enough samples to perform crosscorrealtions."); 
+	Melder_require (nsamples > 0,
+		U"Not enough samples to perform cross-correlations.");
 	for (integer i = 1; i <= x.nrow; i ++)
 		inout_centroid [i] = NUMmean (x.row (i).part (icol1, icol2 + lag));
 
