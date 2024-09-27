@@ -287,12 +287,25 @@ void Configuration_rotateToPrincipalDirections (Configuration me) {
 	}
 }
 
-void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax, double ymin, double ymax, int labelSize, bool useRowLabels, conststring32 label, bool garnish)
+void Configuration_draw (Configuration me, Graphics g, int horizontalDimension, int verticalDimension,
+	double xmin, double xmax, double ymin, double ymax, int labelSize, bool useRowLabels, conststring32 label, bool garnish)
 {
-	if (my numberOfColumns > 1 && (xCoordinate > my numberOfColumns || yCoordinate > my numberOfColumns))
-		return;
-	if (my numberOfColumns == 1)
-		xCoordinate = 1;
+	Melder_require (horizontalDimension > 0,
+		U"The horizontal dimension should be positive, not ", horizontalDimension, U".");
+	Melder_require (horizontalDimension <= my numberOfColumns,
+		U"The horizontal dimension should not exceed the number of dimensions (", my numberOfColumns,
+		U"), but is in fact ", horizontalDimension, U"."
+	);
+	Melder_require (verticalDimension > 0,
+		U"The vertical dimension should be positive, not ", verticalDimension, U".");
+	Melder_require (verticalDimension <= my numberOfColumns,
+		U"The vertical dimension should not exceed the number of dimensions (", my numberOfColumns,
+		U"), but is in fact ", verticalDimension, U"."
+	);
+	Melder_require (horizontalDimension != verticalDimension,
+		U"The horizontal dimension and the vertical dimension should be different, but are in fact ",
+		horizontalDimension, U" and ", verticalDimension, U"."
+	);
 	const double fontSize = Graphics_inqFontSize (g);
 	int noLabel = 0;
 	if (labelSize == 0)
@@ -300,8 +313,8 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	autoVEC x = raw_VEC (my numberOfRows);
 	autoVEC y = raw_VEC (my numberOfRows);
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		x [irow] = my data [irow] [xCoordinate] * my w [xCoordinate];
-		y [irow] = ( my numberOfColumns > 1 ? my data [irow] [yCoordinate] * my w [yCoordinate] : 0.0 );
+		x [irow] = my data [irow] [horizontalDimension] * my w [horizontalDimension];
+		y [irow] = my data [irow] [verticalDimension] * my w [verticalDimension];
 	}
 	if (xmax <= xmin) {
 		xmin = NUMmin_u (x.get());
@@ -343,16 +356,15 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 		Graphics_marksBottom (g, 2, true, true, false);
 		if (my numberOfColumns > 1) {
 			Graphics_marksLeft (g, 2, true, true, false);
-			if (my columnLabels [xCoordinate]) {
-				Graphics_textBottom (g, true, my columnLabels [xCoordinate].get());
-			}
-			if (my columnLabels [yCoordinate]) {
-				Graphics_textLeft (g, true, my columnLabels [yCoordinate].get());
-			}
+			if (my columnLabels [horizontalDimension])
+				Graphics_textBottom (g, true, my columnLabels [horizontalDimension].get());
+			if (my columnLabels [verticalDimension])
+				Graphics_textLeft (g, true, my columnLabels [verticalDimension].get());
 		}
 	}
 	if (noLabel > 0) {
-		Melder_warning (U"Configuration_draw: ", noLabel, U" from ", my numberOfRows, U" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
+		Melder_warning (U"Configuration: Draw: ", noLabel, U" out of ", my numberOfRows,
+				U" labels are not visible, because they are empty or they contain only spaces and/or other non-printable characters.");
 	}
 }
 
