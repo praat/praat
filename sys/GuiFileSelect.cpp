@@ -146,6 +146,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow optionalParent, conststring
 		setlocale (LC_ALL, "C");
 	#elif motif
 		OPENFILENAMEW openFileName;
+		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
 		static WCHAR customFilter [100+2];
 		static WCHAR fullFileNameW [300+2];
 		wcsncpy (fullFileNameW, Melder_peek32toW_fileSystem (defaultName), 300+2);
