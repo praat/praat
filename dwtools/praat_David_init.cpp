@@ -1467,7 +1467,7 @@ DO
 FORM (GRAPHICS_EACH__Discriminant_drawOneSigmaEllipse, U"Discriminant: Draw one sigma ellipse", U"Discriminant: Draw one sigma ellipse...") {
 	SENTENCE (label, U"Label", U"")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
-	BOOLEAN (discriminatPlane, U"Discriminant plane", true)
+	BOOLEAN (discriminantPlane, U"Discriminant plane", true)
 	INTEGER (xDimension, U"X-dimension", U"1")
 	INTEGER (yDimension, U"Y-dimension", U"2")
 	REAL (xmin, U"left Horizontal range", U"0.0")
@@ -1479,7 +1479,7 @@ FORM (GRAPHICS_EACH__Discriminant_drawOneSigmaEllipse, U"Discriminant: Draw one 
 	OK
 DO
 	GRAPHICS_EACH (Discriminant)
-		Discriminant_drawConcentrationEllipses (me, GRAPHICS, numberOfSigmas, false,  label, discriminatPlane, 
+		Discriminant_drawConcentrationEllipses (me, GRAPHICS, numberOfSigmas, false, label, discriminantPlane,
 			xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish
 		);
 	GRAPHICS_EACH_END
@@ -1487,7 +1487,7 @@ DO
 
 FORM (GRAPHICS_EACH__Discriminant_drawConfidenceEllipses, U"Discriminant: Draw confidence ellipses", nullptr) {
 	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
-	BOOLEAN (discriminatPlane, U"Discriminant plane", true)
+	BOOLEAN (discriminantPlane, U"Discriminant plane", true)
 	INTEGER (xDimension, U"X-dimension", U"1")
 	INTEGER (yDimension, U"Y-dimension", U"2")
 	REAL (xmin, U"left Horizontal range", U"0.0")
@@ -1499,7 +1499,7 @@ FORM (GRAPHICS_EACH__Discriminant_drawConfidenceEllipses, U"Discriminant: Draw c
 	OK
 DO
 	GRAPHICS_EACH (Discriminant)
-		Discriminant_drawConcentrationEllipses (me, GRAPHICS, confidenceLevel, true, nullptr, discriminatPlane, 
+		Discriminant_drawConcentrationEllipses (me, GRAPHICS, confidenceLevel, true, nullptr, discriminantPlane,
 			xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish
 		);
 	GRAPHICS_EACH_END
@@ -1508,7 +1508,7 @@ DO
 FORM (GRAPHICS_EACH__Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw one confidence ellipse", nullptr) {
 	SENTENCE (label, U"Label", U"")
 	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
-	BOOLEAN (discriminatPlane, U"Discriminant plane", true)
+	BOOLEAN (discriminantPlane, U"Discriminant plane", true)
 	INTEGER (xDimension, U"X-dimension", U"1")
 	INTEGER (yDimension, U"Y-dimension", U"2")
 	REAL (xmin, U"left Horizontal range", U"0.0")
@@ -1520,7 +1520,7 @@ FORM (GRAPHICS_EACH__Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw
 	OK
 DO
 	GRAPHICS_EACH (Discriminant)
-		Discriminant_drawConcentrationEllipses (me, GRAPHICS, confidenceLevel, true, label, discriminatPlane, 
+		Discriminant_drawConcentrationEllipses (me, GRAPHICS, confidenceLevel, true, label, discriminantPlane, 
 			xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish
 		);
 	GRAPHICS_EACH_END

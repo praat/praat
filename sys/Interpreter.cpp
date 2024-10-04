@@ -167,7 +167,7 @@ void Melder_includeIncludeFiles (autostring32 *inout_text, bool onlyInCodeChunks
 					continue;   // if the text starts with "include", it cannot be within a code chunk
 				integer braceDepth = 0;
 				for (const char32 *p = head; p != includeLocation; p ++)
-					if (*p == U'\n') {
+					if (Melder_isEndOfLine (*p)) {
 						if (p [1] == U'{') {
 							if (braceDepth > 0)
 								Melder_throw (U"Opening brace within a code chunk. Don't know whether or not to include an include file.");
@@ -268,7 +268,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			/*
 				Check invariant here: we are at the beginning of a line.
 			*/
-			Melder_assert (p == text || p [-1] == '\n');
+			Melder_assert (p == text || Melder_isEndOfLine (p [-1]));
 
 			if (scriptTextIsNotebookText) {
 				if (*p == U'{') {

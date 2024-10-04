@@ -2,7 +2,7 @@
 #define _melder_kar_h_
 /* melder_kar.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2020,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,14 +101,17 @@ inline bool Melder_isHorizontalSpace (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SPACE_SEPARATOR) != 0;
 }
 inline void Melder_skipHorizontalSpace (char32 **p_text) {
-	while (Melder_isHorizontalSpace (**p_text)) (*p_text) ++;
+	while (Melder_isHorizontalSpace (**p_text))
+		(*p_text) ++;
 }
 inline char32 * Melder_findEndOfHorizontalSpace (char32 *p) {
-	while (Melder_isHorizontalSpace (*p)) p ++;
+	while (Melder_isHorizontalSpace (*p))
+		p ++;
 	return p;
 }
 inline const char32 * Melder_findEndOfHorizontalSpace (const char32 *p) {
-	while (Melder_isHorizontalSpace (*p)) p ++;
+	while (Melder_isHorizontalSpace (*p))
+		p ++;
 	return p;
 }
 
@@ -133,10 +136,12 @@ inline bool Melder_isAsciiHorizontalOrVerticalSpace (char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
 inline void Melder_skipHorizontalOrVerticalSpace (char32 **p_text) {
-	while (Melder_isHorizontalOrVerticalSpace (**p_text)) (*p_text) ++;
+	while (Melder_isHorizontalOrVerticalSpace (**p_text))
+		(*p_text) ++;
 }
 inline void Melder_skipHorizontalOrVerticalSpace (const char32 **p_text) {
-	while (Melder_isHorizontalOrVerticalSpace (**p_text)) (*p_text) ++;
+	while (Melder_isHorizontalOrVerticalSpace (**p_text))
+		(*p_text) ++;
 }
 
 inline bool Melder_isEndOfInk (char32 kar) {
@@ -155,22 +160,27 @@ inline bool Melder_staysWithinLine (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_LINE) == 0;
 }
 inline void Melder_skipToEndOfLine (char32 **p_text) {
-	while (Melder_staysWithinLine (**p_text)) (*p_text) ++;
+	while (Melder_staysWithinLine (**p_text))
+		(*p_text) ++;
 }
 inline char32 * Melder_findEndOfInk (char32 *p) {
-	while (Melder_staysWithinInk (*p)) p ++;
+	while (Melder_staysWithinInk (*p))
+		p ++;
 	return p;
 }
 inline const char32 * Melder_findEndOfInk (const char32 *p) {
-	while (Melder_staysWithinInk (*p)) p ++;
+	while (Melder_staysWithinInk (*p))
+		p ++;
 	return p;
 }
 inline char32 * Melder_findEndOfLine (char32 *p) {
-	while (Melder_staysWithinLine (*p)) p ++;
+	while (Melder_staysWithinLine (*p))
+		p ++;
 	return p;
 }
 inline const char32 * Melder_findEndOfLine (const char32 *p) {
-	while (Melder_staysWithinLine (*p)) p ++;
+	while (Melder_staysWithinLine (*p))
+		p ++;
 	return p;
 }
 

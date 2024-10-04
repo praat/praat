@@ -662,49 +662,65 @@ autoSSCPList SSCPList_toTwoDimensions (SSCPList me, constVECVU const& v1, constV
 	}
 }
 
-void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, bool confidence, conststring32 label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish) {
-	const SSCP t = my at [1];
+void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, bool confidence, conststring32 label,
+	integer dimension1, integer dimension2, double xmin, double xmax, double ymin, double ymax, double fontSize, bool garnish)
+{
+	try {
+		const SSCP t = my at [1];
 
-	Melder_require (d1 > 0 && d1 <= t -> numberOfColumns && d2 > 0 && d2 <= t -> numberOfColumns && d1 != d2,
-		U"Incorrect axes.");
-	autoSSCPList thee = SSCPList_extractTwoDimensions (me, d1, d2);
-	/*
-		Autowindowing.
-	*/
-	if (xmin == xmax || ymin == ymax) {
-		double boundingBox_xmin, boundingBox_xmax, boundingBox_ymin, boundingBox_ymax;
-		SSCPList_getEllipsesBoundingBoxCoordinates (thee.get(), scale, confidence,
-			& boundingBox_xmin, & boundingBox_xmax, & boundingBox_ymin, & boundingBox_ymax);
-		if (xmin == xmax) {
-			xmin = boundingBox_xmin;
-			xmax = boundingBox_xmax;
+		Melder_require (dimension1 > 0,
+			U"Dimension 1 should be positive, not ", dimension1, U".");
+		Melder_require (dimension1 <= t -> numberOfColumns,
+			U"Dimension 1 should not exceed the number of dimensions (", t -> numberOfColumns, U"), but is in fact ", dimension1, U".");
+		Melder_require (dimension2 > 0,
+			U"Dimension 2 should be positive, not ", dimension2, U".");
+		Melder_require (dimension2 <= t -> numberOfColumns,
+			U"Dimension 2 should not exceed the number of dimensions (", t -> numberOfColumns, U"), but is in fact ", dimension2, U".");
+		Melder_require (dimension1 != dimension2,
+			U"Dimension 1 and dimension 2 should be different, but are in fact ", dimension1, U" and ", dimension2, U".");
+		autoSSCPList thee = SSCPList_extractTwoDimensions (me, dimension1, dimension2);
+		/*
+			Autowindowing.
+		*/
+		if (xmin == xmax || ymin == ymax) {
+			double boundingBox_xmin, boundingBox_xmax, boundingBox_ymin, boundingBox_ymax;
+			SSCPList_getEllipsesBoundingBoxCoordinates (thee.get(), scale, confidence,
+				& boundingBox_xmin, & boundingBox_xmax, & boundingBox_ymin, & boundingBox_ymax);
+			if (xmin == xmax) {
+				xmin = boundingBox_xmin;
+				xmax = boundingBox_xmax;
+			}
+			if (ymin == ymax) {
+				ymin = boundingBox_ymin;
+				ymax = boundingBox_ymax;
+			}
 		}
-		if (ymin == ymax) {
-			ymin = boundingBox_ymin;
-			ymax = boundingBox_ymax;
+
+		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+		Graphics_setInner (g);
+
+		for (integer i = 1; i <= thy size; i ++) {
+			const SSCP ti = thy at [i];
+			const double lscale = SSCP_getEllipseScalefactor (ti, scale, confidence);
+			if (lscale < 0.0)
+				continue;
+			if (! label || Melder_cmp (label, Thing_getName (ti)) == 0)
+				SSCP_drawTwoDimensionalEllipse_inside (ti, g, lscale, Thing_getName (ti), fontSize);
 		}
-	}
 
-	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_setInner (g);
-
-	for (integer i = 1; i <= thy size; i ++) {
-		const SSCP ti = thy at [i];
-		const double lscale = SSCP_getEllipseScalefactor (ti, scale, confidence);
-		if (lscale < 0.0)
-			continue;
-		if (! label || Melder_cmp (label, Thing_getName (ti)) == 0)
-			SSCP_drawTwoDimensionalEllipse_inside (ti, g, lscale, Thing_getName (ti), fontSize);
-	}
-
-	Graphics_unsetInner (g);
-	if (garnish) {
-		const SSCP t1 = my at [1];
-		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, true, true, false);
-		Graphics_textLeft (g, true, t1 -> columnLabels [d2] ? t1 -> columnLabels [d2].get() : Melder_cat (U"Dimension ", d2));
-		Graphics_marksBottom (g, 2, true, true, false);
-		Graphics_textBottom (g, true, t1 -> columnLabels [d1] ? t1 -> columnLabels [d1].get() : Melder_cat (U"Dimension ", d1));
+		Graphics_unsetInner (g);
+		if (garnish) {
+			const SSCP t1 = my at [1];
+			Graphics_drawInnerBox (g);
+			Graphics_marksLeft (g, 2, true, true, false);
+			Graphics_textLeft (g, true,
+					t1 -> columnLabels [dimension2] ? t1 -> columnLabels [dimension2].get() : Melder_cat (U"Dimension ", dimension2));
+			Graphics_marksBottom (g, 2, true, true, false);
+			Graphics_textBottom (g, true,
+					t1 -> columnLabels [dimension1] ? t1 -> columnLabels [dimension1].get() : Melder_cat (U"Dimension ", dimension1));
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Concentration ellipses not drawn.");
 	}
 }
 
