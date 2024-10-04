@@ -99,24 +99,6 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>aif</string>
-			</array>
-			<key>CFBundleTypeIconSystemGenerated</key>
-			<integer>1</integer>
-			<key>CFBundleTypeName</key>
-			<string>AIF audio file</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>LSHandlerRank</key>
-			<string>Default</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
 				<string>mp3</string>
 			</array>
 			<key>CFBundleTypeIconSystemGenerated</key>
