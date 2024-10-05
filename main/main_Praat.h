@@ -18,16 +18,17 @@
 
 
 /*
-	These things have to be #defines so that they can be used in an automated `praat.plist` (next to in `main_Praat.cpp`).
+	These things have to be #defines so that they can be used not only in main_Praat.cpp when initializing the app,
+	but also in an automated `praat.plist` (for macOS).
 	To achieve this automation, go to `Build Settings` -> `Packaging` in the Praat Xcode project,
 	and then set `Preprocess Info.plist File` to `Yes`
-	and `Info.plist Preprocessor Prefix File` to `sys/praat_version.h`.
+	and `Info.plist Preprocessor Prefix File` to `main/main_Praat.h`.
 */
 #define PRAAT_NAME  Praat
-#define PRAAT_VERSION_STR  6.4.21
-#define PRAAT_VERSION_NUM  6421
+#define PRAAT_VERSION_STR  6.4.22
+#define PRAAT_VERSION_NUM  6422
 #define PRAAT_YEAR  2024
-#define PRAAT_MONTH  9
-#define PRAAT_DAY  24
+#define PRAAT_MONTH  10
+#define PRAAT_DAY  05
 
 /* End of file main_Praat.h */

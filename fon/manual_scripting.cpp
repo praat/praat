@@ -1324,8 +1324,8 @@ if you want to know what they are on your computer, try to write them into a scr
 The variable `defaultDirectory$` is available for formulas in scripts; it is the folder that contains the script file.
 Finally, we have `praatVersion$`, which is something like “6.4.21”."
 
-A disadvantage of predefined variables is that they can be changed. For this reason you are advised to use
-functions instead, if they exist:
+A disadvantage of predefined variables is that they can be changed, in which case they take on a different meaning.
+For this reason you are advised to use functions instead (if they exist), because these always have the same meaning:
 - @`appVersion`() instead of `praatVersion`
 - @`appVersion$`() instead of `praatVersion$`
 
