@@ -201,10 +201,12 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 			Table_setNumericValue (my d_events.get(), irow, 7, events -> sample);
 			if (events -> type == espeakEVENT_MARK || events -> type == espeakEVENT_PLAY) {
 				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (events -> id.name));
-			} else {
+			} else if (events -> type == espeakEVENT_PHONEME) {
 				memcpy (phoneme_name, events -> id.string, 8);
 				phoneme_name [8] = 0;   // because id.string is not 0-terminated if 8 chars long
 				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (phoneme_name));
+			} else if (events -> type == espeakEVENT_SAMPLERATE ||1) {
+				Table_setNumericValue (my d_events.get(), irow, 8, events -> id.number);
 			}
 			Table_setNumericValue (my d_events.get(), irow, 9, events -> unique_identifier);
 		}
@@ -471,6 +473,9 @@ static void IntervalTier_removeVeryShortIntervals (IntervalTier me) {
 
 static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin, double xmax) {
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
+	//TRACE
+	if (Melder_isTracingLocally)
+		Table_list (me, false);
 	try {
 		const integer textLength = Melder_length (text);
 		const integer numberOfRows = my rows.size;

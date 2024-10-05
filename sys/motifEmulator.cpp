@@ -2670,7 +2670,7 @@ static void on_verticalWheel (HWND window, int xPos, int yPos, int zDelta, int f
 		if (my widgetClass == xmDrawingAreaWidgetClass) {
 			const bool controlKeyPressed = ( fwKeys & MK_CONTROL );
 			if (controlKeyPressed)
-				_GuiWinDrawingArea_handleZoom (me, double (zDelta) / 120.0);
+				_GuiWinDrawingArea_handleZoom (me, double (zDelta) / 10.0);
 			else if (my parent -> widgetClass == xmScrolledWindowWidgetClass)
 				on_scroll (my parent -> motiff.scrolledWindow.verticalBar, zDelta < 0 ? SB_LINEDOWN : SB_LINEUP, 0);
 			else

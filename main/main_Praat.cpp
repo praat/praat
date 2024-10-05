@@ -50,8 +50,11 @@ int main (int argc, char *argv []) {
 		//TRACE
 		praat_setLogo (130.0, 80.0, logo);
 		Melder_stopwatch ();
-		praat_init (U"" stringize (PRAAT_NAME), U"" stringize (PRAAT_VERSION_STR), PRAAT_VERSION_NUM,
-				PRAAT_YEAR, PRAAT_MONTH, PRAAT_DAY, argc, argv);
+		praat_init (U"" stringize (PRAAT_NAME),
+			U"" stringize (PRAAT_VERSION_STR), PRAAT_VERSION_NUM,
+			PRAAT_YEAR, PRAAT_MONTH, PRAAT_DAY,
+			argc, argv
+		);
 		trace (Melder_stopwatch ());
 		INCLUDE_LIBRARY (praat_uvafon_init)
 		trace (Melder_stopwatch ());

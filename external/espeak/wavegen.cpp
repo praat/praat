@@ -1348,16 +1348,66 @@ static int WavegenFill2(void)
 			result = Wavegen_Klatt(length & 0xffff, resume, (frame_t *)q[2], (frame_t *)q[3], &wdata, wvoice);
 			break;
 #endif
-		case WCMD_MARKER:
+		case WCMD_MARKER: {
 			marker_type = q[0] >> 8;
+			//TRACE
 			trace (U"marker ", marker_type, U" ", q [1], U" ", q [2], U" ", q [3]);
-			if (marker_type == espeakEVENT_PHONEME)
-				MarkerEvent(marker_type, q[1], * (int *) & q[2], * ((int *) & q[2] + 1), out_ptr);
+			/*
+				ppgb:
+				These are the possible marker types:
+					espeakEVENT_LIST_TERMINATED = 0, // Retrieval mode: terminates the event list.
+					espeakEVENT_WORD = 1,            // Start of word
+					espeakEVENT_SENTENCE = 2,        // Start of sentence
+					espeakEVENT_MARK = 3,            // Mark
+					espeakEVENT_PLAY = 4,            // Audio element
+					espeakEVENT_END = 5,             // End of sentence or clause
+					espeakEVENT_MSG_TERMINATED = 6,  // End of message
+					espeakEVENT_PHONEME = 7,         // Phoneme, if enabled in espeak_Initialize()
+					espeakEVENT_SAMPLERATE = 8       // internal use, set sample rate
+				Of these:
+				- espeakEVENT_PHONEME takes all 8 bytes of the `string` branch of the union `espeak_EVENT.id` (see `speak_lib.h`),
+				  which was set in DoPhonemeMarker().
+				- espeakEVENT_WORD
+			*/
+			/*
+				Whether the split version occurs always or only in case of espeakEVENT_PHONEME doesn't seme to matter:
+				- here we have only WORD, SENTENCE and PHONEME (also END)
+				- WORD seems to set `id.number`, end there we do see a difference if we are on 64-bit big-endian
+				- however WORD ignores `id.number` (`id.number is used only by SAMPLE_RATE, which doesn't arrive here)
+				- yes, these assumptions are brittle
+				- so we repair only if PHONEME, although we sent a pull request to eSpeak to always split
+				- the eSpeak version will break as soom as WORD starts to interpret `id.number`.
+			*/
+			/*
+				The incorrect eSpeak version:
+			*/
+			//MarkerEvent(marker_type, q[1], q[2], q[3], out_ptr);
+			/*
+				The corrected eSpeak-Praat version:
+			*/
+			Melder_assert (q[1] >= 0);   // check that we are allowed to do a signedness conversion
+			Melder_assert (q[1] <= INT32_MAX);   // check that we are allowed to convert from a 64-bit intptr_t to a 32-bit int
+			const unsigned int position = (unsigned int) q[1];
+			if (marker_type == espeakEVENT_PHONEME) {
+				MarkerEvent(marker_type, position, * (int *) & q[2], * ((int *) & q[2] + 1), out_ptr);
 						// ppgb-espeak: split up q [2] into two ints (eSpeak issue #1970, pull request #1973)
-			else
-				MarkerEvent(marker_type, q[1], q[2], q[3], out_ptr);
+			} else if (marker_type == espeakEVENT_SENTENCE) {
+				MarkerEvent(marker_type, position, 12345, 123456, out_ptr);
+				//MarkerEvent(marker_type, position, q[2], q[3], out_ptr);
+				//MarkerEvent(marker_type, position, * (int *) & q[2], * ((int *) & q[2] + 1), out_ptr);
+			} else if (marker_type == espeakEVENT_WORD) {
+				MarkerEvent(marker_type, position, 1234567, 12345678, out_ptr);
+				//MarkerEvent(marker_type, position, q[2], q[3], out_ptr);
+				//MarkerEvent(marker_type, position, * (int *) & q[2], * ((int *) & q[2] + 1), out_ptr);
+			} else if (marker_type == espeakEVENT_END) {
+				MarkerEvent(marker_type, position, 123456789, 1234567890, out_ptr);
+				//MarkerEvent(marker_type, position, q[2], q[3], out_ptr);
+				//MarkerEvent(marker_type, position, * (int *) & q[2], * ((int *) & q[2] + 1), out_ptr);
+			} else {
+				Melder_fatal (U"(WavegenFill2:) Uninterpretable marker type ", marker_type);
+			}
 			break;
-		case WCMD_AMPLITUDE:
+		} case WCMD_AMPLITUDE:
 			SetAmplitude(length, (unsigned char *)q[2], q[3]);
 			break;
 		case WCMD_VOICE:
