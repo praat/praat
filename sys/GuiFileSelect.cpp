@@ -214,6 +214,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring3
 			comInited = true;
 		}
 		static BROWSEINFO info;
+		ZeroMemory (& info, sizeof (BROWSEINFO));
 		info. hwndOwner = ( optionalParent && optionalParent -> d_xmShell ? (HWND) XtWindow (optionalParent -> d_xmShell) : nullptr );
 		info. ulFlags = BIF_USENEWUI;
 		info. pidlRoot = nullptr;   // everything on the computer should be browsable
