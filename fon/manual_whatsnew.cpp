@@ -29,6 +29,11 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.22# (5 October 2024)
+• More robustness against trying to run a binary file as a script.
+• Windows Sound window: faster zooming with Ctrl-scrollwheel.
+• Windows: guarantee Explorer-type file selection windows.
+
 ##6.4.21# (21 September 2024)
 • SpeechSynthesizer: repaired an old bug whereby ##Get phonemes from text...# could increase the duration
   of a subsequent ##Play# (or ##To Sound...#).
