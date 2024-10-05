@@ -199,7 +199,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS) {
 		autoPraatBackground background;
 		if (! MelderFile_isNull (& my file))
 			MelderFile_setDefaultDir (& my file);
-TRACE
+//TRACE
 trace (U"<<", textPlusProcedures.string, U">>");
 		Interpreter_run (my interpreter.get(), textPlusProcedures.string, false);
 	}

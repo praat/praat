@@ -528,6 +528,18 @@ static espeak_ng_STATUS Synthesize(unsigned int unique_identifier, const void *t
 
 void MarkerEvent(int type, unsigned int char_position, int value, int value2, unsigned char *outptr)
 {
+	/*
+		ppgb:
+		This function can be called only from:
+		- WavegenSetVoice(), with `type` == espeakEVENT_SAMPLERATE
+		- WavegenFill2(), with `type` is one of:
+			- espeakEVENT_SENTENCE
+			- espeakEVENT_WORD
+			- espeakEVENT_PHONEME
+			- espeakEVENT_END
+	 */
+	//TRACE
+	trace (type, U" ", char_position, U" ", value, U" ", value2);
 	// type: 1=word, 2=sentence, 3=named mark, 4=play audio, 5=end, 7=phoneme
 	espeak_EVENT *ep;
 	double time;
