@@ -1386,7 +1386,7 @@ static int WavegenFill2(void)
 				The corrected eSpeak-Praat version:
 			*/
 			Melder_assert (q[1] >= 0);   // check that we are allowed to do a signedness conversion
-			Melder_assert (q[1] <= INT_MAX);   // check that we are allowed to convert from a 64-bit intptr_t to a 32-bit int
+			Melder_assert (q[1] <= INT32_MAX);   // check that we are allowed to convert from a 64-bit intptr_t to a 32-bit int
 			const unsigned int position = (unsigned int) q[1];
 			if (marker_type == espeakEVENT_PHONEME) {
 				MarkerEvent(marker_type, position, * (int *) & q[2], * ((int *) & q[2] + 1), out_ptr);
