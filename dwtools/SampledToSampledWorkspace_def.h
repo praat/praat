@@ -29,11 +29,12 @@ oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 	*/
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sampled, input)
 	oo_BOOLEAN (inputObjectPresent)
-	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)		
+	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
 	oo_BOOLEAN (outputObjectPresent)
 	
 	oo_BOOLEAN (useMultiThreading)
 	oo_INTEGER (minimumNumberOfFramesPerThread) // default 40
+	oo_INTEGER (maximumNumberOfFramesPerThread) // default 40
 	oo_INTEGER (maximumNumberOfThreads)
 	
 	oo_INTEGER (currentFrame)				// the frame we are working on
