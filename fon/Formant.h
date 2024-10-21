@@ -2,7 +2,7 @@
 #define _Formant_h_
 /* Formant.h
  *
- * Copyright (C) 1992-2005,2007-2009,2011,2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2009,2011,2012,2014-2020,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ void Formant_list (Formant me, bool includeFrameNumbers,
 	bool includeTimes, integer timeDecimals,
 	bool includeIntensity, integer intensityDecimals,
 	bool includeNumberOfFormants, integer frequencyDecimals,
-	bool includeBandwidths);
+	bool includeBandwidths, bool _prependTab);
 
 /* End of file Formant.h */
 #endif

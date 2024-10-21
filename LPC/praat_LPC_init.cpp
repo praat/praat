@@ -819,7 +819,9 @@ DO
 	INFO_ONE (PowerCepstrogram)
 		PowerCepstrogram_listCPP (me, includeFrameNumbers,includeTimes, numberOfTimeDecimals,
 			numberOfCPPdecimals, includePeakQuefrency, numberOfQuefrencyDecimals, fromPitch, toPitch, tolerance, 
-			peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
+			peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod,
+			LIST_PREPEND_TAB
+		);
 	INFO_ONE_END
 }
 

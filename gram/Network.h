@@ -77,7 +77,8 @@ void Network_listNodes (Network me, integer fromNodeNumber, integer toNodeNumber
 	bool includeNodeNumbers,
 	bool includeX, bool includeY, integer positionDecimals,
 	bool includeClamped,
-	bool includeActivity, bool includeExcitation, integer activityDecimals);
+	bool includeActivity, bool includeExcitation, integer activityDecimals,
+	bool _prependTab);
 
 /* End of file Network.h */
 #endif

@@ -1,6 +1,6 @@
 /* Network.cpp
  *
- * Copyright (C) 2009,2011-2023 Paul Boersma
+ * Copyright (C) 2009,2011-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -552,12 +552,13 @@ void Network_listNodes (Network me, integer fromNodeNumber, integer toNodeNumber
 	bool includeNodeNumbers,
 	bool includeX, bool includeY, integer positionDecimals,
 	bool includeClamped,
-	bool includeActivity, bool includeExcitation, integer activityDecimals)
+	bool includeActivity, bool includeExcitation, integer activityDecimals,
+	bool _prependTab)
 {
 	try {
 		autoTable table = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber, includeNodeNumbers,
 				includeX, includeY, positionDecimals, includeClamped, includeActivity, includeExcitation, activityDecimals);
-		Table_list (table.get(), false);
+		Table_list (table.get(), false, _prependTab);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}
