@@ -1825,10 +1825,12 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMeld
 	return thee;
 }
 
-void TextGrid_list (TextGrid me, bool includeLineNumbers, integer timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
+void TextGrid_list (TextGrid me, bool includeLineNumbers, integer timeDecimals, bool includeTierNames, bool includeEmptyIntervals,
+	bool _prependTab
+) {
 	try {
 		autoTable table = TextGrid_downto_Table (me, includeLineNumbers, timeDecimals, includeTierNames, includeEmptyIntervals);
-		Table_list (table.get(), false);
+		Table_list (table.get(), false, _prependTab);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}

@@ -132,7 +132,8 @@ DO
 	INFO_ONE (Network)
 		Network_listNodes (me, fromNodeNumber, toNodeNumber,
 			includeNodeNumbers, includeX, includeY, positionDecimals,
-			includeClamped, includeActivity, includeExcitation, activityDecimals
+			includeClamped, includeActivity, includeExcitation, activityDecimals,
+			LIST_PREPEND_TAB
 		);
 	INFO_ONE_END
 }

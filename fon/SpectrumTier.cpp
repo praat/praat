@@ -1,6 +1,6 @@
 /* SpectrumTier.cpp
  *
- * Copyright (C) 20072008,2010-2012,2015,2016,2018,2020,2022,2023 Paul Boersma
+ * Copyright (C) 20072008,2010-2012,2015,2016,2018,2020,2022-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +56,12 @@ void SpectrumTier_list (
 	const SpectrumTier me,
 	const bool includeIndexes,
 	const bool includeFrequency,
-	const bool includePowerDensity
+	const bool includePowerDensity,
+	const bool _prependTab
 ) {
 	try {
 		autoTable table = SpectrumTier_downto_Table (me, includeIndexes, includeFrequency, includePowerDensity);
-		Table_list (table.get(), false);
+		Table_list (table.get(), false, _prependTab);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}
