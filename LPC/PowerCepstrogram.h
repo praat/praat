@@ -67,8 +67,7 @@ autoTable PowerCepstrogram_to_Table_CPP (PowerCepstrogram me, bool includeFrameN
 void PowerCepstrogram_listCPP (PowerCepstrogram me, bool includeFrameNumber, bool includeTime, 
 	integer numberOfTimeDecimals, integer numberOfCPPdecimals, bool includePeakQuefrency, integer numberOfQuefrencyDecimals,
 	double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType,
-	double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod,
-	bool _prependTab);
+	double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 
 autoPowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, double time);
 

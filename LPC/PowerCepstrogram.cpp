@@ -182,14 +182,13 @@ autoTable PowerCepstrogram_to_Table_CPP (PowerCepstrogram me, bool includeFrameN
 void PowerCepstrogram_listCPP (PowerCepstrogram me, bool includeFrameNumber, bool includeTime, 
 	integer numberOfTimeDecimals, integer numberOfCPPdecimals, bool includePeakQuefrency, integer numberOfQuefrencyDecimals,
 	double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType,
-	double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod,
-	bool _prependTab
+	double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod
 ) {
 	try {
 		autoTable table = PowerCepstrogram_to_Table_CPP (me, includeFrameNumber, includeTime,
 			numberOfTimeDecimals, numberOfCPPdecimals, includePeakQuefrency, numberOfQuefrencyDecimals,
 			pitchFloor, pitchCeiling, deltaF0, peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
-		Table_list (table.get(), false, _prependTab);
+		Table_list (table.get(), false);
 	} catch (MelderError) {
 		Melder_throw (me, U": CPP not listed.");
 	}

@@ -409,7 +409,10 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 					str32str (buffer.string, U"**ERROR** This code chunk was not run,")
 				)
 					Graphics_setColour (my graphics.get(), Melder_RED);
-				HyperPage_code (me, buffer.string);
+				if (str32chr (buffer.string, U'\t'))   // is there a tab *anywhere* in the line?
+					HyperPage_code (me, Melder_cat (U"\t", buffer.string));   // ... then make sure that the first column is also tabbed
+				else
+					HyperPage_code (me, buffer.string);
 				MelderString_empty (& buffer);
 			} else {
 				MelderString_appendCharacter (& buffer, *p);

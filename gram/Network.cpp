@@ -552,13 +552,12 @@ void Network_listNodes (Network me, integer fromNodeNumber, integer toNodeNumber
 	bool includeNodeNumbers,
 	bool includeX, bool includeY, integer positionDecimals,
 	bool includeClamped,
-	bool includeActivity, bool includeExcitation, integer activityDecimals,
-	bool _prependTab)
-{
+	bool includeActivity, bool includeExcitation, integer activityDecimals
+) {
 	try {
 		autoTable table = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber, includeNodeNumbers,
 				includeX, includeY, positionDecimals, includeClamped, includeActivity, includeExcitation, activityDecimals);
-		Table_list (table.get(), false, _prependTab);
+		Table_list (table.get(), false);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}

@@ -130,7 +130,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, integer t
 autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers,
 	kMelder_string which, conststring32 criterion, bool caseSensitive);
 void TextGrid_list (TextGrid me, bool includeLineNumbers, integer timeDecimals, bool includeTierNames,
-	bool includeEmptyIntervals, bool _prependTab);
+	bool includeEmptyIntervals);
 
 void TextGrid_correctRoundingErrors (TextGrid me);
 autoTextGrid TextGrids_concatenate (OrderedOf<structTextGrid>* me);

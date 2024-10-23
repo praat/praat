@@ -1997,12 +1997,9 @@ static conststring32 visibleString (conststring32 s) {
 
 void Table_list (
 	const constTable me,
-	const bool includeRowNumbers,
-	const bool _prependTab
+	const bool includeRowNumbers
 ) {
 	MelderInfo_open ();
-	if (_prependTab)
-		MelderInfo_write (U"\t");
 	if (includeRowNumbers) {
 		MelderInfo_write (U"row");
 		if (my numberOfColumns > 0)
@@ -2015,8 +2012,6 @@ void Table_list (
 	}
 	MelderInfo_write (U"\n");
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
-		if (_prependTab)
-			MelderInfo_write (U"\t");
 		if (includeRowNumbers) {
 			MelderInfo_write (irow);
 			if (my numberOfColumns > 0)
