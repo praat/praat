@@ -43,4 +43,23 @@ autoFormant Sound_to_Formant_burg_mt (constSound me, double dt, double numberOfF
 	double windowLength, double preemphasisFrequency, double safetyMargin
 );
 
+
+void Sound_into_Formant_autocorrelation_mt (constSound me, Formant thee, double windowLength, integer numberOfPoles, double safetyMargin);
+
+autoFormant Sound_to_Formant_autocorrelation_mt (constSound me, double dt, double numberOfFormants, double maximumFrequency,
+	double windowLength, double preemphasisFrequency, double safetyMargin
+);
+
+void Sound_into_Formant_covariance_mt (constSound me, Formant thee, double windowLength, integer numberOfPoles, double safetyMargin);
+
+autoFormant Sound_to_Formant_covariance_mt (constSound me, double dt, double numberOfFormants, double maximumFrequency,
+	double windowLength, double preemphasisFrequency, double safetyMargin
+);
+
+void Sound_into_Formant_marple_mt (constSound me, Formant thee, double windowLength, integer numberOfPoles, double safetyMargin);
+
+autoFormant Sound_to_Formant_marple_mt (constSound me, double dt, double numberOfFormants, double maximumFrequency,
+	double windowLength, double preemphasisFrequency, double safetyMargin
+);
+
 #endif /* _Sound_to_Formant_mt_h_ */

@@ -108,6 +108,7 @@
 #include "Polygon_extensions.h"
 #include "Polynomial_to_Spectrum.h"
 #include "Roots_to_Spectrum.h"
+#include "SampledToSampledWorkspace.h"
 #include "Sound_and_Spectrum_dft.h"
 #include "Sound_extensions.h"
 #include "Sound_and_TextGrid_extensions.h"
@@ -5332,6 +5333,36 @@ DIRECT (MODIFY_FIRST_OF_ONE_AND_ONE__Roots_Polynomial_polish) {
 }
 
 /*****************************************************************************/
+	
+
+
+FORM (SETTINGS__SampledDataAnalysisSettings, U"Sampled data analysis settings", U"Sampled data analysis settings...") {
+	COMMENT (U"This setting determines how fast your analyses will be performed on your computer.")
+	
+	BOOLEAN (useMultithreading, U"Use multi-threading", true)
+	COMMENT (SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailableInfo ());
+	NATURAL (numberOfConcurrentThreadsToUse, U"Number of threads to use",
+		Melder_integer (SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailable ()));
+	COMMENT (U"The minimum number of frames to be analysed in a thread:")
+	INTEGER (minimumNumberOfFramesPerThread, U"Min. frames / thread",
+		Melder_integer (SampledToSampledWorkspace_getMinimumNumberOfFramesPerThread ()));
+	COMMENT (U"The maximum number of frames to be analysed in a thread,")
+	COMMENT (U"where a value of 0 means no upper limit.")
+	INTEGER (maximumNumberOfFramesPerThread, U"Max. frames / thread",
+		Melder_integer (SampledToSampledWorkspace_getMaximumNumberOfFramesPerThread ()));
+	OK
+DO
+	PREFS
+		SampledToSampledWorkspace_setMultiThreading (useMultithreading);
+		SampledToSampledWorkspace_setNumberOfConcurrentThreadsToUse (numberOfConcurrentThreadsToUse);
+		SampledToSampledWorkspace_setMinimumNumberOfFramesPerThread (minimumNumberOfFramesPerThread);
+		SampledToSampledWorkspace_setMaximumNumberOfFramesPerThread (maximumNumberOfFramesPerThread);
+		Melder_require (!useMultithreading || maximumNumberOfFramesPerThread == 0 ||
+			maximumNumberOfFramesPerThread >= minimumNumberOfFramesPerThread,
+			U"The minimum number of frames per thread should not exceed the maximum number of frames per thread.");
+	PREFS_END
+}
+
 
 DIRECT (INFO_NONE__Praat_ReportFloatingPointProperties) {
 	INFO_NONE
@@ -8978,6 +9009,9 @@ void praat_David_init () {
 		classSpeechSynthesizer_initClass ();
 		trace (U"initializing eSpeak data took ", Melder_fixed (1000 * (Melder_clock () - t), 3), U" milliseconds");
 	}
+	
+	praat_addMenuCommand (U"Objects", U"Settings", U"Sampled data analysis settings...", nullptr, 0,
+			SETTINGS__SampledDataAnalysisSettings);
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0,
 			INFO_NONE__Praat_ReportFloatingPointProperties);

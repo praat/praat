@@ -302,9 +302,9 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 {
 	try {
 		Melder_require (timeStep > 0.0,
-			U"The timeStep needs to greater than zero seconds.");
+			U"The timeStep needs to be larger than zero seconds.");
 		Melder_require (ceilingStepSize > 0.0,
-			U"The ceiling step size should larger than 0.0.");
+			U"The ceiling step size should be larger than 0.0.");
 		autoVEC ceilings = getCeilings (middleCeiling, ceilingStepSize, numberOfStepsUpDown);
 		const integer numberOfCandidates = ceilings.size;
 		const double maximumCeiling = ceilings [numberOfCandidates];

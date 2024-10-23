@@ -34,7 +34,7 @@ oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 	
 	oo_BOOLEAN (useMultiThreading)
 	oo_INTEGER (minimumNumberOfFramesPerThread) // default 40
-	oo_INTEGER (maximumNumberOfFramesPerThread) // default 40
+	oo_INTEGER (maximumNumberOfFramesPerThread) // default 0 (= no limit)
 	oo_INTEGER (maximumNumberOfThreads)
 	
 	oo_INTEGER (currentFrame)				// the frame we are working on
@@ -57,7 +57,7 @@ oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 
 		virtual void getInputFrame (void);
 		
-		virtual bool inputFrameToOutputFrame (void); // sets the frameAnalysisInfo and also frameAnalysisIsOK
+		virtual bool inputFrameToOutputFrame (void); // the analysis, also sets the frameAnalysisInfo and also frameAnalysisIsOK
 		
 		virtual void saveOutputFrame (void);
 		

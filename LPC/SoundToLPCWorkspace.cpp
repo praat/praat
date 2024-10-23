@@ -305,18 +305,18 @@ Thing_implement (SoundToLPCBurgWorkspace, SoundToLPCWorkspace, 0);
 static double VECburg_buffered (VEC const& a, constVEC const& x, SoundToSampledWorkspace me) {
 	const integer n = x.size, m = a.size;
 
-	a   <<=  0.0; // necessary??
+	a   <<=  0.0; // always safe
 	if (n <= 2) {
 		a [1] = -1.0;
 		return ( n == 2 ? 0.5 * (x [1] * x [1] + x [2] * x [2]) : x [1] * x [1] );
 	}
-	VEC b1 = my workvectorPool -> getRawVEC (1, n);
-	VEC b2 = my workvectorPool -> getRawVEC (2, n);
-	VEC aa = my workvectorPool -> getRawVEC (3, m + 1);
+	VEC b1 = my workvectorPool -> getZeroVEC (1, n);
+	VEC b2 = my workvectorPool -> getZeroVEC (2, n);
+	VEC aa = my workvectorPool -> getZeroVEC (3, m);
 
 	// (3)
 
-	double p = NUMinner (x,x);
+	double p = NUMinner (x, x);
 
 	if (p == 0.0) {
 		my frameAnalysisInfo = 1;
@@ -325,25 +325,30 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, SoundToSampledW
 	// (9)
 
 	b1 [1] = x [1];
-	b2 [n - 1] = x [n];
 	for (integer j = 2; j <= n - 1; j ++)
 		b1 [j] = b2 [j - 1] = x [j];
+	b2 [n - 1] = x [n];
 
 	longdouble xms = p / n;
 	for (integer i = 1; i <= m; i ++) {
 		// (7)
 
-		longdouble num = 0.0, denum = 0.0;
-		for (integer j = 1; j <= n - i; j ++) {
-			num += b1 [j] * b2 [j];
-			denum += b1 [j] * b1 [j] + b2 [j] * b2 [j];
-		}
-
+		/*
+			longdouble num = 0.0, denum = 0.0;
+			for (integer j = 1; j <= n - i; j ++) {
+				num += b1 [j] * b2 [j];
+				denum += b1 [j] * b1 [j] + b2 [j] * b2 [j];
+			}
+		*/
+		VEC b1part = b1.part (1, n - i), b2part = b2.part (1, n - i);
+		const double num = NUMinner (b1part, b2part);
+		const double denum = NUMinner (b1part, b1part) + NUMinner (b2part, b2part);
+		
 		if (denum <= 0.0) {
 			my frameAnalysisInfo = 1;
 			return 0.0;	// warning ill-conditioned
 		}
-		a [i] = 2.0 * double (num / denum);
+		a [i] = 2.0 * num / denum;
 
 		// (10)
 
