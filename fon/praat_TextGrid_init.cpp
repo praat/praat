@@ -837,7 +837,7 @@ FORM (LIST_TextGrid_list, U"TextGrid: List", nullptr) {
 	OK
 DO
 	INFO_ONE (TextGrid)
-		TextGrid_list (me, includeLineNumber, timeDecimals, includeTierNames, includeEmptyIntervals, LIST_PREPEND_TAB);
+		TextGrid_list (me, includeLineNumber, timeDecimals, includeTierNames, includeEmptyIntervals);
 	INFO_ONE_END
 }
 

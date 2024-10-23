@@ -1762,7 +1762,7 @@ FORM (LIST_SpectrumTier_list, U"SpectrumTier: List", nullptr) {
 	OK
 DO
 	INFO_ONE (SpectrumTier)
-		SpectrumTier_list (me, includeIndexes, includeFrequency, includePowerDensity, LIST_PREPEND_TAB);
+		SpectrumTier_list (me, includeIndexes, includeFrequency, includePowerDensity);
 	INFO_ONE_END
 }
 

@@ -567,18 +567,24 @@ autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
 	}
 }
 
-void Formant_list (Formant me, bool includeFrameNumbers,
-	bool includeTimes, integer timeDecimals,
-	bool includeIntensity, integer intensityDecimals,
-	bool includeNumberOfFormants, integer frequencyDecimals,
-	bool includeBandwidths, bool _prependTab)
-{
+void Formant_list (
+	const Formant me,
+	const bool includeFrameNumbers,
+	const bool includeTimes,
+	const integer timeDecimals,
+	const bool includeIntensity,
+	const integer intensityDecimals,
+	const bool includeNumberOfFormants,
+	const integer frequencyDecimals,
+	const bool includeBandwidths
+) {
 	try {
-		autoTable table = Formant_downto_Table (me, includeFrameNumbers, includeTimes, timeDecimals,
+		autoTable table = Formant_downto_Table (me, includeFrameNumbers,
+			includeTimes, timeDecimals,
 			includeIntensity, intensityDecimals,
 			includeNumberOfFormants, frequencyDecimals, includeBandwidths
 		);
-		Table_list (table.get(), false, _prependTab);
+		Table_list (table.get(), false);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}

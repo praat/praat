@@ -475,7 +475,7 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 	//TRACE
 	if (Melder_isTracingLocally)
-		Table_list (me, false, false);
+		Table_list (me, false);
 	try {
 		const integer textLength = Melder_length (text);
 		const integer numberOfRows = my rows.size;
