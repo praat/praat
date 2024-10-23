@@ -1,6 +1,6 @@
 /* Formant.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2020,2022,2023 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2020,2022-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -571,14 +571,14 @@ void Formant_list (Formant me, bool includeFrameNumbers,
 	bool includeTimes, integer timeDecimals,
 	bool includeIntensity, integer intensityDecimals,
 	bool includeNumberOfFormants, integer frequencyDecimals,
-	bool includeBandwidths)
+	bool includeBandwidths, bool _prependTab)
 {
 	try {
 		autoTable table = Formant_downto_Table (me, includeFrameNumbers, includeTimes, timeDecimals,
 			includeIntensity, intensityDecimals,
 			includeNumberOfFormants, frequencyDecimals, includeBandwidths
 		);
-		Table_list (table.get(), false);
+		Table_list (table.get(), false, _prependTab);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}

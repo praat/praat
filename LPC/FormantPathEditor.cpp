@@ -356,7 +356,7 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS) {
 		const integer numberOfStressDecimals = 2, numberOfTimeDecimals = 6;
 		autoTable stressTable = FormantPath_downTo_Table_stresses (my formantPath(), startTime, endTime, parameters.get(),
 				my instancePref_modeler_varianceExponent(), numberOfStressDecimals, true, numberOfTimeDecimals);
-		Table_list (stressTable.get(), false);
+		Table_list (stressTable.get(), false, false);
 	INFO_DATA_END
 }
 

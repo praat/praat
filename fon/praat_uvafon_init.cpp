@@ -348,7 +348,7 @@ DO
 	INFO_ONE (Formant)
 		Formant_list (me, includeFrameNumber, includeTime, numberOfTimeDecimals,
 			includeIntensity, numberOfIntensityDecimals, includeNumberOfFormants, numberOfFrequencyDecimals,
-			includeBandwidths
+			includeBandwidths, LIST_PREPEND_TAB
 		);
 	INFO_ONE_END
 }

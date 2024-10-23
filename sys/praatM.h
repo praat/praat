@@ -1334,5 +1334,8 @@
 #define PRAAT_END  \
 	END_NO_NEW_DATA
 
+#define LIST_PREPEND_TAB \
+	theCurrentPraatApplication != & theForegroundPraatApplication
+
 /* End of file praatM.h */
 #endif
