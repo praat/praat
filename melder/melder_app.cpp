@@ -138,4 +138,12 @@ integer Melder_appDay() {
 	return theAppDay;
 }
 
+static autostring32 theAppAuthorContactAddress;
+void Melder_setAppAuthorContactAddress (conststring32 firstPartOfEmailAddress, conststring32 secondPartOfEmailAdress) {
+	theAppAuthorContactAddress = Melder_dup (Melder_cat (firstPartOfEmailAddress, U"@", secondPartOfEmailAdress));
+}
+conststring32 Melder_appAuthorContactAddress() {
+	return theAppAuthorContactAddress.get();
+}
+
 /* End of file melder_app.cpp */
