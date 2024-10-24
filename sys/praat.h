@@ -36,7 +36,7 @@
 // File main_Sybil.cpp: //
 int main (int argc, char **argv)
 {
-	praat_init (U"Praat_Sybil", U"6.4.20", 6420, 2024, 9, 18, argc, argv);   // obligatory
+	praat_init (U"Praat_Sybil", U"6.4.20", 6420, 2024, 9, 18, U"sybil", U"sybil.org", argc, argv);   // obligatory
 	INCLUDE_LIBRARY (praat_uvafon_init)   // optional: inherit phonetic stuff
 	INCLUDE_LIBRARY (praat_Sybil_init)   // optional: add Sybil's things
 	INCLUDE_MANPAGES (manual_Sybil)
@@ -58,8 +58,12 @@ To make any class string-readable, use Thing_recognizeClassesByName ().
 String-readable classes are known by Thing_newFromClassName () and can therefore
 be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 */
-void praat_init (conststring32 title, conststring32 versionText, integer versionNumber,
-		integer year, integer month, integer day, int argc, char **argv);
+void praat_init (conststring32 title,
+	conststring32 versionText, integer versionNumber,
+	integer year, integer month, integer day,
+	conststring32 firstPartOfEmailAddress, conststring32 secondPartOfEmailAddress, // skip '@' to not include the full address in our binary
+	int argc, char **argv
+);
 void praat_run ();
 void praat_setStandAloneScriptText (conststring32 text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 extern "C" void praatlib_init ();   // for use in an application that uses Praatlib
