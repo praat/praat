@@ -32,10 +32,10 @@ integer Melder_appMonth();
 conststring32 Melder_appMonthSTR();
 integer Melder_appDay();
 
-void Melder_setAppAuthorContactAddress (conststring32 firstPartOfEmailAddress, conststring32 secondPartOfEmailAdress);
+void Melder_setAppContactAddress (conststring32 firstPartOfEmailAddress, conststring32 secondPartOfEmailAdress);
 		// we don't do a single email address with a "@" in it,
 		// because some simplistic malware checkers would then think that our binary contains malware, which it doesn't
-conststring32 Melder_appAuthorContactAddress();
+conststring32 Melder_appContactAddress();
 
 /* End of file melder_app.h */
 #endif
