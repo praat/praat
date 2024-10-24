@@ -413,16 +413,40 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 		}
 		while (*p) {
 			if (wordItalic && ! isSingleWordCharacter (*p)) {
-				MelderString_append (buffer, U"</i>");
-				wordItalic = false;
+				if (*p == U'\\' && p [1] != U'\0' && p [2] != U'\0') {
+					Longchar_Info info = Longchar_getInfo (p [1], p [2]);
+					if (! isSingleWordCharacter (info -> unicode)) {
+						MelderString_append (buffer, U"</i>");
+						wordItalic = false;
+					}
+				} else {
+					MelderString_append (buffer, U"</i>");
+					wordItalic = false;
+				}
 			}
 			if (wordBold && ! isSingleWordCharacter (*p)) {
-				MelderString_append (buffer, U"</b>");
-				wordBold = false;
+				if (*p == U'\\' && p [1] != U'\0' && p [2] != U'\0') {
+					Longchar_Info info = Longchar_getInfo (p [1], p [2]);
+					if (! isSingleWordCharacter (info -> unicode)) {
+						MelderString_append (buffer, U"</b>");
+						wordBold = false;
+					}
+				} else {
+					MelderString_append (buffer, U"</b>");
+					wordBold = false;
+				}
 			}
-			if (wordCode && ! isSingleWordCharacter (*p)) {
-				MelderString_append (buffer, U"</font></code>");
-				wordCode = false;
+			if (wordCode && ! isSingleWordCharacter (*p)) {   // TODO: remove, because wordCode should no longer exist
+				if (*p == U'\\' && p [1] != U'\0' && p [2] != U'\0') {
+					Longchar_Info info = Longchar_getInfo (p [1], p [2]);
+					if (! isSingleWordCharacter (info -> unicode)) {
+						MelderString_append (buffer, U"</font></code>");
+						wordCode = false;
+					}
+				} else {
+					MelderString_append (buffer, U"</font></code>");
+					wordCode = false;
+				}
 			}
 			if (*p == U'@') {
 				static MelderString link, linkText;
@@ -666,10 +690,10 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				MelderString_append (buffer, U"&amp;");
 				p ++;
 			} else {
-				/*if (wordItalic && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
-				if (wordBold && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</b>"); wordBold = false; }
-				if (wordCode && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</code>"); wordCode = false; }*/
-				if (*p == U'\\') {
+				//if (wordItalic && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+				//if (wordBold && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</b>"); wordBold = false; }
+				//if (wordCode && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</code>"); wordCode = false; }
+				if (*p == U'\\' && p [1] != U'\0' && p [2] != U'\0') {
 					char32 kar1 = *++p, kar2 = *++p;
 					Longchar_Info info = Longchar_getInfo (kar1, kar2);
 					if (info -> unicode < 127)
