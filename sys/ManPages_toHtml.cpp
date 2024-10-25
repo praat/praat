@@ -160,19 +160,45 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 			chunkNumber += 1;
 			if (paragraph -> cacheInfo.string && paragraph -> cacheInfo.string [0] != U'\0') {
 				trace (U"text output");
-				MelderString_append (buffer, U"<code style=\"color:red\">=&gt;</code><br>\n");
+				MelderString_append (buffer, U"<code style=\"color:red\">=&gt;</code><br>\n");   // show a red arrow "=>"
 				static MelderString lineBuffer;
 				MelderString_empty (& lineBuffer);
+				bool inOutputTable = false;
+				integer outputTableRowNumber = 0;
 				bool hasError = false;
 				for (const char32 *paragraphPointer = & paragraph -> cacheInfo.string [0]; *paragraphPointer != U'\0'; paragraphPointer ++) {
 					if (Melder_isEndOfLine (*paragraphPointer)) {
 						hasError |=
 							str32str (lineBuffer.string, U"**AN ERROR OCCURRED IN THIS CODE CHUNK:**") ||
 							str32str (lineBuffer.string, U"**ERROR** This code chunk was not run,");
+						const bool isTableRow = str32chr (lineBuffer.string, U'\t');
 						if (hasError)
-							MelderString_append (buffer, U"<code style=\"color:red,white-space:pre-wrap\">   ");
-						else
-							MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\">   ");
+							MelderString_append (buffer, U"<code style='color:red,white-space:pre-wrap'>   ");
+						else if (isTableRow) {
+							if (! inOutputTable) {
+								/*
+									A new table in the chunk output.
+								*/
+								MelderString_append (buffer, U"<code><table style='text-align:center;border-spacing:0'><tr>\n"
+										"<th style='padding-top:0pt;padding-bottom:0pt;padding-left:5pt;padding-right:5pt'>");
+								inOutputTable = true;
+								outputTableRowNumber = 1;
+							} else {
+								/*
+									A new row in an existing table in the chunk output.
+								*/
+								MelderString_append (buffer, U"<tr>\n"
+										"<td style='padding-top:0pt;padding-bottom:0pt;padding-left:5pt;padding-right:5pt'>");
+								outputTableRowNumber += 1;
+							}
+						} else {
+							if (inOutputTable) {
+								MelderString_append (buffer, U"</table></code>\n");
+								inOutputTable = false;
+								outputTableRowNumber = 0;
+							}
+							MelderString_append (buffer, U"<code style='white-space:pre-wrap'>   ");
+						}
 						for (const char32 *plineBuffer = & lineBuffer.string [0]; *plineBuffer != U'\0'; plineBuffer ++) {
 							/*if (plineBuffer [0] == U' ' && plineBuffer [1] == U' ') {
 								MelderString_append (buffer, U" &nbsp;");
@@ -180,6 +206,18 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 							} else*/
 							if (plineBuffer [0] == U' ') {
 								MelderString_append (buffer, U" ");
+							} else if (plineBuffer [0] == U'\t') {
+								if (inBold) {
+									inBold = false;
+									MelderString_append (buffer, U"</b>");
+								} else if (inItalic) {
+									inItalic = false;
+									MelderString_append (buffer, U"</i>");
+								}
+								if (outputTableRowNumber == 1)
+									MelderString_append (buffer, U"<th style='padding-top:0pt;padding-bottom:0pt;padding-left:5pt;padding-right:5pt'>");
+								else
+									MelderString_append (buffer, U"<td style='padding-top:0pt;padding-bottom:0pt;padding-left:5pt;padding-right:5pt'>");
 							} else if (plineBuffer [0] == U'\\' && plineBuffer [1] == U'#' && plineBuffer [2] == U'{') {
 								inBold = true;
 								MelderString_append (buffer, U"<b>");
@@ -208,7 +246,10 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 							inItalic = false;
 							MelderString_append (buffer, U"</i>");
 						}
-						MelderString_append (buffer, U"<br></code>\n");
+						if (isTableRow)
+							MelderString_append (buffer, U"</tr>\n");
+						else
+							MelderString_append (buffer, U"<br></code>\n");
 						MelderString_empty (& lineBuffer);
 					} else {
 						MelderString_appendCharacter (& lineBuffer, *paragraphPointer);
@@ -216,6 +257,11 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				}
 				if (hasError)
 					continue;   // no longer show any graphics
+				if (inOutputTable) {
+					MelderString_append (buffer, U"</table></code>\n");
+					inOutputTable = false;
+					outputTableRowNumber = 0;
+				}
 			}
 			if (paragraph -> height == 0.001)
 				continue;
