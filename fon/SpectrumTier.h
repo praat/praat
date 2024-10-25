@@ -44,7 +44,7 @@ autoSpectrumTier SpectrumTier_create (double fmin, double fmax);
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
 	double pmin, double pmax, bool garnish, conststring32 method);
 
-void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity, bool _prependTab);
+void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 
 autoTable SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 

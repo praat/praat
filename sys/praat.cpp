@@ -1746,9 +1746,12 @@ static void setPreferencesFolder () {
 	}
 }
 
-void praat_init (conststring32 title, conststring32 versionText, integer versionNumber,
-		integer year, integer month, integer day, int argc, char **argv)
-{
+void praat_init (conststring32 title,
+	conststring32 versionText, integer versionNumber,
+	integer year, integer month, integer day,
+	conststring32 firstPartOfEmailAddress, conststring32 secondPartOfEmailAddress,
+	int argc, char **argv
+) {
 	setThePraatLocale ();
 	Melder_init ();
 	const bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
@@ -1761,6 +1764,7 @@ void praat_init (conststring32 title, conststring32 versionText, integer version
 	Melder_setAppName (title && title [0] != U'\0' ? title : U"Praat");
 	Melder_setAppVersion (versionText, versionNumber);
 	Melder_setAppDate (year, month, day);
+	Melder_setAppContactAddress (firstPartOfEmailAddress, secondPartOfEmailAddress);
 
 	/*
 		Get the home folder, e.g. "/home/miep/", or "/Users/miep/", or just "/".

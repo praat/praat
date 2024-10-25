@@ -2,7 +2,7 @@
 #define _Network_h_
 /* Network.h
  *
- * Copyright (C) 2009,2011-2017,2020 Paul Boersma
+ * Copyright (C) 2009,2011-2017,2020,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,8 +77,7 @@ void Network_listNodes (Network me, integer fromNodeNumber, integer toNodeNumber
 	bool includeNodeNumbers,
 	bool includeX, bool includeY, integer positionDecimals,
 	bool includeClamped,
-	bool includeActivity, bool includeExcitation, integer activityDecimals,
-	bool _prependTab);
+	bool includeActivity, bool includeExcitation, integer activityDecimals);
 
 /* End of file Network.h */
 #endif

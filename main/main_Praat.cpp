@@ -53,6 +53,7 @@ int main (int argc, char *argv []) {
 		praat_init (U"" stringize (PRAAT_NAME),
 			U"" stringize (PRAAT_VERSION_STR), PRAAT_VERSION_NUM,
 			PRAAT_YEAR, PRAAT_MONTH, PRAAT_DAY,
+			U"paul.boersma", U"uva.nl",
 			argc, argv
 		);
 		trace (Melder_stopwatch ());

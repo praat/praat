@@ -309,7 +309,7 @@ FORM (INFO_ONE__Table_list, U"Table: List", nullptr) {
 	OK
 DO
 	INFO_ONE (Table)
-	Table_list (me, includeRowNumbers, LIST_PREPEND_TAB);
+	Table_list (me, includeRowNumbers);
 	INFO_ONE_END
 }
 

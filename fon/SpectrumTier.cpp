@@ -56,12 +56,11 @@ void SpectrumTier_list (
 	const SpectrumTier me,
 	const bool includeIndexes,
 	const bool includeFrequency,
-	const bool includePowerDensity,
-	const bool _prependTab
+	const bool includePowerDensity
 ) {
 	try {
 		autoTable table = SpectrumTier_downto_Table (me, includeIndexes, includeFrequency, includePowerDensity);
-		Table_list (table.get(), false, _prependTab);
+		Table_list (table.get(), false);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}

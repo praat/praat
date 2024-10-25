@@ -1283,8 +1283,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 	bool globalCode = false, globalLink = false, verbatimLink = false;
 	bool globalSmall = 0;
 	numberOfLinks = 0;
-	const bool weAreInManual = ( my dollarSignIsCode );
-	const bool weAreInNotebook = ( my backquoteIsVerbatim );
+	const bool weAreInManual = ( my dollarSignIsCode );   // TODO: this is temporary
+	const bool weAreInNotebook = ( my backquoteIsVerbatim );   // TODO: this is temporary
 	const bool topDownVerbatim = ( my font == kGraphics_font::COURIER && weAreInNotebook );
 	bool globalVerbatim = topDownVerbatim;
 	bool thinLink = false;
@@ -1329,13 +1329,13 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				in ++;
 				wordItalic = wordBold = wordCode = false;
 				continue;
-			} else if (! weAreInManual) {
+			} else if (! weAreInManual) {   // TODO: this is temporary
 				static integer countCharacterSubscript;
 				trace (U"Character subscript: ", ++ countCharacterSubscript, U" ", txt);
 				charSubscript = true;
 				wordItalic = wordBold = wordCode = false;
 				continue;
-			} else if (weAreInNotebook) {
+			} else if (weAreInNotebook) {   // TODO: this is temporary
 				charSubscript = true;
 				wordItalic = wordBold = wordCode = false;
 				continue;
@@ -1369,7 +1369,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				else
 					wordItalic = true;
 				continue;
-			} else if (weAreInNotebook) {
+			} else if (weAreInNotebook) {   // TODO: this is temporary
 				charItalic = true;
 				continue;
 			} else {

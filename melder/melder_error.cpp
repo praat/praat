@@ -59,13 +59,13 @@ bool Melder_hasError (conststring32 partialError) {
 	return !! str32str (theErrorBuffer, partialError);
 }
 
-#define CRASH_SEMAPHORE  U" will crash. Please notify the author ("
+#define CRASH_SEMAPHORE  U" will crash. Please notify the authors ("
 
 static conststring32 crashMessage () {
 	static char32 crashMessageBuffer [1000];
 	str32cpy (crashMessageBuffer, Melder_upperCaseAppName());
 	str32cat (crashMessageBuffer, CRASH_SEMAPHORE);
-	str32cat (crashMessageBuffer, U"paul.boersma@uva.nl");   // TODO: make dependent on author email address
+	str32cat (crashMessageBuffer, Melder_appContactAddress());
 	str32cat (crashMessageBuffer, U") with all of the following information");
 	str32cat (crashMessageBuffer, ( Melder_batch ? U"" : U", before closing this window" ));
 	str32cat (crashMessageBuffer, U" (and please mention in your email precisely"

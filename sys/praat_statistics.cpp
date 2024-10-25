@@ -221,6 +221,7 @@ void praat_reportAppProperties () {
 	MelderInfo_writeLine (U"App month (as a number): ", Melder_appMonth());
 	MelderInfo_writeLine (U"App month (as text): ", Melder_appMonthSTR());
 	MelderInfo_writeLine (U"App day: ", Melder_appDay());
+	MelderInfo_writeLine (U"App contact address: ", Melder_appContactAddress());
 	MelderInfo_close ();
 }
 

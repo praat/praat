@@ -98,7 +98,7 @@ void Formant_list (Formant me, bool includeFrameNumbers,
 	bool includeTimes, integer timeDecimals,
 	bool includeIntensity, integer intensityDecimals,
 	bool includeNumberOfFormants, integer frequencyDecimals,
-	bool includeBandwidths, bool _prependTab);
+	bool includeBandwidths);
 
 /* End of file Formant.h */
 #endif
