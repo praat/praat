@@ -32,9 +32,9 @@ static const struct stylesInfo {
 /* LIST_ITEM: */ { U"<dd style=\"position:relative;padding-left:1em;text-indent:-2em\">", U"" },
 /* TERM: */ { U"<dt>", U"" },
 /* DEFINITION: */ { U"<dd>", U"" },
-/* CODE: */ { U"<code style=\"white-space:pre-wrap\">   ", U"<br></code>" },
+/* CODE: */ { U"<code>   ", U"<br></code>" },
 /* PROTOTYPE: */ { U"<p>", U"</p>" },
-/* EQUATION: */ { U"<table width=\"100%\"><tr><td align=middle>", U"</table>" },
+/* EQUATION: */ { U"<table width=\"100%\" style=\"white-space:pre-wrap\"><tr><td align=middle>", U"</table>" },
 /* PICTURE: */ { U"<p>", U"</p>" },
 /* SCRIPT: */ { U"<p>", U"</p>" },
 /* LIST_ITEM1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"" },
@@ -46,11 +46,11 @@ static const struct stylesInfo {
 /* DEFINITION1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"" },
 /* DEFINITION2: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
 /* DEFINITION3: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
-/* CODE1: */ { U"<code style=\"white-space:pre-wrap\">      ", U"<br></code>" },
-/* CODE2: */ { U"<code style=\"white-space:pre-wrap\">         ", U"<br></code>" },
-/* CODE3: */ { U"<code style=\"white-space:pre-wrap\">            ", U"<br></code>" },
-/* CODE4: */ { U"<code style=\"white-space:pre-wrap\">               ", U"<br></code>" },
-/* CODE5: */ { U"<code style=\"white-space:pre-wrap\">                  ", U"<br></code>" },
+/* CODE1: */ { U"<code>      ", U"<br></code>" },
+/* CODE2: */ { U"<code>         ", U"<br></code>" },
+/* CODE3: */ { U"<code>            ", U"<br></code>" },
+/* CODE4: */ { U"<code>               ", U"<br></code>" },
+/* CODE5: */ { U"<code>                  ", U"<br></code>" },
 /* CAPTION: */ { U"<p style=\"position:relative;padding-left:4em;text-indent:-2em;font-size:86%\">", U"</font></p>" },
 /* QUOTE1: */ { U"<p style=\"position:relative;padding-left:4em;font-size:86%\">", U"</font></p>" },
 /* QUOTE2: */ { U"<p style=\"position:relative;padding-left:8em;font-size:86%\">", U"</font></p>" },
@@ -173,22 +173,22 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 							str32str (lineBuffer.string, U"**ERROR** This code chunk was not run,");
 						const bool isTableRow = str32chr (lineBuffer.string, U'\t');
 						if (hasError)
-							MelderString_append (buffer, U"<code style='color:red,white-space:pre-wrap'>   ");
+							MelderString_append (buffer, U"<code style=\"color:red\">   ");
 						else if (isTableRow) {
 							if (! inOutputTable) {
 								/*
 									A new table in the chunk output.
 								*/
-								MelderString_append (buffer, U"<code><table cellpadding=0 style='text-align:center;border-spacing:0'><tr>\n"
-										"<th style='padding-left:5pt;padding-right:5pt'>");
+								MelderString_append (buffer, U"<code><table cellpadding=0 style='text-align:center;border-spacing:0'>\n"
+										"<tr><th>");
 								inOutputTable = true;
 								outputTableRowNumber = 1;
 							} else {
 								/*
 									A new row in an existing table in the chunk output.
 								*/
-								MelderString_append (buffer, U"<tr>\n"
-										"<td style='padding-left:5pt;padding-right:5pt'>");
+								MelderString_append (buffer, U"<tr>"
+										"<td>");
 								outputTableRowNumber += 1;
 							}
 						} else {
@@ -197,7 +197,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 								inOutputTable = false;
 								outputTableRowNumber = 0;
 							}
-							MelderString_append (buffer, U"<code style='white-space:pre-wrap'>   ");
+							MelderString_append (buffer, U"<code>   ");
 						}
 						for (const char32 *plineBuffer = & lineBuffer.string [0]; *plineBuffer != U'\0'; plineBuffer ++) {
 							/*if (plineBuffer [0] == U' ' && plineBuffer [1] == U' ') {
@@ -215,9 +215,9 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 									MelderString_append (buffer, U"</i>");
 								}
 								if (outputTableRowNumber == 1)
-									MelderString_append (buffer, U"<th style='padding-left:5pt;padding-right:5pt'>");
+									MelderString_append (buffer, U"<th>");
 								else
-									MelderString_append (buffer, U"<td style='padding-left:5pt;padding-right:5pt'>");
+									MelderString_append (buffer, U"<td>");
 							} else if (plineBuffer [0] == U'\\' && plineBuffer [1] == U'#' && plineBuffer [2] == U'{') {
 								inBold = true;
 								MelderString_append (buffer, U"<b>");
@@ -559,7 +559,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				} else if (p [1] == U'`') {
 					p += 2;
 					MelderString_append (& link, U'`');
-					MelderString_append (& linkText, U"<b><code style=\"white-space:pre-wrap\"><font size=+1>");
+					MelderString_append (& linkText, U"<b><code><font size=+1>");
 					while (*p != U'`' && *p != U'\0') {
 						MelderString_append (& link, * p);
 						MelderString_append (& linkText, * p);
@@ -579,7 +579,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 			} else if (*p == U'%') {
 				if (p [1] == U'`') {
 					p += 2;
-					MelderString_append (buffer, U"<i><code style=\"white-space:pre-wrap\"><font size=+1>");
+					MelderString_append (buffer, U"<i><code><font size=+1>");
 					while (*p != U'`' && *p != U'\0')
 						MelderString_append (buffer, * p ++);
 					if (*p)
@@ -629,7 +629,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 			} else if (*p == U'#') {
 				if (p [1] == U'`') {
 					p += 2;
-					MelderString_append (buffer, U"<b><code style=\"white-space:pre-wrap\"><font size=+1>");
+					MelderString_append (buffer, U"<b><code><font size=+1>");
 					while (*p != U'`' && *p != U'\0')
 						MelderString_append (buffer, * p ++);
 					if (*p)
@@ -659,26 +659,26 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 					inCode = false;
 					p ++;
 				} else if (p [1] == U'$') {
-					MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1>");
+					MelderString_append (buffer, U"<code><font size=+1>");
 					inCode = true;
 					p += 2;
 				} else if (p [1] == U'%') {
-					MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1><i>");
+					MelderString_append (buffer, U"<code><font size=+1><i>");
 					wordCode = true;
 					wordItalic = true;
 					p += 2;
 				} else if (p [1] == U'#') {
-					MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1><b>");
+					MelderString_append (buffer, U"<code><font size=+1><b>");
 					wordCode = true;
 					wordBold = true;
 					p += 2;
 				} else {
-					MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1>");
+					MelderString_append (buffer, U"<code><font size=+1>");
 					wordCode = true;
 					p ++;
 				}
 			} else if (verbatimAware && *p == U'`') {
-				MelderString_append (buffer, U"<code style=\"white-space:pre-wrap\"><font size=+1>");
+				MelderString_append (buffer, U"<code><font size=+1>");
 				++ p;
 				while (*p != U'\0' && *p != U'`')
 					MelderString_append (buffer, *p ++);
@@ -823,7 +823,13 @@ static void writeTitleAsHtml (conststring32 title, MelderString *buffer) {
 	MelderString_append (buffer,
 		U"<html><head><meta name=\"robots\" content=\"index,follow\">"
 		U"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n"
-		U"<title>", titleBuffer.string, U"</title></head><body bgcolor=\"#FFFFFF\">\n\n"
+		U"<title>", titleBuffer.string, U"</title>\n"
+		U"<style>\n"
+		U"   td { padding-left: 5pt; padding-right: 5pt; }\n"
+		U"   th { padding-left: 5pt; padding-right: 5pt; }\n"
+		U"   code { white-space: pre-wrap; }\n"
+		U"</style>\n"
+		U"</head><body bgcolor=\"#FFFFFF\">\n\n"
 	);
 	MelderString_append (buffer,
 		U"<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor=\"#CCCC00\">"
@@ -879,7 +885,7 @@ static void writePageAsHtml (ManPages me, Interpreter optionalInterpreterReferen
 					MelderString_copy (& visibleTitle, title);
 					if (visibleTitle.string [visibleTitle.length - 1] == U'`')
 						visibleTitle.string [visibleTitle.length - 1] = U'\0';
-					MelderString_append (buffer, U".html\"><code style=\"white-space:pre-wrap\"><font size=+1>",
+					MelderString_append (buffer, U".html\"><code><font size=+1>",
 							& visibleTitle.string [1], U"</font></code></a>\n");
 				} else
 					MelderString_append (buffer, U".html\">", title, U"</a>\n");
