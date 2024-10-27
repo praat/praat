@@ -667,7 +667,10 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			struct stat statbuf;
 			int status = stat ((char *) utf8path, & statbuf);
 			if (status == -1) {
-				f = nullptr;   // and wait for errno to tell us why
+				if (type [0] == 'r')
+					f = nullptr;   // and wait for errno to tell us why
+				else
+					f = fopen ((char *) utf8path, type);
 			} else if (S_ISDIR (statbuf. st_mode)) {
 				isFolder = true;
 				trace (U"A folder is not a file!");
