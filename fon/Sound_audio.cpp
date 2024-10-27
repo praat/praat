@@ -535,7 +535,7 @@ void Sound_playPart (constSound me, double tmin, double tmax, Sound_PlayCallback
 				thy silenceBefore + thy numberOfSamples + thy silenceAfter, numberOfChannels, melderPlayCallback, thee);
 		} else {
 			autoSound part = Sound_extractPart (me, tmin, tmax, kSound_windowShape::RECTANGULAR, 1.0, true);
-			autoSound resampled = Sound_resample (part.get(), bestSampleRate, 50);
+			autoSound resampled = Sound_resample (part.get(), bestSampleRate, 20);
 			Sound_playPart (resampled.get(), tmin, tmax, callback, boss);   // recursively
 		}
 	} catch (MelderError) {
