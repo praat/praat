@@ -29,6 +29,11 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.23# (27 October 2024)
+• Audio output: higher-quality playback of sounds with unusual sampling frequencies.
+• Scripting: better error messages on #Save commands.
+• Better HTML output from manuals (e.g. italicized or bolded backslash sequences).
+
 ##6.4.22# (5 October 2024)
 • More robustness against trying to run a binary file as a script.
 • Windows Sound window: faster zooming with Ctrl-scrollwheel.
@@ -154,6 +159,10 @@ Latest changes in Praat.
   and made obsolete versions of pitch analysis settings (such as “Pitch silence threshold”)
   available again, now under the COMPATIBILITY section of the output of “Editor info”.
   This will allow older editor scripts to continue to run without change.
+
+################################################################################
+"What was new in 6.4?"
+© Paul Boersma 2022,2023
 
 ##6.4# (15 November 2023)
 • New pitch analysis methods: @@Sound: To Pitch (filtered ac)...@ and
@@ -284,6 +293,7 @@ and is interruptable by the Escape key.
 
 What used to be new?
 ====================
+• @@What was new in 6.4?
 • @@What was new in 6.3?
 • @@What was new in 6.2?
 • @@What was new in 6.1?

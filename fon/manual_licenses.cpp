@@ -35,7 +35,7 @@ The following people contributed source code to Praat:
 	@@Intro 7. Annotation|annotation@, @@Intro 8. Manipulation|speech manipulation@, @@voice|voice report@,
 	@@ExperimentMFC|listening experiments@,
 	@@articulatory synthesis@, @@OT learning|optimality-theoretic learning@,
-	tables, @formulas, @scripting, and adaptation of PortAudio, GLPK, regular expressions, Opus and LAME.
+	tables, @formulas, @scripting, and adaptation of PortAudio, GLPK, regular expressions, eSpeak, Opus and LAME.
 , David Weenink:
 	@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC,
 	@VowelEditor,
