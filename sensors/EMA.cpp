@@ -49,7 +49,7 @@ void CarstensEMA_processHeader (MelderFile file, integer *out_version, integer *
 	integer *out_numberOfSensors, integer *out_samplingFrequencyHz, integer *out_numberOfBytesInLines1234)
 {
 	try {
-		file -> filePointer= Melder_fopen (file, "r");
+		file -> filePointer = Melder_fopen (file, "r");
 		file -> openForReading = true;
 		integer numberOfBytesRead = 0;
 		/*
@@ -57,11 +57,11 @@ void CarstensEMA_processHeader (MelderFile file, integer *out_version, integer *
 			where y is '1', '2' or '3'
 		*/
 		constexpr integer nchar1 = 14;
-		char *line1 =  MelderFile_readLine8 (file);
+		char *line1 = MelderFile_readLine8 (file);
 		const integer length1 = strlen (line1);
 		Melder_require (length1 == nchar1,
 			U"Line 1 should have ", nchar1, U" characters and not ", length1, U".");
-		numberOfBytesRead += nchar1 + 1; // + 15: end of line is always '\n'
+		numberOfBytesRead += nchar1 + 1;   // + 15: end of line is always '\n'
 		if (! strnequ (line1, "AG50xDATA_V00", nchar1 - 1))
 			Melder_throw (U"Not a Carstens AG50x file.");
 		const integer version = line1 [nchar1 - 1] - '0';
@@ -71,18 +71,18 @@ void CarstensEMA_processHeader (MelderFile file, integer *out_version, integer *
 			Second line is 9 bytes long incl. \n: the header size as a character string
 		*/
 		constexpr integer nchar2 = 8;
-		char *line2 =  MelderFile_readLine8 (file);
+		char *line2 = MelderFile_readLine8 (file);
 		const integer length2 = strlen (line2);
 		Melder_require (length2 == nchar2,
 			U"Line 2 should have ", nchar2, U" characters and not ", length2, U".");
-		numberOfBytesRead += nchar2 + 1; // + 9: end of line is always '\n'
+		numberOfBytesRead += nchar2 + 1;   // + 9: end of line is always '\n'
 		const integer headerSizeBytes = atoi (line2);
 		/*
 			Third line should start with the 17 characters 'NumberOfChannels=', followed by the number of channels/sensors
 			(8, 16, or 24) followed by a newline
 		*/
 		constexpr integer nchar3min = 17;
-		char *line3 =  MelderFile_readLine8 (file);
+		char *line3 = MelderFile_readLine8 (file);
 		const integer nchar3 = strlen (line3);
 		Melder_require (nchar3min < nchar3,
 			U"Line 3 should at least have ", nchar3min, U" characters and not ", nchar3, U".");
@@ -91,19 +91,19 @@ void CarstensEMA_processHeader (MelderFile file, integer *out_version, integer *
 		const integer numberOfSensors = atoi (& line3 [nchar3min]);
 		Melder_require (numberOfSensors <= 24,
 			U"The number of sensors (", numberOfSensors, U") should not exceed 24.");
-		numberOfBytesRead += nchar3 + 1; // + 19/20: end of line is always '\n'
+		numberOfBytesRead += nchar3 + 1;   // + 19/20: end of line is always '\n'
 		/*
 			Fourth line should start with the 20 characters 'SamplingFrequencyHz=' followed by a number < 10000 and a newline
 		*/
 		constexpr integer nchar4min = 20;
-		char *line4 =  MelderFile_readLine8 (file);
+		char *line4 = MelderFile_readLine8 (file);
 		const integer nchar4 = strlen (line4);
 		Melder_require (nchar4min < nchar4,
 			U"Line 4 should at least have ", nchar4min, U" characters and not ", nchar4, U".");
 		Melder_require (strnequ (line4, "SamplingFrequencyHz=", nchar4min),
 			U"We expected 'SamplingFrequencyHz='.");
 		const integer samplingFrequency = atoi (& line4 [nchar4min]);
-		numberOfBytesRead += nchar4 + 1; // + 22/23/24: 
+		numberOfBytesRead += nchar4 + 1;   // + 22/23/24: 
 		MelderFile_close (file);
 		if (out_version)
 			*out_version = version;
