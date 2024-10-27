@@ -665,8 +665,10 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			f = _wfopen (Melder_peek32toW_fileSystem (file -> path), Melder_peek32toW (Melder_peek8to32 (type)));
 		#else
 			struct stat statbuf;
-			stat ((char *) utf8path, & statbuf);
-			if (S_ISDIR (statbuf. st_mode)) {
+			int status = stat ((char *) utf8path, & statbuf);
+			if (status == -1) {
+				f = nullptr;   // and wait for errno to tell us why
+			} else if (S_ISDIR (statbuf. st_mode)) {
 				isFolder = true;
 				trace (U"A folder is not a file!");
 				f = nullptr;
@@ -682,6 +684,20 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			( type [0] == 'r' ? U"open" : type [0] == 'a' ? U"append to" : U"create" ),
 			U" file ", file, U"."
 		);
+		if (errno == EIO)
+			Melder_appendError (U"Not-so-useful hint: an error occurred while reading from the file system.");
+		else if (errno == ELOOP)
+			Melder_appendError (U"Hint: the file path contains a loop of symbolic links.");
+		else if (errno == ENAMETOOLONG)
+			Melder_appendError (U"Not-so-useful hint: the file path may be too long. This should not occur.");
+		else if (errno == ENOENT)
+			Melder_appendError (U"Hint: one of the folders in this file path does not exist.");
+		else if (errno == ENOTDIR)
+			Melder_appendError (U"Hint: a component of the file path is not a folder.");
+		else if (errno == EOVERFLOW)
+			Melder_appendError (U"Not-so-useful hint: the file size is too big.");
+		else if (errno != 0)
+			Melder_appendError (U"Not-so-useful hint: unexpected error ", errno, U".");
 		if (isFolder)
 			Melder_appendError (U"Hint: this is a folder, not a file.");
 		else if (path [0] == U'\0')

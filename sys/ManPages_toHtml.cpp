@@ -179,8 +179,8 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 								/*
 									A new table in the chunk output.
 								*/
-								MelderString_append (buffer, U"<code><table style='text-align:center;border-spacing:0'><tr>\n"
-										"<th style='padding-top:0pt;padding-bottom:0pt;padding-left:5pt;padding-right:5pt'>");
+								MelderString_append (buffer, U"<code><table cellpadding=0 style='text-align:center;border-spacing:0'><tr>\n"
+										"<th style='padding-left:5pt;padding-right:5pt'>");
 								inOutputTable = true;
 								outputTableRowNumber = 1;
 							} else {
@@ -188,7 +188,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 									A new row in an existing table in the chunk output.
 								*/
 								MelderString_append (buffer, U"<tr>\n"
-										"<td style='padding-top:0pt;padding-bottom:0pt;padding-left:5pt;padding-right:5pt'>");
+										"<td style='padding-left:5pt;padding-right:5pt'>");
 								outputTableRowNumber += 1;
 							}
 						} else {
@@ -215,9 +215,9 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 									MelderString_append (buffer, U"</i>");
 								}
 								if (outputTableRowNumber == 1)
-									MelderString_append (buffer, U"<th style='padding-top:0pt;padding-bottom:0pt;padding-left:5pt;padding-right:5pt'>");
+									MelderString_append (buffer, U"<th style='padding-left:5pt;padding-right:5pt'>");
 								else
-									MelderString_append (buffer, U"<td style='padding-top:0pt;padding-bottom:0pt;padding-left:5pt;padding-right:5pt'>");
+									MelderString_append (buffer, U"<td style='padding-left:5pt;padding-right:5pt'>");
 							} else if (plineBuffer [0] == U'\\' && plineBuffer [1] == U'#' && plineBuffer [2] == U'{') {
 								inBold = true;
 								MelderString_append (buffer, U"<b>");
