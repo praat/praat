@@ -186,14 +186,20 @@ static void menu_cb_FormantSettings (FormantPathArea me, EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_FormantColourSettings (FormantPathArea me, EDITOR_ARGS) {
+static void menu_cb_FormantDisplaySettings (FormantPathArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Formant colour settings", nullptr)
+		REAL     (dynamicRange, U"Dynamic range (dB)", my default_formant_dynamicRange())
+		POSITIVE (dotSize, U"Dot size (mm)", my default_formant_dotSize())
 		WORD (oddPathColour_string, U"Dots in F1, F3, F5", my default_formant_path_oddColour())
 		WORD (evenPathColour_string, U"Dots in F2, F4", my default_formant_path_evenColour())
 	EDITOR_OK
+		SET_REAL (dynamicRange,      my instancePref_formant_dynamicRange())
+		SET_REAL (dotSize,           my instancePref_formant_dotSize())
 		SET_STRING (oddPathColour_string, my instancePref_formant_path_oddColour())
 		SET_STRING (evenPathColour_string, my instancePref_formant_path_evenColour())
 	EDITOR_DO
+		my setInstancePref_formant_dynamicRange (dynamicRange);
+		my setInstancePref_formant_dotSize (dotSize);
 		my setInstancePref_formant_path_oddColour (oddPathColour_string);
 		my setInstancePref_formant_path_evenColour (evenPathColour_string);
 		FunctionArea_broadcastDataChanged (me);
@@ -272,8 +278,8 @@ void structFormantPathArea :: v_createMenuItems_formant (EditorMenu menu) {
 	// djmw: 20230211 I don't know how to test whether a sound is available here
 	FunctionAreaMenu_addCommand (menu, U"Formant analysis settings...", 0,
 			menu_cb_FormantSettings, this);
-	FunctionAreaMenu_addCommand (menu, U"Formant colour settings...", 0,
-			menu_cb_FormantColourSettings, this);
+	FunctionAreaMenu_addCommand (menu, U"Formant display settings...", 0,
+			menu_cb_FormantDisplaySettings, this);
 	FunctionAreaMenu_addCommand (menu, U"Draw visible formant contour...", 0,
 			menu_cb_DrawVisibleFormantContour, this);
 	FunctionAreaMenu_addCommand (menu, U"Formant listing", 0,
