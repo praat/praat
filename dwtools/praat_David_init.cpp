@@ -5461,9 +5461,9 @@ static void Sound_create_checkCommonFields (double startTime, double endTime, do
 	if (numberOfSamples_real > INT54_MAX)
 		Melder_throw (U"A Sound cannot have ", numberOfSamples_real,
 				U" samples; the maximum is ", Melder_bigInteger (INT54_MAX), U" samples.");
-	if (numberOfSamples_real > INTEGER_MAX)
+	if (sizeof (integer) == 4 && numberOfSamples_real > INT32_MAX)
 		Melder_throw (U"A Sound cannot have ", Melder_bigInteger (int64 (numberOfSamples_real)),
-				U" samples; the maximum is ", Melder_bigInteger (INTEGER_MAX), U" samples.");
+				U" samples; the maximum is ", Melder_bigInteger (INT32_MAX), U" samples.");
 }
 
 FORM_SAVE (SAVE__Sound_saveAsHighestQualityMP3File, U"Sound: Save as MP3 file", nullptr, U"mp3") {

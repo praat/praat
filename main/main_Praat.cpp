@@ -42,7 +42,7 @@ static void logo (Graphics graphics) {
 	Graphics_setFontSize (graphics, 10.0);
 	Graphics_text (graphics, 0.5, 0.20, Melder_cat (U"Copyright © 1992–", Melder_appYear(), U" by Paul Boersma and David Weenink"));
 	Graphics_setFontSize (graphics, 10.0);
-	Graphics_text (graphics, 0.5, 0.10, U"Website: http://praat.org or https://www.fon.hum.uva.nl/praat");
+	Graphics_text (graphics, 0.5, 0.10, U"Website: https://www.fon.hum.uva.nl/praat or http://praat.org");
 }
 
 int main (int argc, char *argv []) {
