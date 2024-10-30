@@ -28,13 +28,8 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"
 
-#if defined (__POWERPC__)||1
-	#define RECOMPUTE_SINES  0
-#else
-	#define RECOMPUTE_SINES  1
-#endif
 double NUM_interpolate_sinc (constVEC const& y, double x, integer maxDepth) {
-	const integer midleft = (integer) floor (x), midright = midleft + 1;
+	const integer midleft = Melder_ifloor (x), midright = midleft + 1;
 	double result = 0.0;
 	if (y.size < 1)
 		return undefined;   // there exists no best guess
@@ -50,7 +45,7 @@ double NUM_interpolate_sinc (constVEC const& y, double x, integer maxDepth) {
 	Melder_clipRight (& maxDepth, midright - 1);
 	Melder_clipRight (& maxDepth, y.size - midleft);
 	if (maxDepth <= NUM_VALUE_INTERPOLATE_NEAREST)
-		return y [(integer) floor (x + 0.5)];
+		return y [Melder_iround (x)];   // possible because we know that 1 <= x <= y.size
 	if (maxDepth == NUM_VALUE_INTERPOLATE_LINEAR)
 		return y [midleft] + (x - midleft) * (y [midright] - y [midleft]);
 	if (maxDepth == NUM_VALUE_INTERPOLATE_CUBIC) {
@@ -62,61 +57,276 @@ double NUM_interpolate_sinc (constVEC const& y, double x, integer maxDepth) {
 	/*
 		maxDepth >= 3: sinc interpolation
 	*/
-	const integer left = midright - maxDepth;
-	const integer right = midleft + maxDepth;
-	double a = NUMpi * (x - midleft);
-	double halfsina = 0.5 * sin (a);
-	double aa = a / (x - left + 1.0);
-	double daa = NUMpi / (x - left + 1.0);
-	#if ! RECOMPUTE_SINES
-		double cosaa = cos (aa);
-		double sinaa = sin (aa);
-		double cosdaa = cos (daa);
-		double sindaa = sin (daa);
-	#endif
-	for (integer ix = midleft; ix >= left; ix --) {
-		#if RECOMPUTE_SINES
-			const double d = halfsina / a * (1.0 + cos (aa));
-		#else
-			const double d = halfsina / a * (1.0 + cosaa);
-		#endif
-		result += y [ix] * d;
-		a += NUMpi;
-		#if RECOMPUTE_SINES
-			aa += daa;
-		#else
-			const double help = cosaa * cosdaa - sinaa * sindaa;
-			sinaa = cosaa * sindaa + sinaa * cosdaa;
-			cosaa = help;
-		#endif
-		halfsina = - halfsina;
-	}
-	a = NUMpi * (midright - x);
-	halfsina = 0.5 * sin (a);
-	aa = a / (right - x + 1.0);
-	daa = NUMpi / (right - x + 1.0);
-	#if ! RECOMPUTE_SINES
-		cosaa = cos (aa);
-		sinaa = sin (aa);
-		cosdaa = cos (daa);
-		sindaa = sin (daa);
-	#endif
-	for (integer ix = midright; ix <= right; ix ++) {
-		#if RECOMPUTE_SINES
-			const double d = halfsina / a * (1.0 + cos (aa));
-		#else
-			const double d = halfsina / a * (1.0 + cosaa);
-		#endif
-		result += y [ix] * d;
-		a += NUMpi;
-		#if RECOMPUTE_SINES
-			aa += daa;
-		#else
-			const double help = cosaa * cosdaa - sinaa * sindaa;
-			sinaa = cosaa * sindaa + sinaa * cosdaa;
-			cosaa = help;
-		#endif
-		halfsina = - halfsina;
+	const integer left = midright - maxDepth;   // as maxDepth <= midright - 1, we know that left >= 1
+	const integer right = midleft + maxDepth;   // as maxDepth <= y.size - midleft, we know that right <= y.size
+	/*
+		The sinc function contains a sine wave with a phase shift of pi per sample. For sample `i`:
+			sinc [i] = sin (pi * (i - x)) / (pi * (i - x)) =
+			         = sin (pi * (x - i)) / (pi * (x - i))
+		The sought interpolated value will then be
+			result = sum_i=left^right sinc [i] * y [i] * window [i] / sum_i=left^right window [i]
+		where `window` is a raised cosine:
+			window [i] = 0.5 + 0.5 * cos (pi * (x - i) / (x - left + 1))    (for `left` <= `i` <= `midleft`)
+			window [i] = 0.5 + 0.5 * cos (pi * (i - x) / (right - x + 1))   (for `midright` <= `i` <= `right`)
+
+		We can check whether a more symmetric window is better, e.g.
+			window [i] = 0.5 + 0.5 * cos (pi * (i - x) / (maxDepth + 0.5))    (for `left` <= `i` <= `right`)
+		That turns out to be about 0.1 dB worse, but `maxDepth` + 2.0 does much better on the script `fon/resamplingDepth.praat`;
+		the aliasing-suppressions are (in dB):
+
+		Depth:  700      50      20      10      6       3       2       1
+		       52.366  41.348  39.357  38.267  36.956  27.897  20.839  19.383
+		       52.365  41.328  39.309  38.180  36.734  27.901  20.839  19.383   maxDepth + 0.5
+		       52.261  41.298  39.269  38.068  36.485  24.870  20.839  19.383   maxDepth + 0.0
+		       52.371  41.358  39.349  38.284  36.967  30.742  20.839  19.383   maxDepth + 1.0
+		       52.377  41.387  39.388  38.375  37.177  32.949  20.839  19.383   maxDepth + 1.5
+		       52.382  41.417  39.426  38.445  37.337  34.032  20.839  19.383   maxDepth + 2.0   but strong reflection of f=0 at fsamp
+		       52.387  41.446  39.462  38.490  37.429 *34.042  20.839  19.383   maxDepth + 2.5
+		       52.392  41.476  39.496 *38.510 *37.450  33.504  20.839  19.383   maxDepth + 3.0
+		       52.397  41.505  39.528  38.503  37.406  32.830  20.839  19.383   maxDepth + 3.5
+		       52.401  41.533  39.558  38.472  37.309  32.193  20.839  19.383   maxDepth + 4.0
+		       52.443  41.856 *39.728  37.254  35.390  29.054  20.839  19.383   maxDepth + 10.0
+		       52.503  42.287  39.523  35.747  34.030  28.212  20.839  19.383   maxDepth + 20.0
+		       52.676  42.933  38.803  34.627  33.309  27.900  20.839  19.383   maxDepth + 50.0
+		       52.951  43.185  38.434  34.349  33.163  27.847  20.839  19.383   maxDepth + 100.0
+		       53.432  43.242  38.283  34.263  33.121  27.833  20.839  19.383   maxDepth + 200.0
+		       54.116 *43.246  38.235  34.239  33.110  27.829  20.839  19.383   maxDepth + 400.0
+		       54.766  43.245  38.222  34.232  33.107  27.828  20.839  19.383   maxDepth + 800.0
+		       55.109  43.245  38.218  34.231  33.106  27.828  20.839  19.383   maxDepth + 1600.0
+		       55.213  43.245  38.217  34.230  33.106  27.828  20.839  19.383   maxDepth + 3200.0
+		      *55.246  43.245  38.217  34.230  33.105  27.828  20.839  19.383   maxDepth + 1e9
+		       53.975  42.453 *39.728  38.347 *37.451  32.949  20.839  19.383   maxDepth * 1.5
+
+		As we will be approximating the sine and cosine values by matrix multiplication
+		(instead of recomputing them every time we need them)
+		we will start where the values of the sinc function are highest, i.e. at `midleft` and `midright`.
+
+		First interpolate over the samples on the left, i.e. for `left` <= `i` <= `midleft`.
+
+		With
+			leftPhase [i] = pi * (x - i)
+			leftDepth = x - left + 1   ; or maxDepth + 0.5
+		we get
+			sinc [i] * window [i] = 0.5 * sin (leftPhase [i]) / leftPhase [i] * (1.0 + cos (leftPhase [i] / leftDepth))
+		Iterate for `i` from `midleft` to `left`:
+			result := 0
+			leftPhase := pi * (x - midleft)
+			windowPhase := leftPhase / leftDepth
+			for i from midleft downto left
+				sincTimesWindow := 0.5 * sin (leftPhase) / leftPhase * (1.0 + cos (windowPhase))
+				result += y [i] * sincTimesWindow
+				leftPhase += pi
+				windowPhase += pi / leftDepth
+			endfor
+		Adding a phase of pi just reverses the sign of the sine. So we can simplify the loop:
+			result := 0
+			leftPhase := pi * (x - midleft)
+			windowPhase := leftPhase / leftDepth
+			windowPhaseStep = pi / leftDepth
+			halfSinLeftPhase := 0.5 * sin (leftPhase)
+			for i from midleft downto left
+				sincTimesWindow := halfSinLeftPhase / leftPhase * (1.0 + cos (windowPhase))
+				result += y [i] * sincTimesWindow
+				leftPhase += pi
+				halfSinLeftPhase := - halfSinLeftPhase
+				windowPhase += windowPhaseStep
+			endfor
+		The computationally slow part of this is the computation of the cosine within the loop.
+		This can be sped up by computing both the sine and cosine of the current `windowPhase` and then
+		computing the sine and cosine of the next `windowPhase`, i.e. the current `windowPhase` plus `windowPhaseStep`:
+			sin (windowPhase + windowPhaseStep) = sin (windowPhase) * cos (windowPhaseStep) + cos (windowPhase) * sin (windowPhaseStep)
+			cos (windowPhase + windowPhaseStep) = cos (windowPhase) * cos (windowPhaseStep) - sin (windowPhase) * sin (windowPhaseStep)
+	*/
+	enum class enumWindowShape { RAISED_COSINE, RAISED_GAUSSIAN };
+	constexpr enumWindowShape WINDOW_SHAPE = enumWindowShape :: RAISED_COSINE;
+	if (WINDOW_SHAPE == enumWindowShape :: RAISED_COSINE) {
+		{// scope: left half
+			//const double leftDepth = x - left + 1.0;
+			const double leftDepth = maxDepth + 0.5;
+			const double windowPhaseStep = NUMpi / leftDepth;
+			const double sinWindowPhaseStep = sin (windowPhaseStep);
+			const double cosWindowPhaseStep = cos (windowPhaseStep);
+			/*
+				Initialize the phase of the sinc.
+			*/
+			double leftPhase = NUMpi * (x - midleft);
+			double halfSinLeftPhase = 0.5 * sin (leftPhase);
+			/*
+				Initialize the phase of the window.
+			*/
+			double windowPhase = leftPhase / leftDepth;
+			double sinWindowPhase = sin (windowPhase);
+			double cosWindowPhase = cos (windowPhase);
+			/*
+				Step through the samples.
+			*/
+			for (integer ix = midleft; ix >= left; ix --) {
+				/*
+					Accumulate the contribution of this sample to the result.
+				*/
+				const double sincTimesWindow = halfSinLeftPhase / leftPhase * (1.0 + cosWindowPhase);
+				result += y [ix] * sincTimesWindow;
+				/*
+					Update the phase of the sinc.
+				*/
+				leftPhase += NUMpi;
+				halfSinLeftPhase = - halfSinLeftPhase;
+				/*
+					Update the phase of the window.
+				*/
+				//windowPhase += windowPhaseStep;   // superfluous statement (though semantically correct)
+				const double nextSinWindowPhase = cosWindowPhase * sinWindowPhaseStep + sinWindowPhase * cosWindowPhaseStep;
+				const double nextCosWindowPhase = cosWindowPhase * cosWindowPhaseStep - sinWindowPhase * sinWindowPhaseStep;
+				sinWindowPhase = nextSinWindowPhase;
+				cosWindowPhase = nextCosWindowPhase;
+			}
+		}
+		/*
+			Then interpolate over the samples on the right, i.e. for `midright` <= `i` <= `right`.
+		*/
+		{// scope: right half
+			//const double rightDepth = right - x + 1.0;
+			const double rightDepth = maxDepth + 0.5;
+			const double windowPhaseStep = NUMpi / rightDepth;
+			const double sinWindowPhaseStep = sin (windowPhaseStep);
+			const double cosWindowPhaseStep = cos (windowPhaseStep);
+			/*
+				Initialize the phase of the sinc.
+			*/
+			double rightPhase = NUMpi * (midright - x);
+			double halfSinRightPhase = 0.5 * sin (rightPhase);
+			/*
+				Initialize the phase of the window.
+			*/
+			double windowPhase = rightPhase / rightDepth;
+			double sinWindowPhase = sin (windowPhase);
+			double cosWindowPhase = cos (windowPhase);
+			/*
+				Step through the samples.
+			*/
+			for (integer ix = midright; ix <= right; ix ++) {
+				/*
+					Accumulate the contribution of this sample to the result.
+				*/
+				const double sincTimesWindow = halfSinRightPhase / rightPhase * (1.0 + cosWindowPhase);
+				result += y [ix] * sincTimesWindow;
+				/*
+					Update the phase of the sinc.
+				*/
+				rightPhase += NUMpi;
+				halfSinRightPhase = - halfSinRightPhase;
+				/*
+					Update the phase of the window.
+				*/
+				//windowPhase += windowPhaseStep;   // superfluous statement (though semantically correct)
+				const double nextSinWindowPhase = cosWindowPhase * sinWindowPhaseStep + sinWindowPhase * cosWindowPhaseStep;
+				const double nextCosWindowPhase = cosWindowPhase * cosWindowPhaseStep - sinWindowPhase * sinWindowPhaseStep;
+				sinWindowPhase = nextSinWindowPhase;
+				cosWindowPhase = nextCosWindowPhase;
+			}
+		}
+	} else if (WINDOW_SHAPE == enumWindowShape :: RAISED_GAUSSIAN) {
+		/*
+			Check whether an exponential window is better, e.g.
+				window [i] = (exp (-12.0 * ((i - x) / (maxDepth + 0.5))^2) - exp (-12.0)) / (1.0 - exp (-12.0))   for `left` <= `i` <= `right`
+			With
+				leftPhase [i] = pi * (x - i)
+				leftDepth = maxDepth + 0.5
+			we get
+				sinc [i] * window [i] = sin (leftPhase [i]) / leftPhase [i] *
+						* exp (-12.0/pi^2 * (leftPhase [i] / leftDepth)^2) - exp (-12.0)) / (1.0 + exp (-12.0))
+			Iterate for `i` from `midleft` to `left`:
+				result := 0
+				leftPhase := pi * (x - midleft)
+				windowPhase := -12/pi * leftPhase / leftDepth
+				for i from midleft downto left
+					sincTimesWindow := sin (leftPhase) / leftPhase * (exp (windowPhase) - exp (-12.0)) / (1.0 + exp (-12.0))
+					result += y [i] * sincTimesWindow
+					leftPhase += pi
+					windowPhase += pi / leftDepth
+				endfor
+			Adding a phase of pi just reverses the sign of the sine. So we can simplify the loop:
+				result := 0
+				leftPhase := pi * (x - midleft)
+				windowPhase := -12/pi^2 * (leftPhase / leftDepth)^2
+				sinLeftPhase := sin (leftPhase)
+				for i from midleft downto left
+					sincTimesWindow := sinLeftPhase / leftPhase * (exp (windowPhase) - exp (-12.0)) / (1.0 + exp (-12.0))
+					result += y [i] * sincTimesWindow
+					leftPhase += pi
+					sinLeftPhase := - sinLeftPhase
+					windowPhase = -12/pi^2 * (leftPhase / leftDepth)^2
+				endfor
+			The computationally slow part of this is the computation of the exponential within the loop.
+			This can be sped up by computing the exponential of the current `windowPhase` and then
+			computing the exponential of the next `windowPhase`, i.e. the current `windowPhase` plus `windowPhaseStep`:
+				exp (windowPhase + windowPhaseStep) = exp (windowPhase) * exp (windowPhaseStep)
+		*/
+		{// scope: left half
+			const double leftDepth = maxDepth + 0.5;
+			/*
+				Initialize the phase of the sinc.
+			*/
+			double leftPhase = NUMpi * (x - midleft);
+			double sinLeftPhase = sin (leftPhase);
+			/*
+				Initialize the phase of the window.
+			*/
+			double windowPhase = (-12.0 / NUMpi / NUMpi) * sqr (leftPhase / leftDepth);
+			/*
+				Step through the samples.
+			*/
+			for (integer ix = midleft; ix >= left; ix --) {
+				/*
+					Accumulate the contribution of this sample to the result.
+				*/
+				const double sincTimesWindow = sinLeftPhase / leftPhase * (exp (windowPhase) - exp (-12.0)) / (1.0 + exp (-12.0));
+				result += y [ix] * sincTimesWindow;
+				/*
+					Update the phase of the sinc.
+				*/
+				leftPhase += NUMpi;
+				sinLeftPhase = - sinLeftPhase;
+				/*
+					Update the phase of the window.
+				*/
+				windowPhase += (-12.0 / NUMpi / NUMpi) * sqr (leftPhase / leftDepth);
+			}
+		}
+		/*
+			Then interpolate over the samples on the right, i.e. for `midright` <= `i` <= `right`.
+		*/
+		{// scope: right half
+			const double rightDepth = maxDepth + 0.5;
+			/*
+				Initialize the phase of the sinc.
+			*/
+			double rightPhase = NUMpi * (midright - x);
+			double sinRightPhase = sin (rightPhase);
+			/*
+				Initialize the phase of the window.
+			*/
+			double windowPhase = (-12.0 / NUMpi / NUMpi) * sqr (rightPhase / rightDepth);
+			/*
+				Step through the samples.
+			*/
+			for (integer ix = midright; ix <= right; ix ++) {
+				/*
+					Accumulate the contribution of this sample to the result.
+				*/
+				const double sincTimesWindow = sinRightPhase / rightPhase * (exp (windowPhase) - exp (-12.0)) / (1.0 + exp (-12.0));
+				result += y [ix] * sincTimesWindow;
+				/*
+					Update the phase of the sinc.
+				*/
+				rightPhase += NUMpi;
+				sinRightPhase = - sinRightPhase;
+				/*
+					Update the phase of the window.
+				*/
+				windowPhase += (-12.0 / NUMpi / NUMpi) * sqr (rightPhase / rightDepth);
+			}
+		}
 	}
 	return result;
 }
