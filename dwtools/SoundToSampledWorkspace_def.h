@@ -21,10 +21,10 @@ oo_DEFINE_CLASS (SoundToSampledWorkspace, SampledToSampledWorkspace)
 
 	oo_DOUBLE (physicalAnalysisWidth) 			// depends on the effectiveAnalysiswidth and the window window shape
 	oo_INTEGER (soundFrameSize) 				// determined by the physicalAnalysisWidth and the samplingFrequency of the Sound
-	oo_VEC (soundFrame, soundFrameSize)			// the sound samples to analyse
+	oo_VEC (soundFrame, soundFrameSize)			// the sound samples to analyse TODO row from oo_MAT for multi channel
 	oo_BOOLEAN (subtractFrameMean)				// if true, the frame mean will be subtracted before the windowing operation
 	oo_ENUM (kSound_windowShape, windowShape)	// Type: Rectangular, triangular, hamming, etc..
-	oo_VEC (windowFunction, soundFrameSize)
+	oo_VEC (windowFunction, soundFrameSize)		// the actual window used
 
 	#if oo_DECLARING
 		/*

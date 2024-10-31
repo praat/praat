@@ -17,8 +17,29 @@
  */
 
 /*
+	TODO: 20241023 ????
+
+#define ooSTRUCT SampledToSampledThreadSpecificData
+oo_DEFINE_CLASS (SampledToSampledThreadSpecificData, Daata)
+
+	oo_INTEGER (currentFrame)				// the frame we are working on
+	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in a frame analysis
+	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo
+	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occurred
+	
+	oo_DOUBLE (tol1)
+	oo_DOUBLE (tol2)
+		
+	oo_OBJECT (WorkvectorPool, 0, workvectorPool)
+
+oo_END_CLASS (SampledToSampledThreadSpecificData)
+#undef ooSTRUCT
+*/
+	
+/*
 	A separate deep copy of the SampledToSampledWorkspace is needed for each thread
 */
+
 #define ooSTRUCT SampledToSampledWorkspace
 oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 
@@ -40,7 +61,7 @@ oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 	oo_INTEGER (currentFrame)				// the frame we are working on
 	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in a frame analysis
 	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo
-	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occured
+	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occurred
 	
 	/*
 		For approximations we need tolerances
