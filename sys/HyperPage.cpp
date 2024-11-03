@@ -34,7 +34,7 @@ Thing_implement (HyperPage, Editor, 0);
 #include "HyperPage_prefs.h"
 
 #define PAGE_HEIGHT  320.0
-#define SCREEN_HEIGHT  15.0
+#define SCREEN_HEIGHT  18.0
 #define PAPER_TOP  12.0
 #define TOP_MARGIN  0.8
 #define PAPER_BOTTOM  (13.0 - (double) thePrinter. paperHeight / thePrinter. resolution)

@@ -194,7 +194,7 @@ public:
 	_autostringautovector&& move () noexcept { return static_cast <_autostringautovector&&> (*this); }   // enable construction and assignment for l-values (variables) via explicit move()
 	void initWithCapacity (integer capacity) {
 		if (capacity > 0)
-			our cells = MelderArray:: _alloc <_autostring <T>> (capacity, MelderArray::kInitializationType::ZERO);
+			our elements = MelderArray:: _alloc <_autostring <T>> (capacity, MelderArray::kInitializationType::ZERO);
 		our size = 0;
 		our _capacity = capacity;
 	}
