@@ -133,6 +133,7 @@ bool structSoundToLPCAutocorrelationWorkspace :: inputFrameToOutputFrame (void) 
 		}
 		iend ++;
 	}
+	-- iend;
 	thy a.part (1, iend)  <<=  a.part (2, iend + 1);
 	thy a.resize (iend);
 	thy nCoefficients = thy a.size; // maintain invariant
