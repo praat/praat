@@ -59,6 +59,7 @@ void structSoundToSampledWorkspace :: getInputFrame () {
 	}
 	if (subtractFrameMean)
 		centre_VEC_inout (soundFrame.get(), nullptr);
+	soundFrameExtremum = NUMextremum_u (soundFrame.get());
 	soundFrame.get()  *=  windowFunction.get();
 }
 
