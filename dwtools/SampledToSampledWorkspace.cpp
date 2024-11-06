@@ -16,11 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Preferences.h"
 #include "SampledToSampledWorkspace.h"
 #include "Sound_extensions.h"
 #include <thread>
 #include <atomic>
 #include "NUM2.h"
+#include "melder_str32.h"
 
 #include "oo_DESTROY.h"
 #include "SampledToSampledWorkspace_def.h"
@@ -42,6 +44,92 @@
 #include "SampledToSampledWorkspace_def.h"
 
 Thing_implement (SampledToSampledWorkspace, Daata, 0);
+
+static struct {
+	bool useMultiThreading = true;
+	integer numberOfConcurrentThreadsAvailable = 20;
+	integer numberOfConcurrentThreadsToUse = 20;
+	integer maximumNumberOfFramesPerThread = 0; // 0: signals no limit
+	integer minimumNumberOfFramesPerThread = 40;
+} preferences;
+
+void SampledToSampledWorkspace_preferences () {
+	Preferences_addBool    (U"SampledToSampledWorkspace.useMultiThreading", & preferences.useMultiThreading, true);
+	Preferences_addInteger (U"SampledToSampledWorkspace.numberOfConcurrentThreadsAvailable", & preferences.numberOfConcurrentThreadsAvailable, 20);
+	Preferences_addInteger (U"SampledToSampledWorkspace.numberOfConcurrentThreadsToUse", & preferences.numberOfConcurrentThreadsToUse, 20);
+	Preferences_addInteger (U"SampledToSampledWorkspace.maximumNumberOfFramesPerThread", & preferences.maximumNumberOfFramesPerThread, 40);
+	Preferences_addInteger (U"SampledToSampledWorkspace.minimumNumberOfFramesPerThread", & preferences.maximumNumberOfFramesPerThread, 40);
+}
+
+bool SampledToSampledWorkspace_useMultiThreading () {
+	return preferences.useMultiThreading;
+}
+
+void SampledToSampledWorkspace_setMultiThreading (bool useMultiThreading) {
+	preferences.useMultiThreading = useMultiThreading;
+}
+integer SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailable () {
+	return std::thread::hardware_concurrency ();
+}
+
+conststring32 SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailableInfo () {
+	static char32 threadingInfoString [80];
+	MelderString info;
+	MelderString_append (& info, U"The maximum number of concurrent threads available on your machine is ",
+		Melder_integer (SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailable ()), U".");
+	str32cpy (threadingInfoString, info.string);
+	MelderString_free (& info);
+	return threadingInfoString;
+}
+
+integer SampledToSampledWorkspace_getNumberOfConcurrentThreadsToUse () {
+	return preferences.numberOfConcurrentThreadsToUse;
+}
+
+void SampledToSampledWorkspace_setNumberOfConcurrentThreadsToUse (integer numberOfConcurrentThreadsToUse) {
+	Melder_require (numberOfConcurrentThreadsToUse <= preferences.numberOfConcurrentThreadsAvailable,
+		U"The number of threads to use should not exceed the number of concurrent threads available (",
+			preferences.numberOfConcurrentThreadsAvailable, U"),");
+	preferences.numberOfConcurrentThreadsToUse = numberOfConcurrentThreadsToUse;
+}
+
+integer SampledToSampledWorkspace_getMaximumNumberOfFramesPerThread () {
+	return preferences.maximumNumberOfFramesPerThread;
+}
+
+void SampledToSampledWorkspace_setMaximumNumberOfFramesPerThread (integer maximumNumberOfFramesPerThread) {
+	preferences.maximumNumberOfFramesPerThread = maximumNumberOfFramesPerThread;
+}
+
+integer SampledToSampledWorkspace_getMinimumNumberOfFramesPerThread () {
+	return preferences.minimumNumberOfFramesPerThread;
+}
+
+void SampledToSampledWorkspace_setMinimumNumberOfFramesPerThread (integer minimumNumberOfFramesPerThread) {
+	preferences.minimumNumberOfFramesPerThread = minimumNumberOfFramesPerThread;
+}
+
+void SampledToSampledWorkspace_getThreadingInfo (constSampledToSampledWorkspace me, integer *out_numberOfThreadsNeeded, integer *out_numberOfFramesPerThread) {
+	const integer numberOfConcurrentThreadsAvailable = SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailable ();
+	const integer numberOfConcurrentThreadsToUse = SampledToSampledWorkspace_getNumberOfConcurrentThreadsToUse ();
+	const integer minimumNumberOfFramesPerThread = SampledToSampledWorkspace_getMinimumNumberOfFramesPerThread ();
+	const integer maximumNumberOfFramesPerThread = SampledToSampledWorkspace_getMaximumNumberOfFramesPerThread ();
+	const integer numberOfFrames = my output -> nx;
+	integer numberOfThreads = 0, numberOfFramesPerThread = numberOfFrames;
+	if (SampledToSampledWorkspace_useMultiThreading () && numberOfConcurrentThreadsToUse > 0) {
+		numberOfFramesPerThread = Melder_iroundUp ((double) numberOfFrames / numberOfConcurrentThreadsToUse);
+		if (maximumNumberOfFramesPerThread > 0)
+			numberOfFramesPerThread = std::min (numberOfFramesPerThread, maximumNumberOfFramesPerThread);
+		if (minimumNumberOfFramesPerThread > 0)
+			numberOfFramesPerThread = std::max (numberOfFramesPerThread, minimumNumberOfFramesPerThread);
+		numberOfThreads = Melder_iroundUp ((double) numberOfFrames / numberOfFramesPerThread);
+		numberOfThreads = std::max (1L, numberOfThreads);
+	}
+	if (out_numberOfThreadsNeeded)
+		*out_numberOfThreadsNeeded = numberOfThreads;
+	if (out_numberOfFramesPerThread)
+		*out_numberOfFramesPerThread = numberOfFramesPerThread;
+}
 
 void structSampledToSampledWorkspace :: getInputFrame (void) {
 	return;
@@ -81,8 +169,6 @@ void SampledToSampledWorkspace_init (mutableSampledToSampledWorkspace me, constS
 		my output = output;
 		my outputObjectPresent = true;
 	}
-	my useMultiThreading = ( Melder_debug != -8 ? true : false );
-	my minimumNumberOfFramesPerThread = 40;
 }
 
 void SampledToSampledWorkspace_replaceInput (mutableSampledToSampledWorkspace me, constSampled thee) {
@@ -95,22 +181,6 @@ void SampledToSampledWorkspace_replaceOutput (mutableSampledToSampledWorkspace m
 	my output = thee;
 }
 
-
-void SampledToSampledWorkspace_getThreadingInfo (constSampledToSampledWorkspace me, integer *out_numberOfThreads) {
-	const integer numberOfProcessors = std::thread::hardware_concurrency ();
-	/*
-		Our processes are compute bound, therefore it probably makes no sense to start more than two threads on one processor
-	*/
-	integer maximumNumberOfThreads = 2 * numberOfProcessors;
-	if (my maximumNumberOfThreads > 0)
-		 maximumNumberOfThreads = std::min (my maximumNumberOfThreads, maximumNumberOfThreads);
-	const integer numberOfFrames = my output -> nx;
-	integer numberOfThreads = 1 + (numberOfFrames - 1) / my minimumNumberOfFramesPerThread;
-	Melder_clip (1_integer, & numberOfThreads, maximumNumberOfThreads);
-	if (out_numberOfThreads)
-		*out_numberOfThreads = numberOfThreads;
-}
-
 void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace me)
 {
 	try {
@@ -121,13 +191,15 @@ void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace
 		
 		std::atomic<integer> globalFrameErrorCount (0);
 		
-		if (my useMultiThreading) {
-			integer numberOfThreads;
-			SampledToSampledWorkspace_getThreadingInfo (me, & numberOfThreads);
-			const integer numberOfFramesPerThread = my minimumNumberOfFramesPerThread;
+		if (SampledToSampledWorkspace_useMultiThreading ()) {
+			integer numberOfThreadsNeeded, numberOfFramesPerThread;
+			SampledToSampledWorkspace_getThreadingInfo (me, & numberOfThreadsNeeded, & numberOfFramesPerThread);
+
 			/*
-				We have to reserve all the needed working memory for each thread beforehand.
+				We need to reserve all the working memory for each thread beforehand.
 			*/
+			const integer numberOfThreadsToUse = SampledToSampledWorkspace_getNumberOfConcurrentThreadsToUse ();
+			const integer numberOfThreads = std::min (numberOfThreadsToUse, numberOfThreadsNeeded);
 			OrderedOf<structSampledToSampledWorkspace> workspaces;
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
 				autoSampledToSampledWorkspace threadWorkspace = Data_copy (me);
@@ -135,26 +207,32 @@ void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace
 			}
 		
 			autovector<std::thread> threads = autovector<std::thread> (numberOfThreads, MelderArray::kInitializationType::ZERO);
-			
+			integer numberOfThreadsInRun;
 			try {
-				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-					SampledToSampledWorkspace threadWorkspace = workspaces.at [ithread];
-					const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
-					const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
-					
-					auto analyseFrames = [&globalFrameErrorCount] (SampledToSampledWorkspace threadWorkspace, integer fromFrame, integer toFrame) {
-						threadWorkspace -> inputFramesToOutputFrames (fromFrame, toFrame);
-						globalFrameErrorCount += threadWorkspace -> globalFrameErrorCount;
-					};
+				const integer numberOfThreadRuns = Melder_iroundUp ((double) numberOfThreadsNeeded / numberOfThreads);
+				const integer numberOfFramesInRun = numberOfThreads * numberOfFramesPerThread;
+				const integer remainingThreads = numberOfThreadsNeeded % numberOfThreads;
+				const integer numberOfThreadsInLastRun = ( remainingThreads == 0 ? numberOfThreads : remainingThreads);
+				for (integer irun = 1; irun <= numberOfThreadRuns; irun ++) {
+					numberOfThreadsInRun = ( irun < numberOfThreadRuns ? numberOfThreads : numberOfThreadsInLastRun );
+					const integer lastFrameInRun = ( irun < numberOfThreadRuns ? numberOfFramesInRun * irun : numberOfFrames);
+					for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++) {
+						SampledToSampledWorkspace threadWorkspace = workspaces.at [ithread];
+						const integer firstFrame = numberOfFramesInRun * (irun - 1) + 1 + (ithread - 1) * numberOfFramesPerThread;
+						const integer lastFrame = ( ithread == numberOfThreadsInRun ? lastFrameInRun : firstFrame + numberOfFramesPerThread - 1 );
+						
+						auto analyseFrames = [&globalFrameErrorCount] (SampledToSampledWorkspace threadWorkspace, integer fromFrame, integer toFrame) {
+							threadWorkspace -> inputFramesToOutputFrames (fromFrame, toFrame);
+							globalFrameErrorCount += threadWorkspace -> globalFrameErrorCount;
+						};
 
-					threads [ithread] = std::thread (analyseFrames, threadWorkspace, firstFrame, lastFrame);
+						threads [ithread] = std::thread (analyseFrames, threadWorkspace, firstFrame, lastFrame);
+					}
+					for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++)
+						threads [ithread]. join ();
 				}
-				
-				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
-					threads [ithread]. join ();
-				
 			} catch (MelderError) {
-				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
+				for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++)
 					if (threads [ithread]. joinable ())
 						threads [ithread]. join ();
 				Melder_clearError ();

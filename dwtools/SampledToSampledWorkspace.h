@@ -25,8 +25,6 @@
 
 void SampledToSampledWorkspace_init (mutableSampledToSampledWorkspace me, constSampled input, mutableSampled output);
 
-void SampledToSampledWorkspace_getThreadingInfo (constSampledToSampledWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
-
 void SampledToSampledWorkspace_replaceOutput (mutableSampledToSampledWorkspace me, mutableSampled thee);
 /*
 	Preconditions:
@@ -42,6 +40,8 @@ void SampledToSampledWorkspace_replaceInput (mutableSampledToSampledWorkspace me
 */
 
 void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace me);
+
+void SampledToSampledWorkspace_preferences ();
 
 inline void Sampled_requireEqualSampling (constSampled me,  constSampled thee) {
 	Melder_assert (me && thee);
@@ -76,6 +76,24 @@ inline void Sampled_assertEqualDomainsAndSampling (constSampled me,  constSample
 	Sampled_assertEqualDomains (me, thee);
 	Sampled_assertEqualSampling (me, thee);
 }
+
+bool SampledToSampledWorkspace_useMultiThreading ();
+
+void SampledToSampledWorkspace_setMultiThreading (bool useMultiThreading);
+
+integer SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailable ();
+conststring32 SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailableInfo (); // 
+
+integer SampledToSampledWorkspace_getNumberOfConcurrentThreadsToUse ();
+void SampledToSampledWorkspace_setNumberOfConcurrentThreadsToUse (integer numberOfConcurrentThreadsToUse);
+
+integer SampledToSampledWorkspace_getMaximumNumberOfFramesPerThread ();
+void SampledToSampledWorkspace_setMaximumNumberOfFramesPerThread (integer maximumNumberOfFramesPerThread);
+
+integer SampledToSampledWorkspace_getMinimumNumberOfFramesPerThread ();
+void SampledToSampledWorkspace_setMinimumNumberOfFramesPerThread (integer minimumNumberOfFramesPerThread);
+
+void SampledToSampledWorkspace_getThreadingInfo (constSampledToSampledWorkspace me, integer *out_numberOfThreadsNeeded, integer *out_numberOfFramesPerThread);
 
 #endif /* _SampledToSampledWorkspace_h_ */
  

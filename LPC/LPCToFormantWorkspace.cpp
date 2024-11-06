@@ -47,13 +47,22 @@ static void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
 }
 
 static void LPC_Frame_into_Polynomial (constLPC_Frame me, mutablePolynomial p) {
+	/*
+		The lpc coefficients are a[1..nCoefficients], a[0] == 1, is not stored
+		For the polynomial we therefore need one extra coefficient since
+		the a's are stored in reverse order in the polynomial and a[0]
+		represents the highest power and is stored into the last position
+		of the polynomial.
+	*/
 	Melder_assert (my nCoefficients  == my a.size); // check invariant
-
-	p -> coefficients.resize (my nCoefficients + 1);
-	for (integer icof = 1; icof <= my nCoefficients; icof ++)
-		p -> coefficients [icof] = my a [my nCoefficients + 1 - icof];
-	p -> coefficients [my nCoefficients + 1] = 1.0;
+	const integer highestPolynomialCoefficientNumber = my nCoefficients + 1;
+	Melder_assert (p -> _capacity >= highestPolynomialCoefficientNumber);
+	
+	p -> coefficients.resize (highestPolynomialCoefficientNumber);
 	p -> numberOfCoefficients = p -> coefficients.size; // maintain invariant
+	p -> coefficients [highestPolynomialCoefficientNumber] = 1.0;
+	for (integer icof = 1; icof <= my nCoefficients; icof ++)
+		p -> coefficients [icof] = my a [highestPolynomialCoefficientNumber - icof];
 }
 
 void structLPCToFormantWorkspace :: allocateOutputFrames () {

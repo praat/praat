@@ -44,7 +44,34 @@ inline integer numberOfPolesFromNumberOfFormants (double numberOfFormants) {
 	return Melder_ifloor (2.0 * numberOfFormants);
 }
 
-/* *********************** burg ********************************************** */
+/* *********************** Autocorrelation ********************************************** */
+
+Thing_define (SoundToFormantAutocorrelationWorkspace, SoundToFormantWorkspace) {
+};
+
+void SoundToFormantAutocorrelationWorkspace_init (SoundToFormantAutocorrelationWorkspace me, double samplingPeriod, integer numberOfPoles, double margin);
+
+autoSoundToFormantAutocorrelationWorkspace SoundToFormantAutocorrelationWorkspace_createSkeleton (constSound input, mutableFormant output);
+
+autoSoundToFormantAutocorrelationWorkspace SoundToFormantAutocorrelationWorkspace_create (constSound input, mutableFormant output,
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, integer numberOfPoles, double margin
+);
+
+
+/* *********************** Covariance ********************************************** */
+
+Thing_define (SoundToFormantCovarianceWorkspace, SoundToFormantWorkspace) {
+};
+
+void SoundToFormantCovarianceWorkspace_init (SoundToFormantCovarianceWorkspace me, double samplingPeriod, integer numberOfPoles, double margin);
+
+autoSoundToFormantCovarianceWorkspace SoundToFormantCovarianceWorkspace_createSkeleton (constSound input, mutableFormant output);
+
+autoSoundToFormantCovarianceWorkspace SoundToFormantCovarianceWorkspace_create (constSound input, mutableFormant output,
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, integer numberOfPoles, double margin
+);
+
+/* *********************** Burg ********************************************** */
 
 Thing_define (SoundToFormantBurgWorkspace, SoundToFormantWorkspace) {
 };
@@ -55,6 +82,19 @@ autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_createSkeleton (cons
 
 autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_create (constSound input, mutableFormant output,
 	double effectiveAnalysisWidth, kSound_windowShape windowShape, integer numberOfPoles, double margin
+);
+
+/* *********************** Marple ********************************************** */
+
+Thing_define (SoundToFormantMarpleWorkspace, SoundToFormantWorkspace) {
+};
+
+void SoundToFormantMarpleWorkspace_init (SoundToFormantMarpleWorkspace me, double samplingPeriod, double tol1, double tol2, integer numberOfPoles, double margin);
+
+autoSoundToFormantMarpleWorkspace SoundToFormantMarpleWorkspace_createSkeleton (constSound input, mutableFormant output);
+
+autoSoundToFormantMarpleWorkspace SoundToFormantMarpleWorkspace_create (constSound input, mutableFormant output,
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, double tol1, double tol2, integer numberOfPoles, double margin
 );
 
 /* *********************** robust ********************************************** */

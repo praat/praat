@@ -302,9 +302,9 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 {
 	try {
 		Melder_require (timeStep > 0.0,
-			U"The timeStep needs to greater than zero seconds.");
+			U"The timeStep needs to be larger than zero seconds.");
 		Melder_require (ceilingStepSize > 0.0,
-			U"The ceiling step size should larger than 0.0.");
+			U"The ceiling step size should be larger than 0.0.");
 		autoVEC ceilings = getCeilings (middleCeiling, ceilingStepSize, numberOfStepsUpDown);
 		const integer numberOfCandidates = ceilings.size;
 		const double maximumCeiling = ceilings [numberOfCandidates];
@@ -328,7 +328,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		*/
 		integer numberOfFrames;
 		double t1;
-		autoSound midCeiling = Sound_resampleAndOrPreemphasize (me, 2.0 * middleCeiling, 50, preemphasisFrequency);
+		autoSound midCeiling = Sound_resampleAndOrPreemphasize (me, middleCeiling, 50, preemphasisFrequency);
 		Sampled_shortTermAnalysis (midCeiling.get(), physicalAnalysisWidth, timeStep, & numberOfFrames, & t1); // Gaussian window
 		autoFormantPath thee = FormantPath_create (my xmin, my xmax, numberOfFrames, timeStep, t1, numberOfCandidates);
 		autoSound multiChannelSound;
@@ -340,7 +340,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			autoFormant formant;
 			autoSound resampledAndPreemphasized;
 			if (candidate != numberOfStepsUpDown + 1)
-				resampledAndPreemphasized = Sound_resampleAndOrPreemphasize (me, 2.0 * thy ceilings [candidate], 50, preemphasisFrequency);
+				resampledAndPreemphasized = Sound_resampleAndOrPreemphasize (me, thy ceilings [candidate], 50, preemphasisFrequency);
 			else 
 				resampledAndPreemphasized = midCeiling.move();
 			autoLPC lpc = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, t1, predictionOrder, resampledAndPreemphasized -> dx);

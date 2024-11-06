@@ -19,9 +19,9 @@
 #define ooSTRUCT SoundToLPCWorkspace
 oo_DEFINE_CLASS (SoundToLPCWorkspace, SoundToSampledWorkspace)
 	
-	oo_DOUBLE (samplingPeriod)				// if input && output object not present
-	oo_INTEGER (maxnCoefficients) 			// if output object not present!
-	oo_STRUCT (LPC_Frame, outputLPCFrame)
+	oo_DOUBLE (samplingPeriod)				// if input && output object not present (LPC is intermediate analysis)
+	oo_INTEGER (maxnCoefficients) 			// if output object not present! (LPC is intermediate analysis)
+	oo_STRUCT (LPC_Frame, outputLPCFrame)	// analysis result of current frame
 
 	#if oo_DECLARING
 

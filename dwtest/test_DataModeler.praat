@@ -1,11 +1,12 @@
 # test_DataModeler.praat
-# djmw 20161011, 20200326, 20240405
+# djmw 20161011, 20200326, 20240923
 
 appendInfoLine: "test_DataModeler.praat"
 
 @testDataModelerInterface
 
 @test_exponential
+@test_Jacquelin_page18
 @test_exponential_plus_constant
 @test_sigmoid
 @test_sigmoid_plus_constant
@@ -111,34 +112,18 @@ procedure createData: .xmin, .xmax, .nx, .ynoise_stdev
 	endfor
 endproc
 
-procedure test_Jacquelin_page18
-	appendInfo: tab$, tab$, "Test with data from Jacquelin, page 18:"
-	xk# = {-0.99,-0.945,-0.874,-0.859,-0.64,-0.573,-0.433, -0.042,-0.007,0.054,
-	... 0.088, 0.222,0.401,0.465,0.633,0.637,0.735,0.762,0.791,0.981}
-	yk# = {0.418,0.412,0.452,0.48,0.453,0.501,0.619,0.9,0.911,0.966,
-	... 0.966,1.123,1.414,1.683,2.101,1.94,2.473,2.276,2.352,3.544}
-	assert size (xk#) == size (yk#)
-	parsFitJacquelin# = {0.313648, 0.574447, 1.716029}
-	.table = Create Table with column names: "epc", 20, "x y"
-	Formula: "x", ~ xk# [row]
-	Formula: "y", ~ yk# [row]
-	.dm = To DataModeler: -1, 1, "x", "y", "", "Exponential plus constant", 3	
-	parsFit# = List parameter values
-	for ipar to 3
-		assert abs (parsFitJacquelin# [ipar] - parsFit# [ipar]) < 1e-6
-	endfor
-	removeObject: .table, .dm
-	appendInfoLine: " OK"
-endproc
-
 procedure test_exponential
 	appendInfoLine: tab$, "Test exponential"
 	.table = Create Table with column names: "exponential", 20, "x y"
 	Formula: "x", ~ randomUniform (-1, 1)
-	par# = {  0.6, 1.7 }
+	par# = {  -0.6, 1.7 }
 	Formula: "y", ~ par#[1] * exp (par# [2] * self ["x"])
 	Sort rows: "x"
-	.dm = To DataModeler: -1, 1, "x", "y", "", "Exponential", 3	
+	.dm1 = To DataModeler: -1, 1, "x", "y", "", "Exponential", 3
+	.dm1p1 = Get parameter value: 1
+	.dm1p2 = Get parameter value: 2
+	assert abs(.dm1p1 - par# [1]) < 1e-5	; '.p1'
+	assert abs(.dm1p2 - par# [2]) < 1e-5	; '.p2'
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
 
@@ -155,18 +140,44 @@ procedure test_exponential
 	assert rSquared > 0.999
 	appendInfoLine: " OK"
 
+	# 
+	selectObject: .table
+	Formula: "y", ~ -self
+	.dm2 = To DataModeler: -1, 1, "x", "y", "", "Exponential", 3
+	.dm2p1 = Get parameter value: 1
+	.dm2p2 = Get parameter value: 2
+	assert .dm2p1 = - .dm1p1
+	assert .dm2p2 = .dm1p2
 	appendInfoLine: tab$, "Test exponential OK"
-	removeObject: .dm, .table
+	removeObject: .dm2, .dm1, .table
+endproc
+
+procedure test_Jacquelin_page18
+	appendInfo: tab$, "Test a+b*exp(c*x) with data from Jacquelin, page 18:"
+	xk# = {-0.99,-0.945,-0.874,-0.859,-0.64,-0.573,-0.433, -0.042,-0.007,0.054,
+	... 0.088, 0.222,0.401,0.465,0.633,0.637,0.735,0.762,0.791,0.981}
+	yk# = {0.418,0.412,0.452,0.48,0.453,0.501,0.619,0.9,0.911,0.966,
+	... 0.966,1.123,1.414,1.683,2.101,1.94,2.473,2.276,2.352,3.544}
+	assert size (xk#) == size (yk#)
+	parsFitJacquelin# = {0.313648, 0.574447, 1.716029}
+	.table = Create Table with column names: "epc_p18", 20, "x y"
+	Formula: "x", ~ xk# [row]
+	Formula: "y", ~ yk# [row]
+	.dm = To DataModeler: -1, 1, "x", "y", "", "Exponential plus constant", 3	
+	parsFit# = List parameter values
+	for ipar to 3
+		assert abs (parsFitJacquelin# [ipar] - parsFit# [ipar]) < 1e-6
+	endfor
+	removeObject: .table, .dm
+	appendInfoLine: " OK"
 endproc
 
 procedure test_exponential_plus_constant
 	appendInfoLine: tab$, "Test exponential plus constant"
-	@test_Jacquelin_page18
-	# example Jacquelin page 18 with own data
 	appendInfo: tab$, tab$, "Test exponential plus constant, self:"
 	.table = Create Table with column names: "epc", 20, "x y"
 	Formula: "x", ~ randomUniform (-1, 1)
-	par# = { 0.3, 0.6, 1.7 }
+	par# = { 0.3, 0.6, 3.7 }
 	Formula: "y", ~ par# [1] + par#[2] * exp (par# [3] * self ["x"])
 	Sort rows: "x"
 	.dm = To DataModeler: -1, 1, "x", "y", "", "Exponential plus constant", 3	
@@ -175,32 +186,32 @@ procedure test_exponential_plus_constant
 	appendInfoLine: " OK"
 
 	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 1 fixed:"
-	Set parameter value: 1, 0.3, "Fixed"
+	Set parameter value: 1, par# [1], "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
 	appendInfoLine: " OK"
 
 	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 2 fixed:"
-	Set parameter free: 1, 3
-	Set parameter value: 2, 0.6, "Fixed"
+	Set parameter free: 0, 0
+	Set parameter value: 2, par# [2], "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.99
 	appendInfoLine: " OK"
 
 	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 3 fixed:"
-	Set parameter free: 1, 3
-	Set parameter value: 3, 1.7, "Fixed"
+	Set parameter free: 0, 0
+	Set parameter value: 3, par# [3], "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
 	appendInfoLine: " OK"
 	
 	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 1 & 2 fixed:"
-	Set parameter free: 1, 3
-	Set parameter value: 1, 0.3, "Fixed"
-	Set parameter value: 2, 0.6, "Fixed"
+	Set parameter free: 0, 0
+	Set parameter value: 1, par# [1], "Fixed"
+	Set parameter value: 2, par# [2], "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
@@ -208,8 +219,8 @@ procedure test_exponential_plus_constant
 	
 	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 1 & 3 fixed:"
 	Set parameter free: 1, 3
-	Set parameter value: 1, 0.3, "Fixed"
-	Set parameter value: 3, 1.7, "Fixed"
+	Set parameter value: 1, par# [1], "Fixed"
+	Set parameter value: 3, par# [3], "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
@@ -217,20 +228,21 @@ procedure test_exponential_plus_constant
 
 	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 2 & 3 fixed:"
 	Set parameter free: 1, 3
-	Set parameter value: 2, 0.6, "Fixed"
-	Set parameter value: 3, 1.7, "Fixed"
+	Set parameter value: 2, par# [2], "Fixed"
+	Set parameter value: 3, par# [3], "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
 	appendInfoLine: " OK"
 
+	appendInfo: tab$, tab$, "Test exponential plus constant, noisy data, self:"
 	selectObject: .table
 	Formula: "y", ~ self + randomUniform (-0.1 * self, 0.1 * self)
-	appendInfo: tab$, tab$, "Test exponential plus constant, noisy data, self:"
+	Rename: "epc_noise"
 	.dm2 = To DataModeler: -1, 1, "x", "y", "", "Exponential plus constant", 3	
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.95
-	removeObject: .table, .dm, .dm2
+	;removeObject: .table, .dm, .dm2
 	appendInfoLine: " OK"
 	appendInfoLine: tab$, "Test exponential plus constant OK"
 endproc

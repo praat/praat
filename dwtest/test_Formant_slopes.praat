@@ -28,12 +28,12 @@ procedure test_exponential
 	Formula (frequencies): ~ if x>=tmin and x <= tmax then .p#[1] + .p#[2]*exp(.p#[3]*(x - tmin)) + 1000 * (row - 1) else 0 fi
 	for .iformant to 3
 		.slope# = List formant slope: .iformant, tmin, tmax, "Exponential plus constant"
-		.p# [1] = .pi#[1] + 1000 * (.iformant -1)
-		.flocus = .p#[1]+ .p#[2]
-		.ftarget = .p#[1] + .p#[2] * exp (.p#[3] * (tmax - tmin) )
+		.p# [1] = .pi#[1] + 1000 * (.iformant - 1)
+		.flocus = .p#[1] + .p#[2]
+		.ftarget = .p#[1] + .p#[2] * exp (.p#[3] * (tmax - tmin))
 		.slope = (.ftarget - .flocus) / (tmax - tmin)
 		.truth# = {.slope, 0, .flocus, .ftarget, .p# [1], .p# [2], .p# [3]}
-		@extraInfo: info_exp, .truth#, .slope#,  .model$+string$ (.iformant)+": "
+		@extraInfo: info_exp, .truth#, .slope#, .model$ + string$ (.iformant)+ ": "
 		assert .slope# [2] > 0.99
 	endfor
 endproc

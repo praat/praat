@@ -17,8 +17,29 @@
  */
 
 /*
+	TODO: 20241023 ????
+
+#define ooSTRUCT SampledToSampledThreadSpecificData
+oo_DEFINE_CLASS (SampledToSampledThreadSpecificData, Daata)
+
+	oo_INTEGER (currentFrame)				// the frame we are working on
+	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in a frame analysis
+	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo
+	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occurred
+	
+	oo_DOUBLE (tol1)
+	oo_DOUBLE (tol2)
+		
+	oo_OBJECT (WorkvectorPool, 0, workvectorPool)
+
+oo_END_CLASS (SampledToSampledThreadSpecificData)
+#undef ooSTRUCT
+*/
+	
+/*
 	A separate deep copy of the SampledToSampledWorkspace is needed for each thread
 */
+
 #define ooSTRUCT SampledToSampledWorkspace
 oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 
@@ -29,17 +50,18 @@ oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 	*/
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sampled, input)
 	oo_BOOLEAN (inputObjectPresent)
-	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)		
+	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
 	oo_BOOLEAN (outputObjectPresent)
 	
 	oo_BOOLEAN (useMultiThreading)
 	oo_INTEGER (minimumNumberOfFramesPerThread) // default 40
+	oo_INTEGER (maximumNumberOfFramesPerThread) // default 0 (= no limit)
 	oo_INTEGER (maximumNumberOfThreads)
 	
 	oo_INTEGER (currentFrame)				// the frame we are working on
 	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in a frame analysis
 	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo
-	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occured
+	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occurred
 	
 	/*
 		For approximations we need tolerances
@@ -56,7 +78,7 @@ oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 
 		virtual void getInputFrame (void);
 		
-		virtual bool inputFrameToOutputFrame (void); // sets the frameAnalysisInfo and also frameAnalysisIsOK
+		virtual bool inputFrameToOutputFrame (void); // the analysis, also sets the frameAnalysisInfo and also frameAnalysisIsOK
 		
 		virtual void saveOutputFrame (void);
 		

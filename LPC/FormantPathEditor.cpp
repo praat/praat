@@ -156,7 +156,7 @@ static void Formant_replaceFrames (Formant target, integer beginFrame, integer e
 	}
 	Melder_require (beginFrame <= endFrame,
 		U"The start frame should not be after the end frame.");
-	Melder_require (beginFrame > 0, 
+	Melder_require (beginFrame > 0,
 		U"The begin frame should be larger than zero.");
 	Melder_require (endFrame <= target->nx,
 		U"The end frame sould not be larger than ", target->nx);
