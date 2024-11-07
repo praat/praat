@@ -62,6 +62,7 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 42, TIME_MATMUL, U"TimeMatMul")
 	enums_add (kPraatTests, 43, THING_AUTO, U"ThingAuto")
 	enums_add (kPraatTests, 44, FILEINMEMORY_IO, U"FileInMemory_io")
-enums_end (kPraatTests, 44, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 45, TIME_MULTI_THREADING, U"TimeMultiThreading")
+enums_end (kPraatTests, 45, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */

@@ -95,5 +95,7 @@ void SampledToSampledWorkspace_setMinimumNumberOfFramesPerThread (integer minimu
 
 void SampledToSampledWorkspace_getThreadingInfo (constSampledToSampledWorkspace me, integer *out_numberOfThreadsNeeded, integer *out_numberOfFramesPerThread);
 
+void timeMultiThreading (double soundDuration);
+
 #endif /* _SampledToSampledWorkspace_h_ */
  

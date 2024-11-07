@@ -23,6 +23,7 @@
 /* 5 June 2015: char32 */
 
 #include "FileInMemory.h"
+#include "SampledToSampledWorkspace.h"
 #include "Praat_tests.h"
 
 #include "Graphics.h"
@@ -663,6 +664,12 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			//Melder_throw (U"Cannot test FileInMemoryManager directly from Praat.");
 			test_FileInMemory_io ();
 		} break;
+		case kPraatTests::TIME_MULTI_THREADING: {
+			const double durationOfSound = ( n < 0 ? 5.0 : 100.0 );
+			timeMultiThreading (durationOfSound);
+			//  Gflops is --undefined--
+		} break;
+		
 	}
 	MelderInfo_writeLine (Melder_single (n / t * 1e-9), U" Gflop/s");
 	MelderInfo_close ();
