@@ -16,6 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <thread>
 #include "Sound_to_Formant_mt.h"
 #include "SoundToFormantWorkspace.h"
 #include "Sound_extensions.h"
@@ -119,7 +120,5 @@ autoFormant Sound_to_Formant_robust_mt (constSound me, double dt_in, double numb
 		Melder_throw (me, U": no robust Formant created.");
 	}
 }
-
-
 
 /* End of file Sound_to_Formant_mt.cpp */

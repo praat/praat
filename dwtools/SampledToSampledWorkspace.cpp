@@ -18,6 +18,7 @@
 
 #include "Preferences.h"
 #include "SampledToSampledWorkspace.h"
+#include "Sound_and_LPC.h"
 #include "Sound_extensions.h"
 #include <thread>
 #include <atomic>
@@ -45,7 +46,8 @@
 
 Thing_implement (SampledToSampledWorkspace, Daata, 0);
 
-static struct {
+
+static struct ThreadingPreferences {
 	bool useMultiThreading = true;
 	integer numberOfConcurrentThreadsAvailable = 20;
 	integer numberOfConcurrentThreadsToUse = 20;
@@ -247,4 +249,51 @@ void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace
 	}
 }
 
+void timeMultiThreading (double soundDuration) {
+	try {
+		Melder_require (preferences.numberOfConcurrentThreadsAvailable > 1,
+			U"No multi-threading possible.");
+		/*
+			Save current situation
+		*/
+		struct ThreadingPreferences savedPreferences = preferences;
+		autoVEC framesPerThread {50, 100, 200, 400, 800, 1600, 3200};
+		const integer maximumNumberOfThreads = std::thread::hardware_concurrency ();
+		autoSound me = Sound_createSimple (1_integer, soundDuration, 5500.0);
+		for (integer i = 1; i <= my nx; i++) {
+			const double time = my x1 + (i - 1) * my dx;
+			my z[1][i] = sin(2.0 * NUMpi * 377 * time) + NUMrandomGauss (0.0, 0.1);
+		}
+		preferences.useMultiThreading = true;
+		const int predictionOrder = 10;
+		const double effectiveAnalysisWidth = 0.025, dt = 0.05, preEmphasisFrequency = 50;
+		autoMelderProgress progress (U"Test multi-threading times...");
+		Melder_clearInfo ();
+		MelderInfo_writeLine (U"duration(s) nThread frames/thread toLPC(s)");
+		integer numberOfThreads = maximumNumberOfThreads;
+		for (integer nThread = 1; nThread <= maximumNumberOfThreads; nThread ++) {
+			preferences.numberOfConcurrentThreadsToUse = nThread;
+			for (integer index = 1; index <= framesPerThread.size; index ++) {
+				const integer numberOfFramesPerThread = framesPerThread [index];
+				preferences.maximumNumberOfFramesPerThread = numberOfFramesPerThread;
+				preferences.minimumNumberOfFramesPerThread = numberOfFramesPerThread;
+				Melder_stopwatch ();
+					autoLPC lpc = Sound_to_LPC_burg (me.get(), predictionOrder, effectiveAnalysisWidth, dt, preEmphasisFrequency);
+				double t = Melder_stopwatch ();
+				MelderInfo_writeLine (soundDuration, U" ", nThread, U" ", numberOfFramesPerThread, U" ", t);
+			}
+			MelderInfo_drain ();
+			try {
+				Melder_progress (((double) nThread) / maximumNumberOfThreads, U"Number of threads: ", nThread);
+			} catch (MelderError) {
+				numberOfThreads = nThread;
+				Melder_clearError ();
+				break;
+			}
+		}
+		MelderInfo_close ();
+	} catch (MelderError) {
+		Melder_throw (U"Could not perform timing.");
+	}
+}
 /* End of file SampledToSampledWorkspace.cpp */
