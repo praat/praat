@@ -249,6 +249,20 @@ void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace
 	}
 }
 
+/*
+	Performs timing of a number of scenarios for multi-threading.
+	This timing is performed on the LPC analysis with the Burg algorithm on a sound file of a given duration
+	and a sampling frequency of 11000 Hz.
+	The workspace for the Burg algorithm needs more memory for its analyses than the other LPC algorithms (it needs
+	n samples for the windowed sound frame and at least 2 vectors of length n for buffering).
+	It varies the number of threads from 1 to the maximum number of concurrency available on the hardware.
+	It varies, for each number of threads separately, the frame sizes (50, 100, 200, 400, 800, 1600, 3200)
+	The data is represented in the info window as a space separated table with 4 columns:
+	duration(s) nThread nFrames/thread toLPC(s)
+	Saving this data, except for the last line, as a csv file and next reading this file as a Table,
+	the best way to show the results would be
+	Table > Scatter plot: "nFrames/thread", 0, 0, toLPC(s), 0, 0, nThread, 8, "yes"
+*/
 void timeMultiThreading (double soundDuration) {
 	/*
 		Save current multi-threading situation
@@ -269,7 +283,7 @@ void timeMultiThreading (double soundDuration) {
 		const double effectiveAnalysisWidth = 0.025, dt = 0.05, preEmphasisFrequency = 50;
 		autoMelderProgress progress (U"Test multi-threading times...");
 		Melder_clearInfo ();
-		MelderInfo_writeLine (U"duration(s) nThread frames/thread toLPC(s)");
+		MelderInfo_writeLine (U"duration(s) nThread nFrames/thread toLPC(s)");
 		integer numberOfThreads = maximumNumberOfThreads;
 		for (integer nThread = 1; nThread <= maximumNumberOfThreads; nThread ++) {
 			preferences.numberOfConcurrentThreadsToUse = nThread;
