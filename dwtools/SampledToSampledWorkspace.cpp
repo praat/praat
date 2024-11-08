@@ -250,13 +250,13 @@ void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace
 }
 
 void timeMultiThreading (double soundDuration) {
+	/*
+		Save current multi-threading situation
+	*/
+	struct ThreadingPreferences savedPreferences = preferences;
 	try {
 		Melder_require (preferences.numberOfConcurrentThreadsAvailable > 1,
 			U"No multi-threading possible.");
-		/*
-			Save current situation
-		*/
-		struct ThreadingPreferences savedPreferences = preferences;
 		autoVEC framesPerThread {50, 100, 200, 400, 800, 1600, 3200};
 		const integer maximumNumberOfThreads = std::thread::hardware_concurrency ();
 		autoSound me = Sound_createSimple (1_integer, soundDuration, 5500.0);
@@ -292,8 +292,11 @@ void timeMultiThreading (double soundDuration) {
 			}
 		}
 		MelderInfo_close ();
+		preferences = savedPreferences;
 	} catch (MelderError) {
+		preferences = savedPreferences;
 		Melder_throw (U"Could not perform timing.");
 	}
 }
+
 /* End of file SampledToSampledWorkspace.cpp */
