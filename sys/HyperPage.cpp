@@ -226,6 +226,9 @@ void HyperPage_intro (HyperPage me, conststring32 text) {
 void HyperPage_entry (HyperPage me, conststring32 title) {
 	HyperPage_any (me, title, my instancePref_font(), my instancePref_fontSize() * 1.4, Graphics_BOLD, 0.5, 0.0, 0.0, 0.25/1.4, 0.1/1.4, HyperPage_USE_ENTRY_HINT);
 }
+void HyperPage_subheader (HyperPage me, conststring32 title) {
+	HyperPage_any (me, title, my instancePref_font(), my instancePref_fontSize() * 1.2, Graphics_BOLD, 0.4, 0.0, 0.0, 0.25/1.2, 0.1/1.2, HyperPage_USE_ENTRY_HINT);
+}
 void HyperPage_paragraph (HyperPage me, conststring32 text) {
 	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);
 }

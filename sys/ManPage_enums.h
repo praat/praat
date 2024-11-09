@@ -1,6 +1,6 @@
 /* ManPage_enums.h
  *
- * Copyright (C) 1996-2005,2009,2013,2015,2016,2021,2023 Paul Boersma
+ * Copyright (C) 1996-2005,2009,2013,2015,2016,2021,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+	KEEP IN SYNC WITH stylesInfo IN ManPages_toHtml.cpp
+*/
 enums_begin (kManPage_type, 1)
 	enums_add (kManPage_type, 1, INTRO, U"intro")
 	enums_add (kManPage_type, 2, ENTRY, U"entry")
@@ -51,7 +54,8 @@ enums_begin (kManPage_type, 1)
 	enums_add (kManPage_type, 28, QUOTE1, U"quote1")
 	enums_add (kManPage_type, 29, QUOTE2, U"quote2")
 	enums_add (kManPage_type, 30, QUOTE3, U"quote3")
-enums_end (kManPage_type, 30, NORMAL)
+	enums_add (kManPage_type, 31, SUBHEADER, U"subheader")
+enums_end (kManPage_type, 31, NORMAL)
 
 /* End of file ManPage_enums.h */
 

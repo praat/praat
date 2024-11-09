@@ -27,7 +27,7 @@ static const struct stylesInfo {
 } stylesInfo [] = {
 { nullptr, nullptr },
 /* INTRO: */ { U"<p>", U"</p>" },
-/* ENTRY: */ { U"<h3>", U"</h3>" },
+/* ENTRY: */ { U"<h2>", U"</h2>" },
 /* NORMAL: */ { U"<p>", U"</p>" },
 /* LIST_ITEM: */ { U"<dd style=\"position:relative;padding-left:1em;text-indent:-2em\">", U"" },
 /* TERM: */ { U"<dt>", U"" },
@@ -52,9 +52,11 @@ static const struct stylesInfo {
 /* CODE4: */ { U"<code>               ", U"<br></code>" },
 /* CODE5: */ { U"<code>                  ", U"<br></code>" },
 /* CAPTION: */ { U"<p style=\"position:relative;padding-left:4em;text-indent:-2em;font-size:86%\">", U"</font></p>" },
-/* QUOTE1: */ { U"<p style=\"position:relative;padding-left:4em;font-size:86%\">", U"</font></p>" },
-/* QUOTE2: */ { U"<p style=\"position:relative;padding-left:8em;font-size:86%\">", U"</font></p>" },
-/* QUOTE3: */ { U"<p style=\"position:relative;padding-left:12em;font-size:86%\">", U"</font></p>" },
+/* QUOTE: */ { U"<p style=\"position:relative;padding-left:4em;font-size:86%\">", U"</font></p>" },
+/* QUOTE1: */ { U"<p style=\"position:relative;padding-left:8em;font-size:86%\">", U"</font></p>" },
+/* QUOTE2: */ { U"<p style=\"position:relative;padding-left:12em;font-size:86%\">", U"</font></p>" },
+/* QUOTE3: */ { U"<p style=\"position:relative;padding-left:16em;font-size:86%\">", U"</font></p>" },
+/* SUBHEADER: */ { U"<h3>", U"</h3>" },
 };
 
 static void writeLinkAsHtml (ManPages me, mutablestring32 link, conststring32 linkText, MelderString *buffer, conststring32 pageTitle) {

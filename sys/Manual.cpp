@@ -140,6 +140,7 @@ void structManual :: v_draw () {
 			case kManPage_type::QUOTE1: HyperPage_quote1 (this, paragraph -> text); break;
 			case kManPage_type::QUOTE2: HyperPage_quote2 (this, paragraph -> text); break;
 			case kManPage_type::QUOTE3: HyperPage_quote3 (this, paragraph -> text); break;
+			case kManPage_type::SUBHEADER: HyperPage_subheader (this, paragraph -> text); break;
 			default: break;
 		}
 	}
@@ -406,7 +407,7 @@ void structManual :: v_createMenus () {
 	Manual_Parent :: v_createMenus ();
 
 	Editor_addCommand (this, U"File", U"Print manual...", 0, menu_cb_printRange);
-	Editor_addCommand (this, U"File", U"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
+	Editor_addCommand (this, U"File", U"Save page as HTML file...", 'S', menu_cb_writeOneToHtmlFile);
 	Editor_addCommand (this, U"File", U"Save manual to HTML folder...", 0, menu_cb_writeAllToHtmlFolder);
 	Editor_addCommand (this, U"File", U"Save manual to HTML directory...", GuiMenu_DEPRECATED_2020, menu_cb_writeAllToHtmlFolder);
 	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
