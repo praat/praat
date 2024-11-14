@@ -2635,10 +2635,10 @@ inline static void moveNumericMatrix (Stackel from, Stackel to) {
 	to -> owned = true;
 }
 
-/**
-	result.. = x.. + y..
-*/
 static void do_add () {
+	/*
+		result.. = x.. + y..
+	*/
 	const Stackel y = pop, x = topOfStack;
 	if (x->which == Stackel_NUMBER) {
 		if (y->which == Stackel_NUMBER) {
@@ -2832,7 +2832,7 @@ static void do_add () {
 				// x does not have to be cleaned up, because it was not owned
 				moveNumericMatrix (y, x);
 			} else {
-				// x does not have to be cleaned up, because it was not owned
+				// x does not have to be cleaned up, because it was not owned and has the right shape
 				x->numericMatrix = add_MAT (x->numericMatrix, y->numericMatrix). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
@@ -2914,11 +2914,17 @@ static void do_sub () {
 	const Stackel y = pop, x = topOfStack;
 	if (x->which == Stackel_NUMBER) {
 		if (y->which == Stackel_NUMBER) {
-			/*
+			/*@praat
+				#
+				# result = x - y
+				#
+				x = 5
+				y = 6
 				result = x - y
-			*/
+				assert result = -1
+			@*/
 			x->number -= y->number;
-			//x->which = Stackel_NUMBER;   // superfluous
+			//x->which = Stackel_NUMBER;   // superfluous, as is cleaning up
 			return;
 		}
 		if (y->which == Stackel_NUMERIC_VECTOR) {
@@ -2926,9 +2932,26 @@ static void do_sub () {
 				result# = x - y#
 			*/
 			if (y->owned) {
+				/*@praat
+					#
+					# result# = x - owned y#
+					#
+					result# = 5 - { 11, 13, 31 }   ; numeric vector literals are owned
+					assert result# = { -6, -8, -26 }
+				@*/
 				y->numericVector  <<=  x->number  -  y->numericVector;
+				// x does not have to be cleaned up, because it was a number
 				moveNumericVector (y, x);
 			} else {
+				/*@praat
+					#
+					# result# = x - unowned y#
+					#
+					y# = { 17, -11, 29 }
+					result# = 30 - y#   ; numeric vector variables are not owned
+					assert result# = { 13, 41, 1 }
+				@*/
+				// x does not have to be cleaned up, because it was a number
 				x->numericVector = subtract_VEC (x->number, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
@@ -2941,8 +2964,10 @@ static void do_sub () {
 			*/
 			if (y->owned) {
 				subtractReversed_MAT_inout (y->numericMatrix, x->number);
+				// x does not have to be cleaned up, because it was a number
 				moveNumericMatrix (y, x);
 			} else {
+				// x does not have to be cleaned up, because it was a number
 				x->numericMatrix = subtract_MAT (x->number, y->numericMatrix). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
@@ -2958,19 +2983,88 @@ static void do_sub () {
 				result# [i] = x# [i] - y# [i]
 			*/
 			const integer nx = x->numericVector.size, ny = y->numericVector.size;
-			if (nx != ny)
+			if (nx != ny) {
+				/*@praat
+					#
+					# Error: unequal sizes.
+					#
+					x# = { 11, 13, 17 }
+					y# = { 8, 90 }
+					asserterror When subtracting vectors, their numbers of elements should be equal, instead of 3 and 2.
+					result# = x# - y#
+				@*/
 				Melder_throw (U"When subtracting vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
+			}
 			if (x -> owned) {
+				/*@praat
+					#
+					# result# = owned x# - y#
+					#
+					result# = { 11, 13, 17 } - { 44, 56, 67 }   ; owned + owned
+					assert result# = { -33, -43, -50 }
+					y# = { 3, 2, 89.5 }
+					result# = { 11, 13, 17 } - y#   ; owned + unowned
+					assert result# = { 8, 11, -72.5 }
+				@*/
 				x->numericVector  -=  y->numericVector;
 			} else if (y -> owned) {
+				/*@praat
+					#
+					# result# = unowned x# + owned y#
+					#
+					x# = { 14, -3, 6.25 }
+					result# = x# + { 55, 1, -89 }
+					assert result# = { 69, -2, -82.75 }
+				@*/
 				y->numericVector  <<=  x->numericVector  -  y->numericVector;
+				// x does not have to be cleaned up, because it was not owned
 				moveNumericVector (y, x);
 			} else {
+				/*@praat
+					#
+					# result# = unowned x# + unowned y#
+					#
+					x# = { 14, -33, 6.25 }
+					y# = { -33, 17, 9 }
+					result# = x# - y#
+					assert result# = { 47, -50, -2.75 }
+				@*/
 				// no clean-up of x required, because x is not owned and has the right type
 				x->numericVector = subtract_VEC (x->numericVector, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
+			return;
+		}
+		if (y->which == Stackel_NUMERIC_MATRIX) {
+			/*
+				result## = x# - y##
+				i.e.
+				result## [i, j] = x# [i] - y## [i, j]
+			*/
+			const integer xsize = x->numericVector.size;
+			const integer ynrow = y->numericMatrix.nrow;
+			Melder_require (ynrow == xsize,
+				U"When subtracting a matrix from a vector, the matrix’s number of rows should be equal to the vector’s size, "
+				"instead of ", ynrow, U" and ", xsize, U"."
+			);
+			if (x->owned) {
+				/*@praat
+					assert { 1, 2, 3 } - { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 0, -1 }, { -1, -2 }, { -2, -3 } }
+				@*/
+				autoMAT newMatrix = subtract_MAT (x->numericVector, y->numericMatrix);
+				x->reset();
+				x->numericMatrix = newMatrix. releaseToAmbiguousOwner();
+			} else {
+				/*@praat
+					a# = { 1, 2, 3 }
+					assert a# - { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 0, -1 }, { -1, -2 }, { -2, -3 } }
+				@*/
+				// x does not have to be cleaned up, because it was not owned
+				x->numericMatrix = subtract_MAT (x->numericVector, y->numericMatrix). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			x->which = Stackel_NUMERIC_MATRIX;
 			return;
 		}
 		if (y->which == Stackel_NUMBER) {
@@ -2982,6 +3076,7 @@ static void do_sub () {
 			if (x->owned) {
 				x->numericVector  -=  y->number;
 			} else {
+				// x does not have to be cleaned up, because it was not owned
 				x->numericVector = subtract_VEC (x->numericVector, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
@@ -3001,19 +3096,64 @@ static void do_sub () {
 				x->numericMatrix  -=  y->numericMatrix;
 			} else if (y->owned) {
 				subtractReversed_MAT_inout (y->numericMatrix, x->numericMatrix);
+				// x does not have to be cleaned up, because it was not owned
 				moveNumericMatrix (y, x);
 			} else {
-				// no clean-up of x required, because x is not owned and has the right type
+				// x does not have to be cleaned up, because it was not owned and has the right shape
 				x->numericMatrix = subtract_MAT (x->numericMatrix, y->numericMatrix). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_MATRIX;   // superfluous
 			return;
 		}
+		if (y->which == Stackel_NUMERIC_VECTOR) {
+			/*
+				result## = x## - y#
+				i.e.
+				result## [i, j] = x## [i, j] - y# [j]
+			*/
+			Melder_require (y->numericVector.size == x->numericMatrix.ncol,
+				U"Cannot subtract a vector with ", y->numericVector.size, U" elements "
+				"from a matrix with ", x->numericMatrix.ncol, U" columns. "
+				"These numbers should be equal."
+			);
+			if (x->owned) {
+				/*@praat
+					#
+					# result## = owned x## - y#
+					#
+					y# = { -5, 6, -19 }
+					result## = { { 14, -33, 6.25 }, { -33, 17, 9 } } - y#
+					assert result## = { { 19, -39, 25.25 }, { -28, 11, 28 } }
+				@*/
+				x->numericMatrix  -=  y->numericVector;
+			} else {
+				/*@praat
+					#
+					# result## = unowned x## - y#
+					#
+					x## = { { 14, -33, 6.25 }, { -33, 17, 9 } }
+					y# = { -5, 6, -19 }
+					result## = x## - y#
+					assert result## = { { 19, -39, 25.25 }, { -28, 11, 28 } }
+				@*/
+				// x does not have to be cleaned up, because it was not owned
+				x->numericMatrix = subtract_MAT (x->numericMatrix, y->numericVector). releaseToAmbiguousOwner();
+				x->owned = true;
+			}
+			//x->which = Stackel_NUMERIC_MATRIX;
+			return;
+		}
 		if (y->which == Stackel_NUMBER) {
+			/*
+				result## = x## - y
+				i.e.
+				result## [i, j] = x## [i, j] - y
+			*/
 			if (x->owned) {
 				x->numericMatrix  -=  y->number;
 			} else {
+				// x does not have to be cleaned up, because it was not owned
 				x->numericMatrix = subtract_MAT (x->numericMatrix, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
@@ -3337,9 +3477,25 @@ static void do_mod () {
 	Melder_throw (U"Cannot divide (“mod”) ", x->whichText(), U" by ", y->whichText(), U".");
 }
 static void do_minus () {
-	const Stackel x = pop;
+	const Stackel x = topOfStack;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (- x->number);
+		x->number = - x->number;
+	} else if (x->which == Stackel_NUMERIC_VECTOR) {
+		if (x->owned) {
+			neg_VEC_inout (x->numericVector);
+		} else {
+			autoVEC result = neg_VEC (x->numericVector);
+			x->numericVector = result. releaseToAmbiguousOwner();
+			x->owned = true;
+		}
+	} else if (x->which == Stackel_NUMERIC_MATRIX) {
+		if (x->owned) {
+			neg_MAT_inout (x->numericMatrix);
+		} else {
+			autoMAT result = neg_MAT (x->numericMatrix);
+			x->numericMatrix = result. releaseToAmbiguousOwner();
+			x->owned = true;
+		}
 	} else {
 		Melder_throw (U"Cannot take the opposite (-) of ", x->whichText(), U".");
 	}
@@ -4428,17 +4584,17 @@ static void do_min_e () {
 	if (last->which == Stackel_NUMBER) {
 		/*@praat
 			assert min_e (5, 6, 1, 7) = 1
-			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			asserterror cannot determine the minimum of a vector: element 1 is undefined.
 			pos = min_e (undefined, 6, 1, 7)
-			asserterror Cannot determine the minimum of a vector: element 2 is undefined.
+			asserterror cannot determine the minimum of a vector: element 2 is undefined.
 			pos = min_e (5, undefined, 1, 7)
-			asserterror Cannot determine the minimum of a vector: element 3 is undefined.
+			asserterror cannot determine the minimum of a vector: element 3 is undefined.
 			pos = min_e (5, 6, undefined, 7)
-			asserterror Cannot determine the minimum of a vector: element 4 is undefined.
+			asserterror cannot determine the minimum of a vector: element 4 is undefined.
 			pos = min_e (5, 6, 1, undefined)
-			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			asserterror cannot determine the minimum of a vector: element 1 is undefined.
 			pos = min_e (undefined, undefined)
-			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			asserterror cannot determine the minimum of a vector: element 1 is undefined.
 			pos = min_e (undefined)
 			assert min_e (5) = 5
 		@*/
@@ -4455,21 +4611,21 @@ static void do_min_e () {
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		/*@praat
 			assert min_e ({ 5, 6, 1, 7 }) = 1
-			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			asserterror cannot determine the minimum of a vector: element 1 is undefined.
 			pos = min_e ({ undefined, 6, 1, 7 })
-			asserterror Cannot determine the minimum of a vector: element 2 is undefined.
+			asserterror cannot determine the minimum of a vector: element 2 is undefined.
 			pos = min_e ({ 5, undefined, 1, 7 })
-			asserterror Cannot determine the minimum of a vector: element 3 is undefined.
+			asserterror cannot determine the minimum of a vector: element 3 is undefined.
 			pos = min_e ({ 5, 6, undefined, 7 })
-			asserterror Cannot determine the minimum of a vector: element 4 is undefined.
+			asserterror cannot determine the minimum of a vector: element 4 is undefined.
 			pos = min_e ({ 5, 6, 1, undefined })
-			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			asserterror cannot determine the minimum of a vector: element 1 is undefined.
 			pos = min_e ({ undefined, undefined })
-			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			asserterror cannot determine the minimum of a vector: element 1 is undefined.
 			pos = min_e ({ undefined })
-			asserterror Cannot determine the minimum of an empty vector.
+			asserterror cannot determine the minimum of an empty vector.
 			pos = min_e (zero# (0))
-			asserterror Cannot determine the minimum of an empty vector.
+			asserterror cannot determine the minimum of an empty vector.
 			pos = min_e ({})
 		@*/
 		Melder_require (n->number == 1,
