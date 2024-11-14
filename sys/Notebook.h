@@ -2,7 +2,7 @@
 #define _Notebook_h_
 /* Notebook.h
  *
- * Copyright (C) 2023 Paul Boersma
+ * Copyright (C) 2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Data.h"
+#include "Collection.h"
 
-Thing_define (Notebook, Daata) {
-	structMelderFile file;
+Thing_define (Notebook, SimpleString) {
+	bool trusted;
 };
 
 autoNotebook Notebook_createFromFile (MelderFile file);

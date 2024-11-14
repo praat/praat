@@ -27,7 +27,7 @@
 struct FLAC__StreamDecoder;
 struct FLAC__StreamEncoder;
 
-#define kMelder_MAXPATH 1023   /* excluding the null byte */
+#define kMelder_MAXPATH  1023   /* excluding the null character */
 
 struct structMelderFile {
 	FILE *filePointer;
