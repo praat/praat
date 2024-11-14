@@ -535,7 +535,7 @@ static void Table_addColumnIfNotExists_colour (Table me, conststring32 colour) {
 
 static void VowelEditor_getVowelMarksFromFile (VowelEditor me) {
 	autoTable marks;
-	structMelderFile file = {};
+	structMelderFile file { };
 	Melder_pathToFile (my instancePref_marks_fileName(), & file);
 	if (! isValidVowelMarksTableFile (& file, & marks))
 		return;
@@ -1345,7 +1345,7 @@ void structVowelEditor :: v9_repairPreferences () {
 			our setInstancePref_marks_dataSet (our default_marks_dataSet());
 			our setInstancePref_marks_speakerType (our default_marks_speakerType());
 		} else {
-			structMelderFile file = {};
+			structMelderFile file { };
 			Melder_pathToFile (our instancePref_marks_fileName(), & file);
 			if (! isValidVowelMarksTableFile (& file, nullptr)) {
 				Melder_warning (U"The file '", our instancePref_marks_fileName(), U"' which was specified in your preferences "

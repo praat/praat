@@ -146,7 +146,7 @@ enum { NO_SYMBOL_,
 		DO_, DOSTR_,
 		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
-		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_,
+		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_NOTEBOOK_,
 		RUN_SYSTEM_, RUN_SYSTEM_STR_, RUN_SYSTEM_NOCHECK_, RUN_SUBPROCESS_, RUN_SUBPROCESS_STR_,
 		MIN_, MIN_E_, MIN_IGNORE_UNDEFINED_,
 		MAX_, MAX_E_, MAX_IGNORE_UNDEFINED_,
@@ -305,7 +305,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"do", U"do$",
 	U"writeInfo", U"writeInfoLine", U"appendInfo", U"appendInfoLine",
 	U"writeFile", U"writeFileLine", U"appendFile", U"appendFileLine",
-	U"pauseScript", U"exitScript", U"runScript",
+	U"pauseScript", U"exitScript", U"runScript", U"runNotebook",
 	U"runSystem", U"runSystem$", U"runSystem_nocheck", U"runSubprocess", U"runSubprocess$",
 	U"min", U"min_e", U"min_removeUndefined",
 	U"max", U"max_e", U"max_removeUndefined",
@@ -4402,6 +4402,31 @@ static void do_runScript () {
 	try {
 		const Editor optionalNewInterpreterOwningWindow = theInterpreter -> optionalDynamicEnvironmentEditor();
 		praat_runScript (fileName->getString(), numberOfArguments - 1, & theStack [stackPointer + 1], optionalNewInterpreterOwningWindow);
+		theLevel -= 1;
+	} catch (MelderError) {
+		theLevel -= 1;
+		throw;
+	}
+	pushNumber (1);
+}
+static void do_runNotebook () {
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	const integer numberOfArguments = Melder_iround (narg->number);
+	if (numberOfArguments < 1)
+		Melder_throw (U"The function “runNotebook” requires at least one argument, namely the file name.");
+	stackPointer -= numberOfArguments;
+	const Stackel fileName = & theStack [stackPointer + 1];
+	Melder_require (fileName->which == Stackel_STRING,
+		U"The first argument to “runNotebook” should be a string (the file name), not ", fileName->whichText());
+	theLevel += 1;
+	if (theLevel > MAXIMUM_NUMBER_OF_LEVELS) {
+		theLevel -= 1;
+		Melder_throw (U"Cannot call runNotebook() more than ", MAXIMUM_NUMBER_OF_LEVELS, U" levels deep.");
+	}
+	try {
+		const Editor optionalNewInterpreterOwningWindow = theInterpreter -> optionalDynamicEnvironmentEditor();
+		praat_runNotebook (fileName->getString(), numberOfArguments - 1, & theStack [stackPointer + 1], optionalNewInterpreterOwningWindow);
 		theLevel -= 1;
 	} catch (MelderError) {
 		theLevel -= 1;
@@ -8755,6 +8780,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case PAUSE_SCRIPT_: { do_pauseScript ();
 } break; case EXIT_SCRIPT_: { do_exitScript ();
 } break; case RUN_SCRIPT_: { do_runScript ();
+} break; case RUN_NOTEBOOK_: { do_runNotebook ();
 } break; case RUN_SYSTEM_: { do_runSystem ();
 } break; case RUN_SYSTEM_STR_: { do_runSystem_STR ();
 } break; case RUN_SYSTEM_NOCHECK_: { do_runSystem_nocheck ();
