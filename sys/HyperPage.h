@@ -89,6 +89,7 @@ void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, doubl
 void HyperPage_pageTitle (HyperPage me, conststring32 title);
 void HyperPage_intro (HyperPage me, conststring32 text);
 void HyperPage_entry (HyperPage me, conststring32 title);
+void HyperPage_subheader (HyperPage me, conststring32 title);
 void HyperPage_paragraph (HyperPage me, conststring32 text);
 void HyperPage_listItem (HyperPage me, conststring32 text);
 void HyperPage_listItem1 (HyperPage me, conststring32 text);

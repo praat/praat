@@ -75,6 +75,79 @@ result## = x## + y#
 assert result## = { { 9, -27, -12.75 }, { -38, 23, -10 } }
 
 #
+# result = x - y
+#
+x = 5
+y = 6
+result = x - y
+assert result = -1
+
+#
+# result# = x - owned y#
+#
+result# = 5 - { 11, 13, 31 }   ; numeric vector literals are owned
+assert result# = { -6, -8, -26 }
+
+#
+# result# = x - unowned y#
+#
+y# = { 17, -11, 29 }
+result# = 30 - y#   ; numeric vector variables are not owned
+assert result# = { 13, 41, 1 }
+
+#
+# Error: unequal sizes.
+#
+x# = { 11, 13, 17 }
+y# = { 8, 90 }
+asserterror When subtracting vectors, their numbers of elements should be equal, instead of 3 and 2.
+result# = x# - y#
+
+#
+# result# = owned x# - y#
+#
+result# = { 11, 13, 17 } - { 44, 56, 67 }   ; owned + owned
+assert result# = { -33, -43, -50 }
+y# = { 3, 2, 89.5 }
+result# = { 11, 13, 17 } - y#   ; owned + unowned
+assert result# = { 8, 11, -72.5 }
+
+#
+# result# = unowned x# + owned y#
+#
+x# = { 14, -3, 6.25 }
+result# = x# + { 55, 1, -89 }
+assert result# = { 69, -2, -82.75 }
+
+#
+# result# = unowned x# + unowned y#
+#
+x# = { 14, -33, 6.25 }
+y# = { -33, 17, 9 }
+result# = x# - y#
+assert result# = { 47, -50, -2.75 }
+
+assert { 1, 2, 3 } - { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 0, -1 }, { -1, -2 }, { -2, -3 } }
+
+a# = { 1, 2, 3 }
+assert a# - { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 0, -1 }, { -1, -2 }, { -2, -3 } }
+
+#
+# result## = owned x## - y#
+#
+y# = { -5, 6, -19 }
+result## = { { 14, -33, 6.25 }, { -33, 17, 9 } } - y#
+assert result## = { { 19, -39, 25.25 }, { -28, 11, 28 } }
+
+#
+# result## = unowned x## - y#
+#
+x## = { { 14, -33, 6.25 }, { -33, 17, 9 } }
+y# = { -5, 6, -19 }
+result## = x## - y#
+assert result## = { { 19, -39, 25.25 }, { -28, 11, 28 } }
+
+#
 # result = x * y
 #
 x = 5
@@ -234,22 +307,49 @@ assert min ({ 5, 6, 1, undefined }) = undefined
 assert min ({ undefined, undefined }) = undefined
 assert min ({ undefined }) = undefined
 assert min (zero# (0)) = undefined
+assert min ({ }) = undefined
+
+assert min_e (5, 6, 1, 7) = 1
+asserterror cannot determine the minimum of a vector: element 1 is undefined.
+pos = min_e (undefined, 6, 1, 7)
+asserterror cannot determine the minimum of a vector: element 2 is undefined.
+pos = min_e (5, undefined, 1, 7)
+asserterror cannot determine the minimum of a vector: element 3 is undefined.
+pos = min_e (5, 6, undefined, 7)
+asserterror cannot determine the minimum of a vector: element 4 is undefined.
+pos = min_e (5, 6, 1, undefined)
+asserterror cannot determine the minimum of a vector: element 1 is undefined.
+pos = min_e (undefined, undefined)
+asserterror cannot determine the minimum of a vector: element 1 is undefined.
+pos = min_e (undefined)
+assert min_e (5) = 5
 
 assert min_e ({ 5, 6, 1, 7 }) = 1
-asserterror min_e: cannot determine the minimum of a vector: element 1 is undefined.
+asserterror cannot determine the minimum of a vector: element 1 is undefined.
 pos = min_e ({ undefined, 6, 1, 7 })
-asserterror min_e: cannot determine the minimum of a vector: element 2 is undefined.
+asserterror cannot determine the minimum of a vector: element 2 is undefined.
 pos = min_e ({ 5, undefined, 1, 7 })
-asserterror min_e: cannot determine the minimum of a vector: element 3 is undefined.
+asserterror cannot determine the minimum of a vector: element 3 is undefined.
 pos = min_e ({ 5, 6, undefined, 7 })
-asserterror min_e: cannot determine the minimum of a vector: element 4 is undefined.
+asserterror cannot determine the minimum of a vector: element 4 is undefined.
 pos = min_e ({ 5, 6, 1, undefined })
-asserterror min_e: cannot determine the minimum of a vector: element 1 is undefined.
+asserterror cannot determine the minimum of a vector: element 1 is undefined.
 pos = min_e ({ undefined, undefined })
-asserterror min_e: cannot determine the minimum of a vector: element 1 is undefined.
+asserterror cannot determine the minimum of a vector: element 1 is undefined.
 pos = min_e ({ undefined })
-asserterror min_e: cannot determine the minimum of an empty vector.
+asserterror cannot determine the minimum of an empty vector.
 pos = min_e (zero# (0))
+asserterror cannot determine the minimum of an empty vector.
+pos = min_e ({})
+
+assert min_removeUndefined (5, 6, 1, 7) = 1
+assert min_removeUndefined (undefined, 6, 1, 7) = 1
+assert min_removeUndefined (5, undefined, 1, 7) = 1
+assert min_removeUndefined (5, 6, undefined, 7) = 5
+assert min_removeUndefined (5, 6, 1, undefined) = 1
+assert min_removeUndefined (undefined, undefined) = undefined
+assert min_removeUndefined (undefined) = undefined
+assert min_removeUndefined (5) = 5
 
 assert min_removeUndefined ({ 5, 6, 1, 7 }) = 1
 assert min_removeUndefined ({ undefined, 6, 1, 7 }) = 1
@@ -259,6 +359,7 @@ assert min_removeUndefined ({ 5, 6, 1, undefined }) = 1
 assert min_removeUndefined ({ undefined, undefined }) = undefined
 assert min_removeUndefined ({ undefined }) = undefined
 assert min_removeUndefined (zero# (0)) = undefined
+assert min_removeUndefined ({ }) = undefined
 
 #
 # A published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence

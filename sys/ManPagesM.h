@@ -57,6 +57,7 @@
 #define EQUATION(text)  { kManPage_type::EQUATION, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
 #define PICTURE(width,height,draw)  { kManPage_type::PICTURE, nullptr, width, height, draw, MAN_EXCESS_INITIALIZERS_ },
 #define SCRIPT(width,height,text)  { kManPage_type::SCRIPT, text, width, height, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define SUBHEADER(text)  { kManPage_type::SUBHEADER, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
 #define MAN_END  { } }; ManPages_addPage (me, title, copyright, page); }
 
 #define Manual_DRAW_WINDOW(height,title,menu) \
