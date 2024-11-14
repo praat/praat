@@ -1,6 +1,6 @@
 /* NotebookEditor.cpp
  *
- * Copyright (C) 2023 Paul Boersma
+ * Copyright (C) 2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,20 +199,23 @@ autoNotebookEditor NotebookEditor_createFromText (conststring32 initialText) {
 
 autoNotebookEditor NotebookEditor_createFromNotebook_canBeNull (Notebook notebook) {
 	try {
+		structMelderFile notebookFile;
 		for (integer ieditor = 1; ieditor <= theReferencesToAllOpenNotebookEditors.size; ieditor ++) {
 			NotebookEditor editor = theReferencesToAllOpenNotebookEditors.at [ieditor];
-			if (MelderFile_equal (& notebook -> file, & editor -> file)) {
+			if (Melder_equ (notebook -> string.get(), editor -> file. path)) {
 				Editor_raise (editor);
-				Melder_appendError (U"The notebook ", & notebook -> file, U" is already open and has been moved to the front.");
+				Melder_pathToFile (notebook -> string.get(), & notebookFile);
+				Melder_appendError (U"The notebook ", & notebookFile, U" is already open and has been moved to the front.");
 				if (editor -> dirty)
 					Melder_appendError (U"Choose “Reopen from disk” if you want to revert to the old version.");
 				Melder_flushError ();
 				return autoNotebookEditor();   // safe null
 			}
 		}
-		autostring32 text = MelderFile_readText (& notebook -> file);
+		Melder_pathToFile (notebook -> string.get(), & notebookFile);
+		autostring32 text = MelderFile_readText (& notebookFile);
 		autoNotebookEditor me = NotebookEditor_createFromText (text.get());
-		MelderFile_copy (& notebook -> file, & my file);
+		MelderFile_copy (& notebookFile, & my file);
 		Thing_setName (me.get(), nullptr);
 		return me;
 	} catch (MelderError) {

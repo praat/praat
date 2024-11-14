@@ -1,6 +1,6 @@
 /* Script.cpp
  *
- * Copyright (C) 1997-2005,2009,2011,2015,2016,2020 Paul Boersma
+ * Copyright (C) 1997-2005,2009,2011,2015,2016,2020,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 #include "Script.h"
 
-Thing_implement (Script, Daata, 0);
+Thing_implement (Script, SimpleString, 0);
 
 autoScript Script_createFromFile (MelderFile file) {
 	autoScript me = Thing_new (Script);
-	MelderFile_copy (file, & my file);
+	my string = Melder_dup (file -> path);
 	return me;
 }
 

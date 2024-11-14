@@ -373,20 +373,23 @@ autoScriptEditor ScriptEditor_createFromText (Editor optionalOwningEditor, const
 
 autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalOwningEditor, Script script) {
 	try {
+		structMelderFile scriptFile;
 		for (integer ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
 			ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
-			if (MelderFile_equal (& script -> file, & editor -> file)) {
+			if (Melder_equ (script -> string.get(), editor -> file. path)) {
 				Editor_raise (editor);
-				Melder_appendError (U"The script ", & script -> file, U" is already open and has been moved to the front.");
+				Melder_pathToFile (script -> string.get(), & scriptFile);   // ensure correct messaging format
+				Melder_appendError (U"The script ", & scriptFile, U" is already open and has been moved to the front.");
 				if (editor -> dirty)
 					Melder_appendError (U"Choose “Reopen from disk” if you want to revert to the old version.");
 				Melder_flushError ();
 				return autoScriptEditor();   // safe null
 			}
 		}
-		autostring32 text = MelderFile_readText (& script -> file);
+		Melder_pathToFile (script -> string.get(), & scriptFile);
+		autostring32 text = MelderFile_readText (& scriptFile);
 		autoScriptEditor me = ScriptEditor_createFromText (optionalOwningEditor, text.get());
-		MelderFile_copy (& script -> file, & my file);
+		MelderFile_copy (& scriptFile, & my file);
 		Thing_setName (me.get(), nullptr);
 		return me;
 	} catch (MelderError) {
