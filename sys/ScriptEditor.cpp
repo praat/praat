@@ -373,7 +373,7 @@ autoScriptEditor ScriptEditor_createFromText (Editor optionalOwningEditor, const
 
 autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalOwningEditor, Script script) {
 	try {
-		structMelderFile scriptFile;
+		structMelderFile scriptFile { };
 		for (integer ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
 			ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
 			if (Melder_equ (script -> string.get(), editor -> file. path)) {

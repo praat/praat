@@ -136,7 +136,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 
 		if (paragraph -> type == kManPage_type::PICTURE) {
 			numberOfPictures ++;
-			structMelderFile pngFile;
+			structMelderFile pngFile { };
 			MelderFile_copy (file, & pngFile);
 			pngFile. path [Melder_length (pngFile. path) - 5] = U'\0';   // delete extension ".html"
 			str32cat (pngFile. path, Melder_cat (U"_", numberOfPictures, U".png"));
@@ -268,7 +268,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 			if (paragraph -> height == 0.001)
 				continue;
 			numberOfPictures ++;
-			structMelderFile pngFile;
+			structMelderFile pngFile { };
 			MelderFile_copy (file, & pngFile);
 			pngFile. path [Melder_length (pngFile. path) - 5] = U'\0';   // delete extension ".html"
 			str32cat (pngFile. path, Melder_cat (U"_", numberOfPictures, U".png"));

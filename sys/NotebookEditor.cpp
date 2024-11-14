@@ -199,7 +199,7 @@ autoNotebookEditor NotebookEditor_createFromText (conststring32 initialText) {
 
 autoNotebookEditor NotebookEditor_createFromNotebook_canBeNull (Notebook notebook) {
 	try {
-		structMelderFile notebookFile;
+		structMelderFile notebookFile { };
 		for (integer ieditor = 1; ieditor <= theReferencesToAllOpenNotebookEditors.size; ieditor ++) {
 			NotebookEditor editor = theReferencesToAllOpenNotebookEditors.at [ieditor];
 			if (Melder_equ (notebook -> string.get(), editor -> file. path)) {

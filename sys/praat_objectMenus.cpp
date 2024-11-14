@@ -396,13 +396,15 @@ FORM_SAVE (GRAPHICS_saveDemoWindowAsPdfFile, U"Save Demo window as PDF file", nu
 FORM (SETTINGS__debug, U"Set debugging options", nullptr) {
 	COMMENT (U"If you switch Tracing on, Praat will write lots of detailed ")
 	COMMENT (U"information about what goes on in Praat")
-	structMelderFile file;
-	#ifdef UNIX
-		MelderFolder_getFile (Melder_preferencesFolder(), U"tracing", & file);
-	#else
-		MelderFolder_getFile (Melder_preferencesFolder(), U"Tracing.txt", & file);
-	#endif
-	COMMENT (Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
+	{// scope
+		structMelderFile file { };
+		#ifdef UNIX
+			MelderFolder_getFile (Melder_preferencesFolder(), U"tracing", & file);
+		#else
+			MelderFolder_getFile (Melder_preferencesFolder(), U"Tracing.txt", & file);
+		#endif
+		COMMENT (Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
+	}
 	BOOLEAN (tracing, U"Tracing", false)
 	COMMENT (U"Setting the following to anything other than zero")
 	COMMENT (U"will alter the behaviour of Praat")
