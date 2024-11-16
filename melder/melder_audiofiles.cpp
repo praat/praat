@@ -777,7 +777,7 @@ static void Melder_checkNistFile (FILE *f, integer *numberOfChannels, int *encod
 static void Melder_checkFlacFile (MelderFile file, integer *numberOfChannels_out, int *encoding_out,
 	double *sampleRate_out, integer *startOfData_out, integer *numberOfSamples_out)
 {
-	const conststring8 fileName_utf8 = Melder_peek32to8_fileSystem (MelderFile_peekPath (file));
+	const conststring8 fileName_utf8 = MelderFile_peekPath8 (file);
 	FLAC__StreamMetadata metadata;
 	if (! FLAC__metadata_get_streaminfo (fileName_utf8, & metadata))   // Unicode-savvy (test/fon/soundFiles.praat 2024-08-11)
 		Melder_throw (U"Invalid FLAC file");

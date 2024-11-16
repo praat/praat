@@ -310,10 +310,34 @@ void Melder_relativePathToFolder (conststring32 path, MelderFolder folder) {
 conststring32 MelderFile_peekPath (MelderFile file) {
 	return & file -> path [0];
 }
-
 conststring32 MelderFolder_peekPath (MelderFolder folder) {
 	return & folder -> path [0];
 }
+
+conststring8 MelderFile_peekPath8 (MelderFile file) {
+	return Melder_peek32to8_fileSystem (MelderFile_peekPath (file));
+}
+conststring8 MelderFolder_peekPath8 (MelderFolder folder) {
+	return Melder_peek32to8_fileSystem (MelderFolder_peekPath (folder));
+}
+
+#ifdef _WIN32
+	conststringW MelderFile_peekPathW (MelderFile file) {
+		return Melder_peek32toW_fileSystem (MelderFile_peekPath (file));
+	}
+	conststringW MelderFolder_peekPathW (MelderFolder folder) {
+		return Melder_peek32toW_fileSystem (MelderFolder_peekPath (folder));
+	}
+#endif
+
+#ifdef macintosh
+	const void * MelderFile_peekPathCfstring (MelderFile file) {
+		return Melder_peek32toCfstring_fileSystem (MelderFile_peekPath (file));
+	}
+	const void * MelderFolder_peekPathCfstring (MelderFolder folder) {
+		return Melder_peek32toCfstring_fileSystem (MelderFolder_peekPath (folder));
+	}
+#endif
 
 void MelderFile_copy (constMelderFile file, MelderFile copy) {
 	str32cpy (copy -> path, file -> path);

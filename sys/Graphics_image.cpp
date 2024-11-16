@@ -833,7 +833,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 rela
 		if (my d_useGdiplus) {
 			structMelderFile file { };
 			Melder_relativePathToFile (relativeFileName, & file);
-			Gdiplus::Bitmap image (Melder_peek32toW_fileSystem (MelderFile_peekPath (& file)));
+			Gdiplus::Bitmap image (MelderFile_peekPathW (& file));
 			if (x1 == x2 && y1 == y2) {
 				width = image. GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
 				height = image. GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
@@ -852,9 +852,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 rela
 	#elif quartz
 		structMelderFile file { };
 		Melder_relativePathToFile (relativeFileName, & file);
-		CFStringRef path = CFStringCreateWithCString (nullptr, Melder_peek32to8_fileSystem (MelderFile_peekPath (& file)), kCFStringEncodingUTF8);
-		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
-		CFRelease (path);
+		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) MelderFile_peekPathCfstring (& file), kCFURLPOSIXPathStyle, false);
 		CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, nullptr);
 		CFRelease (url);
 		if (imageSource) {

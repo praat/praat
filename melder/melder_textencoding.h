@@ -88,6 +88,7 @@ conststring8 Melder_peek32to8_fileSystem (conststring32 string);
 
 void Melder_8bitFileRepresentationToStr32_inplace (conststring8 utf8, mutablestring32 string);
 const void * Melder_peek32toCfstring (conststring32 string);
+const void * Melder_peek32toCfstring_fileSystem (conststring32 text);
 
 /* End of file melder_textencoding.h */
 #endif

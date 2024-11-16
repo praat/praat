@@ -649,6 +649,18 @@ const void * Melder_peek32toCfstring (conststring32 text) {
 	cfString [icfString] = CFStringCreateWithCString (nullptr, (const char *) Melder_peek32to8 (text), kCFStringEncodingUTF8);
 	return cfString [icfString];
 }
+const void * Melder_peek32toCfstring_fileSystem (conststring32 text) {
+	if (! text)
+		return nullptr;
+	static CFStringRef cfString [11];
+	static int icfString = 0;
+	if (++ icfString == 11)
+		icfString = 0;
+	if (cfString [icfString])
+		CFRelease (cfString [icfString]);
+	cfString [icfString] = CFStringCreateWithCString (nullptr, (const char *) Melder_peek32to8_fileSystem (text), kCFStringEncodingUTF8);
+	return cfString [icfString];
+}
 #endif
 
 /* End of file melder_textencoding.cpp */

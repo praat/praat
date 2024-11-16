@@ -55,7 +55,7 @@ void structGraphicsScreen :: v9_destroy () noexcept {
 			cairo_surface_flush (d_cairoSurface);
 			if (d_isPng) {
 				#if 1
-					cairo_surface_write_to_png (d_cairoSurface, Melder_peek32to8_fileSystem (MelderFile_peekPath (& d_file)));
+					cairo_surface_write_to_png (d_cairoSurface, MelderFile_peekPath8 (& d_file));
 				#else
 					unsigned char *bitmap = cairo_image_surface_get_data (my d_cairoSurface);   // peeking into the internal bits
 					// copy bitmap to PNG structure created with the PNG library
@@ -138,7 +138,7 @@ void structGraphicsScreen :: v9_destroy () noexcept {
 			Gdiplus::GetImageEncoders (numberOfImageEncoders, sizeOfImageEncoderArray, imageEncoderInfos);
 			for (int iencoder = 0; iencoder < numberOfImageEncoders; iencoder ++) {
 				if (! wcscmp (imageEncoderInfos [iencoder]. MimeType, L"image/png")) {
-					gdiplusBitmap. Save (Melder_peek32toW_fileSystem (MelderFile_peekPath (& our d_file)),
+					gdiplusBitmap. Save (MelderFile_peekPathW (& our d_file),
 							& imageEncoderInfos [iencoder]. Clsid, nullptr);
 				}
 			}
@@ -185,7 +185,7 @@ void structGraphicsScreen :: v9_destroy () noexcept {
 			Melder_assert (properties);
 
 			CFURLRef url = CFURLCreateWithFileSystemPath (nullptr,
-				(CFStringRef) Melder_peek32toCfstring (MelderFile_peekPath (& d_file)), kCFURLPOSIXPathStyle, false);
+					(CFStringRef) MelderFile_peekPathCfstring (& d_file), kCFURLPOSIXPathStyle, false);
 			CGImageDestinationRef imageDestination = CGImageDestinationCreateWithURL (url, kUTTypePNG, 1, nullptr);
 			if (imageDestination) {
 				CGImageDestinationAddImage (imageDestination, image, properties);
@@ -598,7 +598,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 	#endif
 	Graphics_init (me.get(), resolution);
 	#if cairo
-		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8_fileSystem (MelderFile_peekPath (file)),
+		my d_cairoSurface = cairo_pdf_surface_create (MelderFile_peekPath8 (file),
 			( isdefined (x1inches) ? x2inches - x1inches : x2inches ) * 72.0,
 			( isdefined (y1inches) ? y2inches - y1inches : y2inches ) * 72.0);
 		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);
@@ -615,7 +615,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 			( isdefined (x1inches) ? - x1inches : 0.0 ) * resolution,
 			( isdefined (y1inches) ? (y2inches - 12.0) : 0.0 ) * resolution);
 	#elif quartz
-		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) Melder_peek32toCfstring (MelderFile_peekPath (file)), kCFURLPOSIXPathStyle, false);
+		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) MelderFile_peekPathCfstring (file), kCFURLPOSIXPathStyle, false);
 		CGRect rect = CGRectMake (0, 0,
 			( isdefined (x1inches) ? x2inches - x1inches : x2inches ) * 72.0,
 			( isdefined (y1inches) ? y2inches - y1inches : y2inches ) * 72.0);   // don't tire PDF viewers with funny origins

@@ -102,7 +102,7 @@ autoPhoto Photo_createSimple (integer numberOfRows, integer numberOfColumns) {
 autoPhoto Photo_readFromImageFile (MelderFile file) {
 	try {
 		#if defined (linux) && ! defined (NO_GRAPHICS)
-			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8_fileSystem (MelderFile_peekPath (file)));
+			cairo_surface_t *surface = cairo_image_surface_create_from_png (MelderFile_peekPath8 (file));
 			//if (cairo_surface_status)
 			//	Melder_throw (U"Error opening PNG file.");
 			integer width = cairo_image_surface_get_width (surface);
@@ -142,7 +142,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			cairo_surface_destroy (surface);
 			return me;
 		#elif defined (_WIN32)
-			Gdiplus::Bitmap gdiplusBitmap (Melder_peek32toW_fileSystem (MelderFile_peekPath (file)));
+			Gdiplus::Bitmap gdiplusBitmap (MelderFile_peekPathW (file));
 			integer width = gdiplusBitmap. GetWidth ();
 			integer height = gdiplusBitmap. GetHeight ();
 			if (width == 0 || height == 0)
@@ -161,9 +161,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			return me;
 		#elif defined (macintosh)
 			autoPhoto me;
-			CFStringRef path = CFStringCreateWithCString (nullptr, Melder_peek32to8_fileSystem (MelderFile_peekPath (file)), kCFStringEncodingUTF8);
-			CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
-			CFRelease (path);
+			CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) MelderFile_peekPathCfstring (file), kCFURLPOSIXPathStyle, false);
 			CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, nullptr);
 			CFRelease (url);
 			if (! imageSource)
@@ -236,7 +234,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		}
 		cairo_surface_t *surface = cairo_image_surface_create_for_data (imageData,
 			format, my nx, my ny, bytesPerRow);
-		cairo_surface_write_to_png (surface, Melder_peek32to8_fileSystem (MelderFile_peekPath (file)));
+		cairo_surface_write_to_png (surface, MelderFile_peekPath8 (file));
 		cairo_surface_destroy (surface);
 	}
 #endif
@@ -278,7 +276,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 					encoderParameters. Parameter [0]. Value = & quality;
 					p = & encoderParameters;
 				}
-				gdiplusBitmap. Save (Melder_peek32toW_fileSystem (MelderFile_peekPath (file)),
+				gdiplusBitmap. Save (MelderFile_peekPathW (file),
 						& imageEncoderInfos [iencoder]. Clsid, p);
 				Melder_free (imageEncoderInfos);
 				return;
@@ -317,7 +315,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			8, 32, integer_to_uinteger (bytesPerRow), colourSpace, kCGImageAlphaNone, dataProvider, nullptr, false, kCGRenderingIntentDefault);
 		CGDataProviderRelease (dataProvider);
 		Melder_assert (image);
-		NSString *path = (NSString *) Melder_peek32toCfstring (MelderFile_peekPath (file));
+		NSString *path = (NSString *) MelderFile_peekPathCfstring (file);
 		CFURLRef url = (CFURLRef) [NSURL   fileURLWithPath: path   isDirectory: NO];
 		CGImageDestinationRef destination = CGImageDestinationCreateWithURL (url, (CFStringRef) which, 1, nullptr);
 		CGImageDestinationAddImage (destination, image, nil);

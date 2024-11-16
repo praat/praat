@@ -35,7 +35,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststrin
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
 		if (MelderFolder_isNull (& folder))   // first time?
 			Melder_getCurrentFolder (& folder);
-		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (MelderFolder_peekPath (& folder)));
+		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), MelderFolder_peekPath8 (& folder));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *infolderName_utf8 = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (dialog));
 			if (infolderName_utf8) {
@@ -134,7 +134,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow optionalParent, conststring
 			gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (optionalParent -> d_gtkWindow));
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), true);
 		if (! MelderFile_isNull (& file))
-			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (MelderFile_peekPath (& file)));
+			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), MelderFile_peekPath8 (& file));
 		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (defaultName));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *outfileName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
@@ -197,7 +197,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring3
 		if (optionalParent)
 			gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (optionalParent -> d_gtkWindow));
 		if (! MelderFile_isNull (& file))
-			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (MelderFile_peekPath (& file)));
+			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), MelderFile_peekPath8 (& file));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *folderName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 			folderName = Melder_8to32 (folderName_utf8);

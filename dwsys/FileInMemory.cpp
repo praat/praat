@@ -829,7 +829,7 @@ static void testOneFile (
 		*/
 		MelderInfo_writeLine (U"Testing fopen...");
 		MelderInfo_writeLine (U"\tTrying to open file-in-memory via full path:\n\t\t\"", MelderFile_peekPath (& theTestFile), U"\"...");
-		theTestFim = FileInMemorySet_fopen (theTestFileInMemorySet.get(), Melder_peek32to8_fileSystem (MelderFile_peekPath (& theTestFile)), "rb");
+		theTestFim = FileInMemorySet_fopen (theTestFileInMemorySet.get(), MelderFile_peekPath8 (& theTestFile), "rb");
 		Melder_require (theTestFim == nullptr,
 			U"FileInMemory should have been null.");
 		/*

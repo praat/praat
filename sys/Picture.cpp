@@ -362,7 +362,7 @@ void Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
 	try {
 		HENHMETAFILE metafile = copyToMetafile (me);
 		MelderFile_delete (file);   // overwrite any existing file with the same name
-		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, Melder_peek32toW_fileSystem (MelderFile_peekPath (file))));
+		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, MelderFile_peekPathW (file)));
 		DeleteEnhMetaFile (metafile);
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to Windows metafile ", file);
