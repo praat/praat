@@ -21,7 +21,6 @@
 #include "machine.h"
 #include "EditorM.h"
 #include "praat_script.h"
-#include "sendsocket.h"
 
 Thing_implement (Editor, DataGui, 0);
 
@@ -388,7 +387,16 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS) {
 		structMelderFile file { };
 		MelderFolder_getFile (Melder_preferencesFolder(), U"praat_backToCaller.Data", & file);
 		Data_writeToTextFile (my data(), & file);
-		sendsocket (Melder_peek32to8 (my callbackSocket.get()), Melder_peek32to8 (my data() -> name.get()));
+		/*
+			We used to do:
+		*/
+		//sendsocket (Melder_peek32to8 (my callbackSocket.get()), Melder_peek32to8 (my data() -> name.get()));
+		/*
+			From Praat 7 on, this is no longer possible.
+			Either we have to find a different way to notify the calling program,
+			or we don't notify them, so that they will have to poll (which was needed on the Mac anyway).
+			(this comment 2024-11-16)
+		*/
 	}
 	my v_goAway ();
 }

@@ -18,7 +18,6 @@
 
 #include "praatP.h"
 #include "praat_script.h"
-#include "sendsocket.h"
 #include "UiPause.h"
 #include "DemoEditor.h"
 
@@ -322,24 +321,6 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 				U"The script command “endeditor” is not available inside manuals.");
 			interpreter -> nullifyDynamicEditorEnvironment();
-		} else if (str32nequ (command, U"sendsocket ", 11)) {
-			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
-				U"The script command “sendsocket” is not available inside manuals.");
-			char32 hostName [61], *q = & hostName [0];
-			const char32 *p = command + 11;
-			while (*p == U' ' || *p == U'\t')
-				p ++;
-			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < hostName + 59)
-				*q ++ = *p ++;
-			*q = U'\0';
-			if (q == hostName)
-				Melder_throw (U"Missing host name after “sendsocket”.");
-			while (*p == U' ' || *p == U'\t') p ++;
-			if (*p == U'\0')
-				Melder_throw (U"Missing command after “sendsocket”.");
-			char *result = sendsocket (Melder_peek32to8 (hostName), Melder_peek32to8 (p));
-			if (result)
-				Melder_throw (Melder_peek8to32 (result), U"\nMessage to ", hostName, U" not completed.");
 		} else if (str32nequ (command, U"filedelete ", 11)) {
 			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 				U"The script command “filedelete” is not available inside manuals.");
