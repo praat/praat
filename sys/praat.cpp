@@ -534,7 +534,7 @@ static void praat_exit (int exit_code) {
 				because if we arrive here, we are sure to have created a new pid file
 				in the current computer session).
 			*/
-			if (pidFile. path [0]) {
+			if (! MelderFile_isNull (& pidFile)) {
 				try {
 					/*
 						To see whether we own the pid file,
@@ -955,7 +955,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			or double-clicked a Praat file,
 			while Praat is already running.
 		*/
-		Melder_sprint (text,500, U"Read from file: ~", file -> path);
+		Melder_sprint (text,500, U"Read from file: ~", Melder_fileToPath (file));
 		sendpraat (nullptr, Melder_peek32to8 (Melder_upperCaseAppName()), 0, Melder_peek32to8 (text));
 	}
 	static void cb_finishedOpeningDocuments () {
@@ -1703,7 +1703,7 @@ static void setPreferencesFolder () {
 	*/
 	if (MelderFolder_isNull (Melder_preferencesFolder())) {   // not yet set by the --pref-dir option?
 		try {
-			Melder_setPreferencesFolder (Melder_preferencesFolder5() -> path);
+			Melder_setPreferencesFolder (Melder_folderToPath (Melder_preferencesFolder5()));
 			MelderFolder_create (Melder_preferencesFolder());
 		} catch (MelderError) {
 			/*

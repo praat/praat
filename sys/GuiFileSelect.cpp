@@ -115,7 +115,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststrin
 			for (NSURL *url in [openPanel URLs]) {
 				structMelderFile file { };
 				Melder_8bitFileRepresentationToStr32_inplace ([[url path] UTF8String], file. path);   // BUG: unsafe buffer
-				my addString_copy (file. path);
+				my addString_copy (Melder_fileToPath (& file));
 			}
 		}
 		setlocale (LC_ALL, "C");
@@ -133,8 +133,8 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow optionalParent, conststring
 		if (optionalParent)
 			gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (optionalParent -> d_gtkWindow));
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), true);
-		if (file. path [0] != U'\0')
-			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (file. path));
+		if (! MelderFile_isNull (& file))
+			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (Melder_fileToPath (& file)));
 		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (defaultName));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *outfileName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
@@ -180,7 +180,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow optionalParent, conststring
 				Melder_throw (U"Don't understand where you want to save (2).");
 			structMelderFile file { };
 			Melder_8bitFileRepresentationToStr32_inplace (outfileName_utf8, file. path);   // BUG: unsafe buffer
-			outfileName = Melder_dup (file. path);
+			outfileName = Melder_dup (Melder_fileToPath (& file));
 		}
 		setlocale (LC_ALL, "C");
 	#endif
@@ -196,8 +196,8 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring3
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "Choose", GTK_RESPONSE_ACCEPT, nullptr);
 		if (optionalParent)
 			gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (optionalParent -> d_gtkWindow));
-		if (file. path [0] != U'\0')
-			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (file. path));
+		if (! MelderFile_isNull (& file))
+			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (Melder_fileToPath (& file)));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *folderName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 			folderName = Melder_8to32 (folderName_utf8);
@@ -238,7 +238,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring3
 				const char *folderName_utf8 = [[url path] UTF8String];
 				structMelderFolder folder { };
 				Melder_8bitFileRepresentationToStr32_inplace (folderName_utf8, folder. path);   // BUG: unsafe buffer
-				folderName = Melder_dup (folder. path);
+				folderName = Melder_dup (Melder_folderToPath (& folder));
 			}
 		}
 		setlocale (LC_ALL, "C");

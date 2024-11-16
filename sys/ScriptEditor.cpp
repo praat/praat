@@ -376,7 +376,7 @@ autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalOwningE
 		structMelderFile scriptFile { };
 		for (integer ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
 			ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
-			if (Melder_equ (script -> string.get(), editor -> file. path)) {
+			if (Melder_equ (script -> string.get(), Melder_fileToPath (& editor -> file))) {
 				Editor_raise (editor);
 				Melder_pathToFile (script -> string.get(), & scriptFile);   // ensure correct messaging format
 				Melder_appendError (U"The script ", & scriptFile, U" is already open and has been moved to the front.");

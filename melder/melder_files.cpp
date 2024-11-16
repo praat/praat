@@ -545,7 +545,7 @@ void Melder_setPreferencesFolder (conststring32 path) {
 MelderFolder Melder_preferencesFolder() {
 	return & thePreferencesFolder;
 }
-MelderFolder Melder_preferencesFolder5 () {
+MelderFolder Melder_preferencesFolder5() {
 	static structMelderFolder thePreferencesFolder5;
 	if (MelderFolder_isNull (& thePreferencesFolder5)) {
 		structMelderFolder homeFolder { };
@@ -563,7 +563,7 @@ MelderFolder Melder_preferencesFolder5 () {
 	}
 	return & thePreferencesFolder5;
 }
-MelderFolder Melder_preferencesFolder7 () {
+MelderFolder Melder_preferencesFolder7() {
 	static structMelderFolder thePreferencesFolder7;
 	if (MelderFolder_isNull (& thePreferencesFolder7)) {
 		structMelderFolder homeFolder { };

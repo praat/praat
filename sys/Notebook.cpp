@@ -22,7 +22,7 @@ Thing_implement (Notebook, SimpleString, 0);
 
 autoNotebook Notebook_createFromFile (MelderFile file) {
 	autoNotebook me = Thing_new (Notebook);
-	my string = Melder_dup (file -> path);
+	my string = Melder_dup (Melder_fileToPath (file));
 	return me;
 }
 

@@ -102,7 +102,7 @@ autoPhoto Photo_createSimple (integer numberOfRows, integer numberOfColumns) {
 autoPhoto Photo_readFromImageFile (MelderFile file) {
 	try {
 		#if defined (linux) && ! defined (NO_GRAPHICS)
-			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8_fileSystem (file -> path));
+			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8_fileSystem (Melder_fileToPath (file)));
 			//if (cairo_surface_status)
 			//	Melder_throw (U"Error opening PNG file.");
 			integer width = cairo_image_surface_get_width (surface);
@@ -142,7 +142,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			cairo_surface_destroy (surface);
 			return me;
 		#elif defined (_WIN32)
-			Gdiplus::Bitmap gdiplusBitmap (Melder_peek32toW_fileSystem (file -> path));
+			Gdiplus::Bitmap gdiplusBitmap (Melder_peek32toW_fileSystem (Melder_fileToPath (file)));
 			integer width = gdiplusBitmap. GetWidth ();
 			integer height = gdiplusBitmap. GetHeight ();
 			if (width == 0 || height == 0)
@@ -161,7 +161,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			return me;
 		#elif defined (macintosh)
 			autoPhoto me;
-			CFStringRef path = CFStringCreateWithCString (nullptr, Melder_peek32to8_fileSystem (file -> path), kCFStringEncodingUTF8);
+			CFStringRef path = CFStringCreateWithCString (nullptr, Melder_peek32to8_fileSystem (Melder_fileToPath (file)), kCFStringEncodingUTF8);
 			CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
 			CFRelease (path);
 			CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, nullptr);
@@ -236,7 +236,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		}
 		cairo_surface_t *surface = cairo_image_surface_create_for_data (imageData,
 			format, my nx, my ny, bytesPerRow);
-		cairo_surface_write_to_png (surface, Melder_peek32to8_fileSystem (file -> path));
+		cairo_surface_write_to_png (surface, Melder_peek32to8_fileSystem (Melder_fileToPath (file)));
 		cairo_surface_destroy (surface);
 	}
 #endif
@@ -278,7 +278,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 					encoderParameters. Parameter [0]. Value = & quality;
 					p = & encoderParameters;
 				}
-				gdiplusBitmap. Save (Melder_peek32toW_fileSystem (file -> path),
+				gdiplusBitmap. Save (Melder_peek32toW_fileSystem (Melder_fileToPath (file)),
 						& imageEncoderInfos [iencoder]. Clsid, p);
 				Melder_free (imageEncoderInfos);
 				return;
