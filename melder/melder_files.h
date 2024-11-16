@@ -88,7 +88,6 @@ void MelderFile_delete (MelderFile file);
 /* The following two should be combined with each other and with Windows extension setting: */
 FILE * Melder_fopen (MelderFile file, const char *type);
 void Melder_fclose (MelderFile file, FILE *stream);
-void Melder_files_cleanUp ();
 
 char32 * Melder_peekExpandBackslashes (conststring32 message);   // replace backslashes with "\bs"
 

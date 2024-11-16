@@ -25,7 +25,7 @@
  * pb 2004/09/25 use /tmp as temporary directory
  * pb 2004/10/16 C++ compatible structs
  * pb 2005/11/07 Windows: use %USERPROFILE% rather than %HOMESHARE%%HOMEPATH%
- * rvs&pb 2005/11/18 url support
+ * rvs&pb 2005/11/18 curl support
  * pb 2006/01/21 MelderFile_writeText does not create temporary file
  * pb 2006/08/03 openForWriting
  * rvs 2006/08/12 curl: do not fail on error
@@ -39,14 +39,12 @@
  * pb 2008/11/01 warn after finding final tabs (not just spaces) in file names
  * pb 2010/12/14 more high Unicode compatibility
  * pb 2011/04/05 C++
+ * pb 2024/11/16 rid curl support
  */
 
 #if defined (UNIX)
 	#include <unistd.h>
 	#include <sys/stat.h>
-#endif
-#if defined (CURLPRESENT)
-	#include <curl/curl.h>
 #endif
 #ifdef _WIN32
 	#include <windows.h>
@@ -591,16 +589,6 @@ void Melder_getTempDir (MelderFolder temporaryFolder) {
 	#endif
 }
 
-#ifdef CURLPRESENT
-static int curl_initialized = 0;
-static size_t write_URL_data_to_file (void *buffer, size_t size, size_t nmemb, void *userp) {
-	return fwrite (buffer, size, nmemb, userp);
-}
-static size_t read_URL_data_from_file (void *buffer, size_t size, size_t nmemb, void *userp) {
-	return fread (buffer, size, nmemb, userp);
-}
-#endif
-
 FILE * Melder_fopen (MelderFile file, const char *type) {
 	if (MelderFile_isNull (file))
 		Melder_throw (U"Cannot open null file.");
@@ -618,47 +606,6 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	file -> openForWriting = ( type [0] == 'w' || type [0] == 'a' || strchr (type, '+') );
 	if (str32equ (file -> path, U"<stdout>") && file -> openForWriting) {
 		f = Melder_stdout;
-	#ifdef CURLPRESENT
-	} else if (strstr (utf8path, "://") && file -> openForWriting) {
-		Melder_assert (type [0] == 'w');   // reject "append" and "random" access
-		f = tmpfile ();   // open a temporary file for writing
-	} else if (strstr (utf8path, "://") && ! file -> openForWriting) {
-		CURLcode CURLreturn;
-		CURL *CURLhandle;
-		char errorbuffer [CURL_ERROR_SIZE] = "";
-		f = tmpfile ();   // open a temporary file for writing
-		if (! curl_initialized) {
-			CURLreturn = curl_global_init (CURL_GLOBAL_ALL);
-			curl_initialized = 1;
-		};
-		CURLhandle = curl_easy_init ();   // initialize session
-		/* 
-		 * Set up the connection parameters.
-		 */
-		/* Debugging: Verbose messages */
-		/* CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1); */
-		/* Do not fail on error. */
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FAILONERROR, 0);	
-		/* Store error messages in a buffer. */
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_ERRORBUFFER, errorbuffer);
-		/* The file stream to store the URL. */
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FILE, f);
-		/* The function to write to the file, necessary for Win32.	*/
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_WRITEFUNCTION, write_URL_data_to_file);
-		/* The actual URL to handle.	*/
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, utf8path);
-		/* Get the URL and write it to the given file. */
-		CURLreturn = curl_easy_perform (CURLhandle);
-		/* Handle errors. */
-		if (CURLreturn) {
-			Melder_appendError (Melder_peek8to32 (errorbuffer));
-			f = nullptr;
-		};
-		/* Clean up session. */
-		curl_easy_cleanup (CURLhandle);
-		/* Do something with the file. Why? */
-		if (f) rewind (f);
-	#endif
 	} else {
 		//TRACE
 		#if defined (_WIN32) && ! defined (__CYGWIN__)
@@ -720,66 +667,8 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 void Melder_fclose (MelderFile file, FILE *f) {
 	if (! f)
 		return;
-	#if defined (CURLPRESENT)
- 	if (str32str (file -> wpath, U"://") && file -> openForWriting) {
-		unsigned char utf8path [kMelder_MAXPATH+1];
-		Melder_32to8_fileSystem_inplace (file -> path, utf8path);
-		/* Rewind the file. */
-		if (f) rewind (f);
-		CURLcode CURLreturn;
-		CURL *CURLhandle;
-		char errorbuffer [CURL_ERROR_SIZE] = "";
-		/* Start global init (necessary only ONCE). */
-		if (! curl_initialized) {
-			CURLreturn = curl_global_init (CURL_GLOBAL_ALL);
-			curl_initialized = 1;
-		};
-		CURLhandle = curl_easy_init ();   /* Initialize session. */
-		/* 
-		 * Set up the connection parameters.
-		 */
-		/* Debugging: Verbose messages */
-		/* CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1); */
-        /* Catch FILE: protocol errors. No solution yet */
-		if (str32str (file -> path, U"file://") || str32str (file -> path, U"FILE://")) {
-			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1);
-		}
-		/* Do not return Error pages, just fail. */
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FAILONERROR, 1);	
-		/* Store error messages in a buffer. */
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_ERRORBUFFER, errorbuffer);
-		/* Send header. */
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_HEADER, 1);
-		/* Upload. */
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_UPLOAD, 1);
-		/* The actual URL to handle. */
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, utf8path);
-		/* The function to write to the peer, necessary for Win32. */
-	    CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_READFUNCTION, read_URL_data_from_file);
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_READDATA, f);
-		/* Get the URL and write the file to it. */
-		CURLreturn = curl_easy_perform (CURLhandle);
-		/* Handle errors. */
-		if (CURLreturn) {
-			curl_easy_cleanup (CURLhandle);
-			f = nullptr;
-			Melder_throw (Melder_peek8to32 (errorbuffer), U"\n");
-	    };
-		/* Clean up session */
-		curl_easy_cleanup (CURLhandle);
-    }
-	#endif
 	if (f != Melder_stdout && fclose (f) == EOF)
 		Melder_throw (U"Error closing file ", file, U".");
-}
-
-void Melder_files_cleanUp () {
-	#if defined (CURLPRESENT)
-		if (curl_initialized) {
-			curl_global_cleanup ();
-			curl_initialized = 0;
-		};
-	#endif
 }
 
 bool MelderFile_exists (MelderFile file) {

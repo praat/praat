@@ -585,7 +585,6 @@ static void praat_exit (int exit_code) {
 		trace (U"removing object based on file ", & theCurrentPraatObjects -> list [IOBJECT]. file);
 		praat_remove (IOBJECT, false);
 	}
-	Melder_files_cleanUp ();   // in case a URL is open
 
 	trace (U"leave the program");
 	praat_menuCommands_exit_optimizeByLeaking ();   // these calls are superflous if subsequently _Exit() is called instead of exit()
