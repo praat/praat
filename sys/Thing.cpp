@@ -194,7 +194,7 @@ void Thing_infoWithIdAndFile (Thing me, integer id, MelderFile file) {
 	if (id != 0)
 		MelderInfo_writeLine (U"Object id: ", id);
 	if (! MelderFile_isNull (file))
-		MelderInfo_writeLine (U"Associated file: ", Melder_fileToPath (file));
+		MelderInfo_writeLine (U"Associated file: ", MelderFile_peekPath (file));
 	my v1_info ();
 	MelderInfo_close ();
 }

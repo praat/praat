@@ -863,7 +863,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 				const conststring32 value = UiForm_getString (dialog, parameter);
 				structMelderFile file { };
 				Melder_relativePathToFile (value, & file);   // the working directory should have been set to the script file path
-				my arguments [ipar] = Melder_dup_f (Melder_fileToPath (& file));
+				my arguments [ipar] = Melder_dup_f (MelderFile_peekPath (& file));
 				break;
 			}
 			case Interpreter_REAL:
@@ -942,7 +942,7 @@ static void convertBooleansAndChoicesToNumbersAndRelativeToAbsolutePaths (Interp
 		) {
 			structMelderFile file { };
 			Melder_relativePathToFile (my arguments [ipar].get(), & file);
-			my arguments [ipar] = Melder_dup_f (Melder_fileToPath (& file));
+			my arguments [ipar] = Melder_dup_f (MelderFile_peekPath (& file));
 		} else if (my types [ipar] == Interpreter_BOOLEAN) {
 			mutablestring32 arg = & my arguments [ipar] [0];
 			if (
@@ -2133,12 +2133,12 @@ void Interpreter_run (Interpreter me, char32 *text, const bool reuseVariables) {
 			{// scope
 				structMelderFolder folder { };
 				Melder_getCurrentFolder (& folder);
-				Interpreter_addStringVariable (me, U"defaultDirectory$", Melder_folderToPath (& folder));
-				Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_folderToPath (Melder_preferencesFolder()));
+				Interpreter_addStringVariable (me, U"defaultDirectory$", MelderFolder_peekPath (& folder));
+				Interpreter_addStringVariable (me, U"preferencesDirectory$", MelderFolder_peekPath (Melder_preferencesFolder()));
 				Melder_getHomeDir (& folder);
-				Interpreter_addStringVariable (me, U"homeDirectory$", Melder_folderToPath (& folder));
+				Interpreter_addStringVariable (me, U"homeDirectory$", MelderFolder_peekPath (& folder));
 				Melder_getTempDir (& folder);
-				Interpreter_addStringVariable (me, U"temporaryDirectory$", Melder_folderToPath (& folder));
+				Interpreter_addStringVariable (me, U"temporaryDirectory$", MelderFolder_peekPath (& folder));
 			}
 			#if defined (macintosh)
 				Interpreter_addNumericVariable (me, U"macintosh", 1);

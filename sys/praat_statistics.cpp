@@ -186,7 +186,7 @@ void praat_reportSystemProperties () {
 	#endif
 	structMelderFolder homeFolder {};
 	Melder_getHomeDir (& homeFolder);
-	MelderInfo_writeLine (U"Home folder: ", Melder_folderToPath (& homeFolder));
+	MelderInfo_writeLine (U"Home folder: ", MelderFolder_peekPath (& homeFolder));
 	#ifdef macintosh
 		MelderInfo_writeLine (U"Full Disk Access: ", Melder_kleenean (hasFullDiskAccess ()));
 		MelderInfo_writeLine (U"Sandboxed: ", Melder_boolean (isSandboxed ()));

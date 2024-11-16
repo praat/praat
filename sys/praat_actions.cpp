@@ -330,7 +330,7 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 		} else {
 			structMelderFile file { };
 			Melder_relativePathToFile (script, & file);
-			action -> script = Melder_dup_f (Melder_fileToPath (& file));
+			action -> script = Melder_dup_f (MelderFile_peekPath (& file));
 		}
 		action -> after = ( after [0] != U'\0' ? Melder_dup_f (after) : autostring32() );
 		action -> phase = praatP.phase;
@@ -803,7 +803,7 @@ int praat_doAction (conststring32 title, conststring32 arguments, Interpreter in
 		return 0;
 	if (actionFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		const conststring32 scriptPath = actionFound -> script.get();
-		const conststring32 preferencesFolderPath = Melder_folderToPath (Melder_preferencesFolder());
+		const conststring32 preferencesFolderPath = MelderFolder_peekPath (Melder_preferencesFolder());
 		const bool scriptIsInPlugin = Melder_startsWith (scriptPath, preferencesFolderPath);
 		Melder_throw (
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
@@ -833,7 +833,7 @@ int praat_doAction (conststring32 title, integer narg, Stackel args, Interpreter
 		return 0;
 	if (actionFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		const conststring32 scriptPath = actionFound -> script.get();
-		const conststring32 preferencesFolderPath = Melder_folderToPath (Melder_preferencesFolder());
+		const conststring32 preferencesFolderPath = MelderFolder_peekPath (Melder_preferencesFolder());
 		const bool scriptIsInPlugin = Melder_startsWith (scriptPath, preferencesFolderPath);
 		Melder_throw (
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",

@@ -22,7 +22,7 @@ Thing_implement (Script, SimpleString, 0);
 
 autoScript Script_createFromFile (MelderFile file) {
 	autoScript me = Thing_new (Script);
-	my string = Melder_dup (Melder_fileToPath (file));
+	my string = Melder_dup (MelderFile_peekPath (file));
 	return me;
 }
 

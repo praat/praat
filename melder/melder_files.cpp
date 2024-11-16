@@ -72,7 +72,7 @@ static char32 theShellDirectory [kMelder_MAXPATH+1];
 void Melder_rememberShellDirectory () {
 	structMelderFolder shellFolder { };
 	Melder_getCurrentFolder (& shellFolder);
-	str32cpy (theShellDirectory, Melder_folderToPath (& shellFolder));
+	str32cpy (theShellDirectory, MelderFolder_peekPath (& shellFolder));
 }
 conststring32 Melder_getShellDirectory () {
 	return & theShellDirectory [0];
@@ -307,11 +307,11 @@ void Melder_relativePathToFolder (conststring32 path, MelderFolder folder) {
 	#endif
 }
 
-conststring32 Melder_fileToPath (MelderFile file) {
+conststring32 MelderFile_peekPath (MelderFile file) {
 	return & file -> path [0];
 }
 
-conststring32 Melder_folderToPath (MelderFolder folder) {
+conststring32 MelderFolder_peekPath (MelderFolder folder) {
 	return & folder -> path [0];
 }
 

@@ -217,7 +217,7 @@ static GuiMenuItem EditorMenu_addCommandScript (EditorMenu me, conststring32 ite
 	} else {
 		structMelderFile file { };
 		Melder_relativePathToFile (script, & file);
-		cmd -> script = Melder_dup (Melder_fileToPath (& file));
+		cmd -> script = Melder_dup (MelderFile_peekPath (& file));
 	}
 	GuiMenuItem result = cmd -> itemWidget;
 	my commands. addItem_move (cmd.move());

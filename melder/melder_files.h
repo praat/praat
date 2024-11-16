@@ -53,9 +53,9 @@ void Melder_pathToFile (conststring32 path, MelderFile file);
 void Melder_pathToFolder (conststring32 path, MelderFolder folder);
 void Melder_relativePathToFile (conststring32 path, MelderFile file);
 void Melder_relativePathToFolder (conststring32 path, MelderFolder folder);
-conststring32 Melder_folderToPath (MelderFolder folder);
+conststring32 MelderFolder_peekPath (MelderFolder folder);
 	/* Returns a pointer internal to 'folder', like "/u/paul/praats" or "D:\Paul\Praats" */
-conststring32 Melder_fileToPath (MelderFile file);
+conststring32 MelderFile_peekPath (MelderFile file);
 void MelderFile_copy (constMelderFile file, MelderFile copy);
 void MelderFolder_copy (constMelderFolder folder, MelderFolder copy);
 bool MelderFile_equal (MelderFile file1, MelderFile file2);

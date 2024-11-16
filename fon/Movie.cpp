@@ -65,7 +65,7 @@ autoMovie Movie_openFromSoundFile (MelderFile file)
 		autoMovie me = Thing_new (Movie);
 		autoSound sound = Sound_readFromSoundFile (file);
 		autoMelderString fileNameHead;
-		MelderString_copy (& fileNameHead, Melder_fileToPath (file));
+		MelderString_copy (& fileNameHead, MelderFile_peekPath (file));
 		char32 *extensionLocation = str32rchr (fileNameHead.string, U'.');
 		if (! extensionLocation)
 			extensionLocation = & fileNameHead.string [fileNameHead.length];
@@ -74,7 +74,7 @@ autoMovie Movie_openFromSoundFile (MelderFile file)
 		autoStrings strings = Strings_createAsFileList (Melder_cat (fileNameHead.string, U"*.png"));
 		structMelderFolder folder { };
 		MelderFile_getParentFolder (file, & folder);
-		Movie_init (me.get(), sound.move(), Melder_folderToPath (& folder), strings.move());
+		Movie_init (me.get(), sound.move(), MelderFolder_peekPath (& folder), strings.move());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie object not read from file ", file, U".");
@@ -94,7 +94,7 @@ void Movie_paintOneImageInside (Movie me, Graphics graphics, integer frameNumber
 		Melder_pathToFolder (my d_folderName.get(), & folder);
 		structMelderFile file { };
 		MelderFolder_getFile (& folder, my d_fileNames -> strings [frameNumber].get(), & file);
-		Graphics_imageFromFile (graphics, Melder_fileToPath (& file), xmin, xmax, ymin, ymax);
+		Graphics_imageFromFile (graphics, MelderFile_peekPath (& file), xmin, xmax, ymin, ymax);
 	} catch (MelderError) {
 		Melder_throw (me, U": image ", frameNumber, U" not painted.");
 	}

@@ -219,7 +219,7 @@ static void menu_cb_addToMenu (ScriptEditor me, EDITOR_ARGS) {
 		if (MelderFile_isNull (& my file))
 			SET_STRING (scriptFile, U"(please save your script first)")
 		else
-			SET_STRING (scriptFile, Melder_fileToPath (& my file));
+			SET_STRING (scriptFile, MelderFile_peekPath (& my file));
 	EDITOR_DO
 		praat_addMenuCommandScript (window, menu, command, afterCommand, depth, scriptFile);
 		praat_show ();
@@ -240,7 +240,7 @@ static void menu_cb_addToFixedMenu (ScriptEditor me, EDITOR_ARGS) {
 		if (MelderFile_isNull (& my file))
 			SET_STRING (scriptFile, U"(please save your script first)")
 		else
-			SET_STRING (scriptFile, Melder_fileToPath (& my file))
+			SET_STRING (scriptFile, MelderFile_peekPath (& my file))
 	EDITOR_DO
 		praat_addMenuCommandScript (window, menu, command, afterCommand, depth, scriptFile);
 		praat_show ();
@@ -263,7 +263,7 @@ static void menu_cb_addToDynamicMenu (ScriptEditor me, EDITOR_ARGS) {
 		if (MelderFile_isNull (& my file))
 			SET_STRING (scriptFile, U"(please save your script first)")
 		else
-			SET_STRING (scriptFile, Melder_fileToPath (& my file))
+			SET_STRING (scriptFile, MelderFile_peekPath (& my file))
 	EDITOR_DO
 		praat_addActionScript (class1, number1, class2, number2, class3, number3, command, afterCommand, depth, scriptFile);
 		praat_show ();
@@ -376,7 +376,7 @@ autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalOwningE
 		structMelderFile scriptFile { };
 		for (integer ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
 			ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
-			if (Melder_equ (script -> string.get(), Melder_fileToPath (& editor -> file))) {
+			if (Melder_equ (script -> string.get(), MelderFile_peekPath (& editor -> file))) {
 				Editor_raise (editor);
 				Melder_pathToFile (script -> string.get(), & scriptFile);   // ensure correct messaging format
 				Melder_appendError (U"The script ", & scriptFile, U" is already open and has been moved to the front.");

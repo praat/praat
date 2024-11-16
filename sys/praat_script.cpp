@@ -716,7 +716,7 @@ static void firstPassThroughScript (MelderFile file, Editor optionalInterpreterO
 		if (Interpreter_readParameters (interpreter.get(), text.get()) > 0) {
 			const GuiWindow parentShell = ( optionalInterpreterOwningEditor ? optionalInterpreterOwningEditor -> windowForm : theCurrentPraatApplication -> topShell );
 			autoUiForm form = Interpreter_createForm (interpreter.get(), parentShell, optionalInterpreterOwningEditor,
-					Melder_fileToPath (file), secondPassThroughScript, nullptr, false);
+					MelderFile_peekPath (file), secondPassThroughScript, nullptr, false);
 			UiForm_do (form.get(), false);
 			if (optionalCommand) {
 				optionalCommand -> d_uiform = form.move();

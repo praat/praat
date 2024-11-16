@@ -202,7 +202,7 @@ autoNotebookEditor NotebookEditor_createFromNotebook_canBeNull (Notebook noteboo
 		structMelderFile notebookFile { };
 		for (integer ieditor = 1; ieditor <= theReferencesToAllOpenNotebookEditors.size; ieditor ++) {
 			NotebookEditor editor = theReferencesToAllOpenNotebookEditors.at [ieditor];
-			if (Melder_equ (notebook -> string.get(), Melder_fileToPath (& editor -> file))) {
+			if (Melder_equ (notebook -> string.get(), MelderFile_peekPath (& editor -> file))) {
 				Editor_raise (editor);
 				Melder_pathToFile (notebook -> string.get(), & notebookFile);
 				Melder_appendError (U"The notebook ", & notebookFile, U" is already open and has been moved to the front.");

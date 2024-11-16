@@ -954,7 +954,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			or double-clicked a Praat file,
 			while Praat is already running.
 		*/
-		Melder_sprint (text,500, U"Read from file: ~", Melder_fileToPath (file));
+		Melder_sprint (text,500, U"Read from file: ~", MelderFile_peekPath (file));
 		sendpraat (nullptr, Melder_peek32to8 (Melder_upperCaseAppName()), 0, Melder_peek32to8 (text));
 	}
 	static void cb_finishedOpeningDocuments () {
@@ -1261,7 +1261,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++) {   // do not change praatP.argumentNumber itself (we might return false)
 			structMelderFile file { };
 			Melder_relativePathToFile (Melder_peek8to32 (praatP.argv [iarg]), & file);
-			conststring32 absolutePath = Melder_fileToPath (& file);
+			conststring32 absolutePath = MelderFile_peekPath (& file);
 			MelderString_append (& text32, U"Read from file... ", absolutePath, U"\n");
 			trace (U"Argument ", iarg, U": will open path ", absolutePath);
 		} // TODO: we could send an openDocuments message instead
@@ -1272,11 +1272,11 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 		MelderString_append (& text32, U"setWorkingDirectory: ");
 		structMelderFolder currentFolder { };
 		Melder_getCurrentFolder (& currentFolder);
-		MelderString_append (& text32, quote_doubleSTR (Melder_folderToPath (& currentFolder)).get());
+		MelderString_append (& text32, quote_doubleSTR (MelderFolder_peekPath (& currentFolder)).get());
 		MelderString_append (& text32, U"\nrunScript: ");
 		structMelderFile scriptFile { };
 		Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & scriptFile);
-		conststring32 absolutePath = Melder_fileToPath (& scriptFile);
+		conststring32 absolutePath = MelderFile_peekPath (& scriptFile);
 		MelderString_append (& text32, quote_doubleSTR (absolutePath).get());
 		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++)   // do not change praatP.argumentNumber itself (we might return false)
 			MelderString_append (& text32, U", ", quote_doubleSTR (Melder_peek8to32 (praatP.argv [iarg])).get());
@@ -1702,7 +1702,7 @@ static void setPreferencesFolder () {
 	*/
 	if (MelderFolder_isNull (Melder_preferencesFolder())) {   // not yet set by the --pref-dir option?
 		try {
-			Melder_setPreferencesFolder (Melder_folderToPath (Melder_preferencesFolder5()));
+			Melder_setPreferencesFolder (MelderFolder_peekPath (Melder_preferencesFolder5()));
 			MelderFolder_create (Melder_preferencesFolder());
 		} catch (MelderError) {
 			/*
@@ -2025,7 +2025,7 @@ void praat_run () {
 		structMelderFile searchPattern { };
 		MelderFolder_getFile (Melder_preferencesFolder(), U"plugin_*", & searchPattern);
 		try {
-			autoSTRVEC folderNames = folderNames_STRVEC (Melder_fileToPath (& searchPattern));
+			autoSTRVEC folderNames = folderNames_STRVEC (MelderFile_peekPath (& searchPattern));
 			for (integer i = 1; i <= folderNames.size; i ++) {
 				structMelderFolder pluginFolder { };
 				structMelderFile plugin { };
