@@ -320,25 +320,21 @@ After this, the folder `./src` will be empty again.
 - Adapt `GetVoices()` in `voices.cpp`:
 {;
 	#if DATA_FROM_SOURCECODE_FILES   /* ppgb: whole function adapted to Praat */
-		/*
-			If is_languange_file == 0 then /voices/ else /lang/.
-			We know that our voices are in /voices/ (actually in /voices/!v/) and our languages in /lang/.
-		*/
-		(void) path;
 		FileInMemorySet me = theEspeakPraatFileInMemorySet();
-		conststring32 criterion = ( is_language_file ? U"/lang/" : U"/voices/" );
-		autoFileInMemorySet fileList = FileInMemorySet_listFiles (me, kMelder_string :: CONTAINS, criterion);
-		for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
-			FileInMemory fim = fileList -> at [ifile];
-			FileInMemory f_voice = FileInMemorySet_fopen (me, Melder_peek32to8_fileSystem (fim -> string.get()), "r");
-			conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
-			espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
-			FileInMemory_fclose (f_voice);
-			if (voice_data) {
-				voices_list [n_voices_list ++] = voice_data;
-			} /*else {
-				Melder_warning (U"Voice data for ", fname, U" could not be gathered.");
-			}*/
+		static MelderString criterion;
+		MelderString_copy (& criterion, Melder_peek8to32 (path));
+		MelderString_appendCharacter (& criterion, PATHSEP);
+		Melder_assert (criterion.length == len_path_voices);   // sanity check
+		for (long ifile = 1; ifile <= my size; ifile ++) {
+			FileInMemory fim = my at [ifile];
+			if (Melder_stringMatchesCriterion (fim -> string.get(), kMelder_string :: STARTS_WITH, criterion.string, true)) {
+				FileInMemory f_voice = FileInMemory_fopen (fim, "r");
+				conststring8 fname = Melder_peek32to8_fileSystem (fim -> string.get());
+				espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
+				FileInMemory_fclose (f_voice);
+				if (voice_data)
+					voices_list [n_voices_list ++] = voice_data;
+			}
 		}
 	#else   /* ppgb: the original code, which uses opendir: */
 		char fname[sizeof(path_home)+100];

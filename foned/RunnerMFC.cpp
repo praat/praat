@@ -125,7 +125,7 @@ static void drawNow (RunnerMFC me) {
 			if (str32nequ (textToDraw, U"\\FI", 3)) {
 				structMelderFile file { };
 				MelderFolder_relativePathToFile (& my experiment -> rootDirectory, textToDraw + 3, & file);
-				Graphics_imageFromFile (my graphics.get(), Melder_fileToPath (& file), response -> left, response -> right, response -> bottom, response -> top);
+				Graphics_imageFromFile (my graphics.get(), MelderFile_peekPath (& file), response -> left, response -> right, response -> bottom, response -> top);
 			} else {
 				Graphics_setColour (my graphics.get(),
 					response -> name [0] == U'\0' ? Melder_SILVER :

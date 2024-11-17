@@ -2617,7 +2617,7 @@ FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create St
 	SENTENCE (name, U"Name", U"fileList")
 	static structMelderFolder defaultFolder { };
 	Melder_getHomeDir (& defaultFolder);
-	static conststring32 homeDirectory = Melder_folderToPath (& defaultFolder);
+	static conststring32 homeDirectory = MelderFolder_peekPath (& defaultFolder);
 	static char32 defaultPath [kMelder_MAXPATH+1];
 	#if defined (UNIX)
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
@@ -2642,7 +2642,7 @@ FORM (NEW1_Strings_createAsFolderList, U"Create Strings as folder list", U"Creat
 	SENTENCE (name, U"Name", U"folderList")
 	static structMelderFolder defaultFolder { };
 	Melder_getHomeDir (& defaultFolder);
-	static conststring32 homeDirectory = Melder_folderToPath (& defaultFolder);
+	static conststring32 homeDirectory = MelderFolder_peekPath (& defaultFolder);
 	static char32 defaultPath [kMelder_MAXPATH+1];
 	#if defined (UNIX)
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");

@@ -107,7 +107,7 @@ MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
 "Scripting"
-© Paul Boersma 2000,2002–2004,2008,2010,2011,2013,2014,2017,2020
+© Paul Boersma 2000,2002–2004,2008,2010,2011,2013,2014,2017,2020,2024
 
 This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.
 
@@ -147,7 +147,7 @@ You can read this tutorial sequentially with the help of the “##< 1#” and �
 	, @@Scripting 6.4. Files@ (`fileReadable`, `readFile`, `writeFile`, `deleteFile`, `createFolder`)
 	, @@Scripting 6.5. Calling system commands@ (`runSystem`, `environment$`, `stopwatch`)
 	, @@Scripting 6.6. Controlling the user@ (`pause`, `beginPause`/`endPause`, `chooseReadFile$`)
-	, @@Scripting 6.7. Sending a message to another program@ (`sendsocket`)
+	, @@Scripting 6.7. Sending a message to another program@
 	, @@Scripting 6.8. Messages to the user@ (`exitScript`, `assert`, `nowarn`, `nocheck`)
 	, @@Scripting 6.9. Calling from the command line
 , @@Scripting 7. Scripting the editors
@@ -2002,14 +2002,14 @@ DEFINITION (U"stops the execution of the script while sending an error message t
 NORMAL (U"For an example, see @@Scripting 6.8. Messages to the user@.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6. Communication outside the script", U"ppgb", 20201229)
+MAN_BEGIN (U"Scripting 6. Communication outside the script", U"ppgb", 20241116)
 LIST_ITEM (U"@@Scripting 6.1. Arguments to the script@ (form/endform, runScript)")
 LIST_ITEM (U"@@Scripting 6.2. Writing to the Info window@ (writeInfoLine, appendInfoLine, appendInfo, tab\\$ )")
 LIST_ITEM (U"@@Scripting 6.3. Query commands@ (Get, Count)")
 LIST_ITEM (U"@@Scripting 6.4. Files@ (fileReadable, readFile, writeFile, deleteFile, createFolder)")
 LIST_ITEM (U"@@Scripting 6.5. Calling system commands@ (runSystem, environment\\$ , stopwatch)")
 LIST_ITEM (U"@@Scripting 6.6. Controlling the user@ (pause, beginPause/endPause, chooseReadFile\\$ )")
-LIST_ITEM (U"@@Scripting 6.7. Sending a message to another program@ (sendsocket)")
+LIST_ITEM (U"@@Scripting 6.7. Sending a message to another program@")
 LIST_ITEM (U"@@Scripting 6.8. Messages to the user@ (exitScript, assert, nowarn, nocheck)")
 LIST_ITEM (U"@@Scripting 6.9. Calling from the command line")
 MAN_END
@@ -2551,21 +2551,12 @@ NORMAL (U"This is of course not about controlling the user, "
 	"but it is mentioned here because this section is about pausing.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.7. Sending a message to another program", U"ppgb", 20151020)
+MAN_BEGIN (U"Scripting 6.7. Sending a message to another program", U"ppgb", 20241116)
 NORMAL (U"To send messages to running programs that use the Praat shell, "
 	"use $sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
-NORMAL (U"To send a message to another running program that listens to a socket, "
-	"you can use the $sendsocket directive. This works on Linux and Windows only.")
-ENTRY (U"Example")
-NORMAL (U"Suppose we are in the Praat-shell program #Praat, which is a system for doing phonetics by computer. "
-	"From this program, we can send a message to the %%non%-Praat-shell program #MovieEdit, "
-	"which does know how to display a sound file:")
-CODE (U"Save as file: “hallo.wav”")
-CODE (U"sendsocket fonsg19.hum.uva.nl:6667 display hallo.wav")
-NORMAL (U"In this example, `fonsg19.hum.uva.nl` is the computer on which MovieEdit is running; "
-	"you can specify any valid Internet address instead, as long as that computer allows you to send messages to it. "
-	"If MovieEdit is running on the same computer as Praat, you can specify $localhost instead of the full Internet address.")
-NORMAL (U"The number 6667 is the port number on which MovieEdit is listening. Other programs will use different port numbers.")
+ENTRY (U"Security measure")
+NORMAL (U"One some platforms it used to be possible to send a message to another running program that listens to a socket, "
+	"using the $sendsocket directive. This is no longer possible in Praat version 7.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 6.8. Messages to the user", U"ppgb", 20230122)

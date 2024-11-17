@@ -100,7 +100,7 @@ void structLongSound :: v1_info () {
 		U"IEEE float 64 bit big-endian", U"IEEE float 64 bit little-endian",
 		U"FLAC", U"FLAC", U"FLAC", U"MP3", U"MP3", U"MP3" };
 	MelderInfo_writeLine (U"Duration: ", xmax - xmin, U" seconds");
-	MelderInfo_writeLine (U"File name: ", Melder_fileToPath (& file));
+	MelderInfo_writeLine (U"File name: ", MelderFile_peekPath (& file));
 	MelderInfo_writeLine (U"File type: ", audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? U"unknown" : Melder_audioFileTypeString (audioFileType));
 	MelderInfo_writeLine (U"Number of channels: ", numberOfChannels);
 	MelderInfo_writeLine (U"Encoding: ", encoding > 20 ? U"unknown" : encodingStrings [encoding]);

@@ -62,7 +62,7 @@ autoScriptEditor ScriptEditor_createFromText (
 
 autoScriptEditor ScriptEditor_createFromScript_canBeNull (
 	Editor optionalEditor,
-	Script script
+	autoScript script   // the ScriptEditor will take over ownership, and in turn hand it over to the set of known scripts
 );
 
 bool ScriptEditors_dirty ();   // are there any modified and unsaved scripts? Ask before quitting the program.

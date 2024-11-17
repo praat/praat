@@ -217,7 +217,7 @@ static bool isValidVowelMarksTableFile (MelderFile file, autoTable *out_marks) {
 		autoDaata data = Data_readFromFile (file);
 		if (! Thing_isa (data.get(), classTable))
 			return false;
-		autoTable marks = data.static_cast_move <structTable> ();
+		autoTable marks = data.static_cast_move <structTable>();
 		/*
 			Require columns Vowel F1 and F2 to be present in the Table
 		*/
@@ -920,8 +920,8 @@ static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		Melder_require (isValidVowelMarksTableFile (file, nullptr), 
-			U"File '", Melder_fileToPath (file), U"' does not contain valid Table data.");
-		my setInstancePref_marks_fileName (Melder_fileToPath (file));
+			U"File ", file, U" does not contain valid Table data.");
+		my setInstancePref_marks_fileName (MelderFile_peekPath (file));
 		my setInstancePref_marks_speakerType (kVowelEditor_speakerType::UNKNOWN);
 		my setInstancePref_marks_dataSet (kVowelEditor_marksDataSet::OTHER);
 		VowelEditor_getVowelMarksFromFile (me);

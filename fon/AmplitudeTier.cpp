@@ -1,6 +1,6 @@
 /* AmplitudeTier.cpp
  *
- * Copyright (C) 2003-2012,2014-2022 Paul Boersma
+ * Copyright (C) 2003-2012,2014-2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
 
 autoAmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {
 	try {
-		autoAmplitudeTier thee = PointProcess_upto_RealTier (me, soundPressure, classAmplitudeTier).static_cast_move<structAmplitudeTier>();
+		autoAmplitudeTier thee = PointProcess_upto_RealTier (me, soundPressure, classAmplitudeTier).static_cast_move <structAmplitudeTier>();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to AmplitudeTier.");

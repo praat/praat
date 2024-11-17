@@ -67,6 +67,13 @@ void structScriptEditor :: v_nameChanged () {
 	if (our dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, U" (modified)");   // (3) on Windows and Linux (last checked 2023-02-25)
 	GuiShell_setTitle (windowForm, buffer.string);
+	/*
+		Finally, remember the name of this script.
+	*/
+	if (! MelderFile_isNull (& our file)) {
+		autoScript script = Script_createFromFile (& our file);
+		Script_rememberDuringThisAppSession_move (script.move());
+	}
 }
 
 void structScriptEditor :: v_goAway () {
@@ -219,7 +226,7 @@ static void menu_cb_addToMenu (ScriptEditor me, EDITOR_ARGS) {
 		if (MelderFile_isNull (& my file))
 			SET_STRING (scriptFile, U"(please save your script first)")
 		else
-			SET_STRING (scriptFile, Melder_fileToPath (& my file));
+			SET_STRING (scriptFile, MelderFile_peekPath (& my file));
 	EDITOR_DO
 		praat_addMenuCommandScript (window, menu, command, afterCommand, depth, scriptFile);
 		praat_show ();
@@ -240,7 +247,7 @@ static void menu_cb_addToFixedMenu (ScriptEditor me, EDITOR_ARGS) {
 		if (MelderFile_isNull (& my file))
 			SET_STRING (scriptFile, U"(please save your script first)")
 		else
-			SET_STRING (scriptFile, Melder_fileToPath (& my file))
+			SET_STRING (scriptFile, MelderFile_peekPath (& my file))
 	EDITOR_DO
 		praat_addMenuCommandScript (window, menu, command, afterCommand, depth, scriptFile);
 		praat_show ();
@@ -263,7 +270,7 @@ static void menu_cb_addToDynamicMenu (ScriptEditor me, EDITOR_ARGS) {
 		if (MelderFile_isNull (& my file))
 			SET_STRING (scriptFile, U"(please save your script first)")
 		else
-			SET_STRING (scriptFile, Melder_fileToPath (& my file))
+			SET_STRING (scriptFile, MelderFile_peekPath (& my file))
 	EDITOR_DO
 		praat_addActionScript (class1, number1, class2, number2, class3, number3, command, afterCommand, depth, scriptFile);
 		praat_show ();
@@ -371,25 +378,26 @@ autoScriptEditor ScriptEditor_createFromText (Editor optionalOwningEditor, const
 	}
 }
 
-autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalOwningEditor, Script script) {
+autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalOwningEditor, autoScript script) {
 	try {
 		structMelderFile scriptFile { };
 		for (integer ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
 			ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
-			if (Melder_equ (script -> string.get(), editor -> file. path)) {
+			if (Melder_equ (script -> string.get(), MelderFile_peekPath (& editor -> file))) {
 				Editor_raise (editor);
 				Melder_pathToFile (script -> string.get(), & scriptFile);   // ensure correct messaging format
 				Melder_appendError (U"The script ", & scriptFile, U" is already open and has been moved to the front.");
 				if (editor -> dirty)
 					Melder_appendError (U"Choose “Reopen from disk” if you want to revert to the old version.");
 				Melder_flushError ();
-				return autoScriptEditor();   // safe null
+				return autoScriptEditor();   // safe null, and `script` will be deleted
 			}
 		}
 		Melder_pathToFile (script -> string.get(), & scriptFile);
 		autostring32 text = MelderFile_readText (& scriptFile);
 		autoScriptEditor me = ScriptEditor_createFromText (optionalOwningEditor, text.get());
 		MelderFile_copy (& scriptFile, & my file);
+		Script_rememberDuringThisAppSession_move (script.move());
 		Thing_setName (me.get(), nullptr);
 		return me;
 	} catch (MelderError) {

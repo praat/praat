@@ -55,7 +55,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		const integer length = MelderFile_length (file);
 
 		autoFileInMemory me = Thing_new (FileInMemory);
-		my string = Melder_dup (file -> path);
+		my string = Melder_dup (MelderFile_peekPath (file));
 		my d_numberOfBytes = length;
 		my _dontOwnData = false;
 		my d_data = newvectorzero <byte> (my d_numberOfBytes + 1);   // includes room for a final null byte in case the file happens to contain only text
@@ -68,7 +68,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		MelderFile_close (file);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"FileInMemory not created from \"", Melder_fileToPath (file), U"\".");
+		Melder_throw (U"FileInMemory not created from file ", file, U".");
 	}
 }
 
@@ -828,15 +828,15 @@ static void testOneFile (
 			Full paths should not work:
 		*/
 		MelderInfo_writeLine (U"Testing fopen...");
-		MelderInfo_writeLine (U"\tTrying to open file-in-memory via full path:\n\t\t\"", theTestFile. path, U"\"...");
-		theTestFim = FileInMemorySet_fopen (theTestFileInMemorySet.get(), Melder_peek32to8_fileSystem (theTestFile. path), "rb");
+		MelderInfo_writeLine (U"\tTrying to open file-in-memory via full path:\n\t\t\"", MelderFile_peekPath (& theTestFile), U"\"...");
+		theTestFim = FileInMemorySet_fopen (theTestFileInMemorySet.get(), MelderFile_peekPath8 (& theTestFile), "rb");
 		Melder_require (theTestFim == nullptr,
 			U"FileInMemory should have been null.");
 		/*
 			If the returned file is NULL, errno should contain a relevant message.
 		*/
 		Melder_require (errno == ENOENT,
-			U"It should have been reported that the file ", theTestFile. path, U" does not exist.");
+			U"It should have been reported that the file ", & theTestFile, U" does not exist.");
 		MelderInfo_writeLine (U"\t\t\t... not opened");
 		/*
 			Raw file names should not work:

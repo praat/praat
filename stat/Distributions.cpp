@@ -1,6 +1,6 @@
 /* Distributions.cpp
  *
- * Copyright (C) 1997-2012,2014-2018,2022 Paul Boersma
+ * Copyright (C) 1997-2012,2014-2018,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ static void unicize (Distributions me) {
 
 autoDistributions Distributions_addTwo (Distributions me, Distributions thee) {
 	try {
-		autoDistributions him = TablesOfReal_append (me, thee).static_cast_move<structDistributions>();
+		autoDistributions him = TablesOfReal_append (me, thee).static_cast_move <structDistributions>();
 		TableOfReal_sortByLabel (him.get(), 0, 0);
 		unicize (him.get());
 		return him;
@@ -141,7 +141,7 @@ autoDistributions Distributions_addTwo (Distributions me, Distributions thee) {
 
 autoDistributions Distributions_addMany (OrderedOf<structDistributions>* me) {
 	try {
-		autoDistributions thee = TablesOfReal_appendMany ((OrderedOf<structTableOfReal>*) me).static_cast_move<structDistributions>();   // FIXME cast
+		autoDistributions thee = TablesOfReal_appendMany ((OrderedOf<structTableOfReal>*) me).static_cast_move <structDistributions>();   // FIXME cast
 		TableOfReal_sortByLabel (thee.get(), 0, 0);
 		unicize (thee.get());
 		return thee;

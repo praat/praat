@@ -403,7 +403,7 @@ FORM (SETTINGS__debug, U"Set debugging options", nullptr) {
 		#else
 			MelderFolder_getFile (Melder_preferencesFolder(), U"Tracing.txt", & file);
 		#endif
-		COMMENT (Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
+		COMMENT (Melder_cat (U"to ", MelderFile_peekPath (& file), U"."))
 	}
 	BOOLEAN (tracing, U"Tracing", false)
 	COMMENT (U"Setting the following to anything other than zero")
@@ -514,7 +514,7 @@ static void readFromFile (MelderFile file) {
 		return;
 	}
 	if (Thing_isa (object.get(), classScript) && ! Melder_batch) {
-		autoScriptEditor editor = ScriptEditor_createFromScript_canBeNull (nullptr, (Script) object.get());
+		autoScriptEditor editor = ScriptEditor_createFromScript_canBeNull (nullptr, object.static_cast_move <structScript>());
 		if (! editor) {
 			(void) 0;   // the script was already open, and the user has been notified of that
 		} else {
@@ -587,7 +587,7 @@ FORM (PRAAT_ManPages_saveToHtmlFolder, U"Save all pages as HTML files", nullptr)
 OK
 	LOOP {
 		iam_LOOP (ManPages);
-		SET_STRING (folder, Melder_folderToPath (& my rootDirectory))
+		SET_STRING (folder, MelderFolder_peekPath (& my rootDirectory))
 	}
 DO
 	LOOP {
@@ -644,7 +644,7 @@ FORM (HELP_SaveManualToHtmlFolder, U"Save all pages as HTML files", nullptr) {
 OK
 	structMelderFolder currentFolder { };
 	Melder_getCurrentFolder (& currentFolder);
-	SET_STRING (folder, Melder_folderToPath (& currentFolder))
+	SET_STRING (folder, MelderFolder_peekPath (& currentFolder))
 DO
 	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, nullptr, folder);
 	END_NO_NEW_DATA

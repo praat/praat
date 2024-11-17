@@ -81,7 +81,7 @@ Thing_define (Daata, Thing) {
 };
 
 template <class T> autoSomeThing<T> Data_copy (const T* data) {
-	return _Data_copy (data).template static_cast_move <T> ();
+	return _Data_copy (data).template static_cast_move <T>();
 }
 autoDaata _Data_copy (constDaata me);
 /*

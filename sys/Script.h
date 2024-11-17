@@ -26,5 +26,10 @@ Thing_define (Script, SimpleString) {
 
 autoScript Script_createFromFile (MelderFile file);
 
+Collection_define (ScriptSet, SortedSetOfStringOf, Script) {
+};
+
+void Script_rememberDuringThisAppSession_move (autoScript me);
+
 /* End of file Script.h */
 #endif
