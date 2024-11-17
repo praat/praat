@@ -901,7 +901,7 @@ autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me) {
 			if (thy numberOfColumns != numberOfColumns)
 				Melder_throw (U"Numbers of columns do not match.");
 		}
-		autoTableOfReal him = Thing_newFromClass (thy classInfo).static_cast_move <structTableOfReal> ();
+		autoTableOfReal him = Thing_newFromClass (thy classInfo).static_cast_move <structTableOfReal>();
 		TableOfReal_init (him.get(), totalNumberOfRows, numberOfColumns);
 		/* Unsafe: new attributes not initialized. */
 		for (integer icol = 1; icol <= numberOfColumns; icol ++)

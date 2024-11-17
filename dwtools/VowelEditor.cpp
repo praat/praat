@@ -217,7 +217,7 @@ static bool isValidVowelMarksTableFile (MelderFile file, autoTable *out_marks) {
 		autoDaata data = Data_readFromFile (file);
 		if (! Thing_isa (data.get(), classTable))
 			return false;
-		autoTable marks = data.static_cast_move <structTable> ();
+		autoTable marks = data.static_cast_move <structTable>();
 		/*
 			Require columns Vowel F1 and F2 to be present in the Table
 		*/

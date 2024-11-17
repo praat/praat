@@ -1,6 +1,6 @@
 /* PitchTier.cpp
  *
- * Copyright (C) 1992-2008,2010-2013,2015-2018,2021,2022 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2013,2015-2018,2021,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
 
 autoPitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
 	try {
-		autoPitchTier thee = PointProcess_upto_RealTier (me, frequency, classPitchTier).static_cast_move<structPitchTier>();
+		autoPitchTier thee = PointProcess_upto_RealTier (me, frequency, classPitchTier).static_cast_move <structPitchTier>();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PitchTier.");

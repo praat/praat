@@ -371,7 +371,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, conststring32 myName) {
 		Melder_throw (U"No object was put into the list.");
 
 	if (my classInfo == classCollection) {
-		praat_new_unpackCollection (me.static_cast_move<structCollection>(), myName);
+		praat_new_unpackCollection (me.static_cast_move <structCollection>(), myName);
 		return;
 	}
 

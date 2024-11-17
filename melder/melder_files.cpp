@@ -633,7 +633,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	} else {
 		//TRACE
 		#if defined (_WIN32) && ! defined (__CYGWIN__)
-			f = _wfopen (Melder_peek32toW_fileSystem (file -> path), Melder_peek32toW (Melder_peek8to32 (type)));
+			f = _wfopen (MelderFile_peekPathW (file), Melder_peek32toW (Melder_peek8to32 (type)));
 		#else
 			struct stat statbuf;
 			int status = stat ((char *) utf8path, & statbuf);
@@ -698,12 +698,12 @@ void Melder_fclose (MelderFile file, FILE *f) {
 bool MelderFile_exists (MelderFile file) {
 	#if defined (UNIX)
 		struct stat fileOrFolderStatus;
-		const bool exists = ( stat (Melder_peek32to8_fileSystem (file -> path), & fileOrFolderStatus) == 0 );
+		const bool exists = ( stat (MelderFile_peekPath8 (file), & fileOrFolderStatus) == 0 );
 		if (! exists)
 			return false;
 		return ! S_ISDIR (fileOrFolderStatus. st_mode);
 	#else
-		DWORD fileOrFolderAttributes = GetFileAttributesW (Melder_peek32toW_fileSystem (file -> path));
+		DWORD fileOrFolderAttributes = GetFileAttributesW (MelderFile_peekPathW (file));
 		if (fileOrFolderAttributes == INVALID_FILE_ATTRIBUTES)
 			return false;
 		return (fileOrFolderAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
@@ -713,12 +713,12 @@ bool MelderFile_exists (MelderFile file) {
 bool MelderFolder_exists (MelderFolder folder) {
 	#if defined (UNIX)
 		struct stat fileOrFolderStatus;
-		const bool exists = ( stat (Melder_peek32to8_fileSystem (folder -> path), & fileOrFolderStatus) == 0 );
+		const bool exists = ( stat (MelderFolder_peekPath8 (folder), & fileOrFolderStatus) == 0 );
 		if (! exists)
 			return false;
 		return S_ISDIR (fileOrFolderStatus. st_mode);
 	#else
-		DWORD fileOrFolderAttributes = GetFileAttributesW (Melder_peek32toW_fileSystem (folder -> path));
+		DWORD fileOrFolderAttributes = GetFileAttributesW (MelderFolder_peekPathW (folder));
 		if (fileOrFolderAttributes == INVALID_FILE_ATTRIBUTES)
 			return false;
 		return (fileOrFolderAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
@@ -761,7 +761,7 @@ bool Melder_tryToAppendFile (MelderFile file) {
 integer MelderFile_length (MelderFile file) {
 	#if defined (UNIX)
 		struct stat statistics;
-		if (stat (Melder_peek32to8_fileSystem (file -> path), & statistics) != 0)
+		if (stat (MelderFile_peekPath8 (file), & statistics) != 0)
 			return -1;
 		return statistics. st_size;
 	#else
@@ -779,18 +779,20 @@ integer MelderFile_length (MelderFile file) {
 }
 
 void MelderFile_delete (MelderFile file) {
-	if (! file) return;
+	if (! file)
+		return;
 	#if defined (UNIX)
-		remove (Melder_peek32to8_fileSystem (file -> path));
+		remove (MelderFile_peekPath8 (file));
 	#elif defined (_WIN32)
-		DeleteFile (Melder_peek32toW_fileSystem (file -> path));
+		DeleteFile (MelderFile_peekPathW (file));
 	#endif
 }
 
 char32 * Melder_peekExpandBackslashes (conststring32 message) {
 	static char32 names [11] [kMelder_MAXPATH+1];
 	static int index = 0;
-	if (++ index == 11) index = 0;
+	if (++ index == 11)
+		index = 0;
 	char32 *to = & names [index] [0];
 	for (const char32 *from = & message [0]; *from != '\0'; from ++, to ++) {
 		*to = *from;
@@ -839,10 +841,10 @@ void Melder_getCurrentFolder (MelderFolder folder) {
 
 void Melder_setCurrentFolder (MelderFolder folder) {
 	#if defined (UNIX)
-		chdir (Melder_peek32to8_fileSystem (folder -> path));
+		chdir (MelderFolder_peekPath8 (folder));
 		str32cpy (theDefaultDir. path, folder -> path);
 	#elif defined (_WIN32)
-		SetCurrentDirectory (Melder_peek32toW_fileSystem (folder -> path));
+		SetCurrentDirectory (MelderFolder_peekPathW (folder));
 	#endif
 }
 
@@ -862,7 +864,7 @@ void Melder_createDirectory (MelderFolder parent, conststring32 folderName, int 
 	} else {
 		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", folderName);   // relative path
 	}
-	if (mkdir (Melder_peek32to8_fileSystem (file. path), mode) == -1 && errno != EEXIST)   // ignore if folder already exists
+	if (mkdir (MelderFile_peekPath8 (& file), mode) == -1 && errno != EEXIST)   // ignore if folder already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #elif defined (_WIN32)
 	structMelderFile file { };
@@ -876,7 +878,7 @@ void Melder_createDirectory (MelderFolder parent, conststring32 folderName, int 
 	} else {
 		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", folderName);   // relative path
 	}
-	if (! CreateDirectoryW (Melder_peek32toW_fileSystem (file. path), & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if folder already exists
+	if (! CreateDirectoryW (MelderFile_peekPathW (& file), & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if folder already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #else
 	//#error Unsupported operating system.
@@ -885,7 +887,7 @@ void Melder_createDirectory (MelderFolder parent, conststring32 folderName, int 
 
 void MelderFolder_create (MelderFolder folder) {
 	#if defined (UNIX)
-		const int status = mkdir (Melder_peek32to8_fileSystem (folder -> path), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		const int status = mkdir (MelderFolder_peekPath8 (folder), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		if (status == 0)
 			return;   // successfully created a new folder
 		if (errno == EEXIST)
@@ -896,7 +898,7 @@ void MelderFolder_create (MelderFolder folder) {
 		securityAttributes. nLength = sizeof (SECURITY_ATTRIBUTES);
 		securityAttributes. lpSecurityDescriptor = nullptr;
 		securityAttributes. bInheritHandle = false;
-		const int status = CreateDirectoryW (Melder_peek32toW_fileSystem (folder -> path), & securityAttributes);
+		const int status = CreateDirectoryW (MelderFolder_peekPathW (folder), & securityAttributes);
 		if (status != 0)
 			return;   // successfully created a new folder
 		if (GetLastError () == ERROR_ALREADY_EXISTS)

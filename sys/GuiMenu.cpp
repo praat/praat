@@ -249,7 +249,7 @@ Thing_implement (GuiMenu, GuiThing, 0);
 				NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
 				structMelderFile file { };
 				Melder_8bitFileRepresentationToStr32_inplace ([cocoaFileName UTF8String], file. path);
-				trace (U"Opening file ", file.path);
+				trace (U"Opening file ", MelderFile_peekPath (& file));
 				if (theOpenDocumentCallback)
 					theOpenDocumentCallback (& file);
 			} catch (MelderError) {

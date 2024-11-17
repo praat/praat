@@ -19,11 +19,22 @@
 #include "Script.h"
 
 Thing_implement (Script, SimpleString, 0);
+Thing_implement (ScriptSet, SortedSetOfString, 0);
+
+static autoScriptSet theKnownScripts;
 
 autoScript Script_createFromFile (MelderFile file) {
 	autoScript me = Thing_new (Script);
 	my string = Melder_dup (MelderFile_peekPath (file));
 	return me;
+}
+
+void Script_rememberDuringThisAppSession_move (autoScript me) {
+	if (! theKnownScripts)
+		theKnownScripts = ScriptSet_create ();
+	TRACE
+	trace (U"Adding script: \"", my string.get(), U"\"");
+	theKnownScripts -> addItem_move (me.move());
 }
 
 /* End of file Script.cpp */

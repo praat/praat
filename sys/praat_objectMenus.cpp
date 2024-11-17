@@ -514,7 +514,7 @@ static void readFromFile (MelderFile file) {
 		return;
 	}
 	if (Thing_isa (object.get(), classScript) && ! Melder_batch) {
-		autoScriptEditor editor = ScriptEditor_createFromScript_canBeNull (nullptr, (Script) object.get());
+		autoScriptEditor editor = ScriptEditor_createFromScript_canBeNull (nullptr, object.static_cast_move <structScript>());
 		if (! editor) {
 			(void) 0;   // the script was already open, and the user has been notified of that
 		} else {

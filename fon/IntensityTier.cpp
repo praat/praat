@@ -1,6 +1,6 @@
 /* IntensityTier.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2018,2020-2022 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2018,2020-2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
 
 autoIntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity) {
 	try {
-		autoIntensityTier thee = PointProcess_upto_RealTier (me, intensity, classIntensityTier).static_cast_move<structIntensityTier>();
+		autoIntensityTier thee = PointProcess_upto_RealTier (me, intensity, classIntensityTier).static_cast_move <structIntensityTier>();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to IntensityTier.");
@@ -47,7 +47,7 @@ autoIntensityTier PointProcess_upto_IntensityTier (PointProcess me, double inten
 
 autoIntensityTier Intensity_downto_IntensityTier (Intensity me) {
 	try {
-		autoIntensityTier thee = Vector_to_RealTier (me, 1, classIntensityTier).static_cast_move<structIntensityTier>();
+		autoIntensityTier thee = Vector_to_RealTier (me, 1, classIntensityTier).static_cast_move <structIntensityTier>();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to IntensityTier.");
@@ -56,7 +56,7 @@ autoIntensityTier Intensity_downto_IntensityTier (Intensity me) {
 
 autoIntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 	try {
-		autoIntensityTier thee = Vector_to_RealTier_peaks (me, 1, classIntensityTier).static_cast_move<structIntensityTier>();
+		autoIntensityTier thee = Vector_to_RealTier_peaks (me, 1, classIntensityTier).static_cast_move <structIntensityTier>();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": peaks not converted to IntensityTier.");
@@ -65,7 +65,7 @@ autoIntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 
 autoIntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
 	try {
-		autoIntensityTier thee = Vector_to_RealTier_valleys (me, 1, classIntensityTier).static_cast_move<structIntensityTier>();
+		autoIntensityTier thee = Vector_to_RealTier_valleys (me, 1, classIntensityTier).static_cast_move <structIntensityTier>();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": valleys not converted to IntensityTier.");
