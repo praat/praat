@@ -554,6 +554,13 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			if (! line)
 				return;
 			continue;
+		} else if (numberOfLeadingSpaces == 0 && Melder_startsWith (line, U"---")) {
+			if (previousParagraph)
+				previousParagraph -> type = kManPage_type::SUBHEADER;
+			line = MelderReadText_readLine (text);
+			if (! line)
+				return;
+			continue;
 		} else if (line [0] == U'/' && line [1] == U'/') {
 			line = MelderReadText_readLine (text);
 			if (! line)
@@ -846,6 +853,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					firstNonSpace == continuationLine && *firstNonSpace == U'`' && ! stringHasInk (firstNonSpace + 1) ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'~' ||
 					Melder_startsWith (firstNonSpace, U"===") ||
+					Melder_startsWith (firstNonSpace, U"---") ||
 					*firstNonSpace == U'/' && firstNonSpace [1] == U'/' ||
 					*firstNonSpace == U'\0'
 				) {

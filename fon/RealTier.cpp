@@ -1,6 +1,6 @@
 /* RealTier.cpp
  *
- * Copyright (C) 1992-2012,2014-2023 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ autoRealTier RealTier_create (double tmin, double tmax) {
 
 autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas) {
 	try {
-		autoRealTier me = Thing_newFromClass (klas).static_cast_move <structRealTier> ();
+		autoRealTier me = Thing_newFromClass (klas).static_cast_move <structRealTier>();
 		RealTier_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
@@ -99,7 +99,7 @@ template <typename T> autoSomeThing <T> Thing_create () {
 
 template <>
 autoSomeThing <structRealTier> Thing_create <structRealTier> () {
-	return Thing_newFromClass (classRealTier). static_cast_move<structRealTier>();
+	return Thing_newFromClass (classRealTier).static_cast_move <structRealTier>();
 }
 
 template <typename structSomeRealTier>

@@ -120,15 +120,15 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 			if (Melder_debug == 32) {
 				MelderInfo_open ();
 				MelderInfo_writeLine (U"Path name <", pathName, U">");
-				MelderInfo_writeLine (U"Root folder <", my rootDirectory.path, U">");
-				MelderInfo_writeLine (U"Full path name <", file.path, U">");
+				MelderInfo_writeLine (U"Root folder <", MelderFolder_peekPath (& my rootDirectory), U">");
+				MelderInfo_writeLine (U"Full path name <", MelderFile_peekPath (& file), U">");
 				MelderInfo_close ();
 			}
 		}
 		/*
 			Read the substimulus.
 		*/
-		autoSound substimulus = Data_readFromFile (& file). static_cast_move<structSound>();
+		autoSound substimulus = Data_readFromFile (& file).static_cast_move <structSound>();
 		Melder_require (substimulus -> classInfo == classSound,
 			U"File ", & file, U" contains a ", Thing_className (substimulus.get()), U" instead of a sound.");
 		/*

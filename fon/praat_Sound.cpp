@@ -2189,7 +2189,7 @@ static int recordFromFileProc (MelderFile file) {
 	if (last == melderSoundFromFile.get())
 		last = nullptr;
 	Melder_warningOff ();   // like "missing samples"
-	melderSoundFromFile = Data_readFromFile (file). static_cast_move<structSound>();
+	melderSoundFromFile = Data_readFromFile (file).static_cast_move <structSound>();
 	Melder_warningOn ();
 	if (! melderSoundFromFile)
 		return 0;

@@ -486,9 +486,9 @@ public:
 		or anything like that.
 
 		So we create a method that casts and moves at the same time:
-			autoPitch pitch = sampled. static_cast_move <structPitch> ();
+			autoPitch pitch = sampled.static_cast_move <structPitch>();
 	*/
-	template <class Y> autoSomeThing<Y> static_cast_move () noexcept {
+	template <class Y> autoSomeThing<Y> static_cast_move() noexcept {
 		T* nakedPointer_oldType = our releaseToAmbiguousOwner();   // throw the object in the air...
 		Y* nakedPointer_newType = static_cast<Y*> (nakedPointer_oldType);
 		autoSomeThing<Y> newObject;
@@ -499,7 +499,7 @@ public:
 
 typedef autoSomeThing<structThing> autoThing;
 
-#define Thing_new(Klas)  Thing_newFromClass (class##Klas).static_cast_move<struct##Klas>()
+#define Thing_new(Klas)  Thing_newFromClass (class##Klas).static_cast_move <struct##Klas>()
 /*
 	Function:
 		return a new object of class 'klas'.

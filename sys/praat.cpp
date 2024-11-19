@@ -371,7 +371,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, conststring32 myName) {
 		Melder_throw (U"No object was put into the list.");
 
 	if (my classInfo == classCollection) {
-		praat_new_unpackCollection (me.static_cast_move<structCollection>(), myName);
+		praat_new_unpackCollection (me.static_cast_move <structCollection>(), myName);
 		return;
 	}
 
@@ -534,7 +534,7 @@ static void praat_exit (int exit_code) {
 				because if we arrive here, we are sure to have created a new pid file
 				in the current computer session).
 			*/
-			if (pidFile. path [0]) {
+			if (! MelderFile_isNull (& pidFile)) {
 				try {
 					/*
 						To see whether we own the pid file,
@@ -585,7 +585,6 @@ static void praat_exit (int exit_code) {
 		trace (U"removing object based on file ", & theCurrentPraatObjects -> list [IOBJECT]. file);
 		praat_remove (IOBJECT, false);
 	}
-	Melder_files_cleanUp ();   // in case a URL is open
 
 	trace (U"leave the program");
 	praat_menuCommands_exit_optimizeByLeaking ();   // these calls are superflous if subsequently _Exit() is called instead of exit()
@@ -955,7 +954,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			or double-clicked a Praat file,
 			while Praat is already running.
 		*/
-		Melder_sprint (text,500, U"Read from file: ~", file -> path);
+		Melder_sprint (text,500, U"Read from file: ~", MelderFile_peekPath (file));
 		sendpraat (nullptr, Melder_peek32to8 (Melder_upperCaseAppName()), 0, Melder_peek32to8 (text));
 	}
 	static void cb_finishedOpeningDocuments () {
@@ -1262,7 +1261,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++) {   // do not change praatP.argumentNumber itself (we might return false)
 			structMelderFile file { };
 			Melder_relativePathToFile (Melder_peek8to32 (praatP.argv [iarg]), & file);
-			conststring32 absolutePath = Melder_fileToPath (& file);
+			conststring32 absolutePath = MelderFile_peekPath (& file);
 			MelderString_append (& text32, U"Read from file... ", absolutePath, U"\n");
 			trace (U"Argument ", iarg, U": will open path ", absolutePath);
 		} // TODO: we could send an openDocuments message instead
@@ -1273,11 +1272,11 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 		MelderString_append (& text32, U"setWorkingDirectory: ");
 		structMelderFolder currentFolder { };
 		Melder_getCurrentFolder (& currentFolder);
-		MelderString_append (& text32, quote_doubleSTR (Melder_folderToPath (& currentFolder)).get());
+		MelderString_append (& text32, quote_doubleSTR (MelderFolder_peekPath (& currentFolder)).get());
 		MelderString_append (& text32, U"\nrunScript: ");
 		structMelderFile scriptFile { };
 		Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & scriptFile);
-		conststring32 absolutePath = Melder_fileToPath (& scriptFile);
+		conststring32 absolutePath = MelderFile_peekPath (& scriptFile);
 		MelderString_append (& text32, quote_doubleSTR (absolutePath).get());
 		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++)   // do not change praatP.argumentNumber itself (we might return false)
 			MelderString_append (& text32, U", ", quote_doubleSTR (Melder_peek8to32 (praatP.argv [iarg])).get());
@@ -1703,7 +1702,7 @@ static void setPreferencesFolder () {
 	*/
 	if (MelderFolder_isNull (Melder_preferencesFolder())) {   // not yet set by the --pref-dir option?
 		try {
-			Melder_setPreferencesFolder (Melder_preferencesFolder5() -> path);
+			Melder_setPreferencesFolder (MelderFolder_peekPath (Melder_preferencesFolder5()));
 			MelderFolder_create (Melder_preferencesFolder());
 		} catch (MelderError) {
 			/*
@@ -2026,7 +2025,7 @@ void praat_run () {
 		structMelderFile searchPattern { };
 		MelderFolder_getFile (Melder_preferencesFolder(), U"plugin_*", & searchPattern);
 		try {
-			autoSTRVEC folderNames = folderNames_STRVEC (Melder_fileToPath (& searchPattern));
+			autoSTRVEC folderNames = folderNames_STRVEC (MelderFile_peekPath (& searchPattern));
 			for (integer i = 1; i <= folderNames.size; i ++) {
 				structMelderFolder pluginFolder { };
 				structMelderFile plugin { };

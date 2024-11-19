@@ -1,6 +1,6 @@
 /* Ltas_to_SpectrumTier.cpp
  *
- * Copyright (C) 2007-2011,2015 Paul Boersma
+ * Copyright (C) 2007-2011,2015,2026,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 autoSpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me) {
 	try {
-		autoSpectrumTier thee = Vector_to_RealTier_peaks (me, 1, classSpectrumTier).static_cast_move<structSpectrumTier>();
+		autoSpectrumTier thee = Vector_to_RealTier_peaks (me, 1, classSpectrumTier).static_cast_move <structSpectrumTier>();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": peaks not analyzed as SpectrumTier.");

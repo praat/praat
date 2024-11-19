@@ -18,11 +18,11 @@
 
 #include "Notebook.h"
 
-Thing_implement (Notebook, Daata, 0);
+Thing_implement (Notebook, SimpleString, 0);
 
 autoNotebook Notebook_createFromFile (MelderFile file) {
 	autoNotebook me = Thing_new (Notebook);
-	MelderFile_copy (file, & my file);
+	my string = Melder_dup (MelderFile_peekPath (file));
 	return me;
 }
 

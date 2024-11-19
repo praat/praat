@@ -1,7 +1,7 @@
 #pragma once
 /* MAT.h
  *
- * Copyright (C) 2017-2021 Paul Boersma
+ * Copyright (C) 2017-2021,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -313,6 +313,24 @@ inline autoMAT subtract_MAT (constMATVU const& x, constMATVU const& y) {
 	return result;
 }
 
+inline void abs_MAT_out (MATVU const& target, constMATVU const& x) {
+	Melder_assert (target.nrow == x.nrow);
+	Melder_assert (target.ncol == x.ncol);
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer icol = 1; icol <= x.ncol; icol ++)
+			target [irow] [icol] = fabs (x [irow] [icol]);
+}
+inline void abs_MAT_inout (MATVU const& x) noexcept {
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer icol = 1; icol <= x.ncol; icol ++)
+			x [irow] [icol] = fabs (x [irow] [icol]);
+}
+inline autoMAT abs_MAT (constMATVU const& x) {
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
+	abs_MAT_out (result.all(), x);
+	return result;
+}
+
 /*
 	Make the average of each column zero.
 		a[i][j] -= a[.][j]
@@ -404,6 +422,24 @@ inline autoMAT mul_fast_MAT (constMATVU const& x, constMATVU const& y) {
 }
 void MATmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
 void MATmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
+
+inline void neg_MAT_out (MATVU const& target, constMATVU const& x) {
+	Melder_assert (target.nrow == x.nrow);
+	Melder_assert (target.ncol == x.ncol);
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer icol = 1; icol <= x.ncol; icol ++)
+			target [irow] [icol] = - x [irow] [icol];
+}
+inline void neg_MAT_inout (MATVU const& x) noexcept {
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer icol = 1; icol <= x.ncol; icol ++)
+			x [irow] [icol] = - x [irow] [icol];
+}
+inline autoMAT neg_MAT (constMATVU const& x) {
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
+	neg_MAT_out (result.all(), x);
+	return result;
+}
 
 void outer_MAT_out (MATVU const& target, constVECVU const& x, constVECVU const& y);
 extern autoMAT outer_MAT (constVECVU const& x, constVECVU const& y);

@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma 2024-04-26
+# Paul Boersma, 16 November 2024
 
 include ../makefile.defs
 
@@ -15,7 +15,7 @@ OBJECTS = Thing.o Data.o Simple.o Collection.o Strings.o \
    GraphicsScreen.o Printer.o \
    Preferences.o site.o \
    Picture.o Ui.o UiFile.o UiPause.o DataGui.o Editor.o DataEditor.o HyperPage.o Manual.o TextEditor.o \
-   praat.o praat_actions.o praat_menuCommands.o praat_picture.o sendsocket.o \
+   praat.o praat_actions.o praat_menuCommands.o praat_picture.o \
    praat_script.o praat_statistics.o praat_logo.o praat_library.o \
    praat_objectMenus.o InfoEditor.o ScriptEditor.o NotebookEditor.o ButtonEditor.o \
    Interpreter.o Formula.o \

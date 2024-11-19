@@ -34,7 +34,7 @@ Thing_implement (HyperPage, Editor, 0);
 #include "HyperPage_prefs.h"
 
 #define PAGE_HEIGHT  320.0
-#define SCREEN_HEIGHT  15.0
+#define SCREEN_HEIGHT  18.0
 #define PAPER_TOP  12.0
 #define TOP_MARGIN  0.8
 #define PAPER_BOTTOM  (13.0 - (double) thePrinter. paperHeight / thePrinter. resolution)
@@ -225,6 +225,9 @@ void HyperPage_intro (HyperPage me, conststring32 text) {
 }
 void HyperPage_entry (HyperPage me, conststring32 title) {
 	HyperPage_any (me, title, my instancePref_font(), my instancePref_fontSize() * 1.4, Graphics_BOLD, 0.5, 0.0, 0.0, 0.25/1.4, 0.1/1.4, HyperPage_USE_ENTRY_HINT);
+}
+void HyperPage_subheader (HyperPage me, conststring32 title) {
+	HyperPage_any (me, title, my instancePref_font(), my instancePref_fontSize() * 1.2, Graphics_BOLD, 0.4, 0.0, 0.0, 0.25/1.2, 0.1/1.2, HyperPage_USE_ENTRY_HINT);
 }
 void HyperPage_paragraph (HyperPage me, conststring32 text) {
 	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);

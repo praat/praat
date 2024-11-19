@@ -558,7 +558,7 @@ autoMatrix Matrix_readAP (MelderFile file) {
 
 autoMatrix Matrix_appendRows (const constMatrix me, const constMatrix thee, ClassInfo klas) {
 	try {
-		autoMatrix him = Thing_newFromClass (klas).static_cast_move<structMatrix>();
+		autoMatrix him = Thing_newFromClass (klas).static_cast_move <structMatrix>();
 		Matrix_init (him.get(),
 			std::min (my xmin, thy xmin),
 			std::max (my xmax, thy xmax),
