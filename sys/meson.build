@@ -1,5 +1,5 @@
 # meson.build of the library "sys"
-# David Weenink, 3 January 2024
+# David Weenink, 19 November 2024
 
 sources = '''
 	ButtonEditor.cpp
@@ -17,7 +17,7 @@ sources = '''
 	Notebook.cpp NotebookEditor.cpp
 	Picture.cpp praat.cpp praat_actions.cpp praat_library.cpp praat_logo.cpp praat_menuCommands.cpp praat_objectMenus.cpp praat_picture.cpp praat_script.cpp praat_statistics.cpp
 	Preferences.cpp Printer.cpp
-	sendsocket.c ScriptEditor.cpp StringsEditor.cpp
+	ScriptEditor.cpp StringsEditor.cpp
 	Script.cpp Simple.cpp site.cpp Strings.cpp
 	TextEditor.cpp Thing.cpp
 	Ui.cpp UiFile.cpp UiPause.cpp'''.split()

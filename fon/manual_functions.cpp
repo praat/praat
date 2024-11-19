@@ -1218,7 +1218,7 @@ A function that can be used in @@Formulas@.
 Syntax and semantics
 ====================
 #`chiSquareQ` (%`chiSquare`, %`df`)
-: compute the area under the %\ci^2 curve between %`chiSquare` and +\\oo,
+: compute the area under the %\ci^2 curve between %`chiSquare` and +\oo,
 for %`df` degrees of freedom, i.e. the “statistical significance %p”
 of the %\ci^2 difference between two distributions in %`df`+1 dimensions.
 
