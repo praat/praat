@@ -325,7 +325,8 @@ DO
 			stressWeight >= 0 && stressWeight <= 1.0 &&
 			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
 			U"A weight should be greater than or equal to 0.0 and smaller than or equal to 1.0.");
-		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters, powerf);
+		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight,
+				intensityModulationStepSize, windowLength, parameters, powerf);
 	MODIFY_EACH_END
 }
 
@@ -404,7 +405,8 @@ FORM (GRAPHICS_EACH__PowerCepstrum_drawTrendLine, U"PowerCepstrum: Draw trend li
 	OK
 DO
 	GRAPHICS_EACH (PowerCepstrum)
-		PowerCepstrum_drawTrendLine (me, GRAPHICS, fromQuefrency, toQuefrency,fromAmplitude_dB,toAmplitude_dB, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
+		PowerCepstrum_drawTrendLine (me, GRAPHICS, fromQuefrency, toQuefrency,
+				fromAmplitude_dB, toAmplitude_dB, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
 	GRAPHICS_EACH_END
 }
 
@@ -585,7 +587,8 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get 
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double qpeak;
-		const double result = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch, peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod, & qpeak);
+		const double result = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch,
+				peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod, & qpeak);
 	QUERY_ONE_FOR_REAL_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
 }
 
@@ -741,15 +744,16 @@ DO
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", nullptr) {
 	COMMENT (U"Smoothing:")
 	BOOLEAN (subtractTrendBeforeSmoothing, U"Subtract trend before smoothing", true)
-	REAL (smoothinWindowDuration, U"Time averaging window (s)", U"0.001")
-	REAL (quefrencySmoothinWindowDuration, U"Quefrency averaging window (s)", U"0.00005")
+	REAL (smoothingWindowDuration, U"Time averaging window (s)", U"0.001")
+	REAL (quefrencySmoothingWindowDuration, U"Quefrency averaging window (s)", U"0.00005")
 	COMMENT (U"Peak search:")
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrogram)
-		const double result = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTrendBeforeSmoothing, smoothinWindowDuration, quefrencySmoothinWindowDuration, fromPitch, toPitch);
+		const double result = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTrendBeforeSmoothing,
+				smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch);
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
@@ -772,7 +776,10 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS
 	OK
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrogram)
-		const double result = PowerCepstrogram_getCPPS (me, subtractTrendBeforeSmoothing, smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch, tolerance, peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
+		const double result = PowerCepstrogram_getCPPS (me, subtractTrendBeforeSmoothing,
+			smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch, tolerance,
+			peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod
+		);
 	QUERY_ONE_FOR_REAL_END (U" dB");
 }
 
@@ -845,7 +852,8 @@ DO
 	CONVERT_EACH_TO_ONE (PowerCepstrogram)
 		autoTable result = PowerCepstrogram_to_Table_CPP (me, includeFrameNumbers,includeTimes, numberOfTimeDecimals,
 			numberOfCPPdecimals, includePeakQuefrency, numberOfQuefrencyDecimals, fromPitch, toPitch, tolerance, 
-			peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
+			peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cpp");
 }
 
@@ -891,7 +899,8 @@ FORM (CONVERT_TWO_TO_ONE__Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: T
 	OK
 DO
 	CONVERT_TWO_TO_ONE (Cepstrumc)
-		autoDTW result = Cepstrumc_to_DTW (me, you, cepstralWeight, logEnergyWeight, regressionWeight, regressionLogEnergyWeight, windowDuration, matchBeginPositions, matchEndPositions, slopeConstraintType);
+		autoDTW result = Cepstrumc_to_DTW (me, you, cepstralWeight, logEnergyWeight, regressionWeight, regressionLogEnergyWeight,
+				windowDuration, matchBeginPositions, matchEndPositions, slopeConstraintType);
 	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
@@ -930,7 +939,7 @@ FORM (MODIFY_EACH_WEAK__Formant_formula, U"Formant: Formula", nullptr) {
 	NATURAL (toFormant, U"right Formant range", U"5")
 	COMMENT (U"Formant frequencies in odd numbered rows")
 	COMMENT (U"Formant bandwidths in even numbered rows")
-	SENTENCE (formula, U"Formula", U"if row mod 2 = 1 and self [row,col] / self [row+1,col] < 5 then 0 else self fi")
+	FORMULA (formula, U"Formula", U"if row mod 2 = 1 and self [row,col] / self [row+1,col] < 5 then 0 else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (Formant)
@@ -1230,8 +1239,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Formant_robust, U"Sound: To Formant (robust)
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoFormant result = Sound_to_Formant_robust_mt (me, timeStep, maximumNumberOfFormants, formantCeiling, windowLength, 
-			preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 0.0, true
-		);
+				preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 0.0, true);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1258,8 +1266,11 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantPath, U"Sound: To FormantPath", nullp
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoSound multichannel;
-		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStepSize, numberOfStepsUpDown, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations,
-			( sourcesAsMultichannel ? & multichannel : nullptr ));
+		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, middleFormantCeiling,
+			windowLength, preEmphasisFrequency, ceilingStepSize, numberOfStepsUpDown, marple_tol1, marple_tol2,
+			huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations,
+			( sourcesAsMultichannel ? & multichannel : nullptr )
+		);
 		if (sourcesAsMultichannel)
 			praat_new (multichannel.move(), my name.get(), U"_sources");
 	CONVERT_EACH_TO_ONE_END (my name.get())
@@ -1278,7 +1289,8 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantPath_burg, U"Sound: To FormantPath (B
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStepSize, numberOfStepsUpDown);
+		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength,
+				preEmphasisFrequency, ceilingStepSize, numberOfStepsUpDown);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1298,7 +1310,8 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantPath_robust, U"Sound: To FormantPath 
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoFormantPath result = Sound_to_FormantPath_robust (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, ceilingStepSize, numberOfStepsUpDown);
+		autoFormantPath result = Sound_to_FormantPath_robust (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength,
+				preEmphasisFrequency, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, ceilingStepSize, numberOfStepsUpDown);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1380,7 +1393,7 @@ DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH_TO_ONE (Sound)
 		autoLPC result = Sound_to_LPC_robust (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency, 
-			numberOfStandardDeviations, maximumNumberOfIterations, tolerance, true);
+				numberOfStandardDeviations, maximumNumberOfIterations, tolerance, true);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1390,13 +1403,14 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_MFCC, U"Sound: To MFCC", U"Sound: To MFCC...
 	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	COMMENT (U"Filter bank parameters")
 	POSITIVE (firstFilterFrequency, U"First filter frequency (mel)", U"100.0")
-	POSITIVE (distancBetweenFilters, U"Distance between filters (mel)", U"100.0")
+	POSITIVE (distanceBetweenFilters, U"Distance between filters (mel)", U"100.0")
 	REAL (maximumFrequency, U"Maximum frequency (mel)", U"0.0");
 	OK
 DO
 	Melder_require (numberOfCoefficients < 25, U"The number of coefficients should be less than 25.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoMFCC result = Sound_to_MFCC (me, numberOfCoefficients, windowLength, timeStep, firstFilterFrequency, maximumFrequency, distancBetweenFilters);
+		autoMFCC result = Sound_to_MFCC (me, numberOfCoefficients, windowLength, timeStep,
+				firstFilterFrequency, maximumFrequency, distanceBetweenFilters);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1501,7 +1515,8 @@ DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__LPC_Sound_filterInverse) {
 }
 
 FORM (CONVERT_ONE_AND_ONE_TO_ONE__LPC_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inverse) with filter at time",
-      U"LPC & Sound: Filter (inverse) with filter at time...") {
+		U"LPC & Sound: Filter (inverse) with filter at time...")
+{
 	OPTIONMENU (channel, U"Channel", 2)
 		OPTION (U"Both")
 		OPTION (U"Left")
@@ -1577,90 +1592,90 @@ void praat_uvafon_LPC_init () {
 	structFormantPathEditor  :: f_preferences ();
 
 
-	praat_addAction1 (classCepstrumc, 0, U"Analyse", nullptr,0, nullptr);
-	praat_addAction1 (classCepstrumc, 0, U"To LPC", nullptr,0, 
+	praat_addAction1 (classCepstrumc, 0, U"Analyse", nullptr, 0, nullptr);
+	praat_addAction1 (classCepstrumc, 0, U"To LPC", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Cepstrumc_to_LPC);
-	praat_addAction1 (classCepstrumc, 2, U"To DTW...", nullptr,0, 
+	praat_addAction1 (classCepstrumc, 2, U"To DTW...", nullptr, 0,
 			CONVERT_TWO_TO_ONE__Cepstrumc_to_DTW);
-	praat_addAction1 (classCepstrumc, 0, U"Hack", nullptr,0, nullptr);
-	praat_addAction1 (classCepstrumc, 0, U"To Matrix", nullptr,0,
+	praat_addAction1 (classCepstrumc, 0, U"Hack", nullptr, 0, nullptr);
+	praat_addAction1 (classCepstrumc, 0, U"To Matrix", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Cepstrumc_to_Matrix);
 
 	praat_addAction1 (classFormant, 0, U"List formant slope...", U"Get standard deviation...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL_VECTOR__Formant_listFormantSlope);
-	praat_addAction1 (classFormant, 0, U"Analyse", nullptr,0, nullptr);
-	praat_addAction1 (classFormant, 0, U"To LPC...", nullptr,0, 
+	praat_addAction1 (classFormant, 0, U"Analyse", nullptr, 0, nullptr);
+	praat_addAction1 (classFormant, 0, U"To LPC...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Formant_to_LPC);
-	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, 
+	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1,
 			MODIFY_EACH_WEAK__Formant_formula);
-	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", nullptr,0,
+	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Formant_Spectrogram_to_IntensityTier);
 	
-	praat_addAction1 (classFormantPath, 0, U"FormantPath help", nullptr,0, 
+	praat_addAction1 (classFormantPath, 0, U"FormantPath help", nullptr, 0,
 			HELP__FormantPath_help);
-	praat_addAction1 (classFormantPath, 1, U"View & Edit alone", nullptr,0, 
+	praat_addAction1 (classFormantPath, 1, U"View & Edit alone", nullptr, 0,
 			EDITOR_ONE_FormantPath_viewAndEditAlone);
-	praat_addAction1 (classFormantPath, 1, U"View & Edit with Sound?", nullptr,0, 
+	praat_addAction1 (classFormantPath, 1, U"View & Edit with Sound?", nullptr, 0,
 			HINT__FormantPath_Sound_viewAndEdit);
-	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", nullptr,0, 
-			GRAPHICS_EACH__FormantPath_drawAsGrid);	
+	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", nullptr, 0,
+			GRAPHICS_EACH__FormantPath_drawAsGrid);
 	praat_addAction1 (classFormantPath, 0, U"Tabulate -" , nullptr, 0, nullptr);
 		praat_addAction1 (classFormantPath, 0, U"Down to Table (optimal interval)...", nullptr, 1,
-			NEW__FormantPath_downTo_Table_optimalInterval);
+				NEW__FormantPath_downTo_Table_optimalInterval);
 		praat_addAction1 (classFormantPath, 0, U"Down to Table (stresses)...", nullptr, 1,
-			NEW__FormantPath_downTo_Table_stresses);
+				NEW__FormantPath_downTo_Table_stresses);
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classFormantPath);
 		praat_addAction1 (classFormantPath, 0, U"Get number of candidates", nullptr, 1,
-			QUERY_ONE_FOR_REAL__FormantPath_getNumberOfCandidates);
+				QUERY_ONE_FOR_REAL__FormantPath_getNumberOfCandidates);
 		praat_addAction1 (classFormantPath, 0, U"List ceiling frequencies", nullptr, 1,
-			QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listCeilingFrequencies);
+				QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listCeilingFrequencies);
 		praat_addAction1 (classFormantPath, 0, U"Get stress of candidate...", nullptr, 1,
-			QUERY_ONE_FOR_REAL__FormantPath_getStressOfCandidate);
+				QUERY_ONE_FOR_REAL__FormantPath_getStressOfCandidate);
 		praat_addAction1 (classFormantPath, 0, U"List stress of candidates...", nullptr, 1,
-			QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listStressOfCandidates);
+				QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listStressOfCandidates);
 		praat_addAction1 (classFormantPath, 0, U"Get optimal ceiling...", nullptr, 1,
-			QUERY_ONE_FOR_REAL__FormantPath_getOptimalCeiling);
+				QUERY_ONE_FOR_REAL__FormantPath_getOptimalCeiling);
 	praat_addAction1 (classFormantPath, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classFormantPath, 0, U"Set path...", nullptr, 1,
 			MODIFY_EACH__FormantPath_setPath);
 		praat_addAction1 (classFormantPath, 0, U"Set optimal path...", nullptr, 1,
 			MODIFY_EACH__FormantPath_setOptimalPath);
-	praat_addAction1 (classFormantPath, 0, U"Extract Formant", nullptr,0, 
+	praat_addAction1 (classFormantPath, 0, U"Extract Formant", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FormantPath_extractFormant);
-	praat_addAction1 (classFormantPath, 0, U"To Matrix (stress)...", nullptr,0, 
+	praat_addAction1 (classFormantPath, 0, U"To Matrix (stress)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FormantPath_to_Matrix_stress);
-	praat_addAction1 (classFormantPath, 0, U"To Matrix (qsums)...", nullptr,0, 
+	praat_addAction1 (classFormantPath, 0, U"To Matrix (qsums)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FormantPath_to_Matrix_qsums);
-	praat_addAction1 (classFormantPath, 0, U"To Matrix (transition)...", nullptr,0, 
+	praat_addAction1 (classFormantPath, 0, U"To Matrix (transition)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FormantPath_to_Matrix_transition);
-	praat_addAction1 (classFormantPath, 0, U"To Matrix (deltas)...", nullptr,0,
+	praat_addAction1 (classFormantPath, 0, U"To Matrix (deltas)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FormantPath_to_Matrix_deltas);
-	praat_addAction1 (classFormantPath, 0, U"Path finder...", nullptr,0, 
+	praat_addAction1 (classFormantPath, 0, U"Path finder...", nullptr, 0,
 			MODIFY_EACH__FormantPath_pathFinder);
 
-	praat_addAction1 (classLFCC, 0, U"LFCC help", nullptr,0, 
+	praat_addAction1 (classLFCC, 0, U"LFCC help", nullptr, 0,
 			HELP__LFCC_help);
 	praat_CC_init (classLFCC);
-	praat_addAction1 (classLFCC, 0, U"To LPC...", nullptr,0,
+	praat_addAction1 (classLFCC, 0, U"To LPC...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__LFCC_to_LPC);
 
-	praat_addAction1 (classLineSpectralFrequencies, 0, U"LineSpectralFrequencies help", nullptr,0, 
+	praat_addAction1 (classLineSpectralFrequencies, 0, U"LineSpectralFrequencies help", nullptr, 0,
 			HELP__LineSpectralFrequencies_help);
-	praat_addAction1 (classLineSpectralFrequencies, 0, U"Draw frequencies...", nullptr,0,
+	praat_addAction1 (classLineSpectralFrequencies, 0, U"Draw frequencies...", nullptr, 0,
 			GRAPHICS_EACH__LineSpectralFrequencies_drawFrequencies);
 	praat_addAction1 (classLineSpectralFrequencies, 0, QUERY_BUTTON, 0, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classLineSpectralFrequencies);
-		praat_addAction1 (classLineSpectralFrequencies, 1, U"Get number of frequencies...", nullptr,1,
+		praat_addAction1 (classLineSpectralFrequencies, 1, U"Get number of frequencies...", nullptr, 1,
 				QUERY_ONE_FOR_INTEGER__LineSpectralFrequencies_getNumberOfFrequencies);
-		praat_addAction1 (classLineSpectralFrequencies, 1, U"List frequencies in frame...", nullptr,1,
+		praat_addAction1 (classLineSpectralFrequencies, 1, U"List frequencies in frame...", nullptr, 1,
 				QUERY_ONE_FOR_REAL_VECTOR__LineSpectralFrequencies_listFrequenciesInFrame);
-		praat_addAction1 (classLineSpectralFrequencies, 1, U"List all frequencies", nullptr,1,
+		praat_addAction1 (classLineSpectralFrequencies, 1, U"List all frequencies", nullptr, 1,
 				QUERY_ONE_FOR_MATRIX__LineSpectralFrequencies_listAllFrequencies);
 
 	praat_addAction1 (classLineSpectralFrequencies, 0, U"To LPC", nullptr, 0,
 			CONVERT_EACH_TO_ONE__LineSpectralFrequencies_to_LPC);
-	
+
 	praat_addAction1 (classLPC, 0, U"LPC help", nullptr, 0, 
 			HELP__LPC_help);
 	praat_addAction1 (classLPC, 0, DRAW_BUTTON, nullptr, 0, nullptr);
