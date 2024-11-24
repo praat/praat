@@ -114,8 +114,8 @@ bool structSoundToLPCAutocorrelationWorkspace :: inputFrameToOutputFrame (void) 
 	a [1] = 1.0;
 	a [2] = rc [1] = - r [2] / r [1];
 	thy gain = r [1] + r [2] * rc [1];
-	integer iend = 1;
-	for (integer i = 2; i <= m; i ++) {
+	integer i = 1;
+	for (i = 2; i <= m; i ++) {
 		long double s = 0.0;
 		for (integer j = 1; j <= i; j ++)
 			s += r [i - j + 2] * a [j];
@@ -131,11 +131,10 @@ bool structSoundToLPCAutocorrelationWorkspace :: inputFrameToOutputFrame (void) 
 			frameAnalysisInfo = 2;
 			break;
 		}
-		iend ++;
 	}
-	-- iend;
-	thy a.part (1, iend)  <<=  a.part (2, iend + 1);
-	thy a.resize (iend);
+	-- i;
+	thy a.part (1, i)  <<=  a.part (2, i + 1);
+	thy a.resize (i);
 	thy nCoefficients = thy a.size; // maintain invariant
 	return true;
 }
@@ -809,7 +808,7 @@ void structSoundToLPCRobustWorkspace :: saveOutputFrame (void) {
 
 void SoundToLPCRobustWorkspace_init (SoundToLPCRobustWorkspace me,
 	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape,
-	integer maxnCoefficients,	double k_stdev,	integer itermax, double tol, double location, bool wantlocation)
+	integer maxnCoefficients, double k_stdev, integer itermax, double tol, double location, bool wantlocation)
 {
 	SoundToLPCWorkspace_init (me, samplingPeriod, effectiveAnalysisWidth, windowShape, maxnCoefficients);
 	SoundToLPCAutocorrelationWorkspace stla = reinterpret_cast<SoundToLPCAutocorrelationWorkspace> (my soundToLPC.get());
