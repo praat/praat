@@ -73,8 +73,6 @@ void SoundToFormantWorkspace_init (SoundToFormantWorkspace me, double samplingPe
 	LPCToFormantWorkspace_init (my lpcToFormant.get(), samplingPeriod, numberOfPoles, margin);
 }
 
-#define SoundToFormant_EXTRAS_TYPED
-#define SoundToFormant_EXTRAS
 
 #define SoundToFormant_ANYWORKSPACE(name) \
 Thing_implement (SoundToFormant##name##Workspace, SoundToFormantWorkspace, 0);\
@@ -107,6 +105,9 @@ autoSoundToFormant##name##Workspace SoundToFormant##name##Workspace_create (cons
 	}\
 }
 
+#define SoundToFormant_EXTRAS_TYPED
+#define SoundToFormant_EXTRAS
+
 SoundToFormant_ANYWORKSPACE(Autocorrelation)
 SoundToFormant_ANYWORKSPACE(Covariance)
 SoundToFormant_ANYWORKSPACE(Burg)
@@ -126,75 +127,5 @@ SoundToFormant_ANYWORKSPACE(Robust)
 #undef SoundToFormant_EXTRAS
 
 #undef SoundToFormant_ANYWORKSPACE
-
-
-/*
-void SoundToFormantBurgWorkspace_init (SoundToFormantBurgWorkspace me, double samplingPeriod, double effectiveAnalysisWidth,
-	kSound_windowShape windowShape, integer numberOfPoles, double margin)
-{
-	SoundToFormantWorkspace_init (me, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles, margin);
-	SoundToLPCBurgWorkspace stlb = reinterpret_cast<SoundToLPCBurgWorkspace> (my soundToLPC.get());
-	SoundToLPCBurgWorkspace_init (stlb, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles);
-}
-
-autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_createSkeleton (constSound input, mutableFormant output) {
-	autoSoundToFormantBurgWorkspace me = Thing_new (SoundToFormantBurgWorkspace);
-	SoundToFormantWorkspace_initSkeleton (me.get(), input, output);
-	my soundToLPC = SoundToLPCBurgWorkspace_createSkeleton (nullptr, nullptr);
-	my lpcToFormant = LPCToFormantWorkspace_createSkeleton (nullptr, output);
-	return me;
-}
-
-autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_create (constSound input, mutableFormant output,
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, integer numberOfPoles, double margin)
-{
-	try {
-		Sampled_assertEqualDomains (input, output);
-		autoSoundToFormantBurgWorkspace me = SoundToFormantBurgWorkspace_createSkeleton (input, output);
-		SoundToFormantBurgWorkspace_init (me.get(), input -> dx, effectiveAnalysisWidth, windowShape, numberOfPoles, margin);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"SoundToFormantBurgWorkspace not created.");
-	}
-}
-
-
-
-Thing_implement (SoundToFormantRobustWorkspace, SoundToFormantWorkspace, 0);
-
-void SoundToFormantRobustWorkspace_init (SoundToFormantRobustWorkspace me, double samplingPeriod,
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax,
-	double tol, double location, bool wantlocation, integer numberOfPoles, double margin)
-{
-	SoundToFormantWorkspace_init (me, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles, margin);
-	SoundToLPCRobustWorkspace stlr = reinterpret_cast<SoundToLPCRobustWorkspace> (my soundToLPC.get());
-	SoundToLPCRobustWorkspace_init (stlr, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles,
-		k_stdev, itermax, tol, location, wantlocation);
-	LPCToFormantWorkspace_init (my lpcToFormant.get(), samplingPeriod, numberOfPoles, margin);
-}
-
-autoSoundToFormantRobustWorkspace SoundToFormantRobustWorkspace_createSkeleton (constSound input, mutableFormant output)
-{
-	autoSoundToFormantRobustWorkspace me = Thing_new (SoundToFormantRobustWorkspace);
-	SoundToFormantWorkspace_initSkeleton (me.get(), input, output);
-	my soundToLPC = SoundToLPCRobustWorkspace_createSkeleton (nullptr, nullptr);
-	my lpcToFormant = LPCToFormantWorkspace_createSkeleton (nullptr, output);
-	return me;
-}
-
-autoSoundToFormantRobustWorkspace SoundToFormantRobustWorkspace_create (constSound input, mutableFormant output,
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax,
-	double tol, double location, bool wantlocation, integer numberOfPoles, double margin)
-{
-	try {
-		Sampled_assertEqualDomains (input, output);
-		autoSoundToFormantRobustWorkspace me = SoundToFormantRobustWorkspace_createSkeleton (input, output);
-		SoundToFormantRobustWorkspace_init (me.get(), input -> dx, effectiveAnalysisWidth,
-			windowShape, k_stdev, itermax, tol, location, wantlocation, numberOfPoles, margin);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"SoundToFormantRobustWorkspace not created.");
-	}
-}*/
 
 /* End of file SoundToFormantWorkspace.cpp */
