@@ -808,7 +808,7 @@ void structSoundToLPCRobustWorkspace :: saveOutputFrame (void) {
 
 void SoundToLPCRobustWorkspace_init (SoundToLPCRobustWorkspace me,
 	double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape,
-	integer maxnCoefficients,	double k_stdev,	integer itermax, double tol, double location, bool wantlocation)
+	integer maxnCoefficients, double k_stdev, integer itermax, double tol, double location, bool wantlocation)
 {
 	SoundToLPCWorkspace_init (me, samplingPeriod, effectiveAnalysisWidth, windowShape, maxnCoefficients);
 	SoundToLPCAutocorrelationWorkspace stla = reinterpret_cast<SoundToLPCAutocorrelationWorkspace> (my soundToLPC.get());
