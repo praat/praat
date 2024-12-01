@@ -75,6 +75,7 @@ void SoundToFormantWorkspace_init (SoundToFormantWorkspace me, double samplingPe
 
 #define SoundToFormant_EXTRAS_TYPED
 #define SoundToFormant_EXTRAS
+
 #define SoundToFormant_ANYWORKSPACE(name) \
 Thing_implement (SoundToFormant##name##Workspace, SoundToFormantWorkspace, 0);\
 void SoundToFormant##name##Workspace_init (SoundToFormant##name##Workspace me, double samplingPeriod, double effectiveAnalysisWidth,\
@@ -82,7 +83,7 @@ void SoundToFormant##name##Workspace_init (SoundToFormant##name##Workspace me, d
 {\
 	SoundToFormantWorkspace_init (me, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles, margin);\
 	SoundToLPC##name##Workspace ws = reinterpret_cast<SoundToLPC##name##Workspace> (my soundToLPC.get());\
-	SoundToLPC##name##Workspace_init (ws, samplingPeriod, effectiveAnalysisWidth, windowShape, SoundToFormant_EXTRAS numberOfPoles);\
+	SoundToLPC##name##Workspace_init (ws, samplingPeriod, effectiveAnalysisWidth, windowShape, numberOfPoles SoundToFormant_EXTRAS);\
 }\
 \
 autoSoundToFormant##name##Workspace SoundToFormant##name##Workspace_createSkeleton (constSound input, mutableFormant output) {\
@@ -99,7 +100,7 @@ autoSoundToFormant##name##Workspace SoundToFormant##name##Workspace_create (cons
 	try {\
 		Sampled_assertEqualDomains (input, output);\
 		autoSoundToFormant##name##Workspace me = SoundToFormant##name##Workspace_createSkeleton (input, output);\
-		SoundToFormant##name##Workspace_init (me.get(), input -> dx, effectiveAnalysisWidth, windowShape, SoundToFormant_EXTRAS numberOfPoles, margin);\
+		SoundToFormant##name##Workspace_init (me.get(), input -> dx, effectiveAnalysisWidth, windowShape SoundToFormant_EXTRAS, numberOfPoles, margin);\
 		return me;\
 	} catch (MelderError) {\
 		Melder_throw (U"SoundToFormant##name##Workspace not created.");\
@@ -113,13 +114,13 @@ SoundToFormant_ANYWORKSPACE(Burg)
 #undef SoundToFormant_EXTRAS
 
 #define SoundToFormant_EXTRAS_TYPED double tol1, double tol2,
-#define SoundToFormant_EXTRAS tol1, tol2,
+#define SoundToFormant_EXTRAS ,tol1, tol2
 SoundToFormant_ANYWORKSPACE(Marple)
 #undef SoundToFormant_EXTRAS_TYPED
 #undef SoundToFormant_EXTRAS
 
 #define SoundToFormant_EXTRAS_TYPED double k_stdev, integer itermax, double tol, double location, bool wantlocation,
-#define SoundToFormant_EXTRAS k_stdev, itermax, tol, location, wantlocation,
+#define SoundToFormant_EXTRAS ,k_stdev, itermax, tol, location, wantlocation
 SoundToFormant_ANYWORKSPACE(Robust)
 #undef SoundToFormant_EXTRAS_TYPED
 #undef SoundToFormant_EXTRAS
