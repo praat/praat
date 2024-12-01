@@ -7,7 +7,7 @@ appendInfoLine: "test_LPC"
 
 @testLPCInterface
 
-AppendInfoLine: "test_LPC OK"
+appendInfoLine: "test_LPC OK"
 
 procedure testLPCInterface
 	.sound = Create Sound from formula: "noise", 1, 0, 1, 10000, "randomGauss(0,0.1)"

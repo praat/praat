@@ -125,7 +125,7 @@ void SampledToSampledWorkspace_getThreadingInfo (constSampledToSampledWorkspace 
 		if (minimumNumberOfFramesPerThread > 0)
 			numberOfFramesPerThread = std::max (numberOfFramesPerThread, minimumNumberOfFramesPerThread);
 		numberOfThreads = Melder_iroundUp ((double) numberOfFrames / numberOfFramesPerThread);
-		numberOfThreads = std::max (1L, numberOfThreads);
+		numberOfThreads = std::max (1_integer, numberOfThreads);
 	}
 	if (out_numberOfThreadsNeeded)
 		*out_numberOfThreadsNeeded = numberOfThreads;
