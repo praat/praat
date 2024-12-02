@@ -1,18 +1,19 @@
 # Praat script runAllTests_leak.praat
 # Paul Boersma 2020-12-28
+# 2024-12-01 writing settings to UTF-8 for Praat 7
 #
 # This script runs all Praat scripts in its subdirectories twice,
 # and reports its suspicions of memory leaks.
 # To see whether a leak actually exists, run the suspected script
 # multiple times from the script window, each time followed by `Report memory use`.
 
-Text writing preferences: "try ASCII, then UTF-16"
+Text writing settings: "UTF-8"
 if macintosh
-	Text reading preferences: "try UTF-8, then MacRoman"
+	Text reading settings: "try UTF-8, then MacRoman"
 elif windows
-	Text reading preferences: "try UTF-8, then Windows Latin-1"
+	Text reading settings: "try UTF-8, then Windows Latin-1"
 elif unix
-	Text reading preferences: "try UTF-8, then ISO Latin-1"
+	Text reading settings: "try UTF-8, then ISO Latin-1"
 else
 	exitScript: "Unknown operating system."
 endif

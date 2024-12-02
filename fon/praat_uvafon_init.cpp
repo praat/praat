@@ -2615,22 +2615,22 @@ DIRECT (NEW_Spectrum_to_SpectrumTier_peaks) {
 
 FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...") {
 	SENTENCE (name, U"Name", U"fileList")
-	static structMelderFolder defaultFolder { };
-	Melder_getHomeDir (& defaultFolder);
-	static conststring32 homeDirectory = MelderFolder_peekPath (& defaultFolder);
-	static char32 defaultPath [kMelder_MAXPATH+1];
+	static structMelderFolder homeFolder { };
+	Melder_getHomeDir (& homeFolder);
+	static conststring32 homeFolderPath = MelderFolder_peekPath (& homeFolder);
+	static char32 defaultGlob [kMelder_MAXPATH+1];
 	#if defined (UNIX)
-		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
+		Melder_sprint (defaultGlob,kMelder_MAXPATH+1, homeFolderPath, U"/*.wav");
 	#elif defined (_WIN32)
 	{
-		static integer len = Melder_length (homeDirectory);
-		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory,
-				len == 0 || homeDirectory [len - 1] != U'\\' ? U"\\" : U"", U"*.wav");
+		static integer len = Melder_length (homeFolderPath);
+		Melder_sprint (defaultGlob,kMelder_MAXPATH+1, homeFolderPath,
+				len == 0 || homeFolderPath [len - 1] != U'\\' ? U"\\" : U"", U"*.wav");
 	}
 	#else
-		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
+		Melder_sprint (defaultGlob,kMelder_MAXPATH+1, homeFolderPath, U"/*.wav");
 	#endif
-	FOLDER (path, U"File path", defaultPath)
+	FOLDER (path, U"File path", defaultGlob)
 	OK
 DO
 	CREATE_ONE
@@ -2640,21 +2640,22 @@ DO
 
 FORM (NEW1_Strings_createAsFolderList, U"Create Strings as folder list", U"Create Strings as folder list...") {
 	SENTENCE (name, U"Name", U"folderList")
-	static structMelderFolder defaultFolder { };
-	Melder_getHomeDir (& defaultFolder);
-	static conststring32 homeDirectory = MelderFolder_peekPath (& defaultFolder);
-	static char32 defaultPath [kMelder_MAXPATH+1];
+	static structMelderFolder homeFolder { };
+	Melder_getHomeDir (& homeFolder);
+	static conststring32 homeFolderPath = MelderFolder_peekPath (& homeFolder);
+	static char32 defaultGlob [kMelder_MAXPATH+1];
 	#if defined (UNIX)
-		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
+		Melder_sprint (defaultGlob,kMelder_MAXPATH+1, homeFolderPath, U"/*");
 	#elif defined (_WIN32)
 	{
-		const integer len = Melder_length (homeDirectory);
-		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, len == 0 || homeDirectory [len - 1] != U'\\' ? U"\\" : U"");
+		const integer len = Melder_length (homeFolderPath);
+		Melder_sprint (defaultGlob,kMelder_MAXPATH+1, homeFolderPath,
+				len == 0 || homeFolderPath [len - 1] != U'\\' ? U"\\" : U"");
 	}
 	#else
-		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
+		Melder_sprint (defaultGlob,kMelder_MAXPATH+1, homeFolderPath, U"/*");
 	#endif
-	FOLDER (path, U"Path", defaultPath)
+	FOLDER (path, U"Path", defaultGlob)
 	OK
 DO
 	CREATE_ONE
