@@ -1037,7 +1037,7 @@ static int32 bingeti32_shortened_direct (FILE *f, const uint32 mantissaLength) {
 }
 
 /*
-	The table `alawBitshiftTable` was created by the following script:
+	The table `alawBitshiftTable` was created by the following script (last checked 2024-12-03):
 
 sortedAlawValues# = {
 ...  -32256, -31232, -30208, -29184, -28160, -27136, -26112, -25088,
@@ -1118,7 +1118,8 @@ endproc
 @convertAndCheck: 12, -16384, -32256
 @convertAndCheck: 12, 16384, 8
 
-for bitshift from 2 to 12
+shifted# = zero# (256)
+for bitshift from 1 to 12
 	for i to 256
 		shifted# [i] = -1
 		linearValue = sortedAlawValues# [i]
@@ -1160,8 +1161,7 @@ procedure writeTable: .table#
 		if i mod 16 = 1
 			appendInfo: newline$, tab$
 		endif
-		value$ = string$: .table# [i]
-		appendInfo: left$ ("                            ", maximumTextLength - length (value$) + 1), value$
+		appendInfo: padLeft$ (string$ (.table# [i]), maximumTextLength + 1)
 		if i <> 256
 			appendInfo: ","
 		endif
