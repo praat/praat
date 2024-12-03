@@ -519,6 +519,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		}
 		/*
 			TODO: add:
+				Use Praat windows: Objects, Picture(?), Info, Demo(?)
 				Keywords:   ; lower case, separate by comma
 				Code chunk visibility: +   ; + (the default) or -
 				Text style language: praat   ; praat (the default), i.e. % # $ @ _ ^, or markdown, i.e. * ` ** [] <sub> <sup>

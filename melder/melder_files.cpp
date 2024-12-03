@@ -1204,7 +1204,7 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 					if (kar == U'\n')
 						binputu16 (13, f2);
 				#endif
-				if (kar <= 0x00FFFF) {
+				if (kar <= 0x00'FFFF) {
 					binputu16 ((uint16) kar, f2);   // guarded conversion down
 				} else if (kar <= 0x10'FFFF) {
 					kar -= 0x01'0000;

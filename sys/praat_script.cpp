@@ -483,7 +483,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 						Melder_throw (U"Command “", command, U"” not available for current selection. "
 							U"It is possible that this file is not a Praat script but a Praat data file that you can open with “Read from file...”.");
 					else {
-						if (interpreter -> wasStartedFromEditorEnvironment())
+						if (interpreter && interpreter -> wasStartedFromEditorEnvironment())
 							if (interpreter -> hasDynamicEnvironmentEditor())
 								Melder_throw (U"Command “", command, U"” not available in ", interpreter -> optionalDynamicEditorEnvironmentClassName(), U".");
 							else
