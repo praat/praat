@@ -85,7 +85,7 @@ static void gui_information (conststring32 message) {
 				untilDate: [NSDate distantPast]
 				inMode: NSDefaultRunLoopMode
 				dequeue: NO
-				];
+			];
 			if (nsEvent) {
 				NSUInteger nsEventType = [nsEvent type];
 				if (nsEventType == NSKeyDown) NSBeep ();

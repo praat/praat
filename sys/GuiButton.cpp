@@ -100,6 +100,10 @@ Thing_implement (GuiButton, GuiControl, 0);
 	- (void) _guiCocoaButton_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiButton me = d_userData;
+		if (Thing_isa (my d_shell, classGuiDialog)) {
+			GuiDialog dialog = (GuiDialog) my d_shell;
+			dialog -> clickedButtonId = [(GuiCocoaButton *) my d_widget   tag];
+		}
 		if (my d_activateCallback) {
 			structGuiButtonEvent event { me, false, false, false };
 			try {
@@ -147,18 +151,22 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 			| ( flags & (GuiButton_DEFAULT | GuiButton_ATTRACTIVE) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
 			| WS_CLIPSIBLINGS,
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr
+		);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		SetWindowFont (my d_widget -> window, flags & GuiButton_DEFAULT ? theWinGuiBoldLabelFont () : theWinGuiNormalLabelFont (), false);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
+		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE)
 			parent -> d_widget -> shell -> defaultButton = parent -> d_widget -> defaultButton = my d_widget;
-		}
-		if (flags & GuiButton_CANCEL) {
+		if (flags & GuiButton_CANCEL)
 			parent -> d_widget -> shell -> cancelButton = parent -> d_widget -> cancelButton = my d_widget;
-		}
 	#elif cocoa
 		GuiCocoaButton *button = [[GuiCocoaButton alloc] init];
+		if (Thing_isa (my d_shell, classGuiDialog)) {
+			GuiDialog dialog = (GuiDialog) my d_shell;
+			integer buttonId = ++ dialog -> latestCreatedButtonId;
+			[button setTag: buttonId];
+		}
 		my name = Melder_dup_f (buttonText);
 		my d_widget = (GuiObject) button;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
@@ -168,20 +176,17 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		[button setImagePosition: NSNoImage];
 		[button setBordered: YES];
 		static NSFont *theButtonFont;
-		if (! theButtonFont) {
+		if (! theButtonFont)
 			theButtonFont = [NSFont systemFontOfSize: 13.0];
-		}
 		[button setFont: theButtonFont];
 		[button setTitle: (NSString *) Melder_peek32toCfstring (buttonText)];
 		[button setTarget: (id) my d_widget];
 		[button setAction: @selector (_guiCocoaButton_activateCallback:)];
 		//[button setAutoresizingMask: NSViewNotSizable];
-		if (flags & GuiButton_DEFAULT) {
+		if (flags & GuiButton_DEFAULT)
 			[button setKeyEquivalent: @"\r"];
-		}
-		if (flags & GuiButton_CANCEL) {
+		if (flags & GuiButton_CANCEL)
 			[button setKeyEquivalent: [NSString stringWithFormat: @"%c", 27]];   // Escape key
-		}
 		if (flags & GuiButton_ATTRACTIVE) {
 			//[button setKeyEquivalent: @"\r"];   // slow!
 			[button highlight: YES];   // lasts only till it's clicked!
@@ -189,9 +194,8 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 			//[button setFont: [NSFont boldSystemFontOfSize: 14.0]];
 		}
 	#endif
-	if (flags & GuiButton_INSENSITIVE) {
+	if (flags & GuiButton_INSENSITIVE)
 		GuiThing_setSensitive (me.get(), false);
-	}
 	return me.releaseToAmbiguousOwner();
 }
 
