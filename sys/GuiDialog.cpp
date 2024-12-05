@@ -70,7 +70,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "delete-event",
 				goAwayCallback ? G_CALLBACK (_GuiGtkDialog_goAwayCallback) : G_CALLBACK (gtk_widget_hide_on_delete), me.get());
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
-		gtk_window_set_modal (GTK_WINDOW (my d_gtkWindow), modality >= GuiDialog_Modality::MODAL);
+		//gtk_window_set_modal (GTK_WINDOW (my d_gtkWindow), modality >= GuiDialog_Modality::MODAL);
 		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), false);
 		//GuiObject vbox = GTK_DIALOG (my d_gtkWindow) -> vbox;
 		GuiObject vbox = gtk_dialog_get_content_area (GTK_DIALOG (my d_gtkWindow));
@@ -91,7 +91,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		#endif
 		GuiShell_setTitle (me.get(), title);
 	#elif motif
-		my d_xmShell = XmCreateDialogShell (parent -> d_widget, "dialogShell", nullptr, 0);
+		my d_xmShell = XmCreateDialogShell (parent ? parent -> d_widget : nullptr, "dialogShell", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, nullptr);
 		if (goAwayCallback)
 			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifDialog_goAwayCallback, (char *) me.get());

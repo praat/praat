@@ -587,6 +587,7 @@ Thing_define (GuiLabel, GuiControl) {
 #define GuiLabel_CENTRE  1
 #define GuiLabel_RIGHT  2
 #define GuiLabel_BOLD  4
+#define GuiLabel_MULTILINE  8
 GuiLabel GuiLabel_create      (GuiForm parent, int left, int right, int top, int bottom,
 	conststring32 text, uint32 flags);
 GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,
@@ -841,7 +842,7 @@ Thing_define (GuiMenuItem, GuiThing) {
 #define GuiMenu_DEPRECATED_2066  (0x4200'0000 | GuiMenu_DEPRECATED)
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
-	GuiMenuItemCallback callback, Thing boss);
+		GuiMenuItemCallback callback, Thing boss);
 /* Flags is a combination of the above defines (both layout and accelerators). */
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
 

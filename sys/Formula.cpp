@@ -28,6 +28,7 @@
 #include "../kar/UnicodeData.h"
 #include "../kar/longchar.h"
 #include "UiPause.h"
+#include "GuiTrust.h"
 #include "DemoEditor.h"
 
 static Interpreter theInterpreter;
@@ -158,7 +159,7 @@ enum { NO_SYMBOL_,
 		PAD_LEFT_STR_, PAD_RIGHT_STR_, TRUNCATE_LEFT_STR_, TRUNCATE_RIGHT_STR_, PAD_OR_TRUNCATE_LEFT_STR_, PAD_OR_TRUNCATE_RIGHT_STR_,
 		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_, SELECTED_STRVEC_,
 		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
-		BEGIN_PAUSE_,
+		ASK_FOR_TRUST_, BEGIN_PAUSE_,
 		REAL_, POSITIVE_, INTEGER_, NATURAL_,
 		WORD_, SENTENCE_, TEXT_, BOOLEAN_,
 		CHOICE_, OPTIONMENU_, OPTION_MENU_, OPTION_,
@@ -317,7 +318,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"padLeft$", U"padRight$", U"truncateLeft$", U"truncateRight$", U"padOrTruncateLeft$", U"padOrTruncateRight$",
 	U"selected", U"selected$", U"numberOfSelected", U"selected#", U"selected$#",
 	U"selectObject", U"plusObject", U"minusObject", U"removeObject",
-	U"beginPause", U"real", U"positive", U"integer", U"natural",
+	U"askForTrust", U"beginPause",
+	U"real", U"positive", U"integer", U"natural",
 	U"word", U"sentence", U"text", U"boolean",
 	U"choice", U"optionmenu", U"optionMenu", U"option",
 	U"infile", U"outfile", U"folder",
@@ -7356,6 +7358,23 @@ static void do_solveNonnegative_VEC () {
 	}
 }
 
+static void do_askForTrust () {
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+		U"The function “askForTrust” is not available inside manuals.");
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “askForTrust” should have no arguments.");
+	const Editor optionalTrustWindowOwningEditor = theInterpreter -> optionalDynamicEnvironmentEditor();
+	const GuiWindow parentShell = ( optionalTrustWindowOwningEditor ? optionalTrustWindowOwningEditor -> windowForm : theCurrentPraatApplication -> topShell );
+	const bool trusted = GuiTrust_get (parentShell, optionalTrustWindowOwningEditor,
+		U"The script wants to control your computer\n(e.g. it wants to save files, delete files, "
+		U"run system commands, and/or access the internet).\n\nAllow this only if you fully trust the intentions and skills of the author(s).",
+		U"Yes, I allow the script to control my computer, because I fully trust the authors’ skills and intentions.",
+		nullptr, nullptr, nullptr, nullptr, nullptr,
+		theInterpreter);
+	pushNumber (1);
+}
+
 static void do_beginPause () {
 	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “beginPause” is not available inside manuals.");
@@ -8948,6 +8967,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case SOLVE_MAT_: { do_solve_MAT ();
 } break; case SOLVE_WEAKLYCONSTRAINED_VEC_: { do_solveWeaklyConstrained_VEC ();
 /********** Pause window functions: **********/
+} break; case ASK_FOR_TRUST_: { do_askForTrust ();
 } break; case BEGIN_PAUSE_: { do_beginPause ();
 } break; case REAL_: { do_real ();
 } break; case POSITIVE_: { do_positive ();

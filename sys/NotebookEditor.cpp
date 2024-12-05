@@ -63,7 +63,8 @@ void structNotebookEditor :: v_nameChanged () {
 
 void structNotebookEditor :: v_goAway () {
 	if (our interpreter -> running)
-		Melder_flushError (U"Cannot close the NotebookEditor while the notebook is running or paused. Please close or continue the pause or demo window.");
+		Melder_flushError (U"Cannot close the NotebookEditor while the notebook is running or paused.\n"
+				"Please close or continue the pause, trust or demo window.");
 	else
 		NotebookEditor_Parent :: v_goAway ();
 }
@@ -92,7 +93,7 @@ static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */,
 
 static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 	if (my interpreter -> running)
-		Melder_throw (U"The notebook is already running (paused). Please close or continue the pause or demo window.");
+		Melder_throw (U"The notebook is already running (paused). Please close or continue the pause, trust or demo window.");
 	integer startOfSelection, endOfSelection;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & startOfSelection, & endOfSelection);
 	if (Melder_startsWith (text.get(), U"\"")) {
@@ -133,7 +134,7 @@ static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 
 static void menu_cb_runChunk (NotebookEditor me, EDITOR_ARGS) {
 	if (my interpreter -> running)
-		Melder_throw (U"The notebook is already running (paused). Please close or continue the pause or demo window.");
+		Melder_throw (U"The notebook is already running (paused). Please close or continue the pause, trust or demo window.");
 	autostring32 text = GuiText_getSelection (my textWidget);   // TODO: replace with chunk
 	if (! text)
 		Melder_throw (U"No text selected.");

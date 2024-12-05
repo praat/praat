@@ -44,7 +44,7 @@ static void thePauseFormCancelCallback (UiForm /* dia */, void * /* closure */) 
 }
 void UiPause_begin (GuiWindow topShell, Editor optionalPauseWindowOwningEditor, conststring32 title, Interpreter interpreter) {
 	if (theEventLoopDepth > 0)
-		Melder_throw (U"Praat cannot have more than one pause form at a time.");
+		Melder_throw (Melder_upperCaseAppName(), U" cannot have more than one pause form at a time.");
 	thePauseForm = UiForm_create (topShell, optionalPauseWindowOwningEditor, Melder_cat (U"Pause: ", title),
 		thePauseFormOkCallback, interpreter,   // pass interpreter as closure!
 		nullptr, nullptr);

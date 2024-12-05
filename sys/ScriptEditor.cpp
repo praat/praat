@@ -78,7 +78,8 @@ void structScriptEditor :: v_nameChanged () {
 
 void structScriptEditor :: v_goAway () {
 	if (our interpreter -> running)
-		Melder_flushError (U"Cannot close the script window while the script is running or paused. Please close or continue the pause or demo window.");
+		Melder_flushError (U"Cannot close the script window while the script is running or paused.\n"
+				"Please close or continue the pause, trust or demo window.");
 	else
 		ScriptEditor_Parent :: v_goAway ();
 }
@@ -122,7 +123,7 @@ static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stack
 static void menu_cb_run (ScriptEditor me, EDITOR_ARGS) {
 	bool isObscured = false;
 	if (my interpreter -> running)
-		Melder_throw (U"The script is already running (paused). Please close or continue the pause or demo window.");
+		Melder_throw (U"The script is already running (paused). Please close or continue the pause, trust or demo window.");
 	autostring32 text = GuiText_getString (my textWidget);
 	trace (U"Running the following script (1):\n", text.get());
 	if (! MelderFile_isNull (& my file))
@@ -170,7 +171,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS) {
 
 static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS) {
 	if (my interpreter -> running)
-		Melder_throw (U"The script is already running (paused). Please close or continue the pause or demo window.");
+		Melder_throw (U"The script is already running (paused). Please close or continue the pause, trust or demo window.");
 	autostring32 selectedText = GuiText_getSelection (my textWidget);
 	if (! selectedText)
 		Melder_throw (U"No text selected.");
