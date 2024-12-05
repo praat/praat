@@ -70,7 +70,7 @@ void praat_showLogo () {
 		int width  = theLogo.width_mm  / 25.4 * Gui_getResolution (nullptr);
 		int height = theLogo.height_mm / 25.4 * Gui_getResolution (nullptr);
 		theLogo.dia = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width, height,
-				U"About", gui_cb_goAway, nullptr, 0);
+				U"About", gui_cb_goAway, nullptr, GuiDialog_Modality::MODELESS);
 		theLogo.form = theLogo.dia;
 		theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
 				gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse, nullptr, nullptr, nullptr, nullptr, 0);

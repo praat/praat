@@ -49,7 +49,7 @@ Thing_implement (GuiDialog, GuiShell, 0);
 #endif
 
 GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int height,
-	conststring32 title, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags)
+	conststring32 title, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, GuiDialog_Modality modality)
 {
 	autoGuiDialog me = Thing_new (GuiDialog);
 	my d_parent = parent;
@@ -70,7 +70,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "delete-event",
 				goAwayCallback ? G_CALLBACK (_GuiGtkDialog_goAwayCallback) : G_CALLBACK (gtk_widget_hide_on_delete), me.get());
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
-		gtk_window_set_modal (GTK_WINDOW (my d_gtkWindow), flags & GuiDialog_MODAL);
+		gtk_window_set_modal (GTK_WINDOW (my d_gtkWindow), modality >= GuiDialog_Modality::MODAL);
 		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), false);
 		//GuiObject vbox = GTK_DIALOG (my d_gtkWindow) -> vbox;
 		GuiObject vbox = gtk_dialog_get_content_area (GTK_DIALOG (my d_gtkWindow));
@@ -101,7 +101,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		_GuiObject_setUserData (my d_widget, me.get());
 		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifDialog_destroyCallback, me.get());
 		XtVaSetValues (my d_widget, XmNdialogStyle,
-			(flags & GuiDialog_MODAL) ? XmDIALOG_FULL_APPLICATION_MODAL : XmDIALOG_MODELESS,
+			modality >= GuiDialog_Modality::MODAL ? XmDIALOG_FULL_APPLICATION_MODAL : XmDIALOG_MODELESS,
 			XmNautoUnmanage, False, nullptr
 		);
 	#elif cocoa
@@ -113,7 +113,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 			backing: NSBackingStoreBuffered
 			defer: false
 		];
-        [my d_cocoaShell   setMinSize: NSMakeSize (500.0, 500.0)];   // BUG: should not be needed
+		[my d_cocoaShell   setMinSize: NSMakeSize (500.0, 500.0)];   // BUG: should not be needed
 		[my d_cocoaShell   setTitle: (NSString *) Melder_peek32toCfstring (title)];
 		//[my d_cocoaShell   makeKeyAndOrderFront: nil];
 		my d_widget = (GuiObject) [my d_cocoaShell   contentView];
@@ -127,6 +127,16 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 void GuiDialog_setDefaultCallback (GuiDialog me, GuiDialog_DefaultCallback callback, Thing boss) {
 	my d_defaultCallback = callback;
 	my d_defaultBoss = boss;
+}
+
+integer GuiDialog_run (GuiDialog me) {
+	#if gtk
+	#elif motif
+	#elif cocoa
+		[[NSApplication sharedApplication] runModalForWindow: my d_cocoaShell];
+		return my clickedButtonId;
+	#endif
+	return 0;   // cancel
 }
 
 /* End of file GuiDialog.cpp */

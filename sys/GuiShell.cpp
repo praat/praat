@@ -109,7 +109,7 @@ int GuiShell_getShellWidth (GuiShell me) {
 	#elif motif
 		width = my d_xmShell -> width;
 	#elif cocoa
-        width = [my d_cocoaShell   frame].size.width;
+		width = [my d_cocoaShell   frame].size.width;
 	#endif
 	return width;
 }
@@ -123,7 +123,7 @@ int GuiShell_getShellHeight (GuiShell me) {
 	#elif motif
 		height = my d_xmShell -> height;
 	#elif cocoa
-        height = [my d_cocoaShell   frame].size.height;
+		height = [my d_cocoaShell   frame].size.height;
 	#endif
 	return height;
 }
@@ -152,14 +152,14 @@ void GuiShell_drain (GuiShell me) {
 		UpdateWindow (my d_xmShell -> window);
 	#elif cocoa
 		Melder_assert (my d_cocoaShell);
-        [my d_cocoaShell   display];   // not just flushWindow
+		[my d_cocoaShell   display];   // not just flushWindow
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		NSEvent *nsEvent = [NSApp
 			nextEventMatchingMask: NSAppKitDefinedMask // NSAnyEventMask
 			untilDate: [NSDate distantPast]
 			inMode: NSDefaultRunLoopMode
 			dequeue: YES
-			];
+		];
 		[NSApp  sendEvent: nsEvent];
 		[pool release];
 	#endif

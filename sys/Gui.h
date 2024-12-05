@@ -445,18 +445,21 @@ using GuiDialog_DefaultCallback = MelderCallback <void, structThing /* boss */>;
 Thing_define (GuiDialog, GuiShell) {
 	GuiDialog_DefaultCallback d_defaultCallback;
 	Thing d_defaultBoss;
+	integer latestCreatedButtonId, clickedButtonId;   // especially if the dialog is blocking
 };
 
 /* GuiDialog creation flags: */
-#define GuiDialog_MODAL  1
+enum class GuiDialog_Modality { MODELESS = 0, MODAL = 1, BLOCKING = 2 };
 GuiDialog GuiDialog_create (GuiWindow parent,
 	int x, int y, int width, int height,
 	conststring32 title,
 	GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss,
-	uint32 flags
+	GuiDialog_Modality modality
 );
 
 void GuiDialog_setDefaultCallback (GuiDialog me, GuiDialog_DefaultCallback callback, Thing boss);
+
+integer GuiDialog_run (GuiDialog me);   // only if blocking; returns the clicked button (1, 2, 3...), or 0 for cancel
 
 /********** GuiDrawingArea **********/
 
