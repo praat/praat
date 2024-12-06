@@ -44,6 +44,8 @@ Thing_define (InterpreterVariable, SimpleString) {
 Thing_declare (UiForm);
 Thing_declare (UiField);
 Thing_declare (Editor);
+Thing_declare (Script);
+Thing_declare (Notebook);
 
 enum class kInterpreter_ReturnType {
 	VOID_ = 0,   // don't change; this is how it is automatically zero-initialized in structInterpreter
@@ -73,6 +75,9 @@ enum class kInterpreter_ReturnType {
 conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType returnType, conststring32 command);
 
 Thing_define (Interpreter, Thing) {
+	Script scriptReference;
+	Notebook notebookReference;
+
 	struct EditorEnvironment {
 		ClassInfo _optionalClass;
 		Editor _optionalInstance;

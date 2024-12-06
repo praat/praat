@@ -44,7 +44,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 			thy frequencyAmplifications.part (spectrum_imin, spectrum_imax)  +=  window.get();
 			autoFrequencyBin bin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
 			bin -> z = his z.move();
-			thy frequencyBins.addItem_move (bin.move());
+			thy frequencyBins. addItem_move (bin.move());
 			if (ifreq == 1) {
 				/*
 					DC_BIN:

@@ -56,7 +56,8 @@ integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwning
 	int numberOfOptions = option6 ? 6 : option5 ? 5 : option4 ? 4 : option3 ? 3 : option2 ? 2 : 1;
 	int dialogWidth = 700;
 	int labelHeight = 300;
-	int dialogHeight = labelHeight + 100 + 100 * numberOfOptions;
+	const int buttonHeight = 70;
+	int dialogHeight = labelHeight + 100 + (buttonHeight + Gui_VERTICAL_DIALOG_SPACING_SAME) * (1 + numberOfOptions);
 	int x = Gui_LEFT_DIALOG_SPACING, buttonWidth = dialogWidth - x - Gui_RIGHT_DIALOG_SPACING;
 	GuiDialog me = GuiDialog_create (optionalParent, 150, 70, dialogWidth, dialogHeight,
 			U"Pausing the script for security and safety: Do you trust this script?", gui_dialog_cb_close, nullptr, GuiDialog_Modality::BLOCKING);
@@ -64,15 +65,15 @@ integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwning
 	int y = Gui_TOP_DIALOG_SPACING;
 	GuiLabel label = GuiLabel_createShown (me, x, x + buttonWidth, y, y + labelHeight, message, GuiLabel_CENTRE | GuiLabel_MULTILINE);
 	y += labelHeight + Gui_VERTICAL_DIALOG_SPACING_DIFFERENT;
-	optionButtons [0] = GuiButton_createShown (me, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
-		U"Cancel (I don’t completely trust the authors’ skills and/or intentions)",
+	optionButtons [0] = GuiButton_createShown (me, x, x + buttonWidth, y, y + buttonHeight,
+		U"CANCEL\n(because I don’t completely trust the authors’ skills and/or intentions)",
 		gui_dialog_cb_cancel, nullptr, GuiButton_DEFAULT
 	);
 	for (int i = 1; i <= 6; i ++) {
 		conststring32 option = ( i == 1 ? option1 : i == 2 ? option2 : i == 3 ? option3 : i == 4 ? option4 : i == 5 ? option5 : option6 );
 		if (option) {
-			y += Gui_PUSHBUTTON_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME;
-			optionButtons [i] = GuiButton_createShown (me, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
+			y += buttonHeight + Gui_VERTICAL_DIALOG_SPACING_SAME;
+			optionButtons [i] = GuiButton_createShown (me, x, x + buttonWidth, y, y + buttonHeight,
 					option, gui_dialog_cb_ok, nullptr, 0);
 		} else {
 			optionButtons [i] = nullptr;

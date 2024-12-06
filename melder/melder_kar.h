@@ -104,6 +104,10 @@ inline void Melder_skipHorizontalSpace (char32 **p_text) {
 	while (Melder_isHorizontalSpace (**p_text))
 		(*p_text) ++;
 }
+inline void Melder_skipHorizontalSpace (const char32 **p_text) {
+	while (Melder_isHorizontalSpace (**p_text))
+		(*p_text) ++;
+}
 inline char32 * Melder_findEndOfHorizontalSpace (char32 *p) {
 	while (Melder_isHorizontalSpace (*p))
 		p ++;

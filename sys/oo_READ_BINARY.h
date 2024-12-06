@@ -101,7 +101,7 @@
 		for (integer _i = 1; _i <= _n; _i ++) { \
 			auto##ItemClass _item = Thing_new (ItemClass); \
 			_item -> v1_readBinary (_filePointer_, _formatVersion); \
-			our x.addItem_move (_item.move()); \
+			our x. addItem_move (_item.move()); \
 		} \
 	}
 

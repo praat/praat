@@ -124,7 +124,7 @@ autoTextGrid FormantPath_to_TextGrid_version0 (FormantPath me, INTVEC const& pat
 			TextInterval currentInterval = tier -> intervals . at [currentIndex];
 			autoTextInterval newInterval = TextInterval_create (t, my xmax, Melder_integer (path [ip]));
 			currentInterval -> xmax = t;
-			tier -> intervals.addItem_move (newInterval.move());
+			tier -> intervals. addItem_move (newInterval.move());
 			previousPathIndex = path [ip];
 		}
 	}
@@ -358,7 +358,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 					huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
-			thy formantCandidates . addItem_move (formant.move());
+			thy formantCandidates. addItem_move (formant.move());
 			if (out_sourcesMultiChannel) {
 				// TODO 20240625 is this still correct because we have already pre-emphasized the sound??
 				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampledAndPreemphasized.get ());
