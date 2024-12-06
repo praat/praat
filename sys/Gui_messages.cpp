@@ -162,7 +162,7 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 		#else
 			nullptr, nullptr,
 		#endif
-		0);
+		GuiDialog_Modality::MODELESS);
 
 	trace (U"creating the labels");
 	*label1 = GuiLabel_createShown (*dia, 3, 403, 0, Gui_LABEL_HEIGHT, U"label1", 0);

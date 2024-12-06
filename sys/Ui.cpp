@@ -1383,7 +1383,8 @@ void UiForm_finish (UiForm me) {
 				textFieldHeight;
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
-	my d_dialogForm = GuiDialog_create (my d_dialogParent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name.get(), gui_dialog_cb_close, me, 0);
+	my d_dialogForm = GuiDialog_create (my d_dialogParent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight,
+			my name.get(), gui_dialog_cb_close, me, GuiDialog_Modality::MODELESS);
 	GuiDialog_setDefaultCallback (my d_dialogForm, gui_dialog_cb_default, me);
 
 	form = my d_dialogForm;
@@ -1410,19 +1411,20 @@ void UiForm_finish (UiForm me) {
 					MelderString_copy (& theFinishBuffer, thy labelText.get() + 5);
 					appendColon ();
 					thy label = GuiLabel_createShown (form, 0, Gui_LEFT_DIALOG_SPACING + labelWidth, ylabel, ylabel + textFieldHeight,
-						theFinishBuffer.string, GuiLabel_RIGHT);
+							theFinishBuffer.string, GuiLabel_RIGHT);
 					thy text = GuiText_createShown (form, fieldX, fieldX + halfFieldWidth, thy y, thy y + Gui_TEXTFIELD_HEIGHT, 0);
 				} else if (str32nequ (thy name.get(), U"right ", 6)) {
 					thy text = GuiText_createShown (form, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
-						thy y, thy y + Gui_TEXTFIELD_HEIGHT, 0);
+							thy y, thy y + Gui_TEXTFIELD_HEIGHT, 0);
 				} else {
 					MelderString_copy (& theFinishBuffer, thy labelText.get());
 					appendColon ();
 					thy label = GuiLabel_createShown (form, 0, Gui_LEFT_DIALOG_SPACING + labelWidth,
 						ylabel, ylabel + textFieldHeight,
-						theFinishBuffer.string, GuiLabel_RIGHT);
+						theFinishBuffer.string, GuiLabel_RIGHT
+					);
 					thy text = GuiText_createShown (form, fieldX, fieldX + fieldWidth, // or once the dialog is a Form: - Gui_RIGHT_DIALOG_SPACING,
-						thy y, thy y + Gui_TEXTFIELD_HEIGHT, 0);
+							thy y, thy y + Gui_TEXTFIELD_HEIGHT, 0);
 				}
 			}
 			break;
@@ -1437,7 +1439,7 @@ void UiForm_finish (UiForm me) {
 					theFinishBuffer.string, 0
 				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
+						thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
 			case _kUiField_type::REALVECTOR_:
@@ -1453,12 +1455,13 @@ void UiForm_finish (UiForm me) {
 				);
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
-					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
+					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0
+				);
 				for (int format = (int) kUi_realVectorFormat::MIN; format <= (int) kUi_realVectorFormat::MAX; format ++)
 					GuiOptionMenu_addOption (thy optionMenu, kUi_realVectorFormat_getText ((kUi_realVectorFormat) format));
 				//GuiOptionMenu_setValue (thy optionMenu, (int) thy realVectorDefaultFormat);   // SUPERFLUOUS
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
+						thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
 			case _kUiField_type::INTEGERVECTOR_:
@@ -1474,12 +1477,13 @@ void UiForm_finish (UiForm me) {
 				);
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
-					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
+					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0
+				);
 				for (int format = (int) kUi_integerVectorFormat::MIN; format <= (int) kUi_integerVectorFormat::MAX; format ++)
 					GuiOptionMenu_addOption (thy optionMenu, kUi_integerVectorFormat_getText ((kUi_integerVectorFormat) format));
 				//GuiOptionMenu_setValue (thy optionMenu, (int) thy integerVectorDefaultFormat);   // SUPERFLUOUS
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
+						thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
 			case _kUiField_type::REALMATRIX_:
@@ -1493,10 +1497,11 @@ void UiForm_finish (UiForm me) {
 					theFinishBuffer.string, 0
 				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_SCROLLED);
+						thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_SCROLLED);
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
-					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
+					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0
+				);
 				for (int format = (int) kUi_realMatrixFormat::MIN; format <= (int) kUi_realMatrixFormat::MAX; format ++)
 					GuiOptionMenu_addOption (thy optionMenu, kUi_realMatrixFormat_getText ((kUi_realMatrixFormat) format));
 				GuiOptionMenu_setValue (thy optionMenu, (int) theRealMatrixFormat);
@@ -1514,10 +1519,11 @@ void UiForm_finish (UiForm me) {
 					theFinishBuffer.string, 0
 				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
+						thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
-					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
+					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0
+				);
 				for (int format = (int) kUi_stringArrayFormat::MIN; format <= (int) kUi_stringArrayFormat::MAX; format ++)
 					GuiOptionMenu_addOption (thy optionMenu, kUi_stringArrayFormat_getText ((kUi_stringArrayFormat) format));
 				GuiOptionMenu_setValue (thy optionMenu, (int) theStringArrayFormat);
@@ -1534,7 +1540,7 @@ void UiForm_finish (UiForm me) {
 					theFinishBuffer.string, 0
 				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
+						thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
 			case _kUiField_type::INFILE_:
@@ -1548,7 +1554,7 @@ void UiForm_finish (UiForm me) {
 					theFinishBuffer.string, 0
 				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
+						thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 100, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - 3 - Gui_PUSHBUTTON_HEIGHT, thy y - 3, U"Browse...", gui_button_cb_browseInfile, thee, 0
@@ -1566,7 +1572,7 @@ void UiForm_finish (UiForm me) {
 					theFinishBuffer.string, 0
 				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
+						thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 100, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - 3 - Gui_PUSHBUTTON_HEIGHT, thy y - 3, U"Browse...", gui_button_cb_browseOutfile, thee, 0
@@ -1584,7 +1590,7 @@ void UiForm_finish (UiForm me) {
 					theFinishBuffer.string, 0
 				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
+						thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 100, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - 3 - Gui_PUSHBUTTON_HEIGHT, thy y - 3, U"Browse...", gui_button_cb_browseFolder, thee, 0
@@ -1642,7 +1648,7 @@ void UiForm_finish (UiForm me) {
 				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				thy label = GuiLabel_createShown (form, Gui_LEFT_DIALOG_SPACING, Gui_LEFT_DIALOG_SPACING + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
-					theFinishBuffer.string, GuiLabel_RIGHT);
+						theFinishBuffer.string, GuiLabel_RIGHT);
 				GuiRadioGroup_begin ();
 				for (integer ibutton = 1; ibutton <= thy options.size; ibutton ++) {
 					UiOption button = thy options.at [ibutton];
@@ -1651,7 +1657,8 @@ void UiForm_finish (UiForm me) {
 						fieldX, dialogWidth /* allow to extend into the margin */,
 						thy y + (ibutton - 1) * (Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING),
 						thy y + (ibutton - 1) * (Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING) + Gui_RADIOBUTTON_HEIGHT,
-						theFinishBuffer.string, nullptr, nullptr, 0);
+						theFinishBuffer.string, nullptr, nullptr, 0
+					);
 				}
 				GuiRadioGroup_end ();
 			}
@@ -1665,7 +1672,7 @@ void UiForm_finish (UiForm me) {
 				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				thy label = GuiLabel_createShown (form, Gui_LEFT_DIALOG_SPACING, Gui_LEFT_DIALOG_SPACING + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
-					theFinishBuffer.string, GuiLabel_RIGHT);
+						theFinishBuffer.string, GuiLabel_RIGHT);
 				thy optionMenu = GuiOptionMenu_createShown (form, fieldX, fieldX + fieldWidth, thy y, thy y + Gui_OPTIONMENU_HEIGHT, 0);
 				for (integer ibutton = 1; ibutton <= thy options.size; ibutton ++) {
 					UiOption button = thy options.at [ibutton];
@@ -1678,10 +1685,11 @@ void UiForm_finish (UiForm me) {
 			{
 				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				/*field -> label = GuiLabel_createShown (form, x, x + labelWidth, thy y, thy y + Gui_CHECKBUTTON_HEIGHT,
-					theFinishBuffer.string, GuiLabel_RIGHT); */
+						theFinishBuffer.string, GuiLabel_RIGHT); */
 				thy checkButton = GuiCheckButton_createShown (form,
 					fieldX, dialogWidth /* allow to extend into the margin */, thy y, thy y + Gui_CHECKBUTTON_HEIGHT,
-					theFinishBuffer.string, nullptr, nullptr, 0);
+					theFinishBuffer.string, nullptr, nullptr, 0
+				);
 			}
 			break;
 			case _kUiField_type::LIST_:
@@ -1690,7 +1698,7 @@ void UiForm_finish (UiForm me) {
 				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				thy label = GuiLabel_createShown (form, Gui_LEFT_DIALOG_SPACING, Gui_LEFT_DIALOG_SPACING + labelWidth, thy y + 1, thy y + 21,
-					theFinishBuffer.string, GuiLabel_RIGHT);
+						theFinishBuffer.string, GuiLabel_RIGHT);
 				thy list = GuiList_create (form, fieldX, fieldX + listWidth, thy y, thy y + LIST_HEIGHT, false, theFinishBuffer.string);
 				for (integer i = 1; i <= thy strings.size; i ++)
 					GuiList_insertItem (thy list, thy strings [i], 0);
@@ -1705,7 +1713,7 @@ void UiForm_finish (UiForm me) {
 	const int y = dialogHeight - Gui_BOTTOM_DIALOG_SPACING - Gui_PUSHBUTTON_HEIGHT;
 	if (my helpTitle) {
 		my helpButton = GuiButton_createShown (form, HELP_BUTTON_X, HELP_BUTTON_X + HELP_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
-			U"Help", gui_button_cb_help, me, 0);
+				U"Help", gui_button_cb_help, me, 0);
 	}
 	bool commentsOnly = true;
 	for (integer ifield = 1; ifield <= my numberOfFields; ifield ++) {

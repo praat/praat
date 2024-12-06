@@ -445,18 +445,21 @@ using GuiDialog_DefaultCallback = MelderCallback <void, structThing /* boss */>;
 Thing_define (GuiDialog, GuiShell) {
 	GuiDialog_DefaultCallback d_defaultCallback;
 	Thing d_defaultBoss;
+	integer latestCreatedButtonId, clickedButtonId;   // especially if the dialog is blocking
 };
 
 /* GuiDialog creation flags: */
-#define GuiDialog_MODAL  1
+enum class GuiDialog_Modality { MODELESS = 0, MODAL = 1, BLOCKING = 2 };
 GuiDialog GuiDialog_create (GuiWindow parent,
 	int x, int y, int width, int height,
 	conststring32 title,
 	GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss,
-	uint32 flags
+	GuiDialog_Modality modality
 );
 
 void GuiDialog_setDefaultCallback (GuiDialog me, GuiDialog_DefaultCallback callback, Thing boss);
+
+integer GuiDialog_run (GuiDialog me);   // only if blocking; returns the clicked button (1, 2, 3...), or 0 for cancel
 
 /********** GuiDrawingArea **********/
 
@@ -584,6 +587,7 @@ Thing_define (GuiLabel, GuiControl) {
 #define GuiLabel_CENTRE  1
 #define GuiLabel_RIGHT  2
 #define GuiLabel_BOLD  4
+#define GuiLabel_MULTILINE  8
 GuiLabel GuiLabel_create      (GuiForm parent, int left, int right, int top, int bottom,
 	conststring32 text, uint32 flags);
 GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,
@@ -838,7 +842,7 @@ Thing_define (GuiMenuItem, GuiThing) {
 #define GuiMenu_DEPRECATED_2066  (0x4200'0000 | GuiMenu_DEPRECATED)
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
-	GuiMenuItemCallback callback, Thing boss);
+		GuiMenuItemCallback callback, Thing boss);
 /* Flags is a combination of the above defines (both layout and accelerators). */
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
 

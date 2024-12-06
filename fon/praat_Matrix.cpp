@@ -136,7 +136,8 @@ extern "C" Graphics Movie_create (conststring32 title, int width, int height) {
 	static GuiDialog dialog;
 	static GuiDrawingArea drawingArea;
 	if (! theMovieGraphics) {
-		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, nullptr, nullptr, 0);
+		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2,
+				title, nullptr, nullptr, GuiDialog_Modality::MODELESS);
 		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height,
 			 	gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);

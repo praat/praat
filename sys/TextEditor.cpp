@@ -204,7 +204,7 @@ static void menu_cb_open (TextEditor me, EDITOR_ARGS) {
 				150, 70,
 				Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
-				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
+				U"Text changed", nullptr, nullptr, GuiDialog_Modality::MODAL);
 			GuiLabel_createShown (my dirtyOpenDialog,
 				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,
@@ -262,7 +262,7 @@ static void menu_cb_new (TextEditor me, EDITOR_ARGS) {
 			my dirtyNewDialog = GuiDialog_create (my windowForm,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
-				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
+				U"Text changed", nullptr, nullptr, GuiDialog_Modality::MODAL);
 			GuiLabel_createShown (my dirtyNewDialog,
 				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,
@@ -307,7 +307,7 @@ static void menu_cb_reopen (TextEditor me, EDITOR_ARGS) {
 			my dirtyReopenDialog = GuiDialog_create (my windowForm,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 2 * buttonWidth + 1 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
-				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
+				U"Text changed", nullptr, nullptr, GuiDialog_Modality::MODAL);
 			GuiLabel_createShown (my dirtyReopenDialog,
 				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,
@@ -380,7 +380,7 @@ void structTextEditor :: v_goAway () {
 			our dirtyCloseDialog = GuiDialog_create (our windowForm,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
-				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
+				U"Text changed", nullptr, nullptr, GuiDialog_Modality::MODAL);
 			GuiLabel_createShown (our dirtyCloseDialog,
 				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,

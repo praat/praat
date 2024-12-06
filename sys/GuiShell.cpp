@@ -29,9 +29,10 @@ Thing_implement (GuiShell, GuiForm, 0);
 		if (Melder_debug == 55)
 			Melder_casual (U"\t\tGuiCocoaShell-", Melder_pointer (self), U" dealloc");
 		GuiShell me = d_userData;
-		my d_cocoaShell = nullptr;   // this is already under destruction, so undangle
-		forget (me);
-		trace (U"deleting a window or dialog");
+		if (me) {
+			my d_cocoaShell = nullptr;   // this is already under destruction, so undangle
+			forget (me);
+		}
 		[super dealloc];
 	}
 	- (GuiThing) getUserData {
@@ -48,6 +49,7 @@ Thing_implement (GuiShell, GuiForm, 0);
 	- (BOOL) windowShouldClose: (id) sender {
 		GuiCocoaShell *widget = (GuiCocoaShell *) sender;
 		GuiShell me = (GuiShell) [widget getUserData];
+		Melder_assert (me);
 		if (my d_goAwayCallback) {
 			trace (U"calling goAwayCallback)");
 			my d_goAwayCallback (my d_goAwayBoss);
@@ -90,7 +92,6 @@ void structGuiShell :: v9_destroy () noexcept {
 			Melder_casual (U"\t", Thing_messageNameAndAddress (this), U" v9_destroy: cocoaShell ", Melder_pointer (our d_cocoaShell));
 		if (our d_cocoaShell) {
 			[our d_cocoaShell setUserData: nullptr];   // undangle reference to this
-			Melder_fatal (U"ordering out?");   // TODO: how can this never be reached?
 			[our d_cocoaShell orderOut: nil];
 			[our d_cocoaShell close];
 			[our d_cocoaShell release];
@@ -109,7 +110,7 @@ int GuiShell_getShellWidth (GuiShell me) {
 	#elif motif
 		width = my d_xmShell -> width;
 	#elif cocoa
-        width = [my d_cocoaShell   frame].size.width;
+		width = [my d_cocoaShell   frame].size.width;
 	#endif
 	return width;
 }
@@ -123,7 +124,7 @@ int GuiShell_getShellHeight (GuiShell me) {
 	#elif motif
 		height = my d_xmShell -> height;
 	#elif cocoa
-        height = [my d_cocoaShell   frame].size.height;
+		height = [my d_cocoaShell   frame].size.height;
 	#endif
 	return height;
 }
@@ -152,14 +153,14 @@ void GuiShell_drain (GuiShell me) {
 		UpdateWindow (my d_xmShell -> window);
 	#elif cocoa
 		Melder_assert (my d_cocoaShell);
-        [my d_cocoaShell   display];   // not just flushWindow
+		[my d_cocoaShell   display];   // not just flushWindow
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		NSEvent *nsEvent = [NSApp
 			nextEventMatchingMask: NSAppKitDefinedMask // NSAnyEventMask
 			untilDate: [NSDate distantPast]
 			inMode: NSDefaultRunLoopMode
 			dequeue: YES
-			];
+		];
 		[NSApp  sendEvent: nsEvent];
 		[pool release];
 	#endif
