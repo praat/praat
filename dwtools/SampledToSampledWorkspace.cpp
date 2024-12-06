@@ -205,7 +205,7 @@ void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace
 			OrderedOf<structSampledToSampledWorkspace> workspaces;
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
 				autoSampledToSampledWorkspace threadWorkspace = Data_copy (me);
-				workspaces.addItem_move (threadWorkspace.move());
+				workspaces. addItem_move (threadWorkspace.move());
 			}
 		
 			autovector<std::thread> threads = autovector<std::thread> (numberOfThreads, MelderArray::kInitializationType::ZERO);

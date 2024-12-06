@@ -179,9 +179,9 @@ static void insertBoundaryOrPoint (TextGridArea me, integer itier, double t1, do
 		} else {
 			interval -> xmax = t1;
 			if (t1 != t2)
-				intervalTier -> intervals.addItem_move (midNewInterval.move());
+				intervalTier -> intervals. addItem_move (midNewInterval.move());
 		}
-		intervalTier -> intervals.addItem_move (rightNewInterval.move());
+		intervalTier -> intervals. addItem_move (rightNewInterval.move());
 		if (insertSecond && numberOfTiers >= 2 && t1 == t2) {
 			/*
 				Find the last time before t on another tier.
@@ -198,7 +198,7 @@ static void insertBoundaryOrPoint (TextGridArea me, integer itier, double t1, do
 			if (tlast > interval -> xmin && tlast < t1) {
 				autoTextInterval newInterval = TextInterval_create (tlast, t1, U"");
 				interval -> xmax = tlast;
-				intervalTier -> intervals.addItem_move (newInterval.move());
+				intervalTier -> intervals. addItem_move (newInterval.move());
 			}
 		}
 	} else {

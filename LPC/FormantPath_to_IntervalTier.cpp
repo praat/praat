@@ -24,7 +24,7 @@ static void IntervalTier_addCandidate (IntervalTier me, double splitTime, intege
 	last -> xmax = splitTime;
 	last -> text = Melder_dup (label);
 	autoTextInterval interval = TextInterval_create (splitTime, my xmax, U"");
-	my intervals.addItem_move (interval.move());
+	my intervals. addItem_move (interval.move());
 }
 
 #if 0

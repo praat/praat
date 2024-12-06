@@ -172,7 +172,10 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		[button setUserData: me.get()];
 		[button setButtonType: NSMomentaryPushInButton];
-		[button setBezelStyle: NSRoundedBezelStyle];
+		if (bottom - top < 30)
+			[button setBezelStyle: NSRoundedBezelStyle];
+		else
+			[button setBezelStyle: NSRegularSquareBezelStyle];
 		[button setImagePosition: NSNoImage];
 		[button setBordered: YES];
 		static NSFont *theButtonFont;

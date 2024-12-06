@@ -106,7 +106,7 @@ double PairDistribution_getWeight (PairDistribution me, integer pairNumber) {
 
 void PairDistribution_add (PairDistribution me, conststring32 string1, conststring32 string2, double weight) {
 	autoPairProbability pair = PairProbability_create (string1, string2, weight);
-	my pairs.addItem_move (pair.move());
+	my pairs. addItem_move (pair.move());
 }
 
 void PairDistribution_removeZeroWeights (PairDistribution me) {

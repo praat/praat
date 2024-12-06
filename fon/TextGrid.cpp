@@ -273,7 +273,7 @@ void structTextGrid :: v1_info () {
 
 static void IntervalTier_addInterval_unsafe (IntervalTier me, double tmin, double tmax, conststring32 label) {
 	autoTextInterval interval = TextInterval_create (tmin, tmax, label);
-	my intervals.addItem_move (interval.move());
+	my intervals. addItem_move (interval.move());
 }
 
 void structTextGrid :: v_repair () {
@@ -1590,20 +1590,20 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 					TextInterval latestInterval = sentenceTier -> intervals.at [sentenceTier -> intervals.size];
 					if (tb > latestInterval -> xmax) {
 						autoTextInterval interval = TextInterval_create (latestInterval -> xmax, tb, U"");
-						sentenceTier -> intervals.addItem_move (interval.move());
+						sentenceTier -> intervals. addItem_move (interval.move());
 					} else if (tb < latestInterval -> xmax) {
 						Melder_throw (U"Overlap on tier not allowed.");
 					}
 				} else {
 					if (tb > 0.0) {
 						autoTextInterval interval = TextInterval_create (0.0, tb, U"");
-						sentenceTier -> intervals.addItem_move (interval.move());
+						sentenceTier -> intervals. addItem_move (interval.move());
 					} else if (tb < 0.0) {
 						Melder_throw (U"Negative times not allowed.");
 					}
 				}
 				autoTextInterval interval = TextInterval_create (tb, te, Melder_integer (++ sentenceNumber));
-				sentenceTier -> intervals.addItem_move (interval.move());
+				sentenceTier -> intervals. addItem_move (interval.move());
 			} else if (strnequ (line, "    <tw ref=\"", 13)) {
 				Melder_require (sscanf (line, "%40s%40s%40s%40s%40s%40s%200s", arg1, arg2, arg3, arg4, arg5, arg6, arg7) == 7,
 					U"Too few strings in tw line.");
@@ -1661,7 +1661,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 						Melder_throw (U"Phrase outside sentence.");
 					autoTextInterval newLastInterval = TextInterval_create (tb, te, U"");
 					lastInterval = newLastInterval.get();
-					phraseTier -> intervals.addItem_move (newLastInterval.move());
+					phraseTier -> intervals. addItem_move (newLastInterval.move());
 					phraseBegin = tb;
 					phraseEnd = te;
 				}

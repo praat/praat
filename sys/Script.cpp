@@ -37,4 +37,10 @@ void Script_rememberDuringThisAppSession_move (autoScript me) {
 	theKnownScripts -> addItem_move (me.move());
 }
 
+Script Script_find (conststring32 filePath) {
+	integer position = theKnownScripts -> lookUp (filePath);
+	Melder_assert (position != 0);
+	return theKnownScripts -> at [position];
+}
+
 /* End of file Script.cpp */

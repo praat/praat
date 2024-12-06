@@ -111,7 +111,7 @@ static void Trajectory_addPoint (Trajectory me, double time, double f1, double f
 	try {
 		autoTrajectoryPoint point = TrajectoryPoint_create (time, f1, f2, colour);
 		my xmax = std::max (my xmax, time);
-		my points . addItem_move (point.move());
+		my points. addItem_move (point.move());
 	} catch (MelderError) {
 		Melder_throw (me, U" no point added.");
 	}

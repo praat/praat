@@ -75,7 +75,7 @@ void Regression_addParameter (Regression me, conststring32 label, double minimum
 		thy minimum = minimum;
 		thy maximum = maximum;
 		thy value = value;
-		my parameters.addItem_move (thee.move());
+		my parameters. addItem_move (thee.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": parameter not added.");
 	}

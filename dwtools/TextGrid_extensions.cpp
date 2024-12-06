@@ -657,7 +657,7 @@ static void IntervalTier_addInterval_force (IntervalTier me, double tmin, double
 		if (tmin > leftxmin) {
 			autoTextInterval newInterval = TextInterval_create (tmin, leftxmax, leftText);
 			leftInterval -> xmax = tmin;
-			my intervals.addItem_move (newInterval.move());
+			my intervals. addItem_move (newInterval.move());
 			Melder_assert (my intervals.size == oldSize +1);
 			ileft ++;
 		} else if (tmax == leftxmax) { // tmin == xmin
@@ -673,7 +673,7 @@ static void IntervalTier_addInterval_force (IntervalTier me, double tmin, double
 		if (tmax < rightxmax) {
 			autoTextInterval newInterval = TextInterval_create (rightxmin, tmax, rightText);
 			rightInterval -> xmin = tmax;
-			my intervals.addItem_move (newInterval.move());
+			my intervals. addItem_move (newInterval.move());
 		}
 	}
 	for (integer ipos = ileft; ipos <= iright; ipos ++)
