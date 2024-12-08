@@ -389,6 +389,7 @@ Thing_define (GuiButton, GuiControl) {
 #define GuiButton_CANCEL  2
 #define GuiButton_INSENSITIVE  4
 #define GuiButton_ATTRACTIVE  8
+#define GuiButton_MULTILINE  16
 GuiButton GuiButton_create (GuiForm parent,
 	int left, int right, int top, int bottom,
 	conststring32 text,

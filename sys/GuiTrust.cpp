@@ -42,39 +42,72 @@ static void gui_dialog_cb_ok (Thing, GuiButtonEvent event) {
 	theClickedButtonId = -1;
 }
 
-integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwningEditor, conststring32 message,
-	conststring32 option1, conststring32 option2, conststring32 option3,
-	conststring32 option4, conststring32 option5, conststring32 option6,
+integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwningEditor,
+	conststring32 message1, conststring32 message2, conststring32 message3, conststring32 message4, conststring32 message5,
+	conststring32 option1, conststring32 option2, conststring32 option3, conststring32 option4, conststring32 option5,
 	Interpreter interpreter
 ) {
 	if (theEventLoopDepth > 0)
 		Melder_throw (Melder_upperCaseAppName(), U" cannot have more than one trust form at a time.");
 	Melder_assert (interpreter);
+	constexpr int DIALOG_WIDTH = 700;
+	constexpr int BUTTON_HEIGHT = 60;
 	/*
-		Create the trust form.
+		Compute the height of the trust form.
 	*/
-	int numberOfOptions = option6 ? 6 : option5 ? 5 : option4 ? 4 : option3 ? 3 : option2 ? 2 : 1;
-	int dialogWidth = 700;
-	int labelHeight = 300;
-	const int buttonHeight = 70;
-	int dialogHeight = labelHeight + 100 + (buttonHeight + Gui_VERTICAL_DIALOG_SPACING_SAME) * (1 + numberOfOptions);
-	int x = Gui_LEFT_DIALOG_SPACING, buttonWidth = dialogWidth - x - Gui_RIGHT_DIALOG_SPACING;
-	GuiDialog me = GuiDialog_create (optionalParent, 150, 70, dialogWidth, dialogHeight,
+	constexpr int SHORT_LABEL_HEIGHT = 25;
+	constexpr int TALL_LABEL_HEIGHT = 40;
+	int dialogHeight = Gui_TOP_DIALOG_SPACING;
+	for (int i = 1; i <= 5; i ++) {
+		conststring32 message = ( i == 1 ? message1 : i == 2 ? message2 : i == 3 ? message3 : i == 4 ? message4 : message5 );
+		if (message) {
+			const int numberOfLines = ( str32chr (message, U'\n') || message [0] == U'“' ? 2 : 1 );
+			const int labelHeight = (numberOfLines == 1 ? SHORT_LABEL_HEIGHT : TALL_LABEL_HEIGHT);
+			dialogHeight += labelHeight + Gui_VERTICAL_DIALOG_SPACING_SAME;
+		}
+	}
+	dialogHeight += BUTTON_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME;   // the CANCEL button
+	for (int i = 1; i <= 5; i ++) {
+		conststring32 option = ( i == 1 ? option1 : i == 2 ? option2 : i == 3 ? option3 : i == 4 ? option4 : option5 );
+		if (option)
+			dialogHeight += BUTTON_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME;
+	}
+	dialogHeight += 60;   // the Help button
+	/*
+		Create the dialog.
+	*/
+	int x = Gui_LEFT_DIALOG_SPACING, buttonWidth = DIALOG_WIDTH - x - Gui_RIGHT_DIALOG_SPACING;
+	GuiDialog me = GuiDialog_create (optionalParent, 150, 70, DIALOG_WIDTH, dialogHeight,
 			U"Pausing the script for security and safety: Do you trust this script?", gui_dialog_cb_close, nullptr, GuiDialog_Modality::BLOCKING);
 	GuiDialog_setDefaultCallback (me, gui_dialog_cb_default, nullptr);
+	/*
+		Add the labels.
+	*/
 	int y = Gui_TOP_DIALOG_SPACING;
-	GuiLabel label = GuiLabel_createShown (me, x, x + buttonWidth, y, y + labelHeight, message, GuiLabel_CENTRE | GuiLabel_MULTILINE);
-	y += labelHeight + Gui_VERTICAL_DIALOG_SPACING_DIFFERENT;
-	optionButtons [0] = GuiButton_createShown (me, x, x + buttonWidth, y, y + buttonHeight,
+	for (int i = 1; i <= 5; i ++) {
+		conststring32 message = ( i == 1 ? message1 : i == 2 ? message2 : i == 3 ? message3 : i == 4 ? message4 : message5 );
+		if (message) {
+			const int numberOfLines = ( str32chr (message, U'\n') || message [0] == U'“' ? 2 : 1 );
+			const int labelHeight = (numberOfLines == 1 ? SHORT_LABEL_HEIGHT : TALL_LABEL_HEIGHT);
+			uint32 labelFlags = GuiLabel_CENTRE | GuiLabel_MULTILINE;
+			if (message [0] == U'“')
+				labelFlags |= GuiLabel_BOLD;
+			GuiLabel label = GuiLabel_createShown (me, x, x + buttonWidth, y, y + labelHeight, message, labelFlags);
+			y += labelHeight + Gui_VERTICAL_DIALOG_SPACING_SAME;
+		}
+	}
+	y += Gui_VERTICAL_DIALOG_SPACING_DIFFERENT;
+	optionButtons [0] = GuiButton_createShown (me, x, x + buttonWidth, y, y + BUTTON_HEIGHT,
 		U"CANCEL\n(because I don’t completely trust the authors’ skills and/or intentions)",
-		gui_dialog_cb_cancel, nullptr, GuiButton_DEFAULT
+		gui_dialog_cb_cancel, nullptr, GuiButton_DEFAULT | GuiButton_MULTILINE
 	);
-	for (int i = 1; i <= 6; i ++) {
-		conststring32 option = ( i == 1 ? option1 : i == 2 ? option2 : i == 3 ? option3 : i == 4 ? option4 : i == 5 ? option5 : option6 );
+	y += BUTTON_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME;
+	for (int i = 1; i <= 5; i ++) {
+		conststring32 option = ( i == 1 ? option1 : i == 2 ? option2 : i == 3 ? option3 : i == 4 ? option4 : option5 );
 		if (option) {
-			y += buttonHeight + Gui_VERTICAL_DIALOG_SPACING_SAME;
-			optionButtons [i] = GuiButton_createShown (me, x, x + buttonWidth, y, y + buttonHeight,
-					option, gui_dialog_cb_ok, nullptr, 0);
+			optionButtons [i] = GuiButton_createShown (me, x, x + buttonWidth, y, y + BUTTON_HEIGHT,
+					option, gui_dialog_cb_ok, nullptr, GuiButton_MULTILINE);
+			y += BUTTON_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME;
 		} else {
 			optionButtons [i] = nullptr;
 		}
