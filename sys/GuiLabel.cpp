@@ -82,7 +82,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		/*
 			The following is deprecated in GTK 3:
 		*/
-		gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
+		//gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
 		/*
 			So, what to do after the above function is removed from GTK?
 			First, it was meant to be this:
@@ -95,9 +95,9 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 			Unfortunately, those two functions do nothing at all.
 			Second, GTK 3.15 or so introduced the following:
 		*/
-		#if 0
-			gtk_widget_set_xalign (GTK_WIDGET (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0);
-			gtk_widget_set_yalign (GTK_WIDGET (my d_widget), 0.5);
+		#if 1
+			gtk_label_set_xalign (GTK_LABEL (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0);
+			gtk_label_set_yalign (GTK_LABEL (my d_widget), 0.5);
 		#endif
 		/*
 			A perhaps related comment by the authors of GTK 3 (https://bugzilla.gnome.org/show_bug.cgi?id=733981):
@@ -106,6 +106,11 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 				Don't think there is anything for us to fix here.
 			"
 		*/
+		/*
+			For multiline labels:
+		*/
+		gtk_label_set_line_wrap (GTK_LABEL (my d_widget), true);
+		gtk_label_set_justify (GTK_LABEL (my d_widget), flags & GuiLabel_RIGHT ? GTK_JUSTIFY_RIGHT : flags & GuiLabel_CENTRE ? GTK_JUSTIFY_CENTER : GTK_JUSTIFY_LEFT);
 	#elif motif
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
 		_GuiObject_setUserData (my d_widget, me.get());

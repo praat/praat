@@ -140,6 +140,9 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkButton_destroyCallback), me.get());
 		g_signal_connect (GTK_BUTTON (my d_widget), "clicked", G_CALLBACK (_GuiGtkButton_activateCallback), me.get());
+		GtkWidget *internalLabel = gtk_bin_get_child (GTK_BIN (my d_widget));
+		if (GTK_IS_LABEL (internalLabel))
+			gtk_label_set_justify (GTK_LABEL (internalLabel), GTK_JUSTIFY_CENTER);
 //		if (flags & GuiButton_CANCEL) {
 //			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
 //		}
@@ -149,6 +152,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name.get())),
 			WS_CHILD
 			| ( flags & (GuiButton_DEFAULT | GuiButton_ATTRACTIVE) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
+			| ( flags & GuiButton_MULTILINE ? BS_MULTILINE : 0 )
 			| WS_CLIPSIBLINGS,
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
 			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr
