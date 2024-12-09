@@ -29,6 +29,8 @@
 #include "../kar/longchar.h"
 #include "UiPause.h"
 #include "GuiTrust.h"
+#include "Script.h"
+#include "Notebook.h"
 #include "DemoEditor.h"
 
 static Interpreter theInterpreter;
@@ -7366,12 +7368,35 @@ static void do_askForTrust () {
 		U"The function “askForTrust” should have no arguments.");
 	const Editor optionalTrustWindowOwningEditor = theInterpreter -> optionalDynamicEnvironmentEditor();
 	const GuiWindow parentShell = ( optionalTrustWindowOwningEditor ? optionalTrustWindowOwningEditor -> windowForm : theCurrentPraatApplication -> topShell );
-	const bool trusted = GuiTrust_get (parentShell, optionalTrustWindowOwningEditor,
-		U"The script wants to control your computer\n(e.g. it wants to save files, delete files, "
-		U"run system commands, and/or access the internet).\n\nAllow this only if you fully trust the intentions and skills of the author(s).",
-		U"Yes, I allow the script to control my computer, because I fully trust the authors’ skills and intentions.",
-		nullptr, nullptr, nullptr, nullptr, nullptr,
-		theInterpreter);
+	const bool isAlreadyTrusted = theInterpreter -> scriptReference && theInterpreter -> scriptReference -> trusted;
+	if (! isAlreadyTrusted) {
+		conststring32 message [1+5] = { };
+		if (theInterpreter -> scriptReference || theInterpreter -> notebookReference) {
+			message [1] = theInterpreter -> scriptReference ? U"The script" : U"The notebook";
+			message [2] = Melder_cat (U"“", theInterpreter -> scriptReference -> string.get(), U"”");
+		} else
+			message [1] =  U"Your untitled script or notebook";
+		message [3] = U"requests permission to control your computer (e.g. it may want to overwrite files,\n"
+			"delete folders, run system commands, and/or access the internet).";
+		message [4] = U"Allow this only if you fully trust the intentions and skills of the author(s).";
+		conststring32 option =
+			theInterpreter -> scriptReference ?
+				U"Yes, I allow this script to CONTROL MY COMPUTER\n(because I fully trust its authors’ skills and intentions)"
+			: theInterpreter -> notebookReference ?
+				U"Yes, I allow this notebook to CONTROL MY COMPUTER,\n(because I fully trust its authors’ skills and intentions)"
+			:
+				U"Yes, I allow this script or notebook to CONTROL MY COMPUTER,\n(because I fully trust its authors’ skills and intentions)";
+		const bool trusted = GuiTrust_get (parentShell, optionalTrustWindowOwningEditor,
+			message [1], message [2], message [3], message [4], message [5],
+			option, nullptr, nullptr, nullptr, nullptr, theInterpreter
+		);
+		if (trusted) {
+			if (theInterpreter -> scriptReference)
+				theInterpreter -> scriptReference -> trusted = true;
+			else if (theInterpreter -> notebookReference)
+				theInterpreter -> notebookReference -> trusted = true;
+		}
+	}
 	pushNumber (1);
 }
 

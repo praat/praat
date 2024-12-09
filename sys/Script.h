@@ -31,5 +31,7 @@ Collection_define (ScriptSet, SortedSetOfStringOf, Script) {
 
 void Script_rememberDuringThisAppSession_move (autoScript me);
 
+Script Script_find (conststring32 filePath);   // should exist, cannot be null
+
 /* End of file Script.h */
 #endif

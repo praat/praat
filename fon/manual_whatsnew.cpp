@@ -29,6 +29,10 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.25# (8 December 2024)
+• Command-line interface: solved a crash that occurred when a menu command was not available.
+• Windows: open source code signing.
+
 ##6.4.24# (1 December 2024)
 • FormantPath: fixed bug with sampling frequency.
 • Formant measurements: fixed bugs in ”autocorrelation” and “robust” methods.

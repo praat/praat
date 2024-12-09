@@ -20,9 +20,9 @@
 
 #include "Ui.h"
 
-integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwningEditor, conststring32 message,
-	conststring32 option1, conststring32 option2, conststring32 option3,
-	conststring32 option4, conststring32 option5, conststring32 option6,
+integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwningEditor,
+	conststring32 message1, conststring32 message2, conststring32 message3, conststring32 message4, conststring32 message5,
+	conststring32 option1, conststring32 option2, conststring32 option3, conststring32 option4, conststring32 option5,
 	Interpreter interpreter);
 
 /* End of file UiPause.h */

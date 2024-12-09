@@ -96,8 +96,12 @@ static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */,
 	Interpreter_getArgumentsFromDialog (my interpreter.get(), sendingForm);
 
 	autoPraatBackground background;
-	if (! MelderFile_isNull (& my file))
+	if (! MelderFile_isNull (& my file)) {
 		MelderFile_setDefaultDir (& my file);
+		autoScript script = Script_createFromFile (& my file);
+		Script_rememberDuringThisAppSession_move (script.move());
+		my interpreter -> scriptReference = Script_find (MelderFile_peekPath (& my file));
+	}
 	Interpreter_run (my interpreter.get(), text.get(), false);
 }
 
@@ -115,8 +119,12 @@ static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stack
 	Interpreter_getArgumentsFromDialog (my interpreter.get(), sendingForm);
 
 	autoPraatBackground background;
-	if (! MelderFile_isNull (& my file))
+	if (! MelderFile_isNull (& my file)) {
 		MelderFile_setDefaultDir (& my file);
+		autoScript script = Script_createFromFile (& my file);
+		Script_rememberDuringThisAppSession_move (script.move());
+		my interpreter -> scriptReference = Script_find (MelderFile_peekPath (& my file));
+	}
 	Interpreter_run (my interpreter.get(), text.get(), false);
 }
 
@@ -162,8 +170,12 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS) {
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
-		if (! MelderFile_isNull (& my file))
+		if (! MelderFile_isNull (& my file)) {
 			MelderFile_setDefaultDir (& my file);
+			autoScript script = Script_createFromFile (& my file);
+			Script_rememberDuringThisAppSession_move (script.move());
+			my interpreter -> scriptReference = Script_find (MelderFile_peekPath (& my file));
+		}
 		trace (U"Running the following script (2):\n", text.get());
 		Interpreter_run (my interpreter.get(), text.get(), false);
 	}
@@ -179,24 +191,38 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS) {
 		MelderFile_setDefaultDir (& my file);
 	Melder_includeIncludeFiles (& selectedText);
 	const integer npar = Interpreter_readParameters (my interpreter.get(), selectedText.get());
+	/*
+		TODO: check that no two procedures have the same name
+	*/
+
+	/*
+		Add all the procedures to the selected text.
+		A procedure is counted as any text that honours the following conditions:
+		- it starts with a line starting with the text "procedure"
+		  optionally preceded by whitespace and obligatorily followed by whitespace;
+		- it ends with a line starting with the text "endproc"
+		  optionally preceded by whitespace and obligatorily followed by null or whitespace.
+	*/
 	autoMelderString textPlusProcedures;
 	MelderString_copy (& textPlusProcedures, selectedText.get());
-	if (! Melder_stringMatchesCriterion (selectedText.get(), kMelder_string :: CONTAINS, U"\nprocedure ", true)) {
+	{// scope
 		autostring32 wholeText = GuiText_getString (my textWidget);
 		autoMelderReadText textReader = MelderReadText_createFromText (wholeText.move());
 		int procedureDepth = 0;
 		for (;;) {
-			mutablestring32 line = MelderReadText_readLine (textReader.get());
+			const conststring32 line = MelderReadText_readLine (textReader.get());
 			if (! line)
 				break;
-			if (Melder_startsWith (line, U"procedure "))
+			const conststring32 startOfCode = Melder_findEndOfHorizontalSpace (line);
+			if (Melder_startsWith (startOfCode, U"procedure") && Melder_isHorizontalSpace (startOfCode [9]))
 				procedureDepth += 1;
 			if (procedureDepth > 0)
 				MelderString_append (& textPlusProcedures, U"\n", line);
-			if (Melder_startsWith (line, U"endproc"))
+			if (Melder_startsWith (startOfCode, U"endproc") && (startOfCode [7] == U'\0' || Melder_isHorizontalSpace (startOfCode [7])))
 				procedureDepth -= 1;
 		}
 	}
+
 	if (npar != 0) {
 		/*
 			Pop up a dialog box for querying the arguments.
@@ -205,10 +231,12 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS) {
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
-		if (! MelderFile_isNull (& my file))
+		if (! MelderFile_isNull (& my file)) {
 			MelderFile_setDefaultDir (& my file);
-//TRACE
-trace (U"<<", textPlusProcedures.string, U">>");
+			autoScript script = Script_createFromFile (& my file);
+			Script_rememberDuringThisAppSession_move (script.move());
+			my interpreter -> scriptReference = Script_find (MelderFile_peekPath (& my file));
+		}
 		Interpreter_run (my interpreter.get(), textPlusProcedures.string, false);
 	}
 }

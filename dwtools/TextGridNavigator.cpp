@@ -70,7 +70,7 @@ autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextG
 		autoTextGridTierNavigator thee = TextGrid_and_NavigationContext_to_TextGridTierNavigator (textgrid, navigationContext, tierNumber, matchDomain);
 		autoTextGridNavigator me = Thing_new (TextGridNavigator);
 		Function_init (me.get(), textgrid -> xmin, textgrid -> xmax);
-		my tierNavigators.addItem_move (thee.move());
+		my tierNavigators. addItem_move (thee.move());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGridNavigator could not be created from ", textgrid, U" and ", navigationContext);
@@ -87,7 +87,7 @@ autoTextGridNavigator TextGridNavigator_createSimple (double xmin, double xmax, 
 	autoIntervalTier tier = IntervalTier_create (xmin, xmax);
 	autoTextGridTierNavigator tgtn = TextGridTierNavigator_create (tier.get(), navigationContext.get(),kMatchDomain::TOPIC_START_TO_TOPIC_END);
 	tgtn -> tierNumber = tierNumber;
-	my tierNavigators.addItem_move (tgtn.move());
+	my tierNavigators. addItem_move (tgtn.move());
 	return me;
 }
 
@@ -97,7 +97,7 @@ autoTextGridNavigator TextGridTierNavigator_to_TextGridNavigator (TextGridTierNa
 		Function_init (thee.get(), my xmin, my xmax);
 		autoTextGridTierNavigator tn = Data_copy (me);
 		tn -> matchDomainAlignment = kMatchDomainAlignment::IS_ANYWHERE;
-		thy tierNavigators.addItem_move (tn.move());
+		thy tierNavigators. addItem_move (tn.move());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not create TextGridNavigator.");
@@ -200,7 +200,7 @@ void TextGridNavigator_addTextGridTierNavigator (TextGridNavigator me, TextGridT
 		}
 		autoTextGridTierNavigator tn = Data_copy (thee);
 		tn -> matchDomainAlignment = matchDomainAlignment;
-		my tierNavigators.addItem_move (tn.move());
+		my tierNavigators. addItem_move (tn.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add TextGridTierNavigator.");
 	}
