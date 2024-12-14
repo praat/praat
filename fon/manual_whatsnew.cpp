@@ -31,7 +31,7 @@ Latest changes in Praat.
 
 ##6.4.25# (8 December 2024)
 • Command-line interface: solved a crash that occurred when a menu command was not available.
-• Windows: open source code signing.
+• Windows: open-source code signing.
 
 ##6.4.24# (1 December 2024)
 • FormantPath: fixed bug with sampling frequency.
@@ -89,7 +89,7 @@ Latest changes in Praat.
 • ARM64 Windows: worked around a compiler bug that caused incorrect window sizes.
 • Pitch analysis: faster on Windows (Intel64 and Intel32).
 • Windows: better fonts and background colours (perhaps dependent on language settings).
-• ##TextGrids: Concatenate#: guard against some incorrect TexGrid files.
+• ##TextGrids: Concatenate#: guard against some incorrect TextGrid files.
 
 ##6.4.13# (10 June 2024)
 • More manual pages.
