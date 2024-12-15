@@ -42,14 +42,10 @@ static void gui_dialog_cb_ok (Thing, GuiButtonEvent event) {
 	theClickedButtonId = -1;
 }
 
-integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwningEditor,
+static GuiDialog GuiTrust_createDialog (GuiWindow optionalParent,
 	conststring32 message1, conststring32 message2, conststring32 message3, conststring32 message4, conststring32 message5,
-	conststring32 option1, conststring32 option2, conststring32 option3, conststring32 option4, conststring32 option5,
-	Interpreter interpreter
+	conststring32 option1, conststring32 option2, conststring32 option3, conststring32 option4, conststring32 option5
 ) {
-	if (theEventLoopDepth > 0)
-		Melder_throw (Melder_upperCaseAppName(), U" cannot have more than one trust form at a time.");
-	Melder_assert (interpreter);
 	constexpr int DIALOG_WIDTH = 700;
 	constexpr int BUTTON_HEIGHT = 60;
 	/*
@@ -112,10 +108,46 @@ integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwning
 			optionButtons [i] = nullptr;
 		}
 	}
+	return me;
+}
+
+static void Gui_waitAndHandleOneEvent_any () {
+	#if gtk
+		gtk_main_iteration ();
+	#elif cocoa
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		//[theDemoEditor -> windowForm -> d_cocoaWindow   flushWindow];
+		NSEvent *nsEvent = [NSApp
+			nextEventMatchingMask: NSAnyEventMask
+			untilDate: [NSDate distantFuture]   // wait
+			inMode: NSDefaultRunLoopMode
+			dequeue: YES
+		];
+		Melder_assert (nsEvent);
+		[NSApp  sendEvent: nsEvent];
+		[NSApp  updateWindows];   // called automatically?
+		[pool release];
+	#elif motif
+		XEvent event;
+		GuiNextEvent (& event);
+		XtDispatchEvent (& event);
+	#endif
+}
+
+integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwningEditor,
+	conststring32 message1, conststring32 message2, conststring32 message3, conststring32 message4, conststring32 message5,
+	conststring32 option1, conststring32 option2, conststring32 option3, conststring32 option4, conststring32 option5,
+	Interpreter interpreter
+) {
+	if (theEventLoopDepth > 0)
+		Melder_throw (Melder_upperCaseAppName(), U" cannot have more than one trust form at a time.");
+	Melder_assert (interpreter);
+	GuiDialog me = GuiTrust_createDialog (optionalParent,
+			message1, message2, message3, message4, message5, option1, option2, option3, option4, option5);
 	const bool wasBackgrounding = Melder_backgrounding;
 	//if (theCurrentPraatApplication -> batch) goto end;
 	if (wasBackgrounding)
-		praat_foreground ();
+		praat_foreground ();   // because we will allow any event, including object selection and dynamic-menu clicks
 	/*
 		Put the trust form on the screen.
 	*/
@@ -129,32 +161,9 @@ integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwning
 		Melder_assert (theEventLoopDepth == 0);
 		theEventLoopDepth ++;
 		try {
-			#if gtk
-				do {
-					gtk_main_iteration ();
-				} while (! theClickedButtonId);
-			#elif cocoa
-				do {
-					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-					//[theDemoEditor -> windowForm -> d_cocoaWindow   flushWindow];
-					NSEvent *nsEvent = [NSApp
-						nextEventMatchingMask: NSAnyEventMask
-						untilDate: [NSDate distantFuture]   // wait
-						inMode: NSDefaultRunLoopMode
-						dequeue: YES
-					];
-					Melder_assert (nsEvent);
-					[NSApp  sendEvent: nsEvent];
-					[NSApp  updateWindows];   // called automatically?
-					[pool release];
-				} while (! theClickedButtonId);
-			#elif motif
-				do {
-					XEvent event;
-					GuiNextEvent (& event);
-					XtDispatchEvent (& event);
-				} while (! theClickedButtonId);
-			#endif
+			do {
+				Gui_waitAndHandleOneEvent_any ();
+			} while (! theClickedButtonId);
 		} catch (MelderError) {
 			Melder_flushError (U"An error made it to the outer level in a trust window; should not occur! Please write to paul.boersma@uva.nl");
 		}

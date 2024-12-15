@@ -1,6 +1,6 @@
 /* Gui_messages.cpp
  *
- * Copyright (C) 1992-2018,2020-2023 Paul Boersma,
+ * Copyright (C) 1992-2018,2020-2024 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -27,6 +27,9 @@
 #include "melder.h"
 #include "Graphics.h"
 #include "Gui.h"
+#include "Interpreter.h"
+#include "Script.h"
+#include "Notebook.h"
 
 /********** Exported variable. **********/
 
@@ -380,6 +383,20 @@ static void gui_warning (conststring32 message) {
 	#endif
 }
 
+static void gui_trust (void *void_interpreter, conststring32 message) {
+	Interpreter interpreter = (Interpreter) void_interpreter;
+	if (interpreter) {
+		Script script = interpreter -> scriptReference;
+		Notebook notebook = interpreter -> notebookReference;
+		if (! script && ! notebook)
+			Melder_throw (U"We expected a script or a notebook.");
+		if (script && ! script -> trusted)
+			Melder_throw (U"The following action was requested but is not allowed:\n", message);
+		if (notebook && ! notebook -> trusted)
+			Melder_throw (U"The following action was requested but is not allowed:\n", message);
+	}
+}
+
 void Gui_injectMessageProcs (GuiWindow parent) {
 	theMessageFund = (char *) malloc (theMessageFund_SIZE);
 	assert (theMessageFund);
@@ -389,6 +406,7 @@ void Gui_injectMessageProcs (GuiWindow parent) {
 	Melder_setWarningProc (gui_warning);
 	Melder_setProgressProc (gui_progress);
 	Melder_setMonitorProc (gui_monitor);
+	Melder_setTrustProc (gui_trust);
 }
 
 /* End of file Gui_messages.cpp */

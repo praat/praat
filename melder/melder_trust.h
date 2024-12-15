@@ -26,18 +26,18 @@
 
 namespace MelderTrust {
 	extern MelderString _buffer;
-	using Proc = void (*) (conststring32 message);
-	void _defaultProc (conststring32 message);
+	using Proc = void (*) (void *void_interpreter, conststring32 message);
+	void _defaultProc (void *void_interpreter, conststring32 message);
 	extern Proc _p_currentProc;
 }
 
 template <typename... Args>
-void Melder_checkTrust (const MelderArg& first, Args... rest) {
+void Melder_checkTrust (void *void_interpreter, const MelderArg& first, Args... rest) {
 	MelderString_copy (& MelderTrust::_buffer, first, rest...);
-	(*MelderTrust::_p_currentProc) (MelderTrust::_buffer.string);
+	(*MelderTrust::_p_currentProc) (void_interpreter, MelderTrust::_buffer.string);
 }
 
-]void Melder_setTrustProc (MelderTrust::Proc p_proc);
+void Melder_setTrustProc (MelderTrust::Proc p_proc);
 
 /* End of file melder_trust.h */
 #endif

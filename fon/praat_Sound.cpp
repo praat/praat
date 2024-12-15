@@ -2064,7 +2064,7 @@ FORM_SAVE (SAVE_ALL__Sound_saveAsSunAudioFile, U"Save as NeXT/Sun file", nullptr
 
 FORM_SAVE (SAVE_ALL__Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
 	SAVE_ALL_LISTED (Sound, SoundAndLongSoundList)
-		do { if (_interpreter_) Melder_throw (U"save the selected Sound object(s) to the WAV file ", file, U"."); } while (0);
+		Melder_checkTrust (_interpreter_, U"save the selected Sound object(s) to the WAV file ", file, U".");
 		LongSound_concatenate (list.get(), file, Melder_WAV, 16);
 	SAVE_ALL_LISTED_END
 }
