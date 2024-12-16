@@ -20,33 +20,26 @@
 #include "praatP.h"
 #include "GuiP.h"
 
-static GuiButton optionButtons [1+6];
-static integer theClickedButtonId = 1;   //default is CANCEL
 static int theEventLoopDepth = 0;
 
-static void gui_dialog_cb_close (Thing) {
-	theClickedButtonId = 1;   // cancel
+static void gui_dialog_cb_close (GuiDialog me) {
+	my clickedButtonId = 1;   // cancel
 	#if cocoa
 		[NSApp stopModal];
 	#endif
 }
-static void gui_dialog_cb_default (Thing) {
-	theClickedButtonId = 1;   // cancel
+static void gui_dialog_cb_default (GuiDialog me) {
+	my clickedButtonId = 1;   // cancel
 	#if cocoa
 		[NSApp stopModal];
 	#endif
 }
-static void gui_dialog_cb_ok (Thing, GuiButtonEvent event) {
-	GuiButton clickedButton = event -> button;
-	for (int i = 1; i <= 6; i ++)
-		if (clickedButton == optionButtons [i]) {
-			theClickedButtonId = i;
-			#if cocoa
-				[NSApp stopModal];
-			#endif
-			return;
-		}
-	Melder_assert (false);   // should never occur
+static void gui_dialog_cb_ok (GuiDialog me, GuiButtonEvent event) {
+	#if gtk
+		gtk_dialog_response (GTK_DIALOG (my d_gtkWindow), my clickedButtonId);   // or just 0
+	#elif cocoa
+		[NSApp stopModal];
+	#endif
 }
 
 GuiDialog GuiTrust_createDialog (GuiWindow optionalParent,
@@ -82,7 +75,7 @@ GuiDialog GuiTrust_createDialog (GuiWindow optionalParent,
 	int x = Gui_LEFT_DIALOG_SPACING, buttonWidth = DIALOG_WIDTH - x - Gui_RIGHT_DIALOG_SPACING;
 	GuiDialog me = GuiDialog_create (optionalParent, 150, 70, DIALOG_WIDTH, dialogHeight,
 			U"Praat Trust window: checking for security and safety", gui_dialog_cb_close, nullptr, GuiDialog_Modality::BLOCKING);
-	GuiDialog_setDefaultCallback (me, gui_dialog_cb_default, nullptr);
+	GuiDialog_setDefaultCallback (me, gui_dialog_cb_default, me);
 	/*
 		Add the labels.
 	*/
@@ -106,11 +99,9 @@ GuiDialog GuiTrust_createDialog (GuiWindow optionalParent,
 	for (int i = 1; i <= 5; i ++) {
 		conststring32 option = ( i == 1 ? option1 : i == 2 ? option2 : i == 3 ? option3 : i == 4 ? option4 : option5 );
 		if (option) {
-			optionButtons [i] = GuiButton_createShown (me, x, x + buttonWidth, y, y + BUTTON_HEIGHT,
-					option, gui_dialog_cb_ok, nullptr, GuiButton_MULTILINE + ( i == 1 ? GuiButton_DEFAULT : 0 ));
+			GuiButton_createShown (me, x, x + buttonWidth, y, y + BUTTON_HEIGHT,
+					option, gui_dialog_cb_ok, me, GuiButton_MULTILINE + ( i == 1 ? GuiButton_DEFAULT : 0 ));
 			y += BUTTON_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME;
-		} else {
-			optionButtons [i] = nullptr;
 		}
 	}
 	return me;
@@ -162,13 +153,13 @@ integer GuiTrust_get_XXX (GuiWindow optionalParent, Editor optionalTrustWindowOw
 	*/
 	{// scope
 		autoMelderSaveCurrentFolder saveFolder;
-		theClickedButtonId = 0;
+		my clickedButtonId = 0;
 		Melder_assert (theEventLoopDepth == 0);
 		theEventLoopDepth ++;
 		try {
 			do {
 				Gui_waitAndHandleOneEvent_any ();
-			} while (! theClickedButtonId);
+			} while (! my clickedButtonId);
 		} catch (MelderError) {
 			Melder_flushError (U"An error made it to the outer level in a trust window; should not occur! Please write to paul.boersma@uva.nl");
 		}
@@ -178,11 +169,11 @@ integer GuiTrust_get_XXX (GuiWindow optionalParent, Editor optionalTrustWindowOw
 		praat_background ();
 	GuiThing_hide (me);
 	GuiObject_destroy (my d_widget);
-	if (theClickedButtonId == 1) {
+	if (my clickedButtonId == 1) {
 		Interpreter_stop (interpreter);
 		Melder_throw (U"You interrupted the script.");
 	}
-	return theClickedButtonId;
+	return my clickedButtonId;
 }
 
 integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwningEditor,
@@ -197,69 +188,37 @@ integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwning
 	GuiDialog_run (me);
 	GuiThing_hide (me);
 	GuiObject_destroy (my d_widget);
-	if (theClickedButtonId == 1) {
+	if (my clickedButtonId == 1) {
 		Interpreter_stop (interpreter);
 		Melder_throw (U"You interrupted the script.");
 	}
-	return theClickedButtonId;
+	return my clickedButtonId;
 }
 
 integer GuiDialog_run (GuiDialog me) {
 	#if gtk
+		gtk_dialog_run (GTK_DIALOG (my d_gtkWindow));
 	#elif motif
-		//TRACE
-		trace (1);
-		theClickedButtonId = my clickedButtonId = 0;
-		UpdateWindow (my d_widget -> window);   // the only way to actually show the contents of the dialog
-		MSG event;
-		while (! theClickedButtonId) {
+		my clickedButtonId = 0;
+		UpdateWindow (my d_xmShell -> window);   // the only way to actually show the contents of the dialog (or my d_widget -> window)
+		do {
+			MSG event;
 			GetMessage (& event, nullptr, 0, 0);
 			if (event. hwnd) {
 				GuiObject object = (GuiObject) GetWindowLongPtr (event. hwnd, GWLP_USERDATA);
-				if (IsDialogMessage (my d_widget -> window, & event)) {
+				if (IsDialogMessage (my d_xmShell -> window, & event)) {   // not my d_widget -> window, because that would prevent closing
 					trace (U"dialog message ", event. message);
-				} else if (event. message == WM_LBUTTONDOWN || event. message == WM_LBUTTONUP || event. message == WM_MOUSEMOVE ||
-					event. message == WM_KEYDOWN || event. message == WM_KEYUP || event. message == WM_CHAR ||
-					event. message == WM_NCLBUTTONDOWN || event. message == WM_NCLBUTTONUP || event. message == WM_NCMOUSEMOVE
-				) {
-					if (object && object -> shell == my d_widget -> shell) {
-						TranslateMessage (& event);
-						DispatchMessage (& event);
-						if (0)for (int i = 1; i <= 5; i ++) {
-							//if (object == optionButtons [i] -> d_widget) {
-							//trace (U"hit ", i);
-							//TranslateMessage (& message);
-							//DispatchMessage (& message);
-						//}
-						//if (my clickedButtonId != 0)
-							//return my clickedButtonId;
-							theClickedButtonId = i;
-							return i;
-						}
-					} else {
-						trace (U"click somewhere else");
-						//TranslateMessage (& event);   // don't handle clicks in other windows
-						//DispatchMessage (& event);
-					}
-				} else {
-					trace (U"not a click or key event? ", event. message);
-					//TranslateMessage (& event);
-					//DispatchMessage (& event);
+				} else if (event. message == WM_PAINT) {
+					trace (U"paint ", event. message);
+					TranslateMessage (& event);
+					DispatchMessage (& event);
 				}
-			} else {
-				trace (U"not a window event ", event. message);
-				TranslateMessage (& event);
-				DispatchMessage (& event);
 			}
-		}
-		//return my clickedButtonId;   // TODO: no tags (yet) in buttons on Windows
-		return theClickedButtonId;
+		} while (my clickedButtonId == 0);
 	#elif cocoa
 		[[NSApplication sharedApplication] runModalForWindow: my d_cocoaShell];
-		//return my clickedButtonId;
-		return theClickedButtonId;
 	#endif
-	return 0;   // cancel
+	return my clickedButtonId;
 }
 
 /* End of file GuiTrust.cpp */

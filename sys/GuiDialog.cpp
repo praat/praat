@@ -54,7 +54,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 	autoGuiDialog me = Thing_new (GuiDialog);
 	my d_parent = parent;
 	my d_goAwayCallback = goAwayCallback;
-	my d_goAwayBoss = goAwayBoss;
+	my d_goAwayBoss = ( goAwayBoss ? goAwayBoss : (Thing) me.get() );
 	#if gtk
 		my d_gtkWindow = (GtkWindow *) gtk_dialog_new ();
 		static const GdkRGBA backgroundColour { 0.92, 0.92, 0.92, 1.0 };
