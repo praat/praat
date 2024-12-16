@@ -1,6 +1,6 @@
 /* ArtwordEditor.cpp
  *
- * Copyright (C) 1992-2013,2015-2023 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,8 @@ void structArtwordEditor :: v_createChildren () {
 	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++) {
 		button [i] = GuiRadioButton_createShown (our windowForm,
 			480, 0, dy, dy + Gui_RADIOBUTTON_HEIGHT,
-			kArt_muscle_getText ((kArt_muscle) i), gui_radiobutton_cb_toggle, this, 0);
+			kArt_muscle_getText ((kArt_muscle) i), gui_radiobutton_cb_toggle, this, 0
+		);
 		dy += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING - 2;
 	}
 	GuiRadioGroup_end ();

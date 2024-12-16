@@ -128,6 +128,13 @@ Thing_implement (GuiButton, GuiControl, 0);
 	@end
 #endif
 
+static void gui_blocking_dialog_cb_ok (GuiDialog me, GuiButtonEvent) {
+	#if gtk
+		gtk_dialog_response (GTK_DIALOG (my d_gtkWindow), my clickedButtonId);   // or just 0
+	#elif cocoa
+		[NSApp stopModal];
+	#endif
+}
 GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bottom,
 	conststring32 buttonText, GuiButton_ActivateCallback activateCallback, Thing activateBoss, uint32 flags)
 {
@@ -139,6 +146,10 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 	if (Thing_isa (my d_shell, classGuiDialog)) {
 		GuiDialog dialog = (GuiDialog) my d_shell;
 		my d_sequentalIdInDialog = ++ dialog -> latestCreatedButtonId;
+		if (! my d_activateCallback)
+			my d_activateCallback = gui_blocking_dialog_cb_ok;
+		if (! activateBoss)
+			my d_activateBoss = dialog;
 	}
 	#if gtk
 		my d_widget = gtk_button_new_with_label (Melder_peek32to8 (buttonText));

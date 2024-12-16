@@ -1,6 +1,6 @@
 /* GuiDialog.cpp
  *
- * Copyright (C) 1993-2018,2020,2021 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2018,2020,2021,2024 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,13 +48,26 @@ Thing_implement (GuiDialog, GuiShell, 0);
 	}
 #endif
 
+static void gui_blocking_dialog_cb_close (GuiDialog me) {
+	my clickedButtonId = 1;   // cancel
+	#if cocoa
+		[NSApp stopModal];
+	#endif
+}
 GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int height,
 	conststring32 title, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, GuiDialog_Modality modality)
 {
 	autoGuiDialog me = Thing_new (GuiDialog);
 	my d_parent = parent;
-	my d_goAwayCallback = goAwayCallback;
-	my d_goAwayBoss = ( goAwayBoss ? goAwayBoss : (Thing) me.get() );
+	if (modality == GuiDialog_Modality::BLOCKING) {
+		Melder_assert (! goAwayCallback);
+		Melder_assert (! goAwayBoss);
+		my d_goAwayCallback = gui_blocking_dialog_cb_close;
+		my d_goAwayBoss = me.get();
+	} else {
+		my d_goAwayCallback = goAwayCallback;
+		my d_goAwayBoss = goAwayBoss;
+	}
 	#if gtk
 		my d_gtkWindow = (GtkWindow *) gtk_dialog_new ();
 		static const GdkRGBA backgroundColour { 0.92, 0.92, 0.92, 1.0 };
@@ -68,7 +81,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 			}
 		}
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "delete-event",
-				goAwayCallback ? G_CALLBACK (_GuiGtkDialog_goAwayCallback) : G_CALLBACK (gtk_widget_hide_on_delete), me.get());
+				my d_goAwayCallback ? G_CALLBACK (_GuiGtkDialog_goAwayCallback) : G_CALLBACK (gtk_widget_hide_on_delete), me.get());
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
 		//gtk_window_set_modal (GTK_WINDOW (my d_gtkWindow), modality >= GuiDialog_Modality::MODAL);
 		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), false);
@@ -92,8 +105,8 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		GuiShell_setTitle (me.get(), title);
 	#elif motif
 		my d_xmShell = XmCreateDialogShell (parent ? parent -> d_widget : nullptr, "dialogShell", nullptr, 0);
-		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, nullptr);
-		if (goAwayCallback)
+		XtVaSetValues (my d_xmShell, XmNdeleteResponse, my d_goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, nullptr);
+		if (my d_goAwayCallback)
 			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifDialog_goAwayCallback, (char *) me.get());
 		GuiShell_setTitle (me.get(), title);
 		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
@@ -127,6 +140,39 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 void GuiDialog_setDefaultCallback (GuiDialog me, GuiDialog_DefaultCallback callback, Thing boss) {
 	my d_defaultCallback = callback;
 	my d_defaultBoss = boss;
+}
+
+static void gui_blocking_dialog_cb_default (GuiDialog me) {
+	my clickedButtonId = 1;   // cancel
+	#if cocoa
+		[NSApp stopModal];
+	#endif
+}
+integer GuiDialog_run (GuiDialog me) {
+	GuiDialog_setDefaultCallback (me, gui_blocking_dialog_cb_default, me);
+	#if gtk
+		gtk_dialog_run (GTK_DIALOG (my d_gtkWindow));
+	#elif motif
+		my clickedButtonId = 0;
+		UpdateWindow (my d_xmShell -> window);   // the only way to actually show the contents of the dialog (or my d_widget -> window)
+		do {
+			MSG event;
+			GetMessage (& event, nullptr, 0, 0);
+			if (event. hwnd) {
+				GuiObject object = (GuiObject) GetWindowLongPtr (event. hwnd, GWLP_USERDATA);
+				if (IsDialogMessage (my d_xmShell -> window, & event)) {   // not my d_widget -> window, because that would prevent closing
+					trace (U"dialog message ", event. message);
+				} else if (event. message == WM_PAINT) {
+					trace (U"paint ", event. message);
+					TranslateMessage (& event);
+					DispatchMessage (& event);
+				}
+			}
+		} while (my clickedButtonId == 0);
+	#elif cocoa
+		[[NSApplication sharedApplication] runModalForWindow: my d_cocoaShell];
+	#endif
+	return my clickedButtonId;
 }
 
 /* End of file GuiDialog.cpp */
