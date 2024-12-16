@@ -1393,7 +1393,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 					U"\" (no privilege to write to folder, or disk full).");
 			return false;
 		}
-		if (SendMessage (HWND (theWinApplicationWindow), WM_USER, 0, 0)) {
+		if (SendMessage (HWND (theWinApplicationWindow), WM_APP, 0, 0)) {
 			Melder_casual (U"Cannot send message.");
 			return false;
 		}

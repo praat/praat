@@ -382,6 +382,7 @@ Thing_define (GuiButton, GuiControl) {
 	GuiButton_ActivateCallback d_activateCallback;
 	Thing d_activateBoss;
 	GuiMenu d_menu;   // for cascade buttons
+	integer d_sequentalIdInDialog;
 };
 
 /* GuiButton creation flags: */

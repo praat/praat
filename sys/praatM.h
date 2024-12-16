@@ -422,9 +422,9 @@
 
 #define FORM_SAVE(proc,title,help,ext)  \
 	extern "C" void proc (UiForm sendingForm, integer, structStackel args [], conststring32 sendingString, \
-			Interpreter, conststring32 invokingButtonTitle, bool, void *okClosure, Editor optionalEditor); \
+			Interpreter interpreter, conststring32 invokingButtonTitle, bool, void *okClosure, Editor optionalEditor); \
 	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, \
-			Interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_, Editor _optionalEditor_) \
+			Interpreter _interpreter_, conststring32 _invokingButtonTitle_, bool, void *_okClosure_, Editor _optionalEditor_) \
 	{ \
 		{ static autoUiForm _dia_; \
 		if (! _dia_) \
