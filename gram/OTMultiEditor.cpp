@@ -146,11 +146,11 @@ void structOTMultiEditor :: v_createChildren () {
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarBottom () + 4;
 	GuiButton_createShown (our windowForm, 4, 124, y, y + height,
-		U"Partial forms:", gui_button_cb_limit, this, GuiButton_DEFAULT);
+			U"Partial forms:", gui_button_cb_limit, this, GuiButton_DEFAULT);
 	form1Text = GuiText_createShown (our windowForm,
-		124 + STRING_SPACING, 274 + STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
+			124 + STRING_SPACING, 274 + STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 	form2Text = GuiText_createShown (our windowForm,
-		274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
+			274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
 void structOTMultiEditor :: v_createMenus () {
