@@ -129,14 +129,4 @@ void GuiDialog_setDefaultCallback (GuiDialog me, GuiDialog_DefaultCallback callb
 	my d_defaultBoss = boss;
 }
 
-integer GuiDialog_run (GuiDialog me) {
-	#if gtk
-	#elif motif
-	#elif cocoa
-		[[NSApplication sharedApplication] runModalForWindow: my d_cocoaShell];
-		return my clickedButtonId;
-	#endif
-	return 0;   // cancel
-}
-
 /* End of file GuiDialog.cpp */

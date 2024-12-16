@@ -30,6 +30,7 @@
 #include "Interpreter.h"
 #include "Script.h"
 #include "Notebook.h"
+#include "GuiTrust.h"
 
 /********** Exported variable. **********/
 
@@ -383,17 +384,58 @@ static void gui_warning (conststring32 message) {
 	#endif
 }
 
-static void gui_trust (void *void_interpreter, conststring32 message) {
+static void gui_trust (void *void_interpreter, conststring32 action) {
 	Interpreter interpreter = (Interpreter) void_interpreter;
 	if (interpreter) {
 		Script script = interpreter -> scriptReference;
 		Notebook notebook = interpreter -> notebookReference;
 		if (! script && ! notebook)
 			Melder_throw (U"We expected a script or a notebook.");
-		if (script && ! script -> trusted)
-			Melder_throw (U"The following action was requested but is not allowed:\n", message);
-		if (notebook && ! notebook -> trusted)
-			Melder_throw (U"The following action was requested but is not allowed:\n", message);
+		if (script && script -> trusted || notebook && notebook -> trusted)
+			return;   // the request should be granted
+		conststring32 paragraphs [1+5] = { };
+		if (script) {
+			paragraphs [1] = U"The script";
+			paragraphs [2] = Melder_cat (U"“", script -> string.get(), U"”");
+		} else if (notebook) {
+			paragraphs [1] = U"The notebook";
+			paragraphs [2] = Melder_cat (U"“", notebook -> string.get(), U"”");
+		} else
+			paragraphs [1] =  U"Your untitled script or notebook";
+		paragraphs [3] = U"requests permission to:";
+		paragraphs [4] = action;
+		conststring32 option1 = U"CANCEL\n(because I don’t want the requested action to happen)";
+		conststring32 option2 =
+			script ?
+				U"Yes, I allow this script to perform the action that it requests\n(and ask me again next time)"
+			: notebook ?
+				U"Yes, I allow this notebook to perform the action that it requests\n(and ask me again next time)"
+			:
+				U"Yes, I allow this script or notebook to perform the action that it requests\n(and ask me again next time)";
+		conststring32 option3 =
+			script ?
+				U"Yes, and I even allow this script to CONTROL MY COMPUTER from now on\n"
+				"(i.e. to perform any action, including saving, deleting, calling system commands, and internetting,\n"
+				"because I fully trust the script authors’ skills and intentions)"
+			: notebook ?
+				U"Yes, and I even allow this notebook to CONTROL MY COMPUTER from now on\n"
+				"(i.e. to perform any action, including saving, deleting, calling system commands, and internetting,\n"
+				"because I fully trust the notebook authors’ skills and intentions)"
+			:
+				U"Yes, and I even allow this script or notebook to CONTROL MY COMPUTER from now on\n"
+				"(i.e. to perform any action, including saving, deleting, calling system commands, and internetting,\n"
+				"because I fully trust the notebook authors’ skills and intentions)";
+		integer buttonClicked = GuiTrust_get (nullptr, nullptr,
+			paragraphs [1], paragraphs [2], paragraphs [3], paragraphs [4], paragraphs [5],
+			option1, option2, option3, nullptr, nullptr, interpreter
+		);
+		if (buttonClicked == 2)
+			return;   // allow this one action
+		Melder_assert (buttonClicked == 3);
+		if (script)
+			script -> trusted = true;
+		else if (notebook)
+			notebook -> trusted = true;
 	}
 }
 

@@ -25,5 +25,9 @@ integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwning
 	conststring32 option1, conststring32 option2, conststring32 option3, conststring32 option4, conststring32 option5,
 	Interpreter interpreter);
 
+GuiDialog GuiTrust_createDialog (GuiWindow optionalParent,
+	conststring32 message1, conststring32 message2, conststring32 message3, conststring32 message4, conststring32 message5,
+	conststring32 option1, conststring32 option2, conststring32 option3, conststring32 option4, conststring32 option5);
+
 /* End of file UiPause.h */
 #endif
