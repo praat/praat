@@ -38,10 +38,6 @@ Thing_implement (GuiButton, GuiControl, 0);
 	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer userData) {
 		GuiButton me = (GuiButton) userData;
 		structGuiButtonEvent event { me, false, false, false };
-		if (Thing_isa (my d_shell, classGuiDialog)) {
-			GuiDialog dialog = (GuiDialog) my d_shell;
-			dialog -> clickedButtonId = my d_sequentalIdInDialog;
-		}
 		if (my d_activateCallback) {
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
@@ -62,10 +58,6 @@ Thing_implement (GuiButton, GuiControl, 0);
 	}
 	void _GuiWinButton_handleClick (GuiObject widget) {
 		iam_button;
-		if (Thing_isa (my d_shell, classGuiDialog)) {
-			GuiDialog dialog = (GuiDialog) my d_shell;
-			dialog -> clickedButtonId = my d_sequentalIdInDialog;
-		}
 		if (my d_activateCallback) {
 			structGuiButtonEvent event { me, false, false, false };
 			try {
@@ -77,10 +69,6 @@ Thing_implement (GuiButton, GuiControl, 0);
 	}
 	bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget) {
 		iam_button;
-		if (Thing_isa (my d_shell, classGuiDialog)) {
-			GuiDialog dialog = (GuiDialog) my d_shell;
-			dialog -> clickedButtonId = my d_sequentalIdInDialog;
-		}
 		if (my d_activateCallback) {
 			structGuiButtonEvent event { me, false, false, false };
 			try {
@@ -112,10 +100,6 @@ Thing_implement (GuiButton, GuiControl, 0);
 	- (void) _guiCocoaButton_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiButton me = d_userData;
-		if (Thing_isa (my d_shell, classGuiDialog)) {
-			GuiDialog dialog = (GuiDialog) my d_shell;
-			dialog -> clickedButtonId = my d_sequentalIdInDialog;
-		}
 		if (my d_activateCallback) {
 			structGuiButtonEvent event { me, false, false, false };
 			try {
@@ -128,9 +112,10 @@ Thing_implement (GuiButton, GuiControl, 0);
 	@end
 #endif
 
-static void gui_blocking_dialog_cb_ok (GuiDialog me, GuiButtonEvent) {
+static void gui_blocking_dialog_cb_ok (GuiDialog me, GuiButtonEvent event) {
+	my clickedButtonId = event -> button -> d_sequentalIdInDialog;
 	#if gtk
-		gtk_dialog_response (GTK_DIALOG (my d_gtkWindow), my clickedButtonId);   // or just 0
+		gtk_dialog_response (GTK_DIALOG (my d_gtkWindow), 0);   // or `my clickedButtonId`, but return value of gtk_dialog_run is ignored
 	#elif cocoa
 		[NSApp stopModal];
 	#endif
@@ -143,13 +128,17 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 	my d_parent = parent;
 	my d_activateCallback = activateCallback;
 	my d_activateBoss = activateBoss;
-	if (Thing_isa (my d_shell, classGuiDialog)) {
+	if (! my d_activateCallback) {
+		/*
+			This must be a button in a blocking dialog.
+		*/
+		Melder_assert (Thing_isa (my d_shell, classGuiDialog));
 		GuiDialog dialog = (GuiDialog) my d_shell;
+		my d_activateCallback = gui_blocking_dialog_cb_ok;
+		my d_activateBoss = dialog;
 		my d_sequentalIdInDialog = ++ dialog -> latestCreatedButtonId;
-		if (! my d_activateCallback)
-			my d_activateCallback = gui_blocking_dialog_cb_ok;
-		if (! activateBoss)
-			my d_activateBoss = dialog;
+		if (flags & GuiButton_DEFAULT)
+			dialog -> defaultButtonId = my d_sequentalIdInDialog;
 	}
 	#if gtk
 		my d_widget = gtk_button_new_with_label (Melder_peek32to8 (buttonText));
