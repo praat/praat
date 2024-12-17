@@ -18,8 +18,7 @@
 
 #include "GuiTrust.h"
 #include "praatP.h"
-#include "GuiP.h"
-
+#include "Gui.h"
 
 GuiDialog GuiTrust_createDialog (GuiWindow optionalParent,
 	conststring32 message1, conststring32 message2, conststring32 message3, conststring32 message4, conststring32 message5,
@@ -94,14 +93,16 @@ integer GuiTrust_get (GuiWindow optionalParent, Editor optionalTrustWindowOwning
 	GuiDialog me = GuiTrust_createDialog (optionalParent,
 			message1, message2, message3, message4, message5, option1, option2, option3, option4, option5);
 	GuiThing_show (me);
-	GuiDialog_run (me);
+	const integer clickedButtonId = GuiDialog_run (me);
 	GuiThing_hide (me);
 	GuiObject_destroy (my d_widget);
-	if (my clickedButtonId == 1) {
+	const bool sheClickedOnClose = ( clickedButtonId == 0 );
+	const bool sheClickedOnCancel = ( clickedButtonId == 1 );
+	if (sheClickedOnClose || sheClickedOnCancel) {
 		Interpreter_stop (interpreter);
 		Melder_throw (U"You interrupted the script.");
 	}
-	return my clickedButtonId;
+	return clickedButtonId;
 }
 
 /* End of file GuiTrust.cpp */

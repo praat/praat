@@ -49,7 +49,7 @@ Thing_implement (GuiDialog, GuiShell, 0);
 #endif
 
 static void gui_blocking_dialog_cb_close (GuiDialog me) {
-	my clickedButtonId = 1;   // cancel
+	my clickedButtonId = 0;
 	#if cocoa
 		[NSApp stopModal];
 	#endif
@@ -143,17 +143,25 @@ void GuiDialog_setDefaultCallback (GuiDialog me, GuiDialog_DefaultCallback callb
 }
 
 static void gui_blocking_dialog_cb_default (GuiDialog me) {
-	my clickedButtonId = 1;   // cancel
+	my clickedButtonId = my defaultButtonId;
 	#if cocoa
 		[NSApp stopModal];
 	#endif
 }
 integer GuiDialog_run (GuiDialog me) {
 	GuiDialog_setDefaultCallback (me, gui_blocking_dialog_cb_default, me);
+	my clickedButtonId = -1;
+	/*
+		`my clickedButtonId` will be modified away from -1 in one of three ways:
+		- clicking the dialog's Close button, via `gui_blocking_dialog_cb_close`, which will set it to 0
+		- clicking a normal button (with text), via `gui_blocking_dialog_cb_ok`,
+		  which will set it to the sequential id of the clicked button (1/2/3...)
+		- typing Enter, via `gui_blocking_dialog_cb_default`,
+		  which will set it to the sequential id of the default button (1/2/3...), or to 0 if there is no default button
+	*/
 	#if gtk
 		gtk_dialog_run (GTK_DIALOG (my d_gtkWindow));
 	#elif motif
-		my clickedButtonId = 0;
 		UpdateWindow (my d_xmShell -> window);   // the only way to actually show the contents of the dialog (or my d_widget -> window)
 		do {
 			MSG event;
@@ -168,7 +176,7 @@ integer GuiDialog_run (GuiDialog me) {
 					DispatchMessage (& event);
 				}
 			}
-		} while (my clickedButtonId == 0);
+		} while (my clickedButtonId == -1);
 	#elif cocoa
 		[[NSApplication sharedApplication] runModalForWindow: my d_cocoaShell];
 	#endif
