@@ -448,6 +448,7 @@ Thing_define (GuiDialog, GuiShell) {
 	GuiDialog_DefaultCallback d_defaultCallback;
 	Thing d_defaultBoss;
 	integer latestCreatedButtonId, clickedButtonId, defaultButtonId;   // especially if the dialog is blocking
+	GuiButton defaultButton;
 };
 
 /* GuiDialog creation flags: */

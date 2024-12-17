@@ -137,8 +137,10 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		my d_activateCallback = gui_blocking_dialog_cb_ok;
 		my d_activateBoss = dialog;
 		my d_sequentalIdInDialog = ++ dialog -> latestCreatedButtonId;
-		if (flags & GuiButton_DEFAULT)
+		if (flags & GuiButton_DEFAULT) {
 			dialog -> defaultButtonId = my d_sequentalIdInDialog;
+			dialog -> defaultButton = me.get();
+		}
 	}
 	#if gtk
 		my d_widget = gtk_button_new_with_label (Melder_peek32to8 (buttonText));
