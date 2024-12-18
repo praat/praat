@@ -134,6 +134,7 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 #include "melder_tensorio.h"   // requires MelderReadText
 #include "melder_sysenv.h"
 #include "melder_app.h"
+#include "melder_trust.h"
 #include "abcio_enums.h"
 #include "abcio.h"   // requires MelderReadText
 

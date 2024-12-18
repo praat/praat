@@ -570,6 +570,9 @@ void praat_runScript (conststring32 fileName, integer narg, Stackel args, Editor
 		Interpreter_readParameters (interpreter.get(), text.get());
 		Interpreter_getArgumentsFromArgs (interpreter.get(), narg, args);   // interpret caller-relative paths for infile/outfile/folder arguments
 		autoMelderFileSetCurrentFolder folder (& file);   // so that callee-relative file names can be used inside the script
+		autoScript script = Script_createFromFile (& file);
+		Script_rememberDuringThisAppSession_move (script.move());
+		interpreter -> scriptReference = Script_find (MelderFile_peekPath (& file));
 		Interpreter_run (interpreter.get(), text.get(), false);
 	} catch (MelderError) {
 		Melder_throw (U"Script ", & file, U" not completed.");   // don't refer to 'fileName', because its contents may have changed

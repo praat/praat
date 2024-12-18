@@ -7371,15 +7371,19 @@ static void do_askForTrust () {
 	const bool isAlreadyTrusted = theInterpreter -> scriptReference && theInterpreter -> scriptReference -> trusted;
 	if (! isAlreadyTrusted) {
 		conststring32 message [1+5] = { };
-		if (theInterpreter -> scriptReference || theInterpreter -> notebookReference) {
-			message [1] = theInterpreter -> scriptReference ? U"The script" : U"The notebook";
+		if (theInterpreter -> scriptReference) {
+			message [1] = U"The script";
 			message [2] = Melder_cat (U"“", theInterpreter -> scriptReference -> string.get(), U"”");
+		} else if (theInterpreter -> notebookReference) {
+			message [1] = U"The notebook";
+			message [2] = Melder_cat (U"“", theInterpreter -> notebookReference -> string.get(), U"”");
 		} else
 			message [1] =  U"Your untitled script or notebook";
 		message [3] = U"requests permission to control your computer (e.g. it may want to overwrite files,\n"
 			"delete folders, run system commands, and/or access the internet).";
 		message [4] = U"Allow this only if you fully trust the intentions and skills of the author(s).";
-		conststring32 option =
+		conststring32 option1 = U"CANCEL\n(because I don’t completely trust the authors’ skills and/or intentions)";
+		conststring32 option2 =
 			theInterpreter -> scriptReference ?
 				U"Yes, I allow this script to CONTROL MY COMPUTER\n(because I fully trust its authors’ skills and intentions)"
 			: theInterpreter -> notebookReference ?
@@ -7388,7 +7392,7 @@ static void do_askForTrust () {
 				U"Yes, I allow this script or notebook to CONTROL MY COMPUTER,\n(because I fully trust its authors’ skills and intentions)";
 		const bool trusted = GuiTrust_get (parentShell, optionalTrustWindowOwningEditor,
 			message [1], message [2], message [3], message [4], message [5],
-			option, nullptr, nullptr, nullptr, nullptr, theInterpreter
+			option1, option2, nullptr, nullptr, nullptr, theInterpreter
 		);
 		if (trusted) {
 			if (theInterpreter -> scriptReference)

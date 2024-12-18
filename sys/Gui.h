@@ -382,6 +382,7 @@ Thing_define (GuiButton, GuiControl) {
 	GuiButton_ActivateCallback d_activateCallback;
 	Thing d_activateBoss;
 	GuiMenu d_menu;   // for cascade buttons
+	integer d_sequentalIdInDialog;
 };
 
 /* GuiButton creation flags: */
@@ -446,7 +447,7 @@ using GuiDialog_DefaultCallback = MelderCallback <void, structThing /* boss */>;
 Thing_define (GuiDialog, GuiShell) {
 	GuiDialog_DefaultCallback d_defaultCallback;
 	Thing d_defaultBoss;
-	integer latestCreatedButtonId, clickedButtonId;   // especially if the dialog is blocking
+	integer latestCreatedButtonId, clickedButtonId, defaultButtonId;   // especially if the dialog is blocking
 };
 
 /* GuiDialog creation flags: */
@@ -460,7 +461,15 @@ GuiDialog GuiDialog_create (GuiWindow parent,
 
 void GuiDialog_setDefaultCallback (GuiDialog me, GuiDialog_DefaultCallback callback, Thing boss);
 
-integer GuiDialog_run (GuiDialog me);   // only if blocking; returns the clicked button (1, 2, 3...), or 0 for cancel
+integer GuiDialog_run (GuiDialog me);
+/*
+	Only for blocking dialogs.
+	Return value:
+		- if she clicked a button (with text), the sequentual id of the clicked button (1, 2, 3...) is returned
+		- if she clicked the Close button of the window, 0 is returned
+		- if she typed Enter, and there was a default button, the sequentual id of the default button is returned
+		- if she typed Enter and there was no default button, 0 is returned (i.e. this is the same as clicking the Close button)
+*/
 
 /********** GuiDrawingArea **********/
 
