@@ -190,9 +190,9 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		[button setUserData: me.get()];
 		[button setButtonType: NSMomentaryPushInButton];
 		if (bottom - top < 30)
-			[button setBezelStyle: NSRoundedBezelStyle];
+			[button setBezelStyle: NSBezelStylePush];   // fixed height, ...
 		else
-			[button setBezelStyle: NSRegularSquareBezelStyle];
+			[button setBezelStyle: NSBezelStyleFlexiblePush];   // ... custom height
 		[button setImagePosition: NSNoImage];
 		[button setBordered: YES];
 		static NSFont *theButtonFont;
@@ -203,8 +203,10 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		[button setTarget: (id) my d_widget];
 		[button setAction: @selector (_guiCocoaButton_activateCallback:)];
 		//[button setAutoresizingMask: NSViewNotSizable];
-		if (flags & GuiButton_DEFAULT)
+		if (flags & GuiButton_DEFAULT) {
 			[button setKeyEquivalent: @"\r"];
+			[[button window] setDefaultButtonCell: [button cell]];   // does nothing (and doesn't help flexible push buttons)
+		}
 		if (flags & GuiButton_CANCEL)
 			[button setKeyEquivalent: [NSString stringWithFormat: @"%c", 27]];   // Escape key
 		if (flags & GuiButton_ATTRACTIVE) {
