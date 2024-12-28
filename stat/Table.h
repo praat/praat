@@ -68,6 +68,7 @@ void Table_setNumericValue (Table me, integer row, integer column, double value)
 void Table_numericize_a (Table me, integer columnNumber);
 
 autoVEC Table_getAllNumbersInColumn (Table me, integer columnNumber);
+autoSTRVEC Table_getAllTextsInColumn (Table me, integer columnNumber);
 
 double Table_getQuantile (Table me, integer column, double quantile);
 double Table_getSum (Table me, integer column);
@@ -132,8 +133,6 @@ bool Table_isCellNumeric_ErrorFalse (Table me, integer rowNumber, integer column
 bool Table_isColumnNumeric_ErrorFalse (Table me, integer columnNumber);
 
 conststring32 Table_messageColumn (Table me, integer column);
-
-autoSTRVEC Table_getColumn (Table me, integer columnNumber);
 
 /* End of file Table.h */
 #endif

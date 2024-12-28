@@ -2,7 +2,7 @@
 #define _Strings_h_
 /* Strings.h
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2018,2020,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,11 @@
 
 #include "Strings_def.h"
 
+autoStrings Strings_createFromTexts (constSTRVEC const& texts);
 autoStrings Strings_createAsFileList (conststring32 path /* cattable */);
 autoStrings Strings_createAsFolderList (conststring32 path /* cattable */);
 autoStrings Strings_readFromRawTextFile (MelderFile file);
+
 void Strings_writeToRawTextFile (Strings me, MelderFile file);
 
 void Strings_randomize (Strings me);

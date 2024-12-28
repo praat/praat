@@ -48,7 +48,7 @@ Thing_define (ManPage, Thing) {
 	double recordingTime;
 	bool verbatimAware;
 	void invalidateCache () noexcept {
-		for (integer i = 1; i <= our paragraphs. size; i ++)
+		for (integer i = 1; i <= our paragraphs.size; i ++)
 			our paragraphs [i]. invalidateCache ();
 	}
 };

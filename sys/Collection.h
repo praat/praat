@@ -101,33 +101,33 @@ struct CollectionOf : structDaata {
 	CollectionOf<T>& operator= (const CollectionOf<T>&) = delete;   // disable copy assignment from an l-value of class T*
 	template <class Y> CollectionOf<T>& operator= (const CollectionOf<Y>&) = delete;   // disable copy assignment from an l-value of a descendant class of T*
 	CollectionOf<T> (CollectionOf<T>&& other) noexcept :
-		at (other. at),
-		size (other. size),
+		at (other.at),
+		size (other.size),
 		_capacity (other. _capacity),
 		_ownItems (other. _ownItems),
 		_ownershipInitialized (other. _ownershipInitialized)
 	{
-		other. at._elements = nullptr;
-		other. size = 0;
+		other.at._elements = nullptr;
+		other.size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
 		other. _ownershipInitialized = false;
 	}
 	template <class Y> CollectionOf<T> (CollectionOf<Y>&& other) noexcept :
-		at (other. at),
-		size (other. size),
+		at (other.at),
+		size (other.size),
 		_capacity (other. _capacity),
 		_ownItems (other. _ownItems),
 		_ownershipInitialized (other. _ownershipInitialized)
 	{
-		other. at._elements = nullptr;
-		other. size = 0;
+		other.at._elements = nullptr;
+		other.size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
 		other. _ownershipInitialized = false;
 	}
 	CollectionOf<T>& operator= (CollectionOf<T>&& other) noexcept {
-		if (other. at._elements != our at._elements) {
+		if (other.at._elements != our at._elements) {
 			if (our at._elements) {
 				if (our _ownItems)
 					for (integer i = 1; i <= our size; i ++)
@@ -136,20 +136,20 @@ struct CollectionOf : structDaata {
 				Melder_free (our at._elements);
 			}
 		}
-		our at = other. at;
-		our size = other. size;
+		our at = other.at;
+		our size = other.size;
 		our _capacity = other. _capacity;
 		our _ownItems = other. _ownItems;
 		our _ownershipInitialized = other. _ownershipInitialized;
-		other. at._elements = nullptr;
-		other. size = 0;
+		other.at._elements = nullptr;
+		other.size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
 		other. _ownershipInitialized = false;
 		return *this;
 	}
 	template <class Y> CollectionOf<T>& operator= (CollectionOf<Y>&& other) noexcept {
-		if (other. at._elements != our at._elements) {
+		if (other.at._elements != our at._elements) {
 			if (our at._elements) {
 				if (our _ownItems)
 					for (integer i = 1; i <= our size; i ++)
@@ -158,13 +158,13 @@ struct CollectionOf : structDaata {
 				Melder_free (our at._elements);
 			}
 		}
-		our at = other. at;
-		our size = other. size;
+		our at = other.at;
+		our size = other.size;
 		our _capacity = other. _capacity;
 		our _ownItems = other. _ownItems;
 		our _ownershipInitialized = other. _ownershipInitialized;
-		other. at._elements = nullptr;
-		other. size = 0;
+		other.at._elements = nullptr;
+		other.size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
 		other. _ownershipInitialized = false;

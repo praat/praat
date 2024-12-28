@@ -82,7 +82,7 @@ integer FormantPath_getUniqueCandidateInInterval (FormantPath me, double tmin, d
 
 void structFormantPath :: v1_info () {
 	structDaata :: v1_info ();
-	MelderInfo_writeLine (U"Number of Formant candidates: ", formantCandidates . size);
+	MelderInfo_writeLine (U"Number of Formant candidates: ", formantCandidates.size);
 	for (integer ic = 1; ic <= ceilings.size; ic ++)
 		MelderInfo_writeLine (U"Ceiling ", ic, U": ", ceilings [ic], U" Hz");
 }
@@ -121,7 +121,7 @@ autoTextGrid FormantPath_to_TextGrid_version0 (FormantPath me, INTVEC const& pat
 		if (path [ip] != previousPathIndex) {
 			const double t = Sampled_indexToX (me, ip) - 0.5 * my dx;
 			const integer currentIndex = IntervalTier_timeToLowIndex (tier, t);
-			TextInterval currentInterval = tier -> intervals . at [currentIndex];
+			TextInterval currentInterval = tier -> intervals.at [currentIndex];
 			autoTextInterval newInterval = TextInterval_create (t, my xmax, Melder_integer (path [ip]));
 			currentInterval -> xmax = t;
 			tier -> intervals. addItem_move (newInterval.move());
@@ -272,11 +272,12 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 }
 
 autoFormant FormantPath_extractFormant (FormantPath me) {
-	Formant formant = my formantCandidates. at [1];
+	Melder_assert (my formantCandidates.size > 0);
+	Formant formant = my formantCandidates.at [1];
 	autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, formant -> maxnFormants);
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		const integer candidate = FormantPath_getCandidateInFrame (me, iframe);
-		Formant source = reinterpret_cast <Formant> (my formantCandidates. at [candidate]);
+		Formant source = reinterpret_cast <Formant> (my formantCandidates.at [candidate]);
 		Formant_Frame targetFrame = & thy frames [iframe];
 		Formant_Frame sourceFrame = & source -> frames [iframe];
 		sourceFrame -> copy (targetFrame);
@@ -381,7 +382,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 }
 
 integer FormantPath_getNumberOfFormantTracks (FormantPath me) {
-	Melder_assert (my formantCandidates. size > 0);
+	Melder_assert (my formantCandidates.size > 0);
 	return my formantCandidates.at [1] -> maxnFormants;
 }
 
@@ -468,7 +469,7 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 			U"Not all parameter values should equal zero.");
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, numberOfCandidates + 0.5, numberOfCandidates, 1.0, 1.0);
 		for (integer candidate = 1; candidate <= numberOfCandidates; candidate ++) {
-			const Formant formanti = (Formant) my formantCandidates . at [candidate];
+			const Formant formanti = (Formant) my formantCandidates.at [candidate];
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
 				const double time = my x1 + (iframe - 1) * my dx;
 				const double startTime = time - 0.5 * windowLength;
@@ -487,8 +488,8 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 double FormantPath_getStressOfCandidate (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
 	constINTVEC const& parameters, double powerf, integer candidate)
 {
-	Melder_require (candidate > 0 && candidate <= my formantCandidates. size,
-		U"The candidate number should be between 1 and ", my formantCandidates. size, U".");
+	Melder_require (candidate > 0 && candidate <= my formantCandidates.size,
+		U"The candidate number should be between 1 and ", my formantCandidates.size, U".");
 	const Formant formant = (Formant) my formantCandidates.at [candidate];
 	autoFormantModeler fm = Formant_to_FormantModeler (formant, tmin, tmax,  parameters);
 	return FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
@@ -511,7 +512,7 @@ double FormantPath_getOptimalCeiling (FormantPath me, double tmin, double tmax, 
 
 void FormantPath_setPath (FormantPath me, double tmin, double tmax, integer selectedCandidate) {
 	Melder_require (selectedCandidate > 0 && selectedCandidate <= my formantCandidates.size,
-		U"The candidate number should be between 1 and ", my formantCandidates. size, U".");
+		U"The candidate number should be between 1 and ", my formantCandidates.size, U".");
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	Function_intersectRangeWithDomain (me, & tmin, & tmax);
 	const double ceilingFrequency = my ceilings [selectedCandidate];

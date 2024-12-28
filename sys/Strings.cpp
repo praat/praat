@@ -65,6 +65,17 @@ conststring32 structStrings :: v_getVectorStr (const integer icol) const {
 	return stringValue ? stringValue : U"";
 }
 
+autoStrings Strings_createFromTexts (constSTRVEC const& texts) {
+	try {
+		autoStrings me = Thing_new (Strings);
+		my strings = copy_STRVEC (texts);
+		my maintainInvariants ();
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Strings object not created from texts.");
+	}
+}
+
 autoStrings Strings_createAsFileList (conststring32 path /* cattable */) {
 	try {
 		autoStrings me = Thing_new (Strings);
