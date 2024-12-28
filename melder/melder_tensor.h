@@ -399,7 +399,7 @@ struct matrix {
 	explicit matrix (vector<T> const& vec, integer givenNrow, integer givenNcol)
 		: matrix (vec.cells, givenNrow, givenNcol)
 	{
-		Melder_assert (givenNrow * givenNcol <= vec. size);
+		Melder_assert (givenNrow * givenNcol <= vec.size);
 	}
 	vector<T> operator[] (integer rowNumber) const {
 		return vector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
@@ -470,7 +470,7 @@ struct constmatrix {
 	explicit constmatrix (vector<T> const& vec, integer givenNrow, integer givenNcol)
 		: constmatrix (vec.cells, givenNrow, givenNcol)
 	{
-		Melder_assert (givenNrow * givenNcol <= vec. size);
+		Melder_assert (givenNrow * givenNcol <= vec.size);
 	}
 	constvector<T> operator[] (integer rowNumber) const {
 		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
@@ -565,7 +565,7 @@ struct matrixview {
 	explicit matrixview (vectorview<T> const& vec, integer givenNrow, integer givenNcol) :
 			matrixview (vec.cells, givenNrow, givenNcol, givenNcol * vec.stride, vec.stride)
 	{
-		Melder_assert (givenNrow * givenNcol <= vec. size);
+		Melder_assert (givenNrow * givenNcol <= vec.size);
 	}
 	vectorview<T> operator[] (integer rowNumber) const {
 		return vectorview<T> (our firstCell + (rowNumber - 1) * our rowStride, our ncol, our colStride);
@@ -626,7 +626,7 @@ struct constmatrixview {
 	explicit constmatrixview (constvectorview<T> const& vec, integer givenNrow, integer givenNcol) :
 			constmatrixview (vec.cells, givenNrow, givenNcol, givenNcol * vec.stride, vec.stride)
 	{
-		Melder_assert (givenNrow * givenNcol <= vec. size);
+		Melder_assert (givenNrow * givenNcol <= vec.size);
 	}
 	constvectorview<T> operator[] (integer i) const {
 		return constvectorview<T> (our firstCell + (i - 1) * our rowStride, our ncol, our colStride);

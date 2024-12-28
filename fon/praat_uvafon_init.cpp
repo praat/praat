@@ -2613,6 +2613,16 @@ DIRECT (NEW_Spectrum_to_SpectrumTier_peaks) {
 
 // MARK: New
 
+FORM (NEW1_Strings_createFromTexts, U"Create Strings from texts", nullptr) {
+	WORD (name, U"Name", U"texts")
+	STRINGARRAY_LINES (10, texts, U"Texts", { U"one line", U"another line", U"yet another line" })
+	OK
+DO
+	CREATE_ONE
+		autoStrings result = Strings_createFromTexts (texts);
+	CREATE_ONE_END (name);
+}
+
 FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...") {
 	SENTENCE (name, U"Name", U"fileList")
 	static structMelderFolder homeFolder { };
@@ -3017,6 +3027,8 @@ void praat_uvafon_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"-- new strings --",
 				nullptr, 1, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Strings", nullptr, 1, nullptr);
+			praat_addMenuCommand (U"Objects", U"New", U"Create Strings from texts...",
+					nullptr, 2, NEW1_Strings_createFromTexts);
 			praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...",
 					nullptr, 2, NEW1_Strings_createAsFileList);
 			praat_addMenuCommand (U"Objects", U"New", U"Create Strings as folder list... || Create Strings as directory list...",

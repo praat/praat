@@ -903,12 +903,12 @@ void classSpeechSynthesizer_initClass () {
 		}
 		{// scope
 			static autoSTRVEC list;   // singleton
-			list = Table_getColumn (theSpeechSynthesizerLanguagePropertiesTable, 1);
+			list = Table_getAllTextsInColumn (theSpeechSynthesizerLanguagePropertiesTable, 1);
 			theSpeechSynthesizerLanguageNames = list.get();
 		}
 		{// scope
 			static autoSTRVEC list;   // singleton
-			list = Table_getColumn (theSpeechSynthesizerVoicePropertiesTable, 1);
+			list = Table_getAllTextsInColumn (theSpeechSynthesizerVoicePropertiesTable, 1);
 			theSpeechSynthesizerVoiceNames = list.get();
 		}
 	} catch (MelderError) {

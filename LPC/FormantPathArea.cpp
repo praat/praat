@@ -49,7 +49,8 @@ void structFormantPathArea :: v_formantsInfo () const {
 	} else {
 		FormantPath formantPath = our formantPath();
 		VEC ceilings = formantPath -> ceilings.get();
-		Formant formant = formantPath -> formantCandidates . at [1];
+		Melder_assert (formantPath -> formantCandidates.size > 0);
+		Formant formant = formantPath -> formantCandidates.at [1];
 		MelderInfo_writeLine (U"Formant analysis parameters could only be approximated from the FormantPath");
 		MelderInfo_writeLine (U"Formant time step: ", formantPath -> dx, U" seconds");
 		const double duration = formantPath -> xmax - formantPath-> xmin;

@@ -2488,7 +2488,7 @@ void KlattGrid_replaceAmplitudeTier (KlattGrid me, kKlattGridFormantType formant
 autoFormantGrid KlattGrid_extractFormantGrid (KlattGrid me, kKlattGridFormantType formantType) {
 	try {
 		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
-		Melder_require ((*fg) -> formants . size > 0,
+		Melder_require ((*fg) -> formants.size > 0,
 			KlattGrid_getFormantName (formantType), U"s are not defined.");
 		autoFormantGrid thee = Data_copy (fg->get());
 		return thee;
