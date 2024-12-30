@@ -20,7 +20,7 @@
 oo_DEFINE_CLASS (FormantPath, Sampled)
 
 	oo_COLLECTION_OF (OrderedOf, formantCandidates, Formant, 2)
-	oo_VEC (ceilings, formantCandidates. size)
+	oo_VEC (ceilings, formantCandidates.size)
 	
 	#if oo_DECLARING
 		oo_OBJECT (TextGrid, 0, path)

@@ -190,14 +190,14 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 				U"The domains of the Electroglottogram and the peaks should be equal.");
 			Melder_require (my xmin == valleys -> xmin && my xmax == valleys -> xmax,
 				U"The domains of the Electroglottogram and the valleys should be equal.");
-			Melder_require (peaks -> points. size > 1 && valleys -> points. size > 1,
+			Melder_require (peaks -> points.size > 1 && valleys -> points.size > 1,
 				U"The AmplitudeTiers cannot be empty.");
 			Melder_require (closingThreshold > 0.0 && closingThreshold < 1.0,
 				U"The closing threshold should be a number between 0.0 and 1.0.");
 			autoAmplitudeTier thee = AmplitudeTier_create (my xmin, my xmax);
 			double peakAmplitudeLeft = RealTier_getValueAtIndex (peaks, 1);
 			double peakTimeLeft = peaks -> points.at [1] -> number;
-			for (integer ipoint = 2; ipoint <= peaks -> points. size - 1; ipoint ++) {
+			for (integer ipoint = 2; ipoint <= peaks -> points.size - 1; ipoint ++) {
 				const double peakAmplitudeRight = RealTier_getValueAtIndex (peaks, ipoint);
 				const double peakTimeRight = peaks -> points.at [ipoint] -> number;
 				const integer indexValley = AnyTier_timeToNearestIndex (valleys->asAnyTier(), peakTimeRight);
@@ -228,7 +228,7 @@ autoTextGrid Electroglottogram_to_TextGrid_closedGlottis (Electroglottogram me, 
 		autoTextGrid  thee = TextGrid_create (my xmin, my xmax, U"closedGlottis", U"");
 		IntervalTier intervalTier = static_cast <IntervalTier> (thy tiers -> at [1]);
 		double previousOpeningTime = my xmin;
-		for (integer ipoint = 1; ipoint <= peaks -> points. size; ipoint ++) {
+		for (integer ipoint = 1; ipoint <= peaks -> points.size; ipoint ++) {
 			const RealPoint peak = peaks -> points.at [ipoint];
 			const double peakPosition = peak -> number;
 			const double peakAmplitude = peak -> value;

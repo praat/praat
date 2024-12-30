@@ -148,7 +148,17 @@ static void gui_blocking_dialog_cb_default (GuiDialog me) {
 		[NSApp stopModal];
 	#endif
 }
+#if motif
+std::vector <HWND> theOtherWindows;
+BOOL CALLBACK enumWindowsProc (HWND window, LPARAM lParam) {
+	HWND modalWindow = (HWND) lParam;
+	if (window != modalWindow)
+		theOtherWindows. push_back (window);
+	return true;
+}
+#endif
 integer GuiDialog_run (GuiDialog me) {
+	//TRACE
 	GuiDialog_setDefaultCallback (me, gui_blocking_dialog_cb_default, me);
 	my clickedButtonId = -1;
 	/*
@@ -162,21 +172,43 @@ integer GuiDialog_run (GuiDialog me) {
 	#if gtk
 		gtk_dialog_run (GTK_DIALOG (my d_gtkWindow));
 	#elif motif
+		theOtherWindows. clear ();
+		EnumThreadWindows (GetCurrentThreadId (), enumWindowsProc, (LPARAM) my d_xmShell -> window);
+		for (HWND window: theOtherWindows)
+			EnableWindow (window, false);
 		UpdateWindow (my d_xmShell -> window);   // the only way to actually show the contents of the dialog (or my d_widget -> window)
+		if (my defaultButton)
+			SetFocus (my defaultButton -> d_widget -> window);   // otherwise, no key-down messges will be received by this window
 		do {
 			MSG event;
 			GetMessage (& event, nullptr, 0, 0);
+			if (event. message == WM_COMMAND)
+				trace (event. message);
 			if (event. hwnd) {
 				GuiObject object = (GuiObject) GetWindowLongPtr (event. hwnd, GWLP_USERDATA);
+				/*
+					In case the window goes out of and into focus, the default button will no longer be in focus,
+					but (fortunately) the window will continue to respond to keys.
+					`IsDialogMessage` will no longer handle the Enter key, though, so we should capture the Enter key here.
+					(The window will react even after the user clicks in another window, i.e. when we expect to be out of focus!)
+					This is a HACK.
+				*/
+				if (event. message == WM_KEYDOWN && LOWORD (event. wParam) == VK_RETURN && my defaultButton) {
+					my clickedButtonId = my defaultButtonId;
+					break;
+				}
+
 				if (IsDialogMessage (my d_xmShell -> window, & event)) {   // not my d_widget -> window, because that would prevent closing
 					trace (U"dialog message ", event. message);
 				} else if (event. message == WM_PAINT) {
 					trace (U"paint ", event. message);
-					TranslateMessage (& event);
-					DispatchMessage (& event);
+					//TranslateMessage (& event);
+					//DispatchMessage (& event);
 				}
 			}
 		} while (my clickedButtonId == -1);
+		for (HWND window: theOtherWindows)
+			EnableWindow (window, true);
 	#elif cocoa
 		[[NSApplication sharedApplication] runModalForWindow: my d_cocoaShell];
 	#endif

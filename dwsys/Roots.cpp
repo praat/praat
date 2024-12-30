@@ -268,7 +268,7 @@ void Polynomial_into_Roots (constPolynomial me, mutableRoots r, mutableWorkvecto
 		(*root) . real (wr [ioffset + i]);
 		(*root) . imag (wi [ioffset + i]);
 	}
-	r -> numberOfRoots = r -> roots . size; // maintain invariant
+	r -> numberOfRoots = r -> roots.size; // maintain invariant
 	Roots_Polynomial_polish (r, me);
 }
 
@@ -324,7 +324,7 @@ void Polynomial_into_Roots_old (constPolynomial me, mutableRoots r, VEC const& w
 		(*root) . real (wr [ioffset + i]);
 		(*root) . imag (wi [ioffset + i]);
 	}
-	r -> numberOfRoots = r -> roots . size; // maintain invariant
+	r -> numberOfRoots = r -> roots.size; // maintain invariant
 	Roots_Polynomial_polish (r, me);
 }
 

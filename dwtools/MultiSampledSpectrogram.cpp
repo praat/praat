@@ -222,7 +222,7 @@ void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g
 	*/
 	MelderExtremaWithInit powerExtrema;
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
-		FrequencyBin frequencyBin = my frequencyBins . at [ifreq];
+		FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
 		if (Sampled_getWindowSamples (frequencyBin, tmin, tmax, & itmin, & itmax) == 0)
 			continue;
 		for (integer iframe = itmin; iframe <= itmax; iframe ++) {

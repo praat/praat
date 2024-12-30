@@ -511,7 +511,19 @@ autoVEC Table_getAllNumbersInColumn (Table me, integer columnNumber) {
 		}
 		return result;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannot get numbers of column ", columnNumber, U".");
+		Melder_throw (me, U": cannot get all numbers in column ", columnNumber, U".");
+	}
+}
+
+autoSTRVEC Table_getAllTextsInColumn (Table me, integer columnNumber) {
+	try {
+		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
+		autoSTRVEC strings (my rows.size);
+		for (integer irow = 1; irow <= my rows.size; irow ++)
+			strings [irow] = Melder_dup (Table_getStringValue_a (me, irow, columnNumber));
+		return strings;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot get all texts in column ", columnNumber, U".");
 	}
 }
 
@@ -2301,18 +2313,6 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Table object not read from character-separated text file ", file, U".");
-	}
-}
-
-autoSTRVEC Table_getColumn (Table me, integer columnNumber) {
-	try {
-		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
-		autoSTRVEC strings (my rows.size);
-		for (integer irow = 1; irow <= my rows.size; irow ++)
-			strings [irow] = Melder_dup (Table_getStringValue_a (me, irow, columnNumber));
-		return strings;
-	} catch (MelderError) {
-		Melder_throw (U"A string array could not be created from the column in the Table.");
 	}
 }
 

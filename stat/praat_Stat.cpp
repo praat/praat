@@ -399,6 +399,16 @@ DO
 	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
+FORM (QUERY_ONE_FOR_STRING_ARRAY__Table_getAllTextsInColumn, U"Table: Get all texts in column", nullptr) {
+	SENTENCE (columnLabel, U"Column label", U"")
+	OK
+DO
+	QUERY_ONE_FOR_STRING_ARRAY (Table)
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnLabel);
+		autoSTRVEC result = Table_getAllTextsInColumn (me, columnNumber);
+	QUERY_ONE_FOR_STRING_ARRAY_END
+}
+
 FORM (QUERY_ONE_FOR_INTEGER__Table_getColumnIndex, U"Table: Get column index", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
@@ -1216,6 +1226,8 @@ praat_addAction1 (classDistributions, 0, U"Generate", nullptr, 0, nullptr);
 				nullptr, 1, QUERY_ONE_FOR_REAL__Table_getValue);
 		praat_addAction1 (classTable, 1, U"Get all numbers in column...",
 				nullptr, 1, QUERY_ONE_FOR_REAL_VECTOR__Table_getAllNumbersInColumn);
+		praat_addAction1 (classTable, 1, U"Get all texts in column...",
+				nullptr, 1, QUERY_ONE_FOR_STRING_ARRAY__Table_getAllTextsInColumn);
 		praat_addAction1 (classTable, 1, U"Search column...",
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Table_searchColumn);
 		praat_addAction1 (classTable, 1, U"-- statistics --",
