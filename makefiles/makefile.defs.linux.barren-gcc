@@ -1,11 +1,10 @@
-# File: makefile.defs.linux.barren
-
+# File: makefile.defs.linux.barren-gcc
 # System: Linux without GUI, network, graphics, and sound
-# Paul Boersma 2021-12-27
+# Paul Boersma 2025-01-01
 
-CC ?= gcc
-CXX ?= g++
-LINK ?= $(CXX)
+CC = gcc
+CXX = g++
+LINK = $(CXX)
 
 COMMONFLAGS = -DNO_GRAPHICS -DNO_NETWORK -D_FILE_OFFSET_BITS=64 -DUNIX -Dlinux \
 	-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
@@ -23,4 +22,4 @@ RANLIB = ls
 ICON =
 MAIN_ICON =
 
-INSTALL = cp ./praat_barren /usr/bin
+INSTALL = install -p praat_barren /usr/local/bin

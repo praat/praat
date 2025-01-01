@@ -2,7 +2,7 @@
 #define _melder_real_h_
 /* melder_real.h
  *
- * Copyright (C) 1992-2021,2023,2024 Paul Boersma
+ * Copyright (C) 1992-2021,2023-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,26 @@
 
 /*
 	The following is checked in praat.h.
+
+	Ideally, "long double" is 80 bits ("extended") precision (but stored in 96 or 128 bits), or even really 96 or 128 bits.
+	And ideally, long doubles should be fast.
+
+	They *are* fast on Intel64 processors, which have hardware support for them.
+	But they are *very* slow (i.e. software-emulated) on ARM64 processors, which is why Xcode on the Mac and Clang on Windows
+	typically regard a "long double" as being 64 bits, i.e. identical to a "double".
+	On ARM64 Linux, Gcc regards "long double" as 128 bits, but this is very slow (more than 100 times slower than "double"),
+	so we give up and define "long double" as "double" on ARM64 Linux, just as was already the case on ARM64 Windows and ARM64 Mac.
+
+	The condition could therefore be
+		#if defined (linux) && (defined (__aarch64__) || defined (_M_ARM64_))
+	but just to make sure that no other Windows or Mac compilers happen to do 128-bit long double emulation,
+	we include Windows and Mac into our condition:
 */
-using longdouble = long double;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
+#if defined (__aarch64__) || defined (_M_ARM64_)
+	using longdouble = double;
+#else
+	using longdouble = long double;
+#endif
 
 static const double undefined = (0.0/0.0);   // NaN
 
