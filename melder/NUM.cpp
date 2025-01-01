@@ -190,7 +190,7 @@ static longdouble NUMsumPower_longdouble (constVECVU const& vec, const longdoubl
 			longdouble, sum,
 			integer, vec.size,
 			const double *p = vec. firstCell,
-			powl (longdouble (fabs (*p)), power),
+			( sizeof (longdouble) == 8 ? pow (longdouble (fabs (*p)), power) : powl (longdouble (fabs (*p)), power) ),
 			p += 1
 		)
 		return sum;
@@ -199,7 +199,7 @@ static longdouble NUMsumPower_longdouble (constVECVU const& vec, const longdoubl
 			longdouble, sum,
 			integer, vec.size,
 			const double *p = vec. firstCell,
-			powl (longdouble (fabs (*p)), power),
+			( sizeof (longdouble) == 8 ? pow (longdouble (fabs (*p)), power) : powl (longdouble (fabs (*p)), power) ),
 			p += vec.stride
 		)
 		return sum;
