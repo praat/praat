@@ -606,7 +606,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				MelderString_append (& buffer_graphical, U"\t");
 				line += 2;
 				while (*line != U'\0') {
-					if (*line == U'|')
+					if (line [0] == U'|' && Melder_isHorizontalSpace (line [-1]) && (Melder_isHorizontalSpace (line [1]) || line [1] == U'\0'))
 						MelderString_appendCharacter (& buffer_graphical, U'\t');
 					else
 						MelderString_appendCharacter (& buffer_graphical, *line);
