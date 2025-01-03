@@ -61,24 +61,25 @@ static const struct stylesInfo {
 
 static void writeLinkAsHtml (ManPages me, mutablestring32 link, conststring32 linkText, MelderString *buffer, conststring32 pageTitle) {
 	/*
-		The first character of the link text can have the wrong case.
-	*/
-	integer linkPageNumber = ManPages_lookUp (me, link);
-	if (linkPageNumber == 0)
-		Melder_throw (U"No such manual page: ", link, U" (from page “", pageTitle, U"”).");
-	link [0] = my pages.at [linkPageNumber] -> title [0];
-	/*
 		We write the link in the following format:
 			<a href="link.html">linkText</a>
-		If "link" (initial lower case) is not in the manual, we write "Link.html" instead.
-		All spaces and strange symbols in "link" are replaced by underscores,
-		because it will be a file name (see ManPages_writeAllToHtmlDir).
-		The file name will have no more than 30 or 60 characters, and no less than 1.
 	*/
 	MelderString_append (buffer, U"<a href=\"");
 	if (str32nequ (link, U"\\FI", 3)) {
 		MelderString_append (buffer, link + 3);   // file link
 	} else {
+		/*
+			If "link" (initial lower case) is not in the manual, we write "Link.html" instead.
+			All spaces and strange symbols in "link" are replaced by underscores,
+			because it will be a file name (see ManPages_writeAllToHtmlDir).
+			The file name will have no more than 30 or 60 characters, and no less than 1.
+
+			The first character of the link text can have the wrong case.
+		*/
+		integer linkPageNumber = ManPages_lookUp (me, link);
+		if (linkPageNumber == 0)
+			Melder_throw (U"No such manual page: ", link, U" (from page “", pageTitle, U"”).");
+		link [0] = my pages.at [linkPageNumber] -> title [0];
 		char32 *q = link;
 		if (! ManPages_lookUp_caseSensitive (me, link)) {
 			MelderString_appendCharacter (buffer, Melder_toUpperCase (link [0]));
