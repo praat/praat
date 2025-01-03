@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2024 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
+ * Copyright (C) 1992-2025 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -824,10 +824,10 @@ static void charDraw (Graphics anyGraphics, int xDC, int yDC, _Graphics_widechar
 
 			CGFloat descent = CTFontGetDescent (ctFont);
 
-            CFMutableAttributedStringRef string = CFAttributedStringCreateMutable (kCFAllocatorDefault, length);
-            CFAttributedStringReplaceString (string, CFRangeMake (0, 0), (CFStringRef) s);
-            CFRange textRange = CFRangeMake (0, length);
-            CFAttributedStringSetAttribute (string, textRange, kCTFontAttributeName, ctFont);
+			CFMutableAttributedStringRef string = CFAttributedStringCreateMutable (kCFAllocatorDefault, length);
+			CFAttributedStringReplaceString (string, CFRangeMake (0, 0), (CFStringRef) s);
+			CFRange textRange = CFRangeMake (0, length);
+			CFAttributedStringSetAttribute (string, textRange, kCTFontAttributeName, ctFont);
 
 			/*
 				We don't set kerning explicitly, so that Praat will use standard kerning.
@@ -840,33 +840,35 @@ static void charDraw (Graphics anyGraphics, int xDC, int yDC, _Graphics_widechar
 				paragraphStyle = CTParagraphStyleCreate (paragraphSettings, 1);
 				Melder_assert (paragraphStyle != nullptr);
 			}
-            CFAttributedStringSetAttribute (string, textRange, kCTParagraphStyleAttributeName, paragraphStyle);
+			CFAttributedStringSetAttribute (string, textRange, kCTParagraphStyleAttributeName, paragraphStyle);
 
-            MelderColour colour = lc -> link ? Melder_BLUE : my colour;
-            CGColorRef color = CGColorCreateGenericRGB (colour.red, colour.green, colour.blue, 1.0);
+			MelderColour colour = lc -> link ? Melder_BLUE : my colour;
+			CGColorRef color = CGColorCreateGenericRGB (colour.red, colour.green, colour.blue, 1.0);
 			Melder_assert (color != nullptr);
-            CFAttributedStringSetAttribute (string, textRange, kCTForegroundColorAttributeName, color);
+			CFAttributedStringSetAttribute (string, textRange, kCTForegroundColorAttributeName, color);
 
-            /*
-            	Draw.
+			/*
+				Draw.
 			*/
-    
-            CGContextSetTextMatrix (my d_macGraphicsContext, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
-            CFRelease (color);
 
-            CGContextSaveGState (my d_macGraphicsContext);
-            CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC);
-            if (my yIsZeroAtTheTop)
-            	CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
-            CGContextRotateCTM (my d_macGraphicsContext, my textRotation * NUMpi / 180.0);
+			CGContextSetTextMatrix (my d_macGraphicsContext, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
+			CFRelease (color);
+
+			CGContextSaveGState (my d_macGraphicsContext);
+			CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC);
+			if (my yIsZeroAtTheTop)
+				CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+			CGContextRotateCTM (my d_macGraphicsContext, my textRotation * NUMpi / 180.0);
 
 			CTLineRef line = CTLineCreateWithAttributedString (string);
 			CTLineDraw (line, my d_macGraphicsContext);
 			CFRelease (line);
-            CGContextRestoreGState (my d_macGraphicsContext);
+			CGContextRestoreGState (my d_macGraphicsContext);
 
-            // Clean up
-            CFRelease (string);
+			/*
+				Clean up.
+			*/
+			CFRelease (string);
 			CFRelease (s);
 			//CFRelease (ctFont);
 			return;

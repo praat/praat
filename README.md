@@ -499,8 +499,8 @@ and type something like `export DISPLAY=192.168.1.99:0` (depending on your local
 in your OrbStack window (or into your `.bashrc` file), followed by `praat` into your OrbStack window;
 the Praat-for-Linux Objects and Picture windows will then show up on your Mac screen.
 
-On our 2023 Mac, building Praat this way takes 63 seconds for the ARM64 edition
-and 150 seconds (under emulation) for the Intel64 edition (optimization level O3).
+On our 2023 Mac, building Praat this way from scratch takes 42 seconds for the ARM64 edition
+and 130 seconds (under emulation) for the Intel64 edition (optimization level O3).
 
 To build `praat_barren`, create a folder `praatsb`, and define
 
