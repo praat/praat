@@ -220,5 +220,17 @@ constexpr kleenean kleenean_UNKNOWN = kleenean (-1);
 constexpr kleenean kleenean_NO = kleenean (0);
 constexpr kleenean kleenean_YES = kleenean (1);
 
+constexpr integer factorial_int53_MAXIMUM_ARGUMENT = 18;
+constexpr int64 factorial_int53 [1+factorial_int53_MAXIMUM_ARGUMENT] = {
+	1, 1, 2, 6, 24, 120, 720, 5'040, 40'320, 362'880, 3'628'800, 39'916'800, 479'001'600,
+	6'227'020'800, 87'178'291'200, 1'307'674'368'000, 20'922'789'888'000, 355'687'428'096'000, 6'402'373'705'728'000
+};
+constexpr integer factorial_int64_MAXIMUM_ARGUMENT = 20;
+constexpr int64 factorial_int64 [1+factorial_int64_MAXIMUM_ARGUMENT] = {
+	1, 1, 2, 6, 24, 120, 720, 5'040, 40'320, 362'880, 3'628'800, 39'916'800, 479'001'600,
+	6'227'020'800, 87'178'291'200, 1'307'674'368'000, 20'922'789'888'000, 355'687'428'096'000, 6'402'373'705'728'000,
+	121'645'100'408'832'000, 2'432'902'008'176'640'000
+};
+
 /* End of file melder_int.h */
 #endif
