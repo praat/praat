@@ -430,6 +430,20 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case SET_BACKQUOTE_IS_VERBATIM: {
 				Graphics_setBackquoteIsVerbatim (thee, (bool) get);
 			} break;
+			case RECTANGLE_TEXT_WRAP_AND_TRUNCATE: {
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
+				const integer length = iget;
+				const conststring8 text_utf8 = sget (length);
+				Graphics_rectangleText_wrapAndTruncate (thee, x1, x2, y1, y2, Melder_peek8to32 (text_utf8));
+			} break;
+			case RECTANGLE_TEXT_MAXIMAL_FIT: {
+				const double x1 = get, x2 = get, minimumHorizontalMargin_in_textHeights = get, minimumHorizontalMargin_mm = get;
+				const double y1 = get, y2 = get, minimumVerticalMargin_in_textHeights = get, minimumVerticalMargin_mm = get;
+				const integer length = iget;
+				const conststring8 text_utf8 = sget (length);
+				Graphics_rectangleText_maximalFit (thee, x1, x2, minimumHorizontalMargin_in_textHeights, minimumHorizontalMargin_mm,
+						y1, y2, minimumVerticalMargin_in_textHeights, minimumVerticalMargin_mm, Melder_peek8to32 (text_utf8));
+			} break;
 			default:
 				my recording = wasRecording;
 				Melder_flushError (U"Graphics_play: unknown opcode (", opcode, U").\n", p [-1], U" ", p [1]);

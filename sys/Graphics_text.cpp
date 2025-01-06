@@ -1875,113 +1875,195 @@ double Graphics_textWidth (Graphics me, conststring32 txt) {
 	return width / my scaleX;
 }
 
-void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, conststring32 txt) {
-	_Graphics_widechar *plc, *startOfLine;
-	double width = 0.0, lineHeight = (1.1 / 72) * my fontSize * my resolution;
-	const integer x1DC = x1 * my scaleX + my deltaX + 2, x2DC = x2 * my scaleX + my deltaX - 2;
-	const integer y1DC = y1 * my scaleY + my deltaY, y2DC = y2 * my scaleY + my deltaY;
-	const int availableHeight = ( my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC ), availableWidth = x2DC - x1DC;
-	const int linesAvailable = Melder_clippedLeft (1, int (availableHeight / lineHeight));
-	if (availableWidth <= 0)
-		return;
-	if (! initBuffer (txt))
-		return;
-	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
-	charSizes (me, theWidechar, true);
-	int linesNeeded = 1;
-	for (plc = theWidechar; plc -> kar > U'\t'; plc ++) {
-		width += plc -> width;
-		if (width > availableWidth) {
-			if (++ linesNeeded > linesAvailable)
-				break;
-			width = 0.0;
-		}	
-	}
-	const int lines = Melder_clippedRight (linesNeeded, linesAvailable);
-	startOfLine = theWidechar;
-	for (int iline = 1; iline <= lines; iline ++) {
-		width = 0.0;
-		for (plc = startOfLine; plc -> kar > U'\t'; plc ++) {
-			bool flush = false;
+void Graphics_rectangleText_wrapAndTruncate (Graphics me, double x1, double x2, double y1, double y2, conststring32 text) {
+	if (my recording) {
+		const conststring8 text_utf8 = Melder_peek32to8 (text);
+		const integer length = Melder8_length (text_utf8) / (integer) sizeof (double) + 1;
+		op (RECTANGLE_TEXT_WRAP_AND_TRUNCATE, 5 + length); put (x1); put (x2); put (y1); put (y2); sput (text_utf8, length)
+	} else {
+		double width = 0.0, lineHeight = (1.1 / 72) * my fontSize * my resolution;
+		const integer x1DC = x1 * my scaleX + my deltaX + 2, x2DC = x2 * my scaleX + my deltaX - 2;
+		const integer y1DC = y1 * my scaleY + my deltaY, y2DC = y2 * my scaleY + my deltaY;
+		const int availableHeight = ( my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC ), availableWidth = x2DC - x1DC;
+		const int linesAvailable = Melder_clippedLeft (1, int (availableHeight / lineHeight));
+		if (availableWidth <= 0)
+			return;
+		if (! initBuffer (text))
+			return;
+		parseTextIntoCellsLinesRuns (me, text, theWidechar);
+		charSizes (me, theWidechar, true);
+		int linesNeeded = 1;
+		for (_Graphics_widechar *plc = theWidechar; plc -> kar > U'\t'; plc ++) {
 			width += plc -> width;
-			if (width > availableWidth)
-				flush = true;
-			/*
-				Trick for incorporating end-of-text.
-			*/
-			if (! flush && plc [1]. kar <= U'\t') {
-				Melder_assert (iline == lines);
-				plc ++;   // brr
-				flush = true;
-			}
-			if (flush) {
-				const char32 saveKar = plc -> kar;
-				const int direction = ( my yIsZeroAtTheTop ? -1 : 1 );
-				const int x = (
-					my horizontalTextAlignment == (int) Graphics_LEFT ?
-						x1DC
-					: my horizontalTextAlignment == (int) Graphics_RIGHT ?
-						x2DC
-					:
-						0.5 * (x1 + x2) * my scaleX + my deltaX
-				);
-				const int y = (
-					my verticalTextAlignment == Graphics_BOTTOM ?
-						y1DC + direction * (lines - iline) * lineHeight
-					: my verticalTextAlignment == Graphics_TOP ?
-						y2DC - direction * (iline - 1) * lineHeight
-					:
-						0.5 * (y1 + y2) * my scaleY + my deltaY + 0.5 * direction * (lines - iline*2 + 1) * lineHeight
-				);
-				plc -> kar = U'\0';
-				drawOneCell (me, x, y, startOfLine);
-				plc -> kar = saveKar;
-				startOfLine = plc;
-				break;
+			if (width > availableWidth) {
+				if (++ linesNeeded > linesAvailable)
+					break;
+				width = 0.0;
 			}
 		}
+		const int lines = Melder_clippedRight (linesNeeded, linesAvailable);
+		_Graphics_widechar *startOfLine = theWidechar;
+		for (int iline = 1; iline <= lines; iline ++) {
+			width = 0.0;
+			for (_Graphics_widechar *plc = startOfLine; plc -> kar > U'\t'; plc ++) {
+				bool flush = false;
+				width += plc -> width;
+				if (width > availableWidth)
+					flush = true;
+				/*
+					Trick for incorporating end-of-text.
+				*/
+				if (! flush && plc [1]. kar <= U'\t') {
+					Melder_assert (iline == lines);
+					plc ++;   // brr
+					flush = true;
+				}
+				if (flush) {
+					const char32 saveKar = plc -> kar;
+					const int direction = ( my yIsZeroAtTheTop ? -1 : 1 );
+					const int x = (
+						my horizontalTextAlignment == (int) Graphics_LEFT ?
+							x1DC
+						: my horizontalTextAlignment == (int) Graphics_RIGHT ?
+							x2DC
+						:
+							0.5 * (x1 + x2) * my scaleX + my deltaX
+					);
+					const int y = (
+						my verticalTextAlignment == Graphics_BOTTOM ?
+							y1DC + direction * (lines - iline) * lineHeight
+						: my verticalTextAlignment == Graphics_TOP ?
+							y2DC - direction * (iline - 1) * lineHeight
+						:
+							0.5 * (y1 + y2) * my scaleY + my deltaY + 0.5 * direction * (lines - iline*2 + 1) * lineHeight
+					);
+					plc -> kar = U'\0';
+					drawOneCell (me, x, y, startOfLine);
+					plc -> kar = saveKar;
+					startOfLine = plc;
+					break;
+				}// endif flush
+			}// next plc
+		}// next iline
+	}// endif my recording
+}
+
+static void nonrecorded_Graphics_text (Graphics me, double xWC, double yWC, conststring32 text) {
+	if (my wrapWidth == 0.0 && str32chr (text, U'\n') && my textRotation == 0.0) {
+		const double lineSpacingWC = (1.2/72.0) * my fontSize * my resolution / fabs (my scaleY);
+		integer numberOfLines = 1;
+		for (const char32 *p = & text [0]; *p != U'\0'; p ++)
+			if (*p == U'\n')
+				numberOfLines ++;
+		yWC += (
+			my verticalTextAlignment == Graphics_TOP ?
+				0.0
+			: my verticalTextAlignment == Graphics_HALF ?
+				0.5 * (numberOfLines - 1) * lineSpacingWC
+			:
+				(numberOfLines - 1) * lineSpacingWC
+		);
+		autostring32 linesToDraw = Melder_dup_f (text);
+		const char32 *p = & linesToDraw [0];
+		for (;;) {
+			char32 * const newline = str32chr (p, U'\n');
+			if (newline)
+				*newline = U'\0';
+			nonrecorded_Graphics_text (me, xWC, yWC, p);   // recurse
+			yWC -= lineSpacingWC;
+			if (newline)
+				p = newline + 1;
+			else
+				break;
+		}
+		return;
+	}
+	if (! initBuffer (text))
+		return;
+	parseTextIntoCellsLinesRuns (me, text, theWidechar);
+	drawCells (me, xWC, yWC, theWidechar);
+}
+
+void Graphics_text (Graphics me, double xWC, double yWC, conststring32 text) {
+	if (my recording) {
+		const conststring8 text_utf8 = Melder_peek32to8 (text);
+		const integer length = Melder8_length (text_utf8) / (integer) sizeof (double) + 1;
+		op (TEXT, 3 + length); put (xWC); put (yWC); sput (text_utf8, length)
+	} else {
+		nonrecorded_Graphics_text (me, xWC, yWC, text);
 	}
 }
 
-void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
+void Graphics_rectangleText_maximalFit (Graphics me,
+	const double x1, const double x2, const double minimumHorizontalMargin_in_textHeights, const double minimumHorizontalMargin_mm,
+	const double y1, const double y2, const double minimumVerticalMargin_in_textHeights, const double minimumVerticalMargin_mm,
+	conststring32 text
+) {
 	if (my recording) {
-		const conststring8 txt_utf8 = Melder_peek32to8 (txt);
-		const integer length = Melder8_length (txt_utf8) / (integer) sizeof (double) + 1;
-		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt_utf8, length)
+		const conststring8 text_utf8 = Melder_peek32to8 (text);
+		const integer length = Melder8_length (text_utf8) / (integer) sizeof (double) + 1;
+		op (RECTANGLE_TEXT_MAXIMAL_FIT, 9 + length);
+		put (x1); put (x2); put (minimumHorizontalMargin_in_textHeights); put (minimumHorizontalMargin_mm);
+		put (y1); put (y2); put (minimumVerticalMargin_in_textHeights);   put (minimumVerticalMargin_mm);
+		sput (text_utf8, length)
 	} else {
-		if (my wrapWidth == 0.0 && str32chr (txt, U'\n') && my textRotation == 0.0) {
-			const double lineSpacingWC = (1.2/72.0) * my fontSize * my resolution / fabs (my scaleY);
-			integer numberOfLines = 1;
-			for (const char32 *p = & txt [0]; *p != U'\0'; p ++)
-				if (*p == U'\n')
-					numberOfLines ++;
-			yWC += (
-				my verticalTextAlignment == Graphics_TOP ?
-					0.0
-				: my verticalTextAlignment == Graphics_HALF ?
-					0.5 * (numberOfLines - 1) * lineSpacingWC
-				:
-					(numberOfLines - 1) * lineSpacingWC
-			);
-			autostring32 linesToDraw = Melder_dup_f (txt);
-			const char32 *p = & linesToDraw [0];
-			for (;;) {
-				char32 * const newline = str32chr (p, U'\n');
-				if (newline)
-					*newline = U'\0';
-				Graphics_text (me, xWC, yWC, p);
-				yWC -= lineSpacingWC;
-				if (newline)
-					p = newline + 1;
-				else
-					break;
-			}
-			return;
+		const double save_fontSize = my fontSize;
+		my fontSize = 100;
+		double textWidth_wc = Graphics_textWidth (me, text);
+		double textHeight_mm = my fontSize * (25.4 / 72);
+		double textHeight_wc = Graphics_dyMMtoWC (me, textHeight_mm);
+		/*
+			The number of 0.99 or 0.95 guards against rounding errors in font sizes (they may always be integers).
+		*/
+		#ifdef macintosh
+			const double precision = 0.99;
+		#else
+			const double precision = 0.95;
+		#endif
+		double horizontalMargin_mm =
+				std::max (minimumHorizontalMargin_in_textHeights * textHeight_mm, minimumHorizontalMargin_mm);
+		double horizontalMargin_wc = Graphics_dxMMtoWC (me, horizontalMargin_mm);
+		double maximumHorizontalScaling = std::max (0.001, precision * (x2 - x1  - 2.0 * horizontalMargin_wc) / textWidth_wc);
+		double verticalMargin_mm = std::max (minimumVerticalMargin_in_textHeights * textHeight_mm, minimumVerticalMargin_mm);
+		double verticalMargin_wc = Graphics_dyMMtoWC (me, verticalMargin_mm);
+		double maximumVerticalScaling = std::max (0.001, (y2 - y1 - 2.0 * verticalMargin_wc) / textHeight_wc);
+		double scaling = std::min (maximumHorizontalScaling, maximumVerticalScaling);
+		my fontSize *= scaling;
+		for (int improvementIteration = 1; improvementIteration <= 10; improvementIteration ++) {
+			textWidth_wc *= scaling;
+			textHeight_mm *= scaling;
+			textHeight_wc *= scaling;
+			horizontalMargin_mm = std::max (minimumHorizontalMargin_in_textHeights * textHeight_mm, minimumHorizontalMargin_mm);
+			horizontalMargin_wc = Graphics_dxMMtoWC (me, horizontalMargin_mm);
+			maximumHorizontalScaling = std::max (0.001, precision * (x2 - x1  - 2.0 * horizontalMargin_wc) / textWidth_wc);
+			verticalMargin_mm = std::max (minimumVerticalMargin_in_textHeights * textHeight_mm, minimumVerticalMargin_mm);
+			verticalMargin_wc = Graphics_dyMMtoWC (me, verticalMargin_mm);
+			maximumVerticalScaling = std::max (0.001, (y2 - y1 - 2.0 * verticalMargin_wc) / textHeight_wc);
+			//maximumVerticalScaling = 0.72 * (y2 - y1) / textHeight_wc;
+			scaling = std::min (maximumHorizontalScaling, maximumVerticalScaling);
+			if (scaling == 1.0)
+				break;   // we have converged
+			my fontSize *= scaling;
+			trace (improvementIteration, U" w wc ", textWidth_wc, U" h mm ", textHeight_mm, U" h wc ", textHeight_wc,
+					U" m mm ", horizontalMargin_mm, U" scaling ", scaling, U" ", text);
 		}
-		if (! initBuffer (txt))
-			return;
-		parseTextIntoCellsLinesRuns (me, txt, theWidechar);
-		drawCells (me, xWC, yWC, theWidechar);
+		if (scaling != 1.0) {
+			//TRACE
+			trace (U"0 w wc ", textWidth_wc, U" h mm ", textHeight_mm, U" h wc ", textHeight_wc,
+					U" m mm ", horizontalMargin_mm, U" scaling ", scaling, U" ", text);
+		}
+		const double xWC =
+			my horizontalTextAlignment == (int) Graphics_LEFT  ? x1 + horizontalMargin_wc :
+			my horizontalTextAlignment == (int) Graphics_RIGHT ? x2 - horizontalMargin_wc :
+			0.5 * (x1 + x2)
+		;
+		const double yWC =
+			my verticalTextAlignment == Graphics_BOTTOM ? y1 + verticalMargin_wc :
+			my verticalTextAlignment == Graphics_TOP    ? y2 - verticalMargin_wc :
+			0.5 * (y1 + y2)
+		;
+		nonrecorded_Graphics_text (me, xWC, yWC, text);
+		my fontSize = save_fontSize;
 	}
 }
 
