@@ -1,6 +1,6 @@
 # File: makefile.defs.linux.pulse-clang
 # System: Linux
-# David Weenink and Paul Boersma 2025-01-01
+# David Weenink and Paul Boersma 2025-01-02
 
 CC = clang
 CXX = clang
@@ -14,10 +14,15 @@ COMMONFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `$(
 CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libc++ -Wshadow
+#CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libstdc++ -Wshadow
+#CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
 EXECUTABLE = praat
 
-LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lc++ -lc++abi -lm -lpulse -lasound -lpthread
+#LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lc++ -lc++abi -lm -lpulse -lasound -lpthread
+LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lc++ -lm -lpulse -lasound -lpthread
+#LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -lpthread /usr/lib/llvm-10/lib/libc++.a /usr/lib/llvm-10/lib/libc++abi.a 
+#LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -lpthread
 
 AR = ar
 RANLIB = ls

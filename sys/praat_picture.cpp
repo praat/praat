@@ -712,6 +712,55 @@ DO
 	GRAPHICS_NONE_END
 }
 
+FORM (GRAPHICS_RectangleText_MaximalFit, U"Praat picture: Rectangle text (maximal fit)", nullptr) {
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	OPTIONMENU_ENUM (kGraphics_horizontalAlignment, horizontalAlignment,
+			U"Horizontal alignment", kGraphics_horizontalAlignment::LEFT)
+	REAL (minimumHorizontalMargin_in_textHeights, U"Minimal horizontal margin (in text heights)", U"0.10")
+	REAL (minimumHorizontalMargin_mm, U"Minimal horizontal margin (mm)", U"0.5")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toY, U"To y", U"1.0")
+	OPTIONMENUx (verticalAlignment, U"Vertical alignment", 2, 0)
+		OPTION (U"bottom")
+		OPTION (U"half")
+		OPTION (U"top")
+	REAL (minimumVerticalMargin_in_textHeights, U"Minimal vertical margin (in text heights)", U"0.18")
+	REAL (minimumVerticalMargin_mm, U"Minimal vertical margin (mm)", U"0.25")
+	TEXTFIELD (text, U"Text", U"", 4)
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+		Graphics_setInner (GRAPHICS);
+		Graphics_rectangleText_maximalFit (GRAPHICS, fromX, toX, minimumHorizontalMargin_in_textHeights, minimumHorizontalMargin_mm,
+				fromY, toY, minimumVerticalMargin_in_textHeights, minimumVerticalMargin_mm, text);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
+
+FORM (GRAPHICS_RectangleText_WrapAndTruncate, U"Praat picture: Rectangle text (wrap & truncate)", nullptr) {
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	OPTIONMENU_ENUM (kGraphics_horizontalAlignment, horizontalAlignment,
+			U"Horizontal alignment", kGraphics_horizontalAlignment::LEFT)
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toY, U"To y", U"1.0")
+	OPTIONMENUx (verticalAlignment, U"Vertical alignment", 2, 0)
+		OPTION (U"bottom")
+		OPTION (U"half")
+		OPTION (U"top")
+	TEXTFIELD (text, U"Text", U"", 4)
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+		Graphics_setInner (GRAPHICS);
+		Graphics_rectangleText_wrapAndTruncate (GRAPHICS, fromX, toX, fromY, toY, text);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
+
 FORM (GRAPHICS_DrawLine, U"Praat picture: Draw line", nullptr) {
 	REAL (fromX, U"From x", U"0.0")
 	REAL (fromY, U"From y", U"0.0")
@@ -1814,6 +1863,8 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 
 	praat_addMenuCommand (U"Picture", U"World", U"Text...", nullptr, 0, GRAPHICS_Text);
 	praat_addMenuCommand (U"Picture", U"World", U"Text special...", nullptr, 0, GRAPHICS_TextSpecial);
+	praat_addMenuCommand (U"Picture", U"World", U"Rectangle text (maximal fit)...", nullptr, 0, GRAPHICS_RectangleText_MaximalFit);
+	praat_addMenuCommand (U"Picture", U"World", U"Rectangle text (wrap & truncate)...", nullptr, 0, GRAPHICS_RectangleText_WrapAndTruncate);
 	praat_addMenuCommand (U"Picture", U"World", U"-- line --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"World", U"Draw line...", nullptr, 0, GRAPHICS_DrawLine);
 	praat_addMenuCommand (U"Picture", U"World", U"Draw arrow...", nullptr, 0, GRAPHICS_DrawArrow);

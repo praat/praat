@@ -346,7 +346,7 @@ static void do_drawIntervalTier (TextGridArea me, IntervalTier tier, integer iti
 			const double t1 = std::max (my startWindow(), startInterval);
 			const double t2 = std::min (my endWindow(), endInterval);
 			Graphics_setColour (my graphics(), DataGui_defaultForegroundColour (me, intervalIsSelected));
-			Graphics_textRect (my graphics(), t1, t2, 0.0, 1.0, interval -> text.get());
+			Graphics_rectangleText_wrapAndTruncate (my graphics(), t1, t2, 0.0, 1.0, interval -> text.get());
 			Graphics_setColour (my graphics(), Melder_BLACK);
 		}
 
