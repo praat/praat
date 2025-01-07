@@ -180,7 +180,19 @@ void Graphics_text (Graphics me, double xWC, double yWC, const MelderArg& first,
 	Graphics_text (me, xWC, yWC, Melder_cat (first, rest...));
 }
 
-void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, conststring32 text /* cattable */);
+void Graphics_rectangleText_maximalFit (
+	Graphics me,
+	const double x1, const double x2,
+	const double minimumHorizontalMargin_in_textHeights,   // typically 0.10, i.e. 10 percent of the resulting text height
+	const double minimumHorizontalMargin_mm,   // typically 0.5 mm (both this constraint and the previous will be honoured)
+	const double y1, const double y2,
+	const double minimumVerticalMargin_in_textHeights,   // e.g. 0.18, which would mean a relative line spacing of 1.36 if rectangles touch
+			// a value of 0.19 happens to make the actual font size 12 points
+			// for a rectangle with a height of "3" (with the initial 1344x756 size of the Demo window and axes of [0, 100] x [0, 100]).
+	const double minimumVerticalMargin_mm,   // typically 0.25 mm (both this constraint and the previous will be honoured)
+	conststring32 text /* cattable */
+);
+void Graphics_rectangleText_wrapAndTruncate (Graphics me, double x1, double x2, double y1, double y2, conststring32 text /* cattable */);
 double Graphics_textWidth       (Graphics me, conststring32 text /* cattable */);
 double Graphics_textWidth_ps    (Graphics me, conststring32 text /* cattable */, bool useSilipaPS);
 double Graphics_textWidth_ps_mm (Graphics me, conststring32 text /* cattable */, bool useSilipaPS);
