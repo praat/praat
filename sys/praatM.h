@@ -2,7 +2,7 @@
 #define _praatM_h_
 /* praatM.h
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,7 +279,7 @@
 				labelText, strings, defaultOptionNumber);
 
 /*
-	If the supplied string is not in the list, LISTSTR will return 0 as well as the supplied string, for later handling.
+	If the supplied string is not in the list, LISTNUMSTR will return 0 as well as the supplied string, for later handling.
 */
 #define LISTNUMSTR(integerVariable, stringVariable, labelText, strings, defaultOptionNumber)  \
 		static integer integerVariable; \
@@ -1164,6 +1164,12 @@
 #define CONVERT_TWO_AND_ONE_TO_ONE(klas1,klas2)  \
 	FIND_TWO_AND_ONE (klas1,klas2)
 #define CONVERT_TWO_AND_ONE_TO_ONE_END(...)  \
+	TO_ONE__ (__VA_ARGS__) \
+	CONVERT_END__
+
+#define CONVERT_ONE_AND_TWO_TO_ONE(klas1,klas2)  \
+	FIND_ONE_AND_TWO (klas1,klas2)
+#define CONVERT_ONE_AND_TWO_TO_ONE_END(...)  \
 	TO_ONE__ (__VA_ARGS__) \
 	CONVERT_END__
 

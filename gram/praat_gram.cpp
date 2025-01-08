@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2024 Paul Boersma
+ * Copyright (C) 1997-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -554,6 +554,18 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" violations")
 }
 
+DIRECT (QUERY_ONE_FOR_BOOLEAN__OTGrammar_areAllOutputsDistinguishable) {
+	QUERY_ONE_FOR_BOOLEAN (OTGrammar)
+		const integer result = OTGrammar_areAllOutputsDistinguishable (me);
+	QUERY_ONE_FOR_BOOLEAN_END (result ? U" (all pairs are distinguishable)" : U" (at least one equivalent pair)")
+}
+
+DIRECT (CONVERT_EACH_TO_ONE_OTGrammar_tabulateEquivalentPairs) {
+	CONVERT_EACH_TO_ONE (OTGrammar)
+		autoTable result = OTGrammar_tabulateEquivalentPairs (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 // MARK: Query (parse)
 
 FORM (QUERY_ONE_FOR_INTEGER__OTGrammar_getWinner, U"Get winner", nullptr) {
@@ -905,6 +917,12 @@ DO
 		OTGrammar_learnFromPartialOutputs (me, you, evaluationNoise, updateRule, honourLocalRankings,
 				plasticity, relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history);
 	MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_WITH_HISTORY_END
+}
+
+DIRECT (CONVERT_ONE_AND_TWO_TO_ONE__OTGrammar_Stringses_tabulateAllCorrectRankings) {
+	CONVERT_ONE_AND_TWO_TO_ONE (OTGrammar, Strings)
+		autoTable result = OTGrammar_tabulateAllCorrectRankings (me, you, him);
+	CONVERT_ONE_AND_TWO_TO_ONE_END (my name.get())
 }
 
 // MARK: OTGRAMMAR & DISTRIBUTIONS
@@ -1713,7 +1731,7 @@ void praat_uvafon_gram_init () {
 			HELP__OTGrammar_help);
 	praat_addAction1 (classOTGrammar, 0, U"View & Edit || Edit", nullptr, GuiMenu_ATTRACTIVE,
 			EDITOR_ONE__OTGrammar_viewAndEdit);
-	praat_addAction1 (classOTGrammar, 0, U"Draw -", nullptr, 0, nullptr);
+	praat_addAction1 (classOTGrammar, 0, U"Draw", nullptr, 0, nullptr);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau...", nullptr, 0,
 				GRAPHICS_EACH__OTGrammar_drawTableau);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau (narrowly)...", nullptr, 0,
@@ -1737,6 +1755,10 @@ void praat_uvafon_gram_init () {
 				QUERY_ONE_FOR_STRING__OTGrammar_getCandidate);
 		praat_addAction1 (classOTGrammar, 1, U"Get number of violations...", nullptr, 1,
 				QUERY_ONE_FOR_INTEGER__OTGrammar_getNumberOfViolations);
+		praat_addAction1 (classOTGrammar, 1, U"Are all outputs distinguishable?", nullptr, 1,
+				QUERY_ONE_FOR_BOOLEAN__OTGrammar_areAllOutputsDistinguishable);
+		praat_addAction1 (classOTGrammar, 1, U"Tabulate equivalent pairs", nullptr, 1,
+				CONVERT_EACH_TO_ONE_OTGrammar_tabulateEquivalentPairs);
 		praat_addAction1 (classOTGrammar, 1, U"-- parse --", nullptr, 1, nullptr);
 		praat_addAction1 (classOTGrammar, 1, U"Get winner...", nullptr, 1,
 				QUERY_ONE_FOR_INTEGER__OTGrammar_getWinner);
@@ -1864,6 +1886,8 @@ void praat_uvafon_gram_init () {
 			MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_WITH_HISTORY__OTGrammar_Strings_learnFromPartialOutputs);
 	praat_addAction2 (classOTGrammar, 1, classStrings, 2, U"Learn...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_WEAK_AND_TWO__OTGrammar_Stringses_learn);
+	praat_addAction2 (classOTGrammar, 1, classStrings, 2, U"Tabulate all correct rankings", nullptr, 0,
+			CONVERT_ONE_AND_TWO_TO_ONE__OTGrammar_Stringses_tabulateAllCorrectRankings);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, U"Learn from partial outputs...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_WITH_HISTORY__OTGrammar_Distributions_learnFromPartialOutputs);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, U"Learn from partial outputs (rrip)...", nullptr, 0,
