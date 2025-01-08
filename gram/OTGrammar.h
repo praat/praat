@@ -2,7 +2,7 @@
 #define _OTGrammar_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2012,2014-2018,2021 Paul Boersma
+ * Copyright (C) 1997-2012,2014-2018,2021,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ void OTGrammar_sort (OTGrammar me);
 
 void OTGrammar_newDisharmonies (OTGrammar me, double spreading);
 
-integer OTGrammar_getTableau (OTGrammar me, conststring32 input);
+integer OTGrammar_getTableau (constOTGrammar me, conststring32 input);
 int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, integer itab2, integer icand2);
 	/*
 	 * Function:
@@ -143,8 +143,11 @@ void OTGrammar_setConstraintPlasticity (OTGrammar me, integer constraint, double
 
 void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName);
 void OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, bool singly);
+bool OTGrammar_areAllOutputsDistinguishable (OTGrammar me);
+autoTable OTGrammar_tabulateEquivalentPairs (OTGrammar me);
 void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistribution thee);
 void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions thee, integer columnNumber);
+autoTable OTGrammar_tabulateAllCorrectRankings (constOTGrammar me, constStrings inputs, constStrings partialOutputs);
 
 void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file);
 
