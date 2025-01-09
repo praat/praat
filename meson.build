@@ -1,5 +1,5 @@
 # build system for praat
-# David Weenink 4 January 2024
+# David Weenink 3 January 2025
 
 project('praat', 'cpp', 'c',
 	default_options : ['cpp_std=c++17', 'c_std=c99']
@@ -17,7 +17,7 @@ if os_name == 'linux'
 		-Wunused -Wunused-parameter -Wuninitialized'''.split()
 	compiler_arguments_cpp = common_compiler_arguments
 	compiler_arguments_c = ['-std=gnu99'] + common_compiler_arguments + ['-Wshadow']
-	system_libs = '-no-pie -lm -lpulse -lasound -lpthread -L/usr/lib/x86_64-linux-gnu'.split()
+	system_libs = '-no-pie -lpulse -lasound -lpthread -L/usr/lib/x86_64-linux-gnu'.split()
 	
 elif os_name == 'freebsd'
 	
@@ -29,7 +29,7 @@ elif os_name == 'cygwin'
 elif os_name == 'android' # chrome os
 
 	common_compiler_arguments = '''-DUNIX -Dlinux -Dchrome -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64
-		-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized'''
+		-Wreturn-type -Wunusedninja: error: '/usr/lib/x86_64-linux-gnu/libm.a', needed by 'main/praat', missing and no known rule to make  -Wunused-parameter -Wuninitialized'''
 	compiler_arguments_cpp = ['cpp_std=g++'] + common_compiler_arguments + ['-Wshadow']
 	compiler_arguments_c = ['-std=gnu99'] + common_compiler_arguments + ['-Werror=missing-prototypes -Werror=implicit']
 	system_libs = '-no-pie -lm -lpulse -lasound -static-libgcc -static-libstdc++ -L/usr/lib/x86_64-linux-gnu'.split()
@@ -57,6 +57,7 @@ espeak_inc = include_directories ('external/espeak')
 flac_inc = include_directories ('external/flac')
 gsl_inc = include_directories ('external/gsl')
 mp3_inc = include_directories ('external/mp3')
+num_inc = include_directories ('external/num')
 opusfile_inc = include_directories ('external/opusfile')
 portaudio_inc = include_directories ('external/portaudio')
 vorbis_inc = include_directories ('external/vorbis')
@@ -69,7 +70,7 @@ add_project_arguments (compiler_arguments_c, language: 'c')
 add_project_arguments (compiler_arguments_cpp, language: 'cpp')
 
 praat_dirs = ['artsynth', 'dwsys', 'dwtools', 'EEG', 'FFNet', 'fon', 'foned', 'gram', 'kar', 'LPC', 'melder', 'sensors', 'stat', 'sys']
-praat_external_dirs = ['clapack', 'espeak', 'flac', 'gsl', 'glpk', 'lame', 'mp3', 'opusfile', 'portaudio', 'vorbis']
+praat_external_dirs = ['clapack', 'espeak', 'flac', 'gsl', 'glpk', 'lame', 'num', 'mp3', 'opusfile', 'portaudio', 'vorbis']
 
 foreach dir : praat_dirs
 	subdir (dir)
@@ -79,6 +80,6 @@ foreach dir : praat_external_dirs
 endforeach
 
 praat_libs_dep = [libartsynth_dep, libdwsys_dep, libdwtools_dep, libEEG_dep, libFFNet_dep, libfon_dep, libfoned_dep, libgram_dep, libkar_dep, libLPC_dep, libmelder_dep, libsensors_dep, libstat_dep, libsys_dep]
-praat_external_libs_dep = [libclapack_dep, libespeak_dep, libflac_dep, libgsl_dep, libglpk_dep, liblame_dep, libmp3_dep, libopusfile_dep, libportaudio_dep, libvorbis_dep]
+praat_external_libs_dep = [libclapack_dep, libespeak_dep, libflac_dep, libgsl_dep, libglpk_dep, liblame_dep, libmp3_dep, libnum_dep, libopusfile_dep, libportaudio_dep, libvorbis_dep]
 
 subdir ('main')

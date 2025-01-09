@@ -24,6 +24,7 @@
 
 #include "FileInMemory.h"
 #include "SampledToSampledWorkspace.h"
+#include "NUMmedian.h"
 #include "Praat_tests.h"
 
 #include "Graphics.h"
@@ -669,7 +670,11 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			timeMultiThreading (durationOfSound);
 			//  Gflops is --undefined--
 		} break;
-		
+		case kPraatTests::TIME_MEDIAN: {
+			timeMedian ();
+			//  Gflops is --undefined--
+		} break;
+
 	}
 	MelderInfo_writeLine (Melder_single (n / t * 1e-9), U" Gflop/s");
 	MelderInfo_close ();
