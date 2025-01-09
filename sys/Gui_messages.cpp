@@ -1,6 +1,6 @@
 /* Gui_messages.cpp
  *
- * Copyright (C) 1992-2018,2020-2024 Paul Boersma,
+ * Copyright (C) 1992-2018,2020-2025 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -160,7 +160,7 @@ static GuiButton theProgressCancelButton = nullptr;
 
 static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *label1, GuiLabel *label2, GuiButton *cancelButton, bool hasMonitor) {
 	trace (U"creating the dialog");
-	*dia = GuiDialog_create (Melder_topShell, 200, 100, 400, hasMonitor ? 430 : 200, U"Work in progress",
+	*dia = GuiDialog_create (Melder_topShell, 200, 100, 500, hasMonitor ? 530 : 200, U"Work in progress",
 		#if gtk || cocoa
 			progress_dia_close, nullptr,
 		#else
@@ -169,14 +169,14 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 		GuiDialog_Modality::MODELESS);
 
 	trace (U"creating the labels");
-	*label1 = GuiLabel_createShown (*dia, 3, 403, 0, Gui_LABEL_HEIGHT, U"label1", 0);
-	*label2 = GuiLabel_createShown (*dia, 3, 403, 30, 30 + Gui_LABEL_HEIGHT, U"label2", 0);
+	*label1 = GuiLabel_createShown (*dia, 3, 503, 0, Gui_LABEL_HEIGHT, U"label1", 0);
+	*label2 = GuiLabel_createShown (*dia, 3, 503, 30, 30 + Gui_LABEL_HEIGHT, U"label2", 0);
 
 	trace (U"creating the scale");
 	*scale = GuiProgressBar_createShown (*dia, 3, -3, 70, 110, 0);
 
 	trace (U"creating the cancel button");
-	*cancelButton = GuiButton_createShown (*dia, 0, 400, 170, 170 + Gui_PUSHBUTTON_HEIGHT,
+	*cancelButton = GuiButton_createShown (*dia, 0, 500, 170, 170 + Gui_PUSHBUTTON_HEIGHT,
 		U"Interrupt",
 		#if gtk
 			progress_cancel_btn_press, nullptr,
@@ -227,7 +227,7 @@ static void * gui_monitor (double progress, conststring32 message) {
 	{
 		if (! dia) {
 			_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, true);
-			drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430,
+			drawingArea = GuiDrawingArea_createShown (dia, 0, 500, 230, 530,
 					gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 			GuiThing_show (dia);
 			graphics = Graphics_create_xmdrawingarea (drawingArea);
