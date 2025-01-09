@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2023 David Weenink, 2015,2023,2024 Paul Boersma
+ * Copyright (C) 1993-2023, 2025 David Weenink, 2015,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4641,6 +4641,12 @@ DIRECT (QUERY_ONE_FOR_REAL_VECTOR__Permutation_listValues) {
 		for (integer i = 1; i <= my numberOfElements; i++)
 			result [i] = my p [i];
 	QUERY_ONE_FOR_REAL_VECTOR_END
+}
+
+DIRECT (QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfInversions) {
+	QUERY_ONE_FOR_INTEGER (Permutation)
+		const integer result = Permutation_getNumberOfInversions (me);
+	QUERY_ONE_FOR_INTEGER_END (U" (inversions)")
 }
 
 FORM (QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue, U"Permutation: Get index", U"Permutation: Get index...") {
@@ -10030,6 +10036,8 @@ void praat_David_init () {
 				nullptr, 1, QUERY_ONE_FOR_REAL_VECTOR__Permutation_listValues);
 		praat_addAction1 (classPermutation, 1, U"Get index...",
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue);
+		praat_addAction1 (classPermutation, 1, U"Get number of inversions",
+				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfInversions);
 	praat_addAction1 (classPermutation, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classPermutation, 0, U"Permute randomly (in-place)...",
 				nullptr, 1, MODIFY__Permutation_permuteRandomlyInplace);

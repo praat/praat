@@ -1,6 +1,6 @@
 /* Permutation.cpp
  *
- * Copyright (C) 2005-2022 David Weenink
+ * Copyright (C) 2005-2022, 2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include <time.h>
 #include "Permutation.h"
 #include "NUM2.h"
+#include "NUMpermutations.h"
 
 #include "oo_DESTROY.h"
 #include "Permutation_def.h"
@@ -549,4 +550,14 @@ autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kSt
 	}	
 }
 
+integer Permutation_getNumberOfInversions (Permutation me) {
+	try {
+		autoINTVEC cpy = copy_INTVEC (my p.get());
+		autoINTVEC buffer = raw_INTVEC (my numberOfElements);
+		const integer numberOfInversions = countNumberOfInversions (cpy.get(), 1, my numberOfElements, buffer.get());
+		return numberOfInversions;
+	} catch (MelderError) {
+		Melder_throw (me, U"Could not determine the number of inversions.");
+	}
+}
 /* End of Permutation.cpp */
