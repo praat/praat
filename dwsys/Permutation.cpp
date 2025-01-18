@@ -29,7 +29,7 @@
 #include <time.h>
 #include "Permutation.h"
 #include "NUM2.h"
-#include "NUMpermutations.h"
+#include "NUMinversionCounter.h"
 
 #include "oo_DESTROY.h"
 #include "Permutation_def.h"
@@ -524,6 +524,7 @@ autoPermutation Permutation_moveElementsToTheFront (Permutation me, constINTVEC 
 			bool inSubset = false;
 			for (integer j = 1; j <= subsetPositions.size; j++)
 				if (my p [i] == thy p [j]) {
+				thy p [++ nextPos] = my p [i];
 					inSubset = true;
 					break;
 				}
@@ -552,12 +553,11 @@ autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kSt
 
 integer Permutation_getNumberOfInversions (Permutation me) {
 	try {
-		autoINTVEC cpy = copy_INTVEC (my p.get());
-		autoINTVEC buffer = raw_INTVEC (my numberOfElements);
-		const integer numberOfInversions = countNumberOfInversions (cpy.get(), 1, my numberOfElements, buffer.get());
-		return numberOfInversions;
+		struct InversionCounter<integer> counter (my p.get());
+		return counter.getNumberOfInversions ();
 	} catch (MelderError) {
 		Melder_throw (me, U"Could not determine the number of inversions.");
 	}
 }
+
 /* End of Permutation.cpp */

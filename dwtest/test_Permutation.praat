@@ -1,5 +1,5 @@
 # test_Permutation.praat
-# djmw 20050710, 20070820, 20100525, 20100819, 20110418, 20220825
+# djmw 20050710, 20070820, 20100525, 20100819, 20110418, 20220825, 20250110
 
 appendInfoLine: "test_Permutation.praat"
 
@@ -12,6 +12,7 @@ appendInfoLine: "test_Permutation.praat"
 @multiply
 @jump
 @distributionTest: 10, 10000
+@inversions
 
 appendInfoLine: "test_Permutation OK"
 
@@ -234,6 +235,41 @@ procedure testPermutePart
 	appendInfoLine: tab$, "Permute part OK"
 endproc
 
+procedure inversions
+	appendInfoLine: tab$, "Count inversions"
+	.size = 20
+	for .i from 2 to .size
+		.p = Create Permutation: "p", .i, "yes"
+		# 1,2 (,3,...)
+		.inversions = Get number of inversions
+		assert .inversions = 0
+		for .k to .i - 1
+			for .j from .k + 1 to .i
+				selectObject: .p
+				Swap positions: .k, .j
+				.inversions = Get number of inversions
+				.n = 2 * (.j - .k) - 1
+				assert .inversions = .n  ; '.i' '.k' '.j' '.inversions' = '.n'
+				Swap positions: .k, .j ; restore identity
+			endfor
+		endfor
 
+		.pr = Rotate: 1, 2, 1
+		# 2, 1, 3, 4, ..
+		.inversions = Get number of inversions
+		assert .inversions = 1
+		removeObject:  .pr,  .p
+	endfor
+
+	.p = Create Permutation: "p", 10, "yes"
+	# 1,2,3,4,5,6,7,8,9,10 -> 0
+	.pi = Interleave: 0, 0, 5, 0
+	# 1,6,2,7,3,8,4,9,5,10 -> 10
+	.inversions = Get number of inversions
+	assert .inversions = 10
+
+	removeObject: .pi, .p
+	appendInfoLine: tab$, "Count inversions OK"
+endproc
 
 

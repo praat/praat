@@ -49,7 +49,10 @@ void Permutation_sort (Permutation me);
 /* Set p [1..n] = 1,..n */
 
 integer Permutation_getNumberOfInversions (Permutation me);
-/* Count the number of times when i < j && v [i] >  v[j]. */
+/*
+	Count the number of times when i < j && p [i] >  p [j].
+	E.g. {1,2,3} -> 0 iversions; {3,2,1} -> 3; {1,3,2} -> 1.
+ */
 
 void Permutation_permuteRandomly_inplace (Permutation me, integer from, integer to);
 
