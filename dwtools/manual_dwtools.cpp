@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2024 David Weenink
+ * Copyright (C) 1993-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -6252,6 +6252,10 @@ MAN_END
 
 /********************* References **************************************/
 
+MAN_BEGIN (U"Alexandrescu (2017)", U"djmw", 20250120)
+NORMAL (U"A. Alexandrescu (2017): \"Fast deterministic selection.\" %%Symposium on experimental algorithms (SEA 2017):% 1\\--18.")
+MAN_END
+
 MAN_BEGIN (U"Anderson et al. (1999)", U"djmw", 20200131)
 NORMAL (U"E. Anderson, Z. Bai, C. Bischof, S. Blackford, J. Demmel, J. Dongarra, J. Du Croz, A. Greenbaum, "
 	"S. Hammarling, A. McKenney & D. Sorensen (1999): %%LAPACK users' guide%. Third edition. Philadelphia, PA: Society for Industrial and Applied Mathematics.")
@@ -6464,6 +6468,11 @@ MAN_END
 MAN_BEGIN (U"Marsaglia & Tsang (2000)", U"djmw", 20190620)
 NORMAL (U"G. Marsaglia & W.W. Tsang (2000): \"A simple method for generating gamma variables.\""
 	" %%ACM Transactions on Mathematical Software% #26: 363\\--372.")
+MAN_END
+
+MAN_BEGIN (U"Matou\\s<ek (1991)", U"djmw", 20250119)
+NORMAL (U"J. Matou\\s<ek (1991): \"Randomized optimal algorithm for slope selection.\""
+" %%Information Processing Letters #39: 183\\--187.")
 MAN_END
 
 MAN_BEGIN (U"Morrison (1990)", U"djmw", 19980123)

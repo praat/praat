@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NUM.h"
+#include "NUM2.h"
 
 /*
     The algorithm to do the actual counting was found in (CLRS) Corman, Leiserson, Rivest & Stein: Introduction to algorithms,
@@ -41,54 +41,92 @@
     ...
     n-1(n)|                   n(n-1)/2
 
-    E.g. the inversion between element 1 and element 2 is coded with the number 2,
-        the inversion between element  2 and 5 is code with the number 8.
-    From inversion (i,j) to the index:
-        index = (j-1)*n + i
+    E.g. the inversion between element 1 and element 2 is coded with the number 1,
+        the inversion between element 2 and 5 is code with the number 8.
+    From inversion (i<j) to the index:
+        index = (j-2)*(j-1)/2 + i
     From the code to the inversion (i,j)
-        j = Melder_iroundUp (+0.5 + sqrt (0.25 + 2 * index));
+        j = Melder_iroundUp (0.5 + sqrt (0.25 + 2 * index));
         i = index - (j-2) * (j - 1) / 2;
  */
+
+template <typename T>
+struct structIndexedNumber {
+    T number;
+    integer index;
+};
+
+
+template<typename T> using IndexedNumber = structIndexedNumber<T>;
+typedef IndexedNumber<integer> IndexedInteger;
+typedef IndexedNumber<double> IndexedDouble;
+
+/*static int compareTwoCrossings (Crossing& a, Crossing& b) {
+    return a.crossing < b.crossing ? -1 : a.crossing > b.crossing ? 1 : 0;
+}*/
 
 template <typename T>
 class InversionCounter {
 
 private:
-    integer numberOfInversions;
-    bool registerInversions;
-    autovector<T> buffer;
-    autovector<T> dataCopy;
-    vector<T> v;
 
-    void init (vector<T> const& data, bool preserveData, bool specifyInversions) {
-        if (preserveData) {
-            dataCopy = newvectorcopy<T> (constvectorview<T> (data));
+    autovector<IndexedNumber<T>> buffer;
+    autovector<IndexedNumber<T>> dataCopy;
+    vector<IndexedNumber<T>> v;
+    INTVEC inversions;
+    INTVEC sortedRandomInversionNumbers;
+    integer totalNumberOfInversions = 0;
+    integer numberOfInversionsRegistered = 0;
+    integer numberOfInversionsToRegister = 0;
+    integer lastPosInSortedRandomInversionNumbers = 1;
+    bool workWithCopyOfData = false;
+
+    int (*compare) (T& a, T& b);
+
+    int compareIndexedNumbers (IndexedNumber<T>& a, IndexedNumber<T>& b) {
+        return a.number < b.number ? -1 : a.number > b.number ? 1 : 0;
+    }
+
+    int compareIndexedNumbers (T& a, T& b) {
+        return a < b ? -1 : a > b ? 1 : 0;
+    }
+
+
+    void init (vector<IndexedNumber<T>> const& data) {
+        if (workWithCopyOfData) {
+            dataCopy = newvectorcopy<IndexedNumber<T>> (constvectorview<IndexedNumber<T>> (data));
             v = dataCopy.get();
         } else
             v = data;
-        registerInversions = specifyInversions;
-        buffer = newvectorraw<T> (v.size);
-        if (registerInversions)
-            inversions = raw_INTVEC (v.size * (v.size - 1) / 2);
-        setCompareFunction (compare_);
+        if (buffer.size < v.size)
+            buffer.resize (v.size);
     }
 
     integer mergeInversions (integer p, integer q, integer r) {
         const integer nl = q - p + 1;
         const integer nr = r - q;
-        vector<T> vl = buffer.part (1, nl), vr = buffer.part (nl + 1, nl + nr);
-        vl  <<=  v.part (p, q);
-        vr  <<=  v.part (q + 1, r);
-        integer i = 1, j = 1, k = p, numberOfInversions = 0;
+        vector<IndexedNumber<T>> vl = buffer.part (1, nl), vr = buffer.part (nl + 1, nl + nr);
+        for (integer ii = 1; ii <= nl; ii ++)
+            vl [ii] = v [p + ii - 1];
+        for (integer ii = 1; ii <= nr; ii ++)
+            vr [ii] = v [q + 1 + ii - 1];
+        integer i = 1, j = 1, k = p, localNumberOfInversions = 0;
         while (i <= nl && j <= nr) {
-            if (compare (vl [i], vr [j]) > 0) { //! vl [i] > vr [j], CLRS : L[i] <= R[j]
-                if (registerInversions) {
-                    integer col = p + i - 1, row = q + j; // col < row
-                    for (integer ii = 1; ii <= nl - i + 1; ii ++, col ++) {
-                        inversions [++ numberOfInversions] = (row - 1) * v.size + col;
+            if (compareIndexedNumbers (vl [i], vr [j]) > 0) { //! vl [i] > vr [j], CLRS : L[i] <= R[j]
+                localNumberOfInversions += nl - i + 1;
+                if (numberOfInversionsToRegister > 0) {
+                    integer ilow = p + i - 1, ihigh = q + j; // col < row
+                    for (integer ii = 1; ii <= nl - i + 1; ii ++, ilow ++) {
+                        const integer index = inversionToIndex (ilow, ihigh);
+                        totalNumberOfInversions ++;
+                        while (totalNumberOfInversions == sortedRandomInversionNumbers [lastPosInSortedRandomInversionNumbers]) {
+                            inversions [++ numberOfInversionsRegistered] = index;
+                            if (-- numberOfInversionsToRegister == 0)
+                                break; // TODO: should we stop sorting now?
+                            lastPosInSortedRandomInversionNumbers ++;
+                        }
                     }
-                } else
-                   numberOfInversions += nl - i + 1;
+                }
                 v [k] = vr [j ++]; //! CLRS: A[k] = L[i++];
             } else
                 v [k] = vl [i ++]; //! CLRS: A[k] = R[j++]
@@ -98,62 +136,84 @@ private:
             v [k ++] = vl [i ++];
         while (j <= nr)
             v [k ++] = vr [j ++];
-        return numberOfInversions;
+        return localNumberOfInversions;
     }
 
-    integer countNumberOfInversions_ (integer p, integer r) {
+    integer sortAndCountInversions_ (integer p, integer r) {
         integer numberOfInversions = 0;
         if (p < r) {
             const integer q = (p + r) / 2;
-            numberOfInversions += countNumberOfInversions_ (p, q);
-            numberOfInversions += countNumberOfInversions_ (q + 1, r);
+            numberOfInversions += sortAndCountInversions_ (p, q);
+            numberOfInversions += sortAndCountInversions_ (q + 1, r);
             numberOfInversions += mergeInversions (p, q, r);
         }
         return numberOfInversions;
     }
 
-    static int compare_ (T& a, T& b) {
-        return ( a > b ? 1 : (b > a ? -1 : 0) );
-    }
-
 public:
 
-    autoINTVEC inversions;
-    int (*compare) (T& a, T& b);
-
-    InversionCounter (vector<T> const& data) {
-        init (data, true, false);
+    InversionCounter (bool workWithCopyOfData) {
+        our workWithCopyOfData = workWithCopyOfData;
     }
 
-    InversionCounter (vector<T> const& data, bool preserveData) {
-       init (data, preserveData, false);
-    }
-    InversionCounter (vector<T> const& data, bool preserveData, bool specifyInversions) {
-        init (data, preserveData, specifyInversions);
+    integer getNumberOfInversionsAndSort (vector<IndexedNumber<T>> const& data) {
+        init (data);
+        return sortAndCountInversions_ (1_integer, v.size);
     }
 
-    ~InversionCounter () {
+    integer getNumberOfInversionsAndSort (vector<IndexedNumber<T>> const& data, INTVEC const& inversions) {
+        Melder_assert (inversions.size > 0);
+        init (data);
+        our inversions = inversions;
+        return sortAndCountInversions_ (1_integer, v.size);
     }
 
-    inline integer getNumberOfInversions () {
-        Melder_assert (v.size > 0);
-        return countNumberOfInversions_ (1_integer, v.size);
+    integer getRandomInversionsAndSort (vector<IndexedNumber<T>> const& data, INTVEC const& sortedRandomInversionNumbers, INTVEC const& randomInversions) {
+        Melder_assert (randomInversions.size == sortedRandomInversionNumbers.size);
+        our sortedRandomInversionNumbers = sortedRandomInversionNumbers;
+        init (data);
+        totalNumberOfInversions = 0;
+        numberOfInversionsToRegister = randomInversions.size;
+        numberOfInversionsRegistered = 0;
+        lastPosInSortedRandomInversionNumbers = 1;
+        our inversions = randomInversions;
+        return sortAndCountInversions_ (1_integer, v.size);
     }
 
-    inline void setCompareFunction (int (*compareFunction) (T& a, T& b)) {
-        compare = (compareFunction ? compareFunction : compare_);
+    /*
+        The following two methods first make a copy of the data
+    */
+    integer getNumberOfInversions (vector<IndexedNumber<T>> const& data, INTVEC const& inversions) {
+        Melder_assert (inversions.size > 0);
+        init (data);
+        our inversions = inversions;
+        return sortAndCountInversions_ (1_integer, v.size);
     }
 
-    inline void getInversionFromIndex (integer index, integer *i, integer *j) {
-        *j = Melder_iroundUp (+0.5 + sqrt (0.25 + 2 * index));
-        *i = index - (*j - 2) * (*j - 1) / 2;
+    inline void getInversionFromIndex (integer index, integer *ilow, integer *ihigh) {
+        *ihigh = Melder_iroundUp (+0.5 + sqrt (0.25 + 2 * index));
+        *ilow = index - (*ihigh - 2) * (*ihigh - 1) / 2;
+        Melder_assert (*ilow < *ihigh);
     }
 
-    inline integer inversionToIndex (integer i, integer j) {
-        Melder_assert (i < j);
-        return j * (j - 1) / 2 + i;
+    inline integer inversionToIndex (integer ilow, integer ihigh) {
+        Melder_assert (ilow < ihigh);
+        return (ihigh - 2) * (ihigh - 1) / 2 + ilow;
     }
 
+    autovector<IndexedNumber<T>> convertToIndexedNumberVector (constvector<T> const& v) {
+        autovector<IndexedNumber<T>> result = newvectorraw<IndexedNumber<T>> (v.size);
+        convertToIndexedNumberVector_inplace (v, result.get());
+        return result;
+    }
+
+    void convertToIndexedNumberVector_inplace (constvector<T> const& v, vector<IndexedNumber<T>> const& result) {
+        Melder_assert (v.size == result.size);
+        for (integer i = 1; i <= v.size; i ++) {
+            result [i].number = v [i];
+            result [i].index = i;
+        }
+    }
 };
 
 #endif // _NUMinversionCounter_h_

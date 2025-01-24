@@ -76,6 +76,14 @@
 #include "gsl_poly.h"
 #include "gsl_cdf.h"
 
+int NUMcompareTwoIntegers (integer& a, integer& b) {
+	return a < b ? -1 : a > b ? 1 : 0;
+}
+
+int NUMcompareTwoDoubles (double& a, double& b) {
+	return a < b ? -1 : a > b ? 1 : 0;
+}
+
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
 
 struct pdf1_struct {

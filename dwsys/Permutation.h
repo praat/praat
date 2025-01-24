@@ -54,6 +54,12 @@ integer Permutation_getNumberOfInversions (Permutation me);
 	E.g. {1,2,3} -> 0 iversions; {3,2,1} -> 3; {1,3,2} -> 1.
  */
 
+autoINTVEC Permutation_getRandomInversionIndices (Permutation me, integer maxNumberOfRandomInversions);
+autoINTVEC Permutation_getAllInversionIndices (Permutation me);
+
+autoMAT Permutation_getRandomInversions (Permutation me, integer maxNumberOfRandomInversions); /* convenience for interface */
+autoMAT Permutation_getAllInversions (Permutation me); /* convenience for interface */
+
 void Permutation_permuteRandomly_inplace (Permutation me, integer from, integer to);
 
 autoPermutation Permutation_permuteRandomly (Permutation me, integer from, integer to);
@@ -85,6 +91,7 @@ integer Permutation_getIndexAtValue (Permutation me, integer value);
 /* Find i for which p [i] = value */
 
 autoPermutation Permutation_invert (Permutation me);
+void Permutation_invert_into (Permutation me, Permutation result);
 /*  */
 
 void Permutation_reverse_inline (Permutation me, integer from, integer to);
@@ -96,6 +103,7 @@ void Permutation_next_inplace (Permutation me);
 void Permutation_previous_inplace (Permutation me);
 
 autoPermutation Permutations_multiply2 (Permutation me, Permutation thee);
+void Permutations_multiply2_into (Permutation me, Permutation thee, Permutation result);
 
 autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me);
 

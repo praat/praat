@@ -4649,6 +4649,21 @@ DIRECT (QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfInversions) {
 	QUERY_ONE_FOR_INTEGER_END (U" (inversions)")
 }
 
+FORM (QUERY_ONE_FOR_MATRIX__Permutation_getRandomInversions, U"Permutation: Get random inversions", U"Permutation: Get random inversions...") {
+	NATURAL (maxNumberOfInversions, U"max. number of inversions", U"1")
+	OK
+DO
+	QUERY_ONE_FOR_MATRIX (Permutation)
+		autoMAT result = Permutation_getRandomInversions (me, maxNumberOfInversions);
+	QUERY_ONE_FOR_MATRIX_END
+}
+
+DIRECT (QUERY_ONE_FOR_MATRIX__Permutation_getAllInversions) {
+	QUERY_ONE_FOR_MATRIX (Permutation)
+		autoMAT result = Permutation_getAllInversions (me);
+	QUERY_ONE_FOR_MATRIX_END
+}
+
 FORM (QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue, U"Permutation: Get index", U"Permutation: Get index...") {
 	NATURAL (value, U"Value", U"1")
 	OK
@@ -10038,7 +10053,11 @@ void praat_David_init () {
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue);
 		praat_addAction1 (classPermutation, 1, U"Get number of inversions",
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfInversions);
-	praat_addAction1 (classPermutation, 0, U"Modify -", nullptr, 0, nullptr);
+		praat_addAction1 (classPermutation, 1, U"Get random inversions...",
+						  nullptr, 1, QUERY_ONE_FOR_MATRIX__Permutation_getRandomInversions);
+		praat_addAction1 (classPermutation, 1, U"Get all inversions",
+						  nullptr, 1, QUERY_ONE_FOR_MATRIX__Permutation_getAllInversions);
+		praat_addAction1 (classPermutation, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classPermutation, 0, U"Permute randomly (in-place)...",
 				nullptr, 1, MODIFY__Permutation_permuteRandomlyInplace);
 		praat_addAction1 (classPermutation, 1, U"Sort",

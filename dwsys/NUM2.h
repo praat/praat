@@ -40,6 +40,13 @@
 */
 #define NUMeps 2.3e-16
 
+
+int NUMcompareTwoIntegers (integer& a, integer& b);
+int NUMcompareTwoDoubles (double& a, double& b);
+/*
+	return a < b ? -1 : a > b ? 1 : 0;
+*/
+
 /*
 	only used to append the time info to the name of an object.
 	1.2345678 -> 1_2345678
@@ -116,6 +123,22 @@ inline integer NUMmaxPos (constVECVU const& v) {
 	}
 	return index;	
 }
+
+#if 0
+template <typename T>
+inline T NUMmaxPos (constvectorview<T> const& v) {
+	if (NUMisEmpty (v)) return 0;
+	integer index = 1;
+	T maximum = v [1];
+	for (integer i = 2; i <= v.size; i ++) {
+		if (v [i] > maximum) {
+			maximum = v [i];
+			index = i;
+		}
+	}
+	return index;
+}
+#endif
 
 inline integer NUMmaxPos (constINTVECVU const& v) {
 	if (NUMisEmpty (v)) return 0;

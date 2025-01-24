@@ -12,7 +12,7 @@ appendInfoLine: "test_Permutation.praat"
 @multiply
 @jump
 @distributionTest: 10, 10000
-@inversions
+@countInversions
 
 appendInfoLine: "test_Permutation OK"
 
@@ -235,8 +235,9 @@ procedure testPermutePart
 	appendInfoLine: tab$, "Permute part OK"
 endproc
 
-procedure inversions
+procedure countInversions
 	appendInfoLine: tab$, "Count inversions"
+
 	.size = 20
 	for .i from 2 to .size
 		.p = Create Permutation: "p", .i, "yes"
@@ -267,6 +268,7 @@ procedure inversions
 	# 1,6,2,7,3,8,4,9,5,10 -> 10
 	.inversions = Get number of inversions
 	assert .inversions = 10
+
 
 	removeObject: .pi, .p
 	appendInfoLine: tab$, "Count inversions OK"
