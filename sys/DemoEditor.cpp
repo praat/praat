@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2024 Paul Boersma
+ * Copyright (C) 2009-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -243,7 +243,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 					gtk_main_iteration ();
 				} while (! theReferenceToTheOnlyDemoEditor -> clicked &&
 				         ! theReferenceToTheOnlyDemoEditor -> keyPressed &&
-						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
+				         ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
 			#elif cocoa
 				do {
 					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -261,7 +261,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 					[pool release];
 				} while (! theReferenceToTheOnlyDemoEditor -> clicked &&
 				         ! theReferenceToTheOnlyDemoEditor -> keyPressed &&
-						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
+				         ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
 			#elif defined (_WIN32)
 				do {
 					//Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());   // make sure that even texts will be drawn
@@ -270,7 +270,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 					XtDispatchEvent (& event);
 				} while (! theReferenceToTheOnlyDemoEditor -> clicked &&
 				         ! theReferenceToTheOnlyDemoEditor -> keyPressed &&
-						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
+				         ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
 			#endif
 		} catch (MelderError) {
 			Melder_flushError (U"An error made it to the outer level in the Demo window; should not occur! Please write to paul.boersma@uva.nl");
