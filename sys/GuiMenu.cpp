@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2005,2007-2024 Paul Boersma,
+ * Copyright (C) 1992-2005,2007-2025 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -592,6 +592,14 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		_GuiObject_setUserData (my d_widget, me.get());
 		_GuiObject_setUserData (my d_cascadeButton -> d_widget, me.get());
 	#elif motif
+		#define TRY_BARLESS  0
+		#if TRY_BARLESS
+		my d_cascadeButton -> d_widget = XmCreateCascadeButton (form -> d_widget, Melder_peek32to8 (neatTitle.string), nullptr, 0);
+		form -> v_positionInForm (my d_cascadeButton -> d_widget, left, right, top, bottom, form);
+		my d_widget = XmCreatePulldownMenu (form -> d_widget, Melder_peek32to8 (neatTitle.string), nullptr, 0);
+		XtVaSetValues (my d_cascadeButton -> d_widget, XmNsubMenuId, my d_widget, nullptr);
+		XtManageChild (my d_cascadeButton -> d_widget);
+		#else
 		my d_xmMenuBar = XmCreateMenuBar (form -> d_widget, "dynamicSubmenuBar", 0, 0);
 		form -> v_positionInForm (my d_xmMenuBar, left, right, top, bottom, form);
 		my d_cascadeButton -> d_widget = XmCreateCascadeButton (my d_xmMenuBar, Melder_peek32to8 (neatTitle.string), nullptr, 0);
@@ -600,6 +608,7 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		XtVaSetValues (my d_cascadeButton -> d_widget, XmNsubMenuId, my d_widget, nullptr);
 		XtManageChild (my d_cascadeButton -> d_widget);
 		XtManageChild (my d_xmMenuBar);
+		#endif
 		if (flags & GuiMenu_INSENSITIVE)
 			XtSetSensitive (my d_cascadeButton -> d_widget, False);
 		_GuiObject_setUserData (my d_widget, me.get());

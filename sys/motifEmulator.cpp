@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2024 Paul Boersma
+ * Copyright (C) 1993-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void)) {
 #endif // defined (macintosh)
 
 #if defined (_WIN32)
+#define TRY_BARLESS  0
 
 /* The Motif emulator for Windows. */
 
@@ -535,6 +536,8 @@ static void _GuiNativizeWidget (GuiObject me) {
 			my window = CreateWindowEx (0, Melder_peek32toW (theWindowClassName), L"rowColumn", WS_CHILD | WS_CLIPSIBLINGS,
 				my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
 			SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
+			//TRACE
+			trace (U"Created window ", Melder_pointer (my window), U" for original RowColumn ", Melder_pointer (me));
 		} break;
 		case xmListWidgetClass: Melder_fatal (U"Should be implemented in GuiList."); break;
 		case xmMenuBarWidgetClass: {
@@ -547,9 +550,15 @@ static void _GuiNativizeWidget (GuiObject me) {
 				my widgetClass = xmRowColumnWidgetClass;   // !!!!!!!!!!!!!
 				my orientation = XmHORIZONTAL;
 				my rowColumnType = XmMENU_BAR;
-				my window = CreateWindowEx (0, Melder_peek32toW (theWindowClassName), L"rowColumn", WS_CHILD,
-					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
-				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
+				#if TRY_BARLESS
+					my window = my parent -> window;
+				#else
+					my window = CreateWindowEx (0, Melder_peek32toW (theWindowClassName), L"rowColumn", WS_CHILD,
+						my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
+					SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
+				#endif
+				//TRACE
+				trace (U"Created window ", Melder_pointer (my window), U" for MenuBar-derived RowColumn ", Melder_pointer (me));
 			}
 		} break;
 		case xmPulldownMenuWidgetClass: {
@@ -679,6 +688,8 @@ static void _GuiNativizeWidget (GuiObject me) {
 static GuiObject createWidget (int widgetClass, GuiObject parent, const char *name) {
 	GuiObject me = _Gui_initializeWidget (widgetClass, parent, Melder_peek8to32 (name));
 	_GuiNativizeWidget (me);
+	//TRACE
+	trace (U"Created widget ", Melder_pointer (me));
 	return me;
 }
 
@@ -1400,6 +1411,8 @@ void XtRemoveTimeOut (XtIntervalId id) {
 }
 
 void XtDestroyWidget (GuiObject me) {
+	//TRACE
+	trace (U"Destroying widget ", Melder_pointer (me));
 	GuiObject subview = my firstChild;
 	/*
 	 * Prevent subsequent messages.
@@ -1431,7 +1444,8 @@ void XtDestroyWidget (GuiObject me) {
 			_GuiWinLabel_destroy (me);
 		} break;
 		case xmCascadeButtonWidgetClass: {
-			if (! my inMenu && ! MEMBER (my parent, MenuBar)) _GuiNativeControl_destroy (me);
+			if (! my inMenu && ! MEMBER (my parent, MenuBar))
+				_GuiNativeControl_destroy (me);
 		} break;
 		case xmScaleWidgetClass: {
 			_GuiWinScale_destroy (me);
@@ -1445,7 +1459,18 @@ void XtDestroyWidget (GuiObject me) {
 		case xmDrawingAreaWidgetClass: {
 			_GuiWinDrawingArea_destroy (me);
 		} break;
-		case xmRowColumnWidgetClass:
+		case xmRowColumnWidgetClass: {
+			//TRACE
+			trace (U"Destroying window ", Melder_pointer (my window), U" for RowColumn ", Melder_pointer (me));
+			#if TRY_BARLESS
+				if (my rowColumnType == XmMENU_BAR)
+					; // my window is my parent's window
+				else
+					DestroyWindow (my window);
+			#else
+				DestroyWindow (my window);
+			#endif
+		} break;
 		case xmFormWidgetClass:
 		case xmBulletinBoardWidgetClass: {
 			DestroyWindow (my window);
@@ -1569,9 +1594,12 @@ static void mapWidget (GuiObject me) {
 		case xmBulletinBoardWidgetClass:
 		case xmDrawingAreaWidgetClass:
 		case xmScrolledWindowWidgetClass:
-		case xmFormWidgetClass:
-		case xmRowColumnWidgetClass:
-			ShowWindow (my window, SW_SHOW); break;
+		case xmFormWidgetClass: {
+			ShowWindow (my window, SW_SHOW);
+		} break;
+		case xmRowColumnWidgetClass: {
+			ShowWindow (my window, SW_SHOW);
+		} break;
 		case xmShellWidgetClass: {
 			ShowWindow (my window, theGui.commandShow);
 			if (my dialogStyle == XmDIALOG_FULL_APPLICATION_MODAL)
@@ -2799,7 +2827,7 @@ static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LP
 		case WM_APP: {
 			/*if (IsIconic (window)) ShowWindow (window, SW_RESTORE);
 			SetForegroundWindow (window);*/
-			TRACE
+			//TRACE
 			trace (U"app message ", WM_APP);
 			return theUserMessageCallback ? theUserMessageCallback () : 1;
 		}

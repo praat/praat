@@ -219,10 +219,27 @@ static void deleteDynamicMenu () {
 		return;
 	static integer numberOfDeletions;
 	trace (U"deletion #", ++ numberOfDeletions);
+	#if motif
+		/*
+			Undangle the menu items. They can be destroyed by the removal of their pull-down menu.
+		*/
+		for (integer i = 1; i <= theActions.size; i ++) {
+			Praat_Command action = theActions.at [i];
+			Melder_assert (action);
+			Melder_assert (Thing_isa (action, classPraat_Command));
+			if (action -> button) {
+				Melder_assert (action -> button -> classInfo != classGuiMenu);
+				if (action -> button -> classInfo == classGuiMenuItem)
+					action -> button = nullptr;   // prevent destruction; the menu will take care of that
+			}
+		}
+	#endif
 	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
+		Melder_assert (action);
+		Melder_assert (Thing_isa (action, classPraat_Command));
 		if (action -> button) {
-			trace (U"trying to destroy action ", i, U" of ", theActions.size, U": ", action -> title.get());
+			trace (U"trying to destroy action ", i, U" of ", theActions.size, U", button ", Melder_pointer (action -> button), U": ", action -> title.get());
 			#if gtk || cocoa
 				if (action -> button -> d_parent == praat_form) {
 					trace (U"destroy a label or a push button or a cascade button");
@@ -232,12 +249,48 @@ static void deleteDynamicMenu () {
 					GuiObject_destroy (action -> button -> d_widget);
 				}
 			#elif motif
+				//trace ((int) * (char *) action -> button);   // try to access the memory
+				Melder_assert (action -> button -> classInfo);
+				//trace (2);
+				if (action -> button -> classInfo == classGuiButton)
+					Melder_assert (action -> button -> d_widget);
+				//trace (3);
 				if (action -> button -> classInfo == classGuiButton && action -> button -> d_widget -> subMenuId) {   // a cascade button (not a direct child of the form)?
-					trace (U"destroy the xm menu bar; this also destroys the xm button and the xm menu");
-					GuiObject_destroy (action -> button -> d_widget -> parent);   // the Motif parent, i.e. not d_parent -> d_widget !
-				} else if (action -> button -> d_parent == praat_form) {
-					trace (U"destroy a label or a push button");
+					#define TRY_BARLESS  0
+					#if TRY_BARLESS
 					GuiObject_destroy (action -> button -> d_widget);
+					GuiObject_destroy (action -> button -> d_widget -> subMenuId);
+					#else
+					/*
+						We check that the parent is a RowColumn with exactly two children: a cascade button and a pulldown menu
+					*/
+					GuiObject xmMenuBarRowColumn = action -> button -> d_widget -> parent;
+					Melder_assert (xmMenuBarRowColumn);
+					trace (U"destroy the xm menu bar (widget class ", xmMenuBarRowColumn -> widgetClass, U"); this also destroys the xm button and the xm menu");
+					Melder_assert (xmMenuBarRowColumn -> widgetClass == xmRowColumnWidgetClass);
+					GuiObject xmCascadeButton = xmMenuBarRowColumn -> firstChild;
+					Melder_assert (xmCascadeButton);
+					Melder_assert (xmCascadeButton -> widgetClass == xmCascadeButtonWidgetClass);
+					Melder_assert (xmCascadeButton == action -> button -> d_widget);
+					GuiObject xmPulldownMenu = xmCascadeButton -> nextSibling;
+					Melder_assert (xmPulldownMenu);
+					Melder_assert (xmPulldownMenu -> widgetClass == xmPulldownMenuWidgetClass);
+					Melder_assert (! xmPulldownMenu -> nextSibling);
+					Melder_assert (xmCascadeButton -> subMenuId == xmPulldownMenu);
+					/*
+						Let's do some controlled destruction.
+					*/
+					//GuiObject_destroy (xmCascadeButton);   Melder_assert (xmMenuBarRowColumn -> firstChild == xmPulldownMenu);
+					//GuiObject_destroy (xmPulldownMenu);    Melder_assert (xmMenuBarRowColumn -> firstChild == nullptr);
+					GuiObject_destroy (xmMenuBarRowColumn);
+					//GuiObject_destroy (action -> button -> d_widget);   // that would be only the cascade button
+					#endif
+				} else if (action -> button -> d_parent == praat_form) {
+					GuiObject xmLabelOrButton = action -> button -> d_widget;
+					Melder_assert (xmLabelOrButton);
+					Melder_assert (xmLabelOrButton -> widgetClass == xmLabelWidgetClass || xmLabelOrButton -> widgetClass == xmPushButtonWidgetClass);
+					trace (U"destroy a label or a push button");
+					GuiObject_destroy (xmLabelOrButton);
 				}
 			#endif
 			action -> button = nullptr;   // undangle
