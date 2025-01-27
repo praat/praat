@@ -115,10 +115,27 @@ private:
             if (compareIndexedNumbers (vl [i], vr [j]) > 0) { //! vl [i] > vr [j], CLRS : L[i] <= R[j]
                 localNumberOfInversions += nl - i + 1;
                 if (numberOfInversionsToRegister > 0) {
-                    integer ilow = p + i - 1, ihigh = q + j; // col < row
-                    for (integer ii = 1; ii <= nl - i + 1; ii ++, ilow ++) {
-                        const integer index = inversionToIndex (ilow, ihigh);
+                    const integer ihigh = vr [j].index;
+                    for (integer ii = i; ii <= nl; ii ++) {
+                        const integer ilow = vl [ii].index;
+                        const integer index = ( ilow < ihigh ? inversionToIndex (ilow, ihigh) : inversionToIndex (ihigh, ilow) );
                         totalNumberOfInversions ++;
+                        if (Melder_debug == - 6) {
+                            autoMelderString localInfo;
+                            MelderString_append (& localInfo, U"\n--p:", p, U" q:", q, U" r:", r, U" i:", i, U" j:", j, U" k:", k, U" ilow:", ilow, U" ihigh:", ihigh);
+                            MelderString_append (& localInfo, U"\n\tvl(", vl [1].number);
+                            for (integer i = 2; i <= nl; i ++)
+                                MelderString_append (& localInfo, U",", vl [i].number);
+                            MelderString_append (& localInfo, U") vr(", vr [1].number);
+                            for (integer i = 2; i <= nr; i ++)
+                                MelderString_append (& localInfo, U",", vr [i].number);
+                            MelderString_append (& localInfo, U") v(", v [1].number);
+                            for (integer i = 2; i <= v.size; i ++)
+                                MelderString_append (& localInfo, U",", v [i].number);
+                            MelderString_append (& localInfo, U")\n");
+                            trace (localInfo.string);
+                            MelderString_free (& localInfo);
+                        }
                         while (totalNumberOfInversions == sortedRandomInversionNumbers [lastPosInSortedRandomInversionNumbers]) {
                             inversions [++ numberOfInversionsRegistered] = index;
                             if (-- numberOfInversionsToRegister == 0)
@@ -127,10 +144,9 @@ private:
                         }
                     }
                 }
-                v [k] = vr [j ++]; //! CLRS: A[k] = L[i++];
+                v [k ++] = vr [j ++]; //! CLRS: A[k] = L[i++];
             } else
-                v [k] = vl [i ++]; //! CLRS: A[k] = R[j++]
-            k ++;
+                v [k ++] = vl [i ++]; //! CLRS: A[k] = R[j++]
         }
         while (i <= nl)
             v [k ++] = vl [i ++];
@@ -177,7 +193,9 @@ public:
         numberOfInversionsRegistered = 0;
         lastPosInSortedRandomInversionNumbers = 1;
         our inversions = randomInversions;
-        return sortAndCountInversions_ (1_integer, v.size);
+        const integer numberOfInversions = sortAndCountInversions_ (1_integer, v.size);
+        Melder_assert (numberOfInversions == randomInversions.size);
+        return numberOfInversions;
     }
 
     /*
@@ -187,7 +205,8 @@ public:
         Melder_assert (inversions.size > 0);
         init (data);
         our inversions = inversions;
-        return sortAndCountInversions_ (1_integer, v.size);
+        const integer numberOfInversions = sortAndCountInversions_ (1_integer, v.size);
+        return numberOfInversions;
     }
 
     inline void getInversionFromIndex (integer index, integer *ilow, integer *ihigh) {

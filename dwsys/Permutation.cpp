@@ -632,8 +632,10 @@ autoMAT Permutation_getAllInversions (Permutation me) {
 			for (integer i = 1; i <= inversionIndices.size; i ++) {
 				integer ilow, ihigh;
 				counter.getInversionFromIndex (inversionIndices [i], & ilow, & ihigh);
-				inversions [i] [1] = ihigh;
-				inversions [i] [2] = ilow;
+				inversions [i] [1] = my p [ihigh];
+				inversions [i] [2] = my p [ilow];
+				if (inversions [i] [1] < inversions [i] [2])
+					std::swap (inversions [i] [1], inversions [i] [2]);
 			}
 		}
 		return inversions;
