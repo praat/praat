@@ -29,6 +29,10 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.27# (27 January 2025)
+• Graphics text: better pipes and slashes.
+• Windows for ARM64 processors: removed a bug whereby dynamic menu deletion could crash after a sound was played in the Demo window.
+
 ##6.4.26# (8 January 2025)
 • ##Rectangle text (maximal fit)...# is perhaps useful in general,
   but will especially facilitate text and button drawing in Demo window.
