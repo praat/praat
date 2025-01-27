@@ -52,7 +52,7 @@ static void logo (Graphics graphics) {
 		#elif defined (__s390x__)
 			U"s390x Linux";
 		#elif defined (raspberrypi)
-			U"ARMV7 Raspberry Pi");
+			U"ARMV7 Raspberry Pi";
 		#elif defined (chrome)
 			isArm64 ? U"ARM64 Chromebook" : U"Intel64 Chromebook";
 		#elif defined (linux)
