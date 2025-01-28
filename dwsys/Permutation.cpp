@@ -577,7 +577,7 @@ autoINTVEC Permutation_getAllInversionIndices (Permutation me) {
 		autovector<IndexedInteger> pn = counter.convertToIndexedNumberVector (my p.get());
 		autoINTVEC inversionIndices = raw_INTVEC (maximumNumberOfInversions);
 		autoINTVEC sortedInversionNumbers = to_INTVEC (maximumNumberOfInversions); // sorted
-		const integer numberOfInversions = counter.getRandomInversionsAndSort (pn.get(), sortedInversionNumbers.get(), inversionIndices.get());
+		const integer numberOfInversions = counter.getSelectedInversionsAndSort (pn.get(), sortedInversionNumbers.get(), inversionIndices.get());
 		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {
@@ -595,10 +595,11 @@ autoINTVEC Permutation_getRandomInversionIndices (Permutation me, integer number
 		for (integer i = 1; i <= numberOfRandomInversions; i ++)
 			sortedRandomInversionNumbers [i] = NUMrandomInteger (1, maximumNumberOfInversions);
 		sort_INTVEC_inout (sortedRandomInversionNumbers.get());
-		(void) counter.getRandomInversionsAndSort (pn.get(), sortedRandomInversionNumbers.get(), inversionIndices.get());
+		const integer numberOfInversions = counter.getSelectedInversionsAndSort (pn.get(), sortedRandomInversionNumbers.get(), inversionIndices.get());
+		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {
-		Melder_throw (me, U"Could not determine the random inversions.");
+		Melder_throw (me, U"Could not determine random inversion indices.");
 	}
 }
 
@@ -612,13 +613,15 @@ autoMAT Permutation_getRandomInversions (Permutation me, integer numberOfRandomI
 			for (integer i = 1; i <= inversionIndices.size; i ++) {
 				integer ilow, ihigh;
 				counter.getInversionFromIndex (inversionIndices [i], & ilow, & ihigh);
-				inversions [i] [1] = ihigh;
-				inversions [i] [2] = ilow;
+				inversions [i] [1] =  my p [ihigh];
+				inversions [i] [2] =  my p [ilow];
+				if (inversions [i] [1] < inversions [i] [2])
+					std::swap (inversions [i] [1], inversions [i] [2]);
 			}
 		}
 		return inversions;
 	} catch (MelderError) {
-		Melder_throw (me, U"Could not determine the random inversions.");
+		Melder_throw (me, U"Could not determine random inversions.");
 	}
 }
 
@@ -628,6 +631,7 @@ autoMAT Permutation_getAllInversions (Permutation me) {
 		autoINTVEC inversionIndices = Permutation_getAllInversionIndices (me);
 		if (inversionIndices.size > 0) {
 			struct InversionCounter<integer> counter (false);
+			autoINTVEC columnNumbers {1,2};
 			inversions = raw_MAT (inversionIndices.size, 2_integer);
 			for (integer i = 1; i <= inversionIndices.size; i ++) {
 				integer ilow, ihigh;
@@ -637,10 +641,12 @@ autoMAT Permutation_getAllInversions (Permutation me) {
 				if (inversions [i] [1] < inversions [i] [2])
 					std::swap (inversions [i] [1], inversions [i] [2]);
 			}
+			autoMAT sorted = sortRows_MAT (inversions.get(), columnNumbers.get());
+			inversions.get()  <<=  sorted.get();
 		}
 		return inversions;
 	} catch (MelderError) {
-		Melder_throw (me, U"Could not determine the inversions.");
+		Melder_throw (me, U"Could not determine inversions.");
 	}
 }
 /* End of Permutation.cpp */

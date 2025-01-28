@@ -21,14 +21,14 @@
 #include "NUM2.h"
 
 /*
-    The algorithm to do the actual counting was found in (CLRS) Corman, Leiserson, Rivest & Stein: Introduction to algorithms,
+    The algorithm to do the counting only was found in (CLRS) Corman, Leiserson, Rivest & Stein: Introduction to algorithms,
         third edition, The MIT press, as the solution of problem 2.4.d.
     However, their solution contains three gross errors which I have corrected.
 */
 
 /*
     Given a vector v with n elements, we define an inversion as i < j && v [i] > v [j].
-    We use a tric to store the inversion between two elements (i,j) with only **one** number by using the following
+    We use a tric to store the inversion between two elements (i,j) with only **one** number code by using the following
     lower triangular (n-1) x (n-1) matrix, with i being the **column** index and j being the **row** index!
 
              1  2  3  4  5  ... n-1
@@ -61,10 +61,6 @@ template<typename T> using IndexedNumber = structIndexedNumber<T>;
 typedef IndexedNumber<integer> IndexedInteger;
 typedef IndexedNumber<double> IndexedDouble;
 
-/*static int compareTwoCrossings (Crossing& a, Crossing& b) {
-    return a.crossing < b.crossing ? -1 : a.crossing > b.crossing ? 1 : 0;
-}*/
-
 template <typename T>
 class InversionCounter {
 
@@ -74,11 +70,11 @@ private:
     autovector<IndexedNumber<T>> dataCopy;
     vector<IndexedNumber<T>> v;
     INTVEC inversions;
-    INTVEC sortedRandomInversionNumbers;
+    INTVEC sortedSelectedInversionIndices;
     integer totalNumberOfInversions = 0;
     integer numberOfInversionsRegistered = 0;
     integer numberOfInversionsToRegister = 0;
-    integer lastPosInSortedRandomInversionNumbers = 1;
+    integer lastPosInSortedSelectedInversionIndices = 1;
     bool workWithCopyOfData = false;
 
     int (*compare) (T& a, T& b);
@@ -136,11 +132,11 @@ private:
                             trace (localInfo.string);
                             MelderString_free (& localInfo);
                         }
-                        while (totalNumberOfInversions == sortedRandomInversionNumbers [lastPosInSortedRandomInversionNumbers]) {
+                        while (totalNumberOfInversions == sortedSelectedInversionIndices [lastPosInSortedSelectedInversionIndices]) {
                             inversions [++ numberOfInversionsRegistered] = index;
                             if (-- numberOfInversionsToRegister == 0)
                                 break; // TODO: should we stop sorting now?
-                            lastPosInSortedRandomInversionNumbers ++;
+                            lastPosInSortedSelectedInversionIndices ++;
                         }
                     }
                 }
@@ -184,17 +180,16 @@ public:
         return sortAndCountInversions_ (1_integer, v.size);
     }
 
-    integer getRandomInversionsAndSort (vector<IndexedNumber<T>> const& data, INTVEC const& sortedRandomInversionNumbers, INTVEC const& randomInversions) {
-        Melder_assert (randomInversions.size == sortedRandomInversionNumbers.size);
-        our sortedRandomInversionNumbers = sortedRandomInversionNumbers;
+    integer getSelectedInversionsAndSort (vector<IndexedNumber<T>> const& data, INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions) {
+        Melder_assert (sortedSelectedInversionIndices.size == out_inversions.size);
+        our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
         init (data);
         totalNumberOfInversions = 0;
-        numberOfInversionsToRegister = randomInversions.size;
+        numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
         numberOfInversionsRegistered = 0;
-        lastPosInSortedRandomInversionNumbers = 1;
-        our inversions = randomInversions;
+        lastPosInSortedSelectedInversionIndices = 1;
+        our inversions = out_inversions;
         const integer numberOfInversions = sortAndCountInversions_ (1_integer, v.size);
-        Melder_assert (numberOfInversions == randomInversions.size);
         return numberOfInversions;
     }
 

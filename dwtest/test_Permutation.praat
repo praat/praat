@@ -37,7 +37,7 @@ procedure multiply:
 	for .i to .numberOfPermutations + 1
 		removeObject: .p [.i]
 	endfor
-	appendInfoLine:  ".o.k."
+	appendInfoLine:  ".OK"
 endproc
 
 procedure rotate
@@ -45,11 +45,11 @@ procedure rotate
 	for .i to 20
 		.p = Create Permutation: "test", .i,  "yes"
 	
-		appendInfo: tab$, .i
+		appendInfo: tab$, tab$, .i
 		for .k to .i
 			selectObject: .p
 			.pk = Rotate: 0, 0, .k
-			.pkk = Get value: .k+1
+			.pkk = Get value: .k + 1
 			if .pkk > 0
 				assert .pkk = 1 ; i='.i', k='.k'
 			endif
@@ -61,7 +61,7 @@ procedure rotate
 			removeObject: .pk, .pki
 			appendInfo: "."
 		endfor
-		appendInfoLine: " o.k."
+		appendInfoLine: " OK"
 		removeObject: .p
 	endfor
 endproc
@@ -80,7 +80,7 @@ procedure invertp
 		appendInfo: "."
 		removeObject: .pin, .p, .pm
 	endfor
-	appendInfoLine: "o.k."
+	appendInfoLine: "OK"
 endproc
 
 procedure test_600_12
@@ -95,7 +95,7 @@ procedure test_600_12
 		assert .pkil = .l; l='.l'
 	endfor
 	removeObject: .pin, .pininv, .p, .pm
-	appendInfoLine: "o.k."
+	appendInfoLine: " OK"
 endproc  
 
 procedure sequence
@@ -117,7 +117,7 @@ procedure sequence
 		appendInfo: "."
 	endfor
 	removeObject: p
-	appendInfoLine: "o.k." 
+	appendInfoLine: "OK"
 endproc
  
 procedure swap
@@ -142,7 +142,7 @@ procedure swap
 		endfor
 	endfor
 	removeObject: .p
-	appendInfoLine: "o.k."
+	appendInfoLine: "OK"
 endproc
 
 procedure jump
@@ -175,10 +175,11 @@ procedure jump
 	assert .p# [9] = 7
 	assert .p# [10] = 10
 	removeObject: .p1, .p2
-	appendInfoLine: ".o.k." 
+	appendInfoLine: ".OK"
 endproc
 
 procedure distributionTest: .size, .numberOfRepetitions
+	appendInfoLine: tab$, "distributionTest"
 	.permutation = Create Permutation: "p", .size, "yes"
 	.distribution## = zero## (.size, .size)
 	for .iperm to .numberOfRepetitions
@@ -204,15 +205,22 @@ procedure distributionTest: .size, .numberOfRepetitions
 	.df = (.size - 1)^2 ; last value in each row and whole last row are completely determined
 	.p = chiSquareQ (.chiSq, .df)
 	assert .p > 0.999
-	appendInfoLine: tab$, "p = ", .p, " for chiSquare = ",
+	appendInfoLine: tab$, tab$, "p = ", .p, " for chiSquare = ",
 	...  .chiSq, " with ", .df, " degrees of freedom."
 	removeObject: .permutation, .tor
-	appendInfo: tab$, "Realized## - expected (=", fixed$ (.expected, 0), "):", 
-	... newline$,  tab$, .diff##, newline$
+	appendInfoLine: tab$, tab$, "Realized## - expected (=", fixed$ (.expected, 0), "):"
+	for .irow to .size
+		appendInfo: tab$, tab$, tab$, .diff## [.irow, 1]
+		for .icol from 2 to .size
+			appendInfo: " ", .diff## [.irow, .icol]
+		endfor
+		appendInfoLine: ""
+	endfor
+	appendInfoLine: tab$, "distributionTest OK"
 endproc
  
 procedure testPermutePart
-	appendInfoLine: tab$, "Permute part"
+	appendInfo: tab$, "Permute part"
 	.p10 = Create Permutation: "p", 10, "yes"
 	.v10# = List values
 	.p5 = Create Permutation: "p", 5, "no"
@@ -232,7 +240,7 @@ procedure testPermutePart
 		assert .v2# [5 + i] = 5 + .v5# [i]
 	endfor
 	removeObject: .p2, .p1, .p5, .p10
-	appendInfoLine: tab$, "Permute part OK"
+	appendInfoLine: " OK"
 endproc
 
 procedure countInversions
@@ -266,12 +274,43 @@ procedure countInversions
 	# 1,2,3,4,5,6,7,8,9,10 -> 0
 	.pi = Interleave: 0, 0, 5, 0
 	# 1,6,2,7,3,8,4,9,5,10 -> 10
-	.inversions = Get number of inversions
-	assert .inversions = 10
+	.numberOfInversions = Get number of inversions
+	assert .numberOfInversions = 10
 
+	appendInfo: tab$, tab$, "List all inversions"
+	.inversions_known## = {{6,2}, {6,3}, {6,4}, {6,5}, {7,3}, {7,4}, {7,5}, {8,4}, {8,5}, {9,5}}
+	.inversions## = List all inversions
+	assert numberOfRows (.inversions##) = .numberOfInversions
+	for .irow to .numberOfInversions
+		assert .inversions_known## [.irow, 1] = .inversions## [.irow, 1]
+		assert .inversions_known## [.irow, 2] = .inversions## [.irow, 2]
+	endfor
+	appendInfoLine: " OK"
+	appendInfo: tab$, tab$, "List random inversions"
+
+	.nrandom = 2
+	.randomInversions## = List random inversions: .nrandom
+	@checkInversions: .randomInversions##, .inversions_known##;
+
+	.nrandom = .numberOfInversions + 5
+	.randomInversions## = List random inversions: .nrandom
+	@checkInversions: .randomInversions##, .inversions_known##;
+	appendInfoLine: " OK"
 
 	removeObject: .pi, .p
 	appendInfoLine: tab$, "Count inversions OK"
 endproc
 
-
+procedure checkInversions: .r##, .ref##
+	for .irowr to numberOfRows (.r##)
+		.found = 0
+		.irow = 1
+		repeat
+			if .r## [.irowr, 1] = .ref## [.irow, 1] and .r## [.irowr, 2] = .ref## [.irow, 2]
+				.found = 1
+			endif
+			.irow += 1
+		until .found or .irow > numberOfRows (.ref##)
+		assert .found; '.irowr'
+	endfor
+endproc
