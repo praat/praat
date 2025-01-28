@@ -37,6 +37,31 @@ static void logo (Graphics graphics) {
 	Graphics_setFontSize (graphics, 14.0);
 	Graphics_text (graphics, 0.5, 0.41, Melder_cat (U"version ", Melder_appVersionSTR(),
 			U" (", Melder_appMonthSTR(), U" ", Melder_appDay(), U", ", Melder_appYear(), U")"));
+	Graphics_setFontSize (graphics, 12.0);
+	constexpr bool isArm64 =
+		#if defined (__aarch64__) || defined (_M_ARM64_)
+			true;
+		#else
+			false;
+		#endif
+	const conststring32 builtFor =
+		#if defined (macintosh)
+			isArm64 ? U"ARM64 macOS" : U"Intel64 macOS";
+		#elif defined (_WIN32)
+			isArm64 ? U"ARM64 Windows" : sizeof (void *) == 4 ? U"Intel32 Windows" : U"Intel64 Windows";
+		#elif defined (__s390x__)
+			U"s390x Linux";
+		#elif defined (raspberrypi)
+			U"ARMV7 Raspberry Pi";
+		#elif defined (chrome)
+			isArm64 ? U"ARM64 Chromebook" : U"Intel64 Chromebook";
+		#elif defined (linux)
+			isArm64 ? U"ARM64 Linux" : U"Intel64 Linux";
+		#else
+			U"";
+			#error Unknown OS type.
+		#endif
+	Graphics_text (graphics, 0.5, 0.34, Melder_cat (U"built for ", builtFor));
 	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_setFont (graphics, kGraphics_font::HELVETICA);
 	Graphics_setFontSize (graphics, 10.0);
