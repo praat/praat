@@ -13,6 +13,7 @@ appendInfoLine: "test_Permutation.praat"
 @jump
 @distributionTest: 10, 10000
 @countInversions
+@testCreateSimple
 
 appendInfoLine: "test_Permutation OK"
 
@@ -313,4 +314,60 @@ procedure checkInversions: .r##, .ref##
 		until .found or .irow > numberOfRows (.ref##)
 		assert .found; '.irowr'
 	endfor
+endproc
+
+procedure testCreateSimple
+	appendInfo: tab$ ,"testCreateSimple"
+	.p1 = Create simple Permutation: "p1", {1, 2}
+	asserterror There should be at least one element in a Permutation.
+	.p2 = Create simple Permutation: "p2", {}
+	asserterror All numbers from 1 to 3 should occur exactly once, e.g. the value 1 occurs 2 times.
+	.p3 = Create simple Permutation: "p3",  {3, 1, 1}
+	asserterror Your maximum number (4) should not be larger than the number of elements you supplied (3).
+	.p4 = Create simple Permutation: "p4",  {3, 1, 4}
+	asserterror Your minimum number should be 1 (it is 0).
+	.p5 = Create simple Permutation: "p5",  {0, 1, 2}
+	removeObject: .p1
+	appendInfoLine: " OK"
+endproc
+
+procedure multiplyP: .a, .b
+	assert .a < .b
+	selectObject: .a, .b
+	.a$ = selected$ ("Permutation", 1)
+	.b$ = selected$ ("Permutation", 2)
+	.r = Multiply
+	.newName$ = .a$ + "_x_" + .b$
+	Rename: .newName$
+	.numberOfInversions =  Get number of inversions
+	appendInfoLine: .numberOfInversions, " inversions for: ", .newName$
+endproc
+
+procedure checkDifferenceBetweenTwoPermutations
+	.b = Create simple Permutation: "b", {2, 6, 7, 10, 5, 1, 4, 9, 3, 8}
+	.e = Create simple Permutation: "e", {10, 9, 7, 8, 6, 5, 4, 2, 3, 1}
+	.nie = Get number of inversions
+	.ei = Invert
+	Rename: "ei"
+	selectObject: .b
+	.nib = Get number of inversions
+	appendInfoLine: "We want ", .nie - .nib, " inversions"
+	.bi = Invert
+	Rename: "bi"
+	selectObject: .b
+	.bc = Copy: "b"
+	selectObject: .e
+	.ec = Copy: "e"
+	selectObject: .ei
+	.eic = Copy: "ei"
+	@multiplyP: .b, .e
+	@multiplyP: .e, .bc
+	@multiplyP: .b, .ei
+	@multiplyP: .ei, .bc
+	@multiplyP: .ei, .bi
+	@multiplyP: .e, .bi
+	@multiplyP: .bi, .ec
+	@multiplyP: .bi, .eic
+	
+	removeObject: .b, .e, .bi, .ei, .b_x_ei, .ei_x_b, .ei_x_bi
 endproc

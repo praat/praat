@@ -186,6 +186,7 @@ inline void NUMextrema_e (constVECVU const& x, double *out_minimum, double *out_
 	if (out_maximum)
 		*out_maximum = NUMmax_e (x);
 }
+
 inline void NUMextrema_u (constVECVU const& x, double *out_minimum, double *out_maximum) {
 	if (out_minimum)
 		*out_minimum = NUMmin_u (x);

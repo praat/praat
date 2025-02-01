@@ -61,10 +61,23 @@ static integer Permutation_checkRange (Permutation me, integer *from, integer *t
 }
 
 void Permutation_checkInvariant (Permutation me) {
-	autoINTVEC p = sort_INTVEC (my p.get());
+	/*
+		All element numbers should be in the interval [1, numberOfElements].
+	*/
+	MelderIntegerRange irange = NUMextrema_e (my p.get());
+	Melder_require (irange.first == 1,
+		U"Your minimum number should be 1 (it is ", irange.first, U").");
+	Melder_require (irange.last == my numberOfElements,
+		U"Your maximum number (", irange.last, U") should not be larger than the number of elements you supplied (", my numberOfElements, U").");
+	/*
+		All element numbers should occur exactly once
+	*/
+	autoINTVEC p = zero_INTVEC (my numberOfElements);
 	for (integer i = 1; i <= my numberOfElements; i ++)
-		Melder_require (p [i] == i,
-			me, U": is not a valid permutation.");
+		p [my p [i]] ++;
+	for (integer i = 1; i <= my numberOfElements; i ++)
+		Melder_require (p [i] == 1,
+			U"All numbers from 1 to ", my numberOfElements, U" should occur exactly once, e.g. the value ", i, U" occurs ", p [i], U" times.");
 }
 
 void structPermutation :: v1_info () {
@@ -83,6 +96,19 @@ void structPermutation :: v1_readText (MelderReadText text, int /*formatVersion*
 void Permutation_init (Permutation me, integer numberOfElements) {
 	my numberOfElements = numberOfElements;
 	my p = to_INTVEC (numberOfElements);
+}
+
+autoPermutation Permutation_createSimplePermutation (constINTVEC const& numbers) {
+	try {
+		Melder_require (numbers.size > 0,
+			U"There should be at least one element in a Permutation.");
+		autoPermutation me = Permutation_create (numbers.size, true);
+		my p.get()  <<=  numbers;
+		Permutation_checkInvariant (me.get());
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"The permutation could not be created.");
+	}
 }
 
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first) {
@@ -351,7 +377,7 @@ autoPermutation Permutation_invert (Permutation me) {
 	}
 }
 
-void Permutation_invert_into (Permutation me, Permutation result) {
+void Permutation_invert_into (Permutation me, mutablePermutation result) {
 	Melder_assert (my numberOfElements == result -> numberOfElements);
 	for (integer i = 1; i <= my numberOfElements; i ++)
 		result -> p [my p [i]] = i;
@@ -434,7 +460,7 @@ autoPermutation Permutations_multiply2 (Permutation me, Permutation thee) {
 	}
 }
 
-void Permutations_multiply2_into (Permutation me, Permutation thee, Permutation result) {
+void Permutations_multiply2_into (Permutation me, Permutation thee, mutablePermutation result) {
 	Melder_assert (my numberOfElements == thy numberOfElements && my numberOfElements == result -> numberOfElements);
 	for (integer i = 1; i <= my numberOfElements; i ++)
 		result -> p [i] = my p [thy p [i]];
@@ -646,7 +672,20 @@ autoMAT Permutation_getAllInversions (Permutation me) {
 		}
 		return inversions;
 	} catch (MelderError) {
-		Melder_throw (me, U"Could not determine inversions.");
+		Melder_throw (me, U": Could not determine inversions.");
 	}
 }
+
+/* TODO will this work in general? */
+autoPermutation Permutations_subtractInversions (Permutation me, Permutation thee) {
+	try {
+		autoPermutation result = Permutation_create (my numberOfElements, true);
+		for (integer i = 1; i <= my numberOfElements; i ++)
+			result -> p [i] = thy p [my p [i]];
+		return result;
+	} catch (MelderError) {
+		Melder_throw (me, U": Could not subtract inversions.");
+	}
+}
+
 /* End of Permutation.cpp */

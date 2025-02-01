@@ -1,0 +1,15 @@
+File type = "ooTextFile"
+Object class = "Permutation"
+
+numberOfElements = 10 
+p []: 
+    p [1] = 3 
+    p [2] = 2 
+    p [3] = 8 
+    p [4] = 1 
+    p [5] = 3 
+    p [6] = 9 
+    p [7] = 7 
+    p [8] = 6 
+    p [9] = 10 
+    p [10] = 4 

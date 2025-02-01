@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2023, 2025 David Weenink, 2015,2023,2024 Paul Boersma
+ * Copyright (C) 1993-2025 David Weenink, 2015,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4620,6 +4620,16 @@ DO
 	CREATE_ONE_END (name)
 }
 
+FORM (CREATE_ONE__Permutation_createSimplePermutation, U"Permutation: Create simple Permutation", U"") {
+	WORD (name, U"Name", U"p")
+	INTEGERVECTOR (numbers, U"The Permutation", WHITESPACE_SEPARATED_, U"3 1 2")
+	OK
+DO
+	CREATE_ONE
+		autoPermutation result = Permutation_createSimplePermutation (numbers);
+	CREATE_ONE_END (name)
+}
+
 DIRECT (QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfElements) {
 	QUERY_ONE_FOR_INTEGER (Permutation)
 		const integer result = my numberOfElements;
@@ -4649,7 +4659,7 @@ DIRECT (QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfInversions) {
 	QUERY_ONE_FOR_INTEGER_END (U" (inversions)")
 }
 
-FORM (QUERY_ONE_FOR_MATRIX__Permutation_getRandomInversions, U"Permutation: Get random inversions", U"Permutation: Get random inversions...") {
+FORM (QUERY_ONE_FOR_MATRIX__Permutation_listRandomInversions, U"Permutation: Get random inversions", U"Permutation: Get random inversions...") {
 	NATURAL (maxNumberOfInversions, U"max. number of inversions", U"1")
 	OK
 DO
@@ -4658,7 +4668,7 @@ DO
 	QUERY_ONE_FOR_MATRIX_END
 }
 
-DIRECT (QUERY_ONE_FOR_MATRIX__Permutation_getAllInversions) {
+DIRECT (QUERY_ONE_FOR_MATRIX__Permutation_listAllInversions) {
 	QUERY_ONE_FOR_MATRIX (Permutation)
 		autoMAT result = Permutation_getAllInversions (me);
 	QUERY_ONE_FOR_MATRIX_END
@@ -8979,7 +8989,9 @@ void praat_David_generics_new_init () {
 	);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 1,
-			CREATE_ONE__Permutation_create);
+						  CREATE_ONE__Permutation_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple Permutation...", nullptr, 1,
+						  CREATE_ONE__Permutation_createSimplePermutation);
 	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", nullptr, 2,
 			CREATE_ONE__Polynomial_create);
@@ -10053,10 +10065,10 @@ void praat_David_init () {
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue);
 		praat_addAction1 (classPermutation, 1, U"Get number of inversions",
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfInversions);
-		praat_addAction1 (classPermutation, 1, U"Get random inversions...",
-						  nullptr, 1, QUERY_ONE_FOR_MATRIX__Permutation_getRandomInversions);
-		praat_addAction1 (classPermutation, 1, U"Get all inversions",
-						  nullptr, 1, QUERY_ONE_FOR_MATRIX__Permutation_getAllInversions);
+		praat_addAction1 (classPermutation, 1, U"List random inversions...",
+						  nullptr, 1, QUERY_ONE_FOR_MATRIX__Permutation_listRandomInversions);
+		praat_addAction1 (classPermutation, 1, U"List all inversions",
+						  nullptr, 1, QUERY_ONE_FOR_MATRIX__Permutation_listAllInversions);
 		praat_addAction1 (classPermutation, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classPermutation, 0, U"Permute randomly (in-place)...",
 				nullptr, 1, MODIFY__Permutation_permuteRandomlyInplace);

@@ -26,9 +26,12 @@
 
 /*
 	Class invariant: any permutation equals the identity permutation after all its elements are sorted ascendingly.
+	Alternative: a permutation of size n contains all numbers from 1 to n.
 */
 
 void Permutation_init (Permutation me, integer numberOfElements);
+
+autoPermutation Permutation_createSimplePermutation (constINTVEC const& numbers);
 
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first);
 
@@ -91,7 +94,7 @@ integer Permutation_getIndexAtValue (Permutation me, integer value);
 /* Find i for which p [i] = value */
 
 autoPermutation Permutation_invert (Permutation me);
-void Permutation_invert_into (Permutation me, Permutation result);
+void Permutation_invert_into (Permutation me, mutablePermutation result);
 /*  */
 
 void Permutation_reverse_inline (Permutation me, integer from, integer to);
@@ -103,7 +106,7 @@ void Permutation_next_inplace (Permutation me);
 void Permutation_previous_inplace (Permutation me);
 
 autoPermutation Permutations_multiply2 (Permutation me, Permutation thee);
-void Permutations_multiply2_into (Permutation me, Permutation thee, Permutation result);
+void Permutations_multiply2_into (Permutation me, Permutation thee, mutablePermutation result);
 
 autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me);
 
