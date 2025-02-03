@@ -23,7 +23,7 @@
 /*
     The algorithm to do the counting only was found in (CLRS) Corman, Leiserson, Rivest & Stein: Introduction to algorithms,
         third edition, The MIT press, as the solution of problem 2.4.d.
-    However, their solution contains three gross errors which I have corrected.
+    However, on 15 January 2025, their solution on the web-site of the book had the counting variable in the wrong position
 */
 
 /*
@@ -71,10 +71,12 @@ private:
     vector<IndexedNumber<T>> v;
     INTVEC inversions;
     INTVEC sortedSelectedInversionIndices;
+    INTVEC otherPos;
     integer totalNumberOfInversions = 0;
+    integer totalNumberOfInversionsInInterval = 0;
     integer numberOfInversionsRegistered = 0;
     integer numberOfInversionsToRegister = 0;
-    integer lastPosInSortedSelectedInversionIndices = 1;
+    integer posInSortedSelectedInversionIndices = 1;
     bool workWithCopyOfData = false;
 
     int (*compare) (T& a, T& b);
@@ -96,6 +98,12 @@ private:
             v = data;
         if (buffer.size < v.size)
             buffer.resize (v.size);
+        totalNumberOfInversions = 0;
+        totalNumberOfInversionsInInterval = 0;
+        numberOfInversionsRegistered = 0;
+        numberOfInversionsToRegister = 0;
+        posInSortedSelectedInversionIndices = 1;
+        otherPos = {};
     }
 
     integer mergeInversions (integer p, integer q, integer r) {
@@ -108,17 +116,24 @@ private:
             vr [ii] = v [q + 1 + ii - 1];
         integer i = 1, j = 1, k = p, localNumberOfInversions = 0;
         while (i <= nl && j <= nr) {
-            if (compareIndexedNumbers (vl [i], vr [j]) > 0) { //! vl [i] > vr [j], CLRS : L[i] <= R[j]
+            if (compareIndexedNumbers (vl [i], vr [j]) <= 0) {
+                v [k ++] = vl [i ++];
+            } else { // vl[i] > vr[j]
                 localNumberOfInversions += nl - i + 1;
                 if (numberOfInversionsToRegister > 0) {
-                    const integer ihigh = vr [j].index;
                     for (integer ii = i; ii <= nl; ii ++) {
-                        const integer ilow = vl [ii].index;
-                        const integer index = ( ilow < ihigh ? inversionToIndex (ilow, ihigh) : inversionToIndex (ihigh, ilow) );
                         totalNumberOfInversions ++;
+                        if (otherPos.size > 0 && otherPos [vl [ii].number] < otherPos [vr [j].number]) // if also inversion in other: skip
+                            continue;
+                        /*
+                            The inversions that passed are in the interval
+                        */
+                        totalNumberOfInversionsInInterval ++;
+                        const integer index = inversionToIndex (vr [j].number, vl [ii].number);
                         if (Melder_debug == - 6) {
                             autoMelderString localInfo;
-                            MelderString_append (& localInfo, U"\n--p:", p, U" q:", q, U" r:", r, U" i:", i, U" j:", j, U" k:", k, U" ilow:", ilow, U" ihigh:", ihigh);
+                            MelderString_append (& localInfo, U"\n--p:", p, U" q:", q, U" r:", r, U" i:", i, U" j:", j, U" k:", k,
+                                U" olow:", otherPos [vl [ii].number], U" ohigh:", otherPos [vr [j].number]);
                             MelderString_append (& localInfo, U"\n\tvl(", vl [1].number);
                             for (integer i = 2; i <= nl; i ++)
                                 MelderString_append (& localInfo, U",", vl [i].number);
@@ -132,17 +147,16 @@ private:
                             trace (localInfo.string);
                             MelderString_free (& localInfo);
                         }
-                        while (totalNumberOfInversions == sortedSelectedInversionIndices [lastPosInSortedSelectedInversionIndices]) {
-                            inversions [++ numberOfInversionsRegistered] = index;
+                        while (totalNumberOfInversionsInInterval == sortedSelectedInversionIndices [posInSortedSelectedInversionIndices]) {
+                            inversions [++ numberOfInversionsRegistered] = index; //
                             if (-- numberOfInversionsToRegister == 0)
-                                break; // TODO: should we stop sorting now?
-                            lastPosInSortedSelectedInversionIndices ++;
+                                break;
+                            posInSortedSelectedInversionIndices ++;
                         }
                     }
                 }
                 v [k ++] = vr [j ++]; //! CLRS: A[k] = L[i++];
-            } else
-                v [k ++] = vl [i ++]; //! CLRS: A[k] = R[j++]
+            }
         }
         while (i <= nl)
             v [k ++] = vl [i ++];
@@ -151,12 +165,12 @@ private:
         return localNumberOfInversions;
     }
 
-    integer sortAndCountInversions_ (integer p, integer r) {
+    integer countInversionsBySorting_ (integer p, integer r) {
         integer numberOfInversions = 0;
         if (p < r) {
             const integer q = (p + r) / 2;
-            numberOfInversions += sortAndCountInversions_ (p, q);
-            numberOfInversions += sortAndCountInversions_ (q + 1, r);
+            numberOfInversions += countInversionsBySorting_ (p, q);
+            numberOfInversions += countInversionsBySorting_ (q + 1, r);
             numberOfInversions += mergeInversions (p, q, r);
         }
         return numberOfInversions;
@@ -168,28 +182,41 @@ public:
         our workWithCopyOfData = workWithCopyOfData;
     }
 
-    integer getNumberOfInversionsAndSort (vector<IndexedNumber<T>> const& data) {
-        init (data);
-        return sortAndCountInversions_ (1_integer, v.size);
+    inline integer getNumberOfInversionsRegistered () {
+        return numberOfInversionsRegistered;
     }
 
-    integer getNumberOfInversionsAndSort (vector<IndexedNumber<T>> const& data, INTVEC const& inversions) {
+    integer getNumberOfInversionsbySorting (vector<IndexedNumber<T>> const& data) {
+        init (data);
+        return countInversionsBySorting_ (1_integer, v.size);
+    }
+
+    integer getNumberOfInversionsbySorting (vector<IndexedNumber<T>> const& data, INTVEC const& inversions) {
         Melder_assert (inversions.size > 0);
         init (data);
         our inversions = inversions;
-        return sortAndCountInversions_ (1_integer, v.size);
+        return countInversionsBySorting_ (1_integer, v.size);
     }
 
-    integer getSelectedInversionsAndSort (vector<IndexedNumber<T>> const& data, INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions) {
-        Melder_assert (sortedSelectedInversionIndices.size == out_inversions.size);
+    integer getSelectedInversionsbySorting (vector<IndexedNumber<T>> const& data, INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions) {
+        Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
         our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
         init (data);
-        totalNumberOfInversions = 0;
         numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
-        numberOfInversionsRegistered = 0;
-        lastPosInSortedSelectedInversionIndices = 1;
         our inversions = out_inversions;
-        const integer numberOfInversions = sortAndCountInversions_ (1_integer, v.size);
+        const integer numberOfInversions = countInversionsBySorting_ (1_integer, v.size);
+        return numberOfInversions;
+    }
+
+    integer getSelectedInversionsNotInOtherbySorting (vector<IndexedNumber<T>> const& data, INTVEC const& sortedSelectedInversionIndices, INTVEC const& otherPos, INTVEC const& out_inversions) {
+        Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
+        Melder_assert (otherPos.size == data.size);
+        our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
+        init (data);
+        our otherPos = otherPos;
+        numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
+        our inversions = out_inversions;
+        const integer numberOfInversions = countInversionsBySorting_ (1_integer, v.size);
         return numberOfInversions;
     }
 
@@ -200,7 +227,7 @@ public:
         Melder_assert (inversions.size > 0);
         init (data);
         our inversions = inversions;
-        const integer numberOfInversions = sortAndCountInversions_ (1_integer, v.size);
+        const integer numberOfInversions = countInversionsBySorting_ (1_integer, v.size);
         return numberOfInversions;
     }
 

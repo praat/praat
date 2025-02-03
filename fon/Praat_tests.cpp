@@ -674,6 +674,10 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			timeMedian ();
 			//  Gflops is --undefined--
 		} break;
+		case kPraatTests::TIME_SLOPE_SELECTION: {
+			timeSlopeSelection ();
+			//  Gflops is --undefined--
+		} break;
 
 	}
 	MelderInfo_writeLine (Melder_single (n / t * 1e-9), U" Gflop/s");

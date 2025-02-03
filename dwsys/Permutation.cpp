@@ -590,7 +590,7 @@ integer Permutation_getNumberOfInversions (Permutation me) {
 	try {
 		struct InversionCounter<integer> counter (true);
 		autovector<IndexedInteger> pn = counter.convertToIndexedNumberVector (my p.get());
-		return counter.getNumberOfInversionsAndSort (pn.get());
+		return counter.getNumberOfInversionsbySorting (pn.get());
 	} catch (MelderError) {
 		Melder_throw (me, U"Could not determine the number of inversions.");
 	}
@@ -603,7 +603,7 @@ autoINTVEC Permutation_getAllInversionIndices (Permutation me) {
 		autovector<IndexedInteger> pn = counter.convertToIndexedNumberVector (my p.get());
 		autoINTVEC inversionIndices = raw_INTVEC (maximumNumberOfInversions);
 		autoINTVEC sortedInversionNumbers = to_INTVEC (maximumNumberOfInversions); // sorted
-		const integer numberOfInversions = counter.getSelectedInversionsAndSort (pn.get(), sortedInversionNumbers.get(), inversionIndices.get());
+		const integer numberOfInversions = counter.getSelectedInversionsbySorting (pn.get(), sortedInversionNumbers.get(), inversionIndices.get());
 		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {
@@ -621,7 +621,7 @@ autoINTVEC Permutation_getRandomInversionIndices (Permutation me, integer number
 		for (integer i = 1; i <= numberOfRandomInversions; i ++)
 			sortedRandomInversionNumbers [i] = NUMrandomInteger (1, maximumNumberOfInversions);
 		sort_INTVEC_inout (sortedRandomInversionNumbers.get());
-		const integer numberOfInversions = counter.getSelectedInversionsAndSort (pn.get(), sortedRandomInversionNumbers.get(), inversionIndices.get());
+		const integer numberOfInversions = counter.getSelectedInversionsbySorting (pn.get(), sortedRandomInversionNumbers.get(), inversionIndices.get());
 		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {
