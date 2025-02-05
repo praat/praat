@@ -27,6 +27,7 @@
 */
 
 #include <time.h>
+#include "BinaryIndexedTree.h"
 #include "Permutation.h"
 #include "NUM2.h"
 #include "NUMinversionCounter.h"
@@ -108,6 +109,28 @@ autoPermutation Permutation_createSimplePermutation (constINTVEC const& numbers)
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"The permutation could not be created.");
+	}
+}
+
+void Permutation_drawAsLine (Permutation me, Graphics g, bool garnish) {
+	const double xmin = 0.0, xmax = my numberOfElements + 1.0;
+	const double ymin = xmin, ymax = xmax;
+	Graphics_setInner (g);
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	autoVEC x = raw_VEC (my numberOfElements), y = raw_VEC (my numberOfElements);
+	double x1 = 1.0, y1 = my p [1];
+	for (integer i = 1; i <= my numberOfElements; i ++) {
+		x [i] = i;
+		y [i] = my p [i];
+	}
+	Graphics_polyline (g, my numberOfElements, & x [1], & y [1]);
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_markLeft (g, 1, true, true, false, U"");
+		Graphics_markLeft (g, my numberOfElements, true, true, false, U"");
+		Graphics_markBottom (g, 1, true, true, false, U"");
+		Graphics_markBottom (g, my numberOfElements, true, true, false, U"");
 	}
 }
 
@@ -587,6 +610,16 @@ autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kSt
 }
 
 integer Permutation_getNumberOfInversions (Permutation me) {
+	BinaryIndexedTree bit (my numberOfElements);
+	integer count = 0;
+	for (integer i = my numberOfElements; i >= 1; i --) {
+		count += bit.query (my p [i]);
+		bit.update (my p [i], 1);
+	}
+	return count;
+}
+
+integer Permutation_getNumberOfInversions2 (Permutation me) {
 	try {
 		struct InversionCounter<integer> counter (true);
 		autovector<IndexedInteger> pn = counter.convertToIndexedNumberVector (my p.get());
@@ -676,7 +709,7 @@ autoMAT Permutation_getAllInversions (Permutation me) {
 	}
 }
 
-/* TODO will this work in general? */
+/* TODO will this work in general? NO */
 autoPermutation Permutations_subtractInversions (Permutation me, Permutation thee) {
 	try {
 		autoPermutation result = Permutation_create (my numberOfElements, true);

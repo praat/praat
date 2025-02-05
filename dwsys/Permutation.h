@@ -20,6 +20,7 @@
 
 #include "melder.h"
 #include "Collection.h"
+#include "Graphics.h"
 #include "NUMsorting.h"
 
 #include "Permutation_def.h"
@@ -43,6 +44,8 @@ autoPermutation Permutation_create (integer numberOfElements, bool identity);
 */
 
 autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kStrings_sorting sorting);
+
+void Permutation_drawAsLine (Permutation me, Graphics g, bool garnish);
 
 void Permutation_checkInvariant (Permutation me);
 /* Check that the elements, if sorted ascendingly, are exactly equal to the identity (1,2,...). */

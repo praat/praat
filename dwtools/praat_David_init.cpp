@@ -4609,6 +4609,15 @@ DIRECT (HELP__Permutation_help) {
 	HELP (U"Permutation")
 }
 
+FORM (GRAPHICS_EACH__Permutation_drawAsLine, U"", nullptr) {
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO
+	GRAPHICS_EACH (Permutation)
+		Permutation_drawAsLine (me, GRAPHICS, garnish);
+	GRAPHICS_EACH_END
+}
+
 FORM (CREATE_ONE__Permutation_create, U"Create Permutation", U"Create Permutation...") {
 	WORD (name, U"Name", U"p")
 	NATURAL (numberOfElements, U"Number of elements", U"10")
@@ -10054,6 +10063,8 @@ void praat_David_init () {
 
 	praat_addAction1 (classPermutation, 0, U"Permutation help",
 			nullptr, 0, HELP__Permutation_help);
+	praat_addAction1 (classPermutation, 0, U"Draw as line...",
+					  nullptr, 0, GRAPHICS_EACH__Permutation_drawAsLine);
 	praat_addAction1 (classPermutation, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classPermutation, 1, U"Get number of elements",
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfElements);
