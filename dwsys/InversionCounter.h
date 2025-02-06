@@ -1,6 +1,6 @@
-#ifndef _NUMinversionCounter_h_
-#define _NUMinversionCounter_h_
-/* NUMinversionCounter.h
+#ifndef _InversionCounter_h_
+#define _InversionCounter_h_
+/* InversionCounter.h
  *
  * Copyright (C) 2025 David Weenink
  *
@@ -56,19 +56,18 @@ struct structIndexedNumber {
     integer index;
 };
 
-
 template<typename T> using IndexedNumber = structIndexedNumber<T>;
 typedef IndexedNumber<integer> IndexedInteger;
 typedef IndexedNumber<double> IndexedDouble;
 
-template <typename T>
+template <typename T, typename VT>
 class InversionCounter {
 
 private:
 
-    autovector<IndexedNumber<T>> buffer;
-    autovector<IndexedNumber<T>> dataCopy;
-    vector<IndexedNumber<T>> v;
+    autovector<VT> buffer;      // working space for the merge-sort
+    autovector<VT> dataCopy;
+    vector<VT> v;               // link to the data that are processed
     INTVEC inversions;
     INTVEC sortedSelectedInversionIndices;
     INTVEC otherPos;
@@ -79,25 +78,33 @@ private:
     integer posInSortedSelectedInversionIndices = 1;
     bool workWithCopyOfData = false;
 
-    int (*compare) (T& a, T& b);
+    bool (*compare) (VT& a, VT& b);
 
-    int compareIndexedNumbers (IndexedNumber<T>& a, IndexedNumber<T>& b) {
-        return a.number < b.number ? -1 : a.number > b.number ? 1 : 0;
+    bool compareIndexedNumbers (IndexedNumber<T>& a, IndexedNumber<T>& b) {
+        return a.number <= b.number;
     }
 
-    int compareIndexedNumbers (T& a, T& b) {
-        return a < b ? -1 : a > b ? 1 : 0;
+    bool compareIndexedNumbers (T& a, T& b) {
+        return a < b;
     }
 
+    bool compareNumbers (T& a, T& b) {
+        return a < b;
+    }
 
-    void init (vector<IndexedNumber<T>> const& data) {
+    void init (vector<VT> const& data) {
         if (workWithCopyOfData) {
-            dataCopy = newvectorcopy<IndexedNumber<T>> (constvectorview<IndexedNumber<T>> (data));
+            if (dataCopy._capacity > 0) { // no need to copy data that will be overwritten
+                dataCopy.resize (data.size);
+                for (integer i = 1; i <= data.size; i ++) // operator '<<=' only works for simple types!
+                    dataCopy [i] =  data [i];
+            } else
+                dataCopy = newvectorcopy<VT> (constvectorview<VT> (data));
             v = dataCopy.get();
         } else
             v = data;
-        if (buffer.size < v.size)
-            buffer.resize (v.size);
+
+        buffer.resize (v.size);
         totalNumberOfInversions = 0;
         totalNumberOfInversionsInInterval = 0;
         numberOfInversionsRegistered = 0;
@@ -109,14 +116,14 @@ private:
     integer mergeInversions (integer p, integer q, integer r) {
         const integer nl = q - p + 1;
         const integer nr = r - q;
-        vector<IndexedNumber<T>> vl = buffer.part (1, nl), vr = buffer.part (nl + 1, nl + nr);
+        vector<VT> vl = buffer.part (1, nl), vr = buffer.part (nl + 1, nl + nr);
         for (integer ii = 1; ii <= nl; ii ++)
             vl [ii] = v [p + ii - 1];
         for (integer ii = 1; ii <= nr; ii ++)
             vr [ii] = v [q + 1 + ii - 1];
         integer i = 1, j = 1, k = p, localNumberOfInversions = 0;
         while (i <= nl && j <= nr) {
-            if (compareIndexedNumbers (vl [i], vr [j]) <= 0) {
+            if (compareIndexedNumbers (vl [i], vr [j])) {
                 v [k ++] = vl [i ++];
             } else { // vl[i] > vr[j]
                 localNumberOfInversions += nl - i + 1;
@@ -126,27 +133,10 @@ private:
                         if (otherPos.size > 0 && otherPos [vl [ii].number] < otherPos [vr [j].number]) // if also inversion in other: skip
                             continue;
                         /*
-                            The inversions that passed are in the interval
+                            The inversions that passed are in the 'interval'
                         */
                         totalNumberOfInversionsInInterval ++;
                         const integer index = inversionToIndex (vr [j].number, vl [ii].number);
-                        if (Melder_debug == - 6) {
-                            autoMelderString localInfo;
-                            MelderString_append (& localInfo, U"\n--p:", p, U" q:", q, U" r:", r, U" i:", i, U" j:", j, U" k:", k,
-                                U" olow:", otherPos [vl [ii].number], U" ohigh:", otherPos [vr [j].number]);
-                            MelderString_append (& localInfo, U"\n\tvl(", vl [1].number);
-                            for (integer i = 2; i <= nl; i ++)
-                                MelderString_append (& localInfo, U",", vl [i].number);
-                            MelderString_append (& localInfo, U") vr(", vr [1].number);
-                            for (integer i = 2; i <= nr; i ++)
-                                MelderString_append (& localInfo, U",", vr [i].number);
-                            MelderString_append (& localInfo, U") v(", v [1].number);
-                            for (integer i = 2; i <= v.size; i ++)
-                                MelderString_append (& localInfo, U",", v [i].number);
-                            MelderString_append (& localInfo, U")\n");
-                            trace (localInfo.string);
-                            MelderString_free (& localInfo);
-                        }
                         while (totalNumberOfInversionsInInterval == sortedSelectedInversionIndices [posInSortedSelectedInversionIndices]) {
                             inversions [++ numberOfInversionsRegistered] = index; //
                             if (-- numberOfInversionsToRegister == 0)
@@ -178,41 +168,59 @@ private:
 
 public:
 
+    InversionCounter () {
+    }
+
     InversionCounter (bool workWithCopyOfData) {
         our workWithCopyOfData = workWithCopyOfData;
+    }
+
+    void workWithCopy (bool workWithCopyOfData) {
+        our workWithCopyOfData = workWithCopyOfData;
+    }
+    /*
+        If we need to know the memory beforehand, we allocate it while creating the object.
+    */
+    InversionCounter (bool workWithCopyOfData, integer dataSize) {
+        our workWithCopyOfData = workWithCopyOfData;
+        buffer = newvectorraw<VT> (dataSize);
+        if (workWithCopyOfData) {
+            dataCopy = newvectorraw<VT> (dataSize);
+            v = dataCopy.get();
+        }
     }
 
     inline integer getNumberOfInversionsRegistered () {
         return numberOfInversionsRegistered;
     }
 
-    integer getNumberOfInversionsbySorting (vector<IndexedNumber<T>> const& data) {
+    integer getNumberOfInversionsbySorting (vector<VT> const& data) {
         init (data);
         return countInversionsBySorting_ (1_integer, v.size);
     }
 
-    integer getNumberOfInversionsbySorting (vector<IndexedNumber<T>> const& data, INTVEC const& inversions) {
+    integer getNumberOfInversionsbySorting (vector<VT> const& data, INTVEC const& inversions) {
         Melder_assert (inversions.size > 0);
         init (data);
         our inversions = inversions;
         return countInversionsBySorting_ (1_integer, v.size);
     }
 
-    integer getSelectedInversionsbySorting (vector<IndexedNumber<T>> const& data, INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions) {
+    integer getSelectedInversionsbySorting (vector<VT> const& data, INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions) {
         Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
-        our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
         init (data);
+        our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
         numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
         our inversions = out_inversions;
         const integer numberOfInversions = countInversionsBySorting_ (1_integer, v.size);
         return numberOfInversions;
     }
 
-    integer getSelectedInversionsNotInOtherbySorting (vector<IndexedNumber<T>> const& data, INTVEC const& sortedSelectedInversionIndices, INTVEC const& otherPos, INTVEC const& out_inversions) {
+    integer getSelectedInversionsNotInOtherbySorting (vector<VT> const& data, INTVEC const& sortedSelectedInversionIndices, INTVEC const& otherPos, INTVEC const& out_inversions) {
         Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
         Melder_assert (otherPos.size == data.size);
-        our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
         init (data);
+        our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
         our otherPos = otherPos;
         numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
         our inversions = out_inversions;
@@ -223,7 +231,7 @@ public:
     /*
         The following two methods first make a copy of the data
     */
-    integer getNumberOfInversions (vector<IndexedNumber<T>> const& data, INTVEC const& inversions) {
+    integer getNumberOfInversions (vector<VT> const& data, INTVEC const& inversions) {
         Melder_assert (inversions.size > 0);
         init (data);
         our inversions = inversions;
@@ -242,13 +250,13 @@ public:
         return (ihigh - 2) * (ihigh - 1) / 2 + ilow;
     }
 
-    autovector<IndexedNumber<T>> convertToIndexedNumberVector (constvector<T> const& v) {
-        autovector<IndexedNumber<T>> result = newvectorraw<IndexedNumber<T>> (v.size);
+    autovector<VT> convertToIndexedNumberVector (constvector<T> const& v) {
+        autovector<VT> result = newvectorraw<VT> (v.size);
         convertToIndexedNumberVector_inplace (v, result.get());
         return result;
     }
 
-    void convertToIndexedNumberVector_inplace (constvector<T> const& v, vector<IndexedNumber<T>> const& result) {
+    void convertToIndexedNumberVector_inplace (constvector<T> const& v, vector<VT> const& result) {
         Melder_assert (v.size == result.size);
         for (integer i = 1; i <= v.size; i ++) {
             result [i].number = v [i];
@@ -257,4 +265,4 @@ public:
     }
 };
 
-#endif // _NUMinversionCounter_h_
+#endif // _InversionCounter_h_
