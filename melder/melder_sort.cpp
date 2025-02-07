@@ -47,6 +47,15 @@ void sort_e_VEC_inout (VEC const& x) {
 		}
 	);
 }
+
+void sort_VEC_inout (VEC const& x) {
+	std::sort (x.begin(), x.end(),
+			   [] (double first, double last) {
+				   return first < last;
+			   }
+	);
+}
+
 autoVEC sort_removeUndefined_VEC (constVECVU const& vec) {
 	const integer newSize = NUMcountDefined (vec);
 	autoVEC result = raw_VEC (newSize);
