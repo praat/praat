@@ -24,6 +24,9 @@ void timeMedian (void) {
     try {
         Melder_clearInfo ();
         autoINTVEC numberOfElements {11_integer, 101_integer, 1001_integer, 10001_integer, 100001_integer};
+		MelderInfo_writeLine (U"Old: O(n log(n)); sort, NUMquantile(0.5)\n"
+			"New: Alexandrescu (2017) O(n)\n"
+		);
         MelderInfo_writeLine (U"n tNew tOld tOld/tNew info");
         for (integer index = 1; index <= numberOfElements.size; index ++) {
             /*
@@ -33,13 +36,13 @@ void timeMedian (void) {
             autoVEC p = to_VEC (n);
             autoVEC pc = copy_VEC (p.get());
             Melder_stopwatch ();
-            sort_e_VEC_inout (pc.get());
+            sort_VEC_inout (pc.get());
             double  median1 = NUMquantile (pc.get(), 0.5);
             double t1 = Melder_stopwatch ();
             double median2 = num::NUMquantile (p.get(), 0.5);
             double t2 = Melder_stopwatch ();
             Melder_assert (median1 == median2);
-            MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"* increasing");
+            MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"* increasing 1..n");
             /*
                 median of decreasing values
             */
@@ -48,13 +51,13 @@ void timeMedian (void) {
             }
             pc = copy_VEC (p.get());
             Melder_stopwatch ();
-            sort_e_VEC_inout (pc.get());
+            sort_VEC_inout (pc.get());
             median1 = NUMquantile (pc.get(), 0.5);
             t1 = Melder_stopwatch ();
             median2 = num::NUMquantile (p.get(), 0.5);
             t2 = Melder_stopwatch ();
             Melder_assert (median1 == median2);
-            MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"* decreasing");
+            MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"* decreasing n..1");
             /*
                 median of increasing values followed by decreasing values
             */
@@ -64,7 +67,7 @@ void timeMedian (void) {
             }
             pc = copy_VEC (p.get());
             Melder_stopwatch ();
-            sort_e_VEC_inout (pc.get());
+            sort_VEC_inout (pc.get());
             median1 = NUMquantile (pc.get(), 0.5);
             t1 = Melder_stopwatch ();
             median2 = num::NUMquantile (p.get(), 0.5);
@@ -79,7 +82,7 @@ void timeMedian (void) {
             }
             pc = copy_VEC (p.get());
             Melder_stopwatch ();
-            sort_e_VEC_inout (pc.get());
+            sort_VEC_inout (pc.get());
             median1 = NUMquantile (pc.get(), 0.5);
             t1 = Melder_stopwatch ();
             median2 = num::NUMquantile (p.get(), 0.5);
@@ -94,7 +97,7 @@ void timeMedian (void) {
             }
             pc = copy_VEC (p.get());
             Melder_stopwatch ();
-            sort_e_VEC_inout (pc.get());
+            sort_VEC_inout (pc.get());
             median1 = NUMquantile (pc.get(), 0.5);
             t1 = Melder_stopwatch ();
             median2 = num::NUMquantile (p.get(), 0.5);
