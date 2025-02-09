@@ -25,6 +25,8 @@ private:
 	autoINTVEC bit;
 public:
 
+	BinaryIndexedTree () {	}
+
 	BinaryIndexedTree (integer size) {
 		bit = zero_INTVEC (size);
 	}
@@ -45,17 +47,18 @@ public:
 	}
 
 	// update bit if we put a new 'value' at 'index'
-	void add (integer index, integer value) {
+	void update (integer index, integer value) {
 		for (integer i = index; i <= bit.size; i += i & -i)
 			bit [i] += value;
 	}
 
-	integer sum (integer index) {
+	integer query (integer index) {
 		integer sum = 0;
 		for (integer i = index; i >= 1; i -= i & -i)
 			sum += bit [i];
 		return sum;
 	}
 };
+
 
 #endif /* _BinaryIndexedTree_h_ */
