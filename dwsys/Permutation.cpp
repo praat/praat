@@ -30,7 +30,7 @@
 #include "BinaryIndexedTree.h"
 #include "Permutation.h"
 #include "NUM2.h"
-#include "NUMinversionCounter.h"
+#include "PermutationInversionCounter.h"
 
 #include "oo_DESTROY.h"
 #include "Permutation_def.h"
@@ -118,7 +118,6 @@ void Permutation_drawAsLine (Permutation me, Graphics g, bool garnish) {
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	autoVEC x = raw_VEC (my numberOfElements), y = raw_VEC (my numberOfElements);
-	double x1 = 1.0, y1 = my p [1];
 	for (integer i = 1; i <= my numberOfElements; i ++) {
 		x [i] = i;
 		y [i] = my p [i];
@@ -610,33 +609,23 @@ autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kSt
 }
 
 integer Permutation_getNumberOfInversions (Permutation me) {
-	BinaryIndexedTree bit (my numberOfElements);
-	integer count = 0;
-	for (integer i = my numberOfElements; i >= 1; i --) {
-		count += bit.query (my p [i]);
-		bit.update (my p [i], 1);
-	}
-	return count;
+	PermutationInversionCounter counter (my numberOfElements);
+	return counter.getNumberOfInversions (me);
 }
 
-integer Permutation_getNumberOfInversions2 (Permutation me) {
-	try {
-		struct InversionCounter<integer> counter (true);
-		autovector<IndexedInteger> pn = counter.convertToIndexedNumberVector (my p.get());
-		return counter.getNumberOfInversionsbySorting (pn.get());
-	} catch (MelderError) {
-		Melder_throw (me, U"Could not determine the number of inversions.");
-	}
+// count the number of permutations between the two
+integer Permutations_getNumberOfInversions (Permutation me, Permutation thee) {
+	autoPermutation invert = Permutation_invert (me);
+	autoPermutation mult = Permutations_multiply2 (invert.get(), thee);
+	return Permutation_getNumberOfInversions (mult.get());
 }
 
 autoINTVEC Permutation_getAllInversionIndices (Permutation me) {
 	try {
 		const integer maximumNumberOfInversions = Permutation_getNumberOfInversions (me);
-		struct InversionCounter<integer> counter (true);
-		autovector<IndexedInteger> pn = counter.convertToIndexedNumberVector (my p.get());
+		PermutationInversionCounter counter (me);
 		autoINTVEC inversionIndices = raw_INTVEC (maximumNumberOfInversions);
-		autoINTVEC sortedInversionNumbers = to_INTVEC (maximumNumberOfInversions); // sorted
-		const integer numberOfInversions = counter.getSelectedInversionsbySorting (pn.get(), sortedInversionNumbers.get(), inversionIndices.get());
+		const integer numberOfInversions = counter.getInversions (me, inversionIndices.get());
 		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {
@@ -647,14 +636,13 @@ autoINTVEC Permutation_getAllInversionIndices (Permutation me) {
 autoINTVEC Permutation_getRandomInversionIndices (Permutation me, integer numberOfRandomInversions) {
 	try {
 		const integer maximumNumberOfInversions = Permutation_getNumberOfInversions (me);
-		struct InversionCounter<integer> counter (true);
-		autovector<IndexedInteger> pn = counter.convertToIndexedNumberVector (my p.get());
+		PermutationInversionCounter counter (my numberOfElements);
 		autoINTVEC inversionIndices = raw_INTVEC (numberOfRandomInversions);
 		autoINTVEC sortedRandomInversionNumbers = raw_INTVEC (numberOfRandomInversions);
 		for (integer i = 1; i <= numberOfRandomInversions; i ++)
 			sortedRandomInversionNumbers [i] = NUMrandomInteger (1, maximumNumberOfInversions);
 		sort_INTVEC_inout (sortedRandomInversionNumbers.get());
-		const integer numberOfInversions = counter.getSelectedInversionsbySorting (pn.get(), sortedRandomInversionNumbers.get(), inversionIndices.get());
+		const integer numberOfInversions = counter.getSelectedInversions (me, sortedRandomInversionNumbers.get(), inversionIndices.get());
 		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {
@@ -667,13 +655,12 @@ autoMAT Permutation_getRandomInversions (Permutation me, integer numberOfRandomI
 		autoMAT inversions;
 		autoINTVEC inversionIndices = Permutation_getRandomInversionIndices (me, numberOfRandomInversions);
 		if (inversionIndices.size > 0) {
-			struct InversionCounter<integer> counter (false);
 			inversions = raw_MAT (inversionIndices.size, 2_integer);
 			for (integer i = 1; i <= inversionIndices.size; i ++) {
 				integer ilow, ihigh;
-				counter.getInversionFromIndex (inversionIndices [i], & ilow, & ihigh);
-				inversions [i] [1] =  my p [ihigh];
-				inversions [i] [2] =  my p [ilow];
+				getInversionFromIndex (my numberOfElements, inversionIndices [i], ilow, ihigh);
+				inversions [i] [1] =  ihigh;
+				inversions [i] [2] =  ilow;
 				if (inversions [i] [1] < inversions [i] [2])
 					std::swap (inversions [i] [1], inversions [i] [2]);
 			}
@@ -689,14 +676,13 @@ autoMAT Permutation_getAllInversions (Permutation me) {
 		autoMAT inversions;
 		autoINTVEC inversionIndices = Permutation_getAllInversionIndices (me);
 		if (inversionIndices.size > 0) {
-			struct InversionCounter<integer> counter (false);
 			autoINTVEC columnNumbers {1,2};
 			inversions = raw_MAT (inversionIndices.size, 2_integer);
 			for (integer i = 1; i <= inversionIndices.size; i ++) {
 				integer ilow, ihigh;
-				counter.getInversionFromIndex (inversionIndices [i], & ilow, & ihigh);
-				inversions [i] [1] = my p [ihigh];
-				inversions [i] [2] = my p [ilow];
+				getInversionFromIndex (my numberOfElements, inversionIndices [i], ilow, ihigh);
+				inversions [i] [1] = ihigh;
+				inversions [i] [2] = ilow;
 				if (inversions [i] [1] < inversions [i] [2])
 					std::swap (inversions [i] [1], inversions [i] [2]);
 			}
@@ -706,18 +692,6 @@ autoMAT Permutation_getAllInversions (Permutation me) {
 		return inversions;
 	} catch (MelderError) {
 		Melder_throw (me, U": Could not determine inversions.");
-	}
-}
-
-/* TODO will this work in general? NO */
-autoPermutation Permutations_subtractInversions (Permutation me, Permutation thee) {
-	try {
-		autoPermutation result = Permutation_create (my numberOfElements, true);
-		for (integer i = 1; i <= my numberOfElements; i ++)
-			result -> p [i] = thy p [my p [i]];
-		return result;
-	} catch (MelderError) {
-		Melder_throw (me, U": Could not subtract inversions.");
 	}
 }
 

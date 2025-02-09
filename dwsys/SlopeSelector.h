@@ -19,8 +19,8 @@
  */
 
 
-#include "median_common.h"
-#include "InversionCounter.h"
+#include "NUMmedian.h"
+#include "PermutationInversionCounter.h"
 #include "NUM2.h"
 #include "Permutation.h"
 
@@ -47,6 +47,10 @@
     The number of inversions in a permutation of size N can be counted in O(N log(N)).
  */
 
+#define SlopeSelector_TheilSen 1
+#define SlopeSelector_LeastSquares 2
+#define SlopeSelector_MedianOfMedians 3
+
 class SlopeSelector {
 private:
     integer numberOfDualLines;
@@ -55,35 +59,35 @@ private:
     integer maxNumberOfIntervalCrossings;
     autoINTVEC sortedRandomCrossingIndices;
     autoINTVEC currentCrossingIndices;
-    autoVEC intervalCrossings;
-    autovector<IndexedDouble> lineCrossingsAtX;
+    autoVEC lineCrossings, intervalCrossings;
     autoPermutation lineRankingAtBeginX;
     autoPermutation lineRankingAtEndX;  // n..1
     autoPermutation lineRankingAtBeginXPrevious; // 1..n
     autoPermutation lineRankingAtEndXPrevious;  // n..1
-    autoPermutation positionInRankingAtBeginX; // 1..n
-    autovector<IndexedInteger> indexedLineRankingAtEndX;
-    InversionCounter<integer, IndexedInteger> inversionCounter;
+    autoPermutation inverseOfLineRankingAtBeginX; // 1..n
+    PermutationInversionCounter inversionCounter;
     constVEC ax, ay;
 
-    void init (constVEC const& x, constVEC const& y) {
+    void initData (constVEC const& x, constVEC const& y) {
         Melder_assert (x.size == y.size && x.size > 2);
         our ax = x;
         our ay = y;
-        numberOfDualLines = x.size;
+    }
+
+    void initTheilSen () {
+        numberOfDualLines = ax.size;
         sampleSize = std::max (50_integer, Melder_iroundUp (sqrt (numberOfDualLines)));
         krt = Melder_iroundDown (1.5 * sqrt (sampleSize));
         maxNumberOfIntervalCrossings = numberOfDualLines * (numberOfDualLines - 1) / 2;
         sortedRandomCrossingIndices = raw_INTVEC (sampleSize);
         currentCrossingIndices = raw_INTVEC (sampleSize);
-        intervalCrossings = raw_VEC (sampleSize);
-        lineCrossingsAtX = newvectorraw<IndexedDouble> (numberOfDualLines);
+        lineCrossings = raw_VEC (numberOfDualLines); // used for intervals and line crossing
+        intervalCrossings = raw_VEC (sampleSize); // used for intervals and line crossing
         lineRankingAtBeginX = Permutation_create (numberOfDualLines, true); // 1..n
         lineRankingAtEndX = Permutation_reverse (lineRankingAtBeginX.get(), 0, 0);  // n..1
         lineRankingAtBeginXPrevious = Permutation_create (numberOfDualLines, true); // 1..n
         lineRankingAtEndXPrevious = Permutation_reverse (lineRankingAtBeginX.get(), 0, 0);  // n..1
-        positionInRankingAtBeginX = Permutation_create (numberOfDualLines, true); // 1..n
-        indexedLineRankingAtEndX = newvectorraw<IndexedInteger> (numberOfDualLines);
+        inverseOfLineRankingAtBeginX = Permutation_create (numberOfDualLines, true); // 1..n
     }
 
     void theilSen (integer kth, double *out_kth, double *out_kp1th) {
@@ -114,16 +118,14 @@ private:
             integer numberOfCrossingsAtBeginX = 0, kappa = kth, ilow, ihigh;
 
             auto getSortedSlopes = [&] (integer numberOfSlopes) {
+                intervalCrossings.resize (numberOfSlopes);
                 for (integer i = 1; i <= numberOfSlopes; i ++) {
-                    inversionCounter.getInversionFromIndex (currentCrossingIndices [i], & ilow, & ihigh);
+                    getInversionFromIndex (numberOfDualLines, currentCrossingIndices [i], ilow, ihigh);
                     const integer ipoint = numberOfDualLines + 1 - ilow;
                     const integer jpoint = numberOfDualLines + 1 - ihigh;
                     intervalCrossings [i] = (ay [jpoint] - ay [ipoint]) / (ax [jpoint] - ax [ipoint]); // the slope
                 }
-                std::sort (intervalCrossings.begin(), intervalCrossings.end(),
-                    [] (double& a, double& b) {
-                        return a <= b;
-                    });
+                sort_VEC_inout (intervalCrossings.get());
             };
 
             while (true) {
@@ -143,9 +145,8 @@ private:
                         for (integer i = 1; i <= sampleSize; i ++)
                             sortedRandomCrossingIndices [i] = NUMrandomInteger (1, currentNumberOfIntervalCrossings);
                         sort_INTVEC_inout (sortedRandomCrossingIndices.get());
-                        inversionCounter.convertToIndexedNumberVector_inplace (lineRankingAtEndX -> p.get(), indexedLineRankingAtEndX.get());
-                        const integer numberOfIntervalCrossings = inversionCounter.getSelectedInversionsNotInOtherbySorting
-                            (indexedLineRankingAtEndX.get(), sortedRandomCrossingIndices.get(), positionInRankingAtBeginX -> p.get(), currentCrossingIndices.get());
+                        const integer numberOfIntervalCrossings = inversionCounter.getSelectedInversionsNotInOther
+                            (lineRankingAtEndX.get(), inverseOfLineRankingAtBeginX.get(), sortedRandomCrossingIndices.get(), currentCrossingIndices.get());
                         Melder_assert (numberOfIntervalCrossings > 0);
                     }
 
@@ -162,16 +163,13 @@ private:
                     auto getLineCrossingsAtX = [&](double x, mutablePermutation result) {
                         for (integer iline = 1; iline <= numberOfDualLines; iline ++) {
                             const integer ipoint = numberOfDualLines + 1 - iline;
-                            lineCrossingsAtX [iline].number = x * ax [ipoint] - ay [ipoint]; // the dual line
-                            lineCrossingsAtX [iline].index = iline;
+                            lineCrossings [iline] = x * ax [ipoint] - ay [ipoint]; // the dual line
+                            result -> p [iline] = iline;
                         }
-                        std::sort (lineCrossingsAtX.begin(), lineCrossingsAtX.end(),
-                            [] (IndexedDouble& a, IndexedDouble& b) {
-                                return a.number <= b.number;
-
-                            });
-                        for (integer i = 1; i <= numberOfDualLines; i ++)
-                            result -> p [i] = lineCrossingsAtX [i].index;
+                        std::sort (result -> p.begin(), result -> p.end(),
+                            [&] (integer& i1, integer& i2) {
+                                return lineCrossings [i1] < lineCrossings [i2];
+                             });
                         const integer numberOfCrossingsAtX = Permutation_getNumberOfInversions (result);
                         return numberOfCrossingsAtX;
                     };
@@ -181,20 +179,19 @@ private:
                         const integer numberOfCrossingsAtEndX = getLineCrossingsAtX (endX, lineRankingAtEndX.get());
                         if (kth < numberOfCrossingsAtEndX + 1) { // we also need k+1;
                             currentNumberOfIntervalCrossings = numberOfCrossingsAtEndX - numberOfCrossingsAtBeginX;
-                            Permutation_invert_into (lineRankingAtBeginX.get(), positionInRankingAtBeginX.get());
+                            Permutation_invert_into (lineRankingAtBeginX.get(), inverseOfLineRankingAtBeginX.get());
                             lineRankingAtEndXPrevious -> p.get()  <<=  lineRankingAtEndX -> p.get();
                             firstTime = false;
                         } else
                             lineRankingAtEndX -> p.get()  <<=  lineRankingAtEndXPrevious -> p.get();
-                    } // else is covered by positionInRankingAtBeginX
-                } else { // currentNumberOfIntervalCrossings <= sampleSize
+                    } // else is covered by inverseOfLineRankingAtBeginX
+                } else { // we are done: currentNumberOfIntervalCrossings <= sampleSize
                     sortedRandomCrossingIndices.resize (currentNumberOfIntervalCrossings);
                     currentCrossingIndices.resize (currentNumberOfIntervalCrossings);
                     for (integer i = 1; i <= currentNumberOfIntervalCrossings; i ++)
                         sortedRandomCrossingIndices [i] = i;
-                    inversionCounter.convertToIndexedNumberVector_inplace (lineRankingAtEndX -> p.get(), indexedLineRankingAtEndX.get());
-                    (void) inversionCounter.getSelectedInversionsNotInOtherbySorting
-                        (indexedLineRankingAtEndX.get(), sortedRandomCrossingIndices.get(), positionInRankingAtBeginX -> p.get(), currentCrossingIndices.get());
+                    (void) inversionCounter.getSelectedInversionsNotInOther
+                        (lineRankingAtEndX.get(), inverseOfLineRankingAtBeginX.get(), sortedRandomCrossingIndices.get(), currentCrossingIndices.get());
                     Melder_assert (currentNumberOfIntervalCrossings == inversionCounter.getNumberOfInversionsRegistered ());
                     intervalCrossings.resize (currentNumberOfIntervalCrossings);
                     getSortedSlopes (currentNumberOfIntervalCrossings);
@@ -211,12 +208,20 @@ private:
         }
     }
 
+    double intercept (double slope) {
+        for (integer i = 1; i <= numberOfDualLines; i ++)
+            lineCrossings [i] = ay [i] - slope * ax [i];
+        return num::NUMquantile (lineCrossings.get(), 0.5);
+    }
+
 public:
 
     SlopeSelector () {}
 
-    SlopeSelector (constVEC const& x, constVEC const& y) {
-        init (x, y);
+    SlopeSelector (constVEC const& x, constVEC const& y, bool theilSen) {
+        initData (x, y);
+        if (theilSen)
+            initTheilSen ();
     }
 
     double quantile_theilSen (double factor) {
@@ -232,7 +237,7 @@ public:
         return kleft + (place - left) * dif;
     }
 
-    // for n < 50
+    // only for ax.size < 50
     double quantile_orderNSquared (double factor) {
         const integer numberOfLines = ax.size * (ax.size - 1) / 2;
         autoVEC slopes = raw_VEC (numberOfLines);
@@ -241,7 +246,7 @@ public:
             for (integer j = i + 1; j <= ax.size; j ++)
                 slopes [++ index] = (ay [j] - ay [i]) / (ax [j] - ax [i]);
         Melder_assert (index == numberOfLines);
-        sort_e_VEC_inout (slopes.get());
+        sort_VEC_inout (slopes.get());
         const double medianSlope = NUMquantile (slopes.get(), factor);
         return medianSlope;
     }
@@ -250,6 +255,33 @@ public:
         const integer split = 50;
         return ( ax.size < split ? quantile_orderNSquared (factor) : quantile_theilSen (factor) );
     }
+
+    double slopeQuantile (double factor, double *out_intercept) {
+        const double slope = slopeQuantile (factor);
+        if (out_intercept)
+            *out_intercept = intercept (slope);
+        return slope;
+    }
+
+
+    double leastSquares (double *out_intercept) {
+        const double xsum = NUMsum (ax);
+        const double xmean = xsum / ax.size;
+        longdouble variance = 0.0, m = 0.0;
+        for (integer i = 1; i <= ax.size; i ++) {
+            const double t = ax [i] - xmean;
+            variance += t * t;
+            m += t * ay [i];
+        }
+        // y = m*x + b
+        m /= variance;
+        if (out_intercept) {
+            const double ysum = NUMsum (ay);
+            *out_intercept = (ysum - m * xsum) / ax.size;
+        }
+        return m;
+    }
+
 };
 
 void timeSlopeSelection ();

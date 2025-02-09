@@ -23,6 +23,9 @@ void timeSlopeSelection () {
     try {
         Melder_clearInfo ();
         autoINTVEC sizes {10_integer, 50_integer, 100_integer, 500_integer, 1000_integer, 5000_integer, 10000_integer};
+        MelderInfo_write (U"Old: n² slopes, sort then, NUMquantile(0.5)\n"
+            "New: Matoušek (1991) O(n log(n))\n"
+        );
         MelderInfo_writeLine (U"n tNew tOld tOld/tNew");
         for (integer isize = 1; isize <= sizes.size; isize ++) {
             double slope = 1.0, b = 4.0, stddev = 0.1, factor = 0.5;
@@ -31,15 +34,15 @@ void timeSlopeSelection () {
             autoVEC y = randomGauss_VEC (n, 0.0, 0.1);
             for (integer i = 1; i <= n; i ++)
                 y[i] = slope * x[i] + NUMrandomGauss (b, stddev);
-            SlopeSelector sl (x.get(), y.get());
+            SlopeSelector sl (x.get(), y.get(), true);
 
             Melder_stopwatch ();
-            const double slope1 = sl.quantile_theilSen (factor);
+            const double slope1 = sl.quantile_orderNSquared (factor);
             const double t1 = Melder_stopwatch ();
-            const double slope2 = sl.quantile_orderNSquared (factor);
+            const double slope2 = sl.quantile_theilSen (factor);
             Melder_assert (slope1 == slope2);
             const double t2 = Melder_stopwatch ();
-            MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" ", t1 / t2);
+            MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"*");
         }
         MelderInfo_close ();
     } catch (MelderError) {

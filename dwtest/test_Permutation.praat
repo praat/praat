@@ -246,30 +246,28 @@ endproc
 
 procedure countInversions
 	appendInfoLine: tab$, "Count inversions"
-
+	appendInfo: tab$, tab$, "Counting"
 	.size = 20
 	for .i from 2 to .size
 		.p = Create Permutation: "p", .i, "yes"
-		# 1,2 (,3,...)
-		.inversions = Get number of inversions
-		assert .inversions = 0
-		for .k to .i - 1
-			for .j from .k + 1 to .i
-				selectObject: .p
-				Swap positions: .k, .j
-				.inversions = Get number of inversions
-				.n = 2 * (.j - .k) - 1
-				assert .inversions = .n  ; '.i' '.k' '.j' '.inversions' = '.n'
-				Swap positions: .k, .j ; restore identity
+		for .repetions to max (5, min (10, .size * (.size - 1) / 2))
+			Permute randomly (in-place): 0, 0
+			.inversions = Get number of inversions
+			.inversionsc = 0
+			.values# = List values
+			for .k to .i - 1
+				.valk = .values# [.k]
+				for .j from .k + 1 to .i
+					if .valk > .values# [.j]
+						.inversionsc += 1
+					endif
+				endfor
 			endfor
+			assert .inversions = .inversionsc
 		endfor
-
-		.pr = Rotate: 1, 2, 1
-		# 2, 1, 3, 4, ..
-		.inversions = Get number of inversions
-		assert .inversions = 1
-		removeObject:  .pr,  .p
+		removeObject: .p
 	endfor
+	appendInfoLine: "  OK"
 
 	.p = Create Permutation: "p", 10, "yes"
 	# 1,2,3,4,5,6,7,8,9,10 -> 0
@@ -283,12 +281,16 @@ procedure countInversions
 	.inversions## = List all inversions
 	assert numberOfRows (.inversions##) = .numberOfInversions
 	for .irow to .numberOfInversions
-		assert .inversions_known## [.irow, 1] = .inversions## [.irow, 1]
-		assert .inversions_known## [.irow, 2] = .inversions## [.irow, 2]
+		.known = .inversions_known## [.irow, 1]
+		.test = .inversions## [.irow, 1]
+		assert .known = .test ; col1 '.known' '.test'
+		.known = .inversions_known## [.irow, 2]
+		.test = .inversions## [.irow, 2]
+		assert .known = .test ; col2 '.known' '.test'
 	endfor
 	appendInfoLine: " OK"
-	appendInfo: tab$, tab$, "List random inversions"
 
+	appendInfo: tab$, tab$, "List random inversions"
 	.nrandom = 2
 	.randomInversions## = List random inversions: .nrandom
 	@checkInversions: .randomInversions##, .inversions_known##;
