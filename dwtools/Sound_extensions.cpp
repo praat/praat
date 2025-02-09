@@ -813,8 +813,11 @@ autoSound Sound_createGaussian (double windowDuration, double samplingFrequency)
 		autoSound me = Sound_createSimple (1, windowDuration, samplingFrequency);
 		VEC s = my z.row (1);
 		const double imid = 0.5 * (my nx + 1), edge = exp (-12.0);
-		for (integer i = 1; i <= my nx; i ++)
-			s [i] = (exp (-48.0 * (i - imid) * (i - imid) / (my nx + 1) / (my nx + 1)) - edge) / (1 - edge);
+		for (integer i = 1; i <= my nx; i ++) {
+			const double phase = (i - imid) / my nx; // conforms to standard
+			// const double phase = (i - imid) / (my nx + 1); // behaviour <= 6.4.23
+			s [i] = (exp (-48.0 * phase * phase) - edge) / (1 - edge);
+		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from Gaussian function.");
