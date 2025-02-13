@@ -609,8 +609,8 @@ autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kSt
 }
 
 integer Permutation_getNumberOfInversions (Permutation me) {
-	PermutationInversionCounter counter (my numberOfElements);
-	return counter.getNumberOfInversions (me);
+	autoPermutationInversionCounter pic = PermutationInversionCounter_create (my numberOfElements);
+	return PermutationInversionCounter_getNumberOfInversions (pic.get(), me);
 }
 
 // count the number of permutations between the two
@@ -623,9 +623,9 @@ integer Permutations_getNumberOfInversions (Permutation me, Permutation thee) {
 autoINTVEC Permutation_getAllInversionIndices (Permutation me) {
 	try {
 		const integer maximumNumberOfInversions = Permutation_getNumberOfInversions (me);
-		PermutationInversionCounter counter (me);
+		autoPermutationInversionCounter pic = PermutationInversionCounter_create (my numberOfElements);
 		autoINTVEC inversionIndices = raw_INTVEC (maximumNumberOfInversions);
-		const integer numberOfInversions = counter.getInversions (me, inversionIndices.get());
+		const integer numberOfInversions = PermutationInversionCounter_getInversions (pic.get(), me, inversionIndices.get());
 		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {
@@ -636,13 +636,14 @@ autoINTVEC Permutation_getAllInversionIndices (Permutation me) {
 autoINTVEC Permutation_getRandomInversionIndices (Permutation me, integer numberOfRandomInversions) {
 	try {
 		const integer maximumNumberOfInversions = Permutation_getNumberOfInversions (me);
-		PermutationInversionCounter counter (my numberOfElements);
+		autoPermutationInversionCounter pic = PermutationInversionCounter_create (my numberOfElements);
 		autoINTVEC inversionIndices = raw_INTVEC (numberOfRandomInversions);
 		autoINTVEC sortedRandomInversionNumbers = raw_INTVEC (numberOfRandomInversions);
 		for (integer i = 1; i <= numberOfRandomInversions; i ++)
 			sortedRandomInversionNumbers [i] = NUMrandomInteger (1, maximumNumberOfInversions);
 		sort_INTVEC_inout (sortedRandomInversionNumbers.get());
-		const integer numberOfInversions = counter.getSelectedInversions (me, sortedRandomInversionNumbers.get(), inversionIndices.get());
+		const integer numberOfInversions = PermutationInversionCounter_getSelectedInversions (pic.get(), me,
+			sortedRandomInversionNumbers.get(), inversionIndices.get());
 		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {

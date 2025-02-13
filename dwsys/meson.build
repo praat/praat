@@ -1,5 +1,5 @@
 # meson.build for library "dwsys".
-# David Weenink 6 February 2025
+# David Weenink 12 February 2025
 
 sources = '''
 	ChebyshevSeries.cpp Collection_extensions.cpp Command.cpp
@@ -12,7 +12,7 @@ sources = '''
 	NMF.cpp NUM2.cpp NUMhuber.cpp NUMmachar.cpp 
 	NUMcomplex.cpp NUMfft_d.cpp NUMsorting.cpp
 	NUMmathlib.cpp NUMstring.cpp NUMmedian.cpp
-	Permutation.cpp Permutation_and_Index.cpp
+	Permutation.cpp PermutationInversionCounter.cpp Permutation_and_Index.cpp
 	Polynomial.cpp
 	Roots.cpp
 	SlopeSelector.cpp Spline.cpp SVD.cpp WorkvectorPool.cpp'''.split()
