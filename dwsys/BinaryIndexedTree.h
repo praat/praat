@@ -48,15 +48,22 @@ public:
 
 	// update bit if we put a new 'value' at 'index'
 	void update (integer index, integer value) {
+		Melder_assert (index <= bit.size);
 		for (integer i = index; i <= bit.size; i += i & -i)
 			bit [i] += value;
 	}
 
 	integer query (integer index) {
+		Melder_assert (index <= bit.size);
 		integer sum = 0;
 		for (integer i = index; i >= 1; i -= i & -i)
 			sum += bit [i];
 		return sum;
+	}
+	
+	integer queryRange (integer left, integer right) {
+		Melder_assert (left <= right);
+		return query (right) - query (left - 1);
 	}
 };
 
