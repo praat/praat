@@ -610,7 +610,7 @@ autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kSt
 
 integer Permutation_getNumberOfInversions (Permutation me) {
 	autoPermutationInversionCounter pic = PermutationInversionCounter_create (my numberOfElements);
-	return PermutationInversionCounter_getNumberOfInversions (pic.get(), me);
+	return pic -> getNumberOfInversions (me);
 }
 
 // count the number of permutations between the two
@@ -625,7 +625,7 @@ autoINTVEC Permutation_getAllInversionIndices (Permutation me) {
 		const integer maximumNumberOfInversions = Permutation_getNumberOfInversions (me);
 		autoPermutationInversionCounter pic = PermutationInversionCounter_create (my numberOfElements);
 		autoINTVEC inversionIndices = raw_INTVEC (maximumNumberOfInversions);
-		const integer numberOfInversions = PermutationInversionCounter_getInversions (pic.get(), me, inversionIndices.get());
+		const integer numberOfInversions = pic -> getInversions (me, inversionIndices.get());
 		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {
@@ -642,8 +642,9 @@ autoINTVEC Permutation_getRandomInversionIndices (Permutation me, integer number
 		for (integer i = 1; i <= numberOfRandomInversions; i ++)
 			sortedRandomInversionNumbers [i] = NUMrandomInteger (1, maximumNumberOfInversions);
 		sort_INTVEC_inout (sortedRandomInversionNumbers.get());
-		const integer numberOfInversions = PermutationInversionCounter_getSelectedInversions (pic.get(), me,
-			sortedRandomInversionNumbers.get(), inversionIndices.get());
+		const integer numberOfInversions = pic -> getSelectedInversions (
+			me, sortedRandomInversionNumbers.get(), inversionIndices.get()
+		);
 		Melder_assert (numberOfInversions == maximumNumberOfInversions);
 		return inversionIndices;
 	} catch (MelderError) {
@@ -659,7 +660,7 @@ autoMAT Permutation_getRandomInversions (Permutation me, integer numberOfRandomI
 			inversions = raw_MAT (inversionIndices.size, 2_integer);
 			for (integer i = 1; i <= inversionIndices.size; i ++) {
 				integer ilow, ihigh;
-				getInversionFromIndex (my numberOfElements, inversionIndices [i], ilow, ihigh);
+				getInversionFromCode (inversionIndices [i], ilow, ihigh);
 				inversions [i] [1] =  ihigh;
 				inversions [i] [2] =  ilow;
 				if (inversions [i] [1] < inversions [i] [2])
@@ -681,7 +682,7 @@ autoMAT Permutation_getAllInversions (Permutation me) {
 			inversions = raw_MAT (inversionIndices.size, 2_integer);
 			for (integer i = 1; i <= inversionIndices.size; i ++) {
 				integer ilow, ihigh;
-				getInversionFromIndex (my numberOfElements, inversionIndices [i], ilow, ihigh);
+				getInversionFromCode (inversionIndices [i], ilow, ihigh);
 				inversions [i] [1] = ihigh;
 				inversions [i] [2] = ilow;
 				if (inversions [i] [1] < inversions [i] [2])

@@ -30,15 +30,35 @@ oo_DEFINE_CLASS (PermutationInversionCounter, Daata)
 	oo_INTEGER (posInSortedSelectedInversionIndices)
 	#if oo_DECLARING
 		INTVEC inversions;			// the coded inversions to be output, link to storage supplied by caller
+		INTVEC otherInverse;		// link to potherInverse -> p.get() suppleid by user
+		
 		constINTVEC sortedSelectedInversionIndices; // link to storage supplied by caller
 		
 		void newData (constPermutation p) {
 			Melder_assert (p -> numberOfElements == our numberOfElements);
 			pdata = p;
 		}
+		void reset ();
+		integer mergeInversions (integer p, integer q, integer r);
+		
+		integer mergeSort (integer p, integer r);
+		
+		integer getNumberOfInversions (constPermutation p);
+		
+		integer getSelectedInversionsNotInOther (
+			constPermutation p, constPermutation otherInverse, INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions
+		);
+		
+		integer getSelectedInversions (
+			constPermutation p, constINTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions
+		);
+		
+		integer getInversions (constPermutation p, INTVEC const& out_inversions);
+		
 	#endif
 	#if oo_COPYING
 		thy inversions = inversions;
+		thy otherInverse = otherInverse;
 		thy sortedSelectedInversionIndices = sortedSelectedInversionIndices;
 	#endif
 

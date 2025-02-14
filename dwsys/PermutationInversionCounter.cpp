@@ -46,13 +46,12 @@
 
 Thing_implement (PermutationInversionCounter, Daata, 1);
 
-integer PermutationInversionCounter_mergeInversions (PermutationInversionCounter me, integer p, integer q, integer r) {
+integer structPermutationInversionCounter :: mergeInversions (integer p, integer q, integer r) {
 	const integer nl = q - p + 1;
 	const integer nr = r - q;
-	INTVEC v = my psortingOrder -> p.get();
-	INTVEC vl = my workspace.part (1, nl), vr = my workspace.part (nl + 1, nl + nr);
-	INTVEC data = my pdata -> p.get();
-	INTVEC otherInverse = my potherInverse -> p.get();
+	INTVEC v = psortingOrder -> p.get();
+	INTVEC vl = workspace.part (1, nl), vr = workspace.part (nl + 1, nl + nr);
+	INTVEC data = pdata -> p.get();
 	for (integer ii = 1; ii <= nl; ii ++)
 		vl [ii] = v [p + ii - 1];
 	for (integer ii = 1; ii <= nr; ii ++)
@@ -63,21 +62,21 @@ integer PermutationInversionCounter_mergeInversions (PermutationInversionCounter
 			v [k ++] = vl [i ++];
 		} else { // vl[i] > vr[j]
 			localNumberOfInversions += nl - i + 1;
-			if (my numberOfInversionsToRegister > 0) {
+			if (numberOfInversionsToRegister > 0) {
 				for (integer ii = i; ii <= nl; ii ++) {
-					my totalNumberOfInversions ++;
-					if (otherInverse.size > 0 && otherInverse [data[vl [ii]]] < otherInverse [data[vr [j]]]) // if also inversion in other: skip
+					totalNumberOfInversions ++;
+					if (otherInverse.size > 0 && otherInverse [data [vl [ii]]] < otherInverse [data [vr [j]]]) // if also inversion in other: skip
 						continue;
 					/*
 						The inversions that passed are in the 'interval'
 					*/
-					my totalNumberOfInversionsInInterval ++;
-					const integer index = inversionToIndex (v.size, data[vr [j]], data[vl [ii]]);
-					while (my totalNumberOfInversionsInInterval == my sortedSelectedInversionIndices [my posInSortedSelectedInversionIndices]) {
-						my inversions [++ my numberOfInversionsRegistered] = index; //
-						if (-- my numberOfInversionsToRegister == 0)
+					totalNumberOfInversionsInInterval ++;
+					const integer code = getCodeFromInversion (data [vr [j]], data [vl [ii]]);
+					while (totalNumberOfInversionsInInterval == sortedSelectedInversionIndices [posInSortedSelectedInversionIndices]) {
+						inversions [++ numberOfInversionsRegistered] = code; //
+						if (-- numberOfInversionsToRegister == 0)
 							break;
-						my posInSortedSelectedInversionIndices ++;
+						posInSortedSelectedInversionIndices ++;
 					}
 				}
 			}
@@ -91,52 +90,33 @@ integer PermutationInversionCounter_mergeInversions (PermutationInversionCounter
 	return localNumberOfInversions;
 }
 
-integer PermutationInversionCounter_mergeSort (PermutationInversionCounter me, integer p, integer r) {
+integer structPermutationInversionCounter :: mergeSort (integer p, integer r) {
 	integer numberOfInversions = 0;
 	if (p < r) {
 		const integer q = (p + r) / 2;
-		numberOfInversions += PermutationInversionCounter_mergeSort (me, p, q);
-		numberOfInversions += PermutationInversionCounter_mergeSort (me, q + 1, r);
-		numberOfInversions += PermutationInversionCounter_mergeInversions (me, p, q, r);
+		numberOfInversions += mergeSort (p, q);
+		numberOfInversions += mergeSort (q + 1, r);
+		numberOfInversions += mergeInversions (p, q, r);
 	}
 	return numberOfInversions;
 }
 
-void PermutationInversionCounter_reset (PermutationInversionCounter me) {
-	for (integer i = 1; i <= my numberOfElements; i ++)
-		my psortingOrder -> p [i] = i;
-	my totalNumberOfInversions = 0;
-	my totalNumberOfInversionsInInterval = 0;
-	my numberOfInversionsRegistered = 0;
-	my numberOfInversionsToRegister = 0;
-	my posInSortedSelectedInversionIndices = 1;
-	my potherInverse = nullptr;
+void structPermutationInversionCounter :: reset () {
+	for (integer i = 1; i <= numberOfElements; i ++)
+		psortingOrder -> p [i] = i;
+	totalNumberOfInversions = 0;
+	totalNumberOfInversionsInInterval = 0;
+	numberOfInversionsRegistered = 0;
+	numberOfInversionsToRegister = 0;
+	posInSortedSelectedInversionIndices = 1;
+	potherInverse = nullptr;
 	
 }
 
-void PermutationInversionCounter_init (PermutationInversionCounter me, integer numberOfElements) {
-	Melder_assert (numberOfElements > 0);
-	my numberOfElements = numberOfElements;
-	my workspace.resize (numberOfElements);
-	my psortingOrder = Permutation_create (numberOfElements, true);
-	PermutationInversionCounter_reset (me);
-}
-
-autoPermutationInversionCounter PermutationInversionCounter_create (integer numberOfElements) {
-	try {
-		Melder_assert (numberOfElements > 0);
-		autoPermutationInversionCounter me = Thing_new (PermutationInversionCounter);
-		PermutationInversionCounter_init (me.get(), numberOfElements);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Cannot create PermutationInversionCounter");
-	}
-}
-
-integer PermutationInversionCounter_getNumberOfInversions (PermutationInversionCounter me, constPermutation p) {
+integer structPermutationInversionCounter :: getNumberOfInversions (constPermutation p) {
 	INTVEC pi = p -> p.get();
-	my workspace.resize (pi.size);
-	INTVEC bit = my workspace.get ();
+	workspace.resize (pi.size);
+	INTVEC bit = workspace.get ();
 
 	// we use a binary indexed tree
 	auto update = [&] (integer index, integer value) {
@@ -161,43 +141,63 @@ integer PermutationInversionCounter_getNumberOfInversions (PermutationInversionC
 	return count;
 }
 
-integer PermutationInversionCounter_getSelectedInversionsNotInOther (PermutationInversionCounter me, constPermutation p,
+integer structPermutationInversionCounter :: getSelectedInversionsNotInOther (constPermutation p,
 	constPermutation otherInverse, INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions)
 {
 	Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
 	Melder_assert (otherInverse -> p.size == p -> p.size);
 	const integer numberOfElements = p -> p.size;
-	my newData (p);
- 	PermutationInversionCounter_reset (me);
-	my sortedSelectedInversionIndices = sortedSelectedInversionIndices;
-	my potherInverse = otherInverse;
-	my numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
-	my inversions = out_inversions;
-	const integer numberOfInversions = PermutationInversionCounter_mergeSort (me, 1_integer, numberOfElements);
+	newData (p);
+ 	reset ();
+	our otherInverse = potherInverse -> p.get();
+	our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
+	our potherInverse = otherInverse;
+	numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
+	our inversions = out_inversions;
+	const integer numberOfInversions = mergeSort (1_integer, numberOfElements);
 	return numberOfInversions;
 }
 
-integer PermutationInversionCounter_getSelectedInversions (PermutationInversionCounter me, constPermutation p,
+integer structPermutationInversionCounter :: getSelectedInversions (constPermutation p,
 	constINTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions)
 {
 	Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
-	my newData (p);
-	PermutationInversionCounter_reset (me);
-	my sortedSelectedInversionIndices = sortedSelectedInversionIndices;
-	my numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
-	my inversions = out_inversions;
-	const integer numberOfInversions = PermutationInversionCounter_mergeSort (me, 1_integer, p -> numberOfElements);
+	newData (p);
+	reset ();
+	our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
+	numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
+	inversions = out_inversions;
+	const integer numberOfInversions = mergeSort (1_integer, p -> numberOfElements);
 	return numberOfInversions;
 }
 
-integer PermutationInversionCounter_getInversions (PermutationInversionCounter me, constPermutation p, INTVEC const& out_inversions) {
+integer structPermutationInversionCounter :: getInversions (constPermutation p, INTVEC const& out_inversions) {
 	try {
 		Melder_assert (out_inversions.size > 0);
 		autoINTVEC sortedSelectedInversionIndices = to_INTVEC (out_inversions.size);
-		const integer numberOfInversions = PermutationInversionCounter_getSelectedInversions (me, p, sortedSelectedInversionIndices.get(), out_inversions);
+		const integer numberOfInversions =getSelectedInversions (p, sortedSelectedInversionIndices.get(), out_inversions);
 		return numberOfInversions;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannot determine the inversions.");
+		Melder_throw (this, U": cannot determine the inversions.");
+	}
+}
+
+void PermutationInversionCounter_init (PermutationInversionCounter me, integer numberOfElements) {
+	Melder_assert (numberOfElements > 0);
+	my numberOfElements = numberOfElements;
+	my workspace.resize (numberOfElements);
+	my psortingOrder = Permutation_create (numberOfElements, true);
+	my reset ();
+}
+
+autoPermutationInversionCounter PermutationInversionCounter_create (integer numberOfElements) {
+	try {
+		Melder_assert (numberOfElements > 0);
+		autoPermutationInversionCounter me = Thing_new (PermutationInversionCounter);
+		PermutationInversionCounter_init (me.get(), numberOfElements);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Cannot create PermutationInversionCounter");
 	}
 }
 

@@ -20,6 +20,7 @@
 oo_DEFINE_CLASS (SlopeSelectorTheilSen, Daata)
 	oo_INTEGER (numberOfDualLines)
     oo_INTEGER (maxNumberOfIntervalCrossings)
+    oo_INTEGER (numberOfTries)
 	oo_INTEGER (sampleSize)
 	oo_INTEGER (split)
 	oo_OBJECT (Permutation, 0, lineRankingAtBeginX)

@@ -21,40 +21,44 @@
 #include "Permutation.h"
 #include "PermutationInversionCounter_def.h"
 
-/*
+/*			
 	Given a vector v with n elements, we define an inversion as i < j && v [i] > v [j].
-	We store the inversion with one number, as the position of the cell in a nxn matrix
-	indexed by row i and column j.
-	The number for the inversion (i,j) will be: code = (i-1)*(n-1)+ j.
-	From this number we can easily get back the inversion i,j by
-		i = (code - 1) / n + 1
-		j = (code -1) % n
-		if (i > j) swap (i,j)
+    We use a tric to store the inversion between two elements (i,j) with only **one** number code by using the following
+    lower triangular (n-1) x (n-1) matrix, with i being the **column** index and j being the **row** index!
+
+             1  2  3  4  5  ... n-1
+          +--------------- ...--
+    1(2)  |  1
+    2(3)  |  2  3
+    3(4)  |  4  5  6
+    4(5)  |  7  8  9 10
+    5(6)  | 11 12 13 14 15
+    ...
+    n-1(n)|                   n(n-1)/2
+
+    E.g. the inversion between element 1 and element 2 is coded with the number 1,
+        the inversion between element 2 and 5 is code with the number 8.
+    From inversion (i<j) to the code:
+        code = (j-2)*(j-1)/2 + i
+    From the code to the inversion (i,j)
+        j = Melder_iroundUp (0.5 + sqrt (0.25 + 2 * code));
+        i = code - (j-2) * (j - 1) / 2;
+
  */
 
-inline integer inversionToIndex (integer n, integer i, integer j) {
-	return (i - 1) * n + j;
+inline void getInversionFromCode (integer code, integer& ilow, integer& ihigh) {
+	ihigh = Melder_iroundUp (0.5 + sqrt (0.25 + 2 * code));
+	ilow = code - (ihigh - 2) * (ihigh - 1) / 2;
+	Melder_assert (ilow < ihigh);
 }
 
-inline void getInversionFromIndex (integer n, integer index, integer& ilow, integer& ihigh) {
-	ilow = (index - 1) / n + 1;
-	ihigh = (index - 1) % n + 1;
-	if (ilow > ihigh)
-		std::swap (ilow, ihigh);
+inline integer getCodeFromInversion (integer ilow, integer ihigh) {
+	Melder_assert (ilow < ihigh);
+	return (ihigh - 2) * (ihigh - 1) / 2 + ilow;
 }
 
 void PermutationInversionCounter_init (integer size);
 
 autoPermutationInversionCounter PermutationInversionCounter_create (integer size);
-
-integer PermutationInversionCounter_getNumberOfInversions (PermutationInversionCounter me, constPermutation p);
-
-integer PermutationInversionCounter_getSelectedInversionsNotInOther (PermutationInversionCounter me, constPermutation p, constPermutation otherInverse,
-	INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions);
-
-integer PermutationInversionCounter_getSelectedInversions (PermutationInversionCounter me, constPermutation p,
-	constINTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions);
-
-integer PermutationInversionCounter_getInversions (PermutationInversionCounter me, constPermutation p, INTVEC const& out_inversions);
 
 #endif // _PermutationInversionCounter_h_
