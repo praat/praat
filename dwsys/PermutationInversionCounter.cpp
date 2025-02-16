@@ -52,10 +52,8 @@ integer structPermutationInversionCounter :: mergeInversions (integer p, integer
 	INTVEC v = psortingOrder -> p.get();
 	INTVEC vl = workspace.part (1, nl), vr = workspace.part (nl + 1, nl + nr);
 	INTVEC data = pdata -> p.get();
-	for (integer ii = 1; ii <= nl; ii ++)
-		vl [ii] = v [p + ii - 1];
-	for (integer ii = 1; ii <= nr; ii ++)
-		vr [ii] = v [q + 1 + ii - 1];
+	vl.part (1, nl)  <<=  v.part (p, q);
+	vr.part (1, nr)  <<=  v.part (q + 1, r);
 	integer i = 1, j = 1, k = p, localNumberOfInversions = 0;
 	while (i <= nl && j <= nr) {
 		if (data [vl [i]] < data [vr [j]]) {
@@ -149,6 +147,7 @@ integer structPermutationInversionCounter :: getSelectedInversionsNotInOther (co
 	const integer numberOfElements = p -> p.size;
 	newData (p);
  	reset ();
+	potherInverse = otherInverse;
 	our otherInverse = potherInverse -> p.get();
 	our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
 	our potherInverse = otherInverse;
