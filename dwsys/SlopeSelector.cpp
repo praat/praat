@@ -39,14 +39,98 @@
 #include "oo_DESCRIPTION.h"
 #include "SlopeSelector_def.h"
 
-Thing_implement (SlopeSelectorTheilSen, Daata, 1);
+Thing_implement (SlopeSelector, Daata, 1);
 
-void structSlopeSelectorTheilSen :: newDataPoints (constVEC const& x, constVEC const& y) {
-    Melder_assert (x.size == y.size);
-    Melder_assert (x.size == numberOfDualLines);
+void structSlopeSelector :: init (constVEC const& x, constVEC const& y, integer sampleSize) {
+    numberOfPoints  = x.size;
+    our sampleSize = sampleSize;
+    crossings = raw_VEC (sampleSize);
     our ax = x;
     our ay = y;
 }
+
+void structSlopeSelector :: newDataPoints (constVEC const& x, constVEC const& y) {
+    Melder_assert (x.size == y.size);
+    Melder_assert (x.size == numberOfPoints);
+    our ax = x;
+    our ay = y;
+}
+
+double structSlopeSelector :: getSlope () {
+    const double xsum = NUMsum (ax);
+    const double xmean = xsum / ax.size;
+    longdouble variance = 0.0, slope = 0;
+    for (integer i = 1; i <= ax.size; i ++) {
+        const double ti = ax [i] - xmean;
+        variance += ti * ti;
+        slope += ti * ay [i];
+    }
+    slope /= variance;
+    return slope;
+}
+
+double structSlopeSelector :: getIntercept (double slope) {
+    const double xsum  = NUMsum (ax);
+    const double ysum  = NUMsum (ay);
+    return (ysum - xsum * slope) / numberOfPoints;
+}
+
+void structSlopeSelector :: getSlopeAndIntercept (double &slope, double& intercept) {
+    slope = getSlope ();
+    intercept = getIntercept (slope);
+}
+
+autoSlopeSelector SlopeSelector_create (constVEC const& x, constVEC const& y) {
+    try {
+        autoSlopeSelector me = Thing_new (SlopeSelector);
+        my init (x, y, x.size);
+        return me;
+    } catch (MelderError) {
+        Melder_throw (U"SlopeSelector could not be created.");
+    }
+}
+
+void SlopeSelector_getSlopeAndIntercept (SlopeSelector me, double& slope, double& intercept) {
+    my getSlopeAndIntercept (slope, intercept);
+}
+
+Thing_implement (SlopeSelectorSiegel, SlopeSelector, 0);
+
+double structSlopeSelectorSiegel :: getSlope () {
+    integer numberOfMedians = 0;
+    for (integer i = 1; i <= numberOfPoints; i ++) {
+        integer iline = 0;
+        for (integer j = 1; j <= numberOfPoints; j ++) {
+            if (i != j)
+                crossings [++ iline] = (ay [i] - ay [j]) / (ax [i] - ax [j]);
+        }
+        Melder_assert (iline == numberOfPoints - 1);
+        medians [++ numberOfMedians] = num::NUMquantile (crossings.get(), 0.5);
+    }
+    Melder_assert (numberOfMedians == numberOfPoints);
+    return num::NUMquantile (medians.get(), 0.5);
+}
+
+double structSlopeSelectorSiegel :: getIntercept (double slope) {
+    for (integer i = 1; i <= numberOfPoints; i ++)
+        crossings [i] = ay [i] - slope * ax [i];
+    return num::NUMquantile (crossings.get(), 0.5);
+}
+
+autoSlopeSelectorSiegel SlopeSelectorSiegel_create (constVEC const& x, constVEC const& y) {
+    try {
+        autoSlopeSelectorSiegel me = Thing_new (SlopeSelectorSiegel);
+        my init (x, y, x.size - 1);
+        my medians = zero_VEC (my numberOfPoints);
+        return me;
+    } catch (MelderError) {
+        Melder_throw (U"SlopeSelectorSiegel could not be created.");
+    }
+}
+
+/***************** TheilSen ********************/
+
+Thing_implement (SlopeSelectorTheilSen, SlopeSelector, 0);
 
 void structSlopeSelectorTheilSen :: getKth (integer k, double& kth, double& kp1th) {
     try {
@@ -58,14 +142,14 @@ void structSlopeSelectorTheilSen :: getKth (integer k, double& kth, double& kp1t
 
         auto getSortedSlopes = [&] (integer numberOfSlopes) {
             Melder_assert (numberOfSlopes <= sampleSize);
-            intervalCrossings.resize (numberOfSlopes);
+            crossings.resize (numberOfSlopes);
             for (integer i = 1; i <= numberOfSlopes; i ++) {
                 getInversionFromCode (currentCrossingIndices [i], ilow, ihigh);
                 const integer ipoint = numberOfDualLines + 1 - ilow;
                 const integer jpoint = numberOfDualLines + 1 - ihigh;
-                intervalCrossings [i] = (ay [jpoint] - ay [ipoint]) / (ax [jpoint] - ax [ipoint]); // the slope
+                crossings [i] = (ay [jpoint] - ay [ipoint]) / (ax [jpoint] - ax [ipoint]); // the slope
             }
-            sort_VEC_inout (intervalCrossings.get());
+            sort_VEC_inout (crossings.get());
         };
 
         while (true) {
@@ -97,8 +181,8 @@ void structSlopeSelectorTheilSen :: getKth (integer k, double& kth, double& kp1t
                 kappa = std::max (1_integer, Melder_iroundDown (kappar));
                 const integer kb = std::max (1_integer, kappa - krt);
                 const integer ke = std::min (sampleSize, kappa + krt);
-                const double beginX = intervalCrossings [kb];
-                const double endX = intervalCrossings [ke];
+                const double beginX = crossings [kb];
+                const double endX = crossings [ke];
                 Melder_assert (beginX <= endX);
 
                 auto getLineCrossingsAtX = [&](double x, mutablePermutation result) {
@@ -136,23 +220,17 @@ void structSlopeSelectorTheilSen :: getKth (integer k, double& kth, double& kp1t
                     inverseOfLineRankingAtBeginX.get(), sortedRandomCrossingIndices.get(), currentCrossingIndices.get()
                 );
                 Melder_assert (currentNumberOfIntervalCrossings == inversionCounter -> numberOfInversionsRegistered);
-                intervalCrossings.resize (currentNumberOfIntervalCrossings);
+                crossings.resize (currentNumberOfIntervalCrossings);
                 getSortedSlopes (currentNumberOfIntervalCrossings);
                 kappa = k - numberOfCrossingsAtBeginX;
-                kth = intervalCrossings [kappa];
-                kp1th = intervalCrossings [kappa + 1];
+                kth = crossings [kappa];
+                kp1th = crossings [kappa + 1];
                 return;
             }
         }
     } catch (MelderError) {
         Melder_throw (U"kth slope could not be selected.");
     }
-}
-
-double structSlopeSelectorTheilSen :: getIntercept (double slope) {
-    for (integer i = 1; i <= numberOfDualLines; i ++)
-        lineCrossings [i] = ay [i] - slope * ax [i];
-    return num::NUMquantile (lineCrossings.get(), 0.5);
 }
 
 double structSlopeSelectorTheilSen :: slopeQuantile_theilSen (double factor) {
@@ -166,6 +244,16 @@ double structSlopeSelectorTheilSen :: slopeQuantile_theilSen (double factor) {
     if (dif == 0.0)
         return kleft;
     return kleft + (place - left) * dif;
+}
+
+double structSlopeSelectorTheilSen :: getSlope () {
+    return slopeQuantile_theilSen (0.5);
+}
+
+double structSlopeSelectorTheilSen :: getIntercept (double slope) {
+    for (integer i = 1; i <= numberOfPoints; i ++)
+        crossings [i] = ay [i] - slope * ax [i];
+    return num::NUMquantile (crossings.get(), 0.5);
 }
 
 // only for ax.size < 50
@@ -187,34 +275,21 @@ double structSlopeSelectorTheilSen :: slopeQuantile_orderNSquaredWithBuffer (dou
     return medianSlope;
 }
 
-void structSlopeSelectorTheilSen :: slopeByLeastSquares (double &slope, double& intercept) {
-    const double xsum = NUMsum (ax);
-    const double xmean = xsum / ax.size;
-    longdouble variance = 0.0, m = 0.0;
-    for (integer i = 1; i <= ax.size; i ++) {
-        const double t = ax [i] - xmean;
-        m += t * t;
-        slope += t * ay [i];
-    }
-    slope =(double) (m / variance);
-    const double ysum = NUMsum (ay);
-    intercept = (ysum - slope * xsum) / ax.size;
-}
-
 void SlopeSelectorTheilSen_init (SlopeSelectorTheilSen me, constVEC const& x, constVEC const& y) {
 	my numberOfDualLines = x.size;
-    my newDataPoints (x, y);
     my split = 50;
     my maxNumberOfIntervalCrossings = x.size * (x.size - 1) / 2;
     if (x.size <= my split) {
         my numberOfLinesIfSplit = my maxNumberOfIntervalCrossings;
         my slopes = raw_VEC (my numberOfLinesIfSplit);
     }
-    my sampleSize = std::max (10_integer, Melder_iroundUp (sqrt (my numberOfDualLines)));
+    my sampleSize = my numberOfDualLines;
+    my init (x, y, my sampleSize);
+
     my sortedRandomCrossingIndices = raw_INTVEC (my sampleSize);
     my currentCrossingIndices = raw_INTVEC (my sampleSize);
     my lineCrossings = raw_VEC (my numberOfDualLines); // used for intervals and line crossing
-    my intervalCrossings = raw_VEC (my sampleSize); // used for intervals and line crossing
+    my crossings = raw_VEC (my sampleSize); // used for intervals and line crossing
     my lineRankingAtBeginX = Permutation_create (my numberOfDualLines, true); // 1..n
     my lineRankingAtEndX = Permutation_reverse (my lineRankingAtBeginX.get(), 0, 0);  // n..1
     my lineRankingAtBeginXPrevious = Permutation_create (my numberOfDualLines, true); // 1..n
@@ -271,7 +346,7 @@ void timeSlopeSelection () {
         MelderInfo_write (U"Old: n² slopes, sort, NUMquantile(0.5)\n"
             "New: Matoušek (1991) O(n log(n))\n"
         );
-        MelderInfo_writeLine (U"n ntries tNew tOld tOld/tNew");
+        MelderInfo_writeLine (U"n ntries tTS tSiegel tOld tOld/tTS tOld/tSiegel");
         for (integer isize = 1; isize <= sizes.size; isize ++) {
             double slope = 1.0, b = 4.0, stddev = 0.1, factor = 0.5;
             const integer n = sizes [isize];
@@ -280,16 +355,20 @@ void timeSlopeSelection () {
             autoVEC y = randomGauss_VEC (n, b, stddev);
             for (integer i = 1; i <= n; i ++)
                 y[i] += slope * x[i];
-            autoSlopeSelectorTheilSen sl =  SlopeSelectorTheilSen_create (x.get(), y.get());
+           autoSlopeSelectorTheilSen sl =  SlopeSelectorTheilSen_create (x.get(), y.get());
             autoVEC buffer = raw_VEC (maxNumberOfLines);
             Melder_stopwatch ();
             const double slope1 = sl -> slopeQuantile_orderNSquaredWithBuffer (factor, buffer.get());
             const double t1 = Melder_stopwatch ();
             const double slope2 = sl -> slopeQuantile_theilSen (factor);
-            const integer ntries = sl -> numberOfTries;
-            Melder_assert (slope1 == slope2);
             const double t2 = Melder_stopwatch ();
-            MelderInfo_writeLine (n, U" ", ntries, U" ", t2, U" ", t1, U" *", t1 / t2, U"*");
+            Melder_assert (slope1 == slope2);
+            autoSlopeSelectorSiegel siegel = SlopeSelectorSiegel_create (x.get(), y.get());
+            Melder_stopwatch ();
+            siegel -> getSlope ();
+            const double t3 = Melder_stopwatch ();
+            const integer ntries = sl -> numberOfTries;
+            MelderInfo_writeLine (n, U" ", ntries, U" ", t1, U" ", t2, U" ", t3, U" *", t1 / t2, U"*", U" ", t1 / t3);
         }
         MelderInfo_close ();
     } catch (MelderError) {

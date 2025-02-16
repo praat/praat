@@ -48,9 +48,13 @@
 #include "SlopeSelector_def.h"
 
 /*
-    Precondition:
+    Preconditions:
         x.size == y.size && x.size > 0
+        i < j && x[i] < x[j]
 */
+
+autoSlopeSelector SlopeSelector_create (constVEC const& x, constVEC const& y);
+
 void SlopeSelectorTheilSen_init (SlopeSelectorTheilSen me, constVEC const& x, constVEC const& y);
 
 void SlopeSelectorTheilSen_getMedianSlope (SlopeSelectorTheilSen me, double& slope, double &intercept);
