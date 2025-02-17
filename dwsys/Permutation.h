@@ -124,4 +124,6 @@ void Permutation_permuteSTRVEC_inout (Permutation me, autoSTRVEC & vec); // spec
 
 autoPermutation Permutation_moveElementsToTheFront (Permutation me, constINTVEC const& subsetPositions);
 
+void Permutations_swap (Permutation me, Permutation thee);
+
 #endif /* _Permutation_h_ */

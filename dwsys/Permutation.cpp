@@ -697,4 +697,12 @@ autoMAT Permutation_getAllInversions (Permutation me) {
 	}
 }
 
+void Permutations_swap (Permutation me, Permutation thee) {
+	Melder_assert (my numberOfElements == thy numberOfElements);
+	INTVEC tmp1 = my p.releaseToAmbiguousOwner ();
+	INTVEC tmp2 = thy p.releaseToAmbiguousOwner ();
+	my p.adoptFromAmbiguousOwner (tmp2);
+	thy p.adoptFromAmbiguousOwner (tmp1);
+}
+
 /* End of Permutation.cpp */
