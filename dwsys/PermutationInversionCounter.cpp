@@ -46,30 +46,30 @@
 
 Thing_implement (PermutationInversionCounter, Daata, 1);
 
-integer structPermutationInversionCounter :: mergeInversions (integer p, integer q, integer r) {
-	const integer nl = q - p + 1;
-	const integer nr = r - q;
-	INTVEC v = psortingOrder -> p.get();
-	INTVEC vl = workspace.part (1, nl), vr = workspace.part (nl + 1, nl + nr);
+integer structPermutationInversionCounter :: mergeInversions (integer left, integer mid, integer right) {
+	const integer nl = mid - left + 1;
+	const integer nr = right - mid;
+	INTVEC p = psortingOrder -> p.get();
+	INTVEC pl = workspace.part (1, nl), pr = workspace.part (nl + 1, nl + nr);
 	INTVEC data = pdata -> p.get();
-	vl.part (1, nl)  <<=  v.part (p, q);
-	vr.part (1, nr)  <<=  v.part (q + 1, r);
-	integer i = 1, j = 1, k = p, localNumberOfInversions = 0;
+	pl.part (1, nl)  <<=  p.part (left, mid);
+	pr.part (1, nr)  <<=  p.part (mid + 1, right);
+	integer i = 1, j = 1, k = left, localNumberOfInversions = 0;
 	while (i <= nl && j <= nr) {
-		if (data [vl [i]] < data [vr [j]]) {
-			v [k ++] = vl [i ++];
-		} else { // vl[i] > vr[j]
+		if (data [pl [i]] < data [pr [j]]) {
+			p [k ++] = pl [i ++];
+		} else { // pl[i] > pr[j]
 			localNumberOfInversions += nl - i + 1;
 			if (numberOfInversionsToRegister > 0) {
 				for (integer ii = i; ii <= nl; ii ++) {
 					totalNumberOfInversions ++;
-					if (otherInverse.size > 0 && otherInverse [data [vl [ii]]] < otherInverse [data [vr [j]]]) // if also inversion in other: skip
+					if (otherInverse.size > 0 && otherInverse [data [pl [ii]]] < otherInverse [data [pr [j]]]) // if also inversion in other: skip
 						continue;
 					/*
 						The inversions that passed are in the 'interval'
 					*/
 					totalNumberOfInversionsInInterval ++;
-					const integer code = getCodeFromInversion (data [vr [j]], data [vl [ii]]);
+					const integer code = getCodeFromInversion (data [pr [j]], data [pl [ii]]);
 					while (totalNumberOfInversionsInInterval == sortedSelectedInversionIndices [posInSortedSelectedInversionIndices]) {
 						inversions [++ numberOfInversionsRegistered] = code; //
 						if (-- numberOfInversionsToRegister == 0)
@@ -78,23 +78,23 @@ integer structPermutationInversionCounter :: mergeInversions (integer p, integer
 					}
 				}
 			}
-			v [k ++] = vr [j ++]; //! CLRS: A[k] = L[i++];
+			p [k ++] = pr [j ++]; //! CLRS: A[k] = L[i++];
 		}
 	}
 	while (i <= nl)
-		v [k ++] = vl [i ++];
+		p [k ++] = pl [i ++];
 	while (j <= nr)
-		v [k ++] = vr [j ++];
+		p [k ++] = pr [j ++];
 	return localNumberOfInversions;
 }
 
-integer structPermutationInversionCounter :: mergeSort (integer p, integer r) {
+integer structPermutationInversionCounter :: mergeSort (integer left, integer right) {
 	integer numberOfInversions = 0;
-	if (p < r) {
-		const integer q = (p + r) / 2;
-		numberOfInversions += mergeSort (p, q);
-		numberOfInversions += mergeSort (q + 1, r);
-		numberOfInversions += mergeInversions (p, q, r);
+	if (left < right) {
+		const integer mid = (left + right) / 2;
+		numberOfInversions += mergeSort (left, mid);
+		numberOfInversions += mergeSort (mid + 1, right);
+		numberOfInversions += mergeInversions (left, mid, right);
 	}
 	return numberOfInversions;
 }
@@ -140,7 +140,7 @@ integer structPermutationInversionCounter :: getNumberOfInversions (constPermuta
 }
 
 integer structPermutationInversionCounter :: getSelectedInversionsNotInOther (constPermutation p,
-	constPermutation otherInverse, INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions)
+	constPermutation otherInverse, constINTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions)
 {
 	Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
 	Melder_assert (otherInverse -> p.size == p -> p.size);

@@ -20,13 +20,14 @@
 oo_DEFINE_CLASS (SlopeSelector, Daata)
 	oo_INTEGER (numberOfPoints)
     oo_INTEGER (sampleSize)
-    oo_VEC (crossings, sampleSize)
+    oo_INTEGER (crossingCapacity)
+    oo_VEC (crossings, crossingCapacity)
 
 	#if oo_DECLARING
 		constVEC ax;	// the data points
         constVEC ay;
 
-        void init (constVEC const& x, constVEC const& y, integer sampleSize);
+        void init (constVEC const& x, constVEC const& y, integer crossingCapacity);
 
         void newDataPoints (constVEC const& x, constVEC const& y);
 
@@ -65,22 +66,18 @@ oo_DEFINE_CLASS (SlopeSelectorTheilSen, SlopeSelector)
 	oo_INTEGER (numberOfDualLines)
     oo_INTEGER (maxNumberOfIntervalCrossings)
     oo_INTEGER (numberOfTries)
-	oo_INTEGER (split)
-	oo_OBJECT (Permutation, 0, lineRankingAtBeginX)
-	oo_OBJECT (Permutation, 0, lineRankingAtEndX)
-	oo_OBJECT (Permutation, 0, lineRankingAtBeginXPrevious)
-	oo_OBJECT (Permutation, 0, lineRankingAtEndXPrevious)
-	oo_OBJECT (Permutation, 0, inverseOfLineRankingAtBeginX)
-	oo_INTVEC (sortedRandomCrossingIndices, sampleSize)
-	oo_INTVEC (currentCrossingIndices, sampleSize)
+    oo_INTEGER (maximumContractionSize) // (factor>=1)*sampleSize
+	oo_OBJECT (Permutation, 0, lineRankingAtLowX)
+	oo_OBJECT (Permutation, 0, lineRankingAtLowXPrevious)
+	oo_OBJECT (Permutation, 0, inverseOfLineRankingAtLowX)
+	oo_OBJECT (Permutation, 0, lineRankingAtHighX)
+	oo_OBJECT (Permutation, 0, lineRankingAtHighXPrevious)
+	oo_INTVEC (sortedRandomCrossingCodes, sampleSize)
+	oo_INTVEC (currentCrossingCodes, sampleSize)
 	oo_VEC (lineCrossings, numberOfDualLines)
-    oo_INTEGER (numberOfLinesIfSplit)
-    oo_VEC (slopes, numberOfLinesIfSplit)
 	oo_OBJECT (PermutationInversionCounter, 0, inversionCounter)
 
 	#if oo_DECLARING
-
-        //void setSplit (integer split);  // from O(n²) to O(n log(n))
 
         void getKth (integer k, double& kth, double& kp1th);
 
@@ -92,11 +89,10 @@ oo_DEFINE_CLASS (SlopeSelectorTheilSen, SlopeSelector)
 
         double getIntercept (double slope) override;
 
-        // if numberOfDualLines > split
         double slopeQuantile_orderNSquaredWithBuffer (double factor, VEC const& buffer);
 
         double slopeQuantile (double factor) {
-            return ( numberOfDualLines < split ? slopeQuantile_orderNSquared (factor) : slopeQuantile_theilSen (factor) );
+            return slopeQuantile_theilSen (factor);
         }
 
         void slopeByLeastSquares (double &slope, double& intercept);

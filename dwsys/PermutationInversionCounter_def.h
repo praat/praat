@@ -30,7 +30,7 @@ oo_DEFINE_CLASS (PermutationInversionCounter, Daata)
 	oo_INTEGER (posInSortedSelectedInversionIndices)
 	#if oo_DECLARING
 		INTVEC inversions;			// the coded inversions to be output, link to storage supplied by caller
-		INTVEC otherInverse;		// link to potherInverse -> p.get() suppleid by user
+		INTVEC otherInverse;		// link to potherInverse -> p.get() supplied by user
 		
 		constINTVEC sortedSelectedInversionIndices; // link to storage supplied by caller
 		
@@ -46,7 +46,7 @@ oo_DEFINE_CLASS (PermutationInversionCounter, Daata)
 		integer getNumberOfInversions (constPermutation p);
 		
 		integer getSelectedInversionsNotInOther (
-			constPermutation p, constPermutation otherInverse, INTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions
+			constPermutation p, constPermutation otherInverse, constINTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions
 		);
 		
 		integer getSelectedInversions (
