@@ -39,9 +39,9 @@
 #include "PermutationInversionCounter_def.h"
 
 /*
-	The algorithm to do merge-sort was found in (CLRS) Corman, Leiserson, Rivest & Stein: Introduction to algorithms,
+	The core of the algorithm to do merge-sort was found in (CLRS) Corman, Leiserson, Rivest & Stein: Introduction to algorithms,
 		third edition, The MIT press, as the solution of problem 2.4.d.
-	However, on 15 January 2025, their solution on the web-site of the book had the counting variable in the wrong position
+	However, on 15 January 2025, on the web-site of the book their solution had the counting variable in the wrong position
 */
 
 Thing_implement (PermutationInversionCounter, Daata, 1);
@@ -56,22 +56,36 @@ integer structPermutationInversionCounter :: mergeInversions (integer left, inte
 	pr.part (1, nr)  <<=  p.part (mid + 1, right);
 	integer i = 1, j = 1, k = left, localNumberOfInversions = 0;
 	while (i <= nl && j <= nr) {
-		if (data [pl [i]] < data [pr [j]]) {
+		/*
+			18/2/2025:
+			Some of the array index arithmetic in Praat is computationally relative expensive, we use exlicit pointers instead. 
+			This reduces the amount of time spent in this routine from 30.2% to 9.5% (as timed with valgrind --tool=callgrind
+			during execution of timeSlopeSelection in SlopeSelector.cpp)
+		*/
+		integer *pli = pl.cells + i - 1; 				// *pli == pl [i]
+		const integer *prj = pr.cells + j - 1; 			// *prj == pr [j]
+		integer *datapli = data.cells + *pli - 1; 		// *datapli == data [pl [i]]
+		const integer *dataprj = data.cells + *prj - 1; // *dataprj == data [pr [j]]
+		if (*datapli < *dataprj) {
 			p [k ++] = pl [i ++];
 		} else { // pl[i] > pr[j]
-			localNumberOfInversions += nl - i + 1;
+			localNumberOfInversions += nl - i + 1;  // the inversion count of pdata!!
 			if (numberOfInversionsToRegister > 0) {
-				for (integer ii = i; ii <= nl; ii ++) {
+				const integer *pother =	otherInverse.cells - 1;
+				for (integer ii = i; ii <= nl; ii ++, pli ++) {
+					datapli = data.cells + *pli - 1;
 					totalNumberOfInversions ++;
-					if (otherInverse.size > 0 && otherInverse [data [pl [ii]]] < otherInverse [data [pr [j]]]) // if also inversion in other: skip
+					// if (otherInverse.size > 0 && otherInverse [data [pl [i]] < otherInverse [data [pr [j]]])
+					if (otherInverse.size > 0 && *(pother + *datapli) < *(pother + *dataprj)) // if also inversion in other: skip
 						continue;
 					/*
-						The inversions that passed are in the 'interval'
+						The inversions that passed are in the pdata permutation but not in the pother permutation.
 					*/
 					totalNumberOfInversionsInInterval ++;
-					const integer code = getCodeFromInversion (data [pr [j]], data [pl [ii]]);
 					while (totalNumberOfInversionsInInterval == sortedSelectedInversionIndices [posInSortedSelectedInversionIndices]) {
-						inversions [++ numberOfInversionsRegistered] = code; //
+						++ numberOfInversionsRegistered;
+						inversions [2 * numberOfInversionsRegistered - 1] = *dataprj;	// ilow
+						inversions [2 * numberOfInversionsRegistered    ] = *datapli;	// ihigh
 						if (-- numberOfInversionsToRegister == 0)
 							break;
 						posInSortedSelectedInversionIndices ++;
@@ -111,6 +125,12 @@ void structPermutationInversionCounter :: reset () {
 	
 }
 
+void structPermutationInversionCounter :: newData (constPermutation p) {
+	Melder_assert (p -> numberOfElements == our numberOfElements);
+	pdata = p;
+	reset ();
+}
+
 integer structPermutationInversionCounter :: getNumberOfInversions (constPermutation p) {
 	INTVEC pi = p -> p.get();
 	workspace.resize (pi.size);
@@ -142,11 +162,10 @@ integer structPermutationInversionCounter :: getNumberOfInversions (constPermuta
 integer structPermutationInversionCounter :: getSelectedInversionsNotInOther (constPermutation p,
 	constPermutation otherInverse, constINTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions)
 {
-	Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
+	Melder_assert (out_inversions.size == 2 * sortedSelectedInversionIndices.size);
 	Melder_assert (otherInverse -> p.size == p -> p.size);
 	const integer numberOfElements = p -> p.size;
 	newData (p);
- 	reset ();
 	potherInverse = otherInverse;
 	our otherInverse = potherInverse -> p.get();
 	our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
@@ -162,7 +181,6 @@ integer structPermutationInversionCounter :: getSelectedInversions (constPermuta
 {
 	Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
 	newData (p);
-	reset ();
 	our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
 	numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
 	inversions = out_inversions;
