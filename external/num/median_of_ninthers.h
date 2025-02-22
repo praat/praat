@@ -51,8 +51,7 @@ size_t medianOfMaxima(T*const r, const size_t n, const size_t length)
 		subsetStart = length - subset,
 		computeMaxOver = subsetStart / subset;
 	Melder_assert (computeMaxOver > 0);
-	for (size_t i = subsetStart, j = i - subset * computeMaxOver;
-	i < length; ++i)
+	for (size_t i = subsetStart, j = i - subset * computeMaxOver; i < length; ++i)
 	{
 		const auto limit = j + computeMaxOver;
 		size_t maxIndex = j;
