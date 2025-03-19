@@ -49,9 +49,11 @@ namespace num {
 			return v [1];
 		const double place = factor * v.size + 0.5;
 		const integer left = Melder_clipped (1_integer, Melder_ifloor (place), v.size - 1);
+		trace (U"left:", left, U" size:", v.size);
 		NUMselect_inplace (v, left);
-		const integer minPos = NUMminPos (v.part (left + 1, v.size));
-		const double slope = v [left + minPos] - v [left];
+		VEC highPart = v.part (left + 1, v.size);
+		const double min = NUMmin_e (highPart);
+		const double slope = min - v [left];
 		if (slope == 0.0)
 			return v [left];   // or a [left + 1], which is the same
 		return v [left] + (place - left) * slope;

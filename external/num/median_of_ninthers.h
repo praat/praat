@@ -104,6 +104,7 @@ statistics) and length.
 template <class T>
 void adaptiveQuickselect(T* r, size_t n, size_t length)
 {
+	trace (n, U" ", length);
 	Melder_assert (n < length);
 	for (;;)
 	{
