@@ -1,8 +1,11 @@
 # build system for praat
 # David Weenink 3 January 2025
 
-project('praat', 'cpp', 'c',
-	default_options : ['cpp_std=c++17', 'c_std=c99']
+project(
+  'praat',
+  'cpp',
+  'c',
+  default_options : ['cpp_std=c++17', 'c_std=c99']
 )
 
 system_libs = []
@@ -21,7 +24,6 @@ if os_name == 'linux'
 	
 elif os_name == 'freebsd'
 	
-
 elif os_name == 'darwin' # either OSX or iOS
 
 elif os_name == 'cygwin'
