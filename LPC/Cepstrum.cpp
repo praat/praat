@@ -56,7 +56,7 @@ autoCepstrum Cepstrum_create (double qmax, integer nq) {
 	}
 }
 
-void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool power, bool garnish) {
+void Cepstrum_draw (constCepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool power, bool garnish) {
 	Graphics_setInner (g);
 
 	if (qmax <= qmin) {
@@ -96,7 +96,7 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double mi
 	}
 }
 
-void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool garnish) {
+void Cepstrum_drawLinear (constCepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, bool garnish) {
 	Cepstrum_draw (me, g, qmin, qmax, minimum, maximum, false, garnish);
 }
 
