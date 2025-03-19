@@ -73,7 +73,6 @@ void SoundToFormantWorkspace_init (SoundToFormantWorkspace me, double samplingPe
 	LPCToFormantWorkspace_init (my lpcToFormant.get(), samplingPeriod, numberOfPoles, margin);
 }
 
-
 #define SoundToFormant_ANYWORKSPACE(name) \
 Thing_implement (SoundToFormant##name##Workspace, SoundToFormantWorkspace, 0);\
 void SoundToFormant##name##Workspace_init (SoundToFormant##name##Workspace me, double samplingPeriod, double effectiveAnalysisWidth,\

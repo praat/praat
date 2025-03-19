@@ -202,7 +202,7 @@ integer structPermutationInversionCounter :: getInversions (constPermutation p, 
 void PermutationInversionCounter_init (PermutationInversionCounter me, integer numberOfElements) {
 	Melder_assert (numberOfElements > 0);
 	my numberOfElements = numberOfElements;
-	my workspace.resize (numberOfElements);
+	my workspace = raw_INTVEC (numberOfElements);
 	my psortingOrder = Permutation_create (numberOfElements, true);
 	my reset ();
 }

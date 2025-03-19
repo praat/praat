@@ -25,6 +25,7 @@
 */
 
 #include "PowerCepstrum.h"
+#include "Matrix.h"
 #include "Sound.h"
 #include "Table.h"
 
@@ -77,10 +78,10 @@ autoPowerCepstrogram PowerCepstrogram_subtractTrend (PowerCepstrogram me, double
 void PowerCepstrogram_subtractTrend_inplace (PowerCepstrogram me, double qstartFit, double qendFit,
 	kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 
-double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractTiltBeforeSmoothing,
+double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractTrendBeforeSmoothing,
 	double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling);
 
-double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing,
+double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTrendBeforeSmoothing,
 	double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 
 autoMatrix PowerCepstrogram_to_Matrix (PowerCepstrogram me);

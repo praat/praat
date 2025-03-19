@@ -429,12 +429,12 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"P
 	OK
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
-		double result;
-		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, & result, nullptr);
+		double result, quefrency;
+		PowerCepstrum_getMaximumAndQuefrency_pitch (me, fromPitch, toPitch, peakInterpolationType, result, quefrency);
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
-FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakInQuefrencyInterval, U"", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakInQuefrencyInterval, U"PowerCepstrum: Get peak in quefrency interval", nullptr) {
 	REAL (fromQuefrency, U"left Quefrency interval (s)", U"0.0033 (= 300 Hz)")
 	REAL (toQuefrency, U"right Quefrency interval (s)", U"0.01667 (= 60 Hz)")
 	CHOICE_ENUM (kCepstrum_peakInterpolation, peakInterpolationType,
@@ -443,7 +443,7 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakInQuefrencyInterval, U"", nullptr
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result, quefrency;
-		PowerCepstrum_getMaximumAndQuefrency (me, fromQuefrency, toQuefrency, peakInterpolationType, & result, & quefrency);
+		PowerCepstrum_getMaximumAndQuefrency_q (me, fromQuefrency, toQuefrency, peakInterpolationType, result, quefrency);
 	QUERY_ONE_FOR_REAL_END (U" dB (quefrency=", quefrency, U" s; f=", 1.0 / quefrency, U" Hz).")
 }
 
@@ -455,8 +455,8 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get
 	OK
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
-		double result;
-		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, nullptr, & result);
+		double result, peakdB;
+		PowerCepstrum_getMaximumAndQuefrency_pitch (me, fromPitch, toPitch, peakInterpolationType, peakdB, result);
 		const double f = 1.0 / result;
 	QUERY_ONE_FOR_REAL_END (U" seconds (f = ", f, U" Hz)")
 }
@@ -521,7 +521,7 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence_hillenbrand, U"PowerCe
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double qpeak;
-		const double result = PowerCepstrum_getPeakProminence_hillenbrand (me, fromPitch, toPitch, & qpeak);
+		const double result = PowerCepstrum_getPeakProminence_hillenbrand (me, fromPitch, toPitch, qpeak);
 	QUERY_ONE_FOR_REAL_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).")
 }
 
@@ -562,7 +562,7 @@ DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result =	PowerCepstrum_getTrendLineValue (me, quefrency, fromQuefrency_trendLine, toQuefrency_trendLine,
 			lineType, fitMethod);
-	QUERY_ONE_FOR_REAL_END (U" dB (quefrency = ", quefrency, U" s")
+	QUERY_ONE_FOR_REAL_END (U" dB (quefrency = ", quefrency, U" s)")
 }
 
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getValueInBin, U"PowerCepstrum: Get value in bin", nullptr) {
@@ -588,7 +588,7 @@ DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double qpeak;
 		const double result = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch,
-				peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod, & qpeak);
+				peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod, qpeak);
 	QUERY_ONE_FOR_REAL_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
 }
 
@@ -640,6 +640,15 @@ DO
 DIRECT (CONVERT_EACH_TO_ONE__Cepstrum_to_Spectrum) {
 	CONVERT_EACH_TO_ONE (Cepstrum)
 		autoSpectrum result = Cepstrum_to_Spectrum (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+FORM (CONVERT_EACH_TO_ONE__PowerCepstrum_to_Spectrum, U"PowerCepstrum: To Spectrum", nullptr) {
+	BOOLEAN (randomPhases, U"Random phases", true)
+	OK
+DO
+	CONVERT_EACH_TO_ONE (PowerCepstrum)
+		autoSpectrum result = PowerCepstrum_to_Spectrum (me, randomPhases);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1801,6 +1810,8 @@ void praat_uvafon_LPC_init () {
 			CONVERT_EACH_TO_ONE__PowerCepstrum_smooth);
 	praat_addAction1 (classCepstrum, 0, U"To Spectrum", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Cepstrum_to_Spectrum);
+	praat_addAction1 (classPowerCepstrum, 0, U"To Spectrum...", nullptr, GuiMenu_HIDDEN,
+			CONVERT_EACH_TO_ONE__PowerCepstrum_to_Spectrum);
 	praat_addAction1 (classPowerCepstrum, 0, U"To Matrix", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__PowerCepstrum_to_Matrix);
 

@@ -1,6 +1,6 @@
 /* PowerCepstrogramToMatrixWorkspace_def.h
  *
- * Copyright (C) 2024 David Weenink
+ * Copyright (C) 2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,19 @@
  */
 
 #define ooSTRUCT PowerCepstrogramToMatrixWorkspace
-oo_DEFINE_CLASS (PowerCepstrogramToMatrixWorkspace, Daata)
-
-	oo_OBJECT (PowerCepstrum, 2, powerCepstrum)
-	oo_OBJECT (SlopeSelector, 0, slopeSelector)
+oo_DEFINE_CLASS (PowerCepstrogramToMatrixWorkspace, SampledToSampledWorkspace)
 	oo_INTEGER (numberOfPoints)
-	oo_VEC (x, numberOfPoints)
-	oo_VEC (y, numberOfPoints)
+	oo_OBJECT (PowerCepstrum, 2, powerCepstrum)
+	oo_OBJECT (PowerCepstrumWorkspace, 0, powerCepstrumWs)
+	oo_DOUBLE (cppRaw)
+	oo_DOUBLE (cppCorrected)
+	oo_DOUBLE (peakQuefrency)
 	#if oo_DECLARING
-
+		void getInputFrame () override;
 		void allocateOutputFrames (void) override;
 		bool inputFrameToOutputFrame (void) override;
 		void saveOutputFrame (void) override;
-
 	#endif
-
 oo_END_CLASS (PowerCepstrogramToMatrixWorkspace)
 #undef ooSTRUCT
 

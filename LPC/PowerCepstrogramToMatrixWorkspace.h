@@ -18,11 +18,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#include "SampledToSampledWorkspace.h"
+#include "PowerCepstrum.h"
 #include "PowerCepstrogram.h"
 #include "Matrix.h"
+#include "SlopeSelector.h"
+
 #include "PowerCepstrogramToMatrixWorkspace_def.h"
 
-autoPowerCepstrogramToMatrixWorkspace PowerCepstrogramToMatrixWorkspace_create (integer numberOfDataPoints);
+autoPowerCepstrogramToMatrixWorkspace PowerCepstrogramToMatrixWorkspace_create (constPowerCepstrogram thee, mutableMatrix him);
 
 #endif /* _PowerCepstrogramToMatrixWorkspace_h_ */
