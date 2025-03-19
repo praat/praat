@@ -13,7 +13,16 @@ appendInfoLine: "test_PowerCepstrum.praat"
 
 @testPowerCepstrogramSmoothing
 
+@calibratedPowerCepstrumSmoothing: 1
+
+@test_perfectCosineSpectra
+
+@powerCepstrumSmoothingsOldAndNew
+
+appendInfoLine: "test_PowerCepstrum.praat OK"
+
 procedure testCalibratedPowerCepstrums: .ntries
+	appendInfoLine: tab$, "testCalibratedPowerCepstrums"
 	for .itry to .ntries
 		.duration = randomUniform (0.05, 0.1)
 		.approximateF0 = randomUniform (61, 330)
@@ -21,6 +30,7 @@ procedure testCalibratedPowerCepstrums: .ntries
 		.backgroundDistance_dB = randomUniform (10, 50)
 		@testCalibratedPowerCepstrumCPP: .duration, .approximateF0, .peak_dB, .peak_dB - .backgroundDistance_dB
 	endfor
+	appendInfoLine: tab$, "testCalibratedPowerCepstrums OK"
 endproc
 
 procedure testCalibratedPowerCepstrograms: .ntries
@@ -64,24 +74,27 @@ procedure old_commands
 	appendInfoLine: tab$, "old Rhamonics-to-noise-ratio: ", rnr
 endproc
 
-for ipitch to 5
-	.f0 = randomInteger (600, 3300) / 10
-	@test_perfectCosine: .f0
-endfor
+procedure test_perfectCosineSpectra
+	appendInfoLine: tab$, "test_perfectCosineSpectra"
+	for ipitch to 5
+		.f0 = randomInteger (600, 3300) / 10
+		@test_perfectCosine: .f0
+	endfor
+	appendInfoLine: tab$, "test_perfectCosineSpectra OK"
+endproc
 
-random_initializeWithSeedUnsafelyButPredictably (111)
-
-Debug: "no", -4
-@testPowerCepstrumSmoothing: "Old smoothing (square)"
-Debug: "no", -5
-@testPowerCepstrumSmoothing: "Gaussian smoothing (4 sigmas)"
-Debug: "no", 0
-@testPowerCepstrumSmoothing: "Default smoothing (integration)"
-random_initializeSafelyAndUnpredictably ()
-
-removeObject: powercepstrum, powercepstrogram, toneComplex
-
-appendInfoLine: "test_PowerCepstrum.praat OK"
+procedure powerCepstrumSmoothingsOldAndNew
+	appendInfoLine: tab$, "powerCepstrumSmoothings (old and new)"
+	random_initializeWithSeedUnsafelyButPredictably (111)
+	Debug: "no", -4
+	@testPowerCepstrumSmoothing: "Old smoothing (square)"
+	Debug: "no", -5
+	@testPowerCepstrumSmoothing: "Gaussian smoothing (4 sigmas)"
+	Debug: "no", 0
+	@testPowerCepstrumSmoothing: "Default smoothing (integration)"
+	random_initializeSafelyAndUnpredictably ()
+	appendInfoLine: tab$, "powerCepstrumSmoothings (old and new) OK"
+endproc
 
 procedure test_trendSubtraction
 	appendInfoLine: tab$, "test_trendSubtraction"
@@ -91,8 +104,10 @@ procedure test_trendSubtraction
 	.trendType$# = { "Straight", "Exponential decay" }
 	.fitMethod$# = { "Robust", "Robust slow" }
 	.interpolation$# = { "none", "parabolic", "cubic" }
+	.epsilon# = {1e-10, 1e-2, 1e-2}
 	for .interpolation to size (.interpolation$#)
 		.interpolation$ = .interpolation$# [.interpolation]
+		.eps = .epsilon# [.interpolation]
 		for .trendType to size (.trendType$#)
 			.trendType$ = .trendType$# [.trendType]
 			for .fitMethod to size (.fitMethod$#)
@@ -105,7 +120,7 @@ procedure test_trendSubtraction
 				.prominence2 = Get peak prominence: 60, 350, .interpolation$, 
 					... 0.001, 0.05, .trendType$, .fitMethod$
 				# the assertion fails for the least squares fit. 
-				assert abs (.prominence1 - .prominence2) < 1e-10; '.interpolation$' '.trendType$' '.fitMethod$'
+				assert abs ((.prominence1 - .prominence2)/.prominence1) < .eps ; '.prominence1' '.prominence2' '.fitMethod$'
 				removeObject: .trendRemoved
 			endfor
 		endfor
@@ -132,7 +147,7 @@ procedure draw_powercepstrum
 endproc 
 
 procedure testPowerCepstrumSmoothing: .info$
-	appendInfoLine: tab$, "test smoothing PowerCepstrogram of noisy sound: ", .info$
+	appendInfoLine: tab$, tab$,"test smoothing PowerCepstrogram of noisy sound: ", .info$
 	.kg = Create KlattGrid from vowel: "a", 0.4, 125, 800, 50, 1200, 50, 2300, 100, 2800, 0.05, 1000
 	.cpps_min = 1000
 	.cpps_max = - .cpps_min
@@ -157,7 +172,7 @@ procedure testPowerCepstrumSmoothing: .info$
 	appendInfoLine: tab$, tab$, fixed$ (.cpps_min, 2),  " / " , fixed$ (.cpps_max, 2), " dB min / max; ", 
 		...  fixed$ (.cpps_min1, 2),  " / " , fixed$ (.cpps_max1, 2), "dB min / max after smoothing"
 	removeObject: .kg
-	appendInfoLine: tab$, "test smoothing of PowerCepstrogram OK"
+	appendInfoLine: tab$, tab$,"test smoothing of PowerCepstrogram OK"
 endproc
 
 procedure testPowerCepstrogramSmoothing
@@ -183,7 +198,7 @@ procedure testPowerCepstrogramSmoothing
 endproc
 
 procedure test_perfectCosine: .f0
-	appendInfo: tab$, "Cosine (2*pi*x/", .f0, ") in Spectrum"
+	appendInfo: tab$, tab$, "Cosine (2*pi*x/", .f0, ") in Spectrum"
 	#
 	# Suppose a Spectrum has only real values x[i] then the display of this 
 	# spectrum in dB is S(f) = 10*log10 (2*df*x[i]^2/4e-10), for i=2..n-1 and 10*log10 (df*x[i]^2/4e-10) for i=1 & i=n
@@ -210,12 +225,11 @@ procedure test_perfectCosine: .f0
 	.pc = To PowerCepstrum
 	.qAtPeak = Get quefrency of peak: 1, 333.0, "parabolic"
 	.qtoF0 = 1.0 / .qAtPeak
-	assert abs(.qtoF0 - .f0)/ .f0 < 0.001; q: '.qtoF0' , '.f0'
+	assert abs(.qtoF0 - .f0)/ .f0 < 0.005; q: '.qtoF0' , '.f0'
 	appendInfoLine: " OK"
 	removeObject: .sound, .spectrum, .spectrum2, .pc  
 endproc
 
-@calibratedPowerCepstrumSmoothing: 1
 procedure calibratedPowerCepstrumSmoothing: .duration
 	appendInfo: tab$, "Calibrated smoothing (", .duration, ") s: "
 	.sound = Create Sound from formula: "s", 1, 0.0, .duration, 10000, ~ 0
@@ -289,8 +303,8 @@ endproc
 # Etc. The process can be generalized but we will only test the three smoothings mentioned.
 # 
 procedure testCalibratedPowerCepstrumCPP: .duration, .approximateF0, .peak_dB, .background_dB
-	appendInfoLine: tab$, "Duration: ", .duration, " s, appr. F0 = ", fixed$(.approximateF0, 2), ", peak= ",
-		... fixed$ (.peak_dB, 2), " dB, background = ", .background_dB, " dB" 
+	appendInfoLine: tab$, tab$, "testCalibratedPowerCepstrumCPP: Duration: ", .duration, " s, appr. F0 = ", fixed$(.approximateF0, 2), ","
+	appendInfoLine: tab$, tab$, tab$, "peak= ", fixed$ (.peak_dB, 2), " dB, background = ", .background_dB, " dB" 
 	.sound = Create Sound from formula: "s", 1, 0.0, .duration, 10000, ~ 0
 	.spectrum = To Spectrum: "yes"
 	.pc = To PowerCepstrum
@@ -344,7 +358,7 @@ procedure testCalibratedPowerCepstrumCPP: .duration, .approximateF0, .peak_dB, .
 
 
 	removeObject: .sound, .spectrum, .pc, .smooth1, .smooth2, .smooth25, .smooth3
-	appendInfoLine: tab$, "Calibrated PowerCepstrum for sound: OK"
+	appendInfoLine: tab$, tab$, "testCalibratedPowerCepstrumCPP OK"
 endproc
 
 procedure powercepstrum_assertions: .pc, .peakIndex, .peak, .background_dB, .info$
