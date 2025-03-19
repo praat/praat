@@ -44,6 +44,7 @@
 #include "PermutationInversionCounter.h"
 #include "melder.h"
 #include "NUM2.h"
+#include "SlopeSelector_enums.h"
 
 #include "SlopeSelector_def.h"
 
@@ -55,13 +56,9 @@
 
 autoSlopeSelector SlopeSelector_create (constVEC const& x, constVEC const& y);
 
-void SlopeSelectorTheilSen_init (SlopeSelectorTheilSen me, constVEC const& x, constVEC const& y);
+autoSlopeSelector SlopeSelector_create (integer numberOfPoints);
 
-void SlopeSelectorTheilSen_getMedianSlope (SlopeSelectorTheilSen me, double& slope, double &intercept);
-
-autoSlopeSelectorTheilSen SlopeSelectorTheilSen_create (constVEC const& x, constVEC const& y);
-
-void SlopeSelectorTheilSen_getKth (SlopeSelectorTheilSen me, integer k, double& kth, double& kp1th);
+void SlopeSelector_getSlopeAndIntercept (SlopeSelector me, double &slope, double &intercept, kSlopeSelector_method method);
 
 /****************/
 

@@ -20,54 +20,9 @@
 oo_DEFINE_CLASS (SlopeSelector, Daata)
 	oo_INTEGER (numberOfPoints)
     oo_INTEGER (sampleSize)
-    oo_INTEGER (crossingCapacity)
-    oo_VEC (crossings, crossingCapacity)
 
-	#if oo_DECLARING
-		constVEC ax;	// the data points
-        constVEC ay;
-
-        void init (constVEC const& x, constVEC const& y, integer crossingCapacity);
-
-        void newDataPoints (constVEC const& x, constVEC const& y);
-
-        virtual double getSlope ();
-
-        virtual double getIntercept (double slope);
-
-        void getSlopeAndIntercept (double &slope, double& intercept);
-
-    #endif
-	#if oo_COPYING
-		thy ax = ax;
-		thy ay = ay;
-	#endif
-oo_END_CLASS (SlopeSelector)
-#undef ooSTRUCT
-
-#define ooSTRUCT SlopeSelectorSiegel
-oo_DEFINE_CLASS (SlopeSelectorSiegel, SlopeSelector)
-
-    oo_VEC (medians, numberOfPoints)
-
-	#if oo_DECLARING
-
-        double getSlope () override;
-
-        double getIntercept (double slope) override;
-
-    #endif
-
-oo_END_CLASS (SlopeSelectorSiegel)
-#undef ooSTRUCT
-
-#define ooSTRUCT SlopeSelectorTheilSen
-oo_DEFINE_CLASS (SlopeSelectorTheilSen, SlopeSelector)
-	oo_INTEGER (numberOfDualLines)
-    oo_INTEGER (maxNumberOfIntervalCrossings)
-	oo_INTEGER (sampleSize)
     oo_INTEGER (numberOfTries)
-    oo_INTEGER (maximumContractionSize) // (factor>=1)*sampleSize
+    oo_INTEGER (maximumContractionSize) // > sampleSize + numberOfPoints
 	oo_INTEGER (inversionsSize)
 	oo_OBJECT (Permutation, 0, lineRankingAtLowX)
 	oo_OBJECT (Permutation, 0, lineRankingAtLowXPrevious)
@@ -76,32 +31,41 @@ oo_DEFINE_CLASS (SlopeSelectorTheilSen, SlopeSelector)
 	oo_OBJECT (Permutation, 0, lineRankingAtHighXPrevious)
 	oo_INTVEC (sortedRandomCrossingCodes, sampleSize)
 	oo_INTVEC (currentInversions, inversionsSize)
-	oo_VEC (crossings, maximumContractionSize)
+	oo_VEC (slopes, maximumContractionSize)
+	oo_VEC (xcrossings, numberOfPoints) // could also be shared as slopes.part (slopes._capacity - numberOfPoints + 1, slopes._capacity)
 	oo_OBJECT (PermutationInversionCounter, 0, inversionCounter)
 
 	#if oo_DECLARING
+		constVEC xp;	// link to the data points
+        constVEC yp;
 
-        void getKth (integer k, double& kth, double& kp1th);
+		void newDataPoints (constVEC const& x, constVEC const& y);
+				
+		double getSlope_Siegel ();
+		
+		double getSlope_TheilSen ();
+		
+        double getIntercept (double slope);
+		
+        void getSlopeAndIntercept_leastSquares (double &slope, double& intercept);
+				
+        void getKth_TheilSen (integer k, double& kth, double& kp1th);
 
-        double slopeQuantile_theilSen (double factor);
+        double slopeQuantile_TheilSen (double factor);
 
         double slopeQuantile_orderNSquared (double factor);
-
-        double getSlope () override;
-
-        double getIntercept (double slope) override;
 
         double slopeQuantile_orderNSquaredWithBuffer (double factor, VEC const& buffer);
 
         double slopeQuantile (double factor) {
-            return slopeQuantile_theilSen (factor);
+            return slopeQuantile_TheilSen (factor);
         }
-
-        void slopeByLeastSquares (double &slope, double& intercept);
-
     #endif
-
-oo_END_CLASS (SlopeSelectorTheilSen)
+	#if oo_COPYING
+		thy xp = xp;
+		thy yp = yp;
+	#endif
+oo_END_CLASS (SlopeSelector)
 #undef ooSTRUCT
 
 /* End of file SlopeSelector_def */
