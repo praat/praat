@@ -860,19 +860,22 @@ static int publishProc (autoDaata me) {
 /***** QUIT *****/
 
 FORM (DO_Quit, U"Confirm Quit", U"Quit") {
-	MUTABLE_COMMENT (label, U"You have objects in your list!")
+	MUTABLE_COMMENT (label1, U"You have objects in your list!")
+	MUTABLE_COMMENT (label2, U"Do you still want to quit?")
 	OK
 {
-	char32 prompt [300];
-	if (ScriptEditors_dirty () || NotebookEditors_dirty ()) {
-		if (theCurrentPraatObjects -> n)
-			Melder_sprint (prompt,300, U"You have objects and unsaved scripts or notebooks! Do you still want to quit ", Melder_upperCaseAppName(), U"?");
+	const bool youHaveObjectsInYourList = ( theCurrentPraatObjects -> n > 0 );
+	const bool youHaveUnsavedScriptsOrNotebooks = ( ScriptEditors_dirty () || NotebookEditors_dirty () );
+	if (youHaveObjectsInYourList || youHaveUnsavedScriptsOrNotebooks) {
+		if (youHaveObjectsInYourList && youHaveUnsavedScriptsOrNotebooks)
+			SET_STRING (label1, U"You have objects in your list, and unsaved scripts or notebooks!")
+		else if (youHaveUnsavedScriptsOrNotebooks)
+			SET_STRING (label1, U"You have unsaved scripts or notebooks!")
 		else
-			Melder_sprint (prompt,300, U"You have unsaved scripts or notebooks! Do you still want to quit ", Melder_upperCaseAppName(), U"?");
-		SET_STRING (label, prompt)
-	} else if (theCurrentPraatObjects -> n) {
-		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", Melder_upperCaseAppName(), U"?");
-		SET_STRING (label, prompt)
+			SET_STRING (label1, U"You have objects in your list!")
+		char32 prompt [200];
+		Melder_sprint (prompt,200, U"Do you still want to quit ", Melder_upperCaseAppName(), U"?");
+		SET_STRING (label2, prompt)
 	} else {
 		praat_exit (0);
 	}
