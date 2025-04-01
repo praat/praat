@@ -2,7 +2,7 @@
 #define _Sound_and_LPC_h_
 /* Sound_and_LPC.h
  *
- * Copyright (C) 1994-2024 David Weenink
+ * Copyright (C) 1994-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
 	3. The precision of the autocorrelation and covariance method have been improved a little by using some 'long double' accumulators.
 */
 	
-autoLPC Sound_to_LPC_autocorrelation (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
-autoLPC Sound_to_LPC_covariance (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_auto (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_covar (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
 autoLPC Sound_to_LPC_burg (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
 autoLPC Sound_to_LPC_marple (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2);
 autoLPC Sound_to_LPC_robust (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
@@ -49,14 +49,12 @@ autoLPC LPC_and_Sound_to_LPC_robust (constLPC thee, constSound me, double analys
 	Precondition:
 		Sound has been resampled and pre-emphasized
 */
-void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double analysisWidth);
-void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double analysisWidth);
+void Sound_into_LPC_auto (constSound me, mutableLPC thee, double analysisWidth);
+void Sound_into_LPC_covar (constSound me, mutableLPC thee, double analysisWidth);
 void Sound_into_LPC_burg (constSound me, mutableLPC thee, double analysisWidth);
 void Sound_into_LPC_marple (constSound me, mutableLPC thee, double analysisWidth, double tol1, double tol2);
 void Sound_into_LPC_robust (constSound me, mutableLPC thee, double analysisWidth,
 	double k_stdev,	integer itermax, double tol, bool wantlocation);
-
-autoLPC LPC_createEmptyFromAnalysisSpecifications (constSound me, int predictionOrder, double physicalAnalysisWidth, double dt);
 
 /*
  * Function:

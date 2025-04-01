@@ -126,7 +126,7 @@ procedure test_trendSubtraction
 		endfor
 	endfor
 	removeObject: .toneComplex, .powercepstrogram, .powercepstrum
-	appendInfoLine: tab$, ": OK"
+	appendInfoLine: tab$, "test_trendSubtraction: OK"
 endproc
 
 procedure draw_powercepstrum
@@ -223,7 +223,7 @@ procedure test_perfectCosine: .f0
 	.spectrum2 = Copy: "c"
 	@fillSpectrumWithCosine: .spectrum2, .f0
 	.pc = To PowerCepstrum
-	.qAtPeak = Get quefrency of peak: 1, 333.0, "parabolic"
+	.qAtPeak = Get quefrency of peak: 1, 330.0, "parabolic"
 	.qtoF0 = 1.0 / .qAtPeak
 	assert abs(.qtoF0 - .f0)/ .f0 < 0.005; q: '.qtoF0' , '.f0'
 	appendInfoLine: " OK"

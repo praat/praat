@@ -348,13 +348,13 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			if (lpcType == kLPC_Analysis::BURG) {
 				Sound_into_LPC_burg (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
 			} else if (lpcType == kLPC_Analysis::AUTOCORRELATION) {
-				Sound_into_LPC_autocorrelation (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
+				Sound_into_LPC_auto (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
 			} else if (lpcType == kLPC_Analysis::COVARIANCE) {
-				Sound_into_LPC_covariance (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
+				Sound_into_LPC_covar (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
 			} else if (lpcType == kLPC_Analysis::MARPLE) {
 				Sound_into_LPC_marple (resampledAndPreemphasized.get(), lpc.get(), analysisWidth, marple_tol1, marple_tol2);
 			} else if (lpcType == kLPC_Analysis::ROBUST) {
-				Sound_into_LPC_autocorrelation (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
+				Sound_into_LPC_auto (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
 				lpc = LPC_and_Sound_to_LPC_robust (lpc.get(), resampledAndPreemphasized.get(), analysisWidth, preemphasisFrequency, 
 					huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}

@@ -23,7 +23,7 @@
 /* 5 June 2015: char32 */
 
 #include "FileInMemory.h"
-#include "SampledToSampledWorkspace.h"
+#include "SampledIntoSampled.h"
 #include "NUMmedian.h"
 #include "SlopeSelector.h"
 #include "Praat_tests.h"

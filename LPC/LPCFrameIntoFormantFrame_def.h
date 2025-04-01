@@ -1,6 +1,6 @@
-/* LPCToFormantWorkspace_def.h
+/* LPCFrameIntoFormantFrame_def.h
  *
- * Copyright (C) 2024 David Weenink
+ * Copyright (C) 2024-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,35 +16,28 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT LPCToFormantWorkspace
-oo_DEFINE_CLASS (LPCToFormantWorkspace, LPCToSampledWorkspace)
+#define ooSTRUCT LPCFrameIntoFormantFrame
+oo_DEFINE_CLASS (LPCFrameIntoFormantFrame, LPCFrameIntoSampledFrame)
 
+	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Formant, formant)
 	oo_DOUBLE (margin)
-	oo_INTEGER (maxnFormants) // for initialisation of the Formant_Frame if output object is missing
-	oo_STRUCT (Formant_Frame, formantFrame)
 	
 	oo_OBJECT (Polynomial, 0, p)	// for the coefficients
 	oo_OBJECT (Roots, 0, roots)		// the roots of the polynomial
-
+	oo_INTEGER (bufferSize)
+	oo_VEC (buffer, bufferSize)
+	
 	#if oo_DECLARING
 	
-		Formant_Frame formantFrameRef = & formantFrame;
-
-		void getInputFrame () override;
-		void allocateOutputFrames () override;
-		bool inputFrameToOutputFrame () override;
-		void saveOutputFrame () override;
+		void getInputFrame (void) override;
+		void allocateOutputFrames (void) override;
+		bool inputFrameToOutputFrame (void) override;
+		void saveOutputFrame (void) override;
 		
 	#endif
-		
-	#if oo_COPYING
-	
-		thy formantFrameRef = & thy formantFrame;
 
-	#endif
-
-oo_END_CLASS (LPCToFormantWorkspace)
+oo_END_CLASS (LPCFrameIntoFormantFrame)
 #undef ooSTRUCT
 
-/* End of file LPCToFormantWorkspace_def.h */
+/* End of file LPCFrameIntoFormantFrame_def.h */
 

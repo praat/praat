@@ -221,18 +221,22 @@ autoRoots Polynomial_to_Roots (constPolynomial me) {
 		+ 2 * n 	; for real and imaginary parts
 		+ 11 * n	; the maximum for dhseqr_
 */
-void Polynomial_into_Roots (constPolynomial me, mutableRoots r, mutableWorkvectorPool workplace) {
+void Polynomial_into_Roots (constPolynomial me, mutableRoots r, VEC workspace) {
 	Melder_assert (my numberOfCoefficients == my coefficients.size); // check invariant
+	integer np1 = my numberOfCoefficients, n = np1 - 1;
+	
+	Melder_assert (workspace.size >= n * n + 2 * n + 11 * n);
 	r -> roots.resize (0);
 	r -> numberOfRoots = r -> roots.size;	
-	integer np1 = my numberOfCoefficients, n = np1 - 1;
 	if (n == 0)
 		return;
 	/*
 		Use the workspace reserve storage for Hessenberg matrix (n * n)
 	*/
-	
-	MAT upperHessenberg = workplace -> getZeroMAT (1, n, n);
+	integer size = n * n;
+	VEC uh = workspace.part (1, size);
+	MAT upperHessenberg = uh.asmatrix (n, n);
+	upperHessenberg  <<= 0.0;
 	MATVU uh_CM (upperHessenberg);
 	uh_CM.rowStride = 1; uh_CM.colStride = n;
 	uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);
@@ -244,9 +248,10 @@ void Polynomial_into_Roots (constPolynomial me, mutableRoots r, mutableWorkvecto
 		We don't need to find out size of the working storage needed because for the current version 
 		of NUMlapack_dhseqr (20240608) its size equals maximally 11*n.
 	*/
-	VEC wr = workplace -> getRawVEC (2, n);
-	VEC wi = workplace -> getRawVEC (3, n);
-	VEC work = workplace -> getRawVEC (4, 11 * n);
+	VEC wr = workspace.part (size + 1, size + n); size += n;
+	VEC wi = workspace.part (size + 1, size + n); size += n;
+	VEC work = workspace.part (size + 1, size + 11 * n);
+
 	integer lwork = work.size, info;
 	NUMlapack_dhseqr_ ("E", "N", n, 1, n, & uh_CM [1] [1], n, & wr [1], & wi [1], nullptr, n, & work [1], lwork, & info);
 	integer numberOfEigenvaluesFound = n, ioffset = 0;

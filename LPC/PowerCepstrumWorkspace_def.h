@@ -18,14 +18,18 @@
 
 #define ooSTRUCT PowerCepstrumWorkspace
 oo_DEFINE_CLASS (PowerCepstrumWorkspace, Daata)
+
+	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (PowerCepstrum, powercepstrum)
 	oo_INTEGER (numberOfPoints)
 	oo_INTEGER (imin) // [imin,imax] the range of quefrency indices for the slope calculation
 	oo_INTEGER (imax)
 	oo_VEC (x, numberOfPoints)
-	oo_VEC (y, numberOfPoints)
+	oo_VEC (y, numberOfPoints) // in dB
 	oo_OBJECT (Matrix, 2, asdBs) // for peak detection
 	oo_OBJECT (SlopeSelector, 0, slopeSelector)
-	oo_BOOLEAN (subtractTrendLine)
+	oo_BOOLEAN (slopeKnown)
+	oo_BOOLEAN (peakKnown)
+	oo_BOOLEAN (trendSubtracted)
 	oo_ENUM (kSlopeSelector_method, method)
 	oo_ENUM (kCepstrum_trendType, trendLineType)
 	oo_ENUM (kVector_peakInterpolation, peakInterpolationType)
@@ -33,10 +37,42 @@ oo_DEFINE_CLASS (PowerCepstrumWorkspace, Daata)
 	oo_DOUBLE (qmaxSearchInterval)
 	oo_DOUBLE (slope)
 	oo_DOUBLE (intercept)
-	oo_DOUBLE (cpp) // peakdB - background
-	oo_DOUBLE (background)
-	oo_DOUBLE (peakdB) // value of the peak in dB
+	oo_DOUBLE (cpp) // peakdB - trenddB
+	oo_DOUBLE (trenddB)
+	oo_DOUBLE (peakdB)
 	oo_DOUBLE (peakQuefrency)
+	oo_INTEGER (maximumNumberOfRhamonics)
+	oo_INTEGER (numberOfRhamonics)
+	oo_MAT (rhamonics, maximumNumberOfRhamonics, 5_integer) // power, q1, q, q2, amplitude
+
+	#if oo_DECLARING
+
+		void newData (constPowerCepstrum);
+
+		void getSlopeAndIntercept ();
+
+		void getPeakAndPosition ();
+
+		void subtractTrend ();
+
+		double getTrend (double quefrency);
+
+		void getCPP ();
+
+		void todBs ();
+		
+		void setMaximumNumberOfRhamonics (integer maximumNumberOfRhamonics);
+		
+		void getNumberOfRhamonics (double qmin, double qmax);
+		
+		void getRhamonicPeaks (double qmin, double qmax);
+		
+		void getRhamonicsPower (double qmin, double qmax, double f0fractionalWidth);
+				
+		double getRNR (double qmin, double qmax, double f0fractionalWidth);
+		
+	#endif
+
 oo_END_CLASS (PowerCepstrumWorkspace)
 #undef ooSTRUCT
 

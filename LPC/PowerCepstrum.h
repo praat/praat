@@ -19,11 +19,8 @@
  */
 
 #include "Cepstrum.h"
-#include "SlopeSelector.h"
 #include "Table.h"
 #include "Vector.h"
-
-#include "PowerCepstrumWorkspace_def.h"
 
 /*
 	The PowerCepstrum is a sequence of real numbers.
@@ -114,24 +111,5 @@ autoPowerCepstrum Matrix_to_PowerCepstrum_row (constMatrix me, integer row);
 autoPowerCepstrum Matrix_to_PowerCepstrum_column (constMatrix me, integer col);
 
 autoPowerCepstrum Cepstrum_downto_PowerCepstrum (constCepstrum me);
-
-/************** with PowerCepstrumWorkspace ********/
-
-void PowerCepstrum_into_Matrix_dB (constPowerCepstrum me, mutableMatrix thee);
-
-void PowerCepstrumWorkspace_initSearch (mutablePowerCepstrumWorkspace me, constPowerCepstrum thee, double qminSearchInterval, 
-	double qmaxSearchInterval, kVector_peakInterpolation peakInterpolationType);
-
-autoPowerCepstrumWorkspace PowerCepstrumWorkspace_createSimple (constPowerCepstrum thee, double qminSearchInterval, 
-	double qmaxSearchInterval, kVector_peakInterpolation peakInterpolationType);
-
-autoPowerCepstrumWorkspace PowerCepstrumWorkspace_create (constPowerCepstrum thee, double qminFit, double qmaxFit,
-	kCepstrum_trendType trendLineType, kCepstrum_trendFit method);
-
-void PowerCepstrumWorkspace_getNewData (mutablePowerCepstrumWorkspace me, constPowerCepstrum thee);
-
-void PowerCepstrum_getMaximumAndQuefrency (constPowerCepstrum me, mutablePowerCepstrumWorkspace ws);
-
-void PowerCepstrum_getPeakProminence_inplace (mutablePowerCepstrum me, mutablePowerCepstrumWorkspace ws);
 
 #endif /* _PowerCepstrum_h_ */

@@ -47,5 +47,5 @@ oo_DEFINE_CLASS (SampledFrameIntoSampledFrame, Daata)
 oo_END_CLASS (SampledFrameIntoSampledFrame)
 #undef ooSTRUCT
 
-/* End of file SampledInToSampledWorkspace_def.h */
+/* End of file SampledFrameIntoSampledFrame_def_def.h */
  

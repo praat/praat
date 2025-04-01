@@ -1340,7 +1340,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_LPC_autocorrelation, U"Sound: To LPC (autoco
 DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH_TO_ONE (Sound)
-		autoLPC result = Sound_to_LPC_autocorrelation (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
+		autoLPC result = Sound_to_LPC_auto (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1354,7 +1354,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_LPC_covariance, U"Sound: To LPC (covariance)
 DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH_TO_ONE (Sound)
-		autoLPC result = Sound_to_LPC_covariance (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
+		autoLPC result = Sound_to_LPC_covar (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1402,7 +1402,7 @@ DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH_TO_ONE (Sound)
 		autoLPC result = Sound_to_LPC_robust (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency, 
-				numberOfStandardDeviations, maximumNumberOfIterations, tolerance, true);
+			numberOfStandardDeviations, maximumNumberOfIterations, tolerance, true);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 

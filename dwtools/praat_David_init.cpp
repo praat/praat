@@ -108,7 +108,7 @@
 #include "Polygon_extensions.h"
 #include "Polynomial_to_Spectrum.h"
 #include "Roots_to_Spectrum.h"
-#include "SampledToSampledWorkspace.h"
+#include "SampledIntoSampled.h"
 #include "Sound_and_Spectrum_dft.h"
 #include "Sound_extensions.h"
 #include "Sound_and_TextGrid_extensions.h"
@@ -5380,23 +5380,23 @@ FORM (SETTINGS__SampledDataAnalysisSettings, U"Sampled data analysis settings", 
 	COMMENT (U"This setting determines how fast your analyses will be performed on your computer.")
 	
 	BOOLEAN (useMultithreading, U"Use multi-threading", true)
-	COMMENT (SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailableInfo ());
+	COMMENT (SampledIntoSampled_getNumberOfConcurrentThreadsAvailableInfo ());
 	NATURAL (numberOfConcurrentThreadsToUse, U"Number of threads to use",
-		Melder_integer (SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailable ()));
+		Melder_integer (SampledIntoSampled_getNumberOfConcurrentThreadsAvailable ()));
 	COMMENT (U"The minimum number of frames to be analysed in a thread:")
 	INTEGER (minimumNumberOfFramesPerThread, U"Min. frames / thread",
-		Melder_integer (SampledToSampledWorkspace_getMinimumNumberOfFramesPerThread ()));
+		Melder_integer (SampledIntoSampled_getMinimumNumberOfFramesPerThread ()));
 	COMMENT (U"The maximum number of frames to be analysed in a thread,")
 	COMMENT (U"where a value of 0 means no upper limit.")
 	INTEGER (maximumNumberOfFramesPerThread, U"Max. frames / thread",
-		Melder_integer (SampledToSampledWorkspace_getMaximumNumberOfFramesPerThread ()));
+		Melder_integer (SampledIntoSampled_getMaximumNumberOfFramesPerThread ()));
 	OK
 DO
 	PREFS
-		SampledToSampledWorkspace_setMultiThreading (useMultithreading);
-		SampledToSampledWorkspace_setNumberOfConcurrentThreadsToUse (numberOfConcurrentThreadsToUse);
-		SampledToSampledWorkspace_setMinimumNumberOfFramesPerThread (minimumNumberOfFramesPerThread);
-		SampledToSampledWorkspace_setMaximumNumberOfFramesPerThread (maximumNumberOfFramesPerThread);
+		SampledIntoSampled_setMultiThreading (useMultithreading);
+		SampledIntoSampled_setNumberOfConcurrentThreadsToUse (numberOfConcurrentThreadsToUse);
+		SampledIntoSampled_setMinimumNumberOfFramesPerThread (minimumNumberOfFramesPerThread);
+		SampledIntoSampled_setMaximumNumberOfFramesPerThread (maximumNumberOfFramesPerThread);
 		Melder_require (!useMultithreading || maximumNumberOfFramesPerThread == 0 ||
 			maximumNumberOfFramesPerThread >= minimumNumberOfFramesPerThread,
 			U"The minimum number of frames per thread should not exceed the maximum number of frames per thread.");
