@@ -44,7 +44,7 @@
 
 static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	double pitchFloor, int maxnCandidates, int method, double voicingThreshold, double octaveCost,
-	NUMfft_Table fftTable, double dt_window, integer nsamp_window, integer halfnsamp_window,
+	NUMFourierTable fftTable, double dt_window, integer nsamp_window, integer halfnsamp_window,
 	integer maximumLag, integer nsampFFT, integer nsamp_period, integer halfnsamp_period,
 	integer brent_ixmax, integer brent_depth, double globalPeak,
 	MAT const& frame, VEC const& ac, VEC const& window, VEC const& windowR,
@@ -271,7 +271,7 @@ Thing_define (Sound_into_Pitch_Args, Thing) { public:
 	VEC window, windowR;
 	bool isMainThread;
 	volatile int *cancelled;
-	autoNUMfft_Table fftTable;
+	autoNUMFourierTable fftTable;
 	autoMAT frame;
 	autoVEC ac, rbuffer, localMean;
 	double *r;
@@ -298,7 +298,7 @@ static void Sound_into_Pitch (Sound_into_Pitch_Args me)
 		}
 		Sound_into_PitchFrame (my sound, pitchFrame, t,
 			my pitchFloor, my maxnCandidates, my method, my voicingThreshold, my octaveCost,
-			& my fftTable, my dt_window, my nsamp_window, my halfnsamp_window,
+			my fftTable.get(), my dt_window, my nsamp_window, my halfnsamp_window,
 			my maximumLag, my nsampFFT, my nsamp_period, my halfnsamp_period,
 			my brent_ixmax, my brent_depth, my globalPeak,
 			my frame.get(), my ac.get(), my window, my windowR,
@@ -315,7 +315,6 @@ autoPitch Sound_to_Pitch_any (Sound me,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
 	try {
-		autoNUMfft_Table fftTable;
 		double t1;
 		integer numberOfFrames;
 		integer nsampFFT;
@@ -444,7 +443,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			*/
 			windowR. resize (nsampFFT);
 			window. resize (nsamp_window);
-			NUMfft_Table_init (& fftTable, nsampFFT);
+			autoNUMFourierTable fftTable =  NUMFourierTable_create (nsampFFT);
 
 			/*
 				A Gaussian or Hanning window is applied against phase effects.
@@ -466,14 +465,14 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			*/
 			for (integer i = 1; i <= nsamp_window; i ++)
 				windowR [i] = window [i];
-			NUMfft_forward (& fftTable, windowR.get());
+			NUMfft_forward (fftTable.get(), windowR.get());
 			windowR [1] *= windowR [1];   // DC component
 			for (integer i = 2; i < nsampFFT; i += 2) {
 				windowR [i] = windowR [i] * windowR [i] + windowR [i + 1] * windowR [i + 1];
 				windowR [i + 1] = 0.0;   // power spectrum: square and zero
 			}
 			windowR [nsampFFT] *= windowR [nsampFFT];   // Nyquist frequency
-			NUMfft_backward (& fftTable, windowR.get());   // autocorrelation
+			NUMfft_backward (fftTable.get(), windowR.get());   // autocorrelation
 			for (integer i = 2; i <= nsamp_window; i ++)
 				windowR [i] /= windowR [1];   // normalize
 			windowR [1] = 1.0;   // normalize
@@ -524,7 +523,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			if (method >= FCC_NORMAL) {   // cross-correlation
 				arg -> frame = zero_MAT (my ny, nsamp_window);
 			} else {   // autocorrelation
-				NUMfft_Table_init (& arg -> fftTable, nsampFFT);
+				arg -> fftTable = NUMFourierTable_create (nsampFFT);
 				arg -> frame = zero_MAT (my ny, nsampFFT);
 				arg -> ac = zero_VEC (nsampFFT);
 			}

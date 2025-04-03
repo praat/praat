@@ -447,8 +447,7 @@ void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFreque
 	integer nsampFFT = 1;
 	while (nsampFFT < my sound -> nx)
 		nsampFFT *= 2;
-	autoNUMfft_Table fftTable;
-	NUMfft_Table_init (& fftTable, nsampFFT);
+	autoNUMFourierTable fftTable = NUMFourierTable_create (nsampFFT);
 */
 		for (integer ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++) {
 			autoSound channel = Sound_extractChannel (my sound.get(), ichan);

@@ -120,8 +120,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 
 		autoVEC data = zero_VEC (nsampFFT);
 		autoVEC spectrum = zero_VEC (half_nsampFFT + 1);
-		autoNUMfft_Table fftTable;
-		NUMfft_Table_init (& fftTable, nsampFFT);
+		autoNUMFourierTable fftTable = NUMFourierTable_create (nsampFFT);
 
 		autoMelderProgress progress (U"Sound to Spectrogram...");
 
@@ -154,7 +153,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 				/*
 					Compute the Fast Fourier Transform of the frame.
 				*/
-				NUMfft_forward (& fftTable, data.get());   // data := complex spectrum
+				NUMfft_forward (fftTable.get(), data.get());   // data := complex spectrum
 
 				/*
 					Convert from complex to power spectrum,

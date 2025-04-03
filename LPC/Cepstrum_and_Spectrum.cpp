@@ -111,17 +111,16 @@ autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 
 autoCepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
 	try {
-		autoNUMfft_Table fftTable;
 		// originalNumberOfSamplesProbablyOdd irrelevant
 		Melder_require (my x1 == 0.0,
 			U"A Fourier-transformable Spectrum should have a first frequency of 0 Hz, not ", my x1, U" Hz.");
 		const integer numberOfSamples = my nx - 1;
 		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
-		NUMfft_Table_init (& fftTable, my nx);
+		autoNUMFourierTable fftTable = NUMFourierTable_create (my nx);
 		autoVEC amp = raw_VEC (my nx);
 		for (integer i = 1; i <= my nx; i ++)
 			amp [i] = my v_getValueAtSample (i, 0, 2);
-		NUMfft_forward (& fftTable, amp.get());
+		NUMfft_forward (fftTable.get(), amp.get());
 		
 		for (integer i = 1; i <= my nx; i ++) {
 			const double val = amp [i] / numberOfSamples;// scaling 1/n because ifft(fft(1))= n;

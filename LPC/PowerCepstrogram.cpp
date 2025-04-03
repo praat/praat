@@ -18,6 +18,7 @@
 
 #include "PowerCepstrogram.h"
 #include "PowerCepstrogramFrameIntoMatrixFrame.h"
+#include "SoundFrameIntoPowerCepstrogramFrame.h"
 #include "Cepstrum_and_Spectrum.h"
 #include "Matrix_extensions.h"
 #include "NUM2.h"
@@ -303,10 +304,9 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 		if (numberOfFrames > 1.0) {
 			const double sigma = numberOfFrames / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
 			const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (my nx));   // TODO: explain edge case
-			autoNUMfft_Table fourierTable;
-			NUMfft_Table_init (& fourierTable, nfft);
+			autoNUMFourierTable fourierTable = NUMFourierTable_create (nfft);
 			for (integer iq = 1; iq <= my ny; iq ++) {
-				VECsmooth_gaussian (thy z.row (iq), my z.row (iq), sigma, & fourierTable);
+				VECsmooth_gaussian (thy z.row (iq), my z.row (iq), sigma, fourierTable.get());
 				abs_VEC_inout (thy z.row (iq));
 			}
 		}
@@ -316,11 +316,10 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 		const double numberOfQuefrencyBins = quefrencyAveragingWindow / my dy;
 		if (numberOfQuefrencyBins > 1.0) {
 			const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (my ny));   // TODO: explain edge case
-			autoNUMfft_Table fourierTable;
-			NUMfft_Table_init (& fourierTable, nfft);
+			autoNUMFourierTable fourierTable = NUMFourierTable_create (nfft);
 			const double sigma = numberOfQuefrencyBins / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
-				VECsmooth_gaussian_inplace (thy z.column (iframe), sigma, & fourierTable);
+				VECsmooth_gaussian_inplace (thy z.column (iframe), sigma, fourierTable.get());
 				abs_VEC_inout (thy z.column (iframe));
 			}
 		}
@@ -368,6 +367,39 @@ autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PowerCepstrogram.");
+	}
+}
+
+void Sound_into_PowerCepstrogram (Sound input, PowerCepstrogram output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+	Sampled_assertEqualDomains (input,  output);
+	autoSoundFrameIntoPowerCepstrogramFrame ws = SoundFrameIntoPowerCepstrogramFrame_create (input, output, effectiveAnalysisWidth, windowShape);
+	autoSampledIntoSampled sis = SampledIntoSampled_create (input, output, ws.releaseToAmbiguousOwner());
+	SampledIntoSampled_analyseThreaded (sis.get());
+}
+
+autoPowerCepstrogram Sound_to_PowerCepstrogram_mt (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
+	try {
+		const double effectiveAnalysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
+		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+		const double physicalDuration = my dx * my nx;
+		volatile const double windowDuration = Melder_clippedRight (physicalAnalysisWidth, physicalDuration);   // gaussian window
+		Melder_require (physicalDuration >= physicalAnalysisWidth,
+			U"Your sound is too short:\n"
+			U"it should be longer than 6.0 / pitchFloor (", physicalAnalysisWidth, U" s).");
+		const double samplingFrequency = 2.0 * maximumFrequency;
+		autoSound input = Sound_resampleAndOrPreemphasize (me, maximumFrequency, 50_integer, preEmphasisFrequency);
+		double t1;
+		integer nFrames;
+		Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
+		const integer soundFrameSize = getSoundFrameSize_uneven (physicalAnalysisWidth, input -> dx);
+		const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (soundFrameSize));
+		const integer nq = nfft / 2 + 1;
+		const double qmax = 0.5 * nfft / samplingFrequency, dq = 1.0 / samplingFrequency;
+		autoPowerCepstrogram output = PowerCepstrogram_create (my xmin, my xmax, nFrames, dt, t1, 0, qmax, nq, dq, 0);
+		Sound_into_PowerCepstrogram (input.get(), output.get(), effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+		return output;
+	} catch (MelderError) {
+		Melder_throw (me, U": no PowerCepstrogram created.");
 	}
 }
 
@@ -474,8 +506,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		const integer nfftdiv2 = nfft / 2;
 		autoVEC fftbuf = zero_VEC (nfft); // "complex" array
 		autoVEC spectrum = zero_VEC (nfftdiv2 + 1); // +1 needed 
-		autoNUMfft_Table fftTable;
-		NUMfft_Table_init (& fftTable, nfft); // sound to spectrum
+		autoNUMFourierTable fftTable = NUMFourierTable_create (nfft); // sound to spectrum
 		
 		const double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv2 + 1);
 		autoPowerCepstrogram him = PowerCepstrogram_create (my xmin, my xmax, numberOfFrames, dt, t1, 0, qmax, nfftdiv2+1, dq, 0);
@@ -490,7 +521,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			fftbuf.part (1, nosInWindow)  <<=  thy z.row (1).part (istart, iend) * hamming.all();
 			fftbuf.part (nosInWindow + 1, nfft)  <<=  0.0;
 			
-			NUMfft_forward (& fftTable, fftbuf.get());
+			NUMfft_forward (fftTable.get(), fftbuf.get());
 			complexfftoutput_to_power (fftbuf.get(), spectrum.get(), true); // log10(|fft|^2)
 		
 			centre_VEC_inout (spectrum.get()); // subtract average
@@ -507,7 +538,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 				fftbuf [i+i-1] = 0.0;
 			}
 			fftbuf [nfft] = spectrum [nfftdiv2 + 1];
-			NUMfft_backward (& fftTable, fftbuf.get());
+			NUMfft_backward (fftTable.get(), fftbuf.get());
 			for (integer i = 1; i <= nfftdiv2 + 1; i ++)
 				his z [i] [iframe] = fftbuf [i] * fftbuf [i];
 

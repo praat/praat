@@ -38,9 +38,8 @@ autoSpectrum Sound_to_Spectrum (Sound me, bool fast) {
 			data.part (1, my nx)  *=  1.0 / numberOfChannels;
 		}
 
-		autoNUMfft_Table fourierTable;
-		NUMfft_Table_init (& fourierTable, numberOfFourierSamples);
-		NUMfft_forward (& fourierTable, data.get());
+		autoNUMFourierTable fourierTable = NUMFourierTable_create (numberOfFourierSamples);
+		NUMfft_forward (fourierTable.get(), data.get());
 
 		autoSpectrum thee = Spectrum_create (0.5 / my dx, numberOfFrequencies);
 		thy dx = 1.0 / (my dx * numberOfFourierSamples);   // override, just in case numberOfFourierSamples is odd

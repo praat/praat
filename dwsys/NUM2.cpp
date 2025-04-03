@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2024 David Weenink, Paul Boersma 2017,2020
+ * Copyright (C) 1993-2025 David Weenink, Paul Boersma 2017,2020
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,14 +130,14 @@ void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& 
 	}
 }
 
-void VECsmooth_gaussian (VECVU const& out, constVECVU const& in, double sigma, NUMfft_Table fftTable) {
+void VECsmooth_gaussian (VECVU const& out, constVECVU const& in, double sigma, NUMFourierTable fftTable) {
 	Melder_require (out.size == in.size,
 		U"The sizes of the input and output vectors should be equal.");
 	out  <<=  in;
 	VECsmooth_gaussian_inplace (out, sigma, fftTable);
 }
 
-void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma, NUMfft_Table fftTable) {
+void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma, NUMFourierTable fftTable) {
 	Melder_require (in_out.size <= fftTable -> n,
 		U"The dimension of the table should at least equal the length of the input vector.");
 	autoVEC smooth = zero_VEC (fftTable -> n);
@@ -171,9 +171,8 @@ void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma, NUMfft_Table
 
 void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma) {
 	const integer nfft = Melder_iroundUpToPowerOfTwo (in_out.size);
-	autoNUMfft_Table fftTable;
-	NUMfft_Table_init (& fftTable, nfft);
-	VECsmooth_gaussian_inplace (in_out, sigma, & fftTable);
+	autoNUMFourierTable fftTable = NUMFourierTable_create (nfft);
+	VECsmooth_gaussian_inplace (in_out, sigma, fftTable.get());
 }
 
 autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf) {
