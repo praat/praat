@@ -2386,12 +2386,12 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 					else {
 						if (my shell -> defaultButton && _GuiWinButton_tryToHandleShortcutKey (my shell -> defaultButton)) return;
 					}
-				} else if (kar == VK_ESCAPE) {   // shortcut or cancel button
+				} else if (kar == VK_ESCAPE) {   // shortcut or cancel button (and from 2024-04-06:) or text
 					if (acc & 1 << GuiMenu_ESCAPE) { win_processKeyboardEquivalent (my shell, GuiMenu_ESCAPE, modifiers); return; }
 					else {
 						if (my shell -> cancelButton && _GuiWinButton_tryToHandleShortcutKey (my shell -> cancelButton)) return;
 					}
-					return;
+					//return;   // this return has been here from before 2002; don't know why an Escape cannot be text (Demo wants it)
 				} else if (kar == VK_PRIOR) {   // shortcut or text
 					if (acc & 1 << GuiMenu_PAGE_UP) { win_processKeyboardEquivalent (my shell, GuiMenu_PAGE_UP, modifiers); return; }
 				} else if (kar == VK_NEXT) {   // shortcut or text

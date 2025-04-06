@@ -3818,7 +3818,7 @@ praat_addAction2 (classIntensity, 1, classPitch, 1, U"Query", nullptr, 0, nullpt
 	praat_addMenuCommand (U"Objects", U"New", U"-- new synthesis --", nullptr, 0, nullptr);
 	INCLUDE_LIBRARY (praat_KlattGrid_init)   // from dwtools
 	INCLUDE_LIBRARY (praat_uvafon_Artsynth_init)
-	INCLUDE_LIBRARY (praat_David_init)   // starting with SpeechSynthesizer (last checked 20240907)
+	INCLUDE_LIBRARY (praat_David_init)   // starting with SpeechSynthesizer (last checked 2024-09-07)
 	INCLUDE_LIBRARY (praat_uvafon_sensors_init)
 	praat_addMenuCommand (U"Objects", U"New", U"-- new grammars --", nullptr, 0, nullptr);
 	INCLUDE_LIBRARY (praat_uvafon_gram_init)
