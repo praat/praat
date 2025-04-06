@@ -9034,7 +9034,7 @@ void praat_David_init () {
 	/*
 		The `New/SpeechSynthesizer` commands don't require us to supply the `after` argument,
 		because `praat_David_init()` is called between `praat_uvafon_Artsynth_init()` and `praat_uvafon_gram_init()`.
-		(last checked 20240907)
+		(last checked 2024-09-07)
 	*/
 	praat_addMenuCommand (U"Objects", U"New", U"Text-to-speech synthesis", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"SpeechSynthesizer help", nullptr, 1,
