@@ -377,39 +377,40 @@ void Sound_into_PowerCepstrogram (Sound input, PowerCepstrogram output, double e
 	SampledIntoSampled_analyseThreaded (sis.get());
 }
 
-autoPowerCepstrogram Sound_to_PowerCepstrogram_mt (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
+autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
+		const kSound_windowShape windowShape = kSound_windowShape::GAUSSIAN_2;
 		const double effectiveAnalysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
-		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-		const double physicalDuration = my dx * my nx;
-		volatile const double windowDuration = Melder_clippedRight (physicalAnalysisWidth, physicalDuration);   // gaussian window
-		Melder_require (physicalDuration >= physicalAnalysisWidth,
+		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
+		const double physicalSoundDuration = my dx * my nx;
+		volatile const double windowDuration = Melder_clippedRight (physicalAnalysisWidth, physicalSoundDuration);
+		Melder_require (physicalSoundDuration >= physicalAnalysisWidth,
 			U"Your sound is too short:\n"
-			U"it should be longer than 6.0 / pitchFloor (", physicalAnalysisWidth, U" s).");
+			U"it should be longer than ", physicalAnalysisWidth, U" s.");
 		const double samplingFrequency = 2.0 * maximumFrequency;
 		autoSound input = Sound_resampleAndOrPreemphasize (me, maximumFrequency, 50_integer, preEmphasisFrequency);
 		double t1;
 		integer nFrames;
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
-		const integer soundFrameSize = getSoundFrameSize_uneven (physicalAnalysisWidth, input -> dx);
+		const integer soundFrameSize = getSoundFrameSize (physicalAnalysisWidth, input -> dx);
 		const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (soundFrameSize));
 		const integer nq = nfft / 2 + 1;
 		const double qmax = 0.5 * nfft / samplingFrequency, dq = 1.0 / samplingFrequency;
 		autoPowerCepstrogram output = PowerCepstrogram_create (my xmin, my xmax, nFrames, dt, t1, 0, qmax, nq, dq, 0);
-		Sound_into_PowerCepstrogram (input.get(), output.get(), effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+		Sound_into_PowerCepstrogram (input.get(), output.get(), effectiveAnalysisWidth, windowShape);
 		return output;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PowerCepstrogram created.");
 	}
 }
 
-autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
+autoPowerCepstrogram Sound_to_PowerCepstrogram_old (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
 		const double analysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
 		const double physicalAnalysisWidth = 2.0 * analysisWidth;
-		const double physicalDuration = my dx * my nx;
+		const double physicalSoundDuration = my dx * my nx;
 		volatile const double windowDuration = Melder_clippedRight (2.0 * analysisWidth, my dx * my nx);   // gaussian window
-		Melder_require (physicalDuration >= physicalAnalysisWidth,
+		Melder_require (physicalSoundDuration >= physicalAnalysisWidth,
 			U"Your sound is too short:\n"
 			U"it should be longer than 6.0 / pitchFloor (", physicalAnalysisWidth, U" s).");
 		// Convenience: analyse the whole sound into one Cepstrogram_frame

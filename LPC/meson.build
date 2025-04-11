@@ -18,7 +18,7 @@ sources = '''
 	PowerCepstrum.cpp PowerCepstrumWorkspace.cpp PowerCepstrogram.cpp
 	PowerCepstrogramFrameIntoMatrixFrame.cpp
 	Roots_and_Formant.cpp
-	SoundFrameIntoLPCFrame.cpp SoundFrameIntoFormantFrame.cpp
+	SoundFrameIntoLPCFrame.cpp SoundFrameIntoPowerCepstrogramFrame.cpp SoundFrameIntoFormantFrame.cpp
 	Sound_and_LPC.cpp Sound_to_Formant_mt.cpp
 	Sound_and_Cepstrum.cpp Tube.cpp
 	VocalTractTier.cpp

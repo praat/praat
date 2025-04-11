@@ -41,30 +41,38 @@
 Thing_implement (SoundFrameIntoPowerCepstrogramFrame, SoundFrameIntoSampledFrame, 0);
 
 void structSoundFrameIntoPowerCepstrogramFrame :: saveOutputFrame () {
-	powercepstrogram ->z.column (currentFrame)  <<=  powercepstrum -> z.row(1);
+	powercepstrogram -> z.column (currentFrame)  <<=  powercepstrum -> z.row(1);
 }
 
 bool structSoundFrameIntoPowerCepstrogramFrame :: inputFrameToOutputFrame () {
+	/*
+		Step 1: spectrum of the sound frame
+	*/
 	fftData.part (1, soundFrameSize)  <<=  soundFrame;
 	if (numberOfFourierSamples > soundFrameSize)
 		fftData.part (soundFrameSize + 1, numberOfFourierSamples)  <<=  0.0;
 	NUMfft_forward (fourierTable.get(), fftData.get());
+	for (integer i = 1 ; i <= numberOfFourierSamples; i ++)
+		fftData [i] *= sound -> dx;
+
 	/*
-		log of the spectrum
+		step 2: log of the spectrum power values log (re * re + im * im)
 	*/
 	fftData [1] = log (fftData [1] * fftData [1] + 1e-300);
 	for (integer i = 1; i < numberOfFourierSamples / 2; i ++) {
 		const double re = fftData [2 * i], im = fftData [2 * i + 1];
-		fftData [i + 1] = log (re * re + im * im + 1e-300);
-		fftData [i + 2] = 0.0;
+		fftData [2 * i] = log (re * re + im * im + 1e-300);
+		fftData [2 * i + 1] = 0.0;
 	}
 	fftData [numberOfFourierSamples] = log (fftData [numberOfFourierSamples] * fftData [numberOfFourierSamples] + 1e-300);
-	
+	/*
+		Step 3: inverse fft of the log spectrum
+	*/
 	NUMfft_backward (fourierTable.get(), fftData.get());
-	const double scaling = 1.0 / numberOfFourierSamples;
+	const double df = 1.0 / (sound->dx * numberOfFourierSamples);
 	for (integer i = 1; i <= powercepstrum -> nx; i ++) {
-		const double val = fftData [i];
-		powercepstrum -> z [1] [i] = val * val * scaling;
+		const double val = fftData [i] * df;
+		powercepstrum -> z [1] [i] = val * val;
 	}
 	return true;
 }
@@ -73,7 +81,7 @@ autoSoundFrameIntoPowerCepstrogramFrame SoundFrameIntoPowerCepstrogramFrame_crea
 	kSound_windowShape windowShape) {
 	try {
 		autoSoundFrameIntoPowerCepstrogramFrame me = Thing_new (SoundFrameIntoPowerCepstrogramFrame);
-		SoundFrameIntoSampledFrame_init (me.get(), input, effectiveAnalysisWidth, windowShape);
+		SoundFrameIntoSampledFrame_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
 		my powercepstrogram = output;
 		const integer numberOfFourierSamples = Melder_iroundUpToPowerOfTwo (my frameAsSound -> nx);
 		my numberOfFourierSamples = numberOfFourierSamples;

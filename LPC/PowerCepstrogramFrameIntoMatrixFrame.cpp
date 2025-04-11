@@ -51,13 +51,15 @@ bool structPowerCepstrogramFrameIntoMatrixFrame :: inputFrameToOutputFrame () {
 	double slope, intercept, peakDb, peakQuefrency, cpp;
 	if (getSlope) {
 		powerCepstrumWs -> getSlopeAndIntercept ();
-		
+		powerCepstrumWs -> slopeKnown = true;
 	}
 	if (subtractTrend) {
-		
+		powerCepstrumWs -> subtractTrend ();
+		powerCepstrumWs -> trendSubtracted = true;
 	}
 	if (getPeak) {
-		
+		powerCepstrumWs -> getPeakAndPosition ();
+		powerCepstrumWs -> peakKnown = true;
 	}
 	return true;
 }
@@ -72,7 +74,7 @@ void structPowerCepstrogramFrameIntoMatrixFrame :: saveOutputFrame (void) {
 	if (getPeak) {
 		output -> z [4] [currentFrame] = powerCepstrumWs -> peakdB;
 		output -> z [6] [currentFrame] = powerCepstrumWs -> peakQuefrency;
-		// TODO decide on trendSubtracted
+		powerCepstrumWs -> getCPP ();
 		output -> z [7] [currentFrame] = powerCepstrumWs -> cpp;
 	}
 }
