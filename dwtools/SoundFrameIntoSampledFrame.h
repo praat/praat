@@ -23,9 +23,11 @@
 
 #include "SoundFrameIntoSampledFrame_def.h"
 
-void SoundFrameIntoSampledFrame_init (mutableSoundFrameIntoSampledFrame me, constSound input, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+void SoundFrameIntoSampledFrame_init (mutableSoundFrameIntoSampledFrame me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
 double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape);
+
+integer getSoundFrameSize (double approximatePhysicalAnalysisWidth, double samplingPeriod);
 
 #endif /* _SoundFrameIntoSampledFrame_h_ */
  

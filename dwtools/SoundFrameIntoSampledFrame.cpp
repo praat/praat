@@ -47,17 +47,26 @@ integer getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, doubl
 	return 2 * halfFrameSamples + 1;
 }
 
+integer getSoundFrameSize (double physicalAnalysisWidth, double samplingPeriod) {
+	Melder_assert (physicalAnalysisWidth > 0.0);
+	Melder_assert (samplingPeriod > 0.0);
+	const double numberOfSamples_real = round (physicalAnalysisWidth / samplingPeriod);
+	return (integer) numberOfSamples_real;
+}
+
 void structSoundFrameIntoSampledFrame :: getInputFrame () {
-	const double midTime = Sampled_indexToX (sound, currentFrame);
-	const integer soundCentreSampleNumber = Sampled_xToNearestIndex (sound, midTime);   // time accuracy is half a sampling period
-	integer soundIndex = soundCentreSampleNumber - soundFrameSize / 2;
-	for (integer isample = 1; isample <= soundFrame.size; isample ++, soundIndex ++) {
-		soundFrame [isample] = ( soundIndex > 0 && soundIndex <= sound -> nx ? sound -> z [1] [soundIndex] : 0.0 );
+	const double midTime = Sampled_indexToX (output, currentFrame);
+	integer soundFrameBegin = Sampled_xToNearestIndex (sound, midTime - 0.5 * physicalAnalysisWidth); // approximation
+	if (wantStatus) {
+		sampledIntoSampledStatus -> soundFrameBegins [currentFrame] = soundFrameBegin;
+	}
+	for (integer isample = 1; isample <= soundFrame.size; isample ++, soundFrameBegin ++) {
+		soundFrame [isample] = ( soundFrameBegin > 0 && soundFrameBegin <= sound -> nx ? sound -> z [1] [soundFrameBegin] : 0.0 );
 	}
 	if (subtractFrameMean)
-		centre_VEC_inout (soundFrame.get(), nullptr);
-	soundFrameExtremum = NUMextremum_u (soundFrame.get());
-	soundFrame.get()  *=  windowFunction.get();
+		centre_VEC_inout (soundFrame, nullptr);
+	soundFrameExtremum = NUMextremum_u (soundFrame);
+	soundFrame  *=  windowFunction.get();
 }
 
 double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape) {
@@ -67,15 +76,37 @@ double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowSha
 	return physicalAnalysisWidth;
 }
 
-void SoundFrameIntoSampledFrame_init (mutableSoundFrameIntoSampledFrame me, constSound input, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+static void windowShape_into_VEC_GAUSSIAN2_OLD (kSound_windowShape /* windowShape*/ , VEC inout_window) {
+	const integer size = inout_window.size;
+	const double imid = 0.5 * (double) (size + 1);
+	double edge, onebyedge, factor;
+
+	edge = exp (-12.0);
+	onebyedge = 1.0 / (1.0 - edge);
+	for (integer i = 1; i <= size; i ++) {
+		const double phase = ((double) i - imid) / (size + 1); // 
+		inout_window [i] = (exp (-48.0 * phase * phase) - edge) * onebyedge;
+	}
+}
+
+void SoundFrameIntoSampledFrame_init (mutableSoundFrameIntoSampledFrame me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+	SampledFrameIntoSampledFrame_init (me, output);
 	my sound = input;
 	my windowShape = windowShape;
 	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
-	my getSoundFrameSize = getSoundFrameSize_uneven;
-	my soundFrameSize = my getSoundFrameSize (my physicalAnalysisWidth, input -> dx); // TODO getSoundFrameSize (me)!
-	my soundFrame = raw_VEC (my soundFrameSize);
-	my windowFunction = raw_VEC (my soundFrameSize);
-	windowShape_into_VEC (my windowShape, my windowFunction.get());
+	if (Melder_debug == -6) {
+		my getSoundFrameSize = getSoundFrameSize;
+		my soundFrameSize = my getSoundFrameSize (my physicalAnalysisWidth, input -> dx);
+		my windowFunction = raw_VEC (my soundFrameSize);
+		windowShape_into_VEC_GAUSSIAN2_OLD (windowShape, my windowFunction.get());
+	} else {
+		my getSoundFrameSize = getSoundFrameSize;
+		my soundFrameSize = my getSoundFrameSize (my physicalAnalysisWidth, input -> dx);
+		my windowFunction = raw_VEC (my soundFrameSize);
+		windowShape_into_VEC (my windowShape, my windowFunction.get());
+	}
+	my frameAsSound = Sound_create (1_integer, 0.0, my soundFrameSize * input -> dx, my soundFrameSize, input -> dx, 0.5 * input -> dx); //
+	my soundFrame = my frameAsSound -> z.row (1);
 }
 
 /* End of file SoundFrameIntoSampledFrame.cpp */
