@@ -45,7 +45,7 @@ void structSoundFrameIntoLPCFrame :: allocateOutputFrames () {
 }
 
 void structSoundFrameIntoLPCFrame :: saveOutputFrame () {
-	//outputLPCFrameRef -> copy (& outputlpc-> d_frames [currentFrame]);
+	// nothing to do
 }
 
 bool structSoundFrameIntoLPCFrame :: inputFrameToOutputFrame () {
@@ -55,7 +55,7 @@ bool structSoundFrameIntoLPCFrame :: inputFrameToOutputFrame () {
 void SoundFrameIntoLPCFrame_init (mutableSoundFrameIntoLPCFrame me, constSound input, mutableLPC outputlpc, double effectiveAnalysisWidth, 
 	kSound_windowShape windowShape)
 {
-	SoundFrameIntoSampledFrame_init (me, input, effectiveAnalysisWidth, windowShape);
+	SoundFrameIntoSampledFrame_init (me, input, outputlpc, effectiveAnalysisWidth, windowShape);
 	my outputlpc = outputlpc;
 	my order = my outputlpc -> maxnCoefficients;
 	my orderp1 = my order + 1;
@@ -85,17 +85,15 @@ autoSoundFrameIntoLPCFrameAuto SoundFrameIntoLPCFrameAuto_create (constSound inp
 bool structSoundFrameIntoLPCFrameAuto :: inputFrameToOutputFrame ()  {
 	LPC_Frame lpcf = & outputlpc -> d_frames [currentFrame];
 	frameAnalysisInfo = 0;
-	if (lpcf -> nCoefficients == 0) {
-		frameAnalysisInfo = 6;
-		return false;
-	}
+	Melder_assert (lpcf -> nCoefficients > 0);
 
-	VEC  x = soundFrame.get();
+	VEC  x = soundFrame;
 	
 	/*
 		Compute the autocorrelations
 	*/
 	lpcf -> a.get()  <<=  0.0;
+	lpcf -> gain = 0.0;
 	for (integer i = 1; i <= orderp1; i ++)
 		r [i] = NUMinner (x.part (1, x.size - i + 1), x.part (i, x.size));
 	if (r [1] == 0.0) {
@@ -109,24 +107,26 @@ bool structSoundFrameIntoLPCFrameAuto :: inputFrameToOutputFrame ()  {
 	}
 	a [1] = 1.0;
 	a [2] = rc [1] = - r [2] / r [1];
-	lpcf -> gain = r [1] + r [2] * rc [1];
+	double gain = r [1] + r [2] * rc [1];
+	lpcf -> gain = gain;
 	integer i = 1;
 	for (i = 2; i <= order; i ++) {
 		long double s = 0.0;
 		for (integer j = 1; j <= i; j ++)
 			s += r [i - j + 2] * a [j];
-		rc [i] = - s / lpcf -> gain;
+		rc [i] = - s / gain;
 		for (integer j = 2; j <= i / 2 + 1; j ++) {
 			const double at = a [j] + rc [i] * a [i - j + 2];
 			a [i - j + 2] += rc [i] * a [j];
 			a [j] = at;
 		}
 		a [i + 1] = rc [i];
-        lpcf -> gain += rc [i] * s;
-		if (lpcf -> gain <= 0.0) {
+		gain += rc [i] * s;
+		if (gain <= 0.0) {
 			frameAnalysisInfo = 2;
 			break;
 		}
+		lpcf -> gain = gain;
 	}
 	-- i;
 	lpcf -> a.part (1, i)  <<=  a.part (2, i + 1);
@@ -139,7 +139,9 @@ bool structSoundFrameIntoLPCFrameAuto :: inputFrameToOutputFrame ()  {
 
 Thing_implement (SoundFrameIntoLPCFrameCovar, SoundFrameIntoLPCFrame, 0);
 
-autoSoundFrameIntoLPCFrameCovar SoundFrameIntoLPCFrameCovar_create (constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+autoSoundFrameIntoLPCFrameCovar SoundFrameIntoLPCFrameCovar_create (constSound input, mutableLPC output, double effectiveAnalysisWidth,
+	kSound_windowShape windowShape) 
+{
 	try {
 		autoSoundFrameIntoLPCFrameCovar me = Thing_new (SoundFrameIntoLPCFrameCovar);
 		SoundFrameIntoLPCFrame_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
@@ -158,30 +160,31 @@ autoSoundFrameIntoLPCFrameCovar SoundFrameIntoLPCFrameCovar_create (constSound i
 	Markel & Gray, Linear Prediction of Speech, page 221
 */
 bool structSoundFrameIntoLPCFrameCovar :: inputFrameToOutputFrame () {
-	LPC_Frame outputlpcf = & outputlpc -> d_frames [currentFrame];
+	LPC_Frame lpcf = & outputlpc -> d_frames [currentFrame];
 	const integer n = soundFrameSize, m = order;
 	
-	if (outputlpcf -> nCoefficients == 0) {
+	if (lpcf -> nCoefficients == 0) {
 		frameAnalysisInfo = 6;
 		return false;
 	}
 		
-	VEC x = soundFrame.get();
+	VEC x = soundFrame;
 	
 	frameAnalysisInfo = 0;
-	outputlpcf -> gain = 0.0;
+	double gain = 0.0;
 	/*
 		Compute the covariances
 	*/
 	VEC xi = x.part(m + 1, n), xim1 = x.part(m, n - 1);
-	outputlpcf -> gain = NUMinner (xi, xi);
+	gain = NUMinner (xi, xi);
 	cc [1] = NUMinner (xi, xim1);
 	cc [2] = NUMinner (xim1, xim1);
 
-	if (outputlpcf -> gain == 0.0) {
+	if (gain == 0.0) {
 		frameAnalysisInfo = 1;
-		outputlpcf -> nCoefficients = 0;
-		outputlpcf -> a.resize (outputlpcf -> nCoefficients); //maintain invariant
+		lpcf -> nCoefficients = 0;
+		lpcf -> gain = gain;
+		lpcf -> a.resize (lpcf -> nCoefficients); //maintain invariant
 		return false;
 	}
 
@@ -189,7 +192,7 @@ bool structSoundFrameIntoLPCFrameCovar :: inputFrameToOutputFrame () {
 	beta [1] = cc [2];
 	a [1] = 1.0;
 	a [2] = grc [1] = -cc [1] / cc [2];
-	outputlpcf -> gain += grc [1] * cc [1];
+	lpcf -> gain = gain += grc [1] * cc [1];
 	integer iend = 1;
 	for (integer i = 2; i <= m; i ++) { // 130
 		for (integer j = 1; j <= i; j ++)
@@ -233,17 +236,18 @@ bool structSoundFrameIntoLPCFrameCovar :: inputFrameToOutputFrame () {
 			a [j] += grc [i] * b [i * (i - 1) / 2 + j - 1]; // 110
 		a [i + 1] = grc [i];
 		s = grc [i] * grc [i] * beta [i];
-		outputlpcf -> gain -= s;
-		if (outputlpcf -> gain <= 0.0) {
+		gain -= s;
+		if (gain <= 0.0) {
 			frameAnalysisInfo = 4;
 			break;
 		}
+		lpcf -> gain = gain;
 		iend ++;
 	}
 end:
-	outputlpcf -> a.resize (iend);
-	outputlpcf -> a.part (1, iend)  <<=  a.part (2, iend + 1);
-	outputlpcf -> nCoefficients = outputlpcf -> a.size; // maintain invariant
+	lpcf -> a.resize (iend);
+	lpcf -> a.part (1, iend)  <<=  a.part (2, iend + 1);
+	lpcf -> nCoefficients = lpcf -> a.size; // maintain invariant
 	return true;
 }
 
@@ -338,17 +342,17 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, SoundFrameIntoL
 }
 
 bool structSoundFrameIntoLPCFrameBurg :: inputFrameToOutputFrame () {
-	LPC_Frame outputlpcf = & outputlpc -> d_frames[currentFrame];
+	LPC_Frame lpcf = & outputlpc -> d_frames[currentFrame];
 
-	outputlpcf -> gain = VECburg_buffered (outputlpcf -> a.get(), soundFrame.get(), this);
-	if (outputlpcf -> gain <= 0.0) {
-		outputlpcf -> nCoefficients = 0;
-		outputlpcf -> a.resize (outputlpcf -> nCoefficients); // maintain invariant
+	lpcf -> gain = VECburg_buffered (lpcf -> a.get(), soundFrame, this);
+	if (lpcf -> gain <= 0.0) {
+		lpcf -> nCoefficients = 0;
+		lpcf -> a.resize (lpcf -> nCoefficients); // maintain invariant
 		return false;
 	} else {
-		outputlpcf -> gain *= soundFrame.size;
-		for (integer i = 1; i <= outputlpcf -> nCoefficients; i ++)
-			outputlpcf -> a [i] = - outputlpcf -> a [i];
+		lpcf -> gain *= soundFrame.size;
+		for (integer i = 1; i <= lpcf -> nCoefficients; i ++)
+			lpcf -> a [i] = - lpcf -> a [i];
 		return true;
 	}
 }
@@ -373,19 +377,19 @@ autoSoundFrameIntoLPCFrameMarple SoundFrameIntoLPCFrameMarple_create (constSound
 
 bool structSoundFrameIntoLPCFrameMarple :: inputFrameToOutputFrame () {
 	const integer mmax = order, n = soundFrame.size;
-	LPC_Frame outputlpcf = & outputlpc -> d_frames [currentFrame];
-	VEC x = soundFrame.get();
+	LPC_Frame lpcf = & outputlpc -> d_frames [currentFrame];
+	VEC x = soundFrame;
 	
 	frameAnalysisInfo = 0;
 	VEC c = a.get(); // yes 'a'
-	VEC a = outputlpcf -> a.get();
+	VEC a = lpcf -> a.get();
 
 	double gain = 0.0, e0 = 2.0 * NUMsum2 (x);
 	integer m = 1;
 	if (e0 == 0.0) {
-		outputlpcf -> nCoefficients = 0;
-		outputlpcf -> a.resize (outputlpcf -> nCoefficients); // maintain invariant
-		outputlpcf -> gain = gain;
+		lpcf -> nCoefficients = 0;
+		lpcf -> a.resize (lpcf -> nCoefficients); // maintain invariant
+		lpcf -> gain = gain;
 		frameAnalysisInfo = 1;
 		return false;
 	}
@@ -506,9 +510,9 @@ bool structSoundFrameIntoLPCFrameMarple :: inputFrameToOutputFrame () {
 		}
 	}
 end:
-	outputlpcf -> gain = gain * 0.5;   // because e0 is twice the energy
-	outputlpcf -> a.resize (m);
-	outputlpcf -> nCoefficients = m;   // maintain invariant
+	lpcf -> gain = gain * 0.5;   // because e0 is twice the energy
+	lpcf -> a.resize (m);
+	lpcf -> nCoefficients = m;   // maintain invariant
 	return frameAnalysisInfo == 0 || frameAnalysisInfo == 4 || frameAnalysisInfo == 5;
 }
 
@@ -619,12 +623,12 @@ bool structLPCAndSoundFramesIntoLPCFrameRobust :: inputFrameToOutputFrame () {
 	frameAnalysisInfo = 0;
 	do {
 		const double previousScale = scale;
-		error.all()  <<=  soundFrame.all();
+		error.all()  <<=  soundFrame;
 		VECfilterInverse_inplace (error.get(), inout_a, filterMemory.get());
 		NUMstatistics_huber (error.get(), & location, wantlocation, & scale, wantscale, k_stdev, tol1, huber_iterations, huberwork.get());
 		LPCAndSoundFramesIntoLPCFrameRobust_setSampleWeights (this, error.get());
 
-		LPCAndSoundFramesIntoLPCFrameRobust_setCovariances (this, soundFrame.get());
+		LPCAndSoundFramesIntoLPCFrameRobust_setCovariances (this, soundFrame);
 		/*
 			Solve C a = [-] c
 		*/
@@ -662,7 +666,7 @@ autoSoundFrameIntoLPCFrameRobust SoundFrameIntoLPCFrameRobust_create (SoundFrame
 		my soundIntoLPC.adoptFromAmbiguousOwner (soundIntoLPC);
 		my lpcAndSoundIntoLPC.adoptFromAmbiguousOwner (lpcAndSoundIntoLPC);
 		return me;
-	} catch (MelderError){
+	} catch (MelderError) {
 		Melder_throw (U"Cannot create SoundFrameIntoLPCFrameRobust.");
 	}
 }
