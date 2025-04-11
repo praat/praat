@@ -32,7 +32,7 @@
 	3 4
 	can be layed out in memory as 1 2 3 4 (row major, C++) or as 1 3 2 4 (column major, fortran).
 	
-	Sometimes you can avoid an explicit matrix conversion to col major layout by using the solution for the transposed problem.
+	Sometimes we can avoid an explicit matrix conversion to col major layout by using the solution for the transposed problem.
 	
 	The purpose of a routine and its parameter descriptions have all been copied from the LAPACK netlib repository.
 	
