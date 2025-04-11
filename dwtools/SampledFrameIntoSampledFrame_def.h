@@ -22,11 +22,18 @@
 
 #define ooSTRUCT SampledFrameIntoSampledFrame
 oo_DEFINE_CLASS (SampledFrameIntoSampledFrame, Daata)
+	/*
+		We need a reference to the output object because we need to know the number of frames to analyse
+		which equals output -> nx;
+	*/
+	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
+	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (SampledIntoSampledStatus, sampledIntoSampledStatus)
 	oo_INTEGER (startFrame)
 	oo_INTEGER (numberOfFrames)
 	oo_INTEGER (currentFrame)				// the frame we are working on
-	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in a frame analysis
+	oo_INTEGER (frameAnalysisInfo)			// TODO move to status signals different "error" conditions etc in a frame analysis
 	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo
+	oo_BOOLEAN (wantStatus)					// gather extensive status and error info
 	oo_INTEGER (framesErrorCount)
 	oo_INTVEC (framesInfo, numberOfFrames)
 	oo_DOUBLE (tol1)

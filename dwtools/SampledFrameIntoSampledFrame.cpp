@@ -70,6 +70,10 @@ void structSampledFrameIntoSampledFrame :: inputFramesToOutputFrames (integer fr
 	}	
 }
 
+void SampledFrameIntoSampledFrame_init (SampledFrameIntoSampledFrame me, mutableSampled output) {
+	my output = output;
+}
+
 void SampledFrameIntoSampledFrame_initFrameInterval (SampledFrameIntoSampledFrame me, integer startFrame, integer endFrame) {
 	Melder_assert (startFrame <= endFrame);
 	my startFrame = startFrame;
