@@ -26,22 +26,22 @@ oo_DEFINE_CLASS (SampledIntoSampled, Daata)
 	/*
 		Only a reference to the Sampled input and output objects are needed because
 		each thread only accesses disjoint parts of it. And only the reference needs to be copied.
-		The domains of input and output should be equal, the sampling can be different.
+		The domains of input and output should be equal, the samplings in general are different.
 	*/
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sampled, input)
 	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
-	
+	/*
+		Workload dispatcher 
+	*/
 	oo_BOOLEAN (useMultiThreading)
 	oo_INTEGER (minimumNumberOfFramesPerThread) // default 40
 	oo_INTEGER (maximumNumberOfFramesPerThread) // default 0 (= no limit)
 	oo_INTEGER (maximumNumberOfThreads)
-	
-	oo_INTEGER (globalFrameErrorCount)			// the number of frames where some error occurred
-	
 	/*
 		For all temporary work data in a frame analysis
 	*/
 	oo_OBJECT (SampledFrameIntoSampledFrame, 0, frameIntoFrame)
+	oo_INTEGER (globalFrameErrorCount)			// the number of frames where some error occurred
 
 oo_END_CLASS (SampledIntoSampled)
 #undef ooSTRUCT

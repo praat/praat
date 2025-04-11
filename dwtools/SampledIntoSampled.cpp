@@ -110,13 +110,14 @@ void SampledIntoSampled_setMinimumNumberOfFramesPerThread (integer minimumNumber
 	preferences.minimumNumberOfFramesPerThread = minimumNumberOfFramesPerThread;
 }
 
-void SampledIntoSampled_getThreadingInfo (constSampledIntoSampled me, integer *out_numberOfThreadsNeeded, integer *out_numberOfFramesPerThread) {
+void SampledIntoSampled_getThreadingInfo (constSampledIntoSampled me, integer& numberOfThreads, integer& numberOfFramesPerThread) {
 	const integer numberOfConcurrentThreadsAvailable = SampledIntoSampled_getNumberOfConcurrentThreadsAvailable ();
 	const integer numberOfConcurrentThreadsToUse = SampledIntoSampled_getNumberOfConcurrentThreadsToUse ();
 	const integer minimumNumberOfFramesPerThread = SampledIntoSampled_getMinimumNumberOfFramesPerThread ();
 	const integer maximumNumberOfFramesPerThread = SampledIntoSampled_getMaximumNumberOfFramesPerThread ();
 	const integer numberOfFrames = my output -> nx;
-	integer numberOfThreads = 0, numberOfFramesPerThread = numberOfFrames;
+	numberOfThreads = 0;
+	numberOfFramesPerThread = numberOfFrames;
 	if (SampledIntoSampled_useMultiThreading () && numberOfConcurrentThreadsToUse > 0) {
 		numberOfFramesPerThread = Melder_iroundUp ((double) numberOfFrames / numberOfConcurrentThreadsToUse);
 		if (maximumNumberOfFramesPerThread > 0)
@@ -126,10 +127,6 @@ void SampledIntoSampled_getThreadingInfo (constSampledIntoSampled me, integer *o
 		numberOfThreads = Melder_iroundUp ((double) numberOfFrames / numberOfFramesPerThread);
 		numberOfThreads = std::max (1_integer, numberOfThreads);
 	}
-	if (out_numberOfThreadsNeeded)
-		*out_numberOfThreadsNeeded = numberOfThreads;
-	if (out_numberOfFramesPerThread)
-		*out_numberOfFramesPerThread = numberOfFramesPerThread;
 }
 
 void SampledIntoSampled_init (mutableSampledIntoSampled me, constSampled input, mutableSampled output) {
@@ -149,21 +146,11 @@ autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSam
 	}
 }
 
-void SampledIntoSampled_replaceInput (mutableSampledIntoSampled me, constSampled thee) {
-	Sampled_assertEqualDomainsAndSampling (my input, thee);
-	my input = thee;
-}
-
-void SampledIntoSampled_replaceOutput (mutableSampledIntoSampled me, mutableSampled thee) {
-	Sampled_assertEqualDomainsAndSampling (my output, thee);
-	my output = thee;
-}
-
 integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 {
 	try {
-		SampledFrameIntoSampledFrame ws = my frameIntoFrame.get();
-		ws -> allocateOutputFrames ();
+		SampledFrameIntoSampledFrame frameIntoFrame = my frameIntoFrame.get();
+		frameIntoFrame -> allocateOutputFrames ();
 
 		const integer numberOfFrames = my output -> nx;
 		
@@ -171,17 +158,17 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 		
 		if (SampledIntoSampled_useMultiThreading ()) {
 			integer numberOfThreadsNeeded, numberOfFramesPerThread;
-			SampledIntoSampled_getThreadingInfo (me, & numberOfThreadsNeeded, & numberOfFramesPerThread);
+			SampledIntoSampled_getThreadingInfo (me, numberOfThreadsNeeded, numberOfFramesPerThread);
 
 			/*
 				We need to reserve all the working memory for each thread beforehand.
 			*/
 			const integer numberOfThreadsToUse = SampledIntoSampled_getNumberOfConcurrentThreadsToUse ();
 			const integer numberOfThreads = std::min (numberOfThreadsToUse, numberOfThreadsNeeded);
-			OrderedOf<structSampledIntoSampled> workThreads;
+			OrderedOf<structSampledFrameIntoSampledFrame> workThreads;
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-				autoSampledIntoSampled threadData = Data_copy (me);
-				workThreads. addItem_move (threadData.move());
+				autoSampledFrameIntoSampledFrame frameIntoFrameCopy = Data_copy (frameIntoFrame);
+				workThreads. addItem_move (frameIntoFrameCopy.move());
 			}
 		
 			autovector<std::thread> threads = autovector<std::thread> (numberOfThreads, MelderArray::kInitializationType::ZERO);
@@ -195,16 +182,16 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 					numberOfThreadsInRun = ( irun < numberOfThreadRuns ? numberOfThreads : numberOfThreadsInLastRun );
 					const integer lastFrameInRun = ( irun < numberOfThreadRuns ? numberOfFramesInRun * irun : numberOfFrames);
 					for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++) {
-						SampledIntoSampled threadData = workThreads.at [ithread];
+						SampledFrameIntoSampledFrame frameIntoFrameCopy = workThreads.at [ithread];
 						const integer firstFrame = numberOfFramesInRun * (irun - 1) + 1 + (ithread - 1) * numberOfFramesPerThread;
 						const integer lastFrame = ( ithread == numberOfThreadsInRun ? lastFrameInRun : firstFrame + numberOfFramesPerThread - 1 );
 						
-						auto analyseFrames = [&globalFrameErrorCount] (SampledIntoSampled threadData, integer fromFrame, integer toFrame) {
-							threadData -> frameIntoFrame -> inputFramesToOutputFrames (fromFrame, toFrame);
-							globalFrameErrorCount += threadData -> frameIntoFrame -> framesErrorCount;
+						auto analyseFrames = [&globalFrameErrorCount] (SampledFrameIntoSampledFrame fifthread, integer fromFrame, integer toFrame) {
+							fifthread -> inputFramesToOutputFrames (fromFrame, toFrame);
+							globalFrameErrorCount += fifthread -> framesErrorCount;
 						};
 
-						threads [ithread] = std::thread (analyseFrames, threadData, firstFrame, lastFrame);
+						threads [ithread] = std::thread (analyseFrames, frameIntoFrameCopy, firstFrame, lastFrame);
 					}
 					for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++)
 						threads [ithread]. join ();
@@ -218,8 +205,10 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 			}
 			my globalFrameErrorCount = globalFrameErrorCount;
 		} else {
-			my frameIntoFrame -> inputFramesToOutputFrames (1, numberOfFrames); // no threading
+			frameIntoFrame -> inputFramesToOutputFrames (1, numberOfFrames); // no threading
+			globalFrameErrorCount = frameIntoFrame -> framesErrorCount;
 		}
+		return globalFrameErrorCount;
 	} catch (MelderError) {
 		Melder_throw (me, U"The Sampled analysis could not be done.");
 	}

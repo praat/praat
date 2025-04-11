@@ -27,20 +27,6 @@ void SampledIntoSampled_init (mutableSampledIntoSampled me, constSampled input, 
 
 autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSampled output, SampledFrameIntoSampledFrame ws);
 
-void SampledIntoSampled_replaceOutput (mutableSampledIntoSampled me, mutableSampled thee);
-/*
-	Preconditions:
-		my output -> xmin == thy xmin && my output -> xmax == thy xmax
-		my output -> nx   == thy nx && my output -> dx   == thy dx && my output -> x1   == thy x1
-*/
-
-void SampledIntoSampled_replaceInput (mutableSampledIntoSampled me, constSampled input);
-/*
-	Preconditions:
-		my output -> xmin == thy xmin && my output -> xmax == thy xmax
-		my output -> nx   == thy nx && my output -> dx   == thy dx && my output -> x1   == thy x1
-*/
-
 integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me);
 
 void SampledIntoSampled_preferences ();
@@ -95,7 +81,7 @@ void SampledIntoSampled_setMaximumNumberOfFramesPerThread (integer maximumNumber
 integer SampledIntoSampled_getMinimumNumberOfFramesPerThread ();
 void SampledIntoSampled_setMinimumNumberOfFramesPerThread (integer minimumNumberOfFramesPerThread);
 
-void SampledIntoSampled_getThreadingInfo (constSampledIntoSampled me, integer *out_numberOfThreadsNeeded, integer *out_numberOfFramesPerThread);
+void SampledIntoSampled_getThreadingInfo (constSampledIntoSampled me, integer& numberOfThreadsNeeded, integer & numberOfFramesPerThread);
 
 /*********** timing only *********/
 
