@@ -52,10 +52,8 @@ autoNUMFourierTable NUMFourierTable_create (integer n) {
 		my splitcacheSize = 32;
 		my splitcache = zero_INTVEC (my splitcacheSize);
 		NUMrffti (n, my trigcache.asArgumentToFunctionThatExpectsZeroBasedArray(),
-			my splitcache.asArgumentToFunctionThatExpectsZeroBasedArray()
-	);
-
-		 return me;
+			my splitcache.asArgumentToFunctionThatExpectsZeroBasedArray());
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot create NUMFourierTable.");
 	}
@@ -111,13 +109,11 @@ void NUMfft_backward (NUMFourierTable me, VEC data) {
 	);
 }
 
-
 void NUMrealft (VEC data, integer isign) {
 	if (isign == 1)
 		NUMforwardRealFastFourierTransform (data);
 	else
 		NUMreverseRealFastFourierTransform (data);
 }
-
 
 /* End of file NUMFourier.cpp */

@@ -10,7 +10,7 @@ sources = '''
 	LegendreSeries.cpp
 	MAT_numerics.cpp
 	NMF.cpp NUM2.cpp NUMhuber.cpp NUMmachar.cpp 
-	NUMcomplex.cpp NUMfft_d.cpp NUMsorting.cpp
+	NUMcomplex.cpp NUMFourier.cpp NUMsorting.cpp
 	NUMmathlib.cpp NUMstring.cpp NUMmedian.cpp
 	Permutation.cpp PermutationInversionCounter.cpp Permutation_and_Index.cpp
 	Polynomial.cpp
