@@ -52,6 +52,7 @@ static struct ThreadingPreferences {
 	integer numberOfConcurrentThreadsToUse = 20;
 	integer maximumNumberOfFramesPerThread = 0; // 0: signals no limit
 	integer minimumNumberOfFramesPerThread = 40;
+	bool extraAnalysisInfo = false;
 } preferences;
 
 void SampledIntoSampled_preferences () {
@@ -60,6 +61,7 @@ void SampledIntoSampled_preferences () {
 	Preferences_addInteger (U"SampledIntoSampled.numberOfConcurrentThreadsToUse", & preferences.numberOfConcurrentThreadsToUse, 20);
 	Preferences_addInteger (U"SampledIntoSampled.maximumNumberOfFramesPerThread", & preferences.maximumNumberOfFramesPerThread, 40);
 	Preferences_addInteger (U"SampledIntoSampled.minimumNumberOfFramesPerThread", & preferences.maximumNumberOfFramesPerThread, 40);
+	Preferences_addBool    (U"SampledIntoSampled.extraAnalysisInfo", & preferences.extraAnalysisInfo, false);
 }
 
 bool SampledIntoSampled_useMultiThreading () {
@@ -110,6 +112,13 @@ void SampledIntoSampled_setMinimumNumberOfFramesPerThread (integer minimumNumber
 	preferences.minimumNumberOfFramesPerThread = minimumNumberOfFramesPerThread;
 }
 
+void SampledIntoSampled_setExtraAnalysisInfo (bool extraAnalysisInfo) {
+	preferences.extraAnalysisInfo = extraAnalysisInfo;
+}
+bool SampledIntoSampled_getExtraAnalysisInfo () {
+	return preferences.extraAnalysisInfo;
+}
+
 void SampledIntoSampled_getThreadingInfo (constSampledIntoSampled me, integer& numberOfThreads, integer& numberOfFramesPerThread) {
 	const integer numberOfConcurrentThreadsAvailable = SampledIntoSampled_getNumberOfConcurrentThreadsAvailable ();
 	const integer numberOfConcurrentThreadsToUse = SampledIntoSampled_getNumberOfConcurrentThreadsToUse ();
@@ -135,11 +144,15 @@ void SampledIntoSampled_init (mutableSampledIntoSampled me, constSampled input, 
 	my output = output;
 }
 
-autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSampled output, SampledFrameIntoSampledFrame ws) {
+autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSampled output, SampledFrameIntoSampledFrame ws,
+	SampledIntoSampledStatus status)
+{
 	try {
 		autoSampledIntoSampled me = Thing_new (SampledIntoSampled);
 		SampledIntoSampled_init (me.get(), input, output);
 		my frameIntoFrame.adoptFromAmbiguousOwner (ws);
+		my status.adoptFromAmbiguousOwner (status);
+		SampledFrameIntoSampledFrame_initForStatusUpdates (my frameIntoFrame.get(), my status.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SampledIntoSampled not created.");

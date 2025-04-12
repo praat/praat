@@ -57,8 +57,8 @@ integer getSoundFrameSize (double physicalAnalysisWidth, double samplingPeriod) 
 void structSoundFrameIntoSampledFrame :: getInputFrame () {
 	const double midTime = Sampled_indexToX (output, currentFrame);
 	integer soundFrameBegin = Sampled_xToNearestIndex (sound, midTime - 0.5 * physicalAnalysisWidth); // approximation
-	if (wantStatus) {
-		sampledIntoSampledStatus -> soundFrameBegins [currentFrame] = soundFrameBegin;
+	if (updateStatus) {
+		//status -> soundFrameBegins [currentFrame] = soundFrameBegin;
 	}
 	for (integer isample = 1; isample <= soundFrame.size; isample ++, soundFrameBegin ++) {
 		soundFrame [isample] = ( soundFrameBegin > 0 && soundFrameBegin <= sound -> nx ? sound -> z [1] [soundFrameBegin] : 0.0 );

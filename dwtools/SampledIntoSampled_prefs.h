@@ -20,10 +20,11 @@
 
 Prefs_begin (SampledIntoSampled)
 
-	InstancePrefs_addBool  (SampledIntoSampled, useMultiThreading)
+	InstancePrefs_addBool  (SampledIntoSampled, useMultiThreading, 1, false)
 	ClassPrefs_addInteger  (SampledIntoSampled, maximumNumberOfThreads,  1, U"20")
 	ClassPrefs_addInteger  (SampledIntoSampled, maximumNumberOfFramesPerThread,  1, U"40")
 	ClassPrefs_addInteger  (SampledIntoSampled, minimumNumberOfFramesPerThread,  1, U"40")
+	ClassPrefs_addBool	   (SampledIntoSampled, extraAnalysisInfo, 1, false)
 	
 Prefs_end (SampledIntoSampled)
 

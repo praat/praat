@@ -33,4 +33,5 @@ oo_DEFINE_CLASS (SoundIntoSampledStatus, SampledIntoSampledStatus)
 oo_END_CLASS (SoundIntoSampledStatus)	
 #undef ooSTRUCT
 
+
 /* End of file SampledIntoSampledStatus_def.h */	

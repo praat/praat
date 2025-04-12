@@ -22,6 +22,7 @@
 #include "Sound.h"
 #include "SVD.h"
 #include "SoundFrameIntoSampledFrame.h"
+#include "SampledIntoSampledStatus.h"
 
 #include "SoundFrameIntoLPCFrame_def.h"
 

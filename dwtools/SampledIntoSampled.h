@@ -25,7 +25,8 @@
 
 void SampledIntoSampled_init (mutableSampledIntoSampled me, constSampled input, mutableSampled output);
 
-autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSampled output, SampledFrameIntoSampledFrame ws);
+autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSampled output, 
+	SampledFrameIntoSampledFrame ws, SampledIntoSampledStatus status);
 
 integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me);
 
@@ -79,7 +80,11 @@ integer SampledIntoSampled_getMaximumNumberOfFramesPerThread ();
 void SampledIntoSampled_setMaximumNumberOfFramesPerThread (integer maximumNumberOfFramesPerThread);
 
 integer SampledIntoSampled_getMinimumNumberOfFramesPerThread ();
+
 void SampledIntoSampled_setMinimumNumberOfFramesPerThread (integer minimumNumberOfFramesPerThread);
+
+void SampledIntoSampled_setExtraAnalysisInfo (bool extraAnalysisInfo);
+bool SampledIntoSampled_getExtraAnalysisInfo ();
 
 void SampledIntoSampled_getThreadingInfo (constSampledIntoSampled me, integer& numberOfThreadsNeeded, integer & numberOfFramesPerThread);
 

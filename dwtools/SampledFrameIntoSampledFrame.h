@@ -19,11 +19,13 @@
  */
 
 #include "Sampled.h"
-
-#include "SampledFrameIntoSampledFrame_def.h"
 #include "SampledIntoSampledStatus.h"
 
+#include "SampledFrameIntoSampledFrame_def.h"
+
 void SampledFrameIntoSampledFrame_init (SampledFrameIntoSampledFrame me, mutableSampled output);
+
+void SampledFrameIntoSampledFrame_initForStatusUpdates (SampledFrameIntoSampledFrame me, mutableSampledIntoSampledStatus status, boolean updateStatus);
 
 void SampledFrameIntoSampledFrame_initFrameInterval (SampledFrameIntoSampledFrame me, integer startFrame, integer endFrame);
 

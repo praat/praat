@@ -74,6 +74,11 @@ void SampledFrameIntoSampledFrame_init (SampledFrameIntoSampledFrame me, mutable
 	my output = output;
 }
 
+void SampledFrameIntoSampledFrame_initForStatusUpdates (SampledFrameIntoSampledFrame me, mutableSampledIntoSampledStatus status) {
+	my updateStatus = true;
+	my status = status;
+}
+
 void SampledFrameIntoSampledFrame_initFrameInterval (SampledFrameIntoSampledFrame me, integer startFrame, integer endFrame) {
 	Melder_assert (startFrame <= endFrame);
 	my startFrame = startFrame;

@@ -26,7 +26,8 @@ void LPC_into_Formant (constLPC me, mutableFormant thee, double margin) {
 	Sampled_requireEqualDomainsAndSampling (me, thee);
 
 	autoLPCFrameIntoFormantFrame ws = LPCFrameIntoFormantFrame_create (me, thee, margin);
-	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.releaseToAmbiguousOwner());
+	autoLPCIntoFormantStatus status = LPCIntoFormantStatus_create (thy nx);
+	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.releaseToAmbiguousOwner(), status.releaseToAmbiguousOwner());
 	const integer numberOfErrorFrames = SampledIntoSampled_analyseThreaded (sis.get());
 	Formant_sort (thee);
 	Melder_warning (U"LPC_into_Formant: ", numberOfErrorFrames, U" frames have issues.");

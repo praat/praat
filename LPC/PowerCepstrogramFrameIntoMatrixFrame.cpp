@@ -48,7 +48,6 @@ void structPowerCepstrogramFrameIntoMatrixFrame :: getInputFrame () {
 }
 
 bool structPowerCepstrogramFrameIntoMatrixFrame :: inputFrameToOutputFrame () {
-	double slope, intercept, peakDb, peakQuefrency, cpp;
 	if (getSlope) {
 		powerCepstrumWs -> getSlopeAndIntercept ();
 		powerCepstrumWs -> slopeKnown = true;

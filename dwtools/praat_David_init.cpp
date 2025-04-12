@@ -5378,18 +5378,21 @@ DIRECT (MODIFY_FIRST_OF_ONE_AND_ONE__Roots_Polynomial_polish) {
 
 FORM (SETTINGS__SampledDataAnalysisSettings, U"Sampled data analysis settings", U"Sampled data analysis settings...") {
 	COMMENT (U"This setting determines how fast your analyses will be performed on your computer.")
-	
+	COMMENT (U"")
 	BOOLEAN (useMultithreading, U"Use multi-threading", true)
-	COMMENT (SampledIntoSampled_getNumberOfConcurrentThreadsAvailableInfo ());
+	COMMENT (SampledIntoSampled_getNumberOfConcurrentThreadsAvailableInfo ())
+	COMMENT (U"")
 	NATURAL (numberOfConcurrentThreadsToUse, U"Number of threads to use",
-		Melder_integer (SampledIntoSampled_getNumberOfConcurrentThreadsAvailable ()));
+		Melder_integer (SampledIntoSampled_getNumberOfConcurrentThreadsAvailable ()))
 	COMMENT (U"The minimum number of frames to be analysed in a thread:")
+	COMMENT (U"")
 	INTEGER (minimumNumberOfFramesPerThread, U"Min. frames / thread",
-		Melder_integer (SampledIntoSampled_getMinimumNumberOfFramesPerThread ()));
-	COMMENT (U"The maximum number of frames to be analysed in a thread,")
-	COMMENT (U"where a value of 0 means no upper limit.")
+		Melder_integer (SampledIntoSampled_getMinimumNumberOfFramesPerThread ()))
+	COMMENT (U"The maximum number of frames to be analysed in a thread, where a value of 0 means no upper limit.")
+	COMMENT (U"")
 	INTEGER (maximumNumberOfFramesPerThread, U"Max. frames / thread",
-		Melder_integer (SampledIntoSampled_getMaximumNumberOfFramesPerThread ()));
+		Melder_integer (SampledIntoSampled_getMaximumNumberOfFramesPerThread ()))
+	BOOLEAN (extraAnalysisInfo, U"Extra analysis info", false)
 	OK
 DO
 	PREFS
@@ -5397,6 +5400,7 @@ DO
 		SampledIntoSampled_setNumberOfConcurrentThreadsToUse (numberOfConcurrentThreadsToUse);
 		SampledIntoSampled_setMinimumNumberOfFramesPerThread (minimumNumberOfFramesPerThread);
 		SampledIntoSampled_setMaximumNumberOfFramesPerThread (maximumNumberOfFramesPerThread);
+		SampledIntoSampled_setExtraAnalysisInfo (extraAnalysisInfo);
 		Melder_require (!useMultithreading || maximumNumberOfFramesPerThread == 0 ||
 			maximumNumberOfFramesPerThread >= minimumNumberOfFramesPerThread,
 			U"The minimum number of frames per thread should not exceed the maximum number of frames per thread.");

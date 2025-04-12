@@ -162,7 +162,8 @@ void PowerCepstrogram_into_Matrix_CPP (PowerCepstrogram me, Matrix thee, bool su
 			trendLineType, fitMethod);
 		const double qminSearchInterval = 1.0 / pitchCeiling, qmaxSearchInterval = 1.0 / pitchFloor;
 		PowerCepstrumWorkspace_initPeakSearchPart (ws -> powerCepstrumWs.get(), qminSearchInterval, qmaxSearchInterval, peakInterpolationType);
-		autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.releaseToAmbiguousOwner());
+		autoPowerCepstrogramIntoMatrixStatus status =  PowerCepstrogramIntoMatrixStatus_create (thy nx);
+		autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.releaseToAmbiguousOwner(), status.releaseToAmbiguousOwner());
 		SampledIntoSampled_analyseThreaded (sis.get());
 }
 
@@ -373,7 +374,8 @@ autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 void Sound_into_PowerCepstrogram (Sound input, PowerCepstrogram output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
 	Sampled_assertEqualDomains (input,  output);
 	autoSoundFrameIntoPowerCepstrogramFrame ws = SoundFrameIntoPowerCepstrogramFrame_create (input, output, effectiveAnalysisWidth, windowShape);
-	autoSampledIntoSampled sis = SampledIntoSampled_create (input, output, ws.releaseToAmbiguousOwner());
+	autoSoundIntoCepstrogramStatus status = SoundIntoCepstrogramStatus_create (output -> nx);
+	autoSampledIntoSampled sis = SampledIntoSampled_create (input, output, ws.releaseToAmbiguousOwner(), status.releaseToAmbiguousOwner());
 	SampledIntoSampled_analyseThreaded (sis.get());
 }
 

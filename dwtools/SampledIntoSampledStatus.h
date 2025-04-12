@@ -21,6 +21,8 @@
 
 #include "Data.h"
 #include "melder.h"
+#include "Sampled.h"
+#include "SampledIntoSampledStatus.h"
 
 #include "SampledIntoSampledStatus_def.h"
 
@@ -29,5 +31,67 @@ autoSampledIntoSampledStatus SampledIntoSampledStatus_create (integer numberOfFr
 
 void SoundIntoSampledStatus_init (integer numberOfFrames);
 autoSoundIntoSampledStatus SoundIntoSampledStatus_create (integer numberOfFrames);
+
+
+Thing_define (SoundIntoLPCStatus, SoundIntoSampledStatus) {
+};
+
+void SoundIntoLPCStatus_init (SoundIntoSampledStatus me, integer numberOfFrames);
+autoSoundIntoLPCStatus SoundIntoLPCStatus_create (integer numberOfFrames);
+
+
+Thing_define (SoundIntoCepstrogramStatus, SoundIntoSampledStatus) {	
+};
+
+autoSoundIntoCepstrogramStatus SoundIntoCepstrogramStatus_create (integer numberOfFrames);
+
+
+Thing_define (PowerCepstrogramIntoMatrixStatus, SampledIntoSampledStatus) {};
+
+autoPowerCepstrogramIntoMatrixStatus PowerCepstrogramIntoMatrixStatus_create (integer numberOfFrames);
+
+
+Thing_define (LPCIntoFormantStatus, SampledIntoSampledStatus) {};
+
+autoLPCIntoFormantStatus LPCIntoFormantStatus_create (integer numberOfFrames);
+
+
+
+Thing_define (LPCAndSoundIntoLPCRobustStatus, SampledIntoSampledStatus) {	
+};
+
+autoLPCAndSoundIntoLPCRobustStatus LPCAndSoundIntoLPCRobustStatus_create (integer numberOfFrames);
+
+
+Thing_define (SoundIntoLPCRobustStatus, SampledIntoSampledStatus) {
+	autoSoundIntoLPCStatus soundIntoLPCStatus;
+	autoLPCAndSoundIntoLPCRobustStatus lpcAndSoundIntoLPCRobustStatus;
+};
+
+autoSoundIntoLPCRobustStatus SoundIntoLPCRobustStatus_create (integer numberOfFrames);
+
+
+Thing_define (SoundIntoFormantStatus, SampledIntoSampledStatus) {
+	autoSoundIntoLPCStatus soundIntoLPCStatus;
+	autoLPCIntoFormantStatus lpcIntoFormantStatus;
+};
+
+autoSoundIntoFormantStatus SoundIntoFormantStatus_create (integer numberOfFrames);
+
+
+Thing_define (SoundIntoFormantRobustStatus, SampledIntoSampledStatus) {
+	autoSoundIntoLPCRobustStatus soundIntoLPCRobustStatus;
+	autoLPCIntoFormantStatus lpcIntoFormantStatus;
+};
+
+autoSoundIntoFormantRobustStatus SoundIntoFormantRobustStatus_create (integer numberOfFrames);
+
+
+Thing_define (SoundAndLPCIntoFormantRobustStatus, SampledIntoSampledStatus) {
+	autoLPCAndSoundIntoLPCRobustStatus lpcAndSoundIntoLPCRobustStatus;
+	autoLPCIntoFormantStatus lpcIntoFormantStatus;
+};
+
+autoSoundAndLPCIntoFormantRobustStatus SoundAndLPCIntoFormantRobustStatus_create (integer numberOfFrames);
 
 #endif /* _SampledIntoSampledStatus_h_ */	

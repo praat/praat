@@ -17,6 +17,7 @@
  */
 
 #include "SoundFrameIntoPowerCepstrogramFrame.h"
+#include "SampledIntoSampledStatus.h"
 #include "NUMFourier.h"
 
 #include "oo_DESTROY.h"
