@@ -150,8 +150,8 @@ autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSam
 	try {
 		autoSampledIntoSampled me = Thing_new (SampledIntoSampled);
 		SampledIntoSampled_init (me.get(), input, output);
-		my frameIntoFrame.adoptFromAmbiguousOwner (ws.get());
-		my status.adoptFromAmbiguousOwner (status.get());
+		my frameIntoFrame.adoptFromAmbiguousOwner (ws.releaseToAmbiguousOwner());
+		my status.adoptFromAmbiguousOwner (status.releaseToAmbiguousOwner());
 		const bool updateStatus = SampledIntoSampled_getExtraAnalysisInfo ();
 		SampledFrameIntoSampledFrame_initForStatusUpdates (my frameIntoFrame.get(), my status.get(), updateStatus);
 		return me;
@@ -199,6 +199,7 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 						SampledFrameIntoSampledFrame frameIntoFrameCopy = workThreads.at [ithread];
 						const integer firstFrame = numberOfFramesInRun * (irun - 1) + 1 + (ithread - 1) * numberOfFramesPerThread;
 						const integer lastFrame = ( ithread == numberOfThreadsInRun ? lastFrameInRun : firstFrame + numberOfFramesPerThread - 1 );
+						SampledFrameIntoSampledFrame_initFrameInterval (frameIntoFrameCopy, firstFrame, lastFrame);
 						
 						auto analyseFrames = [&globalFrameErrorCount] (SampledFrameIntoSampledFrame fifthread, integer fromFrame, integer toFrame) {
 							fifthread -> inputFramesToOutputFrames (fromFrame, toFrame);
@@ -257,7 +258,7 @@ void timeMultiThreading (double soundDuration) {
 		autoSound me = Sound_createSimple (1_integer, soundDuration, 5500.0);
 		for (integer i = 1; i <= my nx; i++) {
 			const double time = my x1 + (i - 1) * my dx;
-			my z[1][i] = sin(2.0 * NUMpi * 377 * time) + NUMrandomGauss (0.0, 0.1);
+			my z [1] [i] = sin(2.0 * NUMpi * 377.0 * time) + NUMrandomGauss (0.0, 0.1);
 		}
 		preferences.useMultiThreading = true;
 		const int predictionOrder = 10;

@@ -60,13 +60,14 @@ void structSampledFrameIntoSampledFrame :: allocateOutputFrames () {
 }
 
 void structSampledFrameIntoSampledFrame :: inputFramesToOutputFrames (integer fromFrame, integer toFrame) {
-	//my globalFrameErrorCount = 0;
 	for (integer iframe = fromFrame; iframe <= toFrame; iframe ++) {
 		currentFrame = iframe;
 		getInputFrame ();
 		if (! inputFrameToOutputFrame ())
 			framesErrorCount ++;
 		saveOutputFrame ();
+		if (updateStatus)
+			status -> frameIntoFrameInfo [currentFrame] = frameAnalysisInfo;
 	}	
 }
 
@@ -83,7 +84,6 @@ void SampledFrameIntoSampledFrame_initFrameInterval (SampledFrameIntoSampledFram
 	Melder_assert (startFrame <= endFrame);
 	my startFrame = startFrame;
 	my numberOfFrames = endFrame - startFrame + 1;
-	my framesInfo = zero_INTVEC (my numberOfFrames);
 }
 
 /* End of file SampledFrameIntoSampledFrame.cpp */

@@ -58,7 +58,7 @@ void structSoundFrameIntoSampledFrame :: getInputFrame () {
 	const double midTime = Sampled_indexToX (output, currentFrame);
 	integer soundFrameBegin = Sampled_xToNearestIndex (sound, midTime - 0.5 * physicalAnalysisWidth); // approximation
 	if (updateStatus) {
-		SoundIntoSampledStatus soundIntoSampledStatus = reinterpret_cast<SoundIntoSampledStatus> (our status);
+		SoundIntoSampledStatus soundIntoSampledStatus = reinterpret_cast<SoundIntoSampledStatus> (status);
 		soundIntoSampledStatus -> soundFrameBegins [currentFrame] = soundFrameBegin;
 	}
 	for (integer isample = 1; isample <= soundFrame.size; isample ++, soundFrameBegin ++) {
@@ -95,17 +95,10 @@ void SoundFrameIntoSampledFrame_init (mutableSoundFrameIntoSampledFrame me, cons
 	my sound = input;
 	my windowShape = windowShape;
 	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
-	if (Melder_debug == -6) {
-		my getSoundFrameSize = getSoundFrameSize;
-		my soundFrameSize = my getSoundFrameSize (my physicalAnalysisWidth, input -> dx);
-		my windowFunction = raw_VEC (my soundFrameSize);
-		windowShape_into_VEC_GAUSSIAN2_OLD (windowShape, my windowFunction.get());
-	} else {
-		my getSoundFrameSize = getSoundFrameSize;
-		my soundFrameSize = my getSoundFrameSize (my physicalAnalysisWidth, input -> dx);
-		my windowFunction = raw_VEC (my soundFrameSize);
-		windowShape_into_VEC (my windowShape, my windowFunction.get());
-	}
+	my getSoundFrameSize = getSoundFrameSize;
+	my soundFrameSize = my getSoundFrameSize (my physicalAnalysisWidth, input -> dx);
+	my windowFunction = raw_VEC (my soundFrameSize);
+	windowShape_into_VEC (my windowShape, my windowFunction.get());
 	my frameAsSound = Sound_create (1_integer, 0.0, my soundFrameSize * input -> dx, my soundFrameSize, input -> dx, 0.5 * input -> dx); //
 	my soundFrame = my frameAsSound -> z.row (1);
 }

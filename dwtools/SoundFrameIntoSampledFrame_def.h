@@ -19,26 +19,27 @@
 #define ooSTRUCT SoundFrameIntoSampledFrame
 oo_DEFINE_CLASS (SoundFrameIntoSampledFrame, SampledFrameIntoSampledFrame)
 
-	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (SoundIntoSampledStatus, status)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sound, sound)
 	oo_DOUBLE (physicalAnalysisWidth) 			// depends on the effectiveAnalysiswidth and the window window shape
 	oo_INTEGER (soundFrameSize) 				// determined by the physicalAnalysisWidth and the samplingFrequency of the Sound
 	oo_OBJECT (Sound, 2, frameAsSound)
-	//oo_VEC (soundFrame, soundFrameSize)			// the sound samples to analyse TODO row from oo_MAT for multi channel
 	oo_BOOLEAN (subtractFrameMean)				// if true, the frame mean will be subtracted before the windowing operation
 	oo_DOUBLE (soundFrameExtremum)				// the largest amplitude in the sound frame either positive or negative
 	oo_ENUM (kSound_windowShape, windowShape)	// Type: Rectangular, triangular, hamming, etc..
 	oo_VEC (windowFunction, soundFrameSize)		// the actual window used
 
 	#if oo_DECLARING
-		VEC soundFrame;
+	
+		VEC soundFrame; // the sound samples to analyse TODO row from oo_MAT for multi channel
 		void getInputFrame (void) override;
 		integer (*getSoundFrameSize) (double approximatePhysicalAnalysisWidth, double samplingPeriod);
 
 	#endif
 		
 	#if oo_COPYING
-		thy soundFrame = soundFrame;
+		
+		thy soundFrame = thy frameAsSound -> z.row (1);
+		
 	#endif
 
 oo_END_CLASS (SoundFrameIntoSampledFrame)

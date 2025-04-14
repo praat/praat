@@ -28,6 +28,7 @@ oo_DEFINE_CLASS (SoundFrameIntoPowerCepstrogramFrame, SoundFrameIntoSampledFrame
 
 		bool inputFrameToOutputFrame (void) override;
 		void saveOutputFrame (void) override;
+		void allocateOutputFrames (void) override;
 
 	#endif
 

@@ -41,8 +41,12 @@
 
 Thing_implement (SoundFrameIntoPowerCepstrogramFrame, SoundFrameIntoSampledFrame, 0);
 
+void structSoundFrameIntoPowerCepstrogramFrame :: allocateOutputFrames () {
+	// nothing to do
+};
+
 void structSoundFrameIntoPowerCepstrogramFrame :: saveOutputFrame () {
-	powercepstrogram -> z.column (currentFrame)  <<=  powercepstrum -> z.row(1);
+	powercepstrogram -> z.column (currentFrame)  <<=  powercepstrum -> z.row (1);
 }
 
 bool structSoundFrameIntoPowerCepstrogramFrame :: inputFrameToOutputFrame () {

@@ -663,8 +663,8 @@ autoSoundFrameIntoLPCFrameRobust SoundFrameIntoLPCFrameRobust_create (autoSoundF
 {
 	try {
 		autoSoundFrameIntoLPCFrameRobust me = Thing_new (SoundFrameIntoLPCFrameRobust);
-		my soundIntoLPC.adoptFromAmbiguousOwner (soundIntoLPC.get());
-		my lpcAndSoundIntoLPC.adoptFromAmbiguousOwner (lpcAndSoundIntoLPC.get());
+		my soundIntoLPC.adoptFromAmbiguousOwner (soundIntoLPC.releaseToAmbiguousOwner());
+		my lpcAndSoundIntoLPC.adoptFromAmbiguousOwner (lpcAndSoundIntoLPC.releaseToAmbiguousOwner());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot create SoundFrameIntoLPCFrameRobust.");
