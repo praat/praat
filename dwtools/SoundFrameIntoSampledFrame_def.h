@@ -19,6 +19,7 @@
 #define ooSTRUCT SoundFrameIntoSampledFrame
 oo_DEFINE_CLASS (SoundFrameIntoSampledFrame, SampledFrameIntoSampledFrame)
 
+	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (SoundIntoSampledStatus, status)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sound, sound)
 	oo_DOUBLE (physicalAnalysisWidth) 			// depends on the effectiveAnalysiswidth and the window window shape
 	oo_INTEGER (soundFrameSize) 				// determined by the physicalAnalysisWidth and the samplingFrequency of the Sound

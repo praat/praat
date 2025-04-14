@@ -20,8 +20,12 @@
 oo_DEFINE_CLASS (SampledIntoSampledStatus, Daata)
 
 	oo_INTEGER (numberOfFrames)
-	oo_INTVEC (frameIntoFrameInfo ,numberOfFrames)
-	
+	oo_INTVEC (frameIntoFrameInfo, numberOfFrames)
+
+	#if oo_DECLARING
+		virtual void showStatus ();
+	#endif
+
 oo_END_CLASS (SampledIntoSampledStatus)	
 #undef ooSTRUCT
 
@@ -29,6 +33,9 @@ oo_END_CLASS (SampledIntoSampledStatus)
 oo_DEFINE_CLASS (SoundIntoSampledStatus, SampledIntoSampledStatus)
 
 	oo_INTVEC (soundFrameBegins, numberOfFrames)
+	#if oo_DECLARING
+		void showStatus () override;
+	#endif
 	
 oo_END_CLASS (SoundIntoSampledStatus)	
 #undef ooSTRUCT

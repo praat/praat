@@ -144,15 +144,16 @@ void SampledIntoSampled_init (mutableSampledIntoSampled me, constSampled input, 
 	my output = output;
 }
 
-autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSampled output, SampledFrameIntoSampledFrame ws,
-	SampledIntoSampledStatus status)
+autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSampled output, autoSampledFrameIntoSampledFrame ws,
+	autoSampledIntoSampledStatus status)
 {
 	try {
 		autoSampledIntoSampled me = Thing_new (SampledIntoSampled);
 		SampledIntoSampled_init (me.get(), input, output);
-		my frameIntoFrame.adoptFromAmbiguousOwner (ws);
-		my status.adoptFromAmbiguousOwner (status);
-		SampledFrameIntoSampledFrame_initForStatusUpdates (my frameIntoFrame.get(), my status.get());
+		my frameIntoFrame.adoptFromAmbiguousOwner (ws.get());
+		my status.adoptFromAmbiguousOwner (status.get());
+		const bool updateStatus = SampledIntoSampled_getExtraAnalysisInfo ();
+		SampledFrameIntoSampledFrame_initForStatusUpdates (my frameIntoFrame.get(), my status.get(), updateStatus);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SampledIntoSampled not created.");
@@ -221,6 +222,8 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 			frameIntoFrame -> inputFramesToOutputFrames (1, numberOfFrames); // no threading
 			globalFrameErrorCount = frameIntoFrame -> framesErrorCount;
 		}
+		if (frameIntoFrame -> updateStatus)
+			my status -> showStatus ();
 		return globalFrameErrorCount;
 	} catch (MelderError) {
 		Melder_throw (me, U"The Sampled analysis could not be done.");

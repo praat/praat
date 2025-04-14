@@ -70,7 +70,7 @@ bool structSoundFrameIntoPowerCepstrogramFrame :: inputFrameToOutputFrame () {
 		Step 3: inverse fft of the log spectrum
 	*/
 	NUMfft_backward (fourierTable.get(), fftData.get());
-	const double df = 1.0 / (sound->dx * numberOfFourierSamples);
+	const double df = 1.0 / (sound -> dx * numberOfFourierSamples);
 	for (integer i = 1; i <= powercepstrum -> nx; i ++) {
 		const double val = fftData [i] * df;
 		powercepstrum -> z [1] [i] = val * val;

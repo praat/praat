@@ -48,10 +48,9 @@ autoFormant Sound_to_Formant_burg_mt (constSound me, double dt_in, double number
 		autoLPC lpc = LPC_create (my xmin, my xmax, formant -> nx, formant -> dx, formant -> x1, numberOfPoles, sound -> dx);
 		autoSoundFrameIntoLPCFrameBurg first = SoundFrameIntoLPCFrameBurg_create (me, lpc.get(), effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 		autoLPCFrameIntoFormantFrame second = LPCFrameIntoFormantFrame_create (lpc.get(), formant.get(), safetyMargin);
-		autoSoundFrameIntoFormantFrame soundIntoFormant = SoundFrameIntoFormantFrame_create (first.releaseToAmbiguousOwner(), second.releaseToAmbiguousOwner());
+		autoSoundFrameIntoFormantFrame soundIntoFormant = SoundFrameIntoFormantFrame_create (first.move(), second.move());
 		autoSoundIntoFormantStatus status = SoundIntoFormantStatus_create (formant -> nx);
-		autoSampledIntoSampled sis = SampledIntoSampled_create (me, formant.get(), soundIntoFormant.releaseToAmbiguousOwner(),
-			status.releaseToAmbiguousOwner());
+		autoSampledIntoSampled sis = SampledIntoSampled_create (me, formant.get(), soundIntoFormant.move(), status.move());
 		SampledIntoSampled_analyseThreaded (sis.get());
 		return formant;
 	} catch (MelderError) {
@@ -70,10 +69,9 @@ autoFormant Sound_and_LPC_to_Formant (constSound me, constLPC lpc, double effect
 		autoLPCAndSoundFramesIntoLPCFrameRobust lpcAndSoundIntoLPC = LPCAndSoundFramesIntoLPCFrameRobust_create (lpc, me, outputlpc.get(),
 			effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation);
 		autoLPCFrameIntoFormantFrame lpcFrameIntoFormant = LPCFrameIntoFormantFrame_create (outputlpc.get(), formant.get(), safetyMargin);
-		autoSoundFrameIntoFormantFrame sif = SoundFrameIntoFormantFrame_create (lpcAndSoundIntoLPC.get(), lpcFrameIntoFormant.get());
+		autoSoundFrameIntoFormantFrame sif = SoundFrameIntoFormantFrame_create (lpcAndSoundIntoLPC.move(), lpcFrameIntoFormant.move());
 		autoSoundAndLPCIntoFormantRobustStatus status = SoundAndLPCIntoFormantRobustStatus_create (formant -> nx);
-		autoSampledIntoSampled sis = SampledIntoSampled_create (me, formant.get(), sif.releaseToAmbiguousOwner(),
-			status.releaseToAmbiguousOwner());
+		autoSampledIntoSampled sis = SampledIntoSampled_create (me, formant.get(), sif.move(), status.move());
 		SampledIntoSampled_analyseThreaded (sis.get());
 		return formant;
 	} catch (MelderError) {
@@ -96,12 +94,11 @@ autoFormant Sound_to_Formant_robust_mt (constSound me, double dt_in, double numb
 		autoSoundFrameIntoLPCFrameAuto soundIntoLPC1 = SoundFrameIntoLPCFrameAuto_create (me, lpc.get(), effectiveAnalysisWidth, windowShape);
 		autoLPCAndSoundFramesIntoLPCFrameRobust lpcAndSoundIntoLPC = LPCAndSoundFramesIntoLPCFrameRobust_create (lpc.get(), me, outputLPC.get(),
 			effectiveAnalysisWidth, windowShape, k_stdev, itermax, tol, location, wantlocation);
-		autoSoundFrameIntoLPCFrame soundIntoLPC2 = SoundFrameIntoLPCFrameRobust_create (soundIntoLPC1.get(), lpcAndSoundIntoLPC.get());
+		autoSoundFrameIntoLPCFrame soundIntoLPC2 = SoundFrameIntoLPCFrameRobust_create (soundIntoLPC1.move(), lpcAndSoundIntoLPC.move());
 		autoLPCFrameIntoFormantFrame lpcFrameIntoFormant = LPCFrameIntoFormantFrame_create (outputLPC.get(), formant.get(), safetyMargin);
-		autoSoundFrameIntoFormantFrame sif = SoundFrameIntoFormantFrame_create (soundIntoLPC2.get(), lpcFrameIntoFormant.get());
+		autoSoundFrameIntoFormantFrame sif = SoundFrameIntoFormantFrame_create (soundIntoLPC2.move(), lpcFrameIntoFormant.move());
 		autoSoundIntoFormantRobustStatus status = SoundIntoFormantRobustStatus_create (formant -> nx);
-		autoSampledIntoSampled sis = SampledIntoSampled_create (me, formant.get(), sif.releaseToAmbiguousOwner(),
-			status.releaseToAmbiguousOwner());
+		autoSampledIntoSampled sis = SampledIntoSampled_create (me, formant.get(), sif.move(), status.move());
 		SampledIntoSampled_analyseThreaded (sis.get());
 		return formant;
 	} catch (MelderError) {

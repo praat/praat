@@ -26,7 +26,7 @@
 
 #include "SoundFrameIntoFormantFrame_def.h"
 
-autoSoundFrameIntoFormantFrame SoundFrameIntoFormantFrame_create (SoundFrameIntoLPCFrame silpc, LPCFrameIntoFormantFrame lpcif);
+autoSoundFrameIntoFormantFrame SoundFrameIntoFormantFrame_create (autoSoundFrameIntoLPCFrame silpc, autoLPCFrameIntoFormantFrame lpcif);
 
 #endif /*_SoundFrameIntoFormantFrame_h_ */
 

@@ -659,12 +659,12 @@ bool structSoundFrameIntoLPCFrameRobust :: inputFrameToOutputFrame () {
 void structSoundFrameIntoLPCFrameRobust :: saveOutputFrame () {
 	lpcAndSoundIntoLPC -> saveOutputFrame ();
 }
-autoSoundFrameIntoLPCFrameRobust SoundFrameIntoLPCFrameRobust_create (SoundFrameIntoLPCFrame soundIntoLPC, LPCAndSoundFramesIntoLPCFrameRobust lpcAndSoundIntoLPC)
+autoSoundFrameIntoLPCFrameRobust SoundFrameIntoLPCFrameRobust_create (autoSoundFrameIntoLPCFrame soundIntoLPC, autoLPCAndSoundFramesIntoLPCFrameRobust lpcAndSoundIntoLPC)
 {
 	try {
 		autoSoundFrameIntoLPCFrameRobust me = Thing_new (SoundFrameIntoLPCFrameRobust);
-		my soundIntoLPC.adoptFromAmbiguousOwner (soundIntoLPC);
-		my lpcAndSoundIntoLPC.adoptFromAmbiguousOwner (lpcAndSoundIntoLPC);
+		my soundIntoLPC.adoptFromAmbiguousOwner (soundIntoLPC.get());
+		my lpcAndSoundIntoLPC.adoptFromAmbiguousOwner (lpcAndSoundIntoLPC.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot create SoundFrameIntoLPCFrameRobust.");

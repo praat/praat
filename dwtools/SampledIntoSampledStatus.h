@@ -40,10 +40,10 @@ void SoundIntoLPCStatus_init (SoundIntoSampledStatus me, integer numberOfFrames)
 autoSoundIntoLPCStatus SoundIntoLPCStatus_create (integer numberOfFrames);
 
 
-Thing_define (SoundIntoCepstrogramStatus, SoundIntoSampledStatus) {	
+Thing_define (SoundIntoPowerCepstrogramStatus, SoundIntoSampledStatus) {	
 };
 
-autoSoundIntoCepstrogramStatus SoundIntoCepstrogramStatus_create (integer numberOfFrames);
+autoSoundIntoPowerCepstrogramStatus SoundIntoPowerCepstrogramStatus_create (integer numberOfFrames);
 
 
 Thing_define (PowerCepstrogramIntoMatrixStatus, SampledIntoSampledStatus) {};

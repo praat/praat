@@ -40,20 +40,21 @@ oo_DEFINE_CLASS (SampledFrameIntoSampledFrame, Daata)
 	oo_INTEGER (framesErrorCount)
 	oo_INTVEC (framesInfo, numberOfFrames)
 	oo_DOUBLE (tol1)
-	
+
 	#if oo_DECLARING
 
 		virtual void getInputFrame (void);
-		
+
 		virtual bool inputFrameToOutputFrame (void); // the analysis, also sets the frameAnalysisInfo and also frameAnalysisIsOK
-		
+
 		virtual void saveOutputFrame (void);
-		
+
 		virtual void inputFramesToOutputFrames (integer fromFrame, integer toFrame); // sets currentFrame
 
 		virtual void allocateOutputFrames (void);
 
 	#endif
+
 oo_END_CLASS (SampledFrameIntoSampledFrame)
 #undef ooSTRUCT
 

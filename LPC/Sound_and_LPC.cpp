@@ -65,7 +65,7 @@ void Sound_into_LPC_auto (constSound me, mutableLPC thee, double effectiveAnalys
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundFrameIntoLPCFrameAuto ws = SoundFrameIntoLPCFrameAuto_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	autoSoundIntoLPCStatus status = SoundIntoLPCStatus_create (thy nx);
-	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.releaseToAmbiguousOwner(), status.releaseToAmbiguousOwner());
+	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.move(), status.move());
 	SampledIntoSampled_analyseThreaded (sis.get());
 }
 
@@ -87,7 +87,7 @@ void Sound_into_LPC_covar (constSound me, mutableLPC thee, double effectiveAnaly
 	autoSoundFrameIntoLPCFrameCovar ws = SoundFrameIntoLPCFrameCovar_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	autoSoundIntoLPCStatus status = SoundIntoLPCStatus_create (thy nx);
-	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.releaseToAmbiguousOwner(), status.releaseToAmbiguousOwner());
+	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.move(), status.move());
 	SampledIntoSampled_analyseThreaded (sis.get());
 }
 
@@ -109,7 +109,7 @@ void Sound_into_LPC_burg (constSound me, mutableLPC thee, double effectiveAnalys
 	autoSoundFrameIntoLPCFrameBurg ws = SoundFrameIntoLPCFrameBurg_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	autoSoundIntoLPCStatus status = SoundIntoLPCStatus_create (thy nx);
-	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.releaseToAmbiguousOwner(), status.releaseToAmbiguousOwner());
+	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.move(), status.move());
 	SampledIntoSampled_analyseThreaded (sis.get());
 }
 
@@ -131,7 +131,7 @@ void Sound_into_LPC_marple (constSound me, mutableLPC thee, double effectiveAnal
 	autoSoundFrameIntoLPCFrameMarple ws = SoundFrameIntoLPCFrameMarple_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, tol1, tol2);
 	autoSoundIntoLPCStatus status = SoundIntoLPCStatus_create (thy nx);
-	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.releaseToAmbiguousOwner(), status.releaseToAmbiguousOwner());
+	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.move(), status.move());
 	SampledIntoSampled_analyseThreaded (sis.get());
 }
 
@@ -162,7 +162,7 @@ void LPC_and_Sound_into_LPC_robust (constLPC inputlpc, constSound sound, mutable
 		autoLPCAndSoundFramesIntoLPCFrameRobust ws = LPCAndSoundFramesIntoLPCFrameRobust_create (inputlpc, sound, outputlpc,
 			effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation);
 		autoSoundIntoLPCStatus status = SoundIntoLPCStatus_create (outputlpc -> nx);
-		autoSampledIntoSampled sis = SampledIntoSampled_create (sound, outputlpc, ws.releaseToAmbiguousOwner(), status.releaseToAmbiguousOwner());
+		autoSampledIntoSampled sis = SampledIntoSampled_create (sound, outputlpc, ws.move(), status.move());
 		SampledIntoSampled_analyseThreaded (sis.get());
 	} catch (MelderError) {
 		Melder_throw (sound, U": no LPC (robust) calculated.");
@@ -183,16 +183,16 @@ autoLPC LPC_and_Sound_to_LPC_robust (constLPC thee, constSound me, double effect
 	}	
 }
 
-void Sound_into_LPCrobust_common (constSound me, mutableLPC outputlpc, SoundFrameIntoLPCFrame soundIntoLPCany, double effectiveAnalysisWidth, 
+void Sound_into_LPCrobust_common (constSound me, mutableLPC outputlpc, autoSoundFrameIntoLPCFrame soundIntoLPCany, double effectiveAnalysisWidth, 
 	double k_stdev, integer itermax, double tol, bool wantlocation)
 {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, outputlpc);
 	autoLPC inputlpc = Data_copy (outputlpc);
 	autoLPCAndSoundFramesIntoLPCFrameRobust lpcAndSoundIntoLPC = LPCAndSoundFramesIntoLPCFrameRobust_create (inputlpc.get(), me, outputlpc, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, 0.0, wantlocation);
-	autoSoundFrameIntoLPCFrameRobust soundIntoLPCrobust = SoundFrameIntoLPCFrameRobust_create (soundIntoLPCany,
-		lpcAndSoundIntoLPC.releaseToAmbiguousOwner());
+	autoSoundFrameIntoLPCFrameRobust soundIntoLPCrobust = SoundFrameIntoLPCFrameRobust_create (soundIntoLPCany.move(),
+		lpcAndSoundIntoLPC.move());
 	autoSoundIntoLPCStatus status = SoundIntoLPCStatus_create (outputlpc -> nx); // TODO adapt
-	autoSampledIntoSampled sis = SampledIntoSampled_create (me, outputlpc, soundIntoLPCrobust.get(), status.releaseToAmbiguousOwner());
+	autoSampledIntoSampled sis = SampledIntoSampled_create (me, outputlpc, soundIntoLPCrobust.move(), status.move());
 	SampledIntoSampled_analyseThreaded (sis.get());
 }
 

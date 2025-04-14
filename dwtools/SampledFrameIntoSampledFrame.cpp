@@ -74,9 +74,9 @@ void SampledFrameIntoSampledFrame_init (SampledFrameIntoSampledFrame me, mutable
 	my output = output;
 }
 
-void SampledFrameIntoSampledFrame_initForStatusUpdates (SampledFrameIntoSampledFrame me, mutableSampledIntoSampledStatus status) {
-	my updateStatus = true;
+void SampledFrameIntoSampledFrame_initForStatusUpdates (SampledFrameIntoSampledFrame me, mutableSampledIntoSampledStatus status, bool updateStatus) {
 	my status = status;
+	my updateStatus = updateStatus;
 }
 
 void SampledFrameIntoSampledFrame_initFrameInterval (SampledFrameIntoSampledFrame me, integer startFrame, integer endFrame) {

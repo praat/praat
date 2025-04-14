@@ -41,12 +41,27 @@
 
 Thing_implement (SampledIntoSampledStatus, Daata, 0);
 
+void structSampledIntoSampledStatus :: showStatus () {
+	MelderInfo_writeLine (U"frame\tinfo\n");
+	for (integer i = 1; i <= numberOfFrames; i ++)
+		MelderInfo_writeLine (i, U"\t", frameIntoFrameInfo [i]);
+	MelderInfo_close ();
+}
+
 void SampledIntoSampledStatus_init (SampledIntoSampledStatus me, integer numberOfFrames) {
 	my numberOfFrames = numberOfFrames;
 	my frameIntoFrameInfo = zero_INTVEC (numberOfFrames);
 }
 
 Thing_implement (SoundIntoSampledStatus, SampledIntoSampledStatus, 0);
+
+void structSoundIntoSampledStatus :: showStatus () {
+	
+	MelderInfo_writeLine (U"frame\tinfo\tbegin\n");
+	for (integer i = 1; i <= numberOfFrames; i ++)
+		MelderInfo_writeLine (i, U"\t", frameIntoFrameInfo [i], U"\t", soundFrameBegins [i]);
+	MelderInfo_close ();
+}
 
 void SoundIntoSampledStatus_init (SoundIntoSampledStatus me, integer numberOfFrames) {
 	SampledIntoSampledStatus_init (me, numberOfFrames);
@@ -65,15 +80,15 @@ autoSoundIntoLPCStatus SoundIntoLPCStatus_create (integer numberOfFrames) {
 	}
 }
 
-Thing_implement (SoundIntoCepstrogramStatus, SoundIntoSampledStatus, 0);
+Thing_implement (SoundIntoPowerCepstrogramStatus, SoundIntoSampledStatus, 0);
 
-autoSoundIntoCepstrogramStatus SoundIntoCepstrogramStatus_create (integer numberOfFrames) {
+autoSoundIntoPowerCepstrogramStatus SoundIntoPowerCepstrogramStatus_create (integer numberOfFrames) {
 	try {
-		autoSoundIntoCepstrogramStatus me = Thing_new (SoundIntoCepstrogramStatus);
+		autoSoundIntoPowerCepstrogramStatus me = Thing_new (SoundIntoPowerCepstrogramStatus);
 		SoundIntoSampledStatus_init (me.get(), numberOfFrames);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Cannot create SoundIntoCepstrogramStatus.");
+		Melder_throw (U"Cannot create SoundIntoPowerCepstrogramStatus.");
 	}
 }
 

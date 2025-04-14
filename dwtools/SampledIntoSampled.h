@@ -26,7 +26,7 @@
 void SampledIntoSampled_init (mutableSampledIntoSampled me, constSampled input, mutableSampled output);
 
 autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSampled output, 
-	SampledFrameIntoSampledFrame ws, SampledIntoSampledStatus status);
+	autoSampledFrameIntoSampledFrame ws, autoSampledIntoSampledStatus status);
 
 integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me);
 

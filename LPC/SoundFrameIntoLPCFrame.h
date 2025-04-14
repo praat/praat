@@ -44,6 +44,6 @@ autoLPCAndSoundFramesIntoLPCFrameRobust LPCAndSoundFramesIntoLPCFrameRobust_crea
 	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax, double tol, double location, bool wantlocation
 );
 
-autoSoundFrameIntoLPCFrameRobust SoundFrameIntoLPCFrameRobust_create (SoundFrameIntoLPCFrame ws1, LPCAndSoundFramesIntoLPCFrameRobust ws2);
+autoSoundFrameIntoLPCFrameRobust SoundFrameIntoLPCFrameRobust_create (autoSoundFrameIntoLPCFrame ws1, autoLPCAndSoundFramesIntoLPCFrameRobust ws2);
 
 #endif /*_SoundFrameIntoLPCFrame_h_ */

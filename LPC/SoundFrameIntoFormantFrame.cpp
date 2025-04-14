@@ -61,11 +61,11 @@ void structSoundFrameIntoFormantFrame :: saveOutputFrame () {
 	lpcIntoFormant -> saveOutputFrame ();
 }
 
-autoSoundFrameIntoFormantFrame SoundFrameIntoFormantFrame_create (SoundFrameIntoLPCFrame silpc, LPCFrameIntoFormantFrame lpcif) {
+autoSoundFrameIntoFormantFrame SoundFrameIntoFormantFrame_create (autoSoundFrameIntoLPCFrame silpc, autoLPCFrameIntoFormantFrame lpcif) {
 	try {
 		autoSoundFrameIntoFormantFrame me = Thing_new (SoundFrameIntoFormantFrame);
-		my soundIntoLPC.adoptFromAmbiguousOwner (silpc);
-		my lpcIntoFormant.adoptFromAmbiguousOwner (lpcif);
+		my soundIntoLPC.adoptFromAmbiguousOwner (silpc.get());
+		my lpcIntoFormant.adoptFromAmbiguousOwner (lpcif.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot create SoundFrameIntoFormantFrame.");
