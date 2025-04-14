@@ -66,6 +66,9 @@ inline void Sampled_assertEqualDomainsAndSampling (constSampled me,  constSample
 	Sampled_assertEqualSampling (me, thee);
 }
 
+void SampledIntoSampled_dataAnalysisSettings (bool useMultithreading, integer numberOfConcurrentThreadsToUse,
+	integer minimumNumberOfFramesPerThread, integer maximumNumberOfFramesPerThread, bool extraAnalysisInfo);
+
 bool SampledIntoSampled_useMultiThreading ();
 
 void SampledIntoSampled_setMultiThreading (bool useMultiThreading);

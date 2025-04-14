@@ -5396,14 +5396,11 @@ FORM (SETTINGS__SampledDataAnalysisSettings, U"Sampled data analysis settings", 
 	OK
 DO
 	PREFS
-		SampledIntoSampled_setMultiThreading (useMultithreading);
-		SampledIntoSampled_setNumberOfConcurrentThreadsToUse (numberOfConcurrentThreadsToUse);
-		SampledIntoSampled_setMinimumNumberOfFramesPerThread (minimumNumberOfFramesPerThread);
-		SampledIntoSampled_setMaximumNumberOfFramesPerThread (maximumNumberOfFramesPerThread);
-		SampledIntoSampled_setExtraAnalysisInfo (extraAnalysisInfo);
-		Melder_require (!useMultithreading || maximumNumberOfFramesPerThread == 0 ||
-			maximumNumberOfFramesPerThread >= minimumNumberOfFramesPerThread,
-			U"The minimum number of frames per thread should not exceed the maximum number of frames per thread.");
+	Melder_require (!useMultithreading || maximumNumberOfFramesPerThread == 0 ||
+		maximumNumberOfFramesPerThread >= minimumNumberOfFramesPerThread,
+		U"The minimum number of frames per thread should not exceed the maximum number of frames per thread.");
+	SampledIntoSampled_dataAnalysisSettings (useMultithreading, numberOfConcurrentThreadsToUse, 
+		minimumNumberOfFramesPerThread, maximumNumberOfFramesPerThread, extraAnalysisInfo);
 	PREFS_END
 }
 

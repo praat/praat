@@ -64,6 +64,16 @@ void SampledIntoSampled_preferences () {
 	Preferences_addBool    (U"SampledIntoSampled.extraAnalysisInfo", & preferences.extraAnalysisInfo, false);
 }
 
+void SampledIntoSampled_dataAnalysisSettings (bool useMultithreading, integer numberOfConcurrentThreadsToUse,
+	integer minimumNumberOfFramesPerThread, integer maximumNumberOfFramesPerThread, bool extraAnalysisInfo)
+{
+	SampledIntoSampled_setMultiThreading (useMultithreading);
+	SampledIntoSampled_setNumberOfConcurrentThreadsToUse (numberOfConcurrentThreadsToUse);
+	SampledIntoSampled_setMinimumNumberOfFramesPerThread (minimumNumberOfFramesPerThread);
+	SampledIntoSampled_setMaximumNumberOfFramesPerThread (maximumNumberOfFramesPerThread);
+	SampledIntoSampled_setExtraAnalysisInfo (extraAnalysisInfo);
+}
+
 bool SampledIntoSampled_useMultiThreading () {
 	return preferences.useMultiThreading;
 }
@@ -260,7 +270,7 @@ void timeMultiThreading (double soundDuration) {
 			const double time = my x1 + (i - 1) * my dx;
 			my z [1] [i] = sin(2.0 * NUMpi * 377.0 * time) + NUMrandomGauss (0.0, 0.1);
 		}
-		preferences.useMultiThreading = true;
+		bool useMultiThreading = true, extraAnalysisInfo = false;
 		const int predictionOrder = 10;
 		const double effectiveAnalysisWidth = 0.025, dt = 0.05, preEmphasisFrequency = 50;
 		autoMelderProgress progress (U"Test multi-threading times...");
@@ -268,13 +278,13 @@ void timeMultiThreading (double soundDuration) {
 		MelderInfo_writeLine (U"duration(s) nThread nFrames/thread toLPC(s)");
 		integer numberOfThreads = maximumNumberOfThreads;
 		for (integer nThread = 1; nThread <= maximumNumberOfThreads; nThread ++) {
-			preferences.numberOfConcurrentThreadsToUse = nThread;
+			const integer numberOfConcurrentThreadsToUse = nThread;
 			for (integer index = 1; index <= framesPerThread.size; index ++) {
 				const integer numberOfFramesPerThread = framesPerThread [index];
-				preferences.maximumNumberOfFramesPerThread = numberOfFramesPerThread;
-				preferences.minimumNumberOfFramesPerThread = numberOfFramesPerThread;
+				SampledIntoSampled_dataAnalysisSettings (useMultiThreading, nThread,
+					numberOfFramesPerThread, numberOfFramesPerThread, extraAnalysisInfo);				
 				Melder_stopwatch ();
-					autoLPC lpc = Sound_to_LPC_burg (me.get(), predictionOrder, effectiveAnalysisWidth, dt, preEmphasisFrequency);
+				autoLPC lpc = Sound_to_LPC_burg (me.get(), predictionOrder, effectiveAnalysisWidth, dt, preEmphasisFrequency);
 				double t = Melder_stopwatch ();
 				MelderInfo_writeLine (soundDuration, U" ", nThread, U" ", numberOfFramesPerThread, U" ", t);
 			}
