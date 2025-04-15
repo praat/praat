@@ -29,6 +29,12 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.28# (xx April 2025)
+• TextGrid window: removed a bug that caused slow scrolling (i.e. computation of whole-sound Pitch and Formant objects)
+  if the TextGrid was much longer than the Sound and the Sound was scrolled out of sight.
+• Windows Demo window: made Escape key available to `demoKey$()`
+  (this had been a bug since the beginning of the Demo window, i.e. since May 2009).
+
 ##6.4.27# (27 January 2025)
 • Graphics text: better pipes and slashes.
 • Windows for ARM64 processors: removed a bug whereby dynamic menu deletion could crash after a sound was played in the Demo window.
