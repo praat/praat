@@ -2517,14 +2517,16 @@ void structSoundAnalysisArea :: v_createMenus () {
 }
 
 void structSoundAnalysisArea :: v_updateMenuItems () {
-	GuiMenuItem_check (pitchFilteredAutocorrelationToggle,
-			our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_AUTOCORRELATION);
-	GuiMenuItem_check (pitchRawCrossCorrelationToggle,
-			our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: RAW_CROSS_CORRELATION);
-	GuiMenuItem_check (pitchRawAutocorrelationToggle,
-			our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: RAW_AUTOCORRELATION);
-	GuiMenuItem_check (pitchFilteredCrossCorrelationToggle,
-			our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_CROSS_CORRELATION);
+	if (our pitchFilteredAutocorrelationToggle) {
+		GuiMenuItem_check (pitchFilteredAutocorrelationToggle,
+				our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_AUTOCORRELATION);
+		GuiMenuItem_check (pitchRawCrossCorrelationToggle,
+				our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: RAW_CROSS_CORRELATION);
+		GuiMenuItem_check (pitchRawAutocorrelationToggle,
+				our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: RAW_AUTOCORRELATION);
+		GuiMenuItem_check (pitchFilteredCrossCorrelationToggle,
+				our instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod :: FILTERED_CROSS_CORRELATION);
+	}
 }
 
 #pragma mark - SoundAnalysisArea Drawing
