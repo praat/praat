@@ -32,6 +32,7 @@ Latest changes in Praat.
 ##6.4.28# (xx April 2025)
 • TextGrid window: removed a bug that caused slow scrolling (i.e. computation of whole-sound Pitch and Formant objects)
   if the TextGrid was much longer than the Sound and the Sound was scrolled out of sight.
+• EEG window: repaired a bug that caused Praat to crash when clicking ##View & Edit#.
 • Windows Demo window: made Escape key available to `demoKey$()`
   (this had been a bug since the beginning of the Demo window, i.e. since May 2009).
 
