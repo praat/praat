@@ -93,6 +93,7 @@ autoSoundFrameIntoPowerCepstrogramFrame SoundFrameIntoPowerCepstrogramFrame_crea
 		my fourierTable = NUMFourierTable_create (numberOfFourierSamples);
 		my fftData = raw_VEC (numberOfFourierSamples);
 		my powercepstrum = PowerCepstrum_create (output -> ymax, output -> ny);
+		my subtractFrameMean = true;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot create SoundFrameIntoPowerCepstrogramFrame.");

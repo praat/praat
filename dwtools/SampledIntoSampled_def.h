@@ -31,7 +31,7 @@ oo_DEFINE_CLASS (SampledIntoSampled, Daata)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sampled, input)
 	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
 	/*
-		Workload dispatcher 
+		Workload dispatcher
 	*/
 	oo_BOOLEAN (useMultiThreading)
 	oo_INTEGER (minimumNumberOfFramesPerThread) // default 40

@@ -44,11 +44,11 @@ oo_DEFINE_CLASS (SampledFrameIntoSampledFrame, Daata)
 
 		virtual void getInputFrame (void);
 
-		virtual bool inputFrameToOutputFrame (void); // the analysis, also sets the frameAnalysisInfo and also frameAnalysisIsOK
+		virtual bool inputFrameToOutputFrame (void); // the analysis, also sets 'frameAnalysisInfo' and 'frameAnalysisIsOK'
 
 		virtual void saveOutputFrame (void);
 
-		virtual void inputFramesToOutputFrames (integer fromFrame, integer toFrame); // sets currentFrame
+		virtual void inputFramesToOutputFrames (integer fromFrame, integer toFrame); // sets 'currentFrame'
 
 		virtual void allocateOutputFrames (void);
 

@@ -53,6 +53,7 @@ void SampledIntoSampledStatus_init (SampledIntoSampledStatus me, integer numberO
 	my frameIntoFrameInfo = zero_INTVEC (numberOfFrames);
 }
 
+
 Thing_implement (SoundIntoSampledStatus, SampledIntoSampledStatus, 0);
 
 void structSoundIntoSampledStatus :: showStatus () {
@@ -79,6 +80,7 @@ autoSoundIntoLPCStatus SoundIntoLPCStatus_create (integer numberOfFrames) {
 		Melder_throw (U"Cannot create SoundIntoLPCStatus.");
 	}
 }
+
 
 Thing_implement (SoundIntoPowerCepstrogramStatus, SoundIntoSampledStatus, 0);
 
@@ -132,6 +134,7 @@ autoLPCAndSoundIntoLPCRobustStatus LPCAndSoundIntoLPCRobustStatus_create (intege
 	}
 }
 
+
 Thing_implement (SoundIntoLPCRobustStatus, SampledIntoSampledStatus, 0);
 
 autoSoundIntoLPCRobustStatus SoundIntoLPCRobustStatus_create (integer numberOfFrames) {
@@ -144,6 +147,7 @@ autoSoundIntoLPCRobustStatus SoundIntoLPCRobustStatus_create (integer numberOfFr
 		Melder_throw (U"Cannot create LPCAndSoundIntoLPCRobustStatus.");
 	}
 }
+
 
 Thing_implement (SoundIntoFormantStatus, SampledIntoSampledStatus, 0);
 

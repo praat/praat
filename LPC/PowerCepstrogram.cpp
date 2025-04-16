@@ -379,7 +379,7 @@ void Sound_into_PowerCepstrogram (Sound input, PowerCepstrogram output, double e
 	SampledIntoSampled_analyseThreaded (sis.get());
 }
 
-autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
+autoPowerCepstrogram Sound_to_PowerCepstrogram_new (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
 		const kSound_windowShape windowShape = kSound_windowShape::GAUSSIAN_2;
 		const double effectiveAnalysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
@@ -452,6 +452,15 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_old (Sound me, double pitchFloor,
 	} catch (MelderError) {
 		Melder_throw (me, U": no PowerCepstrogram created.");
 	}
+}
+
+autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
+	autoPowerCepstrogram result;
+	if (Melder_debug == -10)
+		result = Sound_to_PowerCepstrogram_old (me, pitchFloor, dt, maximumFrequency, preEmphasisFrequency);
+	else
+		result = Sound_to_PowerCepstrogram_new (me, pitchFloor, dt, maximumFrequency, preEmphasisFrequency);
+	return result;
 }
 
 //       1           2                          nfftdiv2
