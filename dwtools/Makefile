@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 5 September 2024
+# 16 April 2025
 
 include ../makefile.defs
 
@@ -23,7 +23,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
 	FilterBank.o FormantGrid_extensions.o \
-	GaussianMixture.o  \
+	GaussianMixture.o \
 	HMM.o \
 	ICA.o Intensity_extensions.o \
 	LFCC.o LongSound_extensions.o \
@@ -42,7 +42,8 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Polygon_extensions.o Procrustes.o \
 	Proximity.o Proximity_and_Distance.o \
 	Resonator.o Roots_to_Spectrum.o \
-	SampledToSampledWorkspace.o SoundToSampledWorkspace.o \
+	SampledIntoSampled.o SampledFrameIntoSampledFrame.o SampledIntoSampledStatus.o \
+	SoundFrameIntoSampledFrame.o \
 	Sound_and_MultiSampledSpectrogram.o Sound_and_MixingMatrix.o \
 	Sound_and_Spectrum_dft.o \
 	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o \
