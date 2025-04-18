@@ -2835,6 +2835,12 @@ DO
 	CREATE_ONE_END (allTierNames)
 }
 
+FORM_READ (READ1_TextGrid_readFromEspsLabelFile, U"Read TextGrid from ESPS label file", nullptr, true) {
+	READ_ONE
+		autoTextGrid result = TextGrid_readFromEspsLabelFile (file);
+	READ_ONE_END
+}
+
 // MARK: - TEXTTIER; the remainder is in praat_TextGrid_init.cpp *****/
 
 FORM_READ (READ1_TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr, true) {
@@ -2967,7 +2973,7 @@ void praat_uvafon_init () {
 	Thing_recognizeClassesByName (classPolygon, classParamCurve,
 		classSpectrum, classLtas, classSpectrogram, classFormant,
 		classExcitation, classCochleagram, classVocalTract,
-		classLabel, classTier, classAutosegment,   // three obsolete classes
+		classLabel, classTier, classAutosegment,   // three obsolete classes (pre-1997)
 		classIntensity, classPitch, classHarmonicity,
 		classTransition,
 		classManipulation, classTextPoint, classTextInterval, classTextTier,
@@ -2975,9 +2981,9 @@ void praat_uvafon_init () {
 		classCorpus,
 		nullptr
 	);
-	Thing_recognizeClassByOtherName (classManipulation, U"Psola");
-	Thing_recognizeClassByOtherName (classManipulation, U"Analysis");
-	Thing_recognizeClassByOtherName (classPitchTier, U"StylPitch");
+	Thing_recognizeClassByOtherName (classManipulation, U"Psola");      // obsolete name (pre-1997)
+	Thing_recognizeClassByOtherName (classManipulation, U"Analysis");   // obsolete name (pre-2001)
+	Thing_recognizeClassByOtherName (classPitchTier, U"StylPitch");     // obsolete name (pre-1996)
 
 	Data_recognizeFileType (cgnSyntaxFileRecognizer);
 	Data_recognizeFileType (chronologicalTextGridTextFileRecognizer);
@@ -3041,7 +3047,9 @@ void praat_uvafon_init () {
 			nullptr, 0, READ1_Strings_readFromRawTextFile);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read from special tier file...", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read from special annotation file...", nullptr, 0, nullptr);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read TextGrid from ESPS label file...",
+				nullptr, 1, READ1_TextGrid_readFromEspsLabelFile);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...",
 				nullptr, 1, READ1_TextTier_readFromXwaves);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...",

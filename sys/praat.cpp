@@ -190,7 +190,7 @@ integer praat_numberOfSelected (ClassInfo klas) {
 		return theCurrentPraatObjects -> totalSelection;
 	integer readableClassId = klas -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0)
-		Melder_fatal (U"No sequential unique ID for class ", klas -> className, U".");
+		Melder_fatal (U"No sequential unique ID for class ", klas -> className, U" (numberOfSelected).");
 	return theCurrentPraatObjects -> numberOfSelected [readableClassId];
 }
 
@@ -224,7 +224,7 @@ void praat_select (integer IOBJECT) {
 	Melder_assert (object);
 	integer readableClassId = object -> classInfo -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0)
-		Melder_fatal (U"No sequential unique ID for class ", object -> classInfo -> className, U".");
+		Melder_fatal (U"No sequential unique ID for class ", object -> classInfo -> className, U" (selectObject).");
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] += 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding)
 		GuiList_selectItem (praatList_objects, IOBJECT);

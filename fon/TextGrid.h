@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2012,2014-2018,2020,2021,2024 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2018,2020,2021,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,32 @@ void TextTier_addPoint (TextTier me, double time, conststring32 mark);
 autoTextTier TextTier_readFromXwaves (MelderFile file);
 autoPointProcess TextTier_getPoints (TextTier me, conststring32 text);
 
+autoIntervalTier IntervalTier_create_raw (double tmin, double tmax);
+
+TextInterval /* reference */ IntervalTier_addInterval_raw (
+	IntervalTier me,   // the tier to which the new interval shall be added
+	double tmin,   // the starting time of the new interval
+	double tmax,   // the end time of the new interval
+	conststring32 text   // the label of the new interval
+);
+/*
+	This attempts to add a new interval to an existing tier.
+	Because the intervals in an IntervalTier form a sorted set,
+	the attempt will fail if there is already an interval with the same starting interval.
+
+	This function is called "raw" because no attempt is made to keep the IntervalTier
+	in a valid state. Most notably, the caller will have to make sure
+	that after a series of calls to this function
+	the invariants of the IntervalTier (i.e. adjacent time ranges) will have to be restored.
+
+	The return value is a reference to the new TextInterval,
+	or null of the attempt failed.
+*/
+
+void IntervalTier_haveAtLeastOneInterval (IntervalTier me);
+
 autoIntervalTier IntervalTier_create (double tmin, double tmax);
+autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file);
 autoIntervalTier IntervalTier_readFromXwaves (MelderFile file);
 void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
 
