@@ -221,7 +221,7 @@ static double Sound_findMaximumCorrelation (Sound me, double t1, double windowLe
 		// ...then r1_best and r3_best and ir must also have been assigned to:
 		Melder_assert (isdefined (r1_best) && isdefined (r3_best) && isdefined (ir));
 		double interpolatedPeakHeight = undefined;
-		const double d2r = 2.0 * maximumCorrelation - r1_best - r3_best;
+		const double d2r = (maximumCorrelation - r1_best) + (maximumCorrelation - r3_best);   // careful prevention of rounding error
 		if (d2r != 0.0 && ! (Melder_debug == 57)) {
 			const double dr = 0.5 * (r3_best - r1_best);
 			interpolatedPeakHeight = maximumCorrelation + 0.5 * dr * dr / d2r;

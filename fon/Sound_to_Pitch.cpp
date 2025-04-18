@@ -193,7 +193,10 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 			Use parabolic interpolation for first estimate of frequency,
 			and sin(x)/x interpolation to compute the strength of this frequency.
 		*/
-		const double dr = 0.5 * (r [i+1] - r [i-1]), d2r = 2.0 * r [i] - r [i-1] - r [i+1];
+		const double dr = 0.5 * (r [i+1] - r [i-1]);
+		const double d2r = (r [i] - r [i-1]) + (r [i] - r [i+1]);
+				// not 2.0 * r [i] - r [i-1] - r [i+1] because of rounhding errors! (bug removed 2025-04-18)
+		Melder_assert (d2r > 0);
 		const double frequencyOfMaximum = 1.0 / my dx / (i + dr / d2r);
 		const integer offset = - brent_ixmax - 1;
 		double strengthOfMaximum = /* method & 1 ? */

@@ -1,6 +1,6 @@
 /* TextGrid.cpp
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,13 +123,39 @@ void structIntervalTier :: v_scaleX (double xminfrom, double xmaxfrom, double xm
 	}
 }
 
-autoIntervalTier IntervalTier_create (double tmin, double tmax) {
+autoIntervalTier IntervalTier_create_raw (double tmin, double tmax) {
 	try {
 		autoIntervalTier me = Thing_new (IntervalTier);
 		my xmin = tmin;
 		my xmax = tmax;
-		autoTextInterval interval = TextInterval_create (tmin, tmax, nullptr);
-		my intervals. addItem_move (interval.move());
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Interval tier without intervals not created.");
+	}
+}
+
+TextInterval /* reference */ IntervalTier_addInterval_raw (IntervalTier me, double tmin, double tmax, conststring32 text) {
+	try {
+		autoTextInterval interval = TextInterval_create (tmin, tmax, text);
+		return my intervals. addItem_move (interval.move());
+	} catch (MelderError) {
+		Melder_throw (U"Interval could not be added to tier.");
+	}
+}
+
+void IntervalTier_haveAtLeastOneInterval (IntervalTier me) {
+	try {
+		if (my intervals.size == 0)
+			IntervalTier_addInterval_raw (me, my xmin, my xmax, U"");
+	} catch (MelderError) {
+		Melder_throw (U"Text interval not added to tier.");
+	}
+}
+
+autoIntervalTier IntervalTier_create (double tmin, double tmax) {
+	try {
+		autoIntervalTier me = IntervalTier_create_raw (tmin, tmax);
+		IntervalTier_haveAtLeastOneInterval (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Interval tier not created.");
@@ -271,18 +297,13 @@ void structTextGrid :: v1_info () {
 	MelderInfo_writeLine (U"Number of points: ", pointCount);
 }
 
-static void IntervalTier_addInterval_unsafe (IntervalTier me, double tmin, double tmax, conststring32 label) {
-	autoTextInterval interval = TextInterval_create (tmin, tmax, label);
-	my intervals. addItem_move (interval.move());
-}
-
 void structTextGrid :: v_repair () {
 	for (integer itier = 1; itier <= our tiers->size; itier ++) {
 		Function anyTier = our tiers->at [itier];   // it's a triple indirection: * ((* (* us). tiers). at + itier)
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			if (tier -> intervals.size == 0)
-				IntervalTier_addInterval_unsafe (tier, tier -> xmin, tier -> xmax, U"");
+				IntervalTier_addInterval_raw (tier, tier -> xmin, tier -> xmax, U"");
 		}
 	}
 }
@@ -890,6 +911,179 @@ autoTableOfReal TextTier_downto_TableOfReal_any (TextTier me) {
 	return TextTier_downto_TableOfReal (me, nullptr);
 }
 
+constexpr integer constexpr_str32len (conststring32 string) {
+	return integer (std::char_traits<char32>::length (string));
+}
+
+static void MelderReadText_skipHorizontalWhiteSpace (MelderReadText me) {
+	for (;;) {
+		char32 kar = MelderReadText_getChar (me);
+		if (kar == U'\0')
+			return;
+		if (Melder_isHorizontalSpace (kar))
+			continue;
+		MelderReadText_ungetChar (me);
+		return;
+	}
+}
+
+static int64 MelderReadText_readInteger (MelderReadText me) {
+	char32 kar = MelderReadText_getChar (me);
+	Melder_require (kar != U'\0',
+		U"Looking for an integer, but found the end of the text.");
+	Melder_require (! Melder_isVerticalSpace (kar),
+		U"Looking for an integer, but found the end of the line.");
+	const bool hasSign = ( kar == U'-' || kar == U'+' );
+	Melder_require (hasSign || Melder_isAsciiDecimalNumber (kar),
+		U"Looking for an integer, but found “", MelderReadText_readLine (me), U"”.");
+	constexpr integer MAXIMUM_NUMBER_OF_DIGITS = 40;
+	char buffer [1 + MAXIMUM_NUMBER_OF_DIGITS + 1];   // include room for leading sign and trailing null
+	/* mutable increment */ integer ipos = 0;
+	buffer [ipos ++] = (char) (char8) kar;
+	if (hasSign) {
+		char32 shouldBeDigit = MelderReadText_getChar (me);
+		Melder_require (Melder_isAsciiDecimalNumber (shouldBeDigit),
+			U"Looking for a digit after “", kar, U"”, but found “", MelderReadText_readLine (me), U"”.");
+		buffer [ipos ++] = (char) (char8) shouldBeDigit;
+	}
+	for (;;) {
+		char32 mayBeDigit = MelderReadText_getChar (me);
+		if (Melder_isAsciiDecimalNumber (mayBeDigit)) {
+			Melder_require (ipos < hasSign + MAXIMUM_NUMBER_OF_DIGITS,
+				U"Looking for a normal-sized integer, but found more than ", MAXIMUM_NUMBER_OF_DIGITS, U" digits.");
+			buffer [ipos ++] = (char) (char8) mayBeDigit;
+		} else {
+			MelderReadText_ungetChar (me);
+			break;
+		}
+	}
+	buffer [ipos] = '\0';
+	return strtoll (buffer, nullptr, 10);
+}
+
+static double MelderReadText_readReal (MelderReadText me) {
+	char32 kar = MelderReadText_getChar (me);
+	Melder_require (kar != U'\0',
+		U"Looking for a real number, but found the end of the text.");
+	Melder_require (! Melder_isVerticalSpace (kar),
+		U"Looking for a real number, but found the end of the line.");
+	const bool hasSign = ( kar == U'-' || kar == U'+' );
+	Melder_require (hasSign || Melder_isAsciiDecimalNumber (kar),
+		U"Looking for a real number, but found “", MelderReadText_readLine (me), U"”.");
+	constexpr integer MAXIMUM_NUMBER_OF_CHARACTERS = 100;
+	char buffer [1 + MAXIMUM_NUMBER_OF_CHARACTERS + 1];   // include room for leading sign and trailing null
+	/* mutable increment */ integer ipos = 0;
+	buffer [ipos ++] = (char) (char8) kar;
+	if (hasSign) {
+		char32 shouldBeDigit = MelderReadText_getChar (me);
+		Melder_require (Melder_isAsciiDecimalNumber (shouldBeDigit),
+			U"Looking for a digit after “", kar, U"”, but found “", MelderReadText_readLine (me), U"”.");
+		buffer [ipos ++] = (char) (char8) shouldBeDigit;
+	}
+	for (;;) {
+		char32 numberCharacter = MelderReadText_getChar (me);
+		if (Melder_isAsciiDecimalNumber (numberCharacter) || numberCharacter == U'+' || numberCharacter == U'-' ||
+			numberCharacter == U'e' || numberCharacter == U'E' || numberCharacter == U'.'
+		) {
+			Melder_require (ipos < hasSign + MAXIMUM_NUMBER_OF_CHARACTERS,
+				U"Looking for a normal-sized real number, but found more than ", MAXIMUM_NUMBER_OF_CHARACTERS, U" digits.");
+			buffer [ipos ++] = (char) (char8) numberCharacter;
+		} else {
+			MelderReadText_ungetChar (me);
+			break;
+		}
+	}
+	buffer [ipos] = '\0';
+	return Melder_a8tof (buffer);
+}
+
+autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file) {
+	TRACE
+	try {
+		autoMelderReadText text = MelderReadText_createFromFile (file);   // going to be UTF-8-compatible
+		/* mutable increment */ integer lineNumber = 0;
+
+		/*
+			Cycle through all lines until encountering a line that starts with '#'.
+		*/
+		integer numberOfTiers = 1;
+		char32 separator = U';';
+		for (;;) {
+			const conststring32 line = MelderReadText_readLine (text.get());
+			if (! line)
+				Melder_throw (U"Missing '#' line.");
+			if (line [0] == '#')
+				break;
+			++ lineNumber;
+			trace (U"Line ", lineNumber, U": <", line, U">");
+			constexpr char32 tag_nfields [] = U"nfields ";
+			if (Melder_startsWith (line, tag_nfields))
+				numberOfTiers = Melder_atoi (line + constexpr_str32len (tag_nfields));
+			constexpr char32 tag_separator [] = U"separator ";
+			if (Melder_startsWith (line, tag_separator))
+				separator = line [constexpr_str32len (tag_separator)];
+		}
+		Melder_require (numberOfTiers >= 1,
+			U"The number of tiers has to be at least 1, but the file states that it should be ", numberOfTiers, U".");
+		Melder_require (numberOfTiers <= 1'000'000'000,
+			U"The number of tiers has to be at most 1,000,000,000, but the file states that it should be ", numberOfTiers, U".");
+
+		/* mutable preliminary */ double tmin = 0.0, tmax = 100.0;
+		autoTextGrid me = TextGrid_createWithoutTiers (tmin, tmax);
+		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
+			/*
+				Dummy name.
+			*/
+			autoIntervalTier tier = IntervalTier_create (tmin, tmax);
+			(void) tier -> intervals. subtractItem_move (1);
+			Thing_setName (tier.get(), Melder_integer (itier));
+			my tiers -> addItem_move (tier.move());
+		}
+
+		autoMelderString label;
+		/* mutable step */ double startingTime = 0.0, endTime = undefined;
+		for (;;) {
+			const mutablestring32 line = MelderReadText_readLine (text.get());
+			if (! line)
+				break;
+			++ lineNumber;
+			trace (U"Line ", lineNumber, U": <", line, U">");
+			autoMelderReadText lineText = MelderReadText_createFromText (Melder_dup (line));   // a bit costly
+			MelderReadText_skipHorizontalWhiteSpace (lineText.get());
+			endTime = MelderReadText_readReal (lineText.get());
+			trace (U"end time: ", endTime);
+			MelderReadText_skipHorizontalWhiteSpace (lineText.get());
+			const integer colour = MelderReadText_readInteger (lineText.get());
+			trace (U"colour: ", colour);
+			const char32 shouldBeHorizontalSpace = MelderReadText_getChar (lineText.get());
+			Melder_require (Melder_isHorizontalSpace (shouldBeHorizontalSpace),
+				U"There should be a space after the colour number in line ", lineNumber, U".");
+			trace (U"starting time: ", startingTime, U"; end time: ", endTime);
+			for (integer itier = 1; itier <= numberOfTiers; itier ++) {
+				MelderString_empty (& label);
+				for (;;) {
+					char32 kar = MelderReadText_getChar (lineText.get());
+					if (kar == separator || kar == U'\0')
+						break;
+					MelderString_appendCharacter (& label, kar);
+				}
+				IntervalTier tier = static_cast <IntervalTier> (my tiers->at [itier]);
+				autoTextInterval interval = TextInterval_create (startingTime, endTime, label.string);
+				tier -> intervals. addItem_move (interval.move());
+			}
+			startingTime = endTime;
+		}
+		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
+			IntervalTier tier = static_cast <IntervalTier> (my tiers->at [itier]);
+			tier -> xmax = endTime;
+		}
+		my xmax = endTime;
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"TextGrid not read from file ", file, U".");
+	}
+}
+
 autoIntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 	try {
 		char *line;
@@ -905,7 +1099,8 @@ autoIntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 			line = MelderFile_readLine8 (file);
 			if (! line)
 				Melder_throw (U"Missing '#' line.");
-			if (line [0] == '#') break;
+			if (line [0] == '#')
+				break;
 		}
 
 		/*
@@ -932,7 +1127,7 @@ autoIntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 				interval -> xmax = time;
 				TextInterval_setText (interval, Melder_peek8to32 (mark));
 			} else {
-				IntervalTier_addInterval_unsafe (me.get(), lastTime, time, Melder_peek8to32 (mark));
+				IntervalTier_addInterval_raw (me.get(), lastTime, time, Melder_peek8to32 (mark));
 			}
 			lastTime = time;
 		}
@@ -978,7 +1173,7 @@ autoTextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double 
 			if (endVoiceless <= beginVoiceless) {
 				endVoiceless = beginVoiceless;   // we will use for voiced interval
 			} else {
-				IntervalTier_addInterval_unsafe (tier, beginVoiceless, endVoiceless, U"U");
+				IntervalTier_addInterval_raw (tier, beginVoiceless, endVoiceless, U"U");
 			}
 			for (ipointright = ipointleft + 1; ipointright <= my nt; ipointright ++)
 				if (my t [ipointright] - my t [ipointright - 1] > maxT)
@@ -987,11 +1182,11 @@ autoTextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double 
 			beginVoiceless = my t [ipointright] + halfMeanT;
 			if (beginVoiceless > my xmax)
 				beginVoiceless = my xmax;
-			IntervalTier_addInterval_unsafe (tier, endVoiceless, beginVoiceless, U"V");
+			IntervalTier_addInterval_raw (tier, endVoiceless, beginVoiceless, U"V");
 		}
 		endVoiceless = my xmax;
 		if (endVoiceless > beginVoiceless)
-			IntervalTier_addInterval_unsafe (tier, beginVoiceless, endVoiceless, U"U");
+			IntervalTier_addInterval_raw (tier, beginVoiceless, endVoiceless, U"U");
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TextGrid (vuv).");

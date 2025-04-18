@@ -29,6 +29,7 @@
 #include "../dwsys/NUM2.h"
 
 double NUM_interpolate_sinc (constVEC const& y, double x, integer maxDepth) {
+	Melder_assert (isdefined (x));
 	const integer midleft = Melder_ifloor (x), midright = midleft + 1;
 	double result = 0.0;
 	if (y.size < 1)
@@ -341,6 +342,7 @@ struct improve_params {
 };
 
 static double improve_evaluate (double x, void *closure) {
+	Melder_assert (isdefined (x));
 	struct improve_params *me = (struct improve_params *) closure;
 	const double y = NUM_interpolate_sinc (my y, x, my depth);
 	return my isMaximum ? - y : y;
