@@ -40,23 +40,24 @@
 Thing_implement (PowerCepstrogramFrameIntoMatrixFrame, SampledFrameIntoSampledFrame, 0);
 
 void structPowerCepstrogramFrameIntoMatrixFrame :: allocateOutputFrames (void) {
+	// nothing to do: input and output are Matrix and already allocated at creation
 }
 
 void structPowerCepstrogramFrameIntoMatrixFrame :: getInputFrame () {
 	powerCepstrum -> z.row (1)  <<=  input -> z.column (currentFrame);
-	powerCepstrumWs -> newData (powerCepstrum.get());
+	powerCepstrumWs -> newData (powerCepstrum.get()); // powercepstrum is in dB's now
 }
 
 bool structPowerCepstrogramFrameIntoMatrixFrame :: inputFrameToOutputFrame () {
-	if (getSlope) {
+	if (getSlopeAndIntercept) {
 		powerCepstrumWs -> getSlopeAndIntercept ();
 		powerCepstrumWs -> slopeKnown = true;
 	}
 	if (subtractTrend) {
+		Melder_assert (powerCepstrumWs -> slopeKnown);
 		powerCepstrumWs -> subtractTrend ();
-		powerCepstrumWs -> trendSubtracted = true;
 	}
-	if (getPeak) {
+	if (getPeakAndPosition) {
 		powerCepstrumWs -> getPeakAndPosition ();
 		powerCepstrumWs -> peakKnown = true;
 	}
@@ -65,16 +66,22 @@ bool structPowerCepstrogramFrameIntoMatrixFrame :: inputFrameToOutputFrame () {
 
 void structPowerCepstrogramFrameIntoMatrixFrame :: saveOutputFrame (void) {
 	/* time, slope, intercept, peakdB, peakQuefrency, cpp, */
-	output -> z [1] [currentFrame] = Sampled_indexToX (output, currentFrame);
-	if (getSlope) {
-		output -> z [2] [currentFrame] = powerCepstrumWs -> slope;
-		output -> z [3] [currentFrame] = powerCepstrumWs -> intercept;
-	}
-	if (getPeak) {
-		output -> z [4] [currentFrame] = powerCepstrumWs -> peakdB;
-		output -> z [6] [currentFrame] = powerCepstrumWs -> peakQuefrency;
-		powerCepstrumWs -> getCPP ();
-		output -> z [7] [currentFrame] = powerCepstrumWs -> cpp;
+	if (subtractTrend) {
+		Melder_assert (Thing_isa (output, classPowerCepstrogram));
+		
+		output -> z.column (currentFrame)  <<=  powerCepstrum -> z.row (1);
+	} else {
+		output -> z [1] [currentFrame] = Sampled_indexToX (output, currentFrame);
+		if (getSlopeAndIntercept) {
+			output -> z [2] [currentFrame] = powerCepstrumWs -> slope;
+			output -> z [3] [currentFrame] = powerCepstrumWs -> intercept;
+		}
+		if (getPeakAndPosition) {
+			output -> z [4] [currentFrame] = powerCepstrumWs -> peakdB;
+			output -> z [6] [currentFrame] = powerCepstrumWs -> peakQuefrency;
+			powerCepstrumWs -> getCPP ();
+			output -> z [7] [currentFrame] = powerCepstrumWs -> cpp;
+		}
 	}
 }
 

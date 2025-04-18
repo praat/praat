@@ -25,9 +25,10 @@ oo_DEFINE_CLASS (PowerCepstrogramFrameIntoMatrixFrame, SampledFrameIntoSampledFr
 	oo_INTEGER (numberOfPoints)
 	oo_OBJECT (PowerCepstrum, 2, powerCepstrum) // copy of a column of the PowerCepstrogram
 	oo_OBJECT (PowerCepstrumWorkspace, 0, powerCepstrumWs)
-	oo_BOOLEAN (getSlope)
+	oo_BOOLEAN (getPeakAndPosition)
+	oo_BOOLEAN (getSlopeAndIntercept)
 	oo_BOOLEAN (subtractTrend)
-	oo_BOOLEAN (getPeak)
+	oo_BOOLEAN (trendSubtracted) // ?? needed
 	
 	#if oo_DECLARING
 		void getInputFrame () override;

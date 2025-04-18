@@ -191,6 +191,11 @@ void structPowerCepstrumWorkspace :: todBs () {
 		asdBs -> z [1] [i] = powercepstrum -> v_getValueAtSample (i, 1, 1); // 10 log val^2
 }
 
+void structPowerCepstrumWorkspace :: fromdBs (PowerCepstrum me) {
+	for (integer i = 1; i <= powercepstrum -> nx; i ++)
+		my z [1] [i] = pow (10.0, my z [1] [i] / 10.0) - 1e-30;
+}
+
 void structPowerCepstrumWorkspace :: setMaximumNumberOfRhamonics (integer maximumNumberOfRhamonics) {
 	our maximumNumberOfRhamonics = maximumNumberOfRhamonics;
 	// resize when we calculate values.

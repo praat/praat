@@ -728,7 +728,7 @@ DIRECT (QUERY_ONE_FOR_REAL__PowerCepstrogram_getQuefrencyStep) {
 
 FORM (CONVERT_EACH_TO_ONE__PowerCepstrogram_subtractTrend, U"PowerCepstrogram: Subtract trend", nullptr) {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrum_trendType, lineType, U"Trend type", kCepstrum_trendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrum_trendFit, fitMethod, U"Fit method", kCepstrum_trendFit::DEFAULT)
 	OK
@@ -740,7 +740,7 @@ DO
 
 FORM (MODIFY_EACH__PowerCepstrogram_subtractTrend_inplace, U"PowerCepstrogram: Subtract trend (in-place)", nullptr) {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrum_trendType, lineType, U"Trend type", kCepstrum_trendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrum_trendFit, fitMethod, U"Fit method", kCepstrum_trendFit::DEFAULT)
 	OK

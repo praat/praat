@@ -72,10 +72,10 @@ void PowerCepstrogram_listCPP (PowerCepstrogram me, bool includeFrameNumber, boo
 
 autoPowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, double time);
 
-autoPowerCepstrogram PowerCepstrogram_subtractTrend (PowerCepstrogram me, double qstartFit, double qendFit,
+autoPowerCepstrogram PowerCepstrogram_subtractTrend (constPowerCepstrogram me, double qstartFit, double qendFit,
 	kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 
-void PowerCepstrogram_subtractTrend_inplace (PowerCepstrogram me, double qstartFit, double qendFit,
+void PowerCepstrogram_subtractTrend_inplace (mutablePowerCepstrogram me, double qstartFit, double qendFit,
 	kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 
 double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractTrendBeforeSmoothing,

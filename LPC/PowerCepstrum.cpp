@@ -28,7 +28,7 @@ double structPowerCepstrum :: v_getValueAtSample (integer isamp, integer row, in
 		if (units == 0)
 			result = z [1] [isamp];
 		else
-			result = 10.0 * log10 (z [1] [isamp] + 1e-30); // result > -300
+			result = 10.0 * log10 (z [1] [isamp] + 1e-30); // result >= -300
 	}
 	return result;
 }

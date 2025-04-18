@@ -21,7 +21,7 @@ oo_DEFINE_CLASS (PowerCepstrumWorkspace, Daata)
 
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (PowerCepstrum, powercepstrum)
 	oo_INTEGER (numberOfPoints)
-	oo_INTEGER (imin) // [imin,imax] the range of quefrency indices for the slope calculation
+	oo_INTEGER (imin) // [imin,imax]  the slope calculation interval
 	oo_INTEGER (imax)
 	oo_VEC (x, numberOfPoints)
 	oo_VEC (y, numberOfPoints) // in dB
@@ -60,6 +60,8 @@ oo_DEFINE_CLASS (PowerCepstrumWorkspace, Daata)
 		void getCPP ();
 
 		void todBs ();
+		
+		void fromdBs (PowerCepstrum me);
 		
 		void setMaximumNumberOfRhamonics (integer maximumNumberOfRhamonics);
 		
