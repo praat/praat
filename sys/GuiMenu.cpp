@@ -259,6 +259,19 @@ Thing_implement (GuiMenu, GuiThing, 0);
 		if (theFinishedOpeningDocumentsCallback)
 			theFinishedOpeningDocumentsCallback ();
 	}
+	- (BOOL) applicationSupportsSecureRestorableState: (NSApplication *) app
+	{
+		return true;   // implementing this function silences a warning at start-up
+	}
+	- (BOOL) restoreWindowWithIdentifier: (NSUserInterfaceItemIdentifier) identifier
+		state: (NSCoder *) state
+		completionHandler: (void (^)(NSWindow *, NSError *)) completionHandler
+	{
+		//TRACE
+		trace (U"restoring window “", Melder_peek8to32 ([identifier UTF8String]), U"”");
+		completionHandler (nil, nil);
+		return false;   // do nothing (implementing this function silences a warning at start-up)
+	}
 	@end
 #endif
 
