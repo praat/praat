@@ -68,9 +68,6 @@ TextInterval /* reference */ IntervalTier_addInterval_raw (
 void IntervalTier_haveAtLeastOneInterval (IntervalTier me);
 
 autoIntervalTier IntervalTier_create (double tmin, double tmax);
-autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file);
-autoIntervalTier IntervalTier_readFromXwaves (MelderFile file);
-void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
 
 integer IntervalTier_timeToLowIndex (IntervalTier me, double t);
 integer IntervalTier_timeToIndex (IntervalTier me, double t);   // obsolete
@@ -147,10 +144,6 @@ void TextGrid_setIntervalText (TextGrid me, integer tierNumber, integer interval
 void TextGrid_insertPoint (TextGrid me, integer tierNumber, double t, conststring32 mark);
 void TextGrid_setPointText (TextGrid me, integer tierNumber, integer pointNumber, conststring32 text);
 
-void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file);
-autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file);
-autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
-
 autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, integer timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers,
 	kMelder_string which, conststring32 criterion, bool caseSensitive);
@@ -159,6 +152,54 @@ void TextGrid_list (TextGrid me, bool includeLineNumbers, integer timeDecimals, 
 
 void TextGrid_correctRoundingErrors (TextGrid me);
 autoTextGrid TextGrids_concatenate (OrderedOf<structTextGrid>* me);
+
+/*
+	Defined in TextGrid_files.cpp
+*/
+
+autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file);
+autoIntervalTier IntervalTier_readFromXwaves (MelderFile file);
+void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
+
+void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file);
+autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file);
+autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
+
+autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile);
+/*
+	Read TIMIT label file with the following structure:
+		samplenumber1 samplenumber2 label1
+		samplenumber3 samplenumber4 label2
+		...
+		samplenumber2n-1 samplenumber2n labeln
+
+	The first tier of TextGrid will contain the TIMIT labels.
+	If phnFile == true, the second tier will contain the translation of the
+	TIMIT labels into IPA labels.
+	For the translation from sample number to time a default sampling
+	frequency of 16000 Hz is assumed.
+*/
+
+autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, MelderFile file);
+/*
+	There are two types of TIMIT label files. One with phonetic labels, these
+	files have '.phn' as file extension. The other contains word labels and has
+	'.wrd' as extension. Since these extensions are only valid on the CDROM we can
+	not use them for filetype recognition. Both TIMIT label files do not have a
+	self-describing format. For filetype recognition we make use of the fact that
+	both files are text files and always have three items on each line: two numbers
+	followed by a string. The numbers increase in a monotone way.
+	The recognizer only checks the first two lines and it tests whether
+		0 <= number 1] < number [2] <= number [3] < number [4]
+	(A number of .wrd files do not obey the monotonocity constraint for
+	 number [4] and number [5] !)
+	The decision whether it is a .phn or .wrd file is:
+		.phn if string [1] == 'h#' AND string [2] is a TIMIT phonetic label
+		.wrd if (string [1] == 'h#' AND string [2] is a valid word) OR
+			string [1] and string [2] are both valid words.
+		A valid word is a string with contains the lowercase characters [a-z] and ['].
+*/
+
 
 /* End of file TextGrid.h */
 #endif

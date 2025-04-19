@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 18 September 2023
+# Paul Boersma, 19 April 2025
 
 include ../makefile.defs
 
@@ -17,7 +17,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    Spectrum.o Ltas.o Spectrogram.o SpectrumTier.o Ltas_to_SpectrumTier.o \
    Formant.o Image.o Sound_to_Formant.o Sound_and_Spectrogram.o \
    Sound_and_Spectrum.o Spectrum_and_Spectrogram.o Spectrum_to_Formant.o \
-   FormantTier.o TextGrid.o TextGrid_Sound.o Label.o FormantGrid.o \
+   FormantTier.o TextGrid.o TextGrid_files.o TextGrid_Sound.o Label.o FormantGrid.o \
    Excitation.o Cochleagram.o Cochleagram_and_Excitation.o Excitation_to_Formant.o \
    Sound_to_Cochleagram.o Spectrum_to_Excitation.o \
    VocalTract.o VocalTract_to_Spectrum.o \

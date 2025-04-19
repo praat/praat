@@ -35,6 +35,8 @@ Latest changes in Praat.
 • EEG window: repaired a bug that caused Praat to crash when clicking ##View & Edit#.
 • Windows Demo window: made Escape key available to `demoKey$()`
   (this had been a bug since the beginning of the Demo window, i.e. since May 2009).
+• ##Read TextGrid from ESPS label file...#
+• Repaired a bug that could cause Praat to crash on pitch analysis when a part of the sound was constant.
 
 ##6.4.27# (27 January 2025)
 • Graphics text: better pipes and slashes.
