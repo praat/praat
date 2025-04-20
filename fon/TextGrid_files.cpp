@@ -68,10 +68,6 @@ autoTextTier TextTier_readFromXwaves (MelderFile file) {
 	}
 }
 
-constexpr integer constexpr_str32len (conststring32 string) {
-	return integer (std::char_traits<char32>::length (string));
-}
-
 static void MelderReadText_skipHorizontalWhiteSpace (MelderReadText me) {
 	for (;;) {
 		char32 kar = MelderReadText_getChar (me);
@@ -174,11 +170,12 @@ autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file) {
 			++ lineNumber;
 			trace (U"Line ", lineNumber, U": <", line, U">");
 			constexpr char32 tag_nfields [] = U"nfields ";
+			constexpr integer tag_nfields_length = Melder_length (tag_nfields);
 			if (Melder_startsWith (line, tag_nfields))
-				numberOfTiers = Melder_atoi (line + constexpr_str32len (tag_nfields));
+				numberOfTiers = Melder_atoi (line + tag_nfields_length);
 			constexpr char32 tag_separator [] = U"separator ";
 			if (Melder_startsWith (line, tag_separator))
-				separator = line [constexpr_str32len (tag_separator)];
+				separator = line [Melder_length (tag_separator)];
 		}
 		Melder_require (numberOfTiers >= 1,
 			U"The number of tiers has to be at least 1, but the file states that it should be ", numberOfTiers, U".");
