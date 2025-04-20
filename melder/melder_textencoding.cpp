@@ -160,7 +160,8 @@ int64 Melder_length_utf8 (conststring32 string, bool nativizeNewlines) {
 		char32 kar = *p;
 		if (kar <= 0x00'007F) {
 			#ifdef _WIN32
-				if (nativizeNewlines && kar == U'\n') length ++;
+				if (nativizeNewlines && kar == U'\n')
+					length ++;
 			#else
 				(void) nativizeNewlines;
 			#endif
@@ -183,7 +184,8 @@ int64 Melder_length_utf16 (conststring32 string, bool nativizeNewlines) {
 		char32 kar = *p;
 		if (kar <= 0x00'007F) {
 			#ifdef _WIN32
-				if (nativizeNewlines && kar == U'\n') length ++;
+				if (nativizeNewlines && kar == U'\n')
+					length ++;
 			#else
 				(void) nativizeNewlines;
 			#endif
@@ -202,7 +204,7 @@ void MelderString_8to32 (MelderString *me, conststring8 textA) {
 		textA = "";
 	MelderString_empty (me);
 	uinteger n = strlen (textA);
-	for (uinteger i = 0, j = 0; i <= n; i ++) {
+	for (uinteger i = 0; i <= n; i ++) {
 		char8 kar1 = (char8) textA [i];   // convert sign
 		if (kar1 <= 0x7F) {
 			MelderString_appendCharacter (me,

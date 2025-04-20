@@ -147,19 +147,19 @@ void Preferences_read (MelderFile file) {
 						(int16) strtol (Melder_peek32to8 (value), nullptr, 10);
 				break;
 				case intwa: * (int *) pref -> value =
-						strtol (Melder_peek32to8 (value), nullptr, 10);
+						(int32) strtol (Melder_peek32to8 (value), nullptr, 10);
 				break;
 				case integerwa: * (integer *) pref -> value =
-						strtol (Melder_peek32to8 (value), nullptr, 10);
+						(integer) strtoll (Melder_peek32to8 (value), nullptr, 10);
 				break;
 				case ubytewa: * (unsigned char *) pref -> value =
 						(uint8) strtoul (Melder_peek32to8 (value), nullptr, 10);
 				break;
 				case uintwa: * (unsigned int *) pref -> value =
-						strtoul (Melder_peek32to8 (value), nullptr, 10);
+						(uint32) strtoul (Melder_peek32to8 (value), nullptr, 10);
 				break;
 				case uintegerwa: * (uinteger *) pref -> value =
-						strtoul (Melder_peek32to8 (value), nullptr, 10);
+						(uinteger) strtoull (Melder_peek32to8 (value), nullptr, 10);
 				break;
 				case doublewa: * (double *) pref -> value =
 						Melder_a8tof (Melder_peek32to8 (value));
