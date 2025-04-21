@@ -662,10 +662,11 @@ static void _cellArrayOrImage (Graphics me,
 }
 
 static void _autoSize (
-	Graphics me,
-	double x1WC, double x2WC, double y1WC, double y2WC,
-	integer naturalWidthDC, integer naturalHeightDC,
-	integer *x1DC, integer *x2DC, integer *y1DC, integer *y2DC
+	const constGraphics me,
+	const double x1WC, const double x2WC, const double y1WC, const double y2WC,
+	const integer naturalWidthDC, const integer naturalHeightDC,
+	/* mutable out */ integer *const x1DC, /* mutable out */ integer *const x2DC,
+	/* mutable out */ integer *const y1DC, /* mutable out */ integer *const y2DC
 ) {
 	*x1DC = wdx (x1WC);
 	*x2DC = wdx (x2WC);

@@ -1,10 +1,10 @@
 /* Formula.cpp
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -409,7 +409,7 @@ static integer Formula_hasLanguageName (conststring32 f) {
 		);
 	}
 	constexpr integer sentinel = 0;   // has to be different from the numbers 1 .. index.size
-	const integer * const found = std::lower_bound (index.begin(), index.end(), sentinel,
+	const integer *const found = std::lower_bound (index.begin(), index.end(), sentinel,
 		[f] (integer i, integer j) {
 			return str32cmp (
 				i == sentinel ? f : Formula_instructionNames [i],

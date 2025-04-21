@@ -4,7 +4,7 @@
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -1961,7 +1961,7 @@ static void nonrecorded_Graphics_text (Graphics me, double xWC, double yWC, cons
 		autostring32 linesToDraw = Melder_dup_f (text);
 		const char32 *p = & linesToDraw [0];
 		for (;;) {
-			char32 * const newline = str32chr (p, U'\n');
+			char32 *const newline = str32chr (p, U'\n');
 			if (newline)
 				*newline = U'\0';
 			nonrecorded_Graphics_text (me, xWC, yWC, p);   // recurse

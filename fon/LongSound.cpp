@@ -1,10 +1,10 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2008,2010-2019,2021-2024 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2008,2010-2019,2021-2025 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -109,7 +109,7 @@ void structLongSound :: v1_info () {
 	MelderInfo_writeLine (U"Start of sample data: ", startOfData, U" bytes from the start of the file");
 }
 
-static void _LongSound_FLAC_convertFloats (LongSound me, const int32 * const samples[], const integer bitsPerSample, const integer numberOfSamples) {
+static void _LongSound_FLAC_convertFloats (LongSound me, const int32 *const samples[], const integer bitsPerSample, const integer numberOfSamples) {
 	double multiplier;
 	switch (bitsPerSample) {
 		case 8: multiplier = (1.0 / 128.0); break;
@@ -128,7 +128,7 @@ static void _LongSound_FLAC_convertFloats (LongSound me, const int32 * const sam
 	}
 }
 
-static void _LongSound_FLAC_convertShorts (LongSound me, const int32 * const samples[], const integer bitsPerSample, const integer numberOfSamples) {
+static void _LongSound_FLAC_convertShorts (LongSound me, const int32 *const samples[], const integer bitsPerSample, const integer numberOfSamples) {
 	for (integer channel = 0; channel < my numberOfChannels; ++ channel) {
 		int16 *output = my compressedShorts + channel;
 		const int32 *input = samples [channel];
@@ -147,7 +147,7 @@ static void _LongSound_FLAC_convertShorts (LongSound me, const int32 * const sam
 	my compressedShorts += numberOfSamples * my numberOfChannels;
 }
 
-static FLAC__StreamDecoderWriteStatus _LongSound_FLAC_write (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *void_me) {
+static FLAC__StreamDecoderWriteStatus _LongSound_FLAC_write (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 *const buffer[], void *void_me) {
 	iam (LongSound);
 	const FLAC__FrameHeader *header = & frame -> header;
 	integer numberOfSamples = header -> blocksize;
