@@ -665,40 +665,51 @@ static void _autoSize (
 	Graphics me,
 	double x1WC, double x2WC, double y1WC, double y2WC,
 	integer naturalWidthDC, integer naturalHeightDC,
-	integer *out_x1DC, integer *out_x2DC, integer *out_y1DC, integer *out_y2DC
+	integer *x1DC, integer *x2DC, integer *y1DC, integer *y2DC
 ) {
-	/* mutable autosize */ integer x1DC = wdx (x1WC), x2DC = wdx (x2WC), y1DC = wdy (y1WC), y2DC = wdy (y2WC);
-	/* mutable autosize */ integer width = x2DC - x1DC, height = ( my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC );
-	if (x1WC == x2WC && y1WC == y2WC) {
-		width = naturalWidthDC;
-		x1DC -= width / 2;
-		x2DC = x1DC + width;
-		height = naturalHeightDC;
-		if (my yIsZeroAtTheTop) {
-			y2DC -= height / 2;
-			y1DC = y2DC + height;
+	*x1DC = wdx (x1WC);
+	*x2DC = wdx (x2WC);
+	*y1DC = wdy (y1WC);
+	*y2DC = wdy (y2WC);
+	if (x1WC == x2WC) {
+		if (y1WC == y2WC) {
+			/*
+				Horizontal and vertical autosizing.
+			*/
+			const integer width = naturalWidthDC;
+			*x1DC -= width / 2;
+			*x2DC = *x1DC + width;
+			const integer height = naturalHeightDC;
+			if (my yIsZeroAtTheTop) {
+				*y2DC -= height / 2;
+				*y1DC = *y2DC + height;
+			} else {
+				*y1DC -= height / 2;
+				*y2DC = *y1DC + height;
+			}
 		} else {
-			y1DC -= height / 2;
-			y2DC = y1DC + height;
+			/*
+				Horizontal autosizing only.
+			*/
+			const integer height = ( my yIsZeroAtTheTop ? *y1DC - *y2DC : *y2DC - *y1DC );
+			const integer width = height / (double) naturalHeightDC * (double) naturalWidthDC;
+			*x1DC -= width / 2;
+			*x2DC = *x1DC + width;
 		}
-	} else if (x1WC == x2WC) {
-		width = height / (double) naturalHeightDC * (double) naturalWidthDC;
-		x1DC -= width / 2;
-		x2DC = x1DC + width;
 	} else if (y1WC == y2WC) {
-		height = width / (double) naturalWidthDC * (double) naturalHeightDC;
+		/*
+			Vertical autosizing only.
+		*/
+		const integer width = *x2DC - *x1DC;
+		const integer height = width / (double) naturalWidthDC * (double) naturalHeightDC;
 		if (my yIsZeroAtTheTop) {
-			y2DC -= height / 2;
-			y1DC = y2DC + height;
+			*y2DC -= height / 2;
+			*y1DC = *y2DC + height;
 		} else {
-			y1DC -= height / 2;
-			y2DC = y1DC + height;
+			*y1DC -= height / 2;
+			*y2DC = *y1DC + height;
 		}
 	}
-	*out_x1DC = x1DC;
-	*out_x2DC = x2DC;
-	*out_y1DC = y1DC;
-	*out_y2DC = y2DC;
 }
 
 void Graphics_cellArray (Graphics me, constMATVU const& z,
