@@ -278,6 +278,10 @@ void structSlopeSelector :: getKth_TheilSen (integer k, double& kth, double& kp1
 			}
             currentNumberOfIntervalCrossings = numberOfCrossingsAtHighX - numberOfCrossingsAtLowX;
             ++ numberOfTries;
+			if (numberOfTries > maximumNumberOfTries) { // escape 
+				getSlope_Siegel ();
+				return;
+			}
         }
         /*
             Finish with the remaining inversions. (We don't need the xcrossings anymore.)
@@ -339,6 +343,7 @@ void SlopeSelector_init (SlopeSelector me, integer numberOfPoints) {
 	my numberOfPoints = numberOfPoints;
     my sampleSize = my numberOfPoints;
     my maximumContractionSize = 5 * my numberOfPoints;
+	my maximumNumberOfTries = 20;
 
     my sortedRandomCrossingCodes = raw_INTVEC (my maximumContractionSize);
 	my inversionsSize = 2 * my maximumContractionSize;

@@ -22,6 +22,7 @@ oo_DEFINE_CLASS (SlopeSelector, Daata)
     oo_INTEGER (sampleSize)
 
     oo_INTEGER (numberOfTries)
+	oo_INTEGER (maximumNumberOfTries)
     oo_INTEGER (maximumContractionSize) // > sampleSize + numberOfPoints
 	oo_INTEGER (inversionsSize)
 	oo_OBJECT (Permutation, 0, lineRankingAtLowX)
