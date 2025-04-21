@@ -123,7 +123,8 @@ double structPowerCepstrumWorkspace :: getTrend (double quefrency) {
 	if (! slopeKnown)
 		getSlopeAndIntercept ();
 	const double xq = ( trendLineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? log (quefrency) : quefrency );
-	return slope * xq + intercept;
+	trenddB = slope * xq + intercept;
+	return trenddB;
 }
 
 void structPowerCepstrumWorkspace :: subtractTrend () {

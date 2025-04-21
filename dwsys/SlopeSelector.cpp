@@ -112,7 +112,7 @@ void structSlopeSelector :: getKth_TheilSen (integer k, double& kth, double& kp1
         integer numberOfCrossingsAtHighX = maxNumberOfIntervalCrossings, numberOfCrossingsAtHighXPrevious = maxNumberOfIntervalCrossings;
         integer kappa = k, ilow, ihigh;
 		double lowXPrevious, lowX = - std::numeric_limits<double>::infinity(), delta = 0.1;
-
+		
         auto getSlopes = [&] (integer numberOfSlopes) {
             Melder_assert (numberOfSlopes <= maximumContractionSize);
             slopes.resize (numberOfSlopes);
@@ -140,18 +140,20 @@ void structSlopeSelector :: getKth_TheilSen (integer k, double& kth, double& kp1
 			In Matoušek's paper the following loop has to be run until the currentNumberOfIntervalCrossings <= samplingSize.
 			We changed this to a number 10 times larger to reduce the number of iterations of this loop because
 			the selection of a random sample of the inversions in the interval [xlow,xHigh] with the function
-			'getSelectedInversionsNotInOther' is by far the most computational expensive part in the loop. 
+			'getSelectedInversionsNotInOther' is by far the most computational expensive part in the loop.
 			Reducing the number of iterations of this loop therefore saves more time than calculating somewhat more slopes.
 		*/
+		sortedRandomCrossingCodes.resize (sampleSize); // during the loop
+		currentInversions.resize (2 * sampleSize);
         while (currentNumberOfIntervalCrossings > std::min (maximumContractionSize, maxNumberOfIntervalCrossings)) { // sampleSize*10
 
             /*
                 Pick a random sample of size sampleSize from the intersections in the interval (lowX, highX)
                 and store these in the vector 'currentInversions'.
                 The first time we have the maximum number of slopes in our interval (-inf, +inf) and
-                therefore the current inversions can be chosen directly.
-                In the other cases we have n' < n(n-1)/2 slopes and pick random numbers from the interval [1,n']
-                from which we have to search the corresponding slopes in O(n log(n)) time.
+                therefore the current inversions can be sampled directly.
+                In the other cases we have n' < n(n-1)/2 slopes and pick sampleSize random numbers from the 
+                interval [1,n']. We then search the corresponding slopes in O(n log(n)) time.
             */
             if (numberOfTries == 0) {
  				for (integer i = 1; i <= sampleSize; i ++) {
@@ -181,11 +183,11 @@ void structSlopeSelector :: getKth_TheilSen (integer k, double& kth, double& kp1
 			double highX = slopes [ke];
 			trace (U"lowX:", lowX, U" highX:", highX);
             /*
-                We have one of the following five situations for k, when lpx & hpx are the previous interval borders,
+                We have one of the following five situations for k, when lpX & hpX are the previous interval borders,
                 lowX & highX the current interval borders and nlow and nhigh the number of inversions at the
                 current borders.
                    |                               |
-				  lpx                             hpx
+				  lpX                             hpX
 							|             |
 						   lowX (?==?)  highX
 						   nlow         nhigh
@@ -446,7 +448,6 @@ void timeSlopeSelection () {
 				const double slope4 = sls -> slopeQuantile_TheilSen (factor);
 				Melder_assert (fabs ((slope4 - slope) / slope) < 1e-12);
 			}
-			
         }
         MelderInfo_close ();
     } catch (MelderError) {

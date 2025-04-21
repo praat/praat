@@ -130,8 +130,7 @@ double PowerCepstrum_getTrendLineValue (constPowerCepstrum me, double quefrency,
 	double trenddb = undefined;
 	if (quefrency >= my xmin && quefrency <= my xmax) {
 		autoPowerCepstrumWorkspace ws = PowerCepstrumWorkspace_create (me, qstartFit, qendFit, lineType, fitMethod);
-		ws -> getTrend (quefrency);
-		trenddb =  ws -> trenddB;
+		trenddb = ws -> getTrend (quefrency);
 	}
 	return trenddb;
 }
