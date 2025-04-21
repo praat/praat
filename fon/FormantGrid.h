@@ -2,7 +2,7 @@
 #define _FormantGrid_h_
 /* FormantGrid.h
  *
- * Copyright (C) 2008-2011,2014,2015,2017 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2012,2014-2018,2025 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,34 +33,44 @@ autoFormantGrid FormantGrid_create (double tmin, double tmax, integer numberOfFo
 	double initialFirstFormant, double initialFormantSpacing,
 	double initialFirstBandwidth, double initialBandwidthSpacing);
 
-double FormantGrid_getFormantAtTime (FormantGrid me, integer formantNumber, double time);
-double FormantGrid_getBandwidthAtTime (FormantGrid me, integer formantNumber, double time);
+double FormantGrid_getFormantAtTime (constFormantGrid me, integer formantNumber, double time);
+double FormantGrid_getBandwidthAtTime (constFormantGrid me, integer formantNumber, double time);
 
-void FormantGrid_addFormantPoint (FormantGrid me, integer formantNumber, double time, double value);
-void FormantGrid_addBandwidthPoint (FormantGrid me, integer formantNumber, double time, double value);
-void FormantGrid_removeFormantPointsBetween (FormantGrid me, integer formantNumber, double tmin, double tmax);
-void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, integer formantNumber, double tmin, double tmax);
+void FormantGrid_addFormantPoint (mutableFormantGrid me, integer formantNumber, double time, double value);
+void FormantGrid_addBandwidthPoint (mutableFormantGrid me, integer formantNumber, double time, double value);
+void FormantGrid_removeFormantPointsBetween (mutableFormantGrid me, integer formantNumber, double tmin, double tmax);
+void FormantGrid_removeBandwidthPointsBetween (mutableFormantGrid me, integer formantNumber, double tmin, double tmax);
 
-void Sound_FormantGrid_filter_inplace (Sound me, FormantGrid formantGrid);
-autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid);
-autoSound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid);
+void Sound_FormantGrid_filter_inplace (mutableSound me, constFormantGrid formantGrid);
+autoSound Sound_FormantGrid_filter (constSound me, constFormantGrid formantGrid);
+autoSound Sound_FormantGrid_filter_noscale (constSound me, constFormantGrid formantGrid);
 
-autoSound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
+autoSound FormantGrid_to_Sound (constFormantGrid me, double samplingFrequency,
 	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2);
-void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samplingFrequency,
+void FormantGrid_playPart (constFormantGrid me, double tmin, double tmax, double samplingFrequency,
 	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
 	Sound_PlayCallback playCallback, Thing playBoss);
 
-void FormantGrid_formula_frequencies (FormantGrid me, conststring32 expression, Interpreter interpreter, FormantGrid thee);
-void FormantGrid_formula_bandwidths (FormantGrid me, conststring32 expression, Interpreter interpreter, FormantGrid thee);
+void FormantGrid_formula_frequencies (
+	mutableFormantGrid me,      // the source (and often also the target, namely if `thee` is null)
+	conststring32 expression,
+	Interpreter interpreter,
+	mutableFormantGrid thee     // the target (if not null)
+);
+void FormantGrid_formula_bandwidths (
+	mutableFormantGrid me,      // the source (and often also the target, namely if `thee` is null)
+	conststring32 expression,
+	Interpreter interpreter,
+	mutableFormantGrid thee    // the target (if not null)
+);
 
-autoFormantGrid Formant_downto_FormantGrid (Formant me);
-autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);
+autoFormantGrid Formant_downto_FormantGrid (constFormant me);
+autoFormant FormantGrid_to_Formant (constFormantGrid me, double dt, double intensity);
 
-autoSound Sound_Formant_filter (Sound me, Formant formant);
-autoSound Sound_Formant_filter_noscale (Sound me, Formant formant);
+autoSound Sound_Formant_filter (constSound me, constFormant formant);
+autoSound Sound_Formant_filter_noscale (constSound me, constFormant formant);
 
 /* End of file FormantGrid.h */
 #endif
