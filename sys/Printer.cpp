@@ -1,6 +1,6 @@
 /* Printer.cpp
  *
- * Copyright (C) 1998-2017,2021,2023 Paul Boersma
+ * Copyright (C) 1998-2017,2021,2023,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,8 @@ void Printer_nextPage () {
 			StartPage (theWinDC);
 			initPostScriptPage ();
 		} else {
-			if (EndPage (theWinDC) < 0) ;   /* BUG: should give the opportunity of cancellation. */
+			if (EndPage (theWinDC) < 0)
+				(void) 0;   // FIXME: should give the opportunity of cancellation
 			StartPage (theWinDC);
 			/*
 			 * Since StartPage has reset the DC, restore some of our non-default settings.

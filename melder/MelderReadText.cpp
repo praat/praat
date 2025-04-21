@@ -79,46 +79,65 @@ void MelderReadText_ungetChar (MelderReadText me) {
 }
 
 mutablestring32 MelderReadText_readLine (MelderReadText me) {
+	//TRACE
 	my previousPointerStep = 0;
 	if (my string32) {
+		trace (1);
 		Melder_assert (my readPointer32);
 		Melder_assert (! my readPointer8);
 		if (*my readPointer32 == U'\0')   // tried to read past end of file
 			return nullptr;
-		char32 *result = my readPointer32;
-		char32 *newline = str32chr (result, U'\n');
-		if (newline) {
-			*newline = U'\0';
-			my readPointer32 = newline + 1;
+		char32 *result32 = my readPointer32;
+		char32 *newline32 = str32chr (result32, U'\n');
+		if (newline32) {
+			*newline32 = U'\0';
+			my readPointer32 = newline32 + 1;
 		} else {
-			my readPointer32 += Melder_length (result);
+			my readPointer32 += Melder_length (result32);
 		}
-		return result;
+
+		integer lineLength = Melder_length (result32);
+		integer lineBufferSizeWanted = lineLength + 101;
+		if (lineBufferSizeWanted > my lineBufferSize) {
+			my lineBuffer = autostring32 (lineBufferSizeWanted);
+			my lineBufferSize = lineBufferSizeWanted;
+		}
+		str32cpy (my lineBuffer.get(), result32);
+		if (newline32)
+			*newline32 = U'\n';   // restore original newline symbol, so that getNumberOfLines() and getLineNumber() continue to work
 	} else {
+		trace (2);
 		Melder_assert (my string8);
 		Melder_assert (! my readPointer32);
 		Melder_assert (my readPointer8);
 		if (*my readPointer8 == '\0')   // tried to read past end of file
 			return nullptr;
 		char *result8 = my readPointer8;
-		char *newline = strchr (result8, '\n');
-		if (newline) {
-			*newline = '\0';
-			my readPointer8 = newline + 1;
+		char *newline8 = strchr (result8, '\n');
+		if (newline8) {
+			*newline8 = '\0';
+			my readPointer8 = newline8 + 1;
 		} else {
 			my readPointer8 += strlen (result8);
 		}
-		static char32 *text32 = nullptr;
-		static int64 size = 0;
-		int64 sizeNeeded = (int64) strlen (result8) + 1;
-		if (sizeNeeded > size) {
-			Melder_free (text32);
-			text32 = Melder_malloc_f (char32, sizeNeeded + 100);
-			size = sizeNeeded + 100;
+
+		uint64 lineLength_uint64 = (uint64) strlen (result8);
+		if (lineLength_uint64 > (uint64) (INTEGER_MAX - 101)) {
+			if (newline8)
+				*newline8 = '\n';
+			Melder_throw (U"Line too long: more than ", Melder_bigInteger (INTEGER_MAX - 101), U" characters.");
 		}
-		Melder_8to32_inplace (result8, text32, my input8Encoding);
-		return text32;
+		uint64 lineBufferSizeWanted_uint64 = lineLength_uint64 + 101;   // <= (uint64) INTEGER_MAX
+		integer lineBufferSizeWanted = integer (lineBufferSizeWanted_uint64);   // guarded conversion
+		if (lineBufferSizeWanted > my lineBufferSize) {
+			my lineBuffer = autostring32 (lineBufferSizeWanted);
+			my lineBufferSize = lineBufferSizeWanted;
+		}
+		Melder_8to32_inplace (result8, my lineBuffer.get(), my input8Encoding);
+		if (newline8)
+			*newline8 = '\n';   // restore original newline symbol, so that getNumberOfLines() and getLineNumber() continue to work
 	}
+	return my lineBuffer.get();
 }
 
 int64 MelderReadText_getNumberOfLines (MelderReadText me) {

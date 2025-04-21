@@ -95,19 +95,19 @@ double Function_convertToNonlogarithmic (constFunction me, double value, integer
 	return isdefined (value) && my v_isUnitLogarithmic (level, unit) ? pow (10.0, value) : value;
 }
 
-void Function_shiftXBy (mutableFunction me, double shift) {
+void Function_shiftXBy (const mutableFunction me, const double shift) {
 	my v_shiftX (0.0, shift);
 }
 
-void Function_shiftXTo (mutableFunction me, double xfrom, double xto) {
+void Function_shiftXTo (const mutableFunction me, const double xfrom, const double xto) {
 	my v_shiftX (xfrom, xto);
 }
 
-void Function_scaleXBy (mutableFunction me, double factor) {
+void Function_scaleXBy (const mutableFunction me, const double factor) {
 	my v_scaleX (0.0, 1.0, 0.0, factor);
 }
 
-void Function_scaleXTo (mutableFunction me, double xminto, double xmaxto) {
+void Function_scaleXTo (const mutableFunction me, double xminto, double xmaxto) {
 	my v_scaleX (my xmin, my xmax, xminto, xmaxto);
 }
 

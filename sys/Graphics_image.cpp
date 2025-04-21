@@ -1,10 +1,10 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2021,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -766,11 +766,40 @@ void Graphics_image_colour (Graphics me, constmatrixview <MelderColour> const& z
 				put (row [icol]. transparency);
 			}
 		}
-	} else
+	} else {
+		integer x1DC = wdx (x1WC), x2DC = wdx (x2WC), y1DC = wdy (y1WC), y2DC = wdy (y2WC);
+		integer width = x2DC - x1DC, height = ( my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC );
+		if (x1WC == x2WC && y1WC == y2WC) {
+			width = z.ncol;
+			x1DC -= width / 2;
+			x2DC = x1DC + width;
+			height = z.nrow;
+			if (my yIsZeroAtTheTop) {
+				y2DC -= height / 2;
+				y1DC = y2DC + height;
+			} else {
+				y1DC -= height / 2;
+				y2DC = y1DC + height;
+			}
+		} else if (x1WC == x2WC) {
+			width = height * ((double) z.ncol / (double) z.nrow);
+			x1DC -= width / 2;
+			x2DC = x1DC + width;
+		} else if (y1WC == y2WC) {
+			height = width * ((double) z.nrow / (double) z.ncol);
+			if (my yIsZeroAtTheTop) {
+				y2DC -= height / 2;
+				y1DC = y2DC + height;
+			} else {
+				y1DC -= height / 2;
+				y2DC = y1DC + height;
+			}
+		}
 		_cellArrayOrImage (me, constMATVU(), z, constmatrixview<unsigned char>(),
-			1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+			1, z.ncol, x1DC, x2DC, 1, z.nrow, y1DC, y2DC, minimum, maximum,
 			wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), true
 		);
+	}
 }
 
 void Graphics_image8 (Graphics me, constmatrixview <unsigned char> const& z,
@@ -796,7 +825,7 @@ void Graphics_image8 (Graphics me, constmatrixview <unsigned char> const& z,
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 relativeFileName, double x1, double x2, double y1, double y2) {
 	integer x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
 	integer width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
-	#if 0
+	#if 1
 		structMelderFile file { };
 		Melder_relativePathToFile (relativeFileName, & file);
 		try {
@@ -820,12 +849,13 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 rela
 					z [iy] [ix]. transparency = photo -> d_transparency -> z [iy] [ix];
 				}
 			}
-			_cellArrayOrImage (me, nullptr, z.peek(), nullptr,
+			_cellArrayOrImage (me, constMATVU(), z.get(), constmatrixview<unsigned char>(),
 				1, photo -> nx, x1DC, x2DC, 1, photo -> ny, y1DC, y2DC,
 				0.0, 1.0,
 				//wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC),   // in case of clipping
 				LONG_MIN, LONG_MAX, LONG_MAX, LONG_MIN,   // in case of no clipping
-				true);
+				true
+			);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
@@ -890,6 +920,26 @@ void Graphics_imageFromFile (Graphics me, conststring32 relativeFileName, double
 		op (IMAGE_FROM_FILE, 5 + length); put (x1); put (x2); put (y1); put (y2); sput (txt_utf8, length)
 	} else if (my screen) {
 		_GraphicsScreen_imageFromFile (static_cast <GraphicsScreen> (me), relativeFileName, x1, x2, y1, y2);
+	}
+}
+
+void Graphics_imageFromFile_embedded (Graphics me, conststring32 relativeFileName, double x1, double x2, double y1, double y2) {
+	structMelderFile file { };
+	Melder_relativePathToFile (relativeFileName, & file);
+	try {
+		autoPhoto photo = Photo_readFromImageFile (& file);
+		automatrix <MelderColour> z = newmatrixraw <MelderColour> (photo -> ny, photo -> nx);
+		for (integer iy = 1; iy <= photo -> ny; iy ++) {
+			for (integer ix = 1; ix <= photo -> nx; ix ++) {
+				z [iy] [ix]. red          = photo -> d_red          -> z [iy] [ix];
+				z [iy] [ix]. green        = photo -> d_green        -> z [iy] [ix];
+				z [iy] [ix]. blue         = photo -> d_blue         -> z [iy] [ix];
+				z [iy] [ix]. transparency = photo -> d_transparency -> z [iy] [ix];
+			}
+		}
+		Graphics_image_colour (me, z.get(), x1, x2, y1, y2, 0.0, 1.0);   // this does clipping to the canvas
+	} catch (MelderError) {
+		Melder_clearError ();
 	}
 }
 

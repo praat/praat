@@ -126,22 +126,25 @@ double Function_window (double tim, int windowType);
 	Procedures to adapt a range to the extent of the function domain.
 */
 void Function_unidirectionalAutowindow (
-	const constFunction me,
-	double *const xmin,
-	double *const xmax
+	constFunction me,
+	double *xmin,
+	double *xmax
 );
 void Function_bidirectionalAutowindow (
-	const constFunction me,
-	double *const x1,
-	double *const x2
+	constFunction me,
+	double *x1,
+	double *x2
 );
 bool Function_intersectRangeWithDomain (
-	const constFunction me,
-	double *const x1,
-	double *const x2
+	constFunction me,
+	double *x1,
+	double *x2
 );
 
-void Function_shiftXBy (mutableFunction me, double shift);
+void Function_shiftXBy (
+	mutableFunction me,
+	double shift
+);
 void Function_shiftXTo (mutableFunction me, double xfrom, double xto);
 void Function_scaleXBy (mutableFunction me, double factor);
 void Function_scaleXTo (mutableFunction me, double xminto, double xmaxto);

@@ -1,6 +1,6 @@
 /* FormantGrid.cpp
  *
- * Copyright (C) 2008,2009,2011,2012,2014-2020,2023 Paul Boersma & David Weenink
+ * Copyright (C) 2008,2009,2011,2012,2014-2020,2023,2025 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,41 +41,60 @@
 
 Thing_implement (FormantGrid, Function, 0);
 
-double structFormantGrid :: v_getVector (const integer irow, const integer icol) const {
-	RealTier tier = our formants.at [irow];
+double structFormantGrid :: v_getVector (
+	const integer irow,
+	const integer icol
+) const {
+	const constRealTier tier = our formants.at [irow];
 	return RealTier_getValueAtIndex (tier, icol);
 }
 
-double structFormantGrid :: v_getFunction1 (const integer irow, const double x) const {
-	RealTier tier = our formants.at [irow];
+double structFormantGrid :: v_getFunction1 (
+	const integer irow,
+	const double x
+) const {
+	const constRealTier tier = our formants.at [irow];
 	return RealTier_getValueAtTime (tier, x);
 }
 
-void structFormantGrid :: v_shiftX (double xfrom, double xto) {
+void structFormantGrid :: v_shiftX (
+	const double xfrom,
+	const double xto
+) /* mutable */ {
 	FormantGrid_Parent :: v_shiftX (xfrom, xto);
 	for (integer i = 1; i <= our formants.size; i ++) {
-		RealTier tier = our formants.at [i];
+		const mutableRealTier tier = our formants.at [i];
 		tier -> v_shiftX (xfrom, xto);
 	}
 	for (integer i = 1; i <= our bandwidths.size; i ++) {
-		RealTier tier = our bandwidths.at [i];
+		const mutableRealTier tier = our bandwidths.at [i];
 		tier -> v_shiftX (xfrom, xto);
 	}
 }
 
-void structFormantGrid :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+void structFormantGrid :: v_scaleX (
+	const double xminfrom,
+	const double xmaxfrom,
+	const double xminto,
+	const double xmaxto
+) /* mutable */ {
 	FormantGrid_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	for (integer i = 1; i <= our formants.size; i ++) {
-		RealTier tier = our formants.at [i];
+		const mutableRealTier tier = our formants.at [i];
 		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 	for (integer i = 1; i <= our bandwidths.size; i ++) {
-		RealTier tier = our bandwidths.at [i];
+		const mutableRealTier tier = our bandwidths.at [i];
 		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
 
-void FormantGrid_init (FormantGrid me, double tmin, double tmax, integer numberOfFormants) {
+void FormantGrid_init (
+	const mutableFormantGrid me,
+	const double tmin,
+	const double tmax,
+	const integer numberOfFormants
+) {
 	for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
 		autoRealTier formant = RealTier_create (tmin, tmax);
 		my formants. addItem_move (formant.move());
@@ -86,7 +105,11 @@ void FormantGrid_init (FormantGrid me, double tmin, double tmax, integer numberO
 	my xmax = tmax;
 }
 
-autoFormantGrid FormantGrid_createEmpty (double tmin, double tmax, integer numberOfFormants) {
+autoFormantGrid FormantGrid_createEmpty (
+	const double tmin,
+	const double tmax,
+	const integer numberOfFormants
+) {
 	try {
 		autoFormantGrid me = Thing_new (FormantGrid);
 		FormantGrid_init (me.get(), tmin, tmax, numberOfFormants);
@@ -96,17 +119,22 @@ autoFormantGrid FormantGrid_createEmpty (double tmin, double tmax, integer numbe
 	}
 }
 
-autoFormantGrid FormantGrid_create (double tmin, double tmax, integer numberOfFormants,
-	double initialFirstFormant, double initialFormantSpacing,
-	double initialFirstBandwidth, double initialBandwidthSpacing)
-{
+autoFormantGrid FormantGrid_create (
+	const double tmin,
+	const double tmax,
+	const integer numberOfFormants,
+	const double initialFirstFormant,
+	const double initialFormantSpacing,
+	const double initialFirstBandwidth,
+	const double initialBandwidthSpacing
+) {
 	try {
 		autoFormantGrid me = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
 		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
 			FormantGrid_addFormantPoint (me.get(), iformant, 0.5 * (tmin + tmax),
-				initialFirstFormant + (iformant - 1) * initialFormantSpacing);
+					initialFirstFormant + (iformant - 1) * initialFormantSpacing);
 			FormantGrid_addBandwidthPoint (me.get(), iformant, 0.5 * (tmin + tmax),
-				initialFirstBandwidth + (iformant - 1) * initialBandwidthSpacing);
+					initialFirstBandwidth + (iformant - 1) * initialBandwidthSpacing);
 		}
 		return me;
 	} catch (MelderError) {
@@ -114,78 +142,114 @@ autoFormantGrid FormantGrid_create (double tmin, double tmax, integer numberOfFo
 	}
 }
 
-void FormantGrid_addFormantPoint (FormantGrid me, integer iformant, double t, double value) {
+void FormantGrid_addFormantPoint (
+	const mutableFormantGrid me,
+	const integer iformant,
+	const double time,
+	const double value
+) {
 	try {
 		if (iformant < 1 || iformant > my formants.size)
 			Melder_throw (U"No such formant number.");
 		RealTier formantTier = my formants.at [iformant];
-		RealTier_addPoint (formantTier, t, value);
+		RealTier_addPoint (formantTier, time, value);
 	} catch (MelderError) {
 		Melder_throw (me, U": formant point not added.");
 	}
 }
 
-void FormantGrid_addBandwidthPoint (FormantGrid me, integer iformant, double t, double value) {
+void FormantGrid_addBandwidthPoint (
+	const mutableFormantGrid me,
+	const integer iformant,
+	const double time,
+	const double value
+) {
 	try {
 		if (iformant < 1 || iformant > my formants.size)
 			Melder_throw (U"No such formant number.");
 		RealTier bandwidthTier = my bandwidths.at [iformant];
-		RealTier_addPoint (bandwidthTier, t, value);
+		RealTier_addPoint (bandwidthTier, time, value);
 	} catch (MelderError) {
 		Melder_throw (me, U": bandwidth point not added.");
 	}
 }
 
-double FormantGrid_getFormantAtTime (FormantGrid me, integer iformant, double t) {
-	if (iformant < 1 || iformant > my formants.size) return undefined;
-	return RealTier_getValueAtTime (my formants.at [iformant], t);
+double FormantGrid_getFormantAtTime (
+	const constFormantGrid me,
+	const integer iformant,
+	const double time
+) {
+	if (iformant < 1 || iformant > my formants.size)
+		return undefined;
+	return RealTier_getValueAtTime (my formants.at [iformant], time);
 }
 
-double FormantGrid_getBandwidthAtTime (FormantGrid me, integer iformant, double t) {
-	if (iformant < 1 || iformant > my bandwidths.size) return undefined;
-	return RealTier_getValueAtTime (my bandwidths.at [iformant], t);
+double FormantGrid_getBandwidthAtTime (
+	const constFormantGrid me,
+	const integer iformant,
+	const double time
+) {
+	if (iformant < 1 || iformant > my bandwidths.size)
+		return undefined;
+	return RealTier_getValueAtTime (my bandwidths.at [iformant], time);
 }
 
-void FormantGrid_removeFormantPointsBetween (FormantGrid me, integer iformant, double tmin, double tmax) {
-	if (iformant < 1 || iformant > my formants.size) return;
+void FormantGrid_removeFormantPointsBetween (
+	const mutableFormantGrid me,
+	const integer iformant,
+	const double tmin,
+	const double tmax
+) {
+	if (iformant < 1 || iformant > my formants.size)
+		return;
 	AnyTier_removePointsBetween (my formants.at [iformant]->asAnyTier(), tmin, tmax);
 }
 
-void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, integer iformant, double tmin, double tmax) {
-	if (iformant < 1 || iformant > my bandwidths.size) return;
+void FormantGrid_removeBandwidthPointsBetween (
+	const mutableFormantGrid me,
+	const integer iformant,
+	const double tmin,
+	const double tmax
+) {
+	if (iformant < 1 || iformant > my bandwidths.size)
+		return;
 	AnyTier_removePointsBetween (my bandwidths.at [iformant]->asAnyTier(), tmin, tmax);
 }
 
-void Sound_FormantGrid_filter_inplace (Sound me, FormantGrid formantGrid) {
-	double dt = my dx;
+void Sound_FormantGrid_filter_inplace (
+	const mutableSound me,
+	const constFormantGrid formantGrid
+) {
+	const double dt = my dx;
 	if (formantGrid -> formants.size > 0 && formantGrid -> bandwidths.size > 0) {
 		for (integer iformant = 1; iformant <= formantGrid -> formants.size; iformant ++) {
-			RealTier formantTier = formantGrid -> formants.at [iformant];
-			RealTier bandwidthTier = formantGrid -> bandwidths.at [iformant];
+			const constRealTier formantTier = formantGrid -> formants.at [iformant];
+			const constRealTier bandwidthTier = formantGrid -> bandwidths.at [iformant];
 			for (integer isamp = 1; isamp <= my nx; isamp ++) {
-				double t = my x1 + (isamp - 1) * my dx;
+				const double t = my x1 + (isamp - 1) * my dx;
 				/*
-				 * Compute LP coefficients.
-				 */
-				double formant, bandwidth;
-				formant = RealTier_getValueAtTime (formantTier, t);
-				bandwidth = RealTier_getValueAtTime (bandwidthTier, t);
+					Compute LP coefficients.
+				*/
+				const double formant = RealTier_getValueAtTime (formantTier, t);
+				const double bandwidth = RealTier_getValueAtTime (bandwidthTier, t);
 				if (isdefined (formant) && isdefined (bandwidth)) {
-					double cosomdt = cos (2 * NUMpi * formant * dt);
-					double r = exp (- NUMpi * bandwidth * dt);
+					const double cosomdt = cos (2 * NUMpi * formant * dt);
+					const double r = exp (- NUMpi * bandwidth * dt);
 					/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
 					if (fabs (cosomdt) > 0.999999) {   /* Allow for round-off errors. */
 						/* single pole: D(z) = 1 - r z^-1 */
-						for (integer channel = 1; channel <= my ny; channel ++) {
-							if (isamp > 1) my z [channel] [isamp] += r * my z [channel] [isamp - 1];
-						}
+						for (integer channel = 1; channel <= my ny; channel ++)
+							if (isamp > 1)
+								my z [channel] [isamp] += r * my z [channel] [isamp - 1];
 					} else {
 						/* double pole: D(z) = 1 + p z^-1 + q z^-2 */
-						double p = - 2 * r * cosomdt;
-						double q = r * r;
+						const double p = - 2 * r * cosomdt;
+						const double q = r * r;
 						for (integer channel = 1; channel <= my ny; channel ++) {
-							if (isamp > 1) my z [channel] [isamp] -= p * my z [channel] [isamp - 1];
-							if (isamp > 2) my z [channel] [isamp] -= q * my z [channel] [isamp - 2];
+							if (isamp > 1)
+								my z [channel] [isamp] -= p * my z [channel] [isamp - 1];
+							if (isamp > 2)
+								my z [channel] [isamp] -= q * my z [channel] [isamp - 2];
 						}
 					}
 				}
@@ -194,7 +258,10 @@ void Sound_FormantGrid_filter_inplace (Sound me, FormantGrid formantGrid) {
 	}
 }
 
-autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
+autoSound Sound_FormantGrid_filter (
+	const constSound me,
+	const constFormantGrid formantGrid
+) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_FormantGrid_filter_inplace (thee.get(), formantGrid);
@@ -205,7 +272,10 @@ autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 	}
 }
 
-autoSound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid) {
+autoSound Sound_FormantGrid_filter_noscale (
+	const constSound me,
+	const constFormantGrid formantGrid
+) {
 	try {
 		autoSound thee = Data_copy (me);
 		Sound_FormantGrid_filter_inplace (thee.get(), formantGrid);
@@ -215,17 +285,22 @@ autoSound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid) {
 	}
 }
 
-autoSound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
-	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
-	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2)
-{
+autoSound FormantGrid_to_Sound (
+	const constFormantGrid me,
+	const double samplingFrequency,
+	const double tStart, const double f0Start,
+	const double tMid, const double f0Mid,
+	const double tEnd, const double f0End,
+	const double adaptFactor, const double maximumPeriod,
+	const double openPhase, const double collisionPhase, const double power1, const double power2
+) {
 	try {
 		autoPitchTier pitch = PitchTier_create (my xmin, my xmax);
 		RealTier_addPoint (pitch.get(), my xmin + tStart * (my xmax - my xmin), f0Start);
 		RealTier_addPoint (pitch.get(), my xmin + tMid * (my xmax - my xmin), f0Mid);
 		RealTier_addPoint (pitch.get(), my xmax - (1.0 - tEnd) * (my xmax - my xmin), f0End);
 		autoSound thee = PitchTier_to_Sound_phonation (pitch.get(), samplingFrequency,
-			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2, false);
+				adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2, false);
 		Sound_FormantGrid_filter_inplace (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
@@ -233,15 +308,22 @@ autoSound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 	}
 }
 
-void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samplingFrequency,
-	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
-	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
-	Sound_PlayCallback playCallback, Thing playBoss)
-{
+void FormantGrid_playPart (
+	const constFormantGrid me,
+	const double tmin, const double tmax,
+	const double samplingFrequency,
+	const double tStart, const double f0Start,
+	const double tMid, const double f0Mid,
+	const double tEnd, const double f0End,
+	const double adaptFactor, const double maximumPeriod,
+	const double openPhase, const double collisionPhase, const double power1, const double power2,
+	const Sound_PlayCallback playCallback, const mutableThing playBoss
+) {
 	try {
 		autoSound sound = FormantGrid_to_Sound (me, samplingFrequency,
 			tStart, f0Start, tMid, f0Mid, tEnd, f0End,
-			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2);
+			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2
+		);
 		Vector_scale (sound.get(), 0.99);
 		Sound_playPart (sound.get(), tmin, tmax, playCallback, playBoss);
 	} catch (MelderError) {
@@ -249,27 +331,12 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 	}
 }
 
-void FormantGrid_formula_bandwidths (FormantGrid me, conststring32 expression, Interpreter interpreter, FormantGrid thee) {
-	try {
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		Formula_Result result;
-		if (! thee)
-			thee = me;
-		for (integer irow = 1; irow <= my formants.size; irow ++) {
-			const RealTier bandwidth = thy bandwidths.at [irow];
-			for (integer icol = 1; icol <= bandwidth -> points.size; icol ++) {
-				Formula_run (irow, icol, & result);
-				if (isundef (result. numericResult))
-					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
-				bandwidth -> points.at [icol] -> value = result. numericResult;
-			}
-		}
-	} catch (MelderError) {
-		Melder_throw (me, U": bandwidth formula not completed.");
-	}
-}
-
-void FormantGrid_formula_frequencies (FormantGrid me, conststring32 expression, Interpreter interpreter, FormantGrid thee) {
+void FormantGrid_formula_frequencies (
+	const mutableFormantGrid me,
+	const conststring32 expression,
+	const Interpreter interpreter,
+	/* mutable assign if null */ mutableFormantGrid thee
+) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
@@ -289,7 +356,32 @@ void FormantGrid_formula_frequencies (FormantGrid me, conststring32 expression, 
 	}
 }
 
-autoFormantGrid Formant_downto_FormantGrid (Formant me) {
+void FormantGrid_formula_bandwidths (
+	const mutableFormantGrid me,
+	const conststring32 expression,
+	const Interpreter interpreter,
+	/* mutable assign if null */ mutableFormantGrid thee
+) {
+	try {
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
+		if (! thee)
+			thee = me;
+		for (integer irow = 1; irow <= my formants.size; irow ++) {
+			const RealTier bandwidth = thy bandwidths.at [irow];
+			for (integer icol = 1; icol <= bandwidth -> points.size; icol ++) {
+				Formula_run (irow, icol, & result);
+				if (isundef (result. numericResult))
+					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
+				bandwidth -> points.at [icol] -> value = result. numericResult;
+			}
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": bandwidth formula not completed.");
+	}
+}
+
+autoFormantGrid Formant_downto_FormantGrid (const constFormant me) {
 	try {
 		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, my maxnFormants);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
@@ -307,7 +399,7 @@ autoFormantGrid Formant_downto_FormantGrid (Formant me) {
 	}
 }
 
-autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity) {
+autoFormant FormantGrid_to_Formant (const constFormantGrid me, const double dt, const double intensity) {
 	try {
 		Melder_assert (dt > 0.0);
 		Melder_assert (intensity >= 0.0);
@@ -319,11 +411,11 @@ autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity)
 			frame -> intensity = intensity;
 			frame -> numberOfFormants = my formants.size;
 			frame -> formant = newvectorzero <structFormant_Formant> (my formants.size);
-			const double t = t1 + (iframe - 1) * dt;
+			const double time = t1 + (iframe - 1) * dt;
 			for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 				const Formant_Formant formant = & frame -> formant [iformant];
-				formant -> frequency = RealTier_getValueAtTime (my formants.at [iformant], t);
-				formant -> bandwidth = RealTier_getValueAtTime (my bandwidths.at [iformant], t);
+				formant -> frequency = RealTier_getValueAtTime (my formants.at [iformant], time);
+				formant -> bandwidth = RealTier_getValueAtTime (my bandwidths.at [iformant], time);
 			}
 		}
 		return thee;
@@ -332,7 +424,7 @@ autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity)
 	}
 }
 
-autoSound Sound_Formant_filter (Sound me, Formant formant) {
+autoSound Sound_Formant_filter (const constSound me, const constFormant formant) {
 	try {
 		autoFormantGrid grid = Formant_downto_FormantGrid (formant);
 		autoSound thee = Sound_FormantGrid_filter (me, grid.get());
@@ -342,7 +434,7 @@ autoSound Sound_Formant_filter (Sound me, Formant formant) {
 	}
 }
 
-autoSound Sound_Formant_filter_noscale (Sound me, Formant formant) {
+autoSound Sound_Formant_filter_noscale (const constSound me, const constFormant formant) {
 	try {
 		autoFormantGrid grid = Formant_downto_FormantGrid (formant);
 		autoSound thee = Sound_FormantGrid_filter_noscale (me, grid.get());

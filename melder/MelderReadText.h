@@ -25,6 +25,8 @@ struct structMelderReadText {
 	char *readPointer8;
 	kMelder_textInputEncoding input8Encoding;
 	int previousPointerStep = 0;
+	autostring32 lineBuffer;
+	integer lineBufferSize = 0;
 	structMelderReadText () : readPointer32 (nullptr), readPointer8 (nullptr) {
 		/*
 			Check that C++ default initialization has worked.

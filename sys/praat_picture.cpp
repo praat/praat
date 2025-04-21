@@ -1027,7 +1027,7 @@ FORM (GRAPHICS_InsertPictureFromFile, U"Praat picture: Insert picture from file"
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_imageFromFile (GRAPHICS, fileName, fromX, toX, fromY, toY);
+		Graphics_imageFromFile_embedded (GRAPHICS, fileName, fromX, toX, fromY, toY);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
 }

@@ -26,7 +26,7 @@ Thing_declare (Interpreter);
 
 #include "Matrix_def.h"
 
-#if 1
+#if 0
 template <typename T, typename... Args>
 	autoSomeThing <T> Thing_create (Args ... args) {
 		autoSomeThing <T> me (new T);   // this `new` has to set classInfo

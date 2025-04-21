@@ -210,6 +210,7 @@ void Graphics_image_colour (Graphics me, constmatrixview <MelderColour> const& z
 void Graphics_image8 (Graphics me, constmatrixview <unsigned char> const& z,
 	double x1, double x2, double y1, double y2, uint8 minimum, uint8 maximum);
 void Graphics_imageFromFile (Graphics me, conststring32 relativeFileName, double x1, double x2, double y1, double y2);
+void Graphics_imageFromFile_embedded (Graphics me, conststring32 relativeFileName, double x1, double x2, double y1, double y2);
 void Graphics_line (Graphics me, double x1, double y1, double x2, double y2);
 void Graphics_rectangle (Graphics me, double x1, double x2, double y1, double y2);
 void Graphics_fillRectangle (Graphics me, double x1, double x2, double y1, double y2);
