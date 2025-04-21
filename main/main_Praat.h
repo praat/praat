@@ -4,7 +4,7 @@
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -25,10 +25,10 @@
 	and `Info.plist Preprocessor Prefix File` to `main/main_Praat.h`.
 */
 #define PRAAT_NAME  Praat
-#define PRAAT_VERSION_STR  6.4.27
+#define PRAAT_VERSION_STR  6.4.28beta.250421.1713
 #define PRAAT_VERSION_NUM  6427
 #define PRAAT_YEAR  2025
-#define PRAAT_MONTH  1
-#define PRAAT_DAY  27
+#define PRAAT_MONTH  4
+#define PRAAT_DAY  21
 
 /* End of file main_Praat.h */

@@ -45,13 +45,26 @@ void Sound_FormantGrid_filter_inplace (mutableSound me, constFormantGrid formant
 autoSound Sound_FormantGrid_filter (constSound me, constFormantGrid formantGrid);
 autoSound Sound_FormantGrid_filter_noscale (constSound me, constFormantGrid formantGrid);
 
-autoSound FormantGrid_to_Sound (constFormantGrid me, double samplingFrequency,
-	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
-	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2);
-void FormantGrid_playPart (constFormantGrid me, double tmin, double tmax, double samplingFrequency,
-	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
-	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
-	Sound_PlayCallback playCallback, Thing playBoss);
+autoSound FormantGrid_to_Sound (
+	constFormantGrid me,
+	double samplingFrequency,        // the sample rate of the resulting Sound
+	double tStart, double f0Start,   // time and F0 of the first pitch point
+	double tMid, double f0Mid,       // time and F0 of the second pitch point
+	double tEnd, double f0End,       // time and F0 of the third pitch point
+	double adaptFactor, double maximumPeriod,                               // pulse generation settings
+	double openPhase, double collisionPhase, double power1, double power2   // phonation shape settings
+);
+void FormantGrid_playPart (
+	constFormantGrid me,
+	double tmin, double tmax,        // the time range of the part to play
+	double samplingFrequency,        // the sample rate of the resulting Sound
+	double tStart, double f0Start,   // time and F0 of the first pitch point
+	double tMid, double f0Mid,       // time and F0 of the second pitch point
+	double tEnd, double f0End,       // time and F0 of the third pitch point
+	double adaptFactor, double maximumPeriod,                                // pulse generation settings
+	double openPhase, double collisionPhase, double power1, double power2,   // phonation shape settings
+	Sound_PlayCallback playCallback, mutableThing playBoss   // callback to boss: cancel playing, show running cursor...
+);
 
 void FormantGrid_formula_frequencies (
 	mutableFormantGrid me,      // the source (and often also the target, namely if `thee` is null)
@@ -63,7 +76,7 @@ void FormantGrid_formula_bandwidths (
 	mutableFormantGrid me,      // the source (and often also the target, namely if `thee` is null)
 	conststring32 expression,
 	Interpreter interpreter,
-	mutableFormantGrid thee    // the target (if not null)
+	mutableFormantGrid thee     // the target (if not null)
 );
 
 autoFormantGrid Formant_downto_FormantGrid (constFormant me);

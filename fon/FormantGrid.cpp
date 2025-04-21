@@ -41,17 +41,26 @@
 
 Thing_implement (FormantGrid, Function, 0);
 
-double structFormantGrid :: v_getVector (const integer irow, const integer icol) const {
+double structFormantGrid :: v_getVector (
+	const integer irow,
+	const integer icol
+) const {
 	const constRealTier tier = our formants.at [irow];
 	return RealTier_getValueAtIndex (tier, icol);
 }
 
-double structFormantGrid :: v_getFunction1 (const integer irow, const double x) const {
+double structFormantGrid :: v_getFunction1 (
+	const integer irow,
+	const double x
+) const {
 	const constRealTier tier = our formants.at [irow];
 	return RealTier_getValueAtTime (tier, x);
 }
 
-void structFormantGrid :: v_shiftX (const double xfrom, const double xto) {
+void structFormantGrid :: v_shiftX (
+	const double xfrom,
+	const double xto
+) /* mutable */ {
 	FormantGrid_Parent :: v_shiftX (xfrom, xto);
 	for (integer i = 1; i <= our formants.size; i ++) {
 		const mutableRealTier tier = our formants.at [i];
@@ -63,7 +72,12 @@ void structFormantGrid :: v_shiftX (const double xfrom, const double xto) {
 	}
 }
 
-void structFormantGrid :: v_scaleX (const double xminfrom, const double xmaxfrom, const double xminto, const double xmaxto) {
+void structFormantGrid :: v_scaleX (
+	const double xminfrom,
+	const double xmaxfrom,
+	const double xminto,
+	const double xmaxto
+) /* mutable */ {
 	FormantGrid_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	for (integer i = 1; i <= our formants.size; i ++) {
 		const mutableRealTier tier = our formants.at [i];
@@ -75,7 +89,12 @@ void structFormantGrid :: v_scaleX (const double xminfrom, const double xmaxfrom
 	}
 }
 
-void FormantGrid_init (const mutableFormantGrid me, const double tmin, const double tmax, const integer numberOfFormants) {
+void FormantGrid_init (
+	const mutableFormantGrid me,
+	const double tmin,
+	const double tmax,
+	const integer numberOfFormants
+) {
 	for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
 		autoRealTier formant = RealTier_create (tmin, tmax);
 		my formants. addItem_move (formant.move());
@@ -86,7 +105,11 @@ void FormantGrid_init (const mutableFormantGrid me, const double tmin, const dou
 	my xmax = tmax;
 }
 
-autoFormantGrid FormantGrid_createEmpty (const double tmin, const double tmax, const integer numberOfFormants) {
+autoFormantGrid FormantGrid_createEmpty (
+	const double tmin,
+	const double tmax,
+	const integer numberOfFormants
+) {
 	try {
 		autoFormantGrid me = Thing_new (FormantGrid);
 		FormantGrid_init (me.get(), tmin, tmax, numberOfFormants);
@@ -96,10 +119,15 @@ autoFormantGrid FormantGrid_createEmpty (const double tmin, const double tmax, c
 	}
 }
 
-autoFormantGrid FormantGrid_create (const double tmin, const double tmax, const integer numberOfFormants,
-	const double initialFirstFormant, const double initialFormantSpacing,
-	const double initialFirstBandwidth, const double initialBandwidthSpacing)
-{
+autoFormantGrid FormantGrid_create (
+	const double tmin,
+	const double tmax,
+	const integer numberOfFormants,
+	const double initialFirstFormant,
+	const double initialFormantSpacing,
+	const double initialFirstBandwidth,
+	const double initialBandwidthSpacing
+) {
 	try {
 		autoFormantGrid me = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
 		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
@@ -146,31 +174,52 @@ void FormantGrid_addBandwidthPoint (
 	}
 }
 
-double FormantGrid_getFormantAtTime (const constFormantGrid me, const integer iformant, const double time) {
+double FormantGrid_getFormantAtTime (
+	const constFormantGrid me,
+	const integer iformant,
+	const double time
+) {
 	if (iformant < 1 || iformant > my formants.size)
 		return undefined;
 	return RealTier_getValueAtTime (my formants.at [iformant], time);
 }
 
-double FormantGrid_getBandwidthAtTime (const constFormantGrid me, const integer iformant, const double time) {
+double FormantGrid_getBandwidthAtTime (
+	const constFormantGrid me,
+	const integer iformant,
+	const double time
+) {
 	if (iformant < 1 || iformant > my bandwidths.size)
 		return undefined;
 	return RealTier_getValueAtTime (my bandwidths.at [iformant], time);
 }
 
-void FormantGrid_removeFormantPointsBetween (const mutableFormantGrid me, const integer iformant, const double tmin, const double tmax) {
+void FormantGrid_removeFormantPointsBetween (
+	const mutableFormantGrid me,
+	const integer iformant,
+	const double tmin,
+	const double tmax
+) {
 	if (iformant < 1 || iformant > my formants.size)
 		return;
 	AnyTier_removePointsBetween (my formants.at [iformant]->asAnyTier(), tmin, tmax);
 }
 
-void FormantGrid_removeBandwidthPointsBetween (const mutableFormantGrid me, const integer iformant, const double tmin, const double tmax) {
+void FormantGrid_removeBandwidthPointsBetween (
+	const mutableFormantGrid me,
+	const integer iformant,
+	const double tmin,
+	const double tmax
+) {
 	if (iformant < 1 || iformant > my bandwidths.size)
 		return;
 	AnyTier_removePointsBetween (my bandwidths.at [iformant]->asAnyTier(), tmin, tmax);
 }
 
-void Sound_FormantGrid_filter_inplace (const mutableSound me, const constFormantGrid formantGrid) {
+void Sound_FormantGrid_filter_inplace (
+	const mutableSound me,
+	const constFormantGrid formantGrid
+) {
 	const double dt = my dx;
 	if (formantGrid -> formants.size > 0 && formantGrid -> bandwidths.size > 0) {
 		for (integer iformant = 1; iformant <= formantGrid -> formants.size; iformant ++) {
@@ -236,10 +285,15 @@ autoSound Sound_FormantGrid_filter_noscale (
 	}
 }
 
-autoSound FormantGrid_to_Sound (const constFormantGrid me, double samplingFrequency,
-	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
-	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2)
-{
+autoSound FormantGrid_to_Sound (
+	const constFormantGrid me,
+	const double samplingFrequency,
+	const double tStart, const double f0Start,
+	const double tMid, const double f0Mid,
+	const double tEnd, const double f0End,
+	const double adaptFactor, const double maximumPeriod,
+	const double openPhase, const double collisionPhase, const double power1, const double power2
+) {
 	try {
 		autoPitchTier pitch = PitchTier_create (my xmin, my xmax);
 		RealTier_addPoint (pitch.get(), my xmin + tStart * (my xmax - my xmin), f0Start);
@@ -254,11 +308,17 @@ autoSound FormantGrid_to_Sound (const constFormantGrid me, double samplingFreque
 	}
 }
 
-void FormantGrid_playPart (const constFormantGrid me, double tmin, double tmax, double samplingFrequency,
-	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
-	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
-	Sound_PlayCallback playCallback, const mutableThing playBoss)
-{
+void FormantGrid_playPart (
+	const constFormantGrid me,
+	const double tmin, const double tmax,
+	const double samplingFrequency,
+	const double tStart, const double f0Start,
+	const double tMid, const double f0Mid,
+	const double tEnd, const double f0End,
+	const double adaptFactor, const double maximumPeriod,
+	const double openPhase, const double collisionPhase, const double power1, const double power2,
+	const Sound_PlayCallback playCallback, const mutableThing playBoss
+) {
 	try {
 		autoSound sound = FormantGrid_to_Sound (me, samplingFrequency,
 			tStart, f0Start, tMid, f0Mid, tEnd, f0End,
