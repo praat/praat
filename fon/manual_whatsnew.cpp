@@ -29,7 +29,7 @@ R"~~~(
 
 Latest changes in Praat.
 
-##6.4.28# (xx April 2025)
+##6.4.28# (22 April 2025)
 • TextGrid window: removed a bug that caused slow scrolling (i.e. computation of whole-sound Pitch and Formant objects)
   if the TextGrid was much longer than the Sound and the Sound was scrolled out of sight.
 • EEG window: repaired a bug that caused Praat to crash when clicking ##View & Edit#.
@@ -37,6 +37,9 @@ Latest changes in Praat.
   (this had been a bug since the beginning of the Demo window, i.e. since May 2009).
 • ##Read TextGrid from ESPS label file...#
 • Repaired a bug that could cause Praat to crash on pitch analysis when a part of the sound was constant.
+• ##Insert picture from file...#: the picture is now embedded into Praat picture files;
+  this also solves a problem with file paths that surfaced when a script called another script that inserted a picture.
+• ##Photo: Save as PNG file...#: repaired a bug that caused a crash on the Mac.
 
 ##6.4.27# (27 January 2025)
 • Graphics text: better pipes and slashes.
