@@ -1,10 +1,10 @@
 /* espeak_praat.cpp
  *
-//  * Copyright (C) 2017-2021 David Weenink, 2024 Paul Boersma
+//  * Copyright (C) 2017-2021 David Weenink, 2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -64,7 +64,7 @@ static void littleEndian4ToNativeEndian (uint8 *fourBytes) {
 static void phondata_makeNativeEndian (FileInMemory me, FileInMemory manifest) {
 	//TRACE
 	try {
-		uint8 * const data = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 *const data = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		FileInMemory phondataf = FileInMemorySet_fopen (theEspeakPraatFileInMemorySet(), Melder_peek32to8_fileSystem (my string.get()), "r");
 		Melder_assert (phondataf);
 		FileInMemory manifestf = FileInMemorySet_fopen (theEspeakPraatFileInMemorySet(), Melder_peek32to8_fileSystem (manifest -> string.get()), "r");
@@ -206,7 +206,7 @@ static void phondata_makeNativeEndian (FileInMemory me, FileInMemory manifest) {
 static void phontab_makeNativeEndian (FileInMemory me) {
 	//TRACE
 	try {
-		uint8 * const data = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 *const data = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		const integer numberOfPhonemeTables = data [0];
 		trace (numberOfPhonemeTables, U" phoneme tables");
 		integer index = 4; // skip first 4 bytes
@@ -253,7 +253,7 @@ static void phontab_makeNativeEndian (FileInMemory me) {
 static void phonindex_makeNativeEndian (FileInMemory me) {
 	//TRACE
 	try {
-		uint8 * const data = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
+		uint8 *const data = my d_data.asArgumentToFunctionThatExpectsZeroBasedArray();
 		const integer numberOfShorts = (my d_numberOfBytes - 4) / 2;   // there used to be an extra "- 1" here (ppgb 20240817)
 		integer index = 4; // skip first 4 bytes
 		for (integer i = 0; i < numberOfShorts; i ++) {

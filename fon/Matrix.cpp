@@ -1,10 +1,10 @@
 /* Matrix.cpp
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -167,7 +167,7 @@ integer Matrix_yToHighRow (const constMatrix me, const double y) { return Melder
 integer Matrix_yToNearestRow (const constMatrix me, const double y) { return Melder_iround (Matrix_yToRow (me, y)); }
 
 integer Matrix_getWindowSamplesX (const constMatrix me,
-	const double xmin, const double xmax, integer * const ixmin, integer * const ixmax
+	const double xmin, const double xmax, integer *const ixmin, integer *const ixmax
 ) {
 	*ixmin = 1 + Melder_iceiling ((xmin - my x1) / my dx);
 	*ixmax = 1 + Melder_ifloor   ((xmax - my x1) / my dx);
@@ -182,7 +182,7 @@ integer Matrix_getWindowSamplesX (const constMatrix me,
 
 integer Matrix_getWindowSamplesY (const constMatrix me,
 	const double ymin, const double ymax,
-	integer * const iymin, integer * const iymax
+	integer *const iymin, integer *const iymax
 ) {
 	*iymin = 1 + Melder_iceiling ((ymin - my y1) / my dy);
 	*iymax = 1 + Melder_ifloor   ((ymax - my y1) / my dy);
@@ -198,7 +198,7 @@ integer Matrix_getWindowSamplesY (const constMatrix me,
 integer Matrix_getWindowExtrema (const constMatrix me,
 	integer ixmin, integer ixmax,
 	integer iymin, integer iymax,
-	double * const minimum, double * const maximum)
+	double *const minimum, double *const maximum)
 {
 	if (ixmin == 0)   // default = all
 		ixmin = 1;

@@ -1,10 +1,10 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013-2024 Paul Boersma
+ * Copyright (C) 2013-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -290,7 +290,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 	static void _mac_saveAsImageFile (Photo me, MelderFile file, const void *which) {
 		const integer bytesPerRow = my nx * 4;
 		const integer numberOfRows = my ny;
-		unsigned char * const imageData = Melder_malloc_f (unsigned char, bytesPerRow * numberOfRows);
+		unsigned char *const imageData = Melder_malloc_f (unsigned char, bytesPerRow * numberOfRows);
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			uint8 *rowAddress = imageData + bytesPerRow * (my ny - irow);
 			for (integer icol = 1; icol <= my nx; icol ++) {
@@ -312,7 +312,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		);
 		Melder_assert (dataProvider);
 		CGImageRef image = CGImageCreate (integer_to_uinteger (my nx), integer_to_uinteger (numberOfRows),
-			8, 32, integer_to_uinteger (bytesPerRow), colourSpace, kCGImageAlphaNone, dataProvider, nullptr, false, kCGRenderingIntentDefault);
+			8, 32, integer_to_uinteger (bytesPerRow), colourSpace, kCGImageAlphaLast, dataProvider, nullptr, false, kCGRenderingIntentDefault);
 		CGDataProviderRelease (dataProvider);
 		Melder_assert (image);
 		NSString *path = (NSString *) MelderFile_peekPathCfstring (file);

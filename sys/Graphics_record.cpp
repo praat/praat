@@ -1,10 +1,10 @@
 /* Graphics_record.cpp
  *
- * Copyright (C) 1992-2005,2007-2020,2023 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2020,2023,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -90,7 +90,7 @@ void Graphics_clearRecording (Graphics me) {
 
 void Graphics_play (Graphics me, Graphics thee) {
 	const double *p = my record;
-	const double * const endp = p + my irecord;
+	const double *const endp = p + my irecord;
 	const bool wasRecording = my recording;
 	if (! p)
 		return;
@@ -138,7 +138,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			} break;
 			case FILL_AREA: {
 				const integer n = iget;
-				const double * const x = mget (n), * const y = mget (n);
+				const double *const x = mget (n), *const y = mget (n);
 				Graphics_fillArea (thee, n, & x [1], & y [1]);
 			} break;
 			case FUNCTION: {
@@ -455,7 +455,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 
 void Graphics_writeRecordings (Graphics me, FILE *f) {
 	const double * p = my record;
-	const double * const endp = p + my irecord;
+	const double *const endp = p + my irecord;
 	if (! p)
 		return;
 	binputi32 (integer_to_int32 (my irecord), f);

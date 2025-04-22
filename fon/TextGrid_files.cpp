@@ -4,7 +4,7 @@
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -536,10 +536,10 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		static char phrase [1000];
 		my tiers = FunctionList_create ();
 		autoMelderFile mfile = MelderFile_open (file);
-		char * const line1 = MelderFile_readLine8 (file);
+		char *const line1 = MelderFile_readLine8 (file);
 		Melder_require (strequ (line1, "<?xml version=\"1.0\"?>"),
 			U"This is not a CGN syntax file.");
-		char * const line2 = MelderFile_readLine8 (file);
+		char *const line2 = MelderFile_readLine8 (file);
 		Melder_require (strequ (line2, "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">"),
 			U"This is not a CGN syntax file.");
 		(void) MelderFile_readLine8 (file);   // ignore third line
@@ -550,7 +550,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		my xmin = 0.0;
 		char arg1 [41], arg2 [41], arg3 [41], arg4 [41], arg5 [41], arg6 [41], arg7 [201];
 		for (;;) {
-			char * const line = MelderFile_readLine8 (file);
+			char *const line = MelderFile_readLine8 (file);
 			if (! line)
 				break;
 			if (strnequ (line, "  <tau ref=\"", 12)) {
@@ -566,7 +566,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		*/
 		MelderFile_seek (file, startOfData, SEEK_SET);
 		for (;;) {
-			char * const line = MelderFile_readLine8 (file);
+			char *const line = MelderFile_readLine8 (file);
 			if (! line)
 				break;
 			if (strnequ (line, "  <tau ref=\"", 12)) {
@@ -576,7 +576,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 				Melder_require (length_s >= 5 && strnequ (arg3, "s=\"", 3),
 					U"Missing speaker name.");
 				arg3 [length_s - 1] = '\0';   // truncate at double quote
-				char * const speakerName = arg3 + 3;   // truncate leading s="
+				char *const speakerName = arg3 + 3;   // truncate leading s="
 				/*
 					Does this speaker name occur in the tiers?
 				*/
@@ -739,7 +739,8 @@ const struct TIMIT_key {
 	{"uw", "u"},  			/* boot: bcl b UW tcl t */
 	/* fronted allophone of uw (alveolar contexts) */
 	/* 20190704 wgmichener "\\u\"" -> "\\u\\:^" */
-	{"ux", "\\u\\:^"}, 		/* toot: tcl t UX tcl t */
+	/* 20250422 ppgb       "\\u\\:^" -> "u\\:^" */
+	{"ux", "u\\:^"}, 		/* toot: tcl t UX tcl t */
 	{"er", "\\er\\hr"},		/* bird: bcl b ER dcl d */
 	{"ax", "\\sw"}, 		/* about: AX bcl b aw tcl t */
 	{"ix", "\\i-"}, 		/* debit: dcl d eh bcl b IX tcl t */

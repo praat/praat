@@ -661,6 +661,58 @@ static void _cellArrayOrImage (Graphics me,
 	_Graphics_setColour (me, my colour);
 }
 
+static void _autoSize (
+	const constGraphics me,
+	const double x1WC, const double x2WC, const double y1WC, const double y2WC,
+	const integer naturalWidthDC, const integer naturalHeightDC,
+	/* mutable out */ integer *const x1DC, /* mutable out */ integer *const x2DC,
+	/* mutable out */ integer *const y1DC, /* mutable out */ integer *const y2DC
+) {
+	*x1DC = wdx (x1WC);
+	*x2DC = wdx (x2WC);
+	*y1DC = wdy (y1WC);
+	*y2DC = wdy (y2WC);
+	if (x1WC == x2WC) {
+		if (y1WC == y2WC) {
+			/*
+				Horizontal and vertical autosizing.
+			*/
+			const integer width = naturalWidthDC;
+			*x1DC -= width / 2;
+			*x2DC = *x1DC + width;
+			const integer height = naturalHeightDC;
+			if (my yIsZeroAtTheTop) {
+				*y2DC -= height / 2;
+				*y1DC = *y2DC + height;
+			} else {
+				*y1DC -= height / 2;
+				*y2DC = *y1DC + height;
+			}
+		} else {
+			/*
+				Horizontal autosizing only.
+			*/
+			const integer height = ( my yIsZeroAtTheTop ? *y1DC - *y2DC : *y2DC - *y1DC );
+			const integer width = height / (double) naturalHeightDC * (double) naturalWidthDC;
+			*x1DC -= width / 2;
+			*x2DC = *x1DC + width;
+		}
+	} else if (y1WC == y2WC) {
+		/*
+			Vertical autosizing only.
+		*/
+		const integer width = *x2DC - *x1DC;
+		const integer height = width / (double) naturalWidthDC * (double) naturalHeightDC;
+		if (my yIsZeroAtTheTop) {
+			*y2DC -= height / 2;
+			*y1DC = *y2DC + height;
+		} else {
+			*y1DC -= height / 2;
+			*y2DC = *y1DC + height;
+		}
+	}
+}
+
 void Graphics_cellArray (Graphics me, constMATVU const& z,
 	double x1WC, double x2WC, double y1WC, double y2WC, double minimum, double maximum)
 {
@@ -674,11 +726,14 @@ void Graphics_cellArray (Graphics me, constMATVU const& z,
 		for (integer irow = 1; irow <= z.nrow; irow ++)
 			for (integer icol = 1; icol <= z.ncol; icol ++)
 				put (z [irow] [icol]);
-	} else
+	} else {
+		/* mutable delayed init */ integer x1DC, x2DC, y1DC, y2DC;
+		_autoSize (me, x1WC, x2WC, y1WC, y2WC, z.ncol, z.nrow, & x1DC, & x2DC, & y1DC, & y2DC);
 		_cellArrayOrImage (me, z, constmatrixview<MelderColour>(), constmatrixview<unsigned char>(),
-			1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+			1, z.ncol, x1DC, x2DC, 1, z.nrow, y1DC, y2DC, minimum, maximum,
 			wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), false
 		);
+	}
 }
 
 void Graphics_cellArray_colour (Graphics me, constmatrixview <MelderColour> const& z,
@@ -700,11 +755,14 @@ void Graphics_cellArray_colour (Graphics me, constmatrixview <MelderColour> cons
 				put (row [icol]. transparency);
 			}
 		}
-	} else
+	} else {
+		/* mutable delayed init */ integer x1DC, x2DC, y1DC, y2DC;
+		_autoSize (me, x1WC, x2WC, y1WC, y2WC, z.ncol, z.nrow, & x1DC, & x2DC, & y1DC, & y2DC);
 		_cellArrayOrImage (me, constMATVU(), z, constmatrixview<unsigned char>(),
-			1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+			1, z.ncol, x1DC, x2DC, 1, z.nrow, y1DC, y2DC, minimum, maximum,
 			wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), false
 		);
+	}
 }
 
 void Graphics_cellArray8 (Graphics me, constmatrixview<unsigned char> const& z,
@@ -720,11 +778,14 @@ void Graphics_cellArray8 (Graphics me, constmatrixview<unsigned char> const& z,
 		for (integer irow = 1; irow <= z.nrow; irow ++)
 			for (integer icol = 1; icol <= z.ncol; icol ++)
 				put (z [irow] [icol]);
-	} else
+	} else {
+		/* mutable delayed init */ integer x1DC, x2DC, y1DC, y2DC;
+		_autoSize (me, x1WC, x2WC, y1WC, y2WC, z.ncol, z.nrow, & x1DC, & x2DC, & y1DC, & y2DC);
 		_cellArrayOrImage (me, constMATVU(), constmatrixview<MelderColour>(), z,
-			1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+			1, z.ncol, x1DC, x2DC, 1, z.nrow, y1DC, y2DC, minimum, maximum,
 			wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), false
 		);
+	}
 }
 
 void Graphics_image (Graphics me, constMATVU const& z,
@@ -740,11 +801,14 @@ void Graphics_image (Graphics me, constMATVU const& z,
 		for (integer irow = 1; irow <= z.nrow; irow ++)
 			for (integer icol = 1; icol <= z.ncol; icol ++)
 				put (z [irow] [icol]);
-	} else
+	} else {
+		/* mutable delayed init */ integer x1DC, x2DC, y1DC, y2DC;
+		_autoSize (me, x1WC, x2WC, y1WC, y2WC, z.ncol, z.nrow, & x1DC, & x2DC, & y1DC, & y2DC);
 		_cellArrayOrImage (me, z, constmatrixview<MelderColour>(), constmatrixview<unsigned char>(),
-			1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+			1, z.ncol, x1DC, x2DC, 1, z.nrow, y1DC, y2DC, minimum, maximum,
 			wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), true
 		);
+	}
 }
 
 void Graphics_image_colour (Graphics me, constmatrixview <MelderColour> const& z,
@@ -767,34 +831,8 @@ void Graphics_image_colour (Graphics me, constmatrixview <MelderColour> const& z
 			}
 		}
 	} else {
-		integer x1DC = wdx (x1WC), x2DC = wdx (x2WC), y1DC = wdy (y1WC), y2DC = wdy (y2WC);
-		integer width = x2DC - x1DC, height = ( my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC );
-		if (x1WC == x2WC && y1WC == y2WC) {
-			width = z.ncol;
-			x1DC -= width / 2;
-			x2DC = x1DC + width;
-			height = z.nrow;
-			if (my yIsZeroAtTheTop) {
-				y2DC -= height / 2;
-				y1DC = y2DC + height;
-			} else {
-				y1DC -= height / 2;
-				y2DC = y1DC + height;
-			}
-		} else if (x1WC == x2WC) {
-			width = height * ((double) z.ncol / (double) z.nrow);
-			x1DC -= width / 2;
-			x2DC = x1DC + width;
-		} else if (y1WC == y2WC) {
-			height = width * ((double) z.nrow / (double) z.ncol);
-			if (my yIsZeroAtTheTop) {
-				y2DC -= height / 2;
-				y1DC = y2DC + height;
-			} else {
-				y1DC -= height / 2;
-				y2DC = y1DC + height;
-			}
-		}
+		/* mutable delayed init */ integer x1DC, x2DC, y1DC, y2DC;
+		_autoSize (me, x1WC, x2WC, y1WC, y2WC, z.ncol, z.nrow, & x1DC, & x2DC, & y1DC, & y2DC);
 		_cellArrayOrImage (me, constMATVU(), z, constmatrixview<unsigned char>(),
 			1, z.ncol, x1DC, x2DC, 1, z.nrow, y1DC, y2DC, minimum, maximum,
 			wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), true
@@ -815,17 +853,20 @@ void Graphics_image8 (Graphics me, constmatrixview <unsigned char> const& z,
 		for (integer irow = 1; irow <= z.nrow; irow ++)
 			for (integer icol = 1; icol <= z.ncol; icol ++)
 				put (z [irow] [icol]);
-	} else
+	} else {
+		/* mutable delayed init */ integer x1DC, x2DC, y1DC, y2DC;
+		_autoSize (me, x1WC, x2WC, y1WC, y2WC, z.ncol, z.nrow, & x1DC, & x2DC, & y1DC, & y2DC);
 		_cellArrayOrImage (me, constMATVU(), constmatrixview<MelderColour>(), z,
-			1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+			1, z.ncol, x1DC, x2DC, 1, z.nrow, y1DC, y2DC, minimum, maximum,
 			wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), true
 		);
+	}
 }
 
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 relativeFileName, double x1, double x2, double y1, double y2) {
 	integer x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
 	integer width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
-	#if 1
+	#if 0
 		structMelderFile file { };
 		Melder_relativePathToFile (relativeFileName, & file);
 		try {

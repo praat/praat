@@ -1,10 +1,10 @@
 /* TextGridArea.cpp
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -933,7 +933,7 @@ static void findInTier (TextGridArea me) {
 			const TextPoint point = tier->points.at [ipoint];
 			conststring32 text = point -> mark.get();
 			if (text) {
-				const char32 * const position = str32str (text, my findString.get());
+				const char32 *const position = str32str (text, my findString.get());
 				if (position) {
 					my setSelection (point -> number, point -> number);
 					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToNewSelection()
@@ -955,7 +955,7 @@ static void do_find (TextGridArea me) {
 		if (my editable ()) {
 			integer left, right;
 			autostring32 label = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & left, & right);
-			const char32 * const position = str32str (& label [right], my findString.get());   // CRLF BUG?
+			const char32 *const position = str32str (& label [right], my findString.get());   // CRLF BUG?
 			if (position)
 				GuiText_setSelection (my functionEditor() -> textArea,
 						position - label.get(), position - label.get() + Melder_length (my findString.get()));
