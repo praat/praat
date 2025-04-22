@@ -312,7 +312,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		);
 		Melder_assert (dataProvider);
 		CGImageRef image = CGImageCreate (integer_to_uinteger (my nx), integer_to_uinteger (numberOfRows),
-			8, 32, integer_to_uinteger (bytesPerRow), colourSpace, kCGImageAlphaNone, dataProvider, nullptr, false, kCGRenderingIntentDefault);
+			8, 32, integer_to_uinteger (bytesPerRow), colourSpace, kCGImageAlphaLast, dataProvider, nullptr, false, kCGRenderingIntentDefault);
 		CGDataProviderRelease (dataProvider);
 		Melder_assert (image);
 		NSString *path = (NSString *) MelderFile_peekPathCfstring (file);
