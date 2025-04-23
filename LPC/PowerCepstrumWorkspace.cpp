@@ -173,7 +173,7 @@ void structPowerCepstrumWorkspace :: getPeakAndPosition () {
 		peakQuefrency = thy x1 + (indexm - 1) * thy dx;
 		peakdB = thy z [1] [index]; // always with flat peak
 	}
-	slopeKnown = true;
+	peakKnown = true;
 }
 
 void structPowerCepstrumWorkspace :: getCPP () {

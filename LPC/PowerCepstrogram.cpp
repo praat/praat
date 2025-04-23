@@ -179,7 +179,7 @@ void PowerCepstrogram_into_Matrix_CPP (PowerCepstrogram me, Matrix thee, bool tr
 		ws -> subtractTrend = false;
 		ws -> trendSubtracted = trendSubtracted;
 		PowerCepstrumWorkspace powerCepstrumWs = ws -> powerCepstrumWs.get();
-		PowerCepstrumWorkspace_init (powerCepstrumWs, ws -> powerCepstrum.get(), qminFit, qmaxFit,trendLineType, fitMethod);
+		PowerCepstrumWorkspace_init (powerCepstrumWs, ws -> powerCepstrum.get(), qminFit, qmaxFit, trendLineType, fitMethod);
 		const double qminSearchInterval = 1.0 / pitchCeiling, qmaxSearchInterval = 1.0 / pitchFloor;
 		PowerCepstrumWorkspace_initPeakSearchPart (powerCepstrumWs, qminSearchInterval, qmaxSearchInterval, peakInterpolationType);
 		
@@ -194,7 +194,7 @@ autoMatrix PowerCepstrogram_to_Matrix_CPP (PowerCepstrogram me, bool trendSubtra
 {
 	try {
 		/* Matrix rows: time, cppRaw, slope, intercept, cppCorrected, peakQuefrency */
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my x1, my dx, 0.0, 6, 4, 1.0, 0.5);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my x1, my dx, 0.5, 7.5, 7, 1.0, 1.0);
 		PowerCepstrogram_into_Matrix_CPP (me, thee.get(), trendSubtracted, pitchFloor, pitchCeiling, deltaF0, peakInterpolationType, 
 		qstartFit, qendFit, lineType, fitMethod);
 		return thee;
@@ -601,7 +601,7 @@ double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTrendBeforeSm
 		} else  {
 			autoMatrix cpp = PowerCepstrogram_to_Matrix_CPP (me, trendSubtracted, pitchFloor, pitchCeiling, deltaF0,
 				peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
-			const double cpps = Matrix_getMean (cpp.get(), cpp -> xmin, cpp -> xmax, 1.5, 2.5); // TODO Sampled_getMean??
+			const double cpps = Matrix_getMean (cpp.get(), cpp -> xmin, cpp -> xmax, 6.5, 7.5); // TODO Sampled_getMean??
 			return cpps;
 		}
 	} catch (MelderError) {
