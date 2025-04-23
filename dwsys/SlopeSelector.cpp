@@ -55,8 +55,8 @@ Thing_implement (SlopeSelector, Daata, 1);
 void structSlopeSelector :: newDataPoints (constVEC const& x, constVEC const& y) {
     Melder_assert (x.size == y.size);
     Melder_assert (x.size == numberOfPoints);
-    our xp = x;
-    our yp = y;
+    xp = x;
+    yp = y;
 }
 
 void structSlopeSelector :: getSlopeAndIntercept_leastSquares (double &slope, double& intercept) {

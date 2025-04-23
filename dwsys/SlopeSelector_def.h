@@ -37,8 +37,8 @@ oo_DEFINE_CLASS (SlopeSelector, Daata)
 	oo_OBJECT (PermutationInversionCounter, 0, inversionCounter)
 
 	#if oo_DECLARING
-		constVEC xp;	// link to the data points
-        constVEC yp;
+		constVEC xp;	// links to the outside world data points (by newDataPoints(x,y))
+        constVEC yp;	// 
 
 		void newDataPoints (constVEC const& x, constVEC const& y);
 				
@@ -63,8 +63,8 @@ oo_DEFINE_CLASS (SlopeSelector, Daata)
         }
     #endif
 	#if oo_COPYING
-		thy xp = xp;
-		thy yp = yp;
+		thy xp = xp; // superfluous, xp and yp need to be linked to external data (by newDataPoints)
+		thy yp = yp; //
 	#endif
 oo_END_CLASS (SlopeSelector)
 #undef ooSTRUCT

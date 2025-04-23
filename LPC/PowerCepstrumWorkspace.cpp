@@ -155,6 +155,7 @@ void structPowerCepstrumWorkspace :: newData (constPowerCepstrum thee) {
 			x [ipoint] = log (x [ipoint]);
 		y [ipoint] = thy v_getValueAtSample (i, 1, 1);
 	}
+	slopeSelector -> newDataPoints (x.get(), y.get());
 	todBs ();
 	peakKnown = slopeKnown = trendSubtracted = false;
 }
@@ -284,8 +285,8 @@ void PowerCepstrumWorkspace_init (PowerCepstrumWorkspace me, constPowerCepstrum 
 	my asdBs = Matrix_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, thy ymin, thy ymax, thy ny, thy dy, thy y1);
 	my maximumNumberOfRhamonics = 15;
 	my rhamonics = raw_MAT (my maximumNumberOfRhamonics, 5_integer);
-	my newData (thee);
 	my slopeSelector = SlopeSelector_create (my x.get(), my y.get()); // only reference to the x and y vectors
+	my newData (thee); // new xp and yp reference
 }
 
 autoPowerCepstrumWorkspace PowerCepstrumWorkspace_create (constPowerCepstrum thee, double qminFit, double qmaxFit,
