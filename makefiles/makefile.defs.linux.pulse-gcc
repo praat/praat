@@ -1,27 +1,42 @@
 # File: makefile.defs.linux.pulse-gcc
 # System: Linux
 # David Weenink and Paul Boersma 2025-01-01
+#
+# Use '-BARREN=1' for version without GUI, network, graphics, and sound
+# Paul Boersma 2025-01-01
+# Caio99BR <caiooliveirafarias0@gmail.com>
+
+EXECUTABLE = praat
+
+ifeq ($(BAREN), 1)
+  EXECUTABLE = {EXECUTABLE}_barren
+endif
 
 CC = gcc
 CXX = g++
 LINK = $(CXX)
 
-PKG_CONFIG ?= pkg-config
-
-COMMONFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `$(PKG_CONFIG) --cflags gtk+-3.0` \
+ifeq ($(BAREN), 1)
+  COMMONFLAGS = -DNO_GRAPHICS -DNO_NETWORK -D_FILE_OFFSET_BITS=64 -DUNIX -Dlinux \
 	-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
+
+  LIBS = -lm -static -static-libgcc -static-libstdc++ -no-pie -lpthread
+else
+  PKG_CONFIG ?= pkg-config
+
+  COMMONFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `$(PKG_CONFIG) --cflags gtk+-3.0` \
+	-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
+
+  LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -lpthread
+endif
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
-
-EXECUTABLE = praat
-
-LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -lpthread
 
 AR = ar
 RANLIB = ls
 ICON =
 MAIN_ICON =
 
-INSTALL = install -p praat /usr/local/bin
+INSTALL = cp ./{EXECUTABLE} /usr/local/bin
