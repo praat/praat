@@ -68,45 +68,33 @@ autoTextTier TextTier_readFromXwaves (MelderFile file) {
 	}
 }
 
-static void MelderReadText_skipHorizontalWhiteSpace (MelderReadText me) {
-	for (;;) {
-		char32 kar = MelderReadText_getChar (me);
-		if (kar == U'\0')
-			return;
-		if (Melder_isHorizontalSpace (kar))
-			continue;
-		MelderReadText_ungetChar (me);
-		return;
-	}
-}
-
-static int64 MelderReadText_readInteger (MelderReadText me) {
-	char32 kar = MelderReadText_getChar (me);
+static int64 Melder_readInteger (const char32 **p) {
+	char32 kar = * (*p) ++;
 	Melder_require (kar != U'\0',
 		U"Looking for an integer, but found the end of the text.");
 	Melder_require (! Melder_isVerticalSpace (kar),
 		U"Looking for an integer, but found the end of the line.");
 	const bool hasSign = ( kar == U'-' || kar == U'+' );
 	Melder_require (hasSign || Melder_isAsciiDecimalNumber (kar),
-		U"Looking for an integer, but found “", MelderReadText_readLine (me), U"”.");
+		U"Looking for an integer, but found “", *p, U"”.");
 	constexpr integer MAXIMUM_NUMBER_OF_DIGITS = 40;
 	char buffer [1 + MAXIMUM_NUMBER_OF_DIGITS + 1];   // include room for leading sign and trailing null
 	/* mutable increment */ integer ipos = 0;
 	buffer [ipos ++] = (char) (char8) kar;
 	if (hasSign) {
-		char32 shouldBeDigit = MelderReadText_getChar (me);
+		char32 shouldBeDigit = * (*p) ++;
 		Melder_require (Melder_isAsciiDecimalNumber (shouldBeDigit),
-			U"Looking for a digit after “", kar, U"”, but found “", MelderReadText_readLine (me), U"”.");
+			U"Looking for a digit after “", kar, U"”, but found “", *p, U"”.");
 		buffer [ipos ++] = (char) (char8) shouldBeDigit;
 	}
 	for (;;) {
-		char32 mayBeDigit = MelderReadText_getChar (me);
+		char32 mayBeDigit = * (*p) ++;
 		if (Melder_isAsciiDecimalNumber (mayBeDigit)) {
 			Melder_require (ipos < hasSign + MAXIMUM_NUMBER_OF_DIGITS,
 				U"Looking for a normal-sized integer, but found more than ", MAXIMUM_NUMBER_OF_DIGITS, U" digits.");
 			buffer [ipos ++] = (char) (char8) mayBeDigit;
 		} else {
-			MelderReadText_ungetChar (me);
+			(*p) --;
 			break;
 		}
 	}
@@ -114,27 +102,27 @@ static int64 MelderReadText_readInteger (MelderReadText me) {
 	return strtoll (buffer, nullptr, 10);
 }
 
-static double MelderReadText_readReal (MelderReadText me) {
-	char32 kar = MelderReadText_getChar (me);
+static double Melder_readReal (const char32 **p) {
+	const char32 kar = * (*p) ++;
 	Melder_require (kar != U'\0',
 		U"Looking for a real number, but found the end of the text.");
 	Melder_require (! Melder_isVerticalSpace (kar),
 		U"Looking for a real number, but found the end of the line.");
 	const bool hasSign = ( kar == U'-' || kar == U'+' );
 	Melder_require (hasSign || Melder_isAsciiDecimalNumber (kar),
-		U"Looking for a real number, but found “", MelderReadText_readLine (me), U"”.");
+		U"Looking for a real number, but found “", *p, U"”.");
 	constexpr integer MAXIMUM_NUMBER_OF_CHARACTERS = 100;
 	char buffer [1 + MAXIMUM_NUMBER_OF_CHARACTERS + 1];   // include room for leading sign and trailing null
 	/* mutable increment */ integer ipos = 0;
 	buffer [ipos ++] = (char) (char8) kar;
 	if (hasSign) {
-		char32 shouldBeDigit = MelderReadText_getChar (me);
+		char32 shouldBeDigit = * (*p) ++;
 		Melder_require (Melder_isAsciiDecimalNumber (shouldBeDigit),
-			U"Looking for a digit after “", kar, U"”, but found “", MelderReadText_readLine (me), U"”.");
+			U"Looking for a digit after “", kar, U"”, but found “", *p, U"”.");
 		buffer [ipos ++] = (char) (char8) shouldBeDigit;
 	}
 	for (;;) {
-		char32 numberCharacter = MelderReadText_getChar (me);
+		char32 numberCharacter = * (*p) ++;
 		if (Melder_isAsciiDecimalNumber (numberCharacter) || numberCharacter == U'+' || numberCharacter == U'-' ||
 			numberCharacter == U'e' || numberCharacter == U'E' || numberCharacter == U'.'
 		) {
@@ -142,7 +130,7 @@ static double MelderReadText_readReal (MelderReadText me) {
 				U"Looking for a normal-sized real number, but found more than ", MAXIMUM_NUMBER_OF_CHARACTERS, U" digits.");
 			buffer [ipos ++] = (char) (char8) numberCharacter;
 		} else {
-			MelderReadText_ungetChar (me);
+			(*p) --;
 			break;
 		}
 	}
@@ -151,10 +139,8 @@ static double MelderReadText_readReal (MelderReadText me) {
 }
 
 autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file) {
-	TRACE
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);   // going to be UTF-8-compatible
-		/* mutable increment */ integer lineNumber = 0;
 
 		/*
 			Cycle through all lines until encountering a line that starts with '#'.
@@ -167,8 +153,6 @@ autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file) {
 				Melder_throw (U"Missing '#' line.");
 			if (line [0] == '#')
 				break;
-			++ lineNumber;
-			trace (U"Line ", lineNumber, U": <", line, U">");
 			constexpr char32 tag_nfields [] = U"nfields ";
 			constexpr integer tag_nfields_length = Melder_length (tag_nfields);
 			if (Melder_startsWith (line, tag_nfields))
@@ -188,8 +172,7 @@ autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file) {
 			/*
 				Dummy name.
 			*/
-			autoIntervalTier tier = IntervalTier_create (tmin, tmax);
-			(void) tier -> intervals. subtractItem_move (1);
+			autoIntervalTier tier = IntervalTier_create_raw (tmin, tmax);
 			Thing_setName (tier.get(), Melder_integer (itier));
 			my tiers -> addItem_move (tier.move());
 		}
@@ -197,39 +180,41 @@ autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file) {
 		autoMelderString label;
 		/* mutable step */ double startingTime = 0.0, endTime = undefined;
 		for (;;) {
-			const mutablestring32 line = MelderReadText_readLine (text.get());
+			/* mutable scan */ conststring32 line = MelderReadText_readLine (text.get());
 			if (! line)
 				break;
-			++ lineNumber;
-			trace (U"Line ", lineNumber, U": <", line, U">");
-			autoMelderReadText lineText = MelderReadText_createFromText (Melder_dup (line));   // a bit costly
-			MelderReadText_skipHorizontalWhiteSpace (lineText.get());
-			endTime = MelderReadText_readReal (lineText.get());
-			trace (U"end time: ", endTime);
-			MelderReadText_skipHorizontalWhiteSpace (lineText.get());
-			const integer colour = MelderReadText_readInteger (lineText.get());
-			trace (U"colour: ", colour);
-			const char32 shouldBeHorizontalSpace = MelderReadText_getChar (lineText.get());
-			Melder_require (Melder_isHorizontalSpace (shouldBeHorizontalSpace),
-				U"There should be a space after the colour number in line ", lineNumber, U".");
-			trace (U"starting time: ", startingTime, U"; end time: ", endTime);
+			Melder_skipHorizontalSpace (& line);
+			endTime = Melder_readReal (& line);
+			{// scope
+				const char32 shouldBeHorizontalSpace = * line ++;
+				Melder_require (Melder_isHorizontalSpace (shouldBeHorizontalSpace),
+					U"There should be a space after the time in line ", MelderReadText_getLineNumber (text.get()), U".");
+			}
+			Melder_skipHorizontalSpace (& line);
+			const integer colour = Melder_readInteger (& line);
+			(void) colour;   // ignore
+			{// scope
+				const char32 shouldBeHorizontalSpace = * line ++;
+				Melder_require (Melder_isHorizontalSpace (shouldBeHorizontalSpace),
+					U"There should be a space after the colour number in line ", MelderReadText_getLineNumber (text.get()), U".");
+			}
 			for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 				MelderString_empty (& label);
 				for (;;) {
-					char32 kar = MelderReadText_getChar (lineText.get());
+					char32 kar = * line ++;
 					if (kar == separator || kar == U'\0')
 						break;
 					MelderString_appendCharacter (& label, kar);
 				}
 				IntervalTier tier = static_cast <IntervalTier> (my tiers->at [itier]);
-				autoTextInterval interval = TextInterval_create (startingTime, endTime, label.string);
-				tier -> intervals. addItem_move (interval.move());
+				(void) IntervalTier_addInterval_raw (tier, startingTime, endTime, label.string);
 			}
 			startingTime = endTime;
 		}
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 			IntervalTier tier = static_cast <IntervalTier> (my tiers->at [itier]);
 			tier -> xmax = endTime;
+			IntervalTier_haveAtLeastOneInterval (tier);
 		}
 		my xmax = endTime;
 		return me;

@@ -1,10 +1,10 @@
 /* melder_textencoding.cpp
  *
- * Copyright (C) 2007-2024 Paul Boersma
+ * Copyright (C) 2007-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -48,6 +48,14 @@ void Melder_textEncoding_prefs () {
 bool Melder_isValidAscii (conststring32 text) {
 	for (; *text != U'\0'; text ++) {
 		if (*text > 127)
+			return false;
+	}
+	return true;
+}
+
+bool Melder_str8IsValidAscii (conststring8 text) {
+	for (; *text != U'\0'; text ++) {
+		if (* (unsigned char *) text > 127)
 			return false;
 	}
 	return true;
@@ -356,6 +364,7 @@ char32 Melder_decodeWindowsLatin1 [256] = {
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
 void Melder_8to32_inplace (conststring8 string8, mutablestring32 string32, kMelder_textInputEncoding inputEncoding) {
+	const char8 *p = (const char8 *) & string8 [0];
 	char32 *q = & string32 [0];
 	if (inputEncoding == kMelder_textInputEncoding::UNDEFINED) {
 		inputEncoding = preferences. inputEncoding;
@@ -390,17 +399,16 @@ void Melder_8to32_inplace (conststring8 string8, mutablestring32 string32, kMeld
 			Melder_throw (U"Text is not valid UTF-8; please try a different text input encoding.");
 		}
 	}
-	const char8 *p = (const char8 *) & string8 [0];
 	if (inputEncoding == kMelder_textInputEncoding::UTF8) {
 		while (*p != '\0') {
-			char32 kar1 = * p ++;   // convert up without sign extension
+			char32 kar1 = *p ++;   // convert up without sign extension
 			if (kar1 <= 0x00'007F) {
 				*q ++ = kar1;
 			} else if (kar1 <= 0x00'00DF) {
-				char32 kar2 = * p ++;   // convert up without sign extension
+				char32 kar2 = *p ++;   // convert up without sign extension
 				*q ++ = ((kar1 & 0x00'001F) << 6) | (kar2 & 0x00'003F);
 			} else if (kar1 <= 0x00'00EF) {
-				char32 kar2 = * p ++, kar3 = * p ++;   // convert up without sign extension
+				char32 kar2 = *p ++, kar3 = *p ++;   // convert up without sign extension
 				*q ++ = ((kar1 & 0x00'000F) << 12) | ((kar2 & 0x00'003F) << 6) | (kar3 & 0x00'003F);
 			} else if (kar1 <= 0x00'00F4) {
 				char32 kar2 = *p ++, kar3 = *p ++, kar4 = *p ++;   // convert up without sign extension
