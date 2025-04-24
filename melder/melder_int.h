@@ -2,11 +2,11 @@
 #define _melder_int_h_
 /* melder_int.h
  *
- * Copyright (C) 1992-2021,2023,2024 Paul Boersma
+ * Copyright (C) 1992-2021,2023-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -60,6 +60,22 @@ using uint64 = uint64_t;
 	#define INT54_MAX   9007199254740991LL
 	#define INT54_MIN  -9007199254740991LL
 #endif
+/*
+	The maximum number of bytes that can be allocated in one stroke.
+	The number is conveniently smaller than INTEGER_MAX,
+	which saves us a lot of hassle with the `uinteger` type.
+	On 32-bit machines, this is 2 GB (a bit less than 2^31),
+	and on 64-bit machines it's 8 PB (a bit less than 2^53);
+	in both cases, an allocation of this size is very likely to fail anyway.
+	Both numbers are conveniently smaller than INT54_MAX,
+	so that they can be represented easily in a "double".
+	A final desirable property of the 64-bit version is that 64-bit
+	random sequences of zeroes and ones have a probability of less than 0.1 percent
+	to pass the "less than MAXIMUM_ALLOCATION_SIZE" test.
+*/
+#define MAXIMUM_ALLOCATION_SIZE_32  2'000'000'000L
+#define MAXIMUM_ALLOCATION_SIZE_64  8'000'000'000'000'000LL
+#define MAXIMUM_ALLOCATION_SIZE  ( sizeof (integer) == 4 ? MAXIMUM_ALLOCATION_SIZE_32 : MAXIMUM_ALLOCATION_SIZE_64 )
 
 inline bool Melder_integersAreBigEndian () {
 	int32_t dummy = 1;
