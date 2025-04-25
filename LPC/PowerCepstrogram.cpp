@@ -1,6 +1,6 @@
 /* PowerCepstrogram.cpp
  *
- * Copyright (C) 2013-2022 David Weenink
+ * Copyright (C) 2013-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +194,7 @@ autoMatrix PowerCepstrogram_to_Matrix_CPP (PowerCepstrogram me, bool trendSubtra
 {
 	try {
 		/* Matrix rows: time, cppRaw, slope, intercept, cppCorrected, peakQuefrency */
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my x1, my dx, 0.5, 7.5, 7, 1.0, 1.0);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 6.5, 6, 1.0, 1.0);
 		PowerCepstrogram_into_Matrix_CPP (me, thee.get(), trendSubtracted, pitchFloor, pitchCeiling, deltaF0, peakInterpolationType, 
 		qstartFit, qendFit, lineType, fitMethod);
 		return thee;
@@ -234,6 +234,27 @@ autoTable PowerCepstrogram_to_Table_CPP (PowerCepstrogram me, bool includeFrameN
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Table with cepstral peak prominence values created.");
+	}
+}
+autoTable PowerCepstrogram_to_Table_CPPvalues (PowerCepstrogram me, double pitchFloor, double pitchCeiling,
+	double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit,
+	kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod)
+{
+	try {
+		static const conststring32 colNames [] = { U"time(s)", U"dB/s", U"intercept(dB)", U"peak(dB)", U"quefrency(s)", U"cpp(dB)" };
+		autoTable thee = Table_createWithColumnNames (my nx, ARRAY_TO_STRVEC (colNames));
+		if (lineType == kCepstrum_trendType::EXPONENTIAL_DECAY)
+			Table_renameColumn_e (thee.get(), 2, U"dB/ln(s)");
+		autoMatrix m = PowerCepstrogram_to_Matrix_CPP (me, false, pitchFloor, pitchCeiling,
+			deltaF0,  peakInterpolationType,  qstartFit,  qendFit, lineType, fitMethod);
+		Melder_assert (m -> nx == my nx && m -> ny == 6);
+		for (integer irow = 1; irow <= my nx; irow ++) {
+			for (integer icol = 1; icol <= m -> ny; icol ++)
+				Table_setNumericValue (thee.get(), irow, icol, m -> z [icol] [irow]);
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"Could not create Table from PowerCepstrogram.");
 	}
 }
 
@@ -592,7 +613,7 @@ double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTrendBeforeSm
 		if (subtractTrendBeforeSmoothing)
 			flattened = PowerCepstrogram_subtractTrend (me, qstartFit, qendFit, lineType, fitMethod);
 
-		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (flattened ? flattened.get() : me, timeAveragingWindow, quefrencyAveragingWindow);
+		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (subtractTrendBeforeSmoothing ? flattened.get() : me, timeAveragingWindow, quefrencyAveragingWindow);
 		if (Melder_debug == -6) { // old algorithm
 			autoTable table = PowerCepstrogram_to_Table_CPP (smooth.get(), false, false, 6, 16, false, 6, pitchFloor, pitchCeiling,
 				deltaF0, peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
@@ -601,7 +622,7 @@ double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTrendBeforeSm
 		} else  {
 			autoMatrix cpp = PowerCepstrogram_to_Matrix_CPP (me, trendSubtracted, pitchFloor, pitchCeiling, deltaF0,
 				peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
-			const double cpps = Matrix_getMean (cpp.get(), cpp -> xmin, cpp -> xmax, 6.5, 7.5); // TODO Sampled_getMean??
+			const double cpps = Matrix_getMean (cpp.get(), cpp -> xmin, cpp -> xmax, 5.5, 6.5); // TODO Sampled_getMean??
 			return cpps;
 		}
 	} catch (MelderError) {

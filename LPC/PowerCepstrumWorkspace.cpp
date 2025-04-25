@@ -181,11 +181,8 @@ void structPowerCepstrumWorkspace :: getCPP () {
 		getSlopeAndIntercept ();
 	if (! peakKnown)
 		getPeakAndPosition ();
-	cpp = peakdB;
-	if (! trendSubtracted) {
-		trenddB = getTrend (peakQuefrency);
-		cpp = peakdB - trenddB;
-	}
+	trenddB = getTrend (peakQuefrency);
+	cpp = peakdB - trenddB;
 }
 
 void structPowerCepstrumWorkspace :: todBs () {

@@ -866,6 +866,24 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cpp");
 }
 
+FORM (NEW__PowerCepstrogram_to_Table_CPPvalues, U"PowerCepstrogram: To Table (CPP values)", U"PowerCepstrogram: To Table (CPP values)...") {
+	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
+	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
+	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
+	OPTIONMENU_ENUM (kCepstrum_trendType, lineType, U"Trend type", kCepstrum_trendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrum_trendFit, fitMethod, U"Fit method", kCepstrum_trendFit::DEFAULT)
+	OK
+DO
+	CONVERT_EACH_TO_ONE (PowerCepstrogram)
+	autoTable result = PowerCepstrogram_to_Table_CPPvalues (me, fromPitch, toPitch, tolerance, 
+		peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod
+	);
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cpp");
+}
 FORM (CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_hillenbrand, U"PowerCepstrogram: To Table (hillenbrand)", U"PowerCepstrogram: To Table (peak prominences)...") {
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
@@ -1824,6 +1842,8 @@ void praat_uvafon_LPC_init () {
 				nullptr, 1, LIST__PowerCepstrogram_listCPP);
 		praat_addAction1 (classPowerCepstrogram, 0, U"To Table (cepstral peak prominences)...",
 				nullptr, 1, NEW__PowerCepstrogram_to_Table_CPP);
+		praat_addAction1 (classPowerCepstrogram, 0, U"To Table (CPP values)...",
+				nullptr, 1, NEW__PowerCepstrogram_to_Table_CPPvalues);
 	praat_addAction1 (classPowerCepstrogram, 0, U"To Table (hillenbrand)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_hillenbrand);
 	praat_addAction1 (classPowerCepstrogram, 1, U"Query -", nullptr, 0, nullptr);

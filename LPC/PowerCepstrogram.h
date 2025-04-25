@@ -2,7 +2,7 @@
 #define _PowerCepstrogram_h_
 /* PowerCepstrogram.h
  *
- * Copyright (C) 2012-2021 David Weenink
+ * Copyright (C) 2012-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,10 @@ void PowerCepstrogram_listCPP (PowerCepstrogram me, bool includeFrameNumber, boo
 	integer numberOfTimeDecimals, integer numberOfCPPdecimals, bool includePeakQuefrency, integer numberOfQuefrencyDecimals,
 	double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType,
 	double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
+
+autoTable PowerCepstrogram_to_Table_CPPvalues (PowerCepstrogram me, double pitchFloor, double pitchCeiling,
+	double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit,
+	kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 
 autoPowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, double time);
 

@@ -410,7 +410,7 @@ procedure testCalibratedPowerCepstrogram: .duration, .approximateF0, .peak_dB, .
 	.rdif1 = abs (.cppsGiven1 - .cpps1)/.cppsGiven1
 	assert .rdif1 < 1e-14; CPPS '.rdif1'
 	#
-	# Smoothing with a window 1*dq wide, the background wil stay at the same level
+	# Smoothing with a window 1*dq wide, the background will stay at the same level
 	# only the peak will be widened to three bins
 	# 
 	.timeAveragingWindow = 0.005 ; should not make any difference

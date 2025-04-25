@@ -68,7 +68,6 @@ void structPowerCepstrogramFrameIntoMatrixFrame :: saveOutputFrame (void) {
 	/* time, slope, intercept, peakdB, peakQuefrency, cpp, */
 	if (subtractTrend) {
 		Melder_assert (Thing_isa (output, classPowerCepstrogram));
-		
 		output -> z.column (currentFrame)  <<=  powerCepstrum -> z.row (1);
 	} else {
 		output -> z [1] [currentFrame] = Sampled_indexToX (output, currentFrame);
@@ -78,9 +77,9 @@ void structPowerCepstrogramFrameIntoMatrixFrame :: saveOutputFrame (void) {
 		}
 		if (getPeakAndPosition) {
 			output -> z [4] [currentFrame] = powerCepstrumWs -> peakdB;
-			output -> z [6] [currentFrame] = powerCepstrumWs -> peakQuefrency;
+			output -> z [5] [currentFrame] = powerCepstrumWs -> peakQuefrency;
 			powerCepstrumWs -> getCPP ();
-			output -> z [7] [currentFrame] = powerCepstrumWs -> cpp;
+			output -> z [6] [currentFrame] = powerCepstrumWs -> cpp;
 		}
 	}
 }
