@@ -122,10 +122,10 @@ mutablestring32 MelderReadText_readLine (MelderReadText me) {
 		}
 
 		uint64 lineLength_uint64 = (uint64) strlen (result8);
-		if (lineLength_uint64 > (uint64) (INTEGER_MAX - 101)) {
+		if (lineLength_uint64 > (uint64) (MAXIMUM_ALLOCATION_SIZE - 101)) {
 			if (newline8)
 				*newline8 = '\n';
-			Melder_throw (U"Line too long: more than ", Melder_bigInteger (INTEGER_MAX - 101), U" characters.");
+			Melder_throw (U"Line too long: more than ", Melder_bigInteger (MAXIMUM_ALLOCATION_SIZE - 101), U" characters.");
 		}
 		uint64 lineBufferSizeWanted_uint64 = lineLength_uint64 + 101;   // <= (uint64) INTEGER_MAX
 		integer lineBufferSizeWanted = integer (lineBufferSizeWanted_uint64);   // guarded conversion

@@ -1,10 +1,10 @@
 /* melder_alloc.cpp
  *
- * Copyright (C) 1992-2007,2009,2011,2012,2014-2020,2022-2024 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2020,2022-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -56,7 +56,10 @@ void Melder_alloc_init () {
 void * _Melder_malloc (int64 size) {
 	if (size <= 0)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	if (sizeof (size_t) < 8 && size > SIZE_MAX)
+	Melder_assert (MAXIMUM_ALLOCATION_SIZE < SIZE_MAX);
+	if (size > MAXIMUM_ALLOCATION_SIZE_64)
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
+	if (sizeof (size_t) < 8 && size > MAXIMUM_ALLOCATION_SIZE_32)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	void *result = malloc ((size_t) size);   // guarded cast
 	if (! result)
@@ -71,8 +74,11 @@ void * _Melder_malloc (int64 size) {
 void * _Melder_malloc_f (int64 size) {
 	if (size <= 0)
 		Melder_fatal (U"(Melder_malloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	if (sizeof (size_t) < 8 && size > SIZE_MAX)
+	Melder_assert (MAXIMUM_ALLOCATION_SIZE < SIZE_MAX);
+	if (size > MAXIMUM_ALLOCATION_SIZE_64)
 		Melder_fatal (U"(Melder_malloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
+	if (sizeof (size_t) < 8 && size > MAXIMUM_ALLOCATION_SIZE_32)
+		Melder_fatal (U"(Melder_malloc_f:) Cannot allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	void *result = malloc ((size_t) size);
 	if (! result) {
 		if (theRainyDayFund) {
@@ -103,8 +109,11 @@ void _Melder_free (void **ptr) noexcept {
 void * Melder_realloc (void *ptr, int64 size) {
 	if (size <= 0)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	if (sizeof (size_t) < 8 && size > SIZE_MAX)
-		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
+	Melder_assert (MAXIMUM_ALLOCATION_SIZE < SIZE_MAX);
+	if (size > MAXIMUM_ALLOCATION_SIZE_64)
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
+	if (sizeof (size_t) < 8 && size > MAXIMUM_ALLOCATION_SIZE_32)
+		Melder_throw (U"Cannot allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	void *result = realloc (ptr, (size_t) size);   // will not show in the statistics...
 	if (! result)
 		Melder_throw (U"Out of memory. Could not extend room to ", Melder_bigInteger (size), U" bytes.");
@@ -127,8 +136,11 @@ void * Melder_realloc (void *ptr, int64 size) {
 void * Melder_realloc_f (void *ptr, int64 size) {
 	if (size <= 0)
 		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	if (sizeof (size_t) < 8 && size > SIZE_MAX)
+	Melder_assert (MAXIMUM_ALLOCATION_SIZE < SIZE_MAX);
+	if (size > MAXIMUM_ALLOCATION_SIZE_64)
 		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
+	if (sizeof (size_t) < 8 && size > MAXIMUM_ALLOCATION_SIZE_32)
+		Melder_fatal (U"(Melder_realloc_f:) Cannot allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	void *result = realloc (ptr, (size_t) size);   // will not show in the statistics...
 	if (! result) {
 		if (theRainyDayFund) {
@@ -160,9 +172,13 @@ void * _Melder_calloc (int64 nelem, int64 elsize) {
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem), U" elements.");
 	if (elsize <= 0)
 		Melder_throw (U"Can never allocate elements whose size is ", Melder_bigInteger (elsize), U" bytes.");
-	if ((uint64) nelem > SIZE_MAX / (uint64) elsize)   // guarded casts to unsigned
-		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ", Melder_bigInteger (elsize), U" bytes each.",
-			sizeof (size_t) < 8 ? U" Use a 64-bit edition of Praat instead?" : nullptr);
+	Melder_assert (MAXIMUM_ALLOCATION_SIZE < SIZE_MAX);
+	if ((uint64) nelem > MAXIMUM_ALLOCATION_SIZE_64 / (uint64) elsize)   // guarded casts to unsigned
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ",
+				Melder_bigInteger (elsize), U" bytes each.");
+	if (sizeof (size_t) < 8 && (uint64) nelem > MAXIMUM_ALLOCATION_SIZE_32 / (uint64) elsize)
+		Melder_throw (U"Cannot allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ",
+				Melder_bigInteger (elsize), U" bytes each. Use a 64-bit edition of Praat instead?");
 	void *result = calloc ((size_t) nelem, (size_t) elsize);
 	if (! result)
 		Melder_throw (U"Out of memory: there is not enough room for ", Melder_bigInteger (nelem), U" more elements whose sizes are ", elsize, U" bytes each.");
@@ -178,8 +194,13 @@ void * _Melder_calloc_f (int64 nelem, int64 elsize) {
 		Melder_fatal (U"(Melder_calloc_f:) Can never allocate ", Melder_bigInteger (nelem), U" elements.");
 	if (elsize <= 0)
 		Melder_fatal (U"(Melder_calloc_f:) Can never allocate elements whose size is ", Melder_bigInteger (elsize), U" bytes.");
-	if ((uint64) nelem > SIZE_MAX / (uint64) elsize)
-		Melder_fatal (U"(Melder_calloc_f:) Can never allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ", Melder_bigInteger (elsize), U" bytes each.");
+	Melder_assert (MAXIMUM_ALLOCATION_SIZE < SIZE_MAX);
+	if ((uint64) nelem > MAXIMUM_ALLOCATION_SIZE_64 / (uint64) elsize)   // guarded casts to unsigned
+		Melder_fatal (U"Can never allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ",
+				Melder_bigInteger (elsize), U" bytes each.");
+	if (sizeof (size_t) < 8 && (uint64) nelem > MAXIMUM_ALLOCATION_SIZE_32 / (uint64) elsize)
+		Melder_fatal (U"Cannot allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ",
+				Melder_bigInteger (elsize), U" bytes each. Use a 64-bit edition of Praat instead?");
 	void *result = calloc ((size_t) nelem, (size_t) elsize);
 	if (! result) {
 		if (theRainyDayFund) {
@@ -201,10 +222,15 @@ void * _Melder_calloc_f (int64 nelem, int64 elsize) {
 autostring32 Melder_dup (conststring32 string /* cattable */) {
 	if (! string)
 		return autostring32();
+	Melder_assert (MAXIMUM_ALLOCATION_SIZE < SIZE_MAX);
 	const integer numberOfCharactersToCopy = Melder_length (string);
+	Melder_assert (numberOfCharactersToCopy >= 0);
+	Melder_assert (numberOfCharactersToCopy < MAXIMUM_ALLOCATION_SIZE);   // there should be no way to get longer strings into Praat
 	const int64 requestedBufferSize = (int64) numberOfCharactersToCopy + 1;
-	if (sizeof (size_t) < 8 && requestedBufferSize > SIZE_MAX / sizeof (char32))
-		Melder_throw (U"Can never allocate ", Melder_bigInteger (requestedBufferSize),
+	if (requestedBufferSize > (int64) MAXIMUM_ALLOCATION_SIZE_64 / (int64) sizeof (char32))
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (requestedBufferSize), U" characters.");
+	if (sizeof (size_t) < 8 && requestedBufferSize > (int64) MAXIMUM_ALLOCATION_SIZE_32 / (int64) sizeof (char32))
+		Melder_throw (U"Cannot allocate ", Melder_bigInteger (requestedBufferSize),
 				U" characters. Use a 64-bit edition of Praat instead?");
 	autostring32 result (numberOfCharactersToCopy, false);   // guarded conversion
 	str32cpy (result.get(), string);
@@ -233,10 +259,17 @@ autostring32 Melder_ndup (conststring32 string /* cattable */, const integer num
 autostring32 Melder_dup_f (conststring32 string /* cattable */) {
 	if (! string)
 		return autostring32();
-	const int64 size = (int64) Melder_length (string) + 1;
-	if (sizeof (size_t) < 8 && size > SIZE_MAX / sizeof (char32))
-		Melder_fatal (U"(Melder_dup_f:) Can never allocate ", Melder_bigInteger (size), U" characters.");
-	autostring32 result (size, true);
+	Melder_assert (MAXIMUM_ALLOCATION_SIZE < SIZE_MAX);
+	const integer numberOfCharactersToCopy = Melder_length (string);
+	Melder_assert (numberOfCharactersToCopy >= 0);
+	Melder_assert (numberOfCharactersToCopy < MAXIMUM_ALLOCATION_SIZE);   // there should be no way to get longer strings into Praat
+	const int64 requestedBufferSize = (int64) numberOfCharactersToCopy + 1;
+	if (requestedBufferSize > (int64) MAXIMUM_ALLOCATION_SIZE_64 / (int64) sizeof (char32))
+		Melder_fatal (U"(Melder_dup_f:) Can never allocate ", Melder_bigInteger (requestedBufferSize), U" characters.");
+	if (sizeof (size_t) < 8 && requestedBufferSize > (int64) MAXIMUM_ALLOCATION_SIZE_32 / (int64) sizeof (char32))
+		Melder_fatal (U"(Melder_dup_f:) Cannot allocate ", Melder_bigInteger (requestedBufferSize),
+				U" characters. Use a 64-bit edition of Praat instead?");
+	autostring32 result (numberOfCharactersToCopy, true);
 	str32cpy (result.get(), string);
 	return result;
 }

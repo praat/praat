@@ -6,7 +6,7 @@
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -23,9 +23,6 @@
 #include "Graphics.h"
 #include "TableOfReal.h"
 #include "Table.h"
-
-Collection_define (FunctionList, OrderedOf, Function) {
-};
 
 #include "TextGrid_def.h"
 
@@ -108,7 +105,21 @@ TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, integer tierNumber
 void AnyTextGridTier_identifyClass (Function anyTextGridTier, IntervalTier *intervalTier, TextTier *textTier);
 
 void TextGrid_addTier_copy (TextGrid me, Function tier);
-autoTextGrid TextGrids_merge (OrderedOf<structTextGrid>* textGrids);
+
+autoTextGrid TextGrids_merge (OrderedOf <structTextGrid>* textGrids, bool equalizeDomains);
+/*
+	Merge two or more textGrids.
+	The new domain will run from
+		min (textGrids[] -> xmin)
+	to
+		max (textGrids[] -> xmax)
+
+	If `equalizeDomains`:
+		- All tiers will have this same domain.
+		- All interval tiers will have intervals that border on the edges of this domain;
+		  this implies that a new empty interval can be added at the beginning and/or end of a tier.
+*/
+
 autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, bool preserveTimes);
 
 autoTextGrid Label_to_TextGrid (Label me, double duration);
