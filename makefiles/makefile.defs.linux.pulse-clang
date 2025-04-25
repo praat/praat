@@ -32,7 +32,7 @@ endif
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
-CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libc++ -Wshadow
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
 AR = ar
 RANLIB = ls
