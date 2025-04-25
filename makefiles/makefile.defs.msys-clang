@@ -20,7 +20,7 @@ CXXFLAGS = -std=gnu++17 $(COMMONFLAGS) -Wshadow
 
 EXECUTABLE = Praat.exe
 
-LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -lwinspool -static-libgcc -lc++ -lc++abi -mwindows -static
+LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -lwinspool -static-libgcc -lc++ -lc++abi -mwindows -static -static-libstdc++
 
 AR = $(PREFIX)ar
 RANLIB = $(PREFIX)ranlib

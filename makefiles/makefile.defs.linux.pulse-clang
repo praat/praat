@@ -13,7 +13,7 @@ COMMONFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `$(
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
-CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libc++ -Wshadow
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 #CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libstdc++ -Wshadow
 #CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
