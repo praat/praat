@@ -1453,9 +1453,17 @@ DO
 
 // MARK: Synthesize
 
-DIRECT (NEW1_TextGrids_merge) {
+DIRECT (NEW1_TextGrids_merge_OLD) {
 	COMBINE_ALL_TO_ONE (TextGrid)
-		autoTextGrid result = TextGrids_merge (& list);
+		autoTextGrid result = TextGrids_merge (& list, false);
+	COMBINE_ALL_TO_ONE_END (U"merged")
+}
+FORM (NEW1_TextGrids_merge, U"TextGrids: Merge", U"TextGrids: Merge...") {
+	BOOLEAN (equalizeDomains, U"Equalize domains", 1)
+	OK
+DO
+	COMBINE_ALL_TO_ONE (TextGrid)
+		autoTextGrid result = TextGrids_merge (& list, equalizeDomains);
 	COMBINE_ALL_TO_ONE_END (U"merged")
 }
 
@@ -1689,7 +1697,8 @@ praat_addAction1 (classTextGrid, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classTextGrid, 0, U"Get points (preceded)...", nullptr, 1, NEW_TextGrid_getPoints_preceded);
 		praat_addAction1 (classTextGrid, 0, U"Get points (followed)...", nullptr, 1, NEW_TextGrid_getPoints_followed);
 praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
-	praat_addAction1 (classTextGrid, 0, U"Merge", nullptr, 0, NEW1_TextGrids_merge);
+	praat_addAction1 (classTextGrid, 0, U"Merge", nullptr, GuiMenu_DEPRECATED_2025, NEW1_TextGrids_merge_OLD);
+	praat_addAction1 (classTextGrid, 0, U"Merge...", nullptr, 0, NEW1_TextGrids_merge);
 	praat_addAction1 (classTextGrid, 0, U"Concatenate", nullptr, 0, NEW1_TextGrids_concatenate);
 
 	praat_addAction1 (classTextTier, 0, U"TextTier help", nullptr, 0, HELP_TextTier_help);

@@ -4,7 +4,7 @@
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -324,8 +324,6 @@ void structTextGrid :: v_scaleX (double xminfrom, double xmaxfrom, double xminto
 	}
 }
 
-Thing_implement (FunctionList, Ordered, 0);
-
 Thing_implement (TextGrid, Function, 0);
 
 autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
@@ -475,16 +473,36 @@ void TextGrid_addTier_copy (TextGrid me, Function anyTier) {
 	}
 }
 
-autoTextGrid TextGrids_merge (OrderedOf<structTextGrid>* textGrids) {
+autoTextGrid TextGrids_merge (
+	OrderedOf<structTextGrid>* textGrids,
+	const bool equalizeDomains
+) {
 	try {
 		if (textGrids->size < 1)
 			Melder_throw (U"Cannot merge zero TextGrid objects.");
 		autoTextGrid thee = Data_copy (textGrids->at [1]);
+		double minimumXmin = thy xmin;
+		double maximumXmax = thy xmax;
 		for (integer igrid = 2; igrid <= textGrids->size; igrid ++) {
-			TextGrid textGrid = textGrids->at [igrid];
+			const constTextGrid textGrid = textGrids->at [igrid];
 			for (integer itier = 1; itier <= textGrid -> tiers->size; itier ++)
 				TextGrid_addTier_copy (thee.get(), textGrid -> tiers->at [itier]);
+			Melder_clipRight (& minimumXmin, textGrid -> xmin);
+			Melder_clipLeft (textGrid -> xmax, & maximumXmax);
 		}
+		if (equalizeDomains)
+			for (integer itier = 1; itier <= thy tiers->size; itier ++) {
+				const mutableFunction anyTier = thy tiers->at [itier];
+				if (anyTier -> classInfo == classIntervalTier) {
+					IntervalTier tier = static_cast <IntervalTier> (anyTier);
+					if (tier -> xmin < minimumXmin)
+						IntervalTier_addInterval_raw (tier, minimumXmin, tier -> xmin, U"");
+					if (tier -> xmax < maximumXmax)
+						IntervalTier_addInterval_raw (tier, tier -> xmax, maximumXmax, U"");
+				}
+				anyTier -> xmin = thy xmin;
+				anyTier -> xmax = thy xmax;
+			}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrids not merged.");

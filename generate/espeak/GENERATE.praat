@@ -1,5 +1,5 @@
 "How to integrate eSpeak into Praat"
-© 2012,2015,2017,2021,2023 David Weenink, 2024 Paul Boersma
+© 2012,2015,2017,2021,2023 David Weenink, 2024,2025 Paul Boersma
 
 This script is `generate/espeak/GENERATE.praat` in the Praat source distribution.
 It looks like a Praat %notebook and can indeed be dry-run as such,
@@ -282,7 +282,7 @@ All of these are moved to `generate/espeak/src`, without any recursion, while re
 5. Adapting eSpeak source code to Praat
 =======================================
 
-Many changes to the sources have to be made. If the original eSpeak sources don't change to much,
+Many changes to the sources have to be made. If the original eSpeak sources don't change too much,
 this can be done by a visual `diff` between for instance `./src/speech.cpp` (in the present generation folder)
 and `../../external/espeak/speech.cpp` (in the actual Praat sources).
 The former is the one to be changed (in the way described below).

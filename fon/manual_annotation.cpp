@@ -140,7 +140,7 @@ DEFINITION (U"a space-separated list of suffixes that make a word correct even i
 	"For the CGN, this is \"-\", since the first word in %%verzekerings- en bankwezen% should be ignored by the spelling checker.")
 MAN_END
 
-MAN_BEGIN (U"TextGrid", U"ppgb", 20110128)
+MAN_BEGIN (U"TextGrid", U"ppgb", 20110128 2025)
 INTRO (U"One of the @@types of objects@ in Praat, used for %annotation (segmentation and labelling). "
 	"For tutorial information, see @@Intro 7. Annotation@.")
 ENTRY (U"Description")
@@ -155,7 +155,7 @@ LIST_ITEM (U"@@PointProcess: To TextGrid...@ (takes the time domain from the Poi
 LIST_ITEM (U"@@PointProcess: To TextGrid (vuv)...@ (labels voiced and unvoiced intervals)")
 LIST_ITEM (U"@@Create TextGrid...@")
 TERM (U"From merging existing TextGrids with each other:")
-LIST_ITEM (U"@@TextGrids: Merge@")
+LIST_ITEM (U"@@TextGrids: Merge...@")
 ENTRY (U"How to edit a TextGrid")
 NORMAL (U"You select a TextGrid alone or together with a @Sound or @LongSound, and click ##View & Edit#. "
 	"A @TextGridEditor will appear on your screen, containing the TextGrid "
@@ -187,7 +187,19 @@ NORMAL (U"In this case, the value will not be written into the Info window.")
 MAN_END
  
 MAN_BEGIN (U"TextGrids: Merge", U"ppgb", 20101230)
+INTRO (U"An obsolete command to merge all selected @TextGrid objects into a new @TextGrid.")
+NORMAL (U"The same as @@TextGrids: Merge...@ with “Equalize domains” set to false.")
+MAN_END
+
+MAN_BEGIN (U"TextGrids: Merge...", U"ppgb", 2025)
 INTRO (U"A command to merge all selected @TextGrid objects into a new @TextGrid.")
+NORMAL (U"The time domain of the resulting TextGrid will be the union of the time domains "
+	"of the constituent TextGrids.")
+TERM (U"##Equalize time domains# (default: on)")
+DEFINITION (U"If on, then the time domain of each tier will be made equal to the time domain of the resulting TextGrid. "
+	"If this leads to a change in the end time of an interval tier, a new empty interval will be added "
+	"between the original end time of the tier and its new end time (an analogous insertion could happen at the start of the tier, "
+	"though that is quite rare in practice, because usually all tiers start at 0 seconds).")
 MAN_END
 
 MAN_BEGIN (U"TextGridEditor", U"ppgb", 20210228)

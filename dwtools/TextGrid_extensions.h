@@ -25,15 +25,6 @@
 
 #include "TextGrid.h"
 
-autoTextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2);
-/*
-	Merge two textGrids.
-	The new domain will be:
-	[min(grid1->xmin, grid2->xmin), max(grid1->xmax, grid2->xmax)].
-	This implies that for the resulting TextGrid each interval tier will have
-	one or two extra intervals if the domains of the two TextGrids are not equal,
-*/
-
 void TextGrid_extendTime (TextGrid me, double delta_time, int position);
 /*
 	Extend the begin-time (delta_time<0) or end-time (delta_time>0).

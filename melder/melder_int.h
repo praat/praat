@@ -73,7 +73,7 @@ using uint64 = uint64_t;
 	random sequences of zeroes and ones have a probability of less than 0.1 percent
 	to pass the "less than MAXIMUM_ALLOCATION_SIZE" test.
 */
-#define MAXIMUM_ALLOCATION_SIZE_32  2'000'000'000L
+#define MAXIMUM_ALLOCATION_SIZE_32  2'000'000'000
 #define MAXIMUM_ALLOCATION_SIZE_64  8'000'000'000'000'000LL
 #define MAXIMUM_ALLOCATION_SIZE  ( sizeof (integer) == 4 ? MAXIMUM_ALLOCATION_SIZE_32 : MAXIMUM_ALLOCATION_SIZE_64 )
 

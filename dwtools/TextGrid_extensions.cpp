@@ -33,37 +33,6 @@
 #include "TextGrid_extensions.h"
 #include "NUM2.h"
 
-autoTextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
-	try {
-		int at_end = 0, at_start = 1;
-
-		autoTextGrid g1 = Data_copy (me);
-		autoTextGrid g2 = Data_copy (thee);
-		/*
-			The new TextGrid will have the domain
-			[min(g1->xmin, g2->xmin), max(g1->xmax, g2->xmax)]
-		*/
-		const double extra_time_end = fabs (g2 -> xmax - g1 -> xmax);
-		const double extra_time_start = fabs (g2 -> xmin - g1 -> xmin);
-
-		if (g1 -> xmin > g2 -> xmin)
-			TextGrid_extendTime (g1.get(), extra_time_start, at_start);
-		if (g1 -> xmax < g2 -> xmax)
-			TextGrid_extendTime (g1.get(), extra_time_end, at_end);
-		if (g2 -> xmin > g1 -> xmin)
-			TextGrid_extendTime (g2.get(), extra_time_start, at_start);
-		if (g2 -> xmax < g1 -> xmax)
-			TextGrid_extendTime (g2.get(), extra_time_end, at_end);
-		for (integer i = 1; i <= g2 -> tiers->size; i ++) {
-			autoFunction tier = Data_copy (g2 -> tiers->at [i]);
-			g1 -> tiers -> addItem_move (tier.move());
-		}
-		return g1;
-	} catch (MelderError) {
-		Melder_throw (me, U" & ", thee, U": not merged.");
-	}
-}
-
 void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, conststring32 mark) {
 	try {
 		if (xmax <= my xmax)
