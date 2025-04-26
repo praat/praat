@@ -741,13 +741,13 @@ autoSound Sound_readWithAdjacentAnnotations_timit (conststring32 soundFileName, 
 		OrderedOf <structTextGrid> textgrids;
 
 		/*
-			Read the .txt file.
+			Read the .phn file.
 		*/
-		lastPeriod [1] = U't';
-		lastPeriod [2] = U'x';
-		lastPeriod [3] = U't';
-		autoTextGrid text = TextGrid_readFromTIMITLabelFile (& file, false);
-		textgrids. addItem_ref (text.get());
+		lastPeriod [1] = U'p';
+		lastPeriod [2] = U'h';
+		lastPeriod [3] = U'n';
+		autoTextGrid phones = TextGrid_readFromTimitLabelFile (& file, true);
+		textgrids. addItem_ref (phones.get());
 
 		/*
 			Read the .wrd file.
@@ -755,23 +755,23 @@ autoSound Sound_readWithAdjacentAnnotations_timit (conststring32 soundFileName, 
 		lastPeriod [1] = U'w';
 		lastPeriod [2] = U'r';
 		lastPeriod [3] = U'd';
-		autoTextGrid words = TextGrid_readFromTIMITLabelFile (& file, false);
+		autoTextGrid words = TextGrid_readFromTimitLabelFile (& file, false);
 		textgrids. addItem_ref (words.get());
 
 		/*
-			Read the .phn file.
+			Read the .txt file.
 		*/
-		lastPeriod [1] = U'p';
-		lastPeriod [2] = U'h';
-		lastPeriod [3] = U'n';
-		autoTextGrid phonemes = TextGrid_readFromTIMITLabelFile (& file, true);
-		textgrids. addItem_ref (phonemes.get());
+		lastPeriod [1] = U't';
+		lastPeriod [2] = U'x';
+		lastPeriod [3] = U't';
+		autoTextGrid text = TextGrid_readFromTimitLabelFile (& file, false);
+		textgrids. addItem_ref (text.get());
 
 		*out_textgrid = TextGrids_merge (& textgrids, true);
-		Thing_setName ((*out_textgrid) -> tiers->at [1], U"text");
-		Thing_setName ((*out_textgrid) -> tiers->at [2], U"words");
-		Thing_setName ((*out_textgrid) -> tiers->at [3], U"phon/cmu");
-		Thing_setName ((*out_textgrid) -> tiers->at [4], U"phon/ipa");
+		Thing_setName ((*out_textgrid) -> tiers->at [1], U"phon-ipa");
+		Thing_setName ((*out_textgrid) -> tiers->at [2], U"phon-arpa");
+		Thing_setName ((*out_textgrid) -> tiers->at [3], U"words");
+		Thing_setName ((*out_textgrid) -> tiers->at [4], U"text");
 		return sound;
 	} catch (MelderError) {
 		Melder_throw (U"Sound “", soundFileName, U"” not read with adjacent annotation files.");

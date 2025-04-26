@@ -61,7 +61,7 @@ autoIntervalTier Sound_to_IntervalTier_highMidLowIntervals (Sound me, double min
 autoTextGrid Sound_to_TextGrid_highMidLowIntervals (Sound me, double min, double max) {
 	try {
 		autoTextGrid thee = TextGrid_createWithoutTiers (my xmin, my xmax);
-		autoIntervalTier intervals =  Sound_to_IntervalTier_highMidLowIntervals (me, min, max);
+		autoIntervalTier intervals = Sound_to_IntervalTier_highMidLowIntervals (me, min, max);
 		thy tiers -> addItem_move (intervals.move());
 		return thee;
 	} catch (MelderError) {

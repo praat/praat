@@ -105,6 +105,7 @@ TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, integer tierNumber
 void AnyTextGridTier_identifyClass (Function anyTextGridTier, IntervalTier *intervalTier, TextTier *textTier);
 
 void TextGrid_addTier_copy (TextGrid me, Function tier);
+void TextGrid_addTier_move (TextGrid me, autoFunction tier);
 
 autoTextGrid TextGrids_merge (OrderedOf <structTextGrid>* textGrids, bool equalizeDomains);
 /*
@@ -176,7 +177,8 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file);
 autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file);
 autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
 
-autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile);
+autoIntervalTier IntervalTier_readFromTimitLabelFile (MelderFile file, bool hasPhones);
+autoTextGrid TextGrid_readFromTimitLabelFile (MelderFile file, bool hasPhones);
 /*
 	Read TIMIT label file with the following structure:
 		samplenumber1 samplenumber2 label1
