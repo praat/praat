@@ -3060,7 +3060,7 @@ void praat_uvafon_init () {
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special annotation file...", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Open", U"Read Sound with adjacent annotations (Timit)...",
+		praat_addMenuCommand (U"Objects", U"Open", U"Read Sound with adjacent annotations (TIMIT)...",
 				nullptr, 1, NEW_Sound_readWithAdjacentAnnotations_timit);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read TextGrid from ESPS label file...",
 				nullptr, 1, READ1_TextGrid_readFromEspsLabelFile);

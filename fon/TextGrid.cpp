@@ -137,6 +137,8 @@ autoIntervalTier IntervalTier_create_raw (double tmin, double tmax) {
 TextInterval /* reference */ IntervalTier_addInterval_raw (IntervalTier me, double tmin, double tmax, conststring32 text) {
 	try {
 		autoTextInterval interval = TextInterval_create (tmin, tmax, text);
+		Melder_clipRight (& my xmin, tmin);
+		Melder_clipLeft (tmax, & my xmax);
 		return my intervals. addItem_move (interval.move());
 	} catch (MelderError) {
 		Melder_throw (U"Interval could not be added to tier.");
@@ -463,6 +465,16 @@ integer TextGrid_countPointsWhere (TextGrid me, integer tierNumber, kMelder_stri
 void TextGrid_addTier_copy (TextGrid me, Function anyTier) {
 	try {
 		autoFunction tier = Data_copy (anyTier);
+		Melder_clipRight (& my xmin, tier -> xmin);
+		Melder_clipLeft (tier -> xmax, & my xmax);
+		my tiers -> addItem_move (tier.move());
+	} catch (MelderError) {
+		Melder_throw (me, U": tier not added.");
+	}
+}
+
+void TextGrid_addTier_move (TextGrid me, autoFunction tier) {
+	try {
 		Melder_clipRight (& my xmin, tier -> xmin);
 		Melder_clipLeft (tier -> xmax, & my xmax);
 		my tiers -> addItem_move (tier.move());
