@@ -1541,7 +1541,7 @@ static void CONVERT_DATA_TO_ONE__PublishTier (TextGridArea me, EDITOR_ARGS) {
 	CONVERT_DATA_TO_ONE
 		checkTierSelection (me, U"publish a tier");
 		const Function tier = my textGrid() -> tiers->at [my selectedTier];
-		autoTextGrid result = TextGrid_createWithoutTiers (1e30, -1e30);
+		autoTextGrid result = TextGrid_createWithoutTiers (1e308, -1e308);
 		TextGrid_addTier_copy (result.get(), tier);
 	CONVERT_DATA_TO_ONE_END (tier -> name.get())
 }

@@ -39,7 +39,7 @@ static const conststring32 STRING_POINT_NUMBER = U"Point number";
 
 DIRECT (NEW1_AnyTier_into_TextGrid) {
 	COMBINE_ALL_TO_ONE (Function)
-		autoTextGrid result = TextGrid_createWithoutTiers (1e30, -1e30);
+		autoTextGrid result = TextGrid_createWithoutTiers (1e308, -1e308);
 		for (integer i = 1; i <= list.size; i ++)
 			TextGrid_addTier_copy (result.get(), list.at [i]);
 	COMBINE_ALL_TO_ONE_END (U"grid")
@@ -1345,7 +1345,7 @@ FORM (NEW1_TextGrid_extractOneTier, U"TextGrid: Extract one tier", nullptr) {
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
 		Function tier = pr_TextGrid_peekTier (me, tierNumber);
-		autoTextGrid result = TextGrid_createWithoutTiers (1e30, -1e30);
+		autoTextGrid result = TextGrid_createWithoutTiers (1e308, -1e308);
 		TextGrid_addTier_copy (result.get(), tier);   // no transfer of tier ownership, because a copy is made
 	CONVERT_EACH_TO_ONE_END (tier -> name.get())
 }

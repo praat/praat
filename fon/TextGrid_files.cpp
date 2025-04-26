@@ -936,7 +936,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 				Melder_warning (U"File \"", MelderFile_messageName (file),
 					U"\": Start time set to previous end time for label at line ", linesRead, U".");
 				/*
-					This warning occurs hundreds of time for the .wrd files
+					This warning occurs hundreds of times for the .wrd files.
 				*/
 			}
 			/*
@@ -959,7 +959,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 			autoIntervalTier ipa = Data_copy (timit);
 			Thing_setName (ipa.get(), U"ipa");
 			/*
-				First change the data in ipa
+				First change the data in ipa.
 			*/
 			for (integer i = 1; i <= ipa -> intervals.size; i ++) {
 				interval = timit -> intervals.at [i];

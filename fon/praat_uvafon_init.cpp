@@ -1,10 +1,10 @@
 /* praat_uvafon_init.cpp
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -53,7 +53,7 @@
 #include "Strings_extensions.h"
 #include "StringsEditor.h"
 #include "TableEditor.h"
-#include "TextGrid.h"
+#include "TextGrid_Sound.h"
 #include "VocalTract.h"
 #include "VoiceAnalysis.h"
 #include "WordList.h"
@@ -2841,6 +2841,18 @@ FORM_READ (READ1_TextGrid_readFromEspsLabelFile, U"Read TextGrid from ESPS label
 	READ_ONE_END
 }
 
+FORM (NEW_Sound_readWithAdjacentAnnotations_timit, U"Read with adjacent annotations (TIMIT)", U"Read with adjacent annotations (TIMIT)...") {
+	INFILE (soundFileName, U"Sound file name", U"/Volumes/TIMIT/train/dr1/fcjf0/sa1.wav")
+	OK
+DO
+	CREATE_MULTIPLE
+		autoTextGrid textgrid;
+		autoSound sound = Sound_readWithAdjacentAnnotations_timit (soundFileName, & textgrid);
+		praat_new (sound.move());
+		praat_new (textgrid.move());
+	CREATE_MULTIPLE_END
+}
+
 // MARK: - TEXTTIER; the remainder is in praat_TextGrid_init.cpp *****/
 
 FORM_READ (READ1_TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr, true) {
@@ -3048,6 +3060,8 @@ void praat_uvafon_init () {
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special annotation file...", nullptr, 0, nullptr);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read Sound with adjacent annotations (Timit)...",
+				nullptr, 1, NEW_Sound_readWithAdjacentAnnotations_timit);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read TextGrid from ESPS label file...",
 				nullptr, 1, READ1_TextGrid_readFromEspsLabelFile);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...",

@@ -463,10 +463,8 @@ integer TextGrid_countPointsWhere (TextGrid me, integer tierNumber, kMelder_stri
 void TextGrid_addTier_copy (TextGrid me, Function anyTier) {
 	try {
 		autoFunction tier = Data_copy (anyTier);
-		if (tier -> xmin < my xmin)
-			my xmin = tier -> xmin;
-		if (tier -> xmax > my xmax)
-			my xmax = tier -> xmax;
+		Melder_clipRight (& my xmin, tier -> xmin);
+		Melder_clipLeft (tier -> xmax, & my xmax);
 		my tiers -> addItem_move (tier.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": tier not added.");
@@ -474,31 +472,27 @@ void TextGrid_addTier_copy (TextGrid me, Function anyTier) {
 }
 
 autoTextGrid TextGrids_merge (
-	OrderedOf<structTextGrid>* textGrids,
+	OrderedOf<structTextGrid>* me,
 	const bool equalizeDomains
 ) {
 	try {
-		if (textGrids->size < 1)
+		if (my size < 1)
 			Melder_throw (U"Cannot merge zero TextGrid objects.");
-		autoTextGrid thee = Data_copy (textGrids->at [1]);
-		double minimumXmin = thy xmin;
-		double maximumXmax = thy xmax;
-		for (integer igrid = 2; igrid <= textGrids->size; igrid ++) {
-			const constTextGrid textGrid = textGrids->at [igrid];
-			for (integer itier = 1; itier <= textGrid -> tiers->size; itier ++)
-				TextGrid_addTier_copy (thee.get(), textGrid -> tiers->at [itier]);
-			Melder_clipRight (& minimumXmin, textGrid -> xmin);
-			Melder_clipLeft (textGrid -> xmax, & maximumXmax);
+		autoTextGrid thee = Data_copy (my at [1]);
+		for (integer igrid = 2; igrid <= my size; igrid ++) {
+			const constTextGrid grid = my at [igrid];
+			for (integer itier = 1; itier <= grid -> tiers->size; itier ++)
+				TextGrid_addTier_copy (thee.get(), grid -> tiers->at [itier]);
 		}
 		if (equalizeDomains)
 			for (integer itier = 1; itier <= thy tiers->size; itier ++) {
 				const mutableFunction anyTier = thy tiers->at [itier];
 				if (anyTier -> classInfo == classIntervalTier) {
 					IntervalTier tier = static_cast <IntervalTier> (anyTier);
-					if (tier -> xmin < minimumXmin)
-						IntervalTier_addInterval_raw (tier, minimumXmin, tier -> xmin, U"");
-					if (tier -> xmax < maximumXmax)
-						IntervalTier_addInterval_raw (tier, tier -> xmax, maximumXmax, U"");
+					if (tier -> xmin > thy xmin)
+						IntervalTier_addInterval_raw (tier, thy xmin, tier -> xmin, U"");
+					if (tier -> xmax < thy xmax)
+						IntervalTier_addInterval_raw (tier, tier -> xmax, thy xmax, U"");
 				}
 				anyTier -> xmin = thy xmin;
 				anyTier -> xmax = thy xmax;
