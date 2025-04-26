@@ -724,8 +724,9 @@ const struct TIMIT_key {
 	{"uw", "u"},  			/* boot: bcl b UW tcl t */
 	/* fronted allophone of uw (alveolar contexts) */
 	/* 20190704 wgmichener "\\u\"" -> "\\u\\:^" */
-	/* 20250422 ppgb       "\\u\\:^" -> "u\\:^" */
-	{"ux", "u\\:^"}, 		/* toot: tcl t UX tcl t */
+	/* 20250422 ppgb       "\\u\\:^" -> "u\\:^"  (as in Zue & Seneff 1988: "Transcription and alignment of the Timit database") */
+	/* 20250426 ppgb       "u\\:^" -> "\\u-"     (turn Americanist into IPA (could also have been [y]) */
+	{"ux", "\\u-"}, 		/* toot: tcl t UX tcl t */
 	{"er", "\\er\\hr"},		/* bird: bcl b ER dcl d */
 	{"ax", "\\sw"}, 		/* about: AX bcl b aw tcl t */
 	{"ix", "\\i-"}, 		/* debit: dcl d eh bcl b IX tcl t */
