@@ -1,5 +1,5 @@
 # meson.build of the library "sys"
-# David Weenink, 19 November 2024
+# David Weenink & Paul Boersma, 28 April 2025
 
 sources = '''
 	ButtonEditor.cpp
@@ -11,6 +11,7 @@ sources = '''
 	Graphics_utils.cpp Graphics_grey.cpp Graphics_altitude.cpp
 	GraphicsPostscript.cpp GraphicsScreen.cpp Graphics_surface.cpp
 	Gui.cpp GuiButton.cpp GuiCheckButton.cpp GuiControl.cpp GuiDialog.cpp GuiDrawingArea.cpp GuiFileSelect.cpp GuiForm.cpp GuiLabel.cpp GuiList.cpp GuiMenu.cpp GuiMenuItem.cpp Gui_messages.cpp GuiObject.cpp GuiOptionMenu.cpp GuiProgressBar.cpp GuiRadioButton.cpp GuiScale.cpp GuiScrollBar.cpp GuiScrolledWindow.cpp GuiShell.cpp GuiText.cpp GuiThing.cpp GuiWindow.cpp
+	GuiTrust.cpp
 	HyperPage.cpp InfoEditor.cpp Interpreter.cpp
 	machine.cpp
 	ManPage.cpp ManPages.cpp ManPages_toHtml.cpp Manual.cpp  motifEmulator.cpp
