@@ -439,168 +439,196 @@ A command in the @@Font menu@ of the @@Picture window@,
 to set the font size of subsequent drawings to a specific number of points.
 
 ################################################################################
+"Special symbols"
+© Paul Boersma 1997,1999,2003,2006,2007,2008,2025
+
+When drawing text into the @@Picture window@ or into the @@TextGridEditor@,
+you can use %%backslash trigraphs% to display various kinds of special symbols.
+You can usually also type the characters themselves, if your computer has an input method for them.
+
+
+European symbols
+================
+
+To get the symbol "\a^" (a-circumflex), you can type `\a^`, i.e.,
+a sequence of backslash + a + circumflex (this is three characters in total, hence the term %trigraph).
+In this way, you can get a hundred non-ASCII symbols that are used in the alphabets of many European languages:
+
+- \a^ `\a^`   \e^ `\e^`   \i^ `\i^`   \o^ `\o^`   \u^ `\u^`      \A^ `\A^`   \E^ `\E^`   \I^ `\I^`   \O^ `\O^`   \U^ `\U^`
+- \a` `\a```   \e` `\e```   \i` `\i```   \o` `\o```   \u` `\u```      \A` `\A```   \E` `\E```   \I` `\I```   \O` `\O```   \U` `\U```
+- \a" `\a"`   \e" `\e"`   \i" `\i"`   \o" `\o"`   \u" `\u"`      \A" `\A"`   \E" `\E"`   \I" `\I"`   \O" `\O"`   \U" `\U"`      \y" `\y"`   \Y" `\Y"`
+- \a' `\a'`   \e' `\e'`   \i' `\i'`   \o' `\o'`   \u' `\u'`      \A' `\A'`   \E' `\E'`   \I' `\I'`   \O' `\O'`   \U' `\U'`      \y' `\y'`   \Y' `\Y'`
+- \c' `\c'`   \n' `\n'`   \s' `\s'`   \z' `\z'`      \C' `\C'`   \N' `\N'`   \S' `\S'`   \Z' `\Z'`
+- \o: `\o:`   \u: `\u:`      \O: `\O:`   \U: `\U:`
+- \a~ `\a~`   \n~ `\n~`   \o~ `\o~`      \A~ `\A~`   \N~ `\N~`   \O~ `\O~`
+- \c< `\c<`   \d< `\d<`   \e< `\e<`   \g< `\g<`   \n< `\n<`   \r< `\r<`   \s< `\s<`   \t< `\t<`   \z< `\z<`   
+- \C< `\C<`   \D< `\D<`   \E< `\E<`   \G< `\G<`   \N< `\N<`   \R< `\R<`   \S< `\S<`   \T< `\T<`   \Z< `\Z<`
+- \d- `\d-`   \D- `\D-`
+- \ao `\ao`   \uo `\uo`      \Ao `\Ao`   \Uo `\Uo`
+- \a; `\a;`   \e; `\e;`      \A; `\A;`   \E; `\E;`
+- \c, `\c,`   \s, `\s,`   \t, `\t,`      \C, `\C,`   \S, `\S,`   \T, `\T,`
+- \ae `\ae`   \o/ `\o/`      \Ae `\Ae`   \O/ `\O/`
+- \l/ `\l/`   \ss `\ss`   \th `\th`   \z! `\z!`      \L/ `\L/`   \Th `\Th`   \Z! `\Z!`
+- \!d `\!d`   \?d `\?d`
+- \eu `\eu` %euro,   \Lp `\Lp` %%pound sterling%,   \Y= `\Y=` %yen,   \fd `\fd` %florin,   \c/ `\c/` %cent
+- \SS `\SS` %section,   \|| `\||` %pilcrow (%paragraph)
+- \co `\co` %copyright,   \re `\re` %registered,   \tm `\tm` %trademark
+- \a_ `\a_` %%feminine ordinal%,   \o_ `\o_` %%masculine ordinal%
+- \<< `\<<` %%left-pointing guillemet%,   \>> `\>>` %%right-pointing guillemet%
+
+
+Mathematical symbols
+====================
+- \.c `\.c` %%middle dot%,   \xx `\xx` %multiplication,   \:- `\:-` %division,   \/d `\/d` %%division slash%
+- \dg `\dg` %degree,   \'p `\'p` %prime (%minute),   \"p `\"p` %%double prime% (%second)
+- \-m `\-m` %minus,   \-- `\--` %%en-dash%,   \+- `\+-` %%plus-minus%
+- \<_ `\<_` %%less than or equal to%,   \>_ `\>_` %%greater than or equal to%,   \=/ `\=/` %%not equal to%
+- \no `\no` %%logical not%,   \an `\an` %%logical and%,   \or `\or` %%logical or%
+- \At `\At` %%for all%,   \Er `\Er` %%there exists%,   \.3 `\.3` %therefore
+- \oc `\oc` %%proportional to%,   \=3 `\=3` %%defined as% (or %%congruent modulo%),   \~~ `\~~` %%approximately equal to%
+- \Vr `\Vr` %%square root%
+- \<- `\<-`,   \-> `\->`,   \<> `\<>`
+- \<= `\<=`,   \=> `\=>`,   \eq `\eq`
+- \^| `\^|`,   \=~ `\=~` %%congruent to%,   \_| `\_|`
+- \oo `\oo` %infinity,   \Tt `\Tt` %%up tack% (%%perpendicular to%)
+- \O| `\O|` %%empty set%,   \ni `\ni` %intersection, \uu `\uu` %union,   \c= `\c=` %%subset of%,   \e= `\e=` %%element of%
+- \dd `\dd` %%partial differential%
+- \ox `\ox` %%circled times%,   \o+ `\o+` %%circled plus%
+- \su `\su` %summation,   \in `\in` %integral
+
+
+Greek letters
+=============
+
+To get \ep\up\ro\et\ka\al, you type `\ep\up\ro\et\ka\al`.
+|  %alpha  | \al `\al` | \Al `\Al` 
+ |  %beta  | \be `\be` | \Be `\Be` 
+|  %gamma  | \ga `\ga` | \Ga `\Ga` 
+|  %delta  | \de `\de` | \De `\De` 
+| %epsilon | \ep `\ep` | \Ep `\Ep` 
+ |  %zeta  | \ze `\ze` | \Ze `\Ze` 
+|   %eta   | \et `\et` | \Et `\Et` 
+|  %theta  | \te `\te` | \Te `\Te` | \t2 `\t2` 
+ |  %iota  | \io `\io` | \Io `\Io` 
+|  %kappa  | \ka `\ka` | \Ka `\Ka` 
+ | %lambda | \la `\la` | \La `\La` 
+ |   %mu   | \mu `\mu` | \Mu `\Mu` 
+ |   %nu   | \nu `\nu` | \Nu `\Nu` 
+ |   %xi   | \xi `\xi` | \Xi `\Xi` 
+| %omicron | \on `\on` | \On `\On` 
+ |   %pi   | \pi `\pi` | \Pi `\Pi` | \o2 `\o2` 
+|   %rho   | \ro `\ro` | \Ro `\Ro` 
+|  %sigma  | \si `\si` | \Si `\Si` | \s2 `\s2` 
+|   %tau   | \ta `\ta` | \Ta `\Ta` 
+| %upsilon | \up `\up` | \Up `\Up` 
+|   %phi   | \fi `\fi` | \Fi `\Fi` | \f2 `\f2` 
+|   %chi   | \ci `\ci` | \Ci `\Ci` 
+|   %psi   | \ps `\ps` | \Ps `\Ps` 
+|  %omega  | \om `\om` | \Om `\Om` 
+
+
+Hebrew letters
+==============
+
+To get an alef, you type `\?+`.
+On Windows, you have to install international support to get the left-to-right order correct.
+|  %alef  | \?+ `\?+` 
+ |  %bet  | \B+ `\B+` 
+ | %gimel | \G+ `\G+` 
+ | %dalet | \D+ `\D+` 
+|   %he   | \H+ `\H+` 
+ |  %vav  | \V+ `\V+` 
+ | %zayin | \Z+ `\Z+` 
+ |  %het  | \X+ `\X+` 
+ |  %tet  | \Y+ `\Y+` 
+ |  %yod  | \J+ `\J+` 
+ |  %kaf  | \K+ `\K+` | \K% `\K%` 
+ | %lamed | \L+ `\L+` 
+ |  %mem  | \M+ `\M+` | \M% `\M%` 
+ |  %nun  | \N+ `\N+` | \N% `\N%` 
+| %samekh | \S+ `\S+` 
+|  %ayin  | \9+ `\9+` 
+|   %pe   | \P+ `\P+` | \P% `\P%` 
+ | %tsadi | \C+ `\C+` | \C% `\C%` 
+ |  %qof  | \Q+ `\Q+` 
+|  %resh  | \R+ `\R+` 
+|  %shin  | \W+ `\W+` 
+ |  %tav  | \T+ `\T+` 
+ | %hiriq | \?+\hI `\?+\hI` 
+ | %segol | \?+\sE `\?+\sE` | %tsere | \?+\cE `\?+\cE` 
+| %qamats | \?+\qA `\?+\qA` | %patah | \?+\pA `\?+\pA` 
+ | %holam | \?+\hO `\?+\hO` 
+| %qubuts | \?+\qU `\?+\qU` 
+| %dagesh or %maliq | \dq `\dq` 
+
+Combinations:
+| %%vav holam | \vO `\vO` 
+| %shuruq | \sU `\sU` 
+
+
+Phonetic symbols
+================
+
+See @@Phonetic symbols@
+
+
+Miscellaneous
+=============
+, \bs `\bs` %backslash,   \bu `\bu` %bullet
+, \cl `\cl` (%club),   \di `\di` (%diamond),   \he `\he` (%heart),   \sp `\sp` (%spade)
+, \pf `\pf` %%pointing finger%,   \f5 `\f5` %%flower-five%
+
+
+See also
+========
+
+@@Text styles@
+
+################################################################################
+"Text styles"
+© Paul Boersma 1996,2023,2025
+
+When drawing text into the @@Picture window@ or into an editor,
+you can use text styles other than regular Roman.
+
+Italic, bold, superscript, subscript
+====================================
+
+With the following symbols, you introduce stretches of text drawn in special styles:
+, `%`: the following letter will be italic.
+, `#`: the following letter will be bold.
+, `#%`: the following letter will be bold-italic.
+, `^`: the following letter will be superscript: `%m%c^2` gives %m%c^2.
+, `_`: the following letter will be subscript. Example: %F__0_ is typed as `%F_0`.
+, `%%`: the following letters will be italic, until the following `%`:
+	, `Now %%you% try`   gives:   Now %%you% try.
+, The same goes for `##`, `^^`, and `__`.
+, `\s{...}`: small:
+	, `W\s{ARP}`   gives:   W\s{ARP}
+
+To draw a \%  or \#  or \^  or \_  symbol, you type “`\% `” or “`\# `” or “`\^ `” or “`\_ `”, respectively: a backslash, the symbol, and a space.
+
+See also
+========
+
+@@Special symbols@
+
+################################################################################
+"Phonetic symbols"
+© Paul Boersma 2004,2005,2007,2009
+
+To draw phonetic symbols in the @@Picture window@ or in the @TextGridEditor,
+make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org.
+You can either type the symbols directly (if your computer has an input method for them), or use backslash sequences as described in:
+
+- @@Phonetic symbols: consonants
+- @@Phonetic symbols: vowels
+- @@Phonetic symbols: diacritics
+
+################################################################################
 )~~~"
 MAN_PAGES_END
 
-MAN_BEGIN (U"Special symbols", U"ppgb", 20080227)
-INTRO (U"When drawing text into the @@Picture window@ or into the @@TextGridEditor@, "
-	"you can use %%backslash sequences% to display various kinds of special symbols. "
-	"You can usually also type the characters themselves, if your computer has an input method for them.")
-
-ENTRY (U"European symbols")
-NORMAL (U"To get the symbol “\\a^” (a-circumflex), you type “\\bsa\\^ ”, i.e., "
-	"a sequence of backslash + a + circumflex. In this way, you can get a hundred "
-	"non-ASCII symbols that are used in the alphabets of many European languages.")
-LIST_ITEM (U"\\a\" \\bsa\\\"   \\e\" \\bse\\\"   \\i\" \\bsi\\\"   \\o\" \\bso\\\"   "
-	"\\u\" \\bsu\\\"   \\y\" \\bsy\\\"  "
-	"\\A\" \\bsA\\\"   \\E\" \\bsE\\\"   \\I\" \\bsI\\\"   \\O\" \\bsO\\\"   \\U\" \\bsU\\\"   "
-	"\\Y\" \\bsY\\\" ")
-LIST_ITEM (U"\\a\' \\bsa\'  \\c\' \\bsc\'  \\e\' \\bse\'  \\i\' \\bsi\'  \\n\' \\bsn\'  \\o\' \\bso\'  \\s\' \\bss\'  \\u\' \\bsu\'  \\y\' \\bsy\'  \\z\' \\bsz\'  "
-	"\\A\' \\bsA\'  \\C\' \\bsC\'  \\E\' \\bsE\'  \\I\' \\bsI\'  \\N\' \\bsN\'  \\O\' \\bsO\'  \\S\' \\bsS\'  \\U\' \\bsU\'  \\Y\' \\bsY\'  \\Z\' \\bsZ\'")
-LIST_ITEM (U"\\o: \\bso:  \\u: \\bsu:  \\O: \\bsO:  \\U: \\bsU:")
-LIST_ITEM (U"\\a` \\bsa`  \\e` \\bse`  \\i` \\bsi`  \\o` \\bso`  \\u` \\bsu`  "
-	"\\A` \\bsA`  \\E` \\bsE`  \\I` \\bsI`  \\O` \\bsO`  \\U` \\bsU`")
-LIST_ITEM (U"\\a^ \\bsa\\^   \\e^ \\bse\\^   \\i^ \\bsi\\^   \\o^ \\bso\\^   \\u^ \\bsu\\^   "
-	"\\A^ \\bsA\\^   \\E^ \\bsE\\^   \\I^ \\bsI\\^   \\O^ \\bsO\\^   \\U^ \\bsU\\^ ")
-LIST_ITEM (U"\\a~ \\bsa\\~   \\n~ \\bsn\\~   \\o~ \\bso\\~   \\A~ \\bsA\\~   \\N~ \\bsN\\~   \\O~ \\bsO\\~  ")
-LIST_ITEM (U"\\c< \\bsc<  \\d< \\bsd<  \\e< \\bse<  \\g< \\bsg<  \\n< \\bsn<  \\r< \\bsr<  \\s< \\bss<  \\t< \\bst<  \\z< \\bsz<  "
-	"\\C< \\bsC<  \\D< \\bsD<  \\E< \\bsE<  \\G< \\bsG<  \\N< \\bsN<  \\R< \\bsR<  \\S< \\bsS<  \\T< \\bsT<  \\Z< \\bsZ<")
-LIST_ITEM (U"\\d- \\bsd-  \\D- \\bsD-")
-LIST_ITEM (U"\\ao \\bsao  \\uo \\bsuo  \\Ao \\bsAo  \\Uo \\bsUo")
-LIST_ITEM (U"\\a; \\bsa;  \\e; \\bse;  \\A; \\bsA;  \\E; \\bsE;")
-LIST_ITEM (U"\\ae \\bsae  \\Ae \\bsAe  \\o/ \\bso/  \\O/ \\bsO/  "
-	"\\c, \\bsc,  \\C, \\bsC,  \\l/ \\bsl/  \\L/ \\bsL/  \\ss \\bsss  \\th \\bsth  \\z! \\bsz!  \\Z! \\bsZ!")
-LIST_ITEM (U"\\!d \\bs!d  \\?d \\bs?d")
-LIST_ITEM (U"\\eu \\bseu %euro, \\Lp \\bsLp %%pound sterling%, \\Y= \\bsY= %yen, "
-	"\\fd \\bsfd %florin, \\c/ \\bsc/ %cent")
-LIST_ITEM (U"\\SS \\bsSS %section, \\|| \\bs|| %pilcrow (%paragraph)")
-LIST_ITEM (U"\\co \\bsco %copyright, \\re \\bsre %registered, \\tm \\bstm %trademark")
-LIST_ITEM (U"\\a_ \\bsa_ %%feminine ordinal%, \\o_ \\bso_ %%masculine ordinal%")
-LIST_ITEM (U"\\<< \\bs<< %%left-pointing guillemet%, \\>> \\bs>> %%right-pointing guillemet%")
-
-ENTRY (U"Mathematical symbols")
-LIST_ITEM (U"\\.c \\bs.c %%middle dot%, \\xx \\bsxx %multiplication, \\:- \\bs:- %division, \\/d \\bs/d %%division slash%")
-LIST_ITEM (U"\\dg \\bsdg %degree, \\\'p \\bs\'p %prime (%minute), \\\"p \\bs\\\" p %%double prime% (%second)")
-LIST_ITEM (U"\\-m \\bs-m %minus, \\-- \\bs-- %%en-dash%, \\+- \\bs+- %%plus-minus%")
-LIST_ITEM (U"\\<_ \\bs<_ %%less than or equal to%, \\>_ \\bs>_ %%greater than or equal to%, \\=/ \\bs=/ %%not equal to%")
-LIST_ITEM (U"\\no \\bsno %%logical not%, \\an \\bsan %%logical and%, \\or \\bsor %%logical or%")
-LIST_ITEM (U"\\At \\bsAt %%for all%, \\Er \\bsEr %%there exists%, \\.3 \\bs.3 %therefore")
-LIST_ITEM (U"\\oc \\bsoc %%proportional to%, \\=3 \\bs=3 %%defined as% (or %%congruent modulo%), \\~~ \\bs~~ %%approximately equal to%")
-LIST_ITEM (U"\\Vr \\bsVr %%square root%")
-LIST_ITEM (U"\\<- \\bs<-, \\-> \\bs->, \\<> \\bs<>")
-LIST_ITEM (U"\\<= \\bs<=, \\=> \\bs=>, \\eq \\bseq")
-LIST_ITEM (U"\\^| \\bs\\^ |, \\=~ \\bs=~ %%congruent to%, \\_| \\bs_|")
-LIST_ITEM (U"\\oo \\bsoo %infinity, \\Tt \\bsTt %%up tack% (%%perpendicular to%)")
-LIST_ITEM (U"\\O| \\bsO| %%empty set%, \\ni \\bsni %intersection, \\uu \\bsuu %union, "
-	"\\c= \\bsc= %%subset of%, \\e= \\bse= %%element of%")
-LIST_ITEM (U"\\dd \\bsdd %%partial differential%")
-LIST_ITEM (U"\\ox \\bsox %%circled times%, \\o+ \\bso+ %%circled plus%")
-LIST_ITEM (U"\\su \\bssu %summation, \\in \\bsin %integral")
-
-ENTRY (U"Greek letters")
-NORMAL (U"To get \\ep\\up\\ro\\et\\ka\\al, you type \\bsep\\bsup\\bsro\\bset\\bska\\bsal.")
-LIST_ITEM (U"\t\\al \\bsal \t\\Al \\bsAl %alpha")
-LIST_ITEM (U"\t\\be \\bsbe \t\\Be \\bsBe %beta")
-LIST_ITEM (U"\t\\ga \\bsga \t\\Ga \\bsGa %gamma")
-LIST_ITEM (U"\t\\de \\bsde \t\\De \\bsDe %delta")
-LIST_ITEM (U"\t\\ep \\bsep \t\\Ep \\bsEp %epsilon")
-LIST_ITEM (U"\t\\ze \\bsze \t\\Ze \\bsZe %zeta")
-LIST_ITEM (U"\t\\et \\bset \t\\Et \\bsEt %eta")
-LIST_ITEM (U"\t\\te \\bste \t\\Te \\bsTe %theta \t\\t2 \\bst2")
-LIST_ITEM (U"\t\\io \\bsio \t\\Io \\bsIo %iota")
-LIST_ITEM (U"\t\\ka \\bska \t\\Ka \\bsKa %kappa")
-LIST_ITEM (U"\t\\la \\bsla \t\\La \\bsLa %lambda")
-LIST_ITEM (U"\t\\mu \\bsmu \t\\Mu \\bsMu %mu")
-LIST_ITEM (U"\t\\nu \\bsnu \t\\Nu \\bsNu %nu")
-LIST_ITEM (U"\t\\xi \\bsxi \t\\Xi \\bsXi %xi")
-LIST_ITEM (U"\t\\on \\bson \t\\On \\bsOn %omicron")
-LIST_ITEM (U"\t\\pi \\bspi \t\\Pi \\bsPi %pi")
-LIST_ITEM (U"\t\\ro \\bsro \t\\Ro \\bsRo %rho")
-LIST_ITEM (U"\t\\si \\bssi \t\\Si \\bsSi %sigma \t\\s2 \\bss2")
-LIST_ITEM (U"\t\\ta \\bsta \t\\Ta \\bsTa %tau")
-LIST_ITEM (U"\t\\up \\bsup \t\\Up \\bsUp %upsilon")
-LIST_ITEM (U"\t\\fi \\bsfi \t\\Fi \\bsFi %phi \t\\f2 \\bsf2")
-LIST_ITEM (U"\t\\ci \\bsci \t\\Ci \\bsCi %chi")
-LIST_ITEM (U"\t\\ps \\bsps \t\\Ps \\bsPs %psi")
-LIST_ITEM (U"\t\\om \\bsom \t\\Om \\bsOm %omega \t\\o2 \\bso2")
-
-ENTRY (U"Hebrew letters")
-NORMAL (U"To get an alef, you type \\bs?+. "
-	"On Windows, you have to install international support to get the left-to-right order correct.")
-LIST_ITEM (U"\t\\?+ \\bs?+\t%alef")
-LIST_ITEM (U"\t\\B+ \\bsB+\t%bet")
-LIST_ITEM (U"\t\\G+ \\bsG+\t%gimel")
-LIST_ITEM (U"\t\\D+ \\bsD+\t%dalet")
-LIST_ITEM (U"\t\\H+ \\bsH+\t%he")
-LIST_ITEM (U"\t\\V+ \\bsV+\t%vav")
-LIST_ITEM (U"\t\\Z+ \\bsZ+\t%zayin")
-LIST_ITEM (U"\t\\X+ \\bsX+\t%het")
-LIST_ITEM (U"\t\\Y+ \\bsY+\t%tet")
-LIST_ITEM (U"\t\\J+ \\bsJ+\t%yod")
-LIST_ITEM (U"\t\\K+ \\bsK+\t%kaf\t\\K% \\bsK\\% ")
-LIST_ITEM (U"\t\\L+ \\bsL+\t%lamed")
-LIST_ITEM (U"\t\\M+ \\bsM+\t%mem\t\\M% \\bsM\\% ")
-LIST_ITEM (U"\t\\N+ \\bsN+\t%nun\t\\N% \\bsN\\% ")
-LIST_ITEM (U"\t\\S+ \\bsS+\t%samekh")
-LIST_ITEM (U"\t\\9+ \\bs9+\t%ayin")
-LIST_ITEM (U"\t\\P+ \\bsP+\t%pe\t\\P% \\bsP\\% ")
-LIST_ITEM (U"\t\\C+ \\bsC+\t%tsadi\t\\C% \\bsC\\% ")
-LIST_ITEM (U"\t\\Q+ \\bsQ+\t%qof")
-LIST_ITEM (U"\t\\R+ \\bsR+\t%resh")
-LIST_ITEM (U"\t\\W+ \\bsW+\t%shin")
-LIST_ITEM (U"\t\\T+ \\bsT+\t%tav")
-LIST_ITEM (U"\t\\?+\\hI \\bs?+\\bshI\t%hiriq")
-LIST_ITEM (U"\t\\?+\\sE \\bs?+\\bssE\t%segol\t\\?+\\cE \\bs?+\\bscE\t%tsere")
-LIST_ITEM (U"\t\\?+\\qA \\bs?+\\bsqA\t%qamats\t\\?+\\pA \\bs?+\\bspA\t%patah")
-LIST_ITEM (U"\t\\?+\\hO \\bs?+\\bshO\t%holam")
-LIST_ITEM (U"\t\\?+\\qU \\bs?+\\bsqU\t%qubuts")
-LIST_ITEM (U"\t\\dq \\bsdq\t%dagesh or %maliq")
-NORMAL (U"Combinations:")
-LIST_ITEM (U"\t\\vO \\bsvO\t%%vav holam")
-LIST_ITEM (U"\t\\sU \\bssU\t%shuruq")
-
-ENTRY (U"Phonetic symbols")
-NORMAL (U"See @@Phonetic symbols@")
-
-ENTRY (U"Miscellaneous")
-LIST_ITEM (U"\\bs \\bsbs %backslash")
-LIST_ITEM (U"\\bu \\bsbu %bullet")
-LIST_ITEM (U"\\cl \\bscl (%club), \\di \\bsdi (%diamond), \\he \\bshe (%heart), \\sp \\bssp (%spade)")
-LIST_ITEM (U"\\pf \\bspf %%pointing finger%, \\f5 \\bsf5 %%flower-five%")
-
-ENTRY (U"See also")
-NORMAL (U"@@Text styles@")
-MAN_END
-
-MAN_BEGIN (U"Text styles", U"ppgb", 19961012 /*20230611*/)
-INTRO (U"When drawing text into the @@Picture window@ or into an editor, "
-	"you can use text styles other than regular Roman.")
-ENTRY (U"Italic, bold, superscript, subscript")
-NORMAL (U"With the following symbols, you introduce stretches of text drawn in special styles:")
-LIST_ITEM (U"\\% : the following letter will be italic.")
-LIST_ITEM (U"\\# : the following letter will be bold.")
-LIST_ITEM (U"\\# \\% : the following letter will be bold-italic.")
-LIST_ITEM (U"\\^ : the following letter will be superscript: `%m%c^2` gives %m%c^2.")
-LIST_ITEM (U"\\_ : the following letter will be subscript. Example: %F__0_ is typed as `%F_0`.")
-LIST_ITEM (U"\\% \\% : the following letters will be italic, until the following \\% :")
-LIST_ITEM (U"    `Now %%you% try`   gives:   Now %%you% try.")
-LIST_ITEM (U"The same goes for \\# \\# , \\^ \\^ , and \\_ \\_ .")
-LIST_ITEM (U"\\bss{...}: small:")
-LIST_ITEM (U"    `W\\s{ARP}`   gives:   W\\s{ARP}")
-NORMAL (U"To draw a \\% , \\# , \\^ , or \\_  symbol, you type “`\\% `”, "
-	"“`\\# `”, “`\\^ `”, or “`\\_ `”: a backslash, the symbol, and a space.")
-ENTRY (U"See also")
-NORMAL (U"@@Special symbols@")
-MAN_END
-
-MAN_BEGIN (U"Phonetic symbols", U"ppgb", 20090804)
-NORMAL (U"To draw phonetic symbols in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
-	"You can either type the symbols directly (if your computer has an input method for them), or use backslash sequences as described in:")
-LIST_ITEM (U"\\bu @@Phonetic symbols: consonants")
-LIST_ITEM (U"\\bu @@Phonetic symbols: vowels")
-LIST_ITEM (U"\\bu @@Phonetic symbols: diacritics")
-MAN_END
 
 MAN_BEGIN (U"Phonetic symbols: consonants", U"ppgb", 20090804)
 NORMAL (U"To draw phonetic symbols for consonants in the @@Picture window@ or in the @TextGridEditor, "
@@ -620,7 +648,7 @@ NORMAL (U"For most of the codes, the first letter tells you the most similar let
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN (U"Phonetic symbols: diacritics", U"ppgb", 20211027)
+MAN_BEGIN (U"Phonetic symbols: diacritics", U"ppgb", 20211027 2025)
 NORMAL (U"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can either type the symbols directly (if your computer has an input method for them), "
@@ -644,8 +672,8 @@ LIST_ITEM (U"e\\3v e\\bs3v (%%combining right half ring below%): slightly rounde
 LIST_ITEM (U"u\\cv u\\bscv (%%combining left half ring below%): slightly unrounded")
 NORMAL (U"Overstrikes:")
 LIST_ITEM (U"\\gf\\0^ \\bsgf\\bs0\\^  (%%combining ring above%): voiceless")
-LIST_ITEM (U"\\ef\\\'^ \\bsef\\bs\'\\^  (%%combining acute accent%): high tone")
-LIST_ITEM (U"\\ef\\`^ \\bsef\\bs`\\^  (%%combining grave accent%): low tone")
+LIST_ITEM (U"\\ef\\\'^ \\bsef\\bs\'\\^  (%%combining acute accent%; to get “\'”, type a quote): high tone")
+LIST_ITEM (U"\\ef\\`^ \\bsef\\bs\\` \\^  (%%combining grave accent%; to get “\\` ”, type a backquote): low tone")
 LIST_ITEM (U"\\ef\\-^ \\bsef\\bs-\\^  (%%combining macron%): mid tone (or so)")
 LIST_ITEM (U"\\ef\\~^ \\bsef\\bs~\\^  (%%combining tilde%): nasalized")
 LIST_ITEM (U"\\ef\\v^ \\bsef\\bsv\\^  (%%combining caron%, %%háček%, %wedge): rising tone")   // UNITEXT_LATIN_SMALL_LETTER_C_WITH_CARON
@@ -680,6 +708,8 @@ LIST_ITEM (U"t\\^y t\\bs\\^ y (palatalization in a deprecated American notation)
 NORMAL (U"Digraphs:")
 LIST_ITEM (U"\\ts \\bsts t\\--s ligature")
 LIST_ITEM (U"\\tS \\bstS tesh ligature")
+LIST_ITEM (U"\\dz \\bsts d\\--z ligature")
+LIST_ITEM (U"\\dZ \\bstS dezh ligature")
 MAN_END
 
 MAN_BEGIN (U"Phonetic symbols: vowels", U"ppgb", 20090804)
