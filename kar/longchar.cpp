@@ -546,7 +546,9 @@ static struct structLongchar_Info Longchar_database [] = {
 { '.', 'f', 2, 0, { "/halflength",     250, 0,   217, 235,  250, 0,    250, 0,   0,   0   },  62,  62,  62,  62, UNICODE_MODIFIER_LETTER_HALF_TRIANGULAR_COLON },
 { 'h', 'r', 2, 0, { "/righthook",      300, 0,   250, 265,  300, 0,    300, 0,   0,   0   }, 213, 213, 213, 213, UNICODE_MODIFIER_LETTER_RHOTIC_HOOK }, // or rturnsuper
 { '`', '^', 2, 1, { "/graveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  36,  36,  36,  36, UNICODE_COMBINING_GRAVE_ACCENT },
+{ '`', '`', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_DOUBLE_GRAVE_ACCENT },
 { '\'','^', 2, 1, { "/acuteover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  64,  64,  64,  64, UNICODE_COMBINING_ACUTE_ACCENT },
+{ '\'','\'',2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_DOUBLE_ACUTE_ACCENT },
 { '^', '^', 2, 1, { "/circumover",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  94,  94,  94,  94, UNICODE_COMBINING_CIRCUMFLEX_ACCENT },
 { '~', '^', 2, 1, { "/tildeover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  41,  41,  41,  41, UNICODE_COMBINING_TILDE }, // nasalized
 { '-', '^', 2, 1, { "/minusover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  35,  35,  35,  35, UNICODE_COMBINING_MACRON }, // mid tone or so
@@ -601,6 +603,17 @@ static struct structLongchar_Info Longchar_database [] = {
 { 'i', 'd', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_REVERSED_R_WITH_FISHHOOK },
 { 'i', 'r', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_SQUAT_REVERSED_ESH },
 { '_', 'u', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_UNDERTIE },
+{ '-', '5', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_EXTRA_HIGH_TONE_BAR },
+{ '-', '4', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_HIGH_TONE_BAR },
+{ '-', '3', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_MID_TONE_BAR },
+{ '-', '2', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_LOW_TONE_BAR },
+{ '-', '1', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_EXTRA_LOW_TONE_BAR },
+{ '|', 'u', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_RAISED_UP_ARROW },
+{ '|', 'd', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_RAISED_DOWN_ARROW },
+{ 'N', 'E', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_NORTH_EAST_ARROW },
+{ 'S', 'E', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_SOUTH_EAST_ARROW },
+{ 'N', 'W', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_NORTH_WEST_ARROW },
+{ 'S', 'W', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_SOUTH_WEST_ARROW },
 
 { 't', 's', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TS_DIGRAPH },
 { 't', 'S', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TESH_DIGRAPH },

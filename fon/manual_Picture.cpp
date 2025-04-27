@@ -1,10 +1,10 @@
 /* manual_Picture.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2023,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -490,6 +490,7 @@ Mathematical symbols
 - \<- `\<-`,   \-> `\->`,   \<> `\<>`
 - \<= `\<=`,   \=> `\=>`,   \eq `\eq`
 - \^| `\^|`,   \=~ `\=~` %%congruent to%,   \_| `\_|`
+- \NE `\NE`,   \SE `\SE`,   \SW `\SW`,   \NW `\NW`
 - \oo `\oo` %infinity,   \Tt `\Tt` %%up tack% (%%perpendicular to%)
 - \O| `\O|` %%empty set%,   \ni `\ni` %intersection, \uu `\uu` %union,   \c= `\c=` %%subset of%,   \e= `\e=` %%element of%
 - \dd `\dd` %%partial differential%
@@ -599,7 +600,7 @@ With the following symbols, you introduce stretches of text drawn in special sty
 , `#`: the following letter will be bold.
 , `#%`: the following letter will be bold-italic.
 , `^`: the following letter will be superscript: `%m%c^2` gives %m%c^2.
-, `_`: the following letter will be subscript. Example: %F__0_ is typed as `%F_0`.
+, `_`: the following letter will be subscript. Example: %F_0 is typed as `%F_0`.
 , `%%`: the following letters will be italic, until the following `%`:
 	, `Now %%you% try`   gives:   Now %%you% try.
 , The same goes for `##`, `^^`, and `__`.
@@ -615,15 +616,101 @@ See also
 
 ################################################################################
 "Phonetic symbols"
-© Paul Boersma 2004,2005,2007,2009
+© Paul Boersma 2004,2005,2007,2009,2025
 
 To draw phonetic symbols in the @@Picture window@ or in the @TextGridEditor,
 make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org.
-You can either type the symbols directly (if your computer has an input method for them), or use backslash sequences as described in:
+You can either type the symbols directly (if your computer has an input method for them), or use backslash trigraphs as described in:
 
 - @@Phonetic symbols: consonants
 - @@Phonetic symbols: vowels
 - @@Phonetic symbols: diacritics
+
+################################################################################
+"Phonetic symbols: diacritics"
+© Paul Boersma 2004,2005,2006,2007,2008,2009,2011,2013,2021,2025
+
+To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor,
+make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org.
+You can either type the symbols directly (if your computer has an input method for them),
+or use the backslash trigraphs in the following list.
+
+Understrikes:
+, n\|v `n\|v`  (%%combining vertical line below%): syllabic consonant
+, b\0v `b\0v`  (%%combining ring below%): voiceless (e.g. lenis voiceless plosive, voiceless nasal or approximant)
+, o\Tv `o\Tv`  (%%combining down tack below%, %lowering): lowered vowel; or turns a fricative into an approximant
+, o\T^ `o\T^`  (%%combining up tack below%, %raising): raised vowel; or turns an approximant into a fricative
+, o\T( `o\T(`  (%%combining left tack below%, %atr): advanced tongue root
+, o\T) `o\T)`  (%%combining right tack below%, %rtr): retracted tongue root
+, e\-v `e\-v`  (%%combining macron below%): backed
+, o\+v `o\+v`  (%%combining plus sign below%): fronted
+, o\:v `o\:v`  (%%combining diaeresis below%): breathy voice
+, o\~v `o\~v`  (%%combining tilde below%): creaky voice
+, d\Nv `d\Nv`  (%%combining bridge below%): dental (as opposed to alveolar)
+, d\Uv `d\Uv`  (%%combining inverted bridge below%): apical
+, d\Dv `d\Dv`  (%%combining square below%): laminal
+, u\nv `u\nv`  (%%combining inverted breve below%): nonsyllabic
+, e\3v `e\3v`  (%%combining right half ring below%): slightly rounded
+, u\cv `u\cv`  (%%combining left half ring below%): slightly unrounded
+
+Overstrikes:
+, \gf\0^ `\gf\0^`  (%%combining ring above%): voiceless
+, \ef\'' `\ef\''`  (%%combining double acute accent%): extra high tone
+, \ef\'^ `\ef\'^`  (%%combining acute accent%): high tone
+, \ef\-^ `\ef\-^`  (%%combining macron%): mid tone (or so)
+, \ef\`^ `\ef\``^`  (%%combining grave accent%): low tone
+, \ef\`` `\ef\`````  (%%combining double grave accent%): extra low tone
+, \ef\~^ `\ef\~^`  (%%combining tilde%): nasalized
+, \ef\v^ `\ef\v^`  (%%combining caron%, %%háček%, %wedge): rising tone
+, \ef\^^ `\ef\^^`  (%%combining circumflex accent%): falling tone
+, o\:^ `o\:^`  (%%combining diaeresis%): centralized
+, e\x^ `e\x^`  (%%combining x above%): mid-centralized
+, \ef\N^ `\ef\N^`  (%%combining breve%): extra short
+, k\lip `k\lip`,   t\lis `t\lis`   (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment
+, a\_ub `a\_ub`  undertie (liaison, if spaces don't mean breaks in your transcription)
+
+In-line prefixes:
+, \'1 `\'1`  primary stress
+, \'2 `\'2`  secondary stress
+, \|u `\|u`  (%%modifier letter raised up arrow): upstep
+, \|d `\|d`  (%%modifier letter raised down arrow): downstep
+, \NE `\NE`  (%%north east arrow): global rise
+, \SE `\SE`  (%%south east arrow): global fall
+
+In-line suffixes:
+, \:f `\:f`  the phonetic length sign
+, \.f `\.f`  half length
+, t\cn `t\cn`  (%%combining left angle above%, %corner): unreleased plosive
+, \er\hr `\er\hr`  (%%combining rhotic hook%): rhotacized vowel
+, p\ap `p\ap`  apostrophe (for ejectives)
+, \-5 `\-5`  extra high tone
+, \-4 `\-4`  high tone
+, \-3 `\-3`  mid tone
+, \-2 `\-2`  low tone
+, \-1 `\-1`  extra low tone
+
+Other in-line symbols:
+, \|f `\|f`  the phonetic stroke
+
+Superscripts:
+, t\^h `t\^h`  aspiration
+, b\^H `b\^H`  voiced aspiration (breathiness)
+, t\^j `t\^j`  palatalization
+, t\^g `t\^g`,   t\^M `t\^M`,   t\^G `t\^G`   velarization
+, k\^w `k\^w`  rounding
+, t\^Y `t\^Y`  rounding with palatalization
+, a\^? `a\^?`  glottalization
+, t\^9 `t\^9`  pharyngealization
+, t\^l `t\^l`  lateral release
+, t\^n `t\^n`,   p\^m `p\^m`,   k\^N `k\^N`   nasal release
+, t\^s `t\^s`,   k\^x `k\^x`,   p\^f `p\^f`   affrication
+, t\^y `t\^y`  (palatalization in a deprecated Americanist notation)
+
+Digraphs:
+, \ts `\ts`  t\--s ligature
+, \tS `\tS`  tesh ligature
+, \dz `\dz`  d\--z ligature
+, \dZ `\dZ`  dezh ligature
 
 ################################################################################
 )~~~"
@@ -646,70 +733,6 @@ NORMAL (U"For most of the codes, the first letter tells you the most similar let
 	"The codes for \\ng (%engma), \\dh (%eth), \\sh (%esh), and \\zh (%yogh) are traditional alternative spellings. "
 	"The retroflexes have a period in the second place, because an alternative traditional spelling is to write a dot under them. "
 	"The code for \\fh is an abbreviation for %fishhook.")
-MAN_END
-
-MAN_BEGIN (U"Phonetic symbols: diacritics", U"ppgb", 20211027 2025)
-NORMAL (U"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
-	"You can either type the symbols directly (if your computer has an input method for them), "
-	"or use the backslash sequences in the following list.")
-NORMAL (U"Understrikes:")
-LIST_ITEM (U"n\\|v n\\bs|v (%%combining vertical line below%): syllabic consonant")
-LIST_ITEM (U"b\\0v b\\bs0v (%%combining ring below%): voiceless (e.g. lenis voiceless plosive, voiceless nasal or approximant)")
-LIST_ITEM (U"o\\Tv o\\bsTv (%%combining down tack below%, %lowering): lowered vowel; or turns a fricative into an approximant")
-LIST_ITEM (U"o\\T^ o\\bsT\\^  (%%combining up tack below%, %raising): raised vowel; or turns an approximant into a fricative")
-LIST_ITEM (U"o\\T( o\\bsT( (%%combining left tack below%, %atr): advanced tongue root")
-LIST_ITEM (U"o\\T) o\\bsT) (%%combining right tack below%, %rtr): retracted tongue root")
-LIST_ITEM (U"e\\-v e\\bs-v (%%combining macron below%): backed")
-LIST_ITEM (U"o\\+v o\\bs+v (%%combining plus sign below%): fronted")
-LIST_ITEM (U"o\\:v o\\bs:v (%%combining diaeresis below%): breathy voice")
-LIST_ITEM (U"o\\~v o\\bs~v (%%combining tilde below%): creaky voice")
-LIST_ITEM (U"d\\Nv d\\bsNv (%%combining bridge below%): dental (as opposed to alveolar)")
-LIST_ITEM (U"d\\Uv d\\bsUv (%%combining inverted bridge below%): apical")
-LIST_ITEM (U"d\\Dv d\\bsDv (%%combining square below%): laminal")
-LIST_ITEM (U"u\\nv u\\bsnv (%%combining inverted breve below%): nonsyllabic")
-LIST_ITEM (U"e\\3v e\\bs3v (%%combining right half ring below%): slightly rounded")
-LIST_ITEM (U"u\\cv u\\bscv (%%combining left half ring below%): slightly unrounded")
-NORMAL (U"Overstrikes:")
-LIST_ITEM (U"\\gf\\0^ \\bsgf\\bs0\\^  (%%combining ring above%): voiceless")
-LIST_ITEM (U"\\ef\\\'^ \\bsef\\bs\'\\^  (%%combining acute accent%; to get “\'”, type a quote): high tone")
-LIST_ITEM (U"\\ef\\`^ \\bsef\\bs\\` \\^  (%%combining grave accent%; to get “\\` ”, type a backquote): low tone")
-LIST_ITEM (U"\\ef\\-^ \\bsef\\bs-\\^  (%%combining macron%): mid tone (or so)")
-LIST_ITEM (U"\\ef\\~^ \\bsef\\bs~\\^  (%%combining tilde%): nasalized")
-LIST_ITEM (U"\\ef\\v^ \\bsef\\bsv\\^  (%%combining caron%, %%háček%, %wedge): rising tone")   // UNITEXT_LATIN_SMALL_LETTER_C_WITH_CARON
-LIST_ITEM (U"\\ef\\^^ \\bsef\\bs\\^ \\^  (%%combining circumflex accent%): falling tone")
-LIST_ITEM (U"o\\:^ o\\bs:\\^  (%%combining diaeresis%): centralized")
-LIST_ITEM (U"e\\x^ e\\bsx\\^  (%%combining x above%): mid-centralized")
-LIST_ITEM (U"\\ef\\N^ \\bsef\\bsN\\^  (%%combining breve%): short")
-LIST_ITEM (U"k\\lip t\\lis k\\bslip t\\bslis (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment")
-LIST_ITEM (U"a\\_ub a\\bs\\_ ub undertie (liaison, if spaces don't mean breaks in your transcription)")
-NORMAL (U"In line:")
-LIST_ITEM (U"\\:f \\bs:f the phonetic length sign")
-LIST_ITEM (U"\\.f \\bs.f half length")
-LIST_ITEM (U"\\\'1 \\bs\'1 primary stress")
-LIST_ITEM (U"\\\'2 \\bs\'2 secondary stress")
-LIST_ITEM (U"\\|f \\bs|f the phonetic stroke")
-LIST_ITEM (U"t\\cn t\\bscn (%%combining left angle above%, %corner): unreleased plosive")
-LIST_ITEM (U"\\er\\hr \\bser\\bshr (%%combining rhotic hook%): rhotacized vowel")
-LIST_ITEM (U"p\\ap p\\bsap apostrophe (for ejectives)")
-NORMAL (U"Superscripts:")
-LIST_ITEM (U"t\\^h t\\bs\\^ h aspiration")
-LIST_ITEM (U"b\\^H b\\bs\\^ H voiced aspiration (breathiness)")
-LIST_ITEM (U"t\\^j t\\bs\\^ j palatalization")
-LIST_ITEM (U"t\\^g t\\bs\\^ g, t\\^M t\\bs\\^ M, t\\^G t\\bs\\^ G velarization")
-LIST_ITEM (U"k\\^w k\\bs\\^ w rounding")
-LIST_ITEM (U"t\\^Y t\\bs\\^ Y rounding with palatalization")
-LIST_ITEM (U"a\\^? a\\bs\\^ ? glottalization")
-LIST_ITEM (U"t\\^9 t\\bs\\^ 9 pharyngealization")
-LIST_ITEM (U"t\\^l t\\bs\\^ l lateral release")
-LIST_ITEM (U"t\\^n t\\bs\\^ n, p\\^m p\\bs\\^ m, k\\^N k\\bs\\^ N nasal release")
-LIST_ITEM (U"t\\^s t\\bs\\^ s, k\\^x k\\bs\\^ x, p\\^f p\\bs\\^ f affrication")
-LIST_ITEM (U"t\\^y t\\bs\\^ y (palatalization in a deprecated American notation)")
-NORMAL (U"Digraphs:")
-LIST_ITEM (U"\\ts \\bsts t\\--s ligature")
-LIST_ITEM (U"\\tS \\bstS tesh ligature")
-LIST_ITEM (U"\\dz \\bsts d\\--z ligature")
-LIST_ITEM (U"\\dZ \\bstS dezh ligature")
 MAN_END
 
 MAN_BEGIN (U"Phonetic symbols: vowels", U"ppgb", 20090804)
