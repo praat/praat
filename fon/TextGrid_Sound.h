@@ -37,6 +37,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer tierNumber, integer intervalNumber,
 	conststring32 languageName, bool includeWords, bool includePhonemes);
 
-autoSound Sound_readWithAdjacentAnnotations_timit (conststring32 soundFileName, autoTextGrid *out_textgrid);
+autoSound Sound_readWithAdjacentAnnotationFiles_buckeye (conststring32 soundFileName, autoTextGrid *out_textgrid);
+autoSound Sound_readWithAdjacentAnnotationFiles_timit   (conststring32 soundFileName, autoTextGrid *out_textgrid);
 
 /* End of file TextGrid_Sound.h */
