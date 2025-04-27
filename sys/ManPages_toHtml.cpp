@@ -29,23 +29,23 @@ static const struct stylesInfo {
 /* INTRO: */ { U"<p>", U"</p>" },
 /* ENTRY: */ { U"<h2>", U"</h2>" },
 /* NORMAL: */ { U"<p>", U"</p>" },
-/* LIST_ITEM: */ { U"<dd style=\"position:relative;padding-left:1em;text-indent:-2em\">", U"" },
+/* LIST_ITEM: */ { U"<dd style=\"position:relative;padding-left:1em;text-indent:-2em\">", U"</dd>" },
 /* TERM: */ { U"<dt>", U"" },
-/* DEFINITION: */ { U"<dd>", U"" },
+/* DEFINITION: */ { U"<dd>", U"</dd>" },
 /* CODE: */ { U"<code>   ", U"<br></code>" },
 /* PROTOTYPE: */ { U"<p>", U"</p>" },
 /* EQUATION: */ { U"<table width=\"100%\" style=\"white-space:pre-wrap\"><tr><td align=middle>", U"</table>" },
 /* PICTURE: */ { U"<p>", U"</p>" },
 /* SCRIPT: */ { U"<p>", U"</p>" },
-/* LIST_ITEM1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"" },
-/* LIST_ITEM2: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
-/* LIST_ITEM3: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
+/* LIST_ITEM1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"</dd>" },
+/* LIST_ITEM2: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"</dd>" },
+/* LIST_ITEM3: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"</dd>" },
 /* TERM1: */ { U"<dt>&nbsp;&nbsp;&nbsp;", U"" },
 /* TERM2: */ { U"<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
 /* TERM3: */ { U"<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
-/* DEFINITION1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"" },
-/* DEFINITION2: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
-/* DEFINITION3: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
+/* DEFINITION1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"</dd>" },
+/* DEFINITION2: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"</dd>" },
+/* DEFINITION3: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"</dd>" },
 /* CODE1: */ { U"<code>      ", U"<br></code>" },
 /* CODE2: */ { U"<code>         ", U"<br></code>" },
 /* CODE3: */ { U"<code>            ", U"<br></code>" },
@@ -361,7 +361,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				if (p [0] == U'\\' && p [1] == U'b' && p [2] == U'u' && p [3] == U' ')
 					p += 3;
 			}
-			MelderString_append (buffer, ul ? U"<li>" : stylesInfo [(int) paragraph -> type]. htmlIn, U"\n");
+			MelderString_append (buffer, ul ? U"<li>" : stylesInfo [(int) paragraph -> type]. htmlIn/*, U"\n"*/);
 		} else {
 			if (inList) {
 				MelderString_append (buffer, ul ? U"</ul>\n" : U"</dl>\n");
@@ -831,6 +831,7 @@ static void writeTitleAsHtml (conststring32 title, MelderString *buffer) {
 		U"   td { padding-left: 5pt; padding-right: 5pt; }\n"
 		U"   th { padding-left: 5pt; padding-right: 5pt; }\n"
 		U"   code { white-space: pre-wrap; }\n"
+		U"   dd { white-space: pre-wrap; }\n"
 		U"</style>\n"
 		U"</head><body bgcolor=\"#FFFFFF\">\n\n"
 	);
