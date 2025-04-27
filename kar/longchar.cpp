@@ -273,12 +273,16 @@ static struct structLongchar_Info Longchar_database [] = {
 /*fir  sec  al di    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
 { 's', 's', 0, 0, { "/germandbls",     500, 556, 500, 500,  611, 611,  556, 611, 500, 556 }, 223, 223, 167, 167, UNICODE_LATIN_SMALL_LETTER_SHARP_S }, /* Ringel-s. */
 { 'a', 'e', 0, 0, { "/ae",             667, 722, 667, 722,  889, 889,  758, 778, 638, 738 }, 230, 230, 190, 190, UNICODE_LATIN_SMALL_LETTER_AE }, /* ash */
-{ 'c', ',', 0, 0, { "/ccedilla",       444, 444, 444, 444,  500, 556,  444, 444, 407, 444 }, 231, 231, 141, 141, UNICODE_LATIN_SMALL_LETTER_C_WITH_CEDILLA },
 { 'o', '/', 0, 0, { "/oslash",         500, 500, 500, 500,  611, 611,  556, 556, 444, 556 }, 248, 248, 191, 191, UNICODE_LATIN_SMALL_LETTER_O_WITH_STROKE },
+{ 'c', ',', 0, 0, { "/ccedilla",       444, 444, 444, 444,  500, 556,  444, 444, 407, 444 }, 231, 231, 141, 141, UNICODE_LATIN_SMALL_LETTER_C_WITH_CEDILLA },
+{ 's', ',', 0, 0, { "",                389, 389, 389, 389,  500, 556,  424, 444, 389, 444 }, 115, 115, 115, 115, UNICODE_LATIN_SMALL_LETTER_S_WITH_CEDILLA },
+{ 't', ',', 0, 0, { "",                278, 333, 278, 278,  278, 333,  326, 333, 333, 389 }, 116, 116, 116, 116, UNICODE_LATIN_SMALL_LETTER_T_WITH_CEDILLA },
 { 't', 'h', 0, 0, { "/thorn",          500, 556, 500, 500,  556, 611,  601, 611, 500, 556 }, 254, 254,   0,   0, UNICODE_LATIN_SMALL_LETTER_THORN },
 { 'A', 'e', 0, 0, { "/AE",             722,1000, 889, 944, 1000,1000,  944,1000, 941, 944 }, 198, 198, 174, 174, UNICODE_LATIN_CAPITAL_LETTER_AE }, /* Ash */
-{ 'C', ',', 0, 0, { "/Ccedilla",       667, 722, 667, 667,  722, 722,  709, 722, 667, 685 }, 199, 199, 130, 130, UNICODE_LATIN_CAPITAL_LETTER_C_WITH_CEDILLA },
 { 'O', '/', 0, 0, { "/Oslash",         722, 778, 722, 722,  778, 778,  833, 833, 778, 833 }, 216, 216, 175, 175, UNICODE_LATIN_CAPITAL_LETTER_O_WITH_STROKE },
+{ 'C', ',', 0, 0, { "/Ccedilla",       667, 722, 667, 667,  722, 722,  709, 722, 667, 685 }, 199, 199, 130, 130, UNICODE_LATIN_CAPITAL_LETTER_C_WITH_CEDILLA },
+{ 'S', ',', 0, 0, { "",                556, 556, 500, 556,  667, 667,  525, 611, 556, 556 },  83,  83,  83,  83, UNICODE_LATIN_CAPITAL_LETTER_S_WITH_CEDILLA },
+{ 'T', ',', 0, 0, { "",                611, 667, 556, 611,  611, 611,  613, 667, 611, 611 },  84,  84,  84,  84, UNICODE_LATIN_CAPITAL_LETTER_T_WITH_CEDILLA },
 { 'T', 'h', 0, 0, { "/Thorn",          556, 611, 611, 611,  667, 667,  604, 611, 611, 667 }, 222, 222,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_THORN },
 
 /*fir  sec  al di    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
@@ -600,6 +604,8 @@ static struct structLongchar_Info Longchar_database [] = {
 
 { 't', 's', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TS_DIGRAPH },
 { 't', 'S', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TESH_DIGRAPH },
+{ 'd', 'z', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_DZ_DIGRAPH },
+{ 'd', 'Z', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_DEZH_DIGRAPH },
 { 'a', 'p', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_APOSTROPHE },
 { 'x', '^', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 126, 126, 126, 126, UNICODE_COMBINING_X_ABOVE }, // mid-centralized
 

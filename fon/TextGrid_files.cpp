@@ -789,9 +789,9 @@ const struct TIMIT_key {
 	/* 20190704 wgmichener "?" -> "\\?g" */
 	{"q", "\\?g"},
 	/* Others */
-	{"pau", "pau"},	/* pause */
-	{"epi", "epi"},	/* epenthetic silence */
-	{"h#", "h#"}, 	/* marks start and end piece of sentence */
+	{"pau", "(pau)"},	/* pause */
+	{"epi", "(epi)"},	/* epenthetic silence */
+	{"h#", "(h#)"}, 	/* marks start and end piece of sentence */
 	/* the following markers only occur in the dictionary */
 	/* 20190704 wgmichener "1" -> "\\'1" */
 	{"1", "\\'1"},		/* primary stress marker */
