@@ -750,7 +750,10 @@ autoSound Sound_readWithAdjacentAnnotationFiles_buckeye (conststring32 soundFile
 		lastPeriod [5] = U'e';
 		lastPeriod [6] = U's';
 		lastPeriod [7] = U'\0';
-		autoTextGrid phones = TextGrid_readFromEspsLabelFile (& file);
+		autoTextGrid phones = TextGrid_readFromEspsLabelFile (& file, false, 2);
+		Melder_assert (phones -> tiers->size == 2);
+		Thing_setName (phones -> tiers->at [1], U"phon");
+		Thing_setName (phones -> tiers->at [2], U"phon*");
 		textgrids. addItem_ref (phones.get());
 
 		/*
@@ -762,7 +765,12 @@ autoSound Sound_readWithAdjacentAnnotationFiles_buckeye (conststring32 soundFile
 		lastPeriod [4] = U'd';
 		lastPeriod [5] = U's';
 		lastPeriod [6] = U'\0';
-		autoTextGrid words = TextGrid_readFromEspsLabelFile (& file);
+		autoTextGrid words = TextGrid_readFromEspsLabelFile (& file, false, 4);
+		Melder_assert (words -> tiers->size == 4);
+		Thing_setName (words -> tiers->at [1], U"words");
+		Thing_setName (words -> tiers->at [2], U"dict");
+		Thing_setName (words -> tiers->at [3], U"trans");
+		Thing_setName (words -> tiers->at [4], U"pos");
 		textgrids. addItem_ref (words.get());
 
 		/*
@@ -772,17 +780,16 @@ autoSound Sound_readWithAdjacentAnnotationFiles_buckeye (conststring32 soundFile
 		lastPeriod [2] = U'o';
 		lastPeriod [3] = U'g';
 		lastPeriod [4] = U'\0';
-		autoTextTier text_tier = TextTier_readFromXwaves (& file);
-		autoTextGrid text_grid = TextGrid_createWithoutTiers (+1e308, -1e308);
-		TextGrid_addTier_move (text_grid.get(), text_tier.move());
-		textgrids. addItem_ref (text_grid.get());
+		autoTextGrid log = TextGrid_readFromEspsLabelFile (& file, true, 1);
+		Thing_setName (log -> tiers->at [1], U"log");
+		textgrids. addItem_ref (log.get());
 
 		*out_textgrid = TextGrids_merge (& textgrids, true);
-		Thing_setName ((*out_textgrid) -> tiers->at [1], U"phon");
-		Thing_setName ((*out_textgrid) -> tiers->at [2], U"words");
-		Thing_setName ((*out_textgrid) -> tiers->at [3], U"dict");
-		Thing_setName ((*out_textgrid) -> tiers->at [4], U"trans");
-		Thing_setName ((*out_textgrid) -> tiers->at [5], U"log");
+		Melder_assert ((*out_textgrid) -> tiers->size == 7);
+		lastPeriod [0] = U'\0';
+		Thing_setName (sound.get(), MelderFile_name (& file));
+		Thing_setName ((*out_textgrid).get(), MelderFile_name (& file));
+
 		return sound;
 	} catch (MelderError) {
 		Melder_throw (U"Sound “", soundFileName, U"” not read with adjacent Buckeye annotation files.");
