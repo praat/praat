@@ -37,7 +37,6 @@ void TextInterval_setText (TextInterval me, conststring32 text);
 autoTextTier TextTier_create (double tmin, double tmax);
 
 void TextTier_addPoint (TextTier me, double time, conststring32 mark);
-autoTextTier TextTier_readFromXwaves (MelderFile file);
 autoPointProcess TextTier_getPoints (TextTier me, conststring32 text);
 
 autoIntervalTier IntervalTier_create_raw (double tmin, double tmax);
@@ -169,8 +168,11 @@ autoTextGrid TextGrids_concatenate (OrderedOf<structTextGrid>* me);
 	Defined in TextGrid_files.cpp
 */
 
-autoTextGrid TextGrid_readFromEspsLabelFile (MelderFile file);
-autoIntervalTier IntervalTier_readFromXwaves (MelderFile file);
+autoTextGrid TextGrid_readFromEspsLabelFile (
+	MelderFile file,
+	bool tiersArePointTiers,
+	integer overrideNumberOfTiers   // 0 means don't override
+);
 void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
 
 void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file);
