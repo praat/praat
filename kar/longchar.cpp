@@ -575,7 +575,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { '~', '<', 2, 1, { "/tildethrough",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },   0, 242, 242,   0, UNICODE_COMBINING_TILDE_OVERLAY }, // velarized l
 { '3', 'v', 2, 1, { "/halfringright",    0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 166, 166, 166, 166, UNICODE_COMBINING_RIGHT_HALF_RING_BELOW }, // rounded
 { 'l', 'i', 2, 1, { "/ligature",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 131, 131, 131, 131, UNICODE_COMBINING_DOUBLE_INVERTED_BREVE },
-{ 'g', 'v', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_SEAGULL_BELOW },
+{ 'm', 'v', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_SEAGULL_BELOW },
 { 'w', 'v', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_INVERTED_DOUBLE_ARCH_BELOW },
 { '-', '\'',2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_MACRON_ACUTE },   // high-rising
 { '\'','-', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_ACUTE_MACRON },   // high-falling

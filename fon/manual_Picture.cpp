@@ -652,6 +652,7 @@ Understrikes:
 , u\nv `u\nv`  (%%combining inverted breve below%): nonsyllabic
 , e\3v `e\3v`  (%%combining right half ring below%): slightly rounded
 , u\cv `u\cv`  (%%combining left half ring below%): slightly unrounded
+, d\mv `d\mv`  (%%combining seagull below%): lingiolabial
 , a\_ub `a\_ub`  undertie (liaison, if spaces don't mean breaks in your transcription)
 
 Overstrikes:
