@@ -1,4 +1,4 @@
-# openAllPolyphoneFiles.praat
+# Polyphone.praat
 # Paul Boersma, 4 August 2024
 
 rootFolder$ = "/Volumes/Polyphone"

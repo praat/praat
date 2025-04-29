@@ -18,56 +18,6 @@
 
 #include "TextGrid.h"
 
-autoTextTier TextTier_readFromXwaves (MelderFile file) {
-	try {
-		conststring8 line;
-
-		autoTextTier me = TextTier_create (0, 100);
-		autoMelderFile mfile = MelderFile_open (file);
-
-		/*
-		 * Search for a line that starts with '#'.
-		 */
-		for (;;) {
-			line = MelderFile_readLine8 (file);
-			if (! line)
-				Melder_throw (U"Missing '#' line.");
-			if (line [0] == '#')
-				break;
-		}
-
-		/*
-		 * Read a mark from every line.
-		 */
-		for (;;) {
-			line = MelderFile_readLine8 (file);
-			if (! line)
-				break;   // normal end-of-file
-			double time;
-			integer colour;
-			char mark [300];
-			if (sscanf (line, "%lf%td%299s", & time, & colour, mark) < 3)   // BUG: semantic buffer overflow
-				Melder_throw (U"Line too short: \"", Melder_peek8to32 (line), U"\".");
-			TextTier_addPoint (me.get(), time, Melder_peek8to32 (mark));
-		}
-
-		/*
-		 * Fix domain.
-		 */
-		if (my points.size > 0) {
-			TextPoint point = my points.at [1];
-			if (point -> number < 0.0)
-				my xmin = point -> number - 1.0;
-			point = my points.at [my points.size];
-			my xmax = point -> number + 1.0;
-		}
-		mfile.close ();
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"TextTier not read from Xwaves file.");
-	}
-}
-
 static int64 Melder_readInteger (const char32 **p) {
 	char32 kar = * (*p) ++;
 	Melder_require (kar != U'\0',
@@ -157,13 +107,12 @@ autoTextGrid TextGrid_readFromEspsLabelFile (
 				Melder_throw (U"Missing '#' line.");
 			if (line [0] == '#')
 				break;
-			constexpr char32 tag_nfields [] = U"nfields ";
-			constexpr integer tag_nfields_length = Melder_length (tag_nfields);
-			if (Melder_startsWith (line, tag_nfields))
-				numberOfTiers = Melder_atoi (line + tag_nfields_length);
-			constexpr char32 tag_separator [] = U"separator ";
-			if (Melder_startsWith (line, tag_separator))
-				separator = line [Melder_length (tag_separator)];
+			if (Melder_startsWith (line, U"nfields "))
+				numberOfTiers = Melder_atoi (line + 8);
+			if (Melder_startsWith (line, U"separator "))
+				separator = line [10];
+			else if (Melder_startsWith (line, U"separator"))
+				separator = line [9];
 		}
 		Melder_require (numberOfTiers >= 1,
 			U"The number of tiers has to be at least 1, but the file states that it should be ", numberOfTiers, U".");
@@ -172,14 +121,15 @@ autoTextGrid TextGrid_readFromEspsLabelFile (
 		if (overrideNumberOfTiers >= 1)
 			numberOfTiers = overrideNumberOfTiers;
 
-		/* mutable preliminary */ double tmin = 0.0, tmax = 100.0;
-		autoTextGrid me = TextGrid_createWithoutTiers (tmin, tmax);
+		/* mutable preliminary */ double globalTmin = 0.0, globalTmax = 100.0;
+		autoTextGrid me = TextGrid_createWithoutTiers (globalTmin, globalTmax);
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
-			autoFunction tier = tiersArePointTiers ? static_cast <autoFunction> (TextTier_create (tmin, tmax)) :
-													 static_cast <autoFunction> (IntervalTier_create_raw (tmin, tmax));
+			autoFunction tier = tiersArePointTiers ? static_cast <autoFunction> (TextTier_create (globalTmin, globalTmax)) :
+													 static_cast <autoFunction> (IntervalTier_create_raw (globalTmin, globalTmax));
 			Thing_setName (tier.get(), Melder_integer (itier));
 			my tiers -> addItem_move (tier.move());
 		}
+		Melder_assert (my tiers->size > 0);
 
 		autoMelderString label;
 		/* mutable step */ double startingTime = 0.0, endTime = undefined;
@@ -189,6 +139,123 @@ autoTextGrid TextGrid_readFromEspsLabelFile (
 				break;
 			if (line [0] == U'\0')
 				continue;   // moderately normal stray empty line
+			if (line [0] == U';') {
+				/*
+					This is a continuation from the previous line; it occurs in Buckeye/s35/s3504a.words.
+					The interpretation is that this is the last tier.
+				*/
+				line ++;   // step over semicolon
+				Melder_skipHorizontalSpace (& line);
+				Function lastTier = my tiers->at [my tiers->size];
+				if (tiersArePointTiers) {
+					TextTier tier = static_cast <TextTier> (lastTier);
+					Melder_require (tier -> points.size > 0,
+						U"Stray semicolon in line ", MelderReadText_getLineNumber (text.get()), U".");
+					TextPoint point = tier -> points.at [tier -> points.size];
+					TextPoint_setText (point, line);
+				} else {
+					IntervalTier tier = static_cast <IntervalTier> (lastTier);
+					Melder_require (tier -> intervals.size > 0,
+						U"Stray semicolon in line ", MelderReadText_getLineNumber (text.get()), U".");
+					TextInterval interval = tier -> intervals.at [tier -> intervals.size];
+					TextInterval_setText (interval, line);
+				}
+				/*
+					The quirk in Buckeye/s35/s3504a.words also means that the second and third tiers haven't been filled.
+					Repair this very specific situation, after checking that it indeed occurs.
+				*/
+				if (my tiers->size == 4) {
+					auto getAbbreviation = [] (conststring32 fullText) -> conststring32 {
+						if (Melder_equ (fullText, U"<VOCNOISE>"))
+							return U"U";
+						if (Melder_startsWith (fullText, U"<SIL"))
+							return U"S";
+						if (Melder_startsWith (fullText, U"<IVER"))
+							return U"S";
+						if (Melder_startsWith (fullText, U"<IVER"))
+							return U"S";
+						if (Melder_equ (fullText, U"{B_TRANS}"))
+							return U"B";
+						if (Melder_equ (fullText, U"{E_TRANS}"))
+							return U"E";
+						if (Melder_startsWith (fullText, U"<UNKNOWN"))
+							return U"U";
+						if (Melder_startsWith (fullText, U"<CUTOFF"))
+							return U"U";
+						if (Melder_startsWith (fullText, U"<LAUGH"))
+							return U"U";
+						if (Melder_startsWith (fullText, U"<EXT"))
+							return U"U";
+						if (Melder_startsWith (fullText, U"<NOISE"))
+							return U"U";
+						if (Melder_startsWith (fullText, U"<ERROR"))
+							return U"U";
+						if (Melder_startsWith (fullText, U"<HES"))
+							return U"U";
+						return U"";
+					};
+					/*
+						Get the texts from the first three tiers.
+					*/
+					Function firstAnyTier  = my tiers->at [1];
+					Function secondAnyTier = my tiers->at [2];
+					Function thirdAnyTier  = my tiers->at [3];
+					if (tiersArePointTiers) {
+						TextTier firstTier  = static_cast <TextTier> (firstAnyTier);
+						TextTier secondTier = static_cast <TextTier> (secondAnyTier);
+						TextTier thirdTier  = static_cast <TextTier> (thirdAnyTier);
+						if (firstTier->points.size > 0 && secondTier->points.size > 0 && thirdTier->points.size > 0) {
+							TextTier tier = static_cast <TextTier> (lastTier);
+							TextPoint point = tier -> points.at [tier -> points.size];
+							const double localTime = point -> number;
+							TextPoint firstPoint  = firstTier  -> points.at [firstTier->points.size];
+							TextPoint secondPoint = secondTier -> points.at [secondTier->points.size];
+							TextPoint thirdPoint  = thirdTier  -> points.at [thirdTier->points.size];
+							if (
+								firstPoint  -> number == localTime &&
+								secondPoint -> number == localTime &&
+								thirdPoint  -> number == localTime &&
+								! Melder_equ (firstPoint -> mark.get(), U"") &&   // The first tier should have a text,
+								Melder_equ (secondPoint -> mark.get(), U"") &&   // but the second tier should be empty
+								Melder_equ (thirdPoint  -> mark.get(), U"")   // and the third tier should also be empty.
+							) {
+								conststring32 abbreviation = getAbbreviation (firstPoint -> mark.get());
+								TextPoint_setText (secondPoint, abbreviation);
+								TextPoint_setText (thirdPoint,  abbreviation);
+							}
+						}
+					} else {
+						IntervalTier firstTier  = static_cast <IntervalTier> (firstAnyTier);
+						IntervalTier secondTier = static_cast <IntervalTier> (secondAnyTier);
+						IntervalTier thirdTier  = static_cast <IntervalTier> (thirdAnyTier);
+						if (firstTier->intervals.size > 0 && secondTier->intervals.size > 0 && thirdTier->intervals.size > 0) {
+							IntervalTier tier = static_cast <IntervalTier> (lastTier);
+							TextInterval interval = tier -> intervals.at [tier -> intervals.size];
+							const double localTmin = interval -> xmin;
+							const double localTmax = interval -> xmax;
+							TextInterval firstInterval  = firstTier  -> intervals.at [firstTier->intervals.size];
+							TextInterval secondInterval = secondTier -> intervals.at [secondTier->intervals.size];
+							TextInterval thirdInterval  = thirdTier  -> intervals.at [thirdTier->intervals.size];
+							if (
+								firstInterval  -> xmin == localTmin &&
+								secondInterval -> xmin == localTmin &&
+								thirdInterval  -> xmin == localTmin &&
+								firstInterval  -> xmax == localTmax &&
+								secondInterval -> xmax == localTmax &&
+								thirdInterval  -> xmax == localTmax &&
+								! Melder_equ (firstInterval -> text.get(), U"") &&   // The first tier should have a text,
+								Melder_equ (secondInterval -> text.get(), U"") &&   // but the second tier should be empty
+								Melder_equ (thirdInterval  -> text.get(), U"")   // and the third tier should also be empty.
+							) {
+								conststring32 abbreviation = getAbbreviation (firstInterval -> text.get());
+								TextInterval_setText (secondInterval, abbreviation);
+								TextInterval_setText (thirdInterval,  abbreviation);
+							}
+						}
+					}
+				}
+				continue;
+			}
 			Melder_skipHorizontalSpace (& line);
 			endTime = Melder_readReal (& line);
 			{// scope
