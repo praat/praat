@@ -652,6 +652,7 @@ Understrikes:
 , u\nv `u\nv`  (%%combining inverted breve below%): nonsyllabic
 , e\3v `e\3v`  (%%combining right half ring below%): slightly rounded
 , u\cv `u\cv`  (%%combining left half ring below%): slightly unrounded
+, a\_ub `a\_ub`  undertie (liaison, if spaces don't mean breaks in your transcription)
 
 Overstrikes:
 , \gf\0^ `\gf\0^`  (%%combining ring above%): voiceless
@@ -660,6 +661,12 @@ Overstrikes:
 , \ef\-^ `\ef\-^`  (%%combining macron%): mid tone (or so)
 , \ef\`^ `\ef\``^`  (%%combining grave accent%): low tone
 , \ef\`` `\ef\`````  (%%combining double grave accent%): extra low tone
+, \ef\-' `\ef\-'`  (%%combining macron\--acute%): high-rising tone
+, \ef\'- `\ef\'-`  (%%combining acute\--macron%): high-falling tone
+, \ef\`- `\ef\``-`  (%%combining grave\--macron%): low-rising tone
+, \ef\-` `\ef\-```  (%%combining macron\--grave%): low-falling tone
+, \ef\rf `\ef\rf`  (%%combining grave\--acute\--grave%): rising\--falling tone
+, \ef\fr `\ef\fr`  (%%combining acute\--grave\--acute%): falling\--rising tone
 , \ef\~^ `\ef\~^`  (%%combining tilde%): nasalized
 , \ef\v^ `\ef\v^`  (%%combining caron%, %%háček%, %wedge): rising tone
 , \ef\^^ `\ef\^^`  (%%combining circumflex accent%): falling tone
@@ -667,7 +674,6 @@ Overstrikes:
 , e\x^ `e\x^`  (%%combining x above%): mid-centralized
 , \ef\N^ `\ef\N^`  (%%combining breve%): extra short
 , k\lip `k\lip`,   t\lis `t\lis`   (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment
-, a\_ub `a\_ub`  undertie (liaison, if spaces don't mean breaks in your transcription)
 
 In-line prefixes:
 , \'1 `\'1`  primary stress

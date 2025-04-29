@@ -29,6 +29,11 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.30# (29 April 2025)
+• Made the whole of the Buckeye corpus readable.
+• Backslash trigraphs for tone symbols: a\-' (`a\-'`), a\'- (`a\'-`), a\`- (`a\``-`), a\-` (`a\-```), a\rf (`a\rf`), a\fr (`a\fr`).
+• Other backslash trigraphs: d\gv (`d\gv`), d\wv (`d\wv`).
+
 ##6.4.29# (27 April 2025)
 • ##Read Sound and adjacent annotation files (TIMIT)...#: if you open any sound file from the TIMIT corpus,
   the annotation files with the same name in the same folder are interpreted as a TextGrid and opened as well.
