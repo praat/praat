@@ -505,7 +505,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { 'm', 't', 2, 0, { "/mturn",          778, 0,   809, 866,  778, 0,    778, 0,   0,   0   }, 181, 181, 181, 181, UNICODE_LATIN_SMALL_LETTER_TURNED_M },
 { 'm', 'l', 2, 0, { "/mturnleg",       778, 0,   809, 866,  778, 0,    778, 0,   0,   0   }, 229, 229, 229, 229, UNICODE_LATIN_SMALL_LETTER_TURNED_M_WITH_LONG_LEG },
 { 'm', 'j', 2, 0, { "/mlefttail",      753, 0,   795, 866,  753, 0,    753, 0,   0,   0   },  77,  77,  77,  77, UNICODE_LATIN_SMALL_LETTER_M_WITH_HOOK }, // labiodental nasal
-{ 'n', 'g', 2, 0, { "/eng",            475, 0,   506, 578,  475, 0,    475, 0,   0,   0   },  78,  78,  78,  78, UNICODE_LATIN_SMALL_LETTER_ENG }, /* velar nasal */
+{ 'n', 'g', 2, 0, { "/eng",            475, 0,   506, 578,  475, 0,    475, 0,   0,   0   },  78,  78,  78,  78, UNICODE_LATIN_SMALL_LETTER_ENG }, // velar nasal
 { 'n', 'j', 2, 0, { "/nlefttail",      500, 0,   520, 578,  500, 0,    500, 0,   0,   0   }, 248, 248, 248, 248, UNICODE_LATIN_SMALL_LETTER_N_WITH_LEFT_HOOK }, // palatal nasal
 { 'n', '.', 2, 0, { "/nrighttail",     500, 0,   506, 578,  500, 0,    500, 0,   0,   0   }, 247, 247, 247, 247, UNICODE_LATIN_SMALL_LETTER_N_WITH_RETROFLEX_HOOK },
 { 'n', 'c', 2, 0, { "/ncap",           547, 0,   595, 614,  547, 0,    547, 0,   0,   0   }, 178, 178, 178, 178, UNICODE_LATIN_LETTER_SMALL_CAPITAL_N }, // uvular nasal
@@ -542,21 +542,25 @@ static struct structLongchar_Info Longchar_database [] = {
 { 'O', '.', 2, 0, { "/bullseye",       722, 0,   799, 818,  722, 0,    722, 0,   0,   0   }, 135, 135, 135, 135, UNICODE_LATIN_LETTER_BILABIAL_CLICK },
 { '?', '-', 2, 0, { "/glotbar",        500, 0,   440, 477,  500, 0,    500, 0,   0,   0   },  63, 251, 251,  63, UNICODE_LATIN_LETTER_GLOTTAL_STOP_WITH_STROKE }, // epiglottal plosive
 { '9', '-', 2, 0, { "/glotrevbar",     500, 0,   440, 477,  500, 0,    500, 0,   0,   0   }, 192, 185, 185, 192, UNICODE_LATIN_LETTER_REVERSED_GLOTTAL_STOP_WITH_STROKE }, // epiglottal fricative
+{ 'V', '^', 2, 0, { "",                500, 0,   440, 477,  500, 0,    500, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_V_WITH_RIGHT_HOOK }, // labiodental flap
 { ':', 'f', 2, 0, { "/lengthsign",     250, 0,   217, 235,  250, 0,    250, 0,   0,   0   }, 249, 249, 249, 249, UNICODE_MODIFIER_LETTER_TRIANGULAR_COLON },
 { '.', 'f', 2, 0, { "/halflength",     250, 0,   217, 235,  250, 0,    250, 0,   0,   0   },  62,  62,  62,  62, UNICODE_MODIFIER_LETTER_HALF_TRIANGULAR_COLON },
 { 'h', 'r', 2, 0, { "/righthook",      300, 0,   250, 265,  300, 0,    300, 0,   0,   0   }, 213, 213, 213, 213, UNICODE_MODIFIER_LETTER_RHOTIC_HOOK }, // or rturnsuper
-{ '`', '^', 2, 1, { "/graveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  36,  36,  36,  36, UNICODE_COMBINING_GRAVE_ACCENT },
-{ '`', '`', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_DOUBLE_GRAVE_ACCENT },
-{ '\'','^', 2, 1, { "/acuteover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  64,  64,  64,  64, UNICODE_COMBINING_ACUTE_ACCENT },
-{ '\'','\'',2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_DOUBLE_ACUTE_ACCENT },
-{ '^', '^', 2, 1, { "/circumover",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  94,  94,  94,  94, UNICODE_COMBINING_CIRCUMFLEX_ACCENT },
+{ '`', '^', 2, 1, { "/graveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  36,  36,  36,  36, UNICODE_COMBINING_GRAVE_ACCENT }, // low tone
+{ '`', '`', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_DOUBLE_GRAVE_ACCENT }, // extra low tone
+{ '\'','^', 2, 1, { "/acuteover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  64,  64,  64,  64, UNICODE_COMBINING_ACUTE_ACCENT }, // high tone
+{ '\'','\'',2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_DOUBLE_ACUTE_ACCENT }, // extra high tone
+{ '^', '^', 2, 1, { "/circumover",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  94,  94,  94,  94, UNICODE_COMBINING_CIRCUMFLEX_ACCENT }, // falling tone
 { '~', '^', 2, 1, { "/tildeover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  41,  41,  41,  41, UNICODE_COMBINING_TILDE }, // nasalized
+{ '/', '/', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_LONG_SOLIDUS_OVERLAY },
+{ '-', '/', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_LONG_STROKE_OVERLAY },
+{ '~', '/', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_TILDE_OVERLAY }, // velarized or pharyngealized
 { '-', '^', 2, 1, { "/minusover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  35,  35,  35,  35, UNICODE_COMBINING_MACRON }, // mid tone or so
 { ':', '^', 2, 1, { "/diaeresisover",    0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  95,  95,  95,  95, UNICODE_COMBINING_DIAERESIS }, // centralized
 { '0', '^', 2, 1, { "/ringover",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  42,  42,  42,  42, UNICODE_COMBINING_RING_ABOVE }, // voiceless
-{ 'v', '^', 2, 1, { "/caronover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  38,  38,  38,  38, UNICODE_COMBINING_CARON }, // hacek
+{ 'v', '^', 2, 1, { "/caronover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  38,  38,  38,  38, UNICODE_COMBINING_CARON }, // hacek, rising tone
 { 'N', '^', 2, 1, { "/breveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  40,  40,  40,  40, UNICODE_COMBINING_BREVE }, // nonsyllabic
-{ 'c', 'n', 2, 2, { "/corner",         260, 0,   299, 299,  260, 0,    260, 0,   0,   0   }, 124, 124, 124, 124, UNICODE_COMBINING_LEFT_ANGLE_ABOVE }, // ? unreleased
+{ 'c', 'n', 2, 2, { "/corner",         260, 0,   299, 299,  260, 0,    260, 0,   0,   0   }, 124, 124, 124, 124, UNICODE_COMBINING_LEFT_ANGLE_ABOVE }, // unreleased
 { 'c', 'v', 2, 1, { "/halfringleft",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  55,  55,  55,  55, UNICODE_COMBINING_LEFT_HALF_RING_BELOW }, // unrounded
 { 'T', '^', 2, 1, { "/raising",          0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  51,  51,  51,  51, UNICODE_COMBINING_UP_TACK_BELOW },
 { 'T', 'v', 2, 1, { "/lowering",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  52,  52,  52,  52, UNICODE_COMBINING_DOWN_TACK_BELOW },
@@ -565,6 +569,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { '+', 'v', 2, 1, { "/plusunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  43,  43,  43,  43, UNICODE_COMBINING_PLUS_SIGN_BELOW }, // fronted
 { ':', 'v', 2, 1, { "/diaeresisunder",   0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  45,  45,  45,  45, UNICODE_COMBINING_DIAERESIS_BELOW }, // breathy voiced
 { '0', 'v', 2, 1, { "/ringunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  56,  56,  56,  56, UNICODE_COMBINING_RING_BELOW }, // voiceless
+{ 'v', 'v', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_CARON_BELOW }, // voiced
 { '|', 'v', 2, 1, { "/strokeunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  96,  96,  96,  96, UNICODE_COMBINING_VERTICAL_LINE_BELOW }, // syllabicity mark
 { 'N', 'v', 2, 1, { "/bridgeunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  53,  53,  53,  53, UNICODE_COMBINING_BRIDGE_BELOW }, // dental
 { 'U', 'v', 2, 1, { "/shelfunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 176, 176, 176, 176, UNICODE_COMBINING_INVERTED_BRIDGE_BELOW }, // apical
@@ -575,14 +580,15 @@ static struct structLongchar_Info Longchar_database [] = {
 { '~', '<', 2, 1, { "/tildethrough",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },   0, 242, 242,   0, UNICODE_COMBINING_TILDE_OVERLAY }, // velarized l
 { '3', 'v', 2, 1, { "/halfringright",    0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 166, 166, 166, 166, UNICODE_COMBINING_RIGHT_HALF_RING_BELOW }, // rounded
 { 'l', 'i', 2, 1, { "/ligature",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 131, 131, 131, 131, UNICODE_COMBINING_DOUBLE_INVERTED_BREVE },
+{ 'L', 'I', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 131, 131, 131, 131, UNICODE_COMBINING_DOUBLE_BREVE_BELOW },
 { 'm', 'v', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_SEAGULL_BELOW },
 { 'w', 'v', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_INVERTED_DOUBLE_ARCH_BELOW },
-{ '-', '\'',2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_MACRON_ACUTE },   // high-rising
-{ '\'','-', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_ACUTE_MACRON },   // high-falling
-{ '`', '-', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_GRAVE_MACRON },   // low-rising
-{ '-', '`', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_MACRON_GRAVE },   // low-falling
-{ 'r', 'f', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_GRAVE_ACUTE_GRAVE },   // rising-falling
-{ 'f', 'r', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_ACUTE_GRAVE_ACUTE },   // falling-rising
+{ '-', '\'',2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_MACRON_ACUTE }, // high-rising
+{ '\'','-', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_ACUTE_MACRON }, // high-falling
+{ '`', '-', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_GRAVE_MACRON }, // low-rising
+{ '-', '`', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_MACRON_GRAVE }, // low-falling
+{ 'r', 'f', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_GRAVE_ACUTE_GRAVE }, // rising-falling
+{ 'f', 'r', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_ACUTE_GRAVE_ACUTE }, // falling-rising
 { 'b', 'f', 2, 0, { "/betaphonetic",   500, 0,   520, 597,  500, 0,    500, 0,   0,   0   },  66,  66,  66,  66, UNICODE_GREEK_SMALL_LETTER_BETA }, // second version
 { 't', 'f', 2, 0, { "/thetaphonetic",  444, 0,   520, 585,  444, 0,    444, 0,   0,   0   },  84,  84,  84,  84, UNICODE_GREEK_SMALL_LETTER_THETA }, // second version
 { 'c', 'f', 2, 0, { "/chiphonetic",    500, 0,   572, 610,  500, 0,    500, 0,   0,   0   },  88,  88,  88,  88, UNICODE_GREEK_SMALL_LETTER_CHI }, // second version

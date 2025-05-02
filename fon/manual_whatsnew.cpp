@@ -29,6 +29,9 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.31# (2 May 2025)
+• Backslash trigraphs: s\vv (`s\vv`), m\LIb (`m\LIb`), \V^ (`\V^`), d\// (`d\//`), d\-/ (`d\-/`), d\~/ (`d\~/`).
+
 ##6.4.30# (29 April 2025)
 • Made the whole of the Buckeye corpus readable.
 • Backslash trigraphs for tone symbols: a\-' (`a\-'`), a\'- (`a\'-`), a\`- (`a\``-`), a\-` (`a\-```), a\rf (`a\rf`), a\fr (`a\fr`).
