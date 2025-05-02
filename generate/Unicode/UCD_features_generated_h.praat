@@ -1,9 +1,9 @@
 # UCD_features_generated_h.praat
-# Paul Boersma 2018,2019,2022,2024
+# Paul Boersma 2018,2019,2022,2024,2025
 
 Text writing preferences: "UTF-8"
 
-table = Read Table from semicolon-separated file: "UnicodeData.txt"
+table = Read Table from semicolon-separated file: "UnicodeData 16.0.txt"
 numberOfRows = Get number of rows
 
 stopwatch

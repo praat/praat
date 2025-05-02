@@ -78,7 +78,7 @@ static void draw_IPA_consonant_chart (Graphics graphics) {
 	{
 		static const struct { double x, y; conststring32 string; } symbols [] = {
 { 4, 17, U"p" }, { 4, 16, U"b" }, { 4, 15, U"m" }, { 4, 14, U"\\ff" }, { 4, 13, U"\\bf" }, { 4, 11, U"\\bc" }, { 4, 8, U"\\b^" }, { 4, 7, U"\\O." },
-{ 5, 15, U"\\mj" }, { 5, 14, U"f" }, { 5, 13, U"v" }, { 5, 12, U"\\vs" },
+{ 5, 15, U"\\mj" }, { 5, 14, U"f" }, { 5, 13, U"v" }, { 5, 12, U"\\vs" }, { 5, 10, U"\\V^" },
 { 6, 14, U"\\tf" }, { 6, 13, U"\\dh" }, { 6, 7, U"\\|1" },
 { 7, 17, U"t" }, { 7, 16, U"d" }, { 7, 15, U"n" }, { 7, 14, U"s" }, { 7, 13, U"z" }, { 7, 12, U"\\rt" }, { 7, 11, U"r" }, { 7, 10, U"\\fh" }, { 7, 9, U"l" }, { 7, 8, U"\\d^" },
 { 8, 17, U"t^l" }, { 8, 16, U"d^l" }, { 8, 14, U"\\l-" }, { 8, 13, U"\\lz" }, { 8, 12, U"l" }, { 8, 10, U"\\rl" }, { 8, 9, U"l" }, { 8, 7, U"\\|2" },
@@ -635,9 +635,10 @@ make sure that you have installed the Charis SIL and/or Doulos SIL font, for ins
 You can either type the symbols directly (if your computer has an input method for them),
 or use the backslash trigraphs in the following list.
 
-Understrikes:
+Diacritics above the letter:
 , n\|v `n\|v`  (%%combining vertical line below%): syllabic consonant
 , b\0v `b\0v`  (%%combining ring below%): voiceless (e.g. lenis voiceless plosive, voiceless nasal or approximant)
+, s\vv `s\vv`  (%%combining caron below%): voiced
 , o\Tv `o\Tv`  (%%combining down tack below%, %lowering): lowered vowel; or turns a fricative into an approximant
 , o\T^ `o\T^`  (%%combining up tack below%, %raising): raised vowel; or turns an approximant into a fricative
 , o\T( `o\T(`  (%%combining left tack below%, %atr): advanced tongue root
@@ -655,7 +656,7 @@ Understrikes:
 , d\mv `d\mv`  (%%combining seagull below%): lingiolabial
 , a\_ub `a\_ub`  undertie (liaison, if spaces don't mean breaks in your transcription)
 
-Overstrikes:
+Diacritics below the letter:
 , \gf\0^ `\gf\0^`  (%%combining ring above%): voiceless
 , \ef\'' `\ef\''`  (%%combining double acute accent%): extra high tone
 , \ef\'^ `\ef\'^`  (%%combining acute accent%): high tone
@@ -675,6 +676,15 @@ Overstrikes:
 , e\x^ `e\x^`  (%%combining x above%): mid-centralized
 , \ef\N^ `\ef\N^`  (%%combining breve%): extra short
 , k\lip `k\lip`,   t\lis `t\lis`   (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment
+, m\LIb `k\lix`,   m\LIb `k\LSx`   (%%combining double breve below%, %ligature): simultaneous articulation, or single segment
+
+Diacritics struck through the letter (overlays):
+, d\// `d\//`  (%%combining long solidus overlay%): ?
+, d\-/ `d\-/`  (%%combining long stroke overlay%): ?
+, d\~/ `d\~/`  (%%combining tilde overlay%): velarized or pharyngealized, mainly used for “l”,
+  although l\~/ `l\~/` can more easily be typed as \l~ `\l~` (otherwise, velarization can more clearly be rendered
+  as e.g. d\^g `d\^g` or d\^M `d\^M` or d\^G `d\^G`, and pharyngealization as d\^9 `d\^9`).
+
 
 In-line prefixes:
 , \'1 `\'1`  primary stress
@@ -695,6 +705,8 @@ In-line suffixes:
 , \-3 `\-3`  mid tone
 , \-2 `\-2`  low tone
 , \-1 `\-1`  extra low tone
+, (these last five can be combined, e.g. \-5\-1 `\-5\-1` falling, \-3\-5 `\-3\-5` high-rising,
+  \-2\-5\-2 `\-2\-5\-2` rising-falling, or \-2\-1\-3 `\-2\-1\-3` low falling-rising)
 
 Other in-line symbols:
 , \|f `\|f`  the phonetic stroke
