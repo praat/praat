@@ -30,7 +30,8 @@ R"~~~(
 Latest changes in Praat.
 
 ##6.4.31# (2 May 2025)
-• Backslash trigraphs: s\vv (`s\vv`), m\LIb (`m\LIb`), \V^ (`\V^`), d\// (`d\//`), d\-/ (`d\-/`), d\~/ (`d\~/`).
+• Backslash trigraphs: s\vv (`s\vv`), m\LIb (`m\LIb`), \V^ (`\V^`), d\// (`d\//`), d\-/ (`d\-/`), \l.\~/ (`\l.\~/`).
+• Unicode 16.0.
 
 ##6.4.30# (29 April 2025)
 • Made the whole of the Buckeye corpus readable.

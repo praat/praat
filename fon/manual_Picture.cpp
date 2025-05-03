@@ -706,7 +706,7 @@ In-line suffixes:
 , \-2 `\-2`  low tone
 , \-1 `\-1`  extra low tone
 , (these last five can be combined, e.g. \-5\-1 `\-5\-1` falling, \-3\-5 `\-3\-5` high-rising,
-  \-2\-5\-2 `\-2\-5\-2` rising-falling, or \-2\-1\-3 `\-2\-1\-3` low falling-rising)
+  \-2\-5\-2 `\-2\-5\-2` rising\--falling, or \-2\-1\-3 `\-2\-1\-3` low falling\--rising)
 
 Other in-line symbols:
 , \|f `\|f`  the phonetic stroke
