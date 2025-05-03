@@ -1,10 +1,10 @@
 /* manual_licenses.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -73,7 +73,7 @@ We included the following freely available software libraries in Praat (sometime
 	Courant Institute, Argonne National Lab, and Rice University,
 	C edition by Peng Du, Keith Seymour and Julie Langdou, version 3.2.1 of June 2009.
 , Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL 2 or later).
-, Unicode Character Database by Unicode Inc., version 16.0 of August 2024 (@@Unicode Inc. license agreement@)
+, Unicode Character Database by Unicode Inc., version 16.0 of August 2024 (@@Unicode Inc. license agreement@).
 
 Our own parts of the source code of Praat are distributed either under the General Public License,
 version 2 or later, or under the General Public License, version 3 or later.
