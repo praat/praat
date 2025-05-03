@@ -215,6 +215,7 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, 
 		A valid word is a string with contains the lowercase characters [a-z] and ['].
 */
 
+void TextGrid_checkInvariants_e (const constTextGrid me, const bool includeWeakInvariants);
 
 /* End of file TextGrid.h */
 #endif

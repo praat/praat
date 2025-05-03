@@ -121,7 +121,7 @@ autoTextGrid TextGrid_readFromEspsLabelFile (
 		if (overrideNumberOfTiers >= 1)
 			numberOfTiers = overrideNumberOfTiers;
 
-		/* mutable preliminary */ double globalTmin = 0.0, globalTmax = 100.0;
+		/* mutable preliminary */ double globalTmin = 0.0, globalTmax = 1e-6;
 		autoTextGrid me = TextGrid_createWithoutTiers (globalTmin, globalTmax);
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 			autoFunction tier = tiersArePointTiers ? static_cast <autoFunction> (TextTier_create (globalTmin, globalTmax)) :
@@ -132,7 +132,7 @@ autoTextGrid TextGrid_readFromEspsLabelFile (
 		Melder_assert (my tiers->size > 0);
 
 		autoMelderString label;
-		/* mutable step */ double startingTime = 0.0, endTime = undefined;
+		/* mutable step */ double startingTime = 0.0, endTime = 1e-6;
 		for (;;) {
 			/* mutable scan */ conststring32 line = MelderReadText_readLine (text.get());
 			if (! line)
@@ -155,10 +155,10 @@ autoTextGrid TextGrid_readFromEspsLabelFile (
 					TextPoint_setText (point, line);
 				} else {
 					IntervalTier tier = static_cast <IntervalTier> (lastTier);
-					Melder_require (tier -> intervals.size > 0,
-						U"Stray semicolon in line ", MelderReadText_getLineNumber (text.get()), U".");
-					TextInterval interval = tier -> intervals.at [tier -> intervals.size];
-					TextInterval_setText (interval, line);
+					if (tier -> intervals.size > 0) {
+						TextInterval interval = tier -> intervals.at [tier -> intervals.size];
+						TextInterval_setText (interval, line);
+					}
 				}
 				/*
 					The quirk in Buckeye/s35/s3504a.words also means that the second and third tiers haven't been filled.
@@ -258,6 +258,17 @@ autoTextGrid TextGrid_readFromEspsLabelFile (
 			}
 			Melder_skipHorizontalSpace (& line);
 			endTime = Melder_readReal (& line);
+			if (endTime < 0.0) {
+				Melder_casual (U"A negative time in file ", file, U" in line ", MelderReadText_getLineNumber (text.get()), U".");
+				continue;   // don't insert any interval
+			}
+			if (endTime < startingTime) {
+				/*
+					This could be the error in Buckeye/s28/s2801a/s2301a.words.
+				*/
+				if (my tiers->size == 4 && fabs (endTime - 421.986875) < 1e-9 && fabs (startingTime - 431.847408) < 1e-9)
+					endTime += 10.0;
+			}
 			{// scope
 				const char32 shouldBeHorizontalSpace = * line ++;
 				Melder_require (Melder_isHorizontalSpace (shouldBeHorizontalSpace),
@@ -292,7 +303,19 @@ autoTextGrid TextGrid_readFromEspsLabelFile (
 					TextTier_addPoint (tier, endTime, label.string);
 				} else {
 					IntervalTier tier = static_cast <IntervalTier> (my tiers->at [itier]);
-					(void) IntervalTier_addInterval_raw (tier, startingTime, endTime, label.string);
+					if (startingTime == endTime) {
+						/*
+							A zero-duration interval: combine with the previous interval.
+						*/
+						if (tier -> intervals.size > 1) {
+							const TextInterval previousInterval = tier -> intervals.at [tier -> intervals.size];
+							TextInterval_setText (previousInterval, Melder_cat (previousInterval -> text.get(), U"//", label.string));
+						} else
+							Melder_casual (U"A zero-duration interval at the start of file ", file, U" in tier ", itier,
+									U", containing the text “", label.string, U"”.");
+					} else {
+						(void) IntervalTier_addInterval_raw (tier, startingTime, endTime, label.string);
+					}
 				}
 			}
 			startingTime = endTime;
@@ -304,6 +327,8 @@ autoTextGrid TextGrid_readFromEspsLabelFile (
 				IntervalTier_haveAtLeastOneInterval (static_cast <IntervalTier> (tier));
 		}
 		my xmax = endTime;
+
+		TextGrid_checkInvariants_e (me.get(), true);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid not read from file ", file, U".");
@@ -816,7 +841,7 @@ const struct TIMIT_key {
 	{"pau", "(pau)"},	/* pause */
 	{"epi", "(epi)"},	/* epenthetic silence */
 	{"h#", "(h#)"}, 	/* marks start and end piece of sentence */
-	/* the following markers only occur in the dictionary */
+	/* the following markers occur only in the dictionary */
 	/* 20190704 wgmichener "1" -> "\\'1" */
 	{"1", "\\'1"},		/* primary stress marker */
 	/* 20190704 wgmichener "2" -> "\\'2" */

@@ -1,5 +1,5 @@
 # Buckeye.praat
-# Paul Boersma, 29 April 2025
+# Paul Boersma, 3 May 2025
 
 #
 # This script cycles through all the sound files and annotations of the Buckeye corpus,
@@ -136,6 +136,21 @@ for ifolder to numberOfFolders
 			endif
 		endfor
 
+		#
+		# Look for combined intervals.
+		#
+		for itier from 1 to 6
+			numberOfIntervals = Get number of intervals: itier
+			for iinterval to numberOfIntervals
+				tmin = Get start time of interval: itier, iinterval
+				tmax = Get end time of interval: itier, iinterval
+				text$ = Get label of interval: itier, iinterval
+				if index (text$, "//")
+					appendInfoLine: "WARNING: combined  text “", text$,
+					... "” (between ", tmin, " and ", tmax, "), on tier ", itier, "."
+				endif
+			endfor
+		endfor
 		#
 		# Clean up.
 		#
