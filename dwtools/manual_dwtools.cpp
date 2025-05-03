@@ -5972,7 +5972,7 @@ ENTRY (U"Example 1: Single-tier topic search: ")
 NORMAL (U"We create a TextGridNavigator that searches for the occurrence in tier 1 of one of the labels "
 	"in a %topic set that consists of the labels { \"a\", \"e\", \"i\", \"o\", \"u\" }. If a label in tier 1 equals one of the labels in this topic set we have a match. "
 	"The command to create the TextGridNavigator for the selected TextGrid is:")
-CODE (U"To TextGridNavigator (topic search): 1,")
+CODE (U"To TextGridNavigator (topic only): 1,")
 CODE (U"... { \"a\", \"e\", \"i\", \"o\", \"u\" }, \"is equal to\", \"OR\",")
 CODE (U"... \"Match start to Match end\"")
 NORMAL (U"In this case the tier's ##NavigationContext# is very simple as the searching / matching only involves "
@@ -5999,7 +5999,7 @@ NORMAL (U"Instead of finding the indices one at a time in a %while loop until we
 	"and query for a list of all indices or times where the labels match. We then know beforehand how many matches we have "
 	"and therefore we can use a %for loop.")
 CODE (U"tierNumber = 1")
-CODE (U"navigator = To TextGridNavigator (topic search): tierNumber,")
+CODE (U"navigator = To TextGridNavigator (topic only): tierNumber,")
 CODE (U"... { \"a\", \"e\", \"i\", \"u\", \"o\" }, \"is equal to\", \"OR\",")
 CODE (U"... \"Match start to Match end\"")
 CODE (U"startTimes# = List start times: \"topic\"")

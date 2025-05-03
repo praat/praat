@@ -8189,7 +8189,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic only)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic match criterion", kMelder_string::DEFAULT)

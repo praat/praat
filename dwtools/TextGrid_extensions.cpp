@@ -216,20 +216,20 @@ static void IntervalTier_cutInterval (IntervalTier me, integer index, int extend
 	} else if (index == size_pre) { 
 		/*
 			Change xmax of the new last interval.
-		 */
+		*/
 		ti = my intervals.at [my intervals.size];
 		ti -> xmax = xmax;
 	} else {
 		if (extend_option == 0) { 
 			/*
-				Extend earlier interval to the right
-			 */
+				Extend earlier interval to the right.
+			*/
 			ti = my intervals.at [index - 1];
 			ti -> xmax = xmax;
 		} else {
 			/*
-				Extend next interval to the left
-			 */
+				Extend next interval to the left.
+			*/
 			ti = my intervals.at [index];
 			ti -> xmin = xmin;
 		}
@@ -419,10 +419,10 @@ void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool pres
 		IntervalTier_checkStartAndEndTime (me); // start/end time of first/last interval should match with tier
 		IntervalTier_checkStartAndEndTime (thee);
 		const double time_shift = my xmax - thy xmin;
-        double xmax_previous = my xmax;
+		double xmax_previous = my xmax;
 		if (preserveTimes && my xmax < thy xmin) {
 			autoTextInterval connection = TextInterval_create (my xmax, thy xmin, U"");
-            xmax_previous = thy xmin;
+			xmax_previous = thy xmin;
 			my intervals. addItem_move (connection.move());
 		}
 		for (integer iint = 1; iint <= thy intervals.size; iint ++) {
@@ -436,7 +436,7 @@ void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool pres
 					ti -> xmin < ti->xmax might be false!
 					We want to make sure xmin and xmax are not register variables and therefore force
 					double64 by using volatile variables.
-		 		 */
+				*/
 				volatile double xmin = xmax_previous;
 				volatile double xmax = ti -> xmax + time_shift;
 				if (xmin < xmax) {
@@ -446,9 +446,9 @@ void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool pres
 					xmax_previous = xmax;
 				}
 				/*
-					Else don't include interval
+					Else don't include interval.
 				*/
-            }
+			}
 		}
 		my xmax = preserveTimes ? thy xmax : xmax_previous;
 	} catch (MelderError) {
@@ -491,7 +491,7 @@ void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes)
 		TextGrid_checkStartAndEndTimesOfTiers (me); // all tiers must have the same start/end time as textgrid
 		TextGrid_checkStartAndEndTimesOfTiers (thee);
 		/*
-			Last intervals must have the same end time
+			Last intervals must have the same end time.
 		*/
 		const double xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
 		for (integer itier = 1; itier <= my tiers->size; itier ++) {
@@ -505,14 +505,14 @@ void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes)
 					both the xmax of the tier and the xmax of the last interval equal the xmax of the grid.
 				*/
 				myIntervalTier -> xmax = xmax;
-                const TextInterval lastInterval = myIntervalTier -> intervals.at [myIntervalTier -> intervals.size];
-                lastInterval -> xmax = xmax;
-                Melder_assert (lastInterval -> xmax > lastInterval -> xmin);
+				const TextInterval lastInterval = myIntervalTier -> intervals.at [myIntervalTier -> intervals.size];
+				lastInterval -> xmax = xmax;
+				Melder_assert (lastInterval -> xmax > lastInterval -> xmin);
 			} else if (myTier -> classInfo == classTextTier && thyTier -> classInfo == classTextTier) {
 				const TextTier  myTextTier = static_cast <TextTier>  (myTier);
 				const TextTier thyTextTier = static_cast <TextTier> (thyTier);
 				TextTiers_append_inplace (myTextTier, thyTextTier, preserveTimes);
-                myTextTier -> xmax = xmax;
+				myTextTier -> xmax = xmax;
 			} else {
 				Melder_throw (U"Tier ", itier, U" in the second TextGrid is of a different type "
 					"than tier ", itier, U" in the first TextGrid.");
