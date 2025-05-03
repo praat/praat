@@ -1399,4 +1399,109 @@ autoTextGrid TextGrids_concatenate (OrderedOf<structTextGrid>* me) {
 	}
 }
 
+void TextGrid_checkInvariants_e (const constTextGrid me, const bool includeWeakInvariants) {
+	/*
+		Strong invariant: positive domain of TextGrid.
+	*/
+	Melder_require (my xmax > my xmin,
+		U"The end time of the TextGrid should be greater than its start time (", my xmin,
+		U" seconds), but is ", my xmax, U" seconds instead."
+	);
+	for (integer itier = 1; itier <= my tiers->size; itier ++) {
+		Function anyTier = my tiers->at [itier];
+		/*
+			Strong invariant: positive domain of tier.
+		*/
+		Melder_require (anyTier -> xmax > anyTier -> xmin,
+			U"The end time of tier ", itier, U" should be greater than its start time (", anyTier -> xmin,
+			U" seconds), but is ", anyTier -> xmax, U" seconds instead."
+		);
+		/*
+			Weak invariant: matching domains of tier and TextGrid.
+		*/
+		if (includeWeakInvariants) {
+			Melder_require (anyTier -> xmin == my xmin,
+				U"The start time of tier ", itier, U" should equal the start time of the TextGrid (", my xmin,
+				U" seconds), but is ", anyTier -> xmin, U" seconds instead."
+			);
+			Melder_require (anyTier -> xmax == my xmax,
+				U"The end time of tier ", itier, U" should equal the end time of the TextGrid (", my xmax,
+				U" seconds), but is ", anyTier -> xmax, U" seconds instead."
+			);
+		}
+		if (anyTier -> classInfo == classIntervalTier) {
+			IntervalTier tier = static_cast <IntervalTier> (anyTier);
+			/*
+				Strong invariant: interval tier structure.
+			*/
+			Melder_require (tier -> intervals.size >= 1,
+				U"Tier ", itier, U" should contain at least 1 interval, but it contains none.");
+			/*
+				Weak invariant: matching domains of interval and tier.
+			*/
+			if (includeWeakInvariants) {
+				const constTextInterval firstInterval = tier -> intervals.at [1];
+				Melder_require (firstInterval -> xmin == my xmin,
+					U"The start time of the first interval of tier ", itier, U" should equal the start time of the TextGrid (", my xmin,
+					U" seconds), but is ", firstInterval -> xmin, U" seconds instead."
+				);
+				const constTextInterval lastInterval = tier -> intervals.at [tier -> intervals.size];
+				Melder_require (lastInterval -> xmax == my xmax,
+					U"The end time of the last interval of tier ", itier, U" should equal the end time of the TextGrid (", my xmax,
+					U" seconds), but is ", lastInterval -> xmax, U" seconds instead."
+				);
+			}
+			/*
+				Strong invariant: positive domain of interval.
+			*/
+			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
+				const constTextInterval interval = tier -> intervals.at [iinterval];
+				Melder_require (interval -> xmax > interval -> xmin,
+					U"The end time of interval ", iinterval, U" of tier ", itier,
+					U" should be greater than its start time (", interval -> xmin,
+					U" seconds), but is ", interval -> xmax, U" seconds instead."
+				);
+			}
+			/*
+				Strong invariant: adjacency of intervals.
+			*/
+			for (integer iinterval = 2; iinterval <= tier -> intervals.size; iinterval ++) {
+				const constTextInterval previousInterval = tier -> intervals.at [iinterval - 1];
+				const constTextInterval currentInterval = tier -> intervals.at [iinterval];
+				Melder_require (currentInterval -> xmin == previousInterval -> xmax,
+					U"The start time of interval ", iinterval, U" of tier ", itier,
+					U" should equal the end time of interval ", iinterval - 1, U" (", previousInterval -> xmax,
+					U" seconds), but is ", currentInterval -> xmin, U" seconds instead."
+				);
+			}
+		} else {
+			TextTier tier = static_cast <TextTier> (anyTier);
+			/*
+				Weak invariant: matching domains of point and tier.
+			*/
+			if (includeWeakInvariants) {
+				for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+					const constTextPoint point = tier -> points.at [ipoint];
+					Melder_require (point -> number >= my xmin,
+						U"The time of point ", ipoint, U" of tier ", itier, U" should lie within the time domain of the TextGrid (",
+						my xmin, U" .. ", my xmax, U" seconds), but is ", point -> number, U" seconds instead."
+					);
+				}
+			}
+			/*
+				Strong invariant: strict order of points.
+			*/
+			for (integer ipoint = 2; ipoint <= tier -> points.size; ipoint ++) {
+				const constTextPoint previousPoint = tier -> points.at [ipoint - 1];
+				const constTextPoint currentPoint = tier -> points.at [ipoint];
+				Melder_require (currentPoint -> number > previousPoint -> number,
+					U"The time of point ", ipoint, U" of tier ", itier,
+					U" should be greater than the time of point ", ipoint - 1, U" (", previousPoint -> number,
+					U" seconds), but is ", currentPoint -> number, U" seconds instead."
+				);
+			}
+		} // endif tier class
+	} // next tier
+}
+
 /* End of file TextGrid.cpp */
