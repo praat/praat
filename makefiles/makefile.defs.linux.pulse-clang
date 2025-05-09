@@ -1,6 +1,6 @@
 # File: makefile.defs.linux.pulse-clang
 # System: Linux
-# David Weenink and Paul Boersma 2025-01-02
+# David Weenink and Paul Boersma 2025-05-09
 
 CC = clang
 CXX = clang
@@ -13,9 +13,14 @@ COMMONFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `$(
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
-CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
-#CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libstdc++ -Wshadow
+# This one works for the Praat team:
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libc++ -Wshadow
+# Somebody who submitted a pull request suggested to change the above to the following,
+# which unfortunately causes many build failure at the Praat team, e.g.
+## /usr/bin/ld: .../praats/melder/NUMrandom.cpp:162: undefined reference to `std::chrono::_V2::system_clock::now()'
+## clang: error: linker command failed with exit code 1 (use -v to see invocation)
 #CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
+#CXXFLAGS = -std=c++17 $(COMMONFLAGS) -stdlib=libstdc++ -Wshadow
 
 EXECUTABLE = praat
 
