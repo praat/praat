@@ -29,7 +29,9 @@ R"~~~(
 
 Latest changes in Praat.
 
-##6.4.31# (2 May 2025)
+##6.4.31# (3 May 2025)
+• TextGrid window: rubber banding within the selection,
+  by dragging a boundary while keeping the Option and Command keys pressed (plus the Shift key, if you want to drag in all tiers).
 • Backslash trigraphs: s\vv (`s\vv`), m\LIb (`m\LIb`), \V^ (`\V^`), d\// (`d\//`), d\-/ (`d\-/`), \l.\~/ (`\l.\~/`).
 • Unicode 16.0.
 

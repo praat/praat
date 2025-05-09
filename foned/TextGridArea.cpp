@@ -565,14 +565,18 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 		double startInterval, endInterval;
 		timeToInterval (this, x_world, our selectedTier, & startInterval, & endInterval);
 
-		if (event -> isLeftBottomFunctionKeyPressed()) {
-			our setSelection (x_world - startInterval < endInterval - x_world ? startInterval : endInterval, our endSelection());   // to nearest boundary
-			return FunctionEditor_UPDATE_NEEDED;
+		if (event -> optionKeyPressed != event -> commandKeyPressed) {
+			if (event -> isLeftBottomFunctionKeyPressed()) {
+				our setSelection (x_world - startInterval < endInterval - x_world ? startInterval : endInterval, our endSelection());   // to nearest boundary
+				return FunctionEditor_UPDATE_NEEDED;
+			}
+			if (event -> isRightBottomFunctionKeyPressed()) {
+				our setSelection (our startSelection(), x_world - startInterval < endInterval - x_world ? startInterval : endInterval);
+				return FunctionEditor_UPDATE_NEEDED;
+			}
 		}
-		if (event -> isRightBottomFunctionKeyPressed()) {
-			our setSelection (our startSelection(), x_world - startInterval < endInterval - x_world ? startInterval : endInterval);
-			return FunctionEditor_UPDATE_NEEDED;
-		}
+		Melder_assert (! our functionEditor() -> clickWasModifiedByOptionKey && ! our functionEditor() -> clickWasModifiedByCommandKey ||
+		                 our functionEditor() -> clickWasModifiedByOptionKey &&   our functionEditor() -> clickWasModifiedByCommandKey);   // either neither or both
 
 		IntervalTier selectedIntervalTier;
 		TextTier selectedTextTier;
@@ -632,7 +636,9 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 			/*
 				If the user clicked on an unselected boundary or point, we extend or shrink the selection to it.
 			*/
-			if (event -> shiftKeyPressed) {
+			const bool rubberBanding = our functionEditor() -> clickWasModifiedByOptionKey &&
+			                           our functionEditor() -> clickWasModifiedByCommandKey;
+			if (event -> shiftKeyPressed && ! rubberBanding) {
 				if (our anchorTime > 0.5 * (our startSelection() + our endSelection()))
 					our setSelection (our startSelection(), our anchorTime);
 				else
@@ -649,12 +655,17 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 				Determine the set of selected boundaries and points, and the dragging range.
 			*/
 			our draggingTiers = zero_BOOLVEC (numberOfTiers);
-			our leftDraggingBoundary = our tmin();
-			our rightDraggingBoundary = our tmax();
+			if (rubberBanding) {
+				our leftDraggingBoundary = our startSelection();
+				our rightDraggingBoundary = our endSelection();
+			} else {
+				our leftDraggingBoundary = our tmin();
+				our rightDraggingBoundary = our tmax();
+			}
 			for (int itier = 1; itier <= numberOfTiers; itier ++) {
 				/*
 					If the user has pressed the shift key, let her drag all the boundaries and points at this time.
-					Otherwise, let her only drag the boundary or point on the clicked tier.
+					Otherwise, let her drag only the boundary or point on the clicked tier.
 				*/
 				if (itier == mouseTier || our functionEditor() -> clickWasModifiedByShiftKey == our instancePref_shiftDragMultiple()) {
 					IntervalTier intervalTier;
@@ -666,11 +677,13 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 							TextInterval leftInterval = intervalTier -> intervals.at [ibound - 1];
 							TextInterval rightInterval = intervalTier -> intervals.at [ibound];
 							our draggingTiers [itier] = true;
-							/*
-								Prevent the user from dragging the boundary past its left or right neighbours on the same tier.
-							*/
-							Melder_clipLeft (leftInterval -> xmin, & our leftDraggingBoundary);
-							Melder_clipRight (& our rightDraggingBoundary, rightInterval -> xmax);
+							if (! rubberBanding) {
+								/*
+									Prevent the user from dragging the boundary past its left or right neighbours on the same tier.
+								*/
+								Melder_clipLeft (leftInterval -> xmin, & our leftDraggingBoundary);
+								Melder_clipRight (& our rightDraggingBoundary, rightInterval -> xmax);
+							}
 						}
 					} else {
 						Melder_assert (isdefined (our anchorTime));
@@ -801,13 +814,45 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 			return FunctionEditor_UPDATE_NEEDED;
 		}
 
-		FunctionArea_save (this, U"Drag");
+		const bool rubberBanding = our functionEditor() -> clickWasModifiedByOptionKey &&
+		                           our functionEditor() -> clickWasModifiedByCommandKey;
+		FunctionArea_save (this, rubberBanding ? U"Rubber banding" : U"Drag");
 
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
-			if (our draggingTiers [itier]) {
-				IntervalTier intervalTier;
-				TextTier textTier;
-				AnyTextGridTier_identifyClass (our textGrid() -> tiers->at [itier], & intervalTier, & textTier);
+			if (! our draggingTiers [itier])
+				continue;
+			IntervalTier intervalTier;
+			TextTier textTier;
+			AnyTextGridTier_identifyClass (our textGrid() -> tiers->at [itier], & intervalTier, & textTier);
+			if (rubberBanding) {
+				if (intervalTier) {
+					for (integer iinterval = 1; iinterval <= intervalTier -> intervals.size; iinterval ++) {
+						const mutableTextInterval interval = intervalTier -> intervals.at [iinterval];
+						if (interval -> xmin > leftDraggingBoundary && interval -> xmin < rightDraggingBoundary) {
+							if (interval -> xmin < our anchorTime)
+								NUMscale (& interval -> xmin, our leftDraggingBoundary, our anchorTime, our leftDraggingBoundary, x_world);
+							else
+								NUMscale (& interval -> xmin, our anchorTime, our rightDraggingBoundary, x_world, our rightDraggingBoundary);
+						}
+						if (interval -> xmax > leftDraggingBoundary && interval -> xmax < rightDraggingBoundary) {
+							if (interval -> xmax < our anchorTime)
+								NUMscale (& interval -> xmax, our leftDraggingBoundary, our anchorTime, our leftDraggingBoundary, x_world);
+							else
+								NUMscale (& interval -> xmax, our anchorTime, our rightDraggingBoundary, x_world, our rightDraggingBoundary);
+						}
+					}
+				} else {
+					for (integer ipoint = 1; ipoint <= textTier -> points.size; ipoint ++) {
+						const mutableTextPoint point = textTier -> points.at [ipoint];
+						if (point -> number > leftDraggingBoundary && point -> number < rightDraggingBoundary) {
+							if (point -> number < our anchorTime)
+								NUMscale (& point -> number, our leftDraggingBoundary, our anchorTime, our leftDraggingBoundary, x_world);
+							else
+								NUMscale (& point -> number, our anchorTime, our rightDraggingBoundary, x_world, our rightDraggingBoundary);
+						}
+					}
+				}
+			} else {
 				if (intervalTier) {
 					const integer numberOfIntervals = intervalTier -> intervals.size;
 					for (integer ibound = 2; ibound <= numberOfIntervals; ibound ++) {

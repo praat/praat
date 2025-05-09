@@ -217,5 +217,7 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, 
 
 void TextGrid_checkInvariants_e (const constTextGrid me, const bool includeWeakInvariants);
 
+void TextGrid_scaleTimes_e (mutableTextGrid me, double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+
 /* End of file TextGrid.h */
 #endif

@@ -1,7 +1,7 @@
 # File: makefile.defs.msys-clang
 
 # System: clang on Windows under MSYS2
-# Paul Boersma 2024-01-18
+# Paul Boersma 2025-05-09
 
 PREFIX ?=
 
@@ -20,7 +20,12 @@ CXXFLAGS = -std=gnu++17 $(COMMONFLAGS) -Wshadow
 
 EXECUTABLE = Praat.exe
 
-LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -lwinspool -static-libgcc -lc++ -lc++abi -mwindows -static -static-libstdc++
+# This one works for the Praat team:
+LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -lwinspool -static-libgcc -lc++ -lc++abi -mwindows -static
+# Somebody posted a pull request for the following alternative,
+# but at the Praat team this yields a warning for each of the three editions (ARM64, Intel64, Intel32):
+## clang: warning: argument unused during compilation: '-static-libstdc++' [-Wunused-command-line-argument]
+#LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -lwinspool -static-libgcc -lc++ -lc++abi -mwindows -static -static-libstdc++
 
 AR = $(PREFIX)ar
 RANLIB = $(PREFIX)ranlib

@@ -1504,4 +1504,111 @@ void TextGrid_checkInvariants_e (const constTextGrid me, const bool includeWeakI
 	} // next tier
 }
 
+void TextGrid_scaleTimes_e (mutableTextGrid me, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	try {
+		Melder_require (xminfrom >= my xmin,
+			U"xminfrom should not be less than the start time of the TextGrid.");
+		Melder_require (xmaxfrom > xminfrom,
+			U"xmaxfrom should be greater than xminfrom.");
+		Melder_require (xmaxfrom <= my xmax,
+			U"xmaxfrom should not be greater than the end time of the TextGrid.");
+		Melder_require (xminto >= my xmin,
+			U"xminto should not be less than the start time of the TextGrid.");
+		Melder_require (xmaxto > xminto,
+			U"xmaxto should be greater than xminto.");
+		Melder_require (xmaxto <= my xmax,
+			U"xmaxto should not be greater than the end time of the TextGrid.");
+		TextGrid_checkInvariants_e (me, true);
+		if (xminto == xminfrom && xmaxto == xmaxfrom)
+			return;   // nothing to do
+		/*
+			Check overlap.
+		*/
+		if (xminto < xminfrom) {
+			for (integer itier = 1; itier <= my tiers->size; itier ++) {
+				const constFunction anyTier = my tiers->at [itier];
+				if (anyTier -> classInfo == classIntervalTier) {
+					const constIntervalTier tier = static_cast <constIntervalTier> (anyTier);
+					for (integer iinterval = 2; iinterval <= tier -> intervals.size; iinterval ++) {
+						const constTextInterval interval = tier -> intervals.at [iinterval];
+						if (interval -> xmin > xminfrom) {
+							/* mutable before-after */ double xmin = interval -> xmin;
+							NUMscale (& xmin, xminfrom, xmaxfrom, xminto, xmaxto);
+							if (xmin > tier -> intervals.at [iinterval - 1] -> xmax)
+								break;   // no need to check later intervals
+							Melder_throw (U"Cannot move boundary from ", interval -> xmin, U" seconds to ", xmin, U" seconds, "
+									"because a boundary at ", tier -> intervals.at [iinterval - 1] -> xmax, U" is in the way.");
+						}
+					} // next interval
+				} else {
+					const constTextTier tier = static_cast <constTextTier> (anyTier);
+					for (integer ipoint = 2; ipoint <= tier -> points.size; ipoint ++) {
+						const constTextPoint point = tier -> points.at [itier];
+						if (point -> number > xminfrom) {
+							/* mutable before-after */ double time = point -> number;
+							NUMscale (& time, xminfrom, xmaxfrom, xminto, xmaxto);
+							if (time > tier -> points.at [ipoint - 1] -> number)
+								break;   // no need to check later points
+							Melder_throw (U"Cannot move point from ", point -> number, U" seconds to ", time, U" seconds, "
+									"because a point at ", tier -> points.at [ipoint - 1] -> number, U" is in the way.");
+						}
+					} // next point
+				}
+			} // next tier
+		}
+		if (xmaxto > xmaxfrom) {
+			for (integer itier = 1; itier <= my tiers->size; itier ++) {
+				const constFunction anyTier = my tiers->at [itier];
+				if (anyTier -> classInfo == classIntervalTier) {
+					const constIntervalTier tier = static_cast <constIntervalTier> (anyTier);
+					for (integer iinterval = tier -> intervals.size - 1; iinterval >= 1; iinterval --) {
+						const constTextInterval interval = tier -> intervals.at [iinterval];
+						if (interval -> xmax < xmaxfrom) {
+							/* mutable before-after */ double xmax = interval -> xmax;
+							NUMscale (& xmax, xminfrom, xmaxfrom, xminto, xmaxto);
+							if (xmax < tier -> intervals.at [iinterval + 1] -> xmin)
+								break;
+							Melder_throw (U"Cannot move boundary from ", interval -> xmax, U" seconds to ", xmax, U" seconds, "
+									"because a boundary at ", tier -> intervals.at [iinterval + 1] -> xmin, U" is in the way.");
+						}
+					} // next interval
+				} else {
+					const constTextTier tier = static_cast <constTextTier> (anyTier);
+					for (integer ipoint = tier -> points.size - 1; ipoint >= 1 ; ipoint --) {
+						const constTextPoint point = tier -> points.at [itier];
+						if (point -> number < xmaxfrom) {
+							/* mutable before-after */ double time = point -> number;
+							NUMscale (& time, xminfrom, xmaxfrom, xminto, xmaxto);
+							if (time < tier -> points.at [ipoint + 1] -> number)
+								break;
+							Melder_throw (U"Cannot move point from ", point -> number, U" seconds to ", time, U" seconds, "
+									"because a point at ", tier -> points.at [ipoint + 1] -> number, U" is in the way.");
+						}
+					} // next point
+				}
+			} // next tier
+		}
+		for (integer itier = 1; itier <= my tiers->size; itier ++) {
+			const mutableFunction anyTier = my tiers->at [itier];
+			if (anyTier -> classInfo == classIntervalTier) {
+				const mutableIntervalTier tier = static_cast <mutableIntervalTier> (anyTier);
+				for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
+					const mutableTextInterval interval = tier -> intervals.at [iinterval];
+					NUMscale (& interval -> xmin, xminfrom, xmaxfrom, xminto, xmaxto);
+					NUMscale (& interval -> xmax, xminfrom, xmaxfrom, xminto, xmaxto);
+				}
+			} else {
+				const mutableTextTier tier = static_cast <mutableTextTier> (anyTier);
+				for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+					const mutableTextPoint point = tier -> points.at [ipoint];
+					NUMscale (& point -> number, xminfrom, xmaxfrom, xminto, xmaxto);
+				}
+			}
+		} // next tier
+		TextGrid_checkInvariants_e (me, true);
+	} catch (MelderError) {
+		Melder_throw (me, U": times not scaled.");
+	}
+}
+
 /* End of file TextGrid.cpp */
