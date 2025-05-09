@@ -21,7 +21,7 @@
 #include "../fon/Photo.h"
 
 #if gdi
-	#include <GdiPlus.h>
+	#include <gdiplus.h>
 #elif quartz
 	#include <time.h>
 	#include "macport_on.h"
