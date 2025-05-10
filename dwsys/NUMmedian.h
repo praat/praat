@@ -30,8 +30,9 @@
 
 namespace num {
 	template <typename T>
-	inline void NUMselect_inplace (vector<T> const& v, integer kth_asIfSorted) {
+	inline T NUMselect_inplace (vector<T> const& v, integer kth_asIfSorted) {
 		adaptiveQuickselect (v.asArgumentToFunctionThatExpectsZeroBasedArray (), kth_asIfSorted - 1, v.size);
+		return v [kth_asIfSorted];
 	}
 
 	template <typename T>
@@ -42,7 +43,7 @@ namespace num {
 	}
 
 	template <typename T>
-	double NUMquantile (vector<T> const& v, double factor) {
+	T NUMquantile (vector<T> const& v, double factor) {
 		if (v.size < 1)
 			return undefined;
 		if (v.size == 1)
@@ -51,13 +52,19 @@ namespace num {
 		const integer left = Melder_clipped (1_integer, Melder_ifloor (place), v.size - 1);
 		trace (U"left:", left, U" size:", v.size);
 		NUMselect_inplace (v, left);
-		VEC highPart = v.part (left + 1, v.size);
+		vector<T> highPart = v.part (left + 1, v.size);
 		const double min = NUMmin_e (highPart);
 		const double slope = min - v [left];
 		if (slope == 0.0)
 			return v [left];   // or a [left + 1], which is the same
 		return v [left] + (place - left) * slope;
 	}
+
+	structExtendedReal NUMmin_e (vector<structExtendedReal> v);
+	
+	structExtendedReal NUMmax_e (vector<structExtendedReal> v);
+
+	structExtendedReal NUMquantile (vector<structExtendedReal> const& v, double factor);
 }
 
 /* Only for timing the algorithms */

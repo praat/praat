@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <limits.h>
+#include "ExtendedReal.h"
 #include "melder.h"
 #include "MAT_numerics.h"
 #include "NUMsorting.h"
@@ -39,7 +40,6 @@
 	NUMeps just a little larger than eps. 
 */
 #define NUMeps 2.3e-16
-
 
 int NUMcompareTwoIntegers (integer& a, integer& b);
 int NUMcompareTwoDoubles (double& a, double& b);
