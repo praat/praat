@@ -1,2 +1,4 @@
 .gitignore export-ignore
 .gitattributes export-ignore
+# make sure all files are encoded with unix line endings
+* text eol=lf
