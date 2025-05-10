@@ -23,7 +23,7 @@
 
 /*			
 	Given a vector v with n elements, we define an inversion as i < j && v [i] > v [j].
-    We use a tric to store the inversion between two elements (i,j) with only **one** number code by using the following
+    We use a trick to store the inversion between two elements (i,j) with only **one** number code by using the following
     lower triangular (n-1) x (n-1) matrix, with i being the **column** index and j being the **row** index!
 
              1  2  3  4  5  ... n-1

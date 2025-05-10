@@ -58,7 +58,7 @@ integer structPermutationInversionCounter :: mergeInversions (integer left, inte
 	while (i <= nl && j <= nr) {
 		/*
 			18/2/2025:
-			Some of the array index arithmetic in Praat is computationally relative expensive, we use exlicit pointers instead. 
+			Some of the array index arithmetic in Praat is computationally relative expensive, we use explicit pointers instead. 
 			This reduces the amount of time spent in this routine from 30.2% to 9.5% (as timed with valgrind --tool=callgrind
 			during execution of timeSlopeSelection in SlopeSelector.cpp)
 		*/
