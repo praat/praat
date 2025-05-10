@@ -18,17 +18,20 @@
 
 #define ooSTRUCT PermutationInversionCounter
 oo_DEFINE_CLASS (PermutationInversionCounter, Daata)
-	oo_INTEGER (numberOfElements)
+
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Permutation, pdata)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Permutation, potherInverse)
 	oo_OBJECT (Permutation, 0, psortingOrder)
+	oo_INTEGER (numberOfElements)
 	oo_INTVEC (workspace, numberOfElements)
 	oo_INTEGER (totalNumberOfInversions)
 	oo_INTEGER (totalNumberOfInversionsInInterval)
 	oo_INTEGER (numberOfInversionsRegistered)
 	oo_INTEGER (numberOfInversionsToRegister)
 	oo_INTEGER (posInSortedSelectedInversionIndices)
+	
 	#if oo_DECLARING
+	
 		INTVEC inversions;			// the inversions as pairs of (ilow, ihigh) to be output, link to storage supplied by caller
 		INTVEC otherInverse;		// link to potherInverse -> p.get() supplied by user
 		
@@ -55,6 +58,7 @@ oo_DEFINE_CLASS (PermutationInversionCounter, Daata)
 		integer getInversions (constPermutation p, INTVEC const& out_inversions);
 		
 	#endif
+		
 	#if oo_COPYING
 		thy inversions = inversions;
 		thy otherInverse = otherInverse;

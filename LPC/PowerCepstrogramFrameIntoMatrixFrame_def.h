@@ -17,24 +17,27 @@
  */
 
 #define ooSTRUCT PowerCepstrogramFrameIntoMatrixFrame
-oo_DEFINE_CLASS (PowerCepstrogramFrameIntoMatrixFrame, SampledFrameIntoSampledFrame)
+oo_DEFINE_CLASS (PowerCepstrogramFrameIntoMatrixFrame, SampledFrameIntoMatrixFrame)
 
-	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (PowerCepstrogram, input)
-	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Matrix, output)
+	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (PowerCepstrogram, powercepstrogram)
 	
-	oo_INTEGER (numberOfPoints)
 	oo_OBJECT (PowerCepstrum, 2, powerCepstrum) // copy of a column of the PowerCepstrogram
 	oo_OBJECT (PowerCepstrumWorkspace, 0, powerCepstrumWs)
 	oo_BOOLEAN (getPeakAndPosition)
 	oo_BOOLEAN (getSlopeAndIntercept)
 	oo_BOOLEAN (subtractTrend)
-	oo_BOOLEAN (trendSubtracted) // ?? needed
+	oo_BOOLEAN (trendSubtracted) // TODO ?? needed
 	
 	#if oo_DECLARING
+
 		void getInputFrame () override;
-		void allocateOutputFrames (void) override;
+
 		bool inputFrameToOutputFrame (void) override;
-		void saveOutputFrame (void) override;
+		
+		void saveOutputFrame () override;
+
+		void saveLocalOutputFrames (void) override;
+
 	#endif
 oo_END_CLASS (PowerCepstrogramFrameIntoMatrixFrame)
 #undef ooSTRUCT

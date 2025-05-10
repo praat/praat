@@ -17,7 +17,7 @@
  */
 
 #define ooSTRUCT SoundFrameIntoPowerCepstrogramFrame
-oo_DEFINE_CLASS (SoundFrameIntoPowerCepstrogramFrame, SoundFrameIntoSampledFrame)
+oo_DEFINE_CLASS (SoundFrameIntoPowerCepstrogramFrame, SoundFrameIntoMatrixFrame)
 
 	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (PowerCepstrogram, powercepstrogram)
 	oo_INTEGER (numberOfFourierSamples)
@@ -27,9 +27,9 @@ oo_DEFINE_CLASS (SoundFrameIntoPowerCepstrogramFrame, SoundFrameIntoSampledFrame
 	#if oo_DECLARING
 
 		bool inputFrameToOutputFrame (void) override;
+		
 		void saveOutputFrame (void) override;
-		void allocateOutputFrames (void) override;
-
+		
 	#endif
 
 oo_END_CLASS (SoundFrameIntoPowerCepstrogramFrame)

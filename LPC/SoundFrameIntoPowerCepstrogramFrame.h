@@ -22,7 +22,7 @@
 #include "Sound.h"
 #include "PowerCepstrogram.h"
 #include "NUMFourier.h"
-#include "SoundFrameIntoSampledFrame.h"
+#include "SoundFrameIntoMatrixFrame.h"
 
 #include "SoundFrameIntoPowerCepstrogramFrame_def.h"
 

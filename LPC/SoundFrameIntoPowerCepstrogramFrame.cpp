@@ -39,15 +39,7 @@
 #include "oo_DESCRIPTION.h"
 #include "SoundFrameIntoPowerCepstrogramFrame_def.h"
 
-Thing_implement (SoundFrameIntoPowerCepstrogramFrame, SoundFrameIntoSampledFrame, 0);
-
-void structSoundFrameIntoPowerCepstrogramFrame :: allocateOutputFrames () {
-	// nothing to do
-};
-
-void structSoundFrameIntoPowerCepstrogramFrame :: saveOutputFrame () {
-	powercepstrogram -> z.column (currentFrame)  <<=  powercepstrum -> z.row (1);
-}
+Thing_implement (SoundFrameIntoPowerCepstrogramFrame, SoundFrameIntoMatrixFrame, 0);
 
 bool structSoundFrameIntoPowerCepstrogramFrame :: inputFrameToOutputFrame () {
 	/*
@@ -82,11 +74,16 @@ bool structSoundFrameIntoPowerCepstrogramFrame :: inputFrameToOutputFrame () {
 	return true;
 }
 
+void structSoundFrameIntoPowerCepstrogramFrame :: saveOutputFrame () {
+	const integer localFrame = currentFrame - startFrame + 1;
+	localOutput.column (localFrame)  <<=  powercepstrum -> z.row (1);	
+}
+
 autoSoundFrameIntoPowerCepstrogramFrame SoundFrameIntoPowerCepstrogramFrame_create (constSound input, mutablePowerCepstrogram output, double effectiveAnalysisWidth, 
 	kSound_windowShape windowShape) {
 	try {
 		autoSoundFrameIntoPowerCepstrogramFrame me = Thing_new (SoundFrameIntoPowerCepstrogramFrame);
-		SoundFrameIntoSampledFrame_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
+		SoundFrameIntoMatrixFrame_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
 		my powercepstrogram = output;
 		const integer numberOfFourierSamples = Melder_iroundUpToPowerOfTwo (my frameAsSound -> nx);
 		my numberOfFourierSamples = numberOfFourierSamples;

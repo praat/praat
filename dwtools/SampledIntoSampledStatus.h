@@ -40,13 +40,17 @@ void SoundIntoLPCStatus_init (SoundIntoSampledStatus me, integer numberOfFrames)
 autoSoundIntoLPCStatus SoundIntoLPCStatus_create (integer numberOfFrames);
 
 
-Thing_define (SoundIntoPowerCepstrogramStatus, SoundIntoSampledStatus) {	
+Thing_define (SoundIntoPowerCepstrogramStatus, SoundIntoSampledStatus) {
 };
 
 autoSoundIntoPowerCepstrogramStatus SoundIntoPowerCepstrogramStatus_create (integer numberOfFrames);
 
 
-Thing_define (PowerCepstrogramIntoMatrixStatus, SampledIntoSampledStatus) {};
+Thing_define (PowerCepstrogramIntoMatrixStatus, SampledIntoSampledStatus) {
+		autoVEC slopes, intercepts;
+		autoINTVEC startFrames, numberOfTries;
+		void showStatus () override;
+};
 
 autoPowerCepstrogramIntoMatrixStatus PowerCepstrogramIntoMatrixStatus_create (integer numberOfFrames);
 

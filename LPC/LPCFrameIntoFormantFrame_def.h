@@ -33,7 +33,7 @@ oo_DEFINE_CLASS (LPCFrameIntoFormantFrame, LPCFrameIntoSampledFrame)
 		void allocateOutputFrames (void) override;
 		bool inputFrameToOutputFrame (void) override;
 		void saveOutputFrame (void) override;
-		
+		void saveLocalOutputFrames (void) {};
 	#endif
 
 oo_END_CLASS (LPCFrameIntoFormantFrame)

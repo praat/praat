@@ -97,15 +97,27 @@ autoSoundIntoPowerCepstrogramStatus SoundIntoPowerCepstrogramStatus_create (inte
 
 Thing_implement (PowerCepstrogramIntoMatrixStatus, SampledIntoSampledStatus, 0);
 
+void structPowerCepstrogramIntoMatrixStatus :: showStatus () {
+	
+	MelderInfo_writeLine (U"frame\tinfo\tbegin\tslope\tintercept\tntries\n");
+	for (integer i = 1; i <= numberOfFrames; i ++)
+		MelderInfo_writeLine (i, U"\t", frameIntoFrameInfo [i], U"\t", startFrames [i], U"\t", slopes [i], U"\t", intercepts [i], 
+			U"\t", numberOfTries [i] );
+	MelderInfo_close ();
+}
+
 autoPowerCepstrogramIntoMatrixStatus PowerCepstrogramIntoMatrixStatus_create (integer numberOfFrames) {
 	try {
 		autoPowerCepstrogramIntoMatrixStatus me = Thing_new (PowerCepstrogramIntoMatrixStatus);
 		SampledIntoSampledStatus_init (me.get(), numberOfFrames);
+		my slopes = zero_VEC (numberOfFrames);
+		my intercepts = zero_VEC (numberOfFrames);
+		my startFrames = zero_INTVEC (numberOfFrames);
+		my numberOfTries = zero_INTVEC (numberOfFrames);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot create PowerCepstrogramIntoMatrixStatus.");
 	}
-	
 }
 
 

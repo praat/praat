@@ -148,12 +148,12 @@ void structPowerCepstrumWorkspace :: subtractTrend () {
 void structPowerCepstrumWorkspace :: newData (constPowerCepstrum thee) {
 	Melder_assert (thy nx == powercepstrum -> nx);
 	powercepstrum = thee;
-	integer ipoint = 1;
-	for (integer i = imin; i <= imax; i ++, ipoint ++) {
-		x [ipoint] = thy x1 + (i - 1) * thy dx;
+	for (integer ipoint = 1, i = imin; i <= imax; i ++, ipoint ++) {
+		double xval = Sampled_indexToX (thee, i);
 		if (trendLineType == kCepstrum_trendType::EXPONENTIAL_DECAY)
-			x [ipoint] = log (x [ipoint]);
-		y [ipoint] = thy v_getValueAtSample (i, 1, 1);
+			xval = log (xval);
+		x [ipoint] = xval;
+		y [ipoint] = thy v_getValueAtSample (i, 1, 1); // dB's
 	}
 	slopeSelector -> newDataPoints (x.get(), y.get());
 	todBs ();

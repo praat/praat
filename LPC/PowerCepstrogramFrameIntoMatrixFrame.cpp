@@ -39,19 +39,20 @@
 
 Thing_implement (PowerCepstrogramFrameIntoMatrixFrame, SampledFrameIntoSampledFrame, 0);
 
-void structPowerCepstrogramFrameIntoMatrixFrame :: allocateOutputFrames (void) {
-	// nothing to do: input and output are Matrix and already allocated at creation
-}
-
 void structPowerCepstrogramFrameIntoMatrixFrame :: getInputFrame () {
-	powerCepstrum -> z.row (1)  <<=  input -> z.column (currentFrame);
+	powerCepstrum -> z.row (1)  <<=  powercepstrogram -> z.column (currentFrame);
 	powerCepstrumWs -> newData (powerCepstrum.get()); // powercepstrum is in dB's now
 }
 
 bool structPowerCepstrogramFrameIntoMatrixFrame :: inputFrameToOutputFrame () {
+	PowerCepstrogramIntoMatrixStatus myStatus = reinterpret_cast<PowerCepstrogramIntoMatrixStatus> (status);
 	if (getSlopeAndIntercept) {
 		powerCepstrumWs -> getSlopeAndIntercept ();
 		powerCepstrumWs -> slopeKnown = true;
+		myStatus -> slopes [currentFrame] = powerCepstrumWs -> slope;
+		myStatus -> intercepts [currentFrame] = powerCepstrumWs -> intercept;
+		myStatus -> startFrames [currentFrame] = startFrame;
+		myStatus -> numberOfTries [currentFrame] = powerCepstrumWs -> slopeSelector -> numberOfTries;
 	}
 	if (subtractTrend) {
 		Melder_assert (powerCepstrumWs -> slopeKnown);
@@ -66,36 +67,47 @@ bool structPowerCepstrogramFrameIntoMatrixFrame :: inputFrameToOutputFrame () {
 
 void structPowerCepstrogramFrameIntoMatrixFrame :: saveOutputFrame (void) {
 	/* time, slope, intercept, peakdB, peakQuefrency, cpp, */
+	const integer localFrame = currentFrame - startFrame + 1;
 	if (subtractTrend) {
-		Melder_assert (Thing_isa (output, classPowerCepstrogram));
-		output -> z.column (currentFrame)  <<=  powerCepstrum -> z.row (1);
+		Melder_assert (Thing_isa (matrix, classPowerCepstrogram));
+		localOutput.column (localFrame)  <<=  powerCepstrum -> z.row (1);
 	} else {
-		output -> z [1] [currentFrame] = Sampled_indexToX (output, currentFrame);
+		localOutput [1] [localFrame] = Sampled_indexToX (matrix, currentFrame);
 		if (getSlopeAndIntercept) {
-			output -> z [2] [currentFrame] = powerCepstrumWs -> slope;
-			output -> z [3] [currentFrame] = powerCepstrumWs -> intercept;
+			localOutput [2] [localFrame] = powerCepstrumWs -> slope;
+			localOutput [3] [localFrame] = powerCepstrumWs -> intercept;
 		}
 		if (getPeakAndPosition) {
-			output -> z [4] [currentFrame] = powerCepstrumWs -> peakdB;
-			output -> z [5] [currentFrame] = powerCepstrumWs -> peakQuefrency;
+			localOutput [4] [localFrame] = powerCepstrumWs -> peakdB;
+			localOutput [5] [localFrame] = powerCepstrumWs -> peakQuefrency;
 			powerCepstrumWs -> getCPP ();
-			output -> z [6] [currentFrame] = powerCepstrumWs -> cpp;
+			localOutput [6] [localFrame] = powerCepstrumWs -> cpp;
 		}
 	}
 }
 
-void PowerCepstrogramFrameIntoMatrixFrame_init (PowerCepstrogramFrameIntoMatrixFrame me, constPowerCepstrogram thee, mutableMatrix him) {
-	my input = thee;
-	my output = him;
-	const integer numberOfPoints = thy ny;
-	my powerCepstrum = PowerCepstrum_create (thy ymax, thy ny);
-	my powerCepstrumWs = Thing_new (PowerCepstrumWorkspace);
+void structPowerCepstrogramFrameIntoMatrixFrame :: saveLocalOutputFrames (void) {
+	Melder_assert (localOutput.ncol == numberOfFrames);
+	Melder_assert (localOutput.nrow == matrix -> ny);
+	for (integer irow = 1; irow <= localOutput.nrow; irow ++)
+		for (integer outputcol = startFrame, icol = 1; icol <=numberOfFrames; icol ++, outputcol ++)
+			matrix -> z [irow] [outputcol] = localOutput [irow] [icol];
 }
 
-autoPowerCepstrogramFrameIntoMatrixFrame PowerCepstrogramFrameIntoMatrixFrame_create (constPowerCepstrogram pc, mutableMatrix m) {
+void PowerCepstrogramFrameIntoMatrixFrame_init (PowerCepstrogramFrameIntoMatrixFrame me, constPowerCepstrogram thee, mutableMatrix him,
+	double qminFit, double qmaxFit,	kCepstrum_trendType trendLineType, kCepstrum_trendFit fitMethod) {
+	SampledFrameIntoMatrixFrame_init (me, him);
+	my powercepstrogram = thee;
+	my powerCepstrum = PowerCepstrum_create (thy ymax, thy ny);
+	my powerCepstrumWs = PowerCepstrumWorkspace_create (my powerCepstrum.get(), qminFit, qmaxFit, trendLineType, fitMethod);
+}
+
+autoPowerCepstrogramFrameIntoMatrixFrame PowerCepstrogramFrameIntoMatrixFrame_create (constPowerCepstrogram pc, mutableMatrix matrix,
+	double qminFit, double qmaxFit,	kCepstrum_trendType trendLineType, kCepstrum_trendFit fitMethod)
+{
 	try {
 		autoPowerCepstrogramFrameIntoMatrixFrame me = Thing_new (PowerCepstrogramFrameIntoMatrixFrame);
-		PowerCepstrogramFrameIntoMatrixFrame_init (me.get(), pc, m);
+		PowerCepstrogramFrameIntoMatrixFrame_init (me.get(), pc, matrix, qminFit, qmaxFit, trendLineType, fitMethod);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Could not create PowerCepstrogramFrameIntoMatrixFrame.");

@@ -174,7 +174,6 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 {
 	try {
 		SampledFrameIntoSampledFrame frameIntoFrame = my frameIntoFrame.get();
-		frameIntoFrame -> allocateOutputFrames ();
 
 		const integer numberOfFrames = my output -> nx;
 		
@@ -218,8 +217,11 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 
 						threads [ithread] = std::thread (analyseFrames, frameIntoFrameCopy, firstFrame, lastFrame);
 					}
-					for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++)
+					for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++) {
 						threads [ithread]. join ();
+						SampledFrameIntoSampledFrame frameIntoFrameCopy = workThreads.at [ithread];
+						frameIntoFrameCopy -> saveLocalOutputFrames();
+					}
 				}
 			} catch (MelderError) {
 				for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++)
@@ -231,6 +233,7 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 			my globalFrameErrorCount = globalFrameErrorCount;
 		} else {
 			frameIntoFrame -> inputFramesToOutputFrames (1, numberOfFrames); // no threading
+			frameIntoFrame -> saveLocalOutputFrames();
 			globalFrameErrorCount = frameIntoFrame -> framesErrorCount;
 		}
 		if (frameIntoFrame -> updateStatus)

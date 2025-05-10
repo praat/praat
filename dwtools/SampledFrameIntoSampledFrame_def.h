@@ -1,6 +1,6 @@
 /* SampledFrameIntoSampledFrame_def.h
  *
- * Copyright (C) 2024 David Weenink
+ * Copyright (C) 2024-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,11 +51,13 @@ oo_DEFINE_CLASS (SampledFrameIntoSampledFrame, Daata)
 		virtual void inputFramesToOutputFrames (integer fromFrame, integer toFrame); // sets 'currentFrame'
 
 		virtual void allocateOutputFrames (void);
+		
+		virtual void saveLocalOutputFrames (void) {};
 
 	#endif
 
 oo_END_CLASS (SampledFrameIntoSampledFrame)
 #undef ooSTRUCT
 
-/* End of file SampledFrameIntoSampledFrame_def_def.h */
+/* End of file SampledFrameIntoSampledFrame_def.h */
  

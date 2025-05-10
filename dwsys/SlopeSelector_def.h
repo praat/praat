@@ -16,6 +16,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define ooSTRUCT ExtendedNumber
+oo_DEFINE_STRUCT (ExtendedNumber)
+	oo_DOUBLE (number)
+	oo_INTEGER (index)
+oo_END_STRUCT (ExtendedNumber)
+
+#undef ooSTRUCT
+
 #define ooSTRUCT SlopeSelector
 oo_DEFINE_CLASS (SlopeSelector, Daata)
 	oo_INTEGER (numberOfPoints)
@@ -24,21 +32,24 @@ oo_DEFINE_CLASS (SlopeSelector, Daata)
     oo_INTEGER (numberOfTries)
 	oo_INTEGER (maximumNumberOfTries)
     oo_INTEGER (maximumContractionSize) // > sampleSize + numberOfPoints
-	oo_INTEGER (inversionsSize)
 	oo_OBJECT (Permutation, 0, lineRankingAtLowX)
 	oo_OBJECT (Permutation, 0, lineRankingAtLowXPrevious)
 	oo_OBJECT (Permutation, 0, inverseOfLineRankingAtLowX)
 	oo_OBJECT (Permutation, 0, lineRankingAtHighX)
 	oo_OBJECT (Permutation, 0, lineRankingAtHighXPrevious)
 	oo_INTVEC (sortedRandomCrossingCodes, sampleSize)
+	oo_INTEGER (inversionsSize)
 	oo_INTVEC (currentInversions, inversionsSize)
-	oo_VEC (slopes, maximumContractionSize)
-	oo_VEC (xcrossings, numberOfPoints) // could also be shared as slopes.part (slopes._capacity - numberOfPoints + 1, slopes._capacity)
+	oo_STRUCTVEC(ExtendedReal, slopes, maximumContractionSize)
+	oo_STRUCTVEC(ExtendedReal, xcrossings, numberOfPoints)
+	oo_INTEGER (siegelSize)
+	oo_VEC (siegelSlopes, siegelSize)
+	oo_VEC (siegelMedians, siegelSize)
 	oo_OBJECT (PermutationInversionCounter, 0, inversionCounter)
 
 	#if oo_DECLARING
 		constVEC xp;	// links to the outside world data points (by newDataPoints(x,y))
-        constVEC yp;	// 
+        constVEC yp;	//
 
 		void newDataPoints (constVEC const& x, constVEC const& y);
 				

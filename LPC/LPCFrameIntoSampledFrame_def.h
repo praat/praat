@@ -22,6 +22,10 @@ oo_DEFINE_CLASS (LPCFrameIntoSampledFrame, SampledFrameIntoSampledFrame)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, inputlpc)
 	oo_INTEGER (order) // for conveniance inputlpc -> maxnCoefficients
 
+	#if oo_DECLARING
+		void saveLocalOutputFrames (void) override {};
+	#endif
+
 oo_END_CLASS (LPCFrameIntoSampledFrame)
 #undef ooSTRUCT
 

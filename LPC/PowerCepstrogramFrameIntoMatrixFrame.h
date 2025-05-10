@@ -18,13 +18,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SampledFrameIntoSampledFrame.h"
+#include "SampledFrameIntoMatrixFrame.h"
 #include "PowerCepstrumWorkspace.h"
 #include "PowerCepstrogram.h"
 #include "Matrix.h"
 
 #include "PowerCepstrogramFrameIntoMatrixFrame_def.h"
 
-autoPowerCepstrogramFrameIntoMatrixFrame PowerCepstrogramFrameIntoMatrixFrame_create (constPowerCepstrogram thee, mutableMatrix him);
+autoPowerCepstrogramFrameIntoMatrixFrame PowerCepstrogramFrameIntoMatrixFrame_create (constPowerCepstrogram thee, mutableMatrix matrix,
+	double qminFit, double qmaxFit,	kCepstrum_trendType trendLineType, kCepstrum_trendFit fitMethod);
 
 #endif /* _PowerCepstrogramFrameIntoMatrixFrame_h_ */
