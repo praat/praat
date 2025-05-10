@@ -1,9 +1,9 @@
 # meson.build for library "dwsys".
-# David Weenink 12 February 2025
+# David Weenink 30 April 2025
 
 sources = '''
 	ChebyshevSeries.cpp Collection_extensions.cpp Command.cpp
-	DoublyLinkedList.cpp Eigen.cpp
+	DoublyLinkedList.cpp Eigen.cpp ExtendedReal.cpp
 	FileInMemory.cpp
 	FunctionSeries.cpp
 	Graphics_extensions.cpp Index.cpp
