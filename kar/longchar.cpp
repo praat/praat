@@ -273,12 +273,16 @@ static struct structLongchar_Info Longchar_database [] = {
 /*fir  sec  al di    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
 { 's', 's', 0, 0, { "/germandbls",     500, 556, 500, 500,  611, 611,  556, 611, 500, 556 }, 223, 223, 167, 167, UNICODE_LATIN_SMALL_LETTER_SHARP_S }, /* Ringel-s. */
 { 'a', 'e', 0, 0, { "/ae",             667, 722, 667, 722,  889, 889,  758, 778, 638, 738 }, 230, 230, 190, 190, UNICODE_LATIN_SMALL_LETTER_AE }, /* ash */
-{ 'c', ',', 0, 0, { "/ccedilla",       444, 444, 444, 444,  500, 556,  444, 444, 407, 444 }, 231, 231, 141, 141, UNICODE_LATIN_SMALL_LETTER_C_WITH_CEDILLA },
 { 'o', '/', 0, 0, { "/oslash",         500, 500, 500, 500,  611, 611,  556, 556, 444, 556 }, 248, 248, 191, 191, UNICODE_LATIN_SMALL_LETTER_O_WITH_STROKE },
+{ 'c', ',', 0, 0, { "/ccedilla",       444, 444, 444, 444,  500, 556,  444, 444, 407, 444 }, 231, 231, 141, 141, UNICODE_LATIN_SMALL_LETTER_C_WITH_CEDILLA },
+{ 's', ',', 0, 0, { "",                389, 389, 389, 389,  500, 556,  424, 444, 389, 444 }, 115, 115, 115, 115, UNICODE_LATIN_SMALL_LETTER_S_WITH_CEDILLA },
+{ 't', ',', 0, 0, { "",                278, 333, 278, 278,  278, 333,  326, 333, 333, 389 }, 116, 116, 116, 116, UNICODE_LATIN_SMALL_LETTER_T_WITH_CEDILLA },
 { 't', 'h', 0, 0, { "/thorn",          500, 556, 500, 500,  556, 611,  601, 611, 500, 556 }, 254, 254,   0,   0, UNICODE_LATIN_SMALL_LETTER_THORN },
 { 'A', 'e', 0, 0, { "/AE",             722,1000, 889, 944, 1000,1000,  944,1000, 941, 944 }, 198, 198, 174, 174, UNICODE_LATIN_CAPITAL_LETTER_AE }, /* Ash */
-{ 'C', ',', 0, 0, { "/Ccedilla",       667, 722, 667, 667,  722, 722,  709, 722, 667, 685 }, 199, 199, 130, 130, UNICODE_LATIN_CAPITAL_LETTER_C_WITH_CEDILLA },
 { 'O', '/', 0, 0, { "/Oslash",         722, 778, 722, 722,  778, 778,  833, 833, 778, 833 }, 216, 216, 175, 175, UNICODE_LATIN_CAPITAL_LETTER_O_WITH_STROKE },
+{ 'C', ',', 0, 0, { "/Ccedilla",       667, 722, 667, 667,  722, 722,  709, 722, 667, 685 }, 199, 199, 130, 130, UNICODE_LATIN_CAPITAL_LETTER_C_WITH_CEDILLA },
+{ 'S', ',', 0, 0, { "",                556, 556, 500, 556,  667, 667,  525, 611, 556, 556 },  83,  83,  83,  83, UNICODE_LATIN_CAPITAL_LETTER_S_WITH_CEDILLA },
+{ 'T', ',', 0, 0, { "",                611, 667, 556, 611,  611, 611,  613, 667, 611, 611 },  84,  84,  84,  84, UNICODE_LATIN_CAPITAL_LETTER_T_WITH_CEDILLA },
 { 'T', 'h', 0, 0, { "/Thorn",          556, 611, 611, 611,  667, 667,  604, 611, 611, 667 }, 222, 222,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_THORN },
 
 /*fir  sec  al di    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
@@ -501,7 +505,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { 'm', 't', 2, 0, { "/mturn",          778, 0,   809, 866,  778, 0,    778, 0,   0,   0   }, 181, 181, 181, 181, UNICODE_LATIN_SMALL_LETTER_TURNED_M },
 { 'm', 'l', 2, 0, { "/mturnleg",       778, 0,   809, 866,  778, 0,    778, 0,   0,   0   }, 229, 229, 229, 229, UNICODE_LATIN_SMALL_LETTER_TURNED_M_WITH_LONG_LEG },
 { 'm', 'j', 2, 0, { "/mlefttail",      753, 0,   795, 866,  753, 0,    753, 0,   0,   0   },  77,  77,  77,  77, UNICODE_LATIN_SMALL_LETTER_M_WITH_HOOK }, // labiodental nasal
-{ 'n', 'g', 2, 0, { "/eng",            475, 0,   506, 578,  475, 0,    475, 0,   0,   0   },  78,  78,  78,  78, UNICODE_LATIN_SMALL_LETTER_ENG }, /* velar nasal */
+{ 'n', 'g', 2, 0, { "/eng",            475, 0,   506, 578,  475, 0,    475, 0,   0,   0   },  78,  78,  78,  78, UNICODE_LATIN_SMALL_LETTER_ENG }, // velar nasal
 { 'n', 'j', 2, 0, { "/nlefttail",      500, 0,   520, 578,  500, 0,    500, 0,   0,   0   }, 248, 248, 248, 248, UNICODE_LATIN_SMALL_LETTER_N_WITH_LEFT_HOOK }, // palatal nasal
 { 'n', '.', 2, 0, { "/nrighttail",     500, 0,   506, 578,  500, 0,    500, 0,   0,   0   }, 247, 247, 247, 247, UNICODE_LATIN_SMALL_LETTER_N_WITH_RETROFLEX_HOOK },
 { 'n', 'c', 2, 0, { "/ncap",           547, 0,   595, 614,  547, 0,    547, 0,   0,   0   }, 178, 178, 178, 178, UNICODE_LATIN_LETTER_SMALL_CAPITAL_N }, // uvular nasal
@@ -538,19 +542,25 @@ static struct structLongchar_Info Longchar_database [] = {
 { 'O', '.', 2, 0, { "/bullseye",       722, 0,   799, 818,  722, 0,    722, 0,   0,   0   }, 135, 135, 135, 135, UNICODE_LATIN_LETTER_BILABIAL_CLICK },
 { '?', '-', 2, 0, { "/glotbar",        500, 0,   440, 477,  500, 0,    500, 0,   0,   0   },  63, 251, 251,  63, UNICODE_LATIN_LETTER_GLOTTAL_STOP_WITH_STROKE }, // epiglottal plosive
 { '9', '-', 2, 0, { "/glotrevbar",     500, 0,   440, 477,  500, 0,    500, 0,   0,   0   }, 192, 185, 185, 192, UNICODE_LATIN_LETTER_REVERSED_GLOTTAL_STOP_WITH_STROKE }, // epiglottal fricative
+{ 'V', '^', 2, 0, { "",                500, 0,   440, 477,  500, 0,    500, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_V_WITH_RIGHT_HOOK }, // labiodental flap
 { ':', 'f', 2, 0, { "/lengthsign",     250, 0,   217, 235,  250, 0,    250, 0,   0,   0   }, 249, 249, 249, 249, UNICODE_MODIFIER_LETTER_TRIANGULAR_COLON },
 { '.', 'f', 2, 0, { "/halflength",     250, 0,   217, 235,  250, 0,    250, 0,   0,   0   },  62,  62,  62,  62, UNICODE_MODIFIER_LETTER_HALF_TRIANGULAR_COLON },
 { 'h', 'r', 2, 0, { "/righthook",      300, 0,   250, 265,  300, 0,    300, 0,   0,   0   }, 213, 213, 213, 213, UNICODE_MODIFIER_LETTER_RHOTIC_HOOK }, // or rturnsuper
-{ '`', '^', 2, 1, { "/graveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  36,  36,  36,  36, UNICODE_COMBINING_GRAVE_ACCENT },
-{ '\'','^', 2, 1, { "/acuteover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  64,  64,  64,  64, UNICODE_COMBINING_ACUTE_ACCENT },
-{ '^', '^', 2, 1, { "/circumover",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  94,  94,  94,  94, UNICODE_COMBINING_CIRCUMFLEX_ACCENT },
+{ '`', '^', 2, 1, { "/graveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  36,  36,  36,  36, UNICODE_COMBINING_GRAVE_ACCENT }, // low tone
+{ '`', '`', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_DOUBLE_GRAVE_ACCENT }, // extra low tone
+{ '\'','^', 2, 1, { "/acuteover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  64,  64,  64,  64, UNICODE_COMBINING_ACUTE_ACCENT }, // high tone
+{ '\'','\'',2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_DOUBLE_ACUTE_ACCENT }, // extra high tone
+{ '^', '^', 2, 1, { "/circumover",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  94,  94,  94,  94, UNICODE_COMBINING_CIRCUMFLEX_ACCENT }, // falling tone
 { '~', '^', 2, 1, { "/tildeover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  41,  41,  41,  41, UNICODE_COMBINING_TILDE }, // nasalized
+{ '/', '/', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_LONG_SOLIDUS_OVERLAY },
+{ '-', '/', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_LONG_STROKE_OVERLAY },
+{ '~', '/', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_TILDE_OVERLAY }, // velarized or pharyngealized
 { '-', '^', 2, 1, { "/minusover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  35,  35,  35,  35, UNICODE_COMBINING_MACRON }, // mid tone or so
 { ':', '^', 2, 1, { "/diaeresisover",    0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  95,  95,  95,  95, UNICODE_COMBINING_DIAERESIS }, // centralized
 { '0', '^', 2, 1, { "/ringover",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  42,  42,  42,  42, UNICODE_COMBINING_RING_ABOVE }, // voiceless
-{ 'v', '^', 2, 1, { "/caronover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  38,  38,  38,  38, UNICODE_COMBINING_CARON }, // hacek
+{ 'v', '^', 2, 1, { "/caronover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  38,  38,  38,  38, UNICODE_COMBINING_CARON }, // hacek, rising tone
 { 'N', '^', 2, 1, { "/breveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  40,  40,  40,  40, UNICODE_COMBINING_BREVE }, // nonsyllabic
-{ 'c', 'n', 2, 2, { "/corner",         260, 0,   299, 299,  260, 0,    260, 0,   0,   0   }, 124, 124, 124, 124, UNICODE_COMBINING_LEFT_ANGLE_ABOVE }, // ? unreleased
+{ 'c', 'n', 2, 2, { "/corner",         260, 0,   299, 299,  260, 0,    260, 0,   0,   0   }, 124, 124, 124, 124, UNICODE_COMBINING_LEFT_ANGLE_ABOVE }, // unreleased
 { 'c', 'v', 2, 1, { "/halfringleft",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  55,  55,  55,  55, UNICODE_COMBINING_LEFT_HALF_RING_BELOW }, // unrounded
 { 'T', '^', 2, 1, { "/raising",          0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  51,  51,  51,  51, UNICODE_COMBINING_UP_TACK_BELOW },
 { 'T', 'v', 2, 1, { "/lowering",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  52,  52,  52,  52, UNICODE_COMBINING_DOWN_TACK_BELOW },
@@ -559,6 +569,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { '+', 'v', 2, 1, { "/plusunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  43,  43,  43,  43, UNICODE_COMBINING_PLUS_SIGN_BELOW }, // fronted
 { ':', 'v', 2, 1, { "/diaeresisunder",   0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  45,  45,  45,  45, UNICODE_COMBINING_DIAERESIS_BELOW }, // breathy voiced
 { '0', 'v', 2, 1, { "/ringunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  56,  56,  56,  56, UNICODE_COMBINING_RING_BELOW }, // voiceless
+{ 'v', 'v', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_CARON_BELOW }, // voiced
 { '|', 'v', 2, 1, { "/strokeunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  96,  96,  96,  96, UNICODE_COMBINING_VERTICAL_LINE_BELOW }, // syllabicity mark
 { 'N', 'v', 2, 1, { "/bridgeunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  53,  53,  53,  53, UNICODE_COMBINING_BRIDGE_BELOW }, // dental
 { 'U', 'v', 2, 1, { "/shelfunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 176, 176, 176, 176, UNICODE_COMBINING_INVERTED_BRIDGE_BELOW }, // apical
@@ -569,6 +580,15 @@ static struct structLongchar_Info Longchar_database [] = {
 { '~', '<', 2, 1, { "/tildethrough",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },   0, 242, 242,   0, UNICODE_COMBINING_TILDE_OVERLAY }, // velarized l
 { '3', 'v', 2, 1, { "/halfringright",    0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 166, 166, 166, 166, UNICODE_COMBINING_RIGHT_HALF_RING_BELOW }, // rounded
 { 'l', 'i', 2, 1, { "/ligature",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 131, 131, 131, 131, UNICODE_COMBINING_DOUBLE_INVERTED_BREVE },
+{ 'L', 'I', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 131, 131, 131, 131, UNICODE_COMBINING_DOUBLE_BREVE_BELOW },
+{ 'm', 'v', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_SEAGULL_BELOW },
+{ 'w', 'v', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_INVERTED_DOUBLE_ARCH_BELOW },
+{ '-', '\'',2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_MACRON_ACUTE }, // high-rising
+{ '\'','-', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_ACUTE_MACRON }, // high-falling
+{ '`', '-', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_GRAVE_MACRON }, // low-rising
+{ '-', '`', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_MACRON_GRAVE }, // low-falling
+{ 'r', 'f', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_GRAVE_ACUTE_GRAVE }, // rising-falling
+{ 'f', 'r', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, '?', '?', '?', '?', UNICODE_COMBINING_ACUTE_GRAVE_ACUTE }, // falling-rising
 { 'b', 'f', 2, 0, { "/betaphonetic",   500, 0,   520, 597,  500, 0,    500, 0,   0,   0   },  66,  66,  66,  66, UNICODE_GREEK_SMALL_LETTER_BETA }, // second version
 { 't', 'f', 2, 0, { "/thetaphonetic",  444, 0,   520, 585,  444, 0,    444, 0,   0,   0   },  84,  84,  84,  84, UNICODE_GREEK_SMALL_LETTER_THETA }, // second version
 { 'c', 'f', 2, 0, { "/chiphonetic",    500, 0,   572, 610,  500, 0,    500, 0,   0,   0   },  88,  88,  88,  88, UNICODE_GREEK_SMALL_LETTER_CHI }, // second version
@@ -597,9 +617,22 @@ static struct structLongchar_Info Longchar_database [] = {
 { 'i', 'd', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_REVERSED_R_WITH_FISHHOOK },
 { 'i', 'r', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_SQUAT_REVERSED_ESH },
 { '_', 'u', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_UNDERTIE },
+{ '-', '5', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_EXTRA_HIGH_TONE_BAR },
+{ '-', '4', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_HIGH_TONE_BAR },
+{ '-', '3', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_MID_TONE_BAR },
+{ '-', '2', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_LOW_TONE_BAR },
+{ '-', '1', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_EXTRA_LOW_TONE_BAR },
+{ '|', 'u', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_RAISED_UP_ARROW },
+{ '|', 'd', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_RAISED_DOWN_ARROW },
+{ 'N', 'E', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_NORTH_EAST_ARROW },
+{ 'S', 'E', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_SOUTH_EAST_ARROW },
+{ 'N', 'W', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_NORTH_WEST_ARROW },
+{ 'S', 'W', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_SOUTH_WEST_ARROW },
 
 { 't', 's', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TS_DIGRAPH },
 { 't', 'S', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TESH_DIGRAPH },
+{ 'd', 'z', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_DZ_DIGRAPH },
+{ 'd', 'Z', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_DEZH_DIGRAPH },
 { 'a', 'p', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_APOSTROPHE },
 { 'x', '^', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 126, 126, 126, 126, UNICODE_COMBINING_X_ABOVE }, // mid-centralized
 

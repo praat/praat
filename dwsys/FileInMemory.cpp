@@ -1,6 +1,6 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2021 David Weenink, 2017,2024 Paul Boersma
+ * Copyright (C) 2012-2021 David Weenink, 2017,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -759,7 +759,7 @@ autoStrings FileInMemorySet_to_Strings_path (FileInMemorySet me) {
 
 /*
 	The following test is meant to be called only from `test/dwsys/FileInMemory.praat`,
-	because that is where the subfolder `examples\FileInMemory` resides,
+	because that is where the subfolder `examples/FileInMemory` resides,
 	which contains the files that are tested.
 
 	If the files aren't there yet, they can be created by setting `WRITE` to true

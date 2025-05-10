@@ -521,7 +521,7 @@ MAN_BEGIN (U"total duration", U"ppgb", 20040505)
 INTRO (U"- the extent of the @@time domain@ (see there).")
 MAN_END
 
-MAN_BEGIN (U"vector peak interpolation", U"ppgb", 20200912)
+MAN_BEGIN (U"vector peak interpolation", U"ppgb", 20200912 20250418)
 INTRO (U"An algorithm for finding a maximum or a minimum in a sampled signal.")
 ENTRY (U"Overview")
 NORMAL (U"The signal is described with the sequence %y__%i_, %i = 1...%n, where %n is the number of samples. "
@@ -545,7 +545,7 @@ NORMAL (U"If the interpolation method is “parabolic”, the algorithm uses one
 	"can be approximated as a parabola in the vicinity of any local maximum, the location %x__%max_ and value %y__%max_ can be found "
 	"with the following procedure:")
 EQUATION (U"%dy ≡ 1/2 (%y__%m+1_ - %y__%m-1_)")
-EQUATION (U"%d^2%y ≡ 2 %y__%m_ - %y__%m-1_ - %y__%m+1_")
+EQUATION (U"%d^2%y ≡ (%y__%m_ - %y__%m-1_) + (%y__%m_- %y__%m+1_)")
 EQUATION (U"%m′ ≡ %m + %dy/%d^2%y")
 EQUATION (U"%x__%max_ = %x__1_ + (%m′ - 1) %dx")
 EQUATION (U"%y__%max_ = %y__%m_ + 1/2 %dy^2 / %d^2%y")

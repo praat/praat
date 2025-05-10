@@ -2,11 +2,11 @@
 #define _Function_h_
 /* Function.h
  *
- * Copyright (C) 1992-2012,2015-2018,2020,2023,2024 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2018,2020,2023-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -18,9 +18,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Data.h"
+#include "Collection.h"
 
 #include "Function_def.h"
+
+Collection_define (FunctionList, OrderedOf, Function) {
+};
 
 /*
 	An object of type Function represents a function f (x, ...) on the domain [xmin, xmax] * ....
@@ -126,22 +129,25 @@ double Function_window (double tim, int windowType);
 	Procedures to adapt a range to the extent of the function domain.
 */
 void Function_unidirectionalAutowindow (
-	const constFunction me,
-	double *const xmin,
-	double *const xmax
+	constFunction me,
+	double *xmin,
+	double *xmax
 );
 void Function_bidirectionalAutowindow (
-	const constFunction me,
-	double *const x1,
-	double *const x2
+	constFunction me,
+	double *x1,
+	double *x2
 );
 bool Function_intersectRangeWithDomain (
-	const constFunction me,
-	double *const x1,
-	double *const x2
+	constFunction me,
+	double *x1,
+	double *x2
 );
 
-void Function_shiftXBy (mutableFunction me, double shift);
+void Function_shiftXBy (
+	mutableFunction me,
+	double shift
+);
 void Function_shiftXTo (mutableFunction me, double xfrom, double xto);
 void Function_scaleXBy (mutableFunction me, double factor);
 void Function_scaleXTo (mutableFunction me, double xminto, double xmaxto);

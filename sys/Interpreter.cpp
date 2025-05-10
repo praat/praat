@@ -1,10 +1,10 @@
 /* Interpreter.cpp
  *
- * Copyright (C) 1993-2024 Paul Boersma
+ * Copyright (C) 1993-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -1435,7 +1435,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 		char32 *q = lines [iline] + 10;
 		while (Melder_isHorizontalSpace (*q))
 			q ++;   // skip whitespace before procedure name
-		char32 * const procName = q;
+		char32 *const procName = q;
 		while (Melder_staysWithinInk (*q) && *q != U'(' && *q != U':')
 			q ++;
 		if (q == procName)

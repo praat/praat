@@ -2,7 +2,7 @@
 #define _melder_readtext_h_
 /* melder_readtext.h
  *
- * Copyright (C) 1992-2019,2023 Paul Boersma
+ * Copyright (C) 1992-2019,2023,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@ struct structMelderReadText {
 	autostring8 string8;
 	char *readPointer8;
 	kMelder_textInputEncoding input8Encoding;
+	int previousPointerStep = 0;
+	autostring32 lineBuffer;
+	integer lineBufferSize = 0;
 	structMelderReadText () : readPointer32 (nullptr), readPointer8 (nullptr) {
 		/*
 			Check that C++ default initialization has worked.
@@ -72,10 +75,11 @@ struct autoMelderReadText {
 
 autoMelderReadText MelderReadText_createFromFile (MelderFile file);
 autoMelderReadText MelderReadText_createFromText (autostring32 text);
-char32 MelderReadText_getChar (MelderReadText text);
-mutablestring32 MelderReadText_readLine (MelderReadText text);
+char32 MelderReadText_getChar (MelderReadText me);
+void MelderReadText_ungetChar (MelderReadText me);   // WARNING: undefined behaviour if you haven't called getChar() first
+mutablestring32 MelderReadText_readLine (MelderReadText me);
 int64 MelderReadText_getNumberOfLines (MelderReadText me);
-conststring32 MelderReadText_getLineNumber (MelderReadText text);
+conststring32 MelderReadText_getLineNumber (MelderReadText me);
 
 /* End of file melder_readText.h */
 #endif

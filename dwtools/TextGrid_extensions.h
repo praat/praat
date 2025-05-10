@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2018, 2023 David Weenink
+ * Copyright (C) 1993-2018,2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,50 +24,6 @@
 */
 
 #include "TextGrid.h"
-
-autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile);
-/*
-	Read TIMIT label file with the following structure:
-		samplenumber1 samplenumber2 label1
-		samplenumber3 samplenumber4 label2
-		...
-		samplenumber2n-1 samplenumber2n labeln
-
-	The first tier of TextGrid will contain the TIMIT labels.
-	If phnFile == true, the second tier will contain the translation of the
-	TIMIT labels into IPA labels.
-	For the translation from sample number to time a default sampling
-	frequency of 16000 Hz is assumed.
-*/
-
-autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, MelderFile file);
-/*
-	There are two types of TIMIT label files. One with phonetic labels, these
-	files have '.phn' as file extension. The other contains word labels and has
-	'.wrd' as extension. Since these extensions are only valid on the CDROM we can
-	not use them for filetype recognition. Both TIMIT label files do not have a
-	self-describing format. For filetype recognition we make use of the fact that
-	both files are text files and always have three items on each line: two numbers
-	followed by a string. The numbers increase in a monotone way.
-	The recognizer only checks the first two lines and it tests whether
-		0 <= number 1] < number [2] <= number [3] < number [4]
-	(A number of .wrd files do not obey the monotonocity constraint for
-	 number [4] and number [5] !)
-	The decision whether it is a .phn or .wrd file is:
-		.phn if string [1] == 'h#' AND string [2] is a TIMIT phonetic label
-		.wrd if (string [1] == 'h#' AND string [2] is a valid word) OR
-			string [1] and string [2] are both valid words.
-		A valid word is a string with contains the lowercase characters [a-z] and ['].
-*/
-
-autoTextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2);
-/*
-	Merge two textGrids.
-	The new domain will be:
-	[min(grid1->xmin, grid2->xmin), max(grid1->xmax, grid2->xmax)].
-	This implies that for the resulting TextGrid each interval tier will have
-	one or two extra intervals if the domains of the two TextGrids are not equal,
-*/
 
 void TextGrid_extendTime (TextGrid me, double delta_time, int position);
 /*

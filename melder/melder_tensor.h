@@ -2,11 +2,11 @@
 #define _melder_tensor_h_
 /* melder_tensor.h
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -140,7 +140,7 @@ struct vectorview {
 	integer stride = 1;
 	vectorview ()
 		= default;
-	explicit vectorview (T * const firstCell_, integer const size_, integer const stride_)
+	explicit vectorview (T *const firstCell_, integer const size_, integer const stride_)
 		: firstCell (firstCell_), size (size_), stride (stride_) { }
 	vectorview (vector<T> const& other)
 		: firstCell (other.cells), size (other.size), stride (1) { }
@@ -169,7 +169,7 @@ struct constvectorview {
 	integer size = 0;
 	integer stride = 1;
 	constvectorview () = default;
-	explicit constvectorview (const T * const firstCell_, integer const size_, integer const stride_)
+	explicit constvectorview (const T *const firstCell_, integer const size_, integer const stride_)
 		: firstCell (firstCell_), size (size_), stride (stride_) { }
 	constvectorview (constvector<T> const& other)
 		: constvectorview (other.cells, other.size, 1) { }
@@ -615,7 +615,7 @@ struct constmatrixview {
 	integer rowStride = 0, colStride = 1;
 	constmatrixview ()
 		= default;
-	explicit constmatrixview (const T * const firstCell_, integer const nrow_, integer const ncol_, integer const rowStride_, integer const colStride_)
+	explicit constmatrixview (const T *const firstCell_, integer const nrow_, integer const ncol_, integer const rowStride_, integer const colStride_)
 		: firstCell (firstCell_), nrow (nrow_), ncol (ncol_), rowStride (rowStride_), colStride (colStride_) { }
 	constmatrixview (const constmatrix<T>& other)
 		: constmatrixview (other.cells, other.nrow, other.ncol, other.ncol, 1_integer) { }

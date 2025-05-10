@@ -1,10 +1,10 @@
 /* Pitch_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2014-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2014-2018,2020,2021,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -82,8 +82,8 @@ static int Pitch_getVoicedIntervalAfter (Pitch me, double after, double *tleft, 
 }
 
 static double findExtremum_3 (double *channel1_base, double *channel2_base, integer d, integer n, bool includeMaxima, bool includeMinima) {
-	const double * const channel1 = channel1_base + d;
-	const double * const channel2 = ( channel2_base ? channel2_base + d : nullptr );
+	const double *const channel1 = channel1_base + d;
+	const double *const channel2 = ( channel2_base ? channel2_base + d : nullptr );
 	bool includeAll = ( includeMaxima == includeMinima );
 	integer imin = 1, imax = 1, i;
 	double minimum, maximum;
@@ -221,7 +221,7 @@ static double Sound_findMaximumCorrelation (Sound me, double t1, double windowLe
 		// ...then r1_best and r3_best and ir must also have been assigned to:
 		Melder_assert (isdefined (r1_best) && isdefined (r3_best) && isdefined (ir));
 		double interpolatedPeakHeight = undefined;
-		const double d2r = 2.0 * maximumCorrelation - r1_best - r3_best;
+		const double d2r = (maximumCorrelation - r1_best) + (maximumCorrelation - r3_best);   // careful prevention of rounding error
 		if (d2r != 0.0 && ! (Melder_debug == 57)) {
 			const double dr = 0.5 * (r3_best - r1_best);
 			interpolatedPeakHeight = maximumCorrelation + 0.5 * dr * dr / d2r;

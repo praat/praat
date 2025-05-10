@@ -1,10 +1,10 @@
 /* STRVEC.cpp
  *
- * Copyright (C) 2006,2007,2009,2011,2012,2015-2024 Paul Boersma
+ * Copyright (C) 2006,2007,2009,2011,2012,2015-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -51,8 +51,8 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 			*/
 			autoMelderString searchDirectory, left, middle, right, filePath;
 			MelderString_copy (& searchDirectory, path);
-			char32 * const asterisk1 = str32chr (searchDirectory.string, U'*');
-			char32 * const asterisk2 = str32rchr (searchDirectory.string, U'*');
+			char32 *const asterisk1 = str32chr (searchDirectory.string, U'*');
+			char32 *const asterisk2 = str32rchr (searchDirectory.string, U'*');
 			if (asterisk1) {
 				/*
 					The path is a wildcarded path.
@@ -60,7 +60,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 				*asterisk1 = U'\0';
 				*asterisk2 = U'\0';
 				searchDirectory. length = asterisk1 - searchDirectory.string;   // probably superfluous, but correct
-				char32 * lastSlash = str32rchr (searchDirectory.string, U'/');
+				char32 *lastSlash = str32rchr (searchDirectory.string, U'/');
 				if (! lastSlash)
 					lastSlash = str32rchr (searchDirectory.string, U'\\');
 				if (lastSlash) {
@@ -107,7 +107,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 					}
 					bool doesTheMiddleMatch = true;
 					if (middle. length != 0) {
-						const char32 * const position = str32str_optionallyCaseSensitive (buffer32 + numberOfMatchedCharacters, middle.string, caseSensitive);
+						const char32 *const position = str32str_optionallyCaseSensitive (buffer32 + numberOfMatchedCharacters, middle.string, caseSensitive);
 						doesTheMiddleMatch = !! position;
 						if (doesTheMiddleMatch)
 							numberOfMatchedCharacters = position - buffer32 + middle.length;
@@ -141,8 +141,8 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 			*/
 			autoMelderString searchDirectory, left, middle, right, filePath;
 			MelderString_copy (& searchDirectory, path);
-			char32 * const asterisk1 = str32chr (searchDirectory.string, U'*');
-			char32 * const asterisk2 = str32rchr (searchDirectory.string, U'*');
+			char32 *const asterisk1 = str32chr (searchDirectory.string, U'*');
+			char32 *const asterisk2 = str32rchr (searchDirectory.string, U'*');
 			if (asterisk1) {
 				/*
 					The path is a wildcarded path.
@@ -150,7 +150,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 				*asterisk1 = U'\0';
 				*asterisk2 = U'\0';
 				searchDirectory. length = asterisk1 - searchDirectory.string;   // probably superfluous, but correct
-				char32 * const lastSlash = str32rchr (searchDirectory.string, Melder_DIRECTORY_SEPARATOR);
+				char32 *const lastSlash = str32rchr (searchDirectory.string, Melder_DIRECTORY_SEPARATOR);
 				if (lastSlash) {
 					*lastSlash = U'\0';   // this fixes searchDirectory
 					searchDirectory. length = lastSlash - searchDirectory.string;   // probably superfluous, but correct
@@ -203,7 +203,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 					}
 					bool doesTheMiddleMatch = true;
 					if (middle. length != 0) {
-						const char32 * const position = str32str_optionallyCaseSensitive (buffer32 + numberOfMatchedCharacters, middle.string, caseSensitive);
+						const char32 *const position = str32str_optionallyCaseSensitive (buffer32 + numberOfMatchedCharacters, middle.string, caseSensitive);
 						doesTheMiddleMatch = !! position;
 						if (doesTheMiddleMatch)
 							numberOfMatchedCharacters = position - buffer32 + middle.length;

@@ -33,310 +33,6 @@
 #include "TextGrid_extensions.h"
 #include "NUM2.h"
 
-const struct TIMIT_key {
-	const char *timitLabel, *ipaLabel;
-} TIMIT_toIpaTable [] = {
-	{"", ""},
-	/* Vowels */
-	{"iy", "i"},			/* beet: bcl b IY tcl t */
-	{"ih", "\\ic"}, 		/* bit: bcl b IH tcl t */
-	/* 20190704 wgmichener "\\ep" -> "\\ef" */
-	{"eh", "\\ef"}, 		/* bet: bcl b EH tcl t */
-	{"ey", "e"},  			/* bait: bcl b EY tcl t */
-	{"ae", "\\ae"},  		/* bat: bcl b AE tcl t */
-	{"aa", "\\as"}, 		/* bott: bcl b AA tcl t */
-	{"aw", "a\\hs"},  		/* bout: bcl b AW tcl t */
-	{"ay", "a\\ic"},  		/* bite: bcl b AY tcl t */
-	{"ah", "\\vt"}, 		/* but: bcl b AH tcl t */
-	{"ao", "\\ct"},  		/* bought: bcl b AO tcl t */
-	{"oy", "\\ct\\ic"},		/* boy: bcl b OY */
-	{"ow", "o"}, 			/* boat: bcl b OW tcl t */
-	{"uh", "\\hs"}, 		/* book: bcl b UH tcl t */
-	{"uw", "u"},  			/* boot: bcl b UW tcl t */
-	/* fronted allophone of uw (alveolar contexts) */
-	/* 20190704 wgmichener "\\u\"" -> "\\u\\:^" */
-	{"ux", "\\u\\:^"}, 		/* toot: tcl t UX tcl t */
-	{"er", "\\er\\hr"},		/* bird: bcl b ER dcl d */
-	{"ax", "\\sw"}, 		/* about: AX bcl b aw tcl t */
-	{"ix", "\\i-"}, 		/* debit: dcl d eh bcl b IX tcl t */
-	{"axr", "\\sr"}, 		/* butter: bcl ah dx AXR */
-	/* devoiced schwa, very short */
-	/* 20190704 wgmichener "\\sw\\ov"" -> "\\sw\\0v" */
-	{"ax-h", "\\sw\\0v"}, 	/* suspect: s AX-H s pcl p eh kcl k tcl t */
-	/* Semivowels and glides */
-	{"l", "l"},				/* lay:	L ey */
-	/* 20190704 wgmichener "r" -> "\\rt" */
-	{"r", "\\rt"},			/* ray:	R ey */
-	{"w", "w"},				/* way:	w ey */
-	{"y", "j"},				/* yacht: Y aa tcl t */
-	{"hh", "h" },		/* hay: HH ey*/
-	/* voiced allophone of h */
-	/* 20190704 wgmichener "\\hv" -> "\\h^" */
-	{"hv", "\\h^"},			/* ahead: ax HV eh dcl d */
-	{"el", "l\\|v"},		/* bottle: bcl b aa tcl t EL */
-	/* Nasals */
-	{"m", "m"},				/* mom:	M aa M */
-	{"n", "n"},				/* noon: N uw N*/
-	{"ng", "\\ng"},			/* sing: s ih NG */
-	{"em", "m\\|v"},		/* bottom: b aa tcl t EM */
-	{"en", "n\\|v"},		/* button:	b ah q EN */
-	{"eng", "\\ng\\|v"},	/* washington: w aa sh ENG tcl t ax n */
-	/* nasal flap */
-	/* 20190704 wgmichener "n^\\fh" -> "\\fh\\~^" */
-	{"nx", "\\fh\\~^"},		/* winner: wih NX axr */
-	/* Fricatives */
-	{"s", "s"},				/* sea: S iy */
-	{"sh", "\\sh"},			/* she: SH iy */
-	{"z", "z"},				/* zone: Z ow n */
-	{"zh", "\\zh"},			/* azure: ae ZH er */
-	{"f", "f"},				/* fin: F ih n */
-	/* 20190704 wgmichener "\\te" -> "\\tf" */
-	{"th", "\\tf"},			/* thin: TH ih n */
-	{"v", "v"},				/* van: v ae n */
-	{"dh", "\\dh"},			/* then: DH en */
-	/* Affricates */
-	{"jh", "d\\zh"},		/* joke: DCL JH ow kcl k */
-	{"ch", "t\\sh"},		/* choke TCL CH ow kcl k */
-	/* Stops */
-	{"b", "b"},				/* bee: BCL B iy */
-	{"d", "d"},				/* day: DCL D ey */
-	{"g", "g"},				/* gay: GCL G ey */
-	{"p", "p"},				/* pea: PCL P iy */
-	{"t", "t"},				/* tea: TCL T iy */
-	{"k", "k"},				/* key: KCL K iy */
-	/* 20140315: Added silences before the burst */
-	/* 20190704 wgmichener "" -> "x\\cn" */
-	{"bcl", "b\\cn"},
-	{"dcl", "d\\cn"},
-	{"gcl", "g\\cn"},
-	{"pcl", "p\\cn"},
-	{"tcl", "t\\cn"},
-	{"kcl", "k\\cn"},
-	/* flap */
-	{"dx", "\\fh"},			/* muddy: m ah DX iy & dirty: dcl d er DX iy */
-	/* glottal stop */
-	/* 20190704 wgmichener "?" -> "\\?g" */
-	{"q", "\\?g"},
-	/* Others */
-	{"pau", ""},	/* pause */
-	{"epi", ""},	/* epenthetic silence */
-	{"h#", ""}, 	/* marks start and end piece of sentence */
-	/* the following markers only occur in the dictionary */
-	/* 20190704 wgmichener "1" -> "\\'1" */
-	{"1", "\\'1"},		/* primary stress marker */
-	/* 20190704 wgmichener "2" -> "\\'2" */
-	{"2", "\\'2"}		/* secondary stress marker */
-};
-
-constexpr integer TIMIT_NLABELS = ((integer) sizeof TIMIT_toIpaTable / (integer) sizeof TIMIT_toIpaTable [1] - 1);
-static const char *TIMIT_DELIMITER = "h#";
-
-static const char *timitLabelToIpaLabel (const char timitLabel []) {
-	for (integer i = 1; i <= TIMIT_NLABELS; i ++)
-		if (! strcmp (TIMIT_toIpaTable [i].timitLabel, timitLabel))
-			return TIMIT_toIpaTable [i].ipaLabel;
-	return timitLabel;
-}
-
-static bool isTimitPhoneticLabel (const char label []) {
-	for (integer i = 1; i <= TIMIT_NLABELS; i ++)
-		if (! strcmp (TIMIT_toIpaTable [i].timitLabel, label))
-			return true;
-	return false;
-}
-
-static bool isTimitWord (const char label []) {
-	const char *p = label;
-	for (; *p; p++)
-		if (Melder_isUpperCaseLetter (*p))
-			return false;
-	return true;
-}
-
-autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, MelderFile file) {
-	char hkruis [3] = "h#", label1 [512], label2 [512];
-	int length;
-	bool phnFile = false;
-	integer it [5];
-	if (nread < 12 || sscanf (header, "%td%td%511s%n\n", & it [1], & it [2], label1, & length) != 3 ||
-		it [1] < 0 || it [2] <= it [1] || sscanf (& header [length], "%td%td%511s\n", & it [3], & it [4], label2) != 3 ||
-		it [4] <= it [3]) {
-		/*
-			20120512 djmw removed the extra "it [3] < it [2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read
-		*/
-		return autoDaata ();
-	}
-	if (! strcmp (label1, hkruis)) {
-		if (isTimitPhoneticLabel (label2))
-			phnFile = true;
-		else if (! isTimitWord (label2))
-			return autoDaata ();
-	} else if (! isTimitWord (label1) || ! isTimitWord (label2)) {
-		return autoDaata ();
-	}
-	autoTextGrid thee = TextGrid_readFromTIMITLabelFile (file, phnFile);
-	return thee.move();
-}
-
-static void IntervalTier_add (IntervalTier me, double xmin, double xmax, conststring32 label) {
-	const integer i = IntervalTier_timeToIndex (me, xmin); // xmin is in interval i
-	Melder_require (i > 0,
-		U"Index too low.");
-	autoTextInterval newti = TextInterval_create (xmin, xmax, label);
-	const TextInterval interval = my intervals.at [i];
-	const double xmaxi = interval -> xmax;
-	Melder_require (xmax <= xmaxi,
-		U"Don't know what to do");
-	if (xmin == interval -> xmin) {
-		if (xmax == interval -> xmax) { // interval already present
-			TextInterval_setText (interval, label);
-			return;
-		}
-		/*
-			Split interval
-		*/
-		interval -> xmin = xmax;
-		my intervals. addItem_move (newti.move());
-		return;
-	}
-	interval -> xmax = xmin;
-	my intervals. addItem_move (newti.move());
-	/*
-		Extra interval when xmax's are not the same
-	*/
-	if (xmax < xmaxi) {
-		autoTextInterval newti2 = TextInterval_create (xmax, xmaxi, interval -> text.get());
-		my intervals. addItem_move (newti2.move());
-	}
-}
-
-autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
-	try {
-		const double dt = 1.0 / 16000.0; // TIMIT samplingFrequency)
-		double xmax = dt;
-		autofile f = Melder_fopen (file, "r");
-		/*
-			Ending time will only be known after all labels have been read.
-			We start with a sufficiently long duration (one hour) and correct this later.
-		*/
-		autoTextGrid me = TextGrid_create (0.0, 3600.0, U"wrd", 0);
-		const IntervalTier timit = (IntervalTier) my tiers->at [1];
-		integer linesRead = 0;
-		char line [200], label [200];
-		while (fgets (line, 199, f)) {
-			integer it1, it2;
-			linesRead ++;
-			Melder_require (sscanf (line, "%td%td%199s", & it1, & it2, label) == 3,
-				U"Incorrect number of items.");
-			if (it1 == it2) {
-				Melder_warning (U"File \"", MelderFile_messageName (file), U"\": Label \"", Melder_peek8to32 (label),
-					U"\" on line ", linesRead, U" was skipped because the start time and the end time were equal.");
-				/*
-					For the following .wrd files this occurs once per file:
-					train/dr3/makr0/si1982
-					train/dr3/mhjb0/sa2
-					train/dr5/mmcc0/sx348
-					train/dr6/meal0/sa2
-					train/dr6/mesj0/si2039
-					train/dr7/fmkc0/sx352
-					train/dr7/mrem0/sx61
-					train/dr7/mvrw0/sx315
-					test/dr6/mjfc0/sx138
-				*/
-			} else {
-				Melder_require (it1 >= 0 && it1 < it2,
-					U"Incorrect time at line ", linesRead);
-			}
-			xmax = it2 * dt;
-			double xmin = it1 * dt;
-			integer ni = timit -> intervals.size - 1;
-			if (ni < 1) {
-				ni = 1;
-				/*
-					Some files do not start with a first line "0 <number2> h#".
-					Instead they start with "<number1> <number2> h#", where number1 > 0.
-					We override number1 with 0.
-				*/
-				if (xmin > 0.0 && phnFile)
-					xmin = 0.0;
-			}
-			const TextInterval interval = timit -> intervals.at [ni];
-			if (xmin < interval -> xmax && linesRead > 1) {
-				xmin = interval -> xmax;
-				Melder_warning (U"File \"", MelderFile_messageName (file),
-					U"\": Start time set to previous end time for label at line ", linesRead, U".");
-				/*
-					This warning occurs hundreds of time for the .wrd files
-				*/
-			}
-			/*
-				Standard: new TextInterval
-			*/
-			const char *labelstring = (strncmp (label, "h#", 2) ? label : TIMIT_DELIMITER);
-			IntervalTier_add (timit, xmin, xmax, Melder_peek8to32 (labelstring));
-		}
-		/*
-			Now correct the end times, based on last read interval.
-			(end time was set to large value!)
-		*/
-		Melder_require (timit -> intervals.size > 1,
-			U"Empty TextGrid.");
-		timit -> intervals. removeItem (timit -> intervals.size);
-		TextInterval interval = timit -> intervals.at [timit -> intervals.size];
-		timit -> xmax = interval -> xmax;
-		my xmax = xmax;
-		if (phnFile) { // Create tier 2 with IPA symbols
-			autoIntervalTier ipa = Data_copy (timit);
-			Thing_setName (ipa.get(), U"ipa");
-			/*
-				First change the data in ipa
-			*/
-			for (integer i = 1; i <= ipa -> intervals.size; i ++) {
-				interval = timit -> intervals.at [i];
-				TextInterval_setText (ipa -> intervals.at [i],
-					Melder_peek8to32 (timitLabelToIpaLabel (Melder_peek32to8 (interval -> text.get()))));
-			}
-			my tiers -> addItem_move (ipa.move());
-			Thing_setName (timit, U"phn");
-		}
-		f.close (file);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"TextGrid not read from file ", file, U".");
-	}
-}
-
-autoTextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
-	try {
-		int at_end = 0, at_start = 1;
-
-		autoTextGrid g1 = Data_copy (me);
-		autoTextGrid g2 = Data_copy (thee);
-		/*
-			The new TextGrid will have the domain
-			[min(g1->xmin, g2->xmin), max(g1->xmax, g2->xmax)]
-		*/
-		const double extra_time_end = fabs (g2 -> xmax - g1 -> xmax);
-		const double extra_time_start = fabs (g2 -> xmin - g1 -> xmin);
-
-		if (g1 -> xmin > g2 -> xmin)
-			TextGrid_extendTime (g1.get(), extra_time_start, at_start);
-		if (g1 -> xmax < g2 -> xmax)
-			TextGrid_extendTime (g1.get(), extra_time_end, at_end);
-		if (g2 -> xmin > g1 -> xmin)
-			TextGrid_extendTime (g2.get(), extra_time_start, at_start);
-		if (g2 -> xmax < g1 -> xmax)
-			TextGrid_extendTime (g2.get(), extra_time_end, at_end);
-		for (integer i = 1; i <= g2 -> tiers->size; i ++) {
-			autoFunction tier = Data_copy (g2 -> tiers->at [i]);
-			g1 -> tiers -> addItem_move (tier.move());
-		}
-		return g1;
-	} catch (MelderError) {
-		Melder_throw (me, U" & ", thee, U": not merged.");
-	}
-}
-
 void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, conststring32 mark) {
 	try {
 		if (xmax <= my xmax)
@@ -520,20 +216,20 @@ static void IntervalTier_cutInterval (IntervalTier me, integer index, int extend
 	} else if (index == size_pre) { 
 		/*
 			Change xmax of the new last interval.
-		 */
+		*/
 		ti = my intervals.at [my intervals.size];
 		ti -> xmax = xmax;
 	} else {
 		if (extend_option == 0) { 
 			/*
-				Extend earlier interval to the right
-			 */
+				Extend earlier interval to the right.
+			*/
 			ti = my intervals.at [index - 1];
 			ti -> xmax = xmax;
 		} else {
 			/*
-				Extend next interval to the left
-			 */
+				Extend next interval to the left.
+			*/
 			ti = my intervals.at [index];
 			ti -> xmin = xmin;
 		}
@@ -723,10 +419,10 @@ void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool pres
 		IntervalTier_checkStartAndEndTime (me); // start/end time of first/last interval should match with tier
 		IntervalTier_checkStartAndEndTime (thee);
 		const double time_shift = my xmax - thy xmin;
-        double xmax_previous = my xmax;
+		double xmax_previous = my xmax;
 		if (preserveTimes && my xmax < thy xmin) {
 			autoTextInterval connection = TextInterval_create (my xmax, thy xmin, U"");
-            xmax_previous = thy xmin;
+			xmax_previous = thy xmin;
 			my intervals. addItem_move (connection.move());
 		}
 		for (integer iint = 1; iint <= thy intervals.size; iint ++) {
@@ -740,7 +436,7 @@ void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool pres
 					ti -> xmin < ti->xmax might be false!
 					We want to make sure xmin and xmax are not register variables and therefore force
 					double64 by using volatile variables.
-		 		 */
+				*/
 				volatile double xmin = xmax_previous;
 				volatile double xmax = ti -> xmax + time_shift;
 				if (xmin < xmax) {
@@ -750,9 +446,9 @@ void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool pres
 					xmax_previous = xmax;
 				}
 				/*
-					Else don't include interval
+					Else don't include interval.
 				*/
-            }
+			}
 		}
 		my xmax = preserveTimes ? thy xmax : xmax_previous;
 	} catch (MelderError) {
@@ -795,7 +491,7 @@ void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes)
 		TextGrid_checkStartAndEndTimesOfTiers (me); // all tiers must have the same start/end time as textgrid
 		TextGrid_checkStartAndEndTimesOfTiers (thee);
 		/*
-			Last intervals must have the same end time
+			Last intervals must have the same end time.
 		*/
 		const double xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
 		for (integer itier = 1; itier <= my tiers->size; itier ++) {
@@ -809,14 +505,14 @@ void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes)
 					both the xmax of the tier and the xmax of the last interval equal the xmax of the grid.
 				*/
 				myIntervalTier -> xmax = xmax;
-                const TextInterval lastInterval = myIntervalTier -> intervals.at [myIntervalTier -> intervals.size];
-                lastInterval -> xmax = xmax;
-                Melder_assert (lastInterval -> xmax > lastInterval -> xmin);
+				const TextInterval lastInterval = myIntervalTier -> intervals.at [myIntervalTier -> intervals.size];
+				lastInterval -> xmax = xmax;
+				Melder_assert (lastInterval -> xmax > lastInterval -> xmin);
 			} else if (myTier -> classInfo == classTextTier && thyTier -> classInfo == classTextTier) {
 				const TextTier  myTextTier = static_cast <TextTier>  (myTier);
 				const TextTier thyTextTier = static_cast <TextTier> (thyTier);
 				TextTiers_append_inplace (myTextTier, thyTextTier, preserveTimes);
-                myTextTier -> xmax = xmax;
+				myTextTier -> xmax = xmax;
 			} else {
 				Melder_throw (U"Tier ", itier, U" in the second TextGrid is of a different type "
 					"than tier ", itier, U" in the first TextGrid.");

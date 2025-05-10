@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2008,2010-2024 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2008,2010-2025 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -958,7 +958,7 @@ autostring32 MelderFile_readText (MelderFile file, autostring8 *string8) {
 				length -= 3;
 				fseeko (f, 3, SEEK_SET);
 			} else {
-				rewind (f);   // length and type already set correctly.
+				rewind (f);   // length and type already set correctly
 			}
 			autostring8 text8bit (length);
 			Melder_assert (text8bit);

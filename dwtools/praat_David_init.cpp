@@ -8230,7 +8230,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic only)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic match criterion", kMelder_string::DEFAULT)
@@ -9077,7 +9077,7 @@ void praat_David_init () {
 	/*
 		The `New/SpeechSynthesizer` commands don't require us to supply the `after` argument,
 		because `praat_David_init()` is called between `praat_uvafon_Artsynth_init()` and `praat_uvafon_gram_init()`.
-		(last checked 20240907)
+		(last checked 2024-09-07)
 	*/
 	praat_addMenuCommand (U"Objects", U"New", U"Text-to-speech synthesis", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"SpeechSynthesizer help", nullptr, 1,

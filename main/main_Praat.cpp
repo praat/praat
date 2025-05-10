@@ -1,10 +1,10 @@
 /* main_Praat.cpp
  *
- * Copyright (C) 1992-2008,2010-2021,2023,2024 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2021,2023-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -65,9 +65,9 @@ static void logo (Graphics graphics) {
 	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_setFont (graphics, kGraphics_font::HELVETICA);
 	Graphics_setFontSize (graphics, 10.0);
-	Graphics_text (graphics, 0.5, 0.20, Melder_cat (U"Copyright © 1992–", Melder_appYear(), U" by Paul Boersma and David Weenink"));
+	Graphics_text (graphics, 0.5, 0.16, Melder_cat (U"Copyright © 1992–", Melder_appYear(), U" by Paul Boersma and David Weenink"));
 	Graphics_setFontSize (graphics, 10.0);
-	Graphics_text (graphics, 0.5, 0.10, U"Website: https://www.fon.hum.uva.nl/praat or http://praat.org");
+	Graphics_text (graphics, 0.5, 0.09, U"Website: https://www.fon.hum.uva.nl/praat or http://praat.org");
 }
 
 int main (int argc, char *argv []) {

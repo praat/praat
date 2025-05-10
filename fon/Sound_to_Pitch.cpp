@@ -1,10 +1,10 @@
 /* Sound_to_Pitch.cpp
  *
- * Copyright (C) 1992-2005,2007-2012,2014-2020,2023,2024 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2014-2020,2023-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -116,7 +116,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		const integer offset = startSample - 1;
 		longdouble sumx2 = 0.0;   // sum of squares
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			const double * const amp = & my z [channel] [0] + offset;
+			const double *const amp = & my z [channel] [0] + offset;
 			for (integer i = 1; i <= nsamp_window; i ++) {
 				const double x = amp [i] - localMean [channel];
 				sumx2 += x * x;
@@ -127,7 +127,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		for (integer i = 1; i <= localMaximumLag; i ++) {
 			longdouble product = 0.0;
 			for (integer channel = 1; channel <= my ny; channel ++) {
-				const double * const amp = & my z [channel] [0] + offset;
+				const double *const amp = & my z [channel] [0] + offset;
 				const double y0 = amp [i] - localMean [channel];
 				const double yZ = amp [i + nsamp_window] - localMean [channel];
 				sumy2 += yZ * yZ - y0 * y0;
@@ -193,7 +193,10 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 			Use parabolic interpolation for first estimate of frequency,
 			and sin(x)/x interpolation to compute the strength of this frequency.
 		*/
-		const double dr = 0.5 * (r [i+1] - r [i-1]), d2r = 2.0 * r [i] - r [i-1] - r [i+1];
+		const double dr = 0.5 * (r [i+1] - r [i-1]);
+		const double d2r = (r [i] - r [i-1]) + (r [i] - r [i+1]);
+				// not 2.0 * r [i] - r [i-1] - r [i+1] because of rounhding errors! (bug removed 2025-04-18)
+		Melder_assert (d2r > 0);
 		const double frequencyOfMaximum = 1.0 / my dx / (i + dr / d2r);
 		const integer offset = - brent_ixmax - 1;
 		double strengthOfMaximum = /* method & 1 ? */

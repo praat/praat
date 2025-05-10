@@ -2,11 +2,11 @@
 #define _melder_strvec_h_
 /* melder_strvec.h
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2022,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -21,10 +21,10 @@
 template <typename T>
 class _stringvector {
 public:
-	T** elements = nullptr;
+	T **elements = nullptr;
 	integer size = 0;
 	_stringvector () { }
-	_stringvector (T** givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
+	_stringvector (T **givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
 	T* & operator[] (integer i) const {
 		return our elements [i - 1];
 	}
@@ -49,13 +49,13 @@ class _autostringvectorview;
 template <typename T>
 class _conststringvector {
 public:
-	const T* const * elements = nullptr;
+	const T *const *elements = nullptr;
 	integer size = 0;
 	_conststringvector () { }
-	_conststringvector (const T* const * givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
+	_conststringvector (const T *const *givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
 	_conststringvector (_stringvector<T> other): elements (other.elements), size (other.size) { }
-	_conststringvector (_autostringvectorview<T> other): elements (reinterpret_cast <const T* const *> (other.elements)), size (other.size) { }
-	const T* const & operator[] (integer i) const {
+	_conststringvector (_autostringvectorview<T> other): elements (reinterpret_cast <const T *const *> (other.elements)), size (other.size) { }
+	const T *const & operator[] (integer i) const {
 		return our elements [i - 1];
 	}
 	_conststringvector<T> part (integer firstPosition, integer lastPosition) {
@@ -76,7 +76,7 @@ using conststring8vector  = _conststringvector <char>;
 template <typename T>
 class _autostringvectorview {
 public:
-	_autostring <T> * elements = nullptr;
+	_autostring <T> *elements = nullptr;
 	integer size = 0;
 	_autostringvectorview<T> () = default;
 	_autostringvectorview<T> (_autostring <T> * givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
@@ -96,7 +96,7 @@ void operator<<= (_autostringvectorview <T> const& target, _autostringvectorview
 template <typename T>
 class _autostringautovector {
 public:
-	_autostring <T> * elements;   // Because of DataEditor, this has to be the first field...
+	_autostring <T> *elements;   // Because of DataEditor, this has to be the first field...
 	integer size;   // ... and this the second...
 private:
 	integer _capacity = 0;   // ... and this the third.

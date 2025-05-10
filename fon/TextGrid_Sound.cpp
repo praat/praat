@@ -1,10 +1,10 @@
 /* TextGrid_Sound.cpp
  *
- * Copyright (C) 1992-2020,2022,2024 Paul Boersma
+ * Copyright (C) 1992-2020,2022,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -725,6 +725,124 @@ void TextGrid_Pitch_draw (
 		Graphics_unsetInner (g);
 	} catch (MelderError) {
 		Melder_throw (grid, U" & ", pitch, U": not drawn.");
+	}
+}
+
+autoSound Sound_readWithAdjacentAnnotationFiles_buckeye (conststring32 soundFileName, autoTextGrid *out_textgrid) {
+	try {
+		structMelderFile file { };
+		Melder_pathToFile (soundFileName, & file);
+		char32 *lastPeriod = str32rchr (file.path, U'.');
+		Melder_require (lastPeriod,
+			U"Sound file name should have an extension, but is ", & file, U".");
+		Melder_require (Melder_equ (lastPeriod, U".wav"),
+			U"Sound file name should end in “.wav”, not in “", lastPeriod, U"”.");
+		autoSound sound = Sound_readFromSoundFile (& file);
+		OrderedOf <structTextGrid> textgrids;
+
+		/*
+			Read the .phones file.
+		*/
+		lastPeriod [1] = U'p';
+		lastPeriod [2] = U'h';
+		lastPeriod [3] = U'o';
+		lastPeriod [4] = U'n';
+		lastPeriod [5] = U'e';
+		lastPeriod [6] = U's';
+		lastPeriod [7] = U'\0';
+		autoTextGrid phones = TextGrid_readFromEspsLabelFile (& file, false, 2);
+		Melder_assert (phones -> tiers->size == 2);
+		Thing_setName (phones -> tiers->at [1], U"phon");
+		Thing_setName (phones -> tiers->at [2], U"phon*");
+		textgrids. addItem_ref (phones.get());
+
+		/*
+			Read the .words file.
+		*/
+		lastPeriod [1] = U'w';
+		lastPeriod [2] = U'o';
+		lastPeriod [3] = U'r';
+		lastPeriod [4] = U'd';
+		lastPeriod [5] = U's';
+		lastPeriod [6] = U'\0';
+		autoTextGrid words = TextGrid_readFromEspsLabelFile (& file, false, 4);
+		Melder_assert (words -> tiers->size == 4);
+		Thing_setName (words -> tiers->at [1], U"words");
+		Thing_setName (words -> tiers->at [2], U"dict");
+		Thing_setName (words -> tiers->at [3], U"trans");
+		Thing_setName (words -> tiers->at [4], U"pos");
+		textgrids. addItem_ref (words.get());
+
+		/*
+			Read the .log file.
+		*/
+		lastPeriod [1] = U'l';
+		lastPeriod [2] = U'o';
+		lastPeriod [3] = U'g';
+		lastPeriod [4] = U'\0';
+		autoTextGrid log = TextGrid_readFromEspsLabelFile (& file, true, 1);
+		Thing_setName (log -> tiers->at [1], U"log");
+		textgrids. addItem_ref (log.get());
+
+		*out_textgrid = TextGrids_merge (& textgrids, true);
+		Melder_assert ((*out_textgrid) -> tiers->size == 7);
+		lastPeriod [0] = U'\0';
+		Thing_setName (sound.get(), MelderFile_name (& file));
+		Thing_setName ((*out_textgrid).get(), MelderFile_name (& file));
+
+		return sound;
+	} catch (MelderError) {
+		Melder_throw (U"Sound “", soundFileName, U"” not read with adjacent Buckeye annotation files.");
+	}
+}
+
+autoSound Sound_readWithAdjacentAnnotationFiles_timit (conststring32 soundFileName, autoTextGrid *out_textgrid) {
+	try {
+		structMelderFile file { };
+		Melder_pathToFile (soundFileName, & file);
+		char32 *lastPeriod = str32rchr (file.path, U'.');
+		Melder_require (lastPeriod,
+			U"Sound file name should have an extension, but is ", & file, U".");
+		Melder_require (Melder_equ (lastPeriod, U".wav"),
+			U"Sound file name should end in “.wav”, not in “", lastPeriod, U"”.");
+		autoSound sound = Sound_readFromSoundFile (& file);
+		OrderedOf <structTextGrid> textgrids;
+
+		/*
+			Read the .phn file.
+		*/
+		lastPeriod [1] = U'p';
+		lastPeriod [2] = U'h';
+		lastPeriod [3] = U'n';
+		autoTextGrid phones = TextGrid_readFromTimitLabelFile (& file, true);
+		textgrids. addItem_ref (phones.get());
+
+		/*
+			Read the .wrd file.
+		*/
+		lastPeriod [1] = U'w';
+		lastPeriod [2] = U'r';
+		lastPeriod [3] = U'd';
+		autoTextGrid words = TextGrid_readFromTimitLabelFile (& file, false);
+		textgrids. addItem_ref (words.get());
+
+		/*
+			Read the .txt file.
+		*/
+		lastPeriod [1] = U't';
+		lastPeriod [2] = U'x';
+		lastPeriod [3] = U't';
+		autoTextGrid text = TextGrid_readFromTimitLabelFile (& file, false);
+		textgrids. addItem_ref (text.get());
+
+		*out_textgrid = TextGrids_merge (& textgrids, true);
+		Thing_setName ((*out_textgrid) -> tiers->at [1], U"phon-ipa");
+		Thing_setName ((*out_textgrid) -> tiers->at [2], U"phon-arpa");
+		Thing_setName ((*out_textgrid) -> tiers->at [3], U"words");
+		Thing_setName ((*out_textgrid) -> tiers->at [4], U"text");
+		return sound;
+	} catch (MelderError) {
+		Melder_throw (U"Sound “", soundFileName, U"” not read with adjacent TIMIT annotation files.");
 	}
 }
 

@@ -1,6 +1,6 @@
-/* melder_readtext.cpp
+/* MelderReadText.cpp
  *
- * Copyright (C) 2008,2010-2012,2014-2020,2022,2023 Paul Boersma
+ * Copyright (C) 2008,2010-2012,2014-2020,2022,2023,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,81 +21,123 @@
 
 char32 MelderReadText_getChar (MelderReadText me) {
 	if (my string32) {
-		if (* my readPointer32 == U'\0')
+		if (* my readPointer32 == U'\0') {
+			my previousPointerStep = 0;   // because we're not moving forward
 			return U'\0';
+		}
+		my previousPointerStep = 1;
 		return * my readPointer32 ++;
 	} else {
-		if (* my readPointer8 == '\0') return U'\0';
+		if (* my readPointer8 == '\0') {
+			my previousPointerStep = 0;   // because we're not moving forward
+			return U'\0';
+		}
 		if (my input8Encoding == kMelder_textInputEncoding::UTF8) {
 			char32 kar1 = (char32) (char8) * my readPointer8 ++;
 			if (kar1 <= 0x00'007F) {
+				my previousPointerStep = 1;
 				return kar1;
 			} else if (kar1 <= 0x00'00DF) {
 				char32 kar2 = (char32) (char8) * my readPointer8 ++;
+				my previousPointerStep = 2;
 				return ((kar1 & 0x00'001F) << 6) | (kar2 & 0x00'003F);
 			} else if (kar1 <= 0x00'00EF) {
 				char32 kar2 = (char32) (char8) * my readPointer8 ++;
 				char32 kar3 = (char32) (char8) * my readPointer8 ++;
+				my previousPointerStep = 3;
 				return ((kar1 & 0x00'000F) << 12) | ((kar2 & 0x00'003F) << 6) | (kar3 & 0x00'003F);
 			} else if (kar1 <= 0x00'00F4) {
 				char32 kar2 = (char32) (char8) * my readPointer8 ++;
 				char32 kar3 = (char32) (char8) * my readPointer8 ++;
 				char32 kar4 = (char32) (char8) * my readPointer8 ++;
+				my previousPointerStep = 4;
 				return ((kar1 & 0x00'0007) << 18) | ((kar2 & 0x00'003F) << 12) | ((kar3 & 0x00'003F) << 6) | (kar4 & 0x00'003F);
 			} else {
+				my previousPointerStep = 1;
 				return UNICODE_REPLACEMENT_CHARACTER;
 			}
 		} else if (my input8Encoding == kMelder_textInputEncoding::MACROMAN) {
+			my previousPointerStep = 1;
 			return Melder_decodeMacRoman [(char8) * my readPointer8 ++];
 		} else if (my input8Encoding == kMelder_textInputEncoding::WINDOWS_LATIN1) {
+			my previousPointerStep = 1;
 			return Melder_decodeWindowsLatin1 [(char8) * my readPointer8 ++];
 		} else {
 			/* Unknown encoding. */
+			my previousPointerStep = 1;
 			return (char32) (char8) * my readPointer8 ++;
 		}
 	}
 }
 
+void MelderReadText_ungetChar (MelderReadText me) {
+	if (my string32)
+		my readPointer32 -= my previousPointerStep;
+	else
+		my readPointer8 -= my previousPointerStep;
+	my previousPointerStep = 0;
+}
+
 mutablestring32 MelderReadText_readLine (MelderReadText me) {
+	//TRACE
+	my previousPointerStep = 0;
 	if (my string32) {
+		trace (1);
 		Melder_assert (my readPointer32);
 		Melder_assert (! my readPointer8);
 		if (*my readPointer32 == U'\0')   // tried to read past end of file
 			return nullptr;
-		char32 *result = my readPointer32;
-		char32 *newline = str32chr (result, U'\n');
-		if (newline) {
-			*newline = U'\0';
-			my readPointer32 = newline + 1;
+		char32 *result32 = my readPointer32;
+		char32 *newline32 = str32chr (result32, U'\n');
+		if (newline32) {
+			*newline32 = U'\0';
+			my readPointer32 = newline32 + 1;
 		} else {
-			my readPointer32 += Melder_length (result);
+			my readPointer32 += Melder_length (result32);
 		}
-		return result;
+
+		integer lineLength = Melder_length (result32);
+		integer lineBufferSizeWanted = lineLength + 101;
+		if (lineBufferSizeWanted > my lineBufferSize) {
+			my lineBuffer = autostring32 (lineBufferSizeWanted);
+			my lineBufferSize = lineBufferSizeWanted;
+		}
+		str32cpy (my lineBuffer.get(), result32);
+		if (newline32)
+			*newline32 = U'\n';   // restore original newline symbol, so that getNumberOfLines() and getLineNumber() continue to work
 	} else {
+		trace (2);
 		Melder_assert (my string8);
 		Melder_assert (! my readPointer32);
 		Melder_assert (my readPointer8);
 		if (*my readPointer8 == '\0')   // tried to read past end of file
 			return nullptr;
 		char *result8 = my readPointer8;
-		char *newline = strchr (result8, '\n');
-		if (newline) {
-			*newline = '\0';
-			my readPointer8 = newline + 1;
+		char *newline8 = strchr (result8, '\n');
+		if (newline8) {
+			*newline8 = '\0';
+			my readPointer8 = newline8 + 1;
 		} else {
 			my readPointer8 += strlen (result8);
 		}
-		static char32 *text32 = nullptr;
-		static int64 size = 0;
-		int64 sizeNeeded = (int64) strlen (result8) + 1;
-		if (sizeNeeded > size) {
-			Melder_free (text32);
-			text32 = Melder_malloc_f (char32, sizeNeeded + 100);
-			size = sizeNeeded + 100;
+
+		uint64 lineLength_uint64 = (uint64) strlen (result8);
+		if (lineLength_uint64 > (uint64) (MAXIMUM_ALLOCATION_SIZE - 101)) {
+			if (newline8)
+				*newline8 = '\n';
+			Melder_throw (U"Line too long: more than ", Melder_bigInteger (MAXIMUM_ALLOCATION_SIZE - 101), U" characters.");
 		}
-		Melder_8to32_inplace (result8, text32, my input8Encoding);
-		return text32;
+		uint64 lineBufferSizeWanted_uint64 = lineLength_uint64 + 101;   // <= (uint64) INTEGER_MAX
+		integer lineBufferSizeWanted = integer (lineBufferSizeWanted_uint64);   // guarded conversion
+		if (lineBufferSizeWanted > my lineBufferSize) {
+			my lineBuffer = autostring32 (lineBufferSizeWanted);
+			my lineBufferSize = lineBufferSizeWanted;
+		}
+		Melder_8to32_inplace (result8, my lineBuffer.get(), my input8Encoding);
+		if (newline8)
+			*newline8 = '\n';   // restore original newline symbol, so that getNumberOfLines() and getLineNumber() continue to work
 	}
+	return my lineBuffer.get();
 }
 
 int64 MelderReadText_getNumberOfLines (MelderReadText me) {
@@ -177,4 +219,4 @@ autoMelderReadText MelderReadText_createFromText (autostring32 text) {
 	return me;
 }
 
-/* End of file melder_readtext.cpp */
+/* End of file MelderReadText.cpp */

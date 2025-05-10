@@ -2,11 +2,11 @@
 #define _melder_textencoding_h_
 /* melder_textencoding.h
  *
- * Copyright (C) 1992-2020,2022,2024 Paul Boersma
+ * Copyright (C) 1992-2020,2022,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -37,7 +37,8 @@ constexpr uint32 kMelder_textOutputEncoding_ISO_LATIN1 = 0x4C41'5401;
 constexpr uint32 kMelder_textOutputEncoding_FLAC = 0x464C'4143;
 
 bool Melder_isValidAscii (conststring32 string);
-bool Melder_str8IsValidUtf8 (const char *string);
+bool Melder_str8IsValidAscii (conststring8 string);
+bool Melder_str8IsValidUtf8 (conststring8 string);
 bool Melder_isEncodable (conststring32 string, int outputEncoding);
 extern char32 Melder_decodeMacRoman [256];
 extern char32 Melder_decodeWindowsLatin1 [256];

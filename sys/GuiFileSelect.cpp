@@ -19,7 +19,7 @@
 #include "GuiP.h"
 #include <locale.h>
 #if motif
-	#include <Shlobj.h>
+	#include <shlobj.h>
 #endif
 
 autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststring32 title, bool allowMultipleFiles) {

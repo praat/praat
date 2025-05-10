@@ -1,10 +1,10 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -669,7 +669,7 @@ autoSound Sounds_crossCorrelate (constSound me, constSound thee, kSounds_convolv
 			} break;
 			case kSounds_convolve_signalOutsideTimeDomain::SIMILAR: {
 				for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-					double * const a = & his z [channel] [0];
+					double *const a = & his z [channel] [0];
 					double const edge = std::min (n1, n2);
 					for (integer i = 1; i < edge; i ++) {
 						const double factor = edge / i;

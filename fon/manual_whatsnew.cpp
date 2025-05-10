@@ -29,6 +29,39 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.31# (3 May 2025)
+• TextGrid window: rubber banding within the selection,
+  by dragging a boundary while keeping the Option and Command keys pressed (plus the Shift key, if you want to drag in all tiers).
+• Backslash trigraphs: s\vv (`s\vv`), m\LIb (`m\LIb`), \V^ (`\V^`), d\// (`d\//`), d\-/ (`d\-/`), \l.\~/ (`\l.\~/`).
+• Unicode 16.0.
+
+##6.4.30# (29 April 2025)
+• Made the whole of the Buckeye corpus readable.
+• Backslash trigraphs for tone symbols: a\-' (`a\-'`), a\'- (`a\'-`), a\`- (`a\``-`), a\-` (`a\-```), a\rf (`a\rf`), a\fr (`a\fr`).
+• Other backslash trigraphs: d\mv (`d\mv`), d\wv (`d\wv`).
+
+##6.4.29# (27 April 2025)
+• ##Read Sound and adjacent annotation files (TIMIT)...#: if you open any sound file from the TIMIT corpus,
+  the annotation files with the same name in the same folder are interpreted as a TextGrid and opened as well.
+• ##Read Sound and adjacent annotation files (Buckeye)...#: if you open any sound file from the Buckeye corpus,
+  the annotation files with the same name in the same folder are interpreted as a TextGrid and opened as well.
+• Backslash trigraphs for tone symbols: a\'' (`a\''`), a\`` (`a\`````),
+  \-5 (`\-5`), \-4 (`\-4`), \-3 (`\-3`), \-2 (`\-2`), \-1 (`\-1`), \|u (`\|u`), \|d (`\|d`).
+• Backslash trigraphs for diagonal arrows: \NE (`\NE`), \SE (`\SE`), \SW (`\SW`), \NW (`\NW`);
+  the first two of these double as tone symbols.
+
+##6.4.28# (22 April 2025)
+• TextGrid window: removed a bug that caused slow scrolling (i.e. computation of whole-sound Pitch and Formant objects)
+  if the TextGrid was much longer than the Sound and the Sound was scrolled out of sight.
+• EEG window: repaired a bug that caused Praat to crash when clicking ##View & Edit#.
+• Windows Demo window: made Escape key available to `demoKey$()`
+  (this had been a bug since the beginning of the Demo window, i.e. since May 2009).
+• ##Read TextGrid from ESPS label file...#
+• Repaired a bug that could cause Praat to crash on pitch analysis when a part of the sound was constant.
+• ##Insert picture from file...#: the picture is now embedded into Praat picture files;
+  this also solves a problem with file paths that surfaced when a script called another script that inserted a picture.
+• ##Photo: Save as PNG file...#: repaired a bug that caused a crash on the Mac.
+
 ##6.4.27# (27 January 2025)
 • Graphics text: better pipes and slashes.
 • Windows for ARM64 processors: removed a bug whereby dynamic menu deletion could crash after a sound was played in the Demo window.

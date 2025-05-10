@@ -34,13 +34,13 @@ autoIntervalTier Sound_to_IntervalTier_highMidLowIntervals (Sound me, double min
 			if (leveli == level)
 				continue;
 			// new interval
-			endTime = my x1 + (isamp - 1 - 0.5) * my dx; // midpoint
+			endTime = my x1 + (isamp - 1 - 0.5) * my dx;   // midpoint
 			conststring32 label = ( level == 1 ? U"High" : level == -1 ? U"Low" : U"Mid" );
 			if (firstInterval) {
-				TextInterval interval = thy intervals .at[1];
+				TextInterval interval = thy intervals.at [1];
 				interval -> xmax = endTime;
 				autostring32 firstLabel = Melder_dup (label);
-				interval ->  text = firstLabel. move();
+				interval -> text = firstLabel.move();
 				firstInterval = false;
 			} else {
 				autoTextInterval interval = TextInterval_create (startTime, endTime, label);
@@ -61,7 +61,7 @@ autoIntervalTier Sound_to_IntervalTier_highMidLowIntervals (Sound me, double min
 autoTextGrid Sound_to_TextGrid_highMidLowIntervals (Sound me, double min, double max) {
 	try {
 		autoTextGrid thee = TextGrid_createWithoutTiers (my xmin, my xmax);
-		autoIntervalTier intervals =  Sound_to_IntervalTier_highMidLowIntervals (me, min, max);
+		autoIntervalTier intervals = Sound_to_IntervalTier_highMidLowIntervals (me, min, max);
 		thy tiers -> addItem_move (intervals.move());
 		return thee;
 	} catch (MelderError) {
@@ -88,7 +88,7 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
 					-- numberOfSamples;
 				previous_ixmax = ixmax;
 			} else { // matches label
-				if (iint == 1) // Start time of output sound is end time of first interval
+				if (iint == 1)   // start time of output sound is end time of first interval
 					xmin = interval -> xmax;
 			}
 		}
@@ -131,6 +131,5 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 		Melder_throw (me, U": no TextGrid with silences created.");
 	}
 }
-
 
 /* End of file Sound_and_TextGrid_extensions.cpp */

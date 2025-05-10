@@ -1,5 +1,5 @@
 # meson.build of the library "fon"
-# David Weenink, 3 January 2024
+# David Weenink & Paul Boersma, 28 April 2025
 
 sources = '''
 	Transition.cpp Distributions_and_Transition.cpp
@@ -14,7 +14,7 @@ sources = '''
    Spectrum.cpp Ltas.cpp Spectrogram.cpp SpectrumTier.cpp Ltas_to_SpectrumTier.cpp
    Formant.cpp Image.cpp Sound_to_Formant.cpp Sound_and_Spectrogram.cpp
    Sound_and_Spectrum.cpp Spectrum_and_Spectrogram.cpp Spectrum_to_Formant.cpp
-   FormantTier.cpp TextGrid.cpp TextGrid_Sound.cpp Label.cpp FormantGrid.cpp
+   FormantTier.cpp TextGrid.cpp TextGrid_files.cpp TextGrid_Sound.cpp Label.cpp FormantGrid.cpp
    Excitation.cpp Cochleagram.cpp Cochleagram_and_Excitation.cpp Excitation_to_Formant.cpp
    Sound_to_Cochleagram.cpp Spectrum_to_Excitation.cpp
    VocalTract.cpp VocalTract_to_Spectrum.cpp

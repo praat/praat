@@ -1,10 +1,10 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2025 David Weenink
+ * Copyright (C) 1993-2024 David Weenink, 2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -5972,7 +5972,7 @@ ENTRY (U"Example 1: Single-tier topic search: ")
 NORMAL (U"We create a TextGridNavigator that searches for the occurrence in tier 1 of one of the labels "
 	"in a %topic set that consists of the labels { \"a\", \"e\", \"i\", \"o\", \"u\" }. If a label in tier 1 equals one of the labels in this topic set we have a match. "
 	"The command to create the TextGridNavigator for the selected TextGrid is:")
-CODE (U"To TextGridNavigator (topic search): 1,")
+CODE (U"To TextGridNavigator (topic only): 1,")
 CODE (U"... { \"a\", \"e\", \"i\", \"o\", \"u\" }, \"is equal to\", \"OR\",")
 CODE (U"... \"Match start to Match end\"")
 NORMAL (U"In this case the tier's ##NavigationContext# is very simple as the searching / matching only involves "
@@ -5999,7 +5999,7 @@ NORMAL (U"Instead of finding the indices one at a time in a %while loop until we
 	"and query for a list of all indices or times where the labels match. We then know beforehand how many matches we have "
 	"and therefore we can use a %for loop.")
 CODE (U"tierNumber = 1")
-CODE (U"navigator = To TextGridNavigator (topic search): tierNumber,")
+CODE (U"navigator = To TextGridNavigator (topic only): tierNumber,")
 CODE (U"... { \"a\", \"e\", \"i\", \"u\", \"o\" }, \"is equal to\", \"OR\",")
 CODE (U"... \"Match start to Match end\"")
 CODE (U"startTimes# = List start times: \"topic\"")
@@ -6148,7 +6148,7 @@ NORMAL (U"The text corpus design was done by the Massachusetts Institute of "
 	"Technology (MIT), Stanford Research Institute and Texas Instruments (TI). "
 	"The speech was recorded at TI, transcribed at MIT, and has been maintained, "
 	"verified and prepared for CDROM production by the American National Institute "
-	"of Standards and Technology (NIST) (@@Lamel et al. (1986)@).")
+	"of Standards and Technology (NIST) (@@Lamel, Kassel & Seneff (1986)@).")
 MAN_END
 
 MAN_BEGIN (U"VowelEditor", U"djmw", 20200403)
@@ -6349,106 +6349,169 @@ MAN_BEGIN (U"Ganong (1980)", U"djmw", 20130622)
 NORMAL (U"W.F. Ganong III (1980): \"Phonetic categorization in auditory word perception.\" %%Journal of Experimental Psychology: Human Perception and Performance% #6: 110\\--125.") 
 MAN_END
 
-MAN_BEGIN (U"Greiner & Hormann (1998)", U"djmw", 20110617)
-NORMAL (U"G. Greiner & K. Hormann (1998): \"Efficient clipping of arbitrary polygons.\" %%ACM Transactions on Graphics% #17: 71\\--83.")
-MAN_END
 
-MAN_BEGIN (U"Heath et al. (1986)", U"djmw", 19981007)
-NORMAL (U"M.T. Heath, J.A. Laub, C.C. Paige & R.C. Ward (1986): \"Computing the "
-	"singular value decomposition of a product of two matrices.\" "
-	"%%SIAM J. Sci. Statist. Comput.% #7: 1147\\--1159.")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Garofolo, Lamel, Fisher, Fiscus, Pallett & Dahlgren (1993)"
+© Paul Boersma 2025-04-26
 
-MAN_BEGIN (U"Hastie, Tibshirani & Friedman (2001)", U"djmw", 20220111)
-NORMAL (U"T. Hastie, R. Tibshirani & J. Friedman (2001): %%The elements of statistical learning%. Springer series in statistics.")
-MAN_END
+John S. Garofolo, Lori F. Lamel, William M. Fisher, Jonathan G. Fiscus, David S. Pallett & Nancy L. Dahlgren (1993):
+“DARPA TIMIT: acoustic-phonetic continuous speech corpus CD-ROM, NIST Speech Disc CD1-1.1”,
+%NISTIR (%%National Institute of Standards and Technology Interagency or Internal Report%) 4930, Gaithersburg MD.
+[https://doi.org/10.6028/NIST.IR.4930]
 
-MAN_BEGIN (U"Henrich et al. (2004)", U"djmw", 20190903)
-NORMAL (U"N. Henrich, C. d'Alessandro, B. Doval & M. Castellengo (2004): \"On the use of the derivative of electroglottographic signals for characterization of nonpathological phonation.\" %%Journal of the Acoustical Society of America% #115: 1321\\--1332.")
-MAN_END
+################################################################################
+"Greiner & Hormann (1998)"
+© David Weenink 2011-06-17
 
-MAN_BEGIN (U"Hermes (1988)", U"djmw", 19980123)
-NORMAL (U"D.J. Hermes (1988): \"Measurement of pitch by subharmonic "
-	"summation.\" %%Journal of the Acoustical Society of America% #83: 257\\--264.")
-MAN_END
+G. Greiner & K. Hormann (1998): “Efficient clipping of arbitrary polygons”, %%ACM Transactions on Graphics% #17: 71\--83.
 
-MAN_BEGIN (U"Henze & Wagner (1997)", U"djmw", 20210803)
-NORMAL (U"N. Henze & T. Wagner (1997): \"A new approach to the BHEP Tests for Multivariate Normality.\" "
-	"%%Journal of Multivariate Analysis% #62: 1\\--23.")
-MAN_END
+################################################################################
+"Heath et al. (1986)"
+© David Weenink 1998-10-07
 
-MAN_BEGIN (U"Herbst et al. (2014)", U"djmw", 20190829)
-NORMAL (U"C. Herbst, J. Lohscheller, J. \\S<vec, N. Henrich, G. Weissengruber & W. Tecumseh Fitch (2014): \"Glottal opening and closing events investigated by electroglottography and super-high-speed video recordings.\", %%The Journal of Experimental Biology% #217: 955\\--963.")
-MAN_END
+M.T. Heath, J.A. Laub, C.C. Paige & R.C. Ward (1986): “Computing the
+singular value decomposition of a product of two matrices”,
+%%SIAM Journal on Scientific and Statistical Computing% #7: 1147\--1159.
 
-MAN_BEGIN (U"Herbst (2019)", U"djmw", 20190826)
-NORMAL (U"C. Herbst (2019): \"Electroglottography - An update.\", %%Journal of Voice%: In press.")
-MAN_END
+################################################################################
+"Hastie, Tibshirani & Friedman (2001)"
+© David Weenink 2022-01-11
 
-MAN_BEGIN (U"Holighaus et al. (2013)", U"djmw", 20210426)
-NORMAL (U"N. Holighaus, M. Dörfler, G. A. Velasco & T. Grill (2013): \"A framework for invertible, real-time constant-Q transforms.\" "
-	"%%IEEE Transactions on Audio, Speech, and Language Processing% ##21#: 775\\--785.")
-MAN_END
+T. Hastie, R. Tibshirani & J. Friedman (2001): %%The elements of statistical learning%. Springer Series in Statistics.
 
-MAN_BEGIN (U"Hormann & Agathos (2001)", U"djmw", 20110617)
-NORMAL (U"K. Hormann & A. Agathos (2001): \"The point in polygon problem for arbitrary polygons.\" "
-	"%%Computational Geometry% #20: 131\\--144.")
-MAN_END
+################################################################################
+"Henrich et al. (2004)"
+© David Weenink 2019-09-03
 
-MAN_BEGIN (U"Irino & Patterson (1997)", U"djmw", 20100517)
-NORMAL (U"T. Irino & R.D. Patterson (1997): \"A time-domain, level-dependent "
-	"auditory filter: The gammachirp.\" %%Journal of the Acoustical Society of America% #101: 412\\--419.")
-MAN_END
+N. Henrich, C. d'Alessandro, B. Doval & M. Castellengo (2004):
+“On the use of the derivative of electroglottographic signals for characterization of nonpathological phonation”,
+%%Journal of the Acoustical Society of America% #115: 1321\--1332.
 
-MAN_BEGIN (U"Itakura & Saito (1968)", U"djmw", 20190617)
-NORMAL (U"F. Itakura & S. Saito (1968): \"Analysis synthesis telephony based on the maximum likelihood method.\""
-	"In %%Proc. 6th International Congress on Acoustics%, Los Alamitos, CA: IEEE: C-17\\--20.")
-MAN_END
+################################################################################
+"Hermes (1988)"
+© David Weenink 1998-01-23
 
-MAN_BEGIN (U"Janecek et al. (2011)", U"djmw", 20190312)
-NORMAL (U"A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011): "
-		"\"LIBNMF \\-- A library for nonnegative matrix factorization.\""
-		"%%Computing and informatics% #30: 205\\--224")
-MAN_END
+Dik J. Hermes (1988): “Measurement of pitch by subharmonic summation”,
+%%Journal of the Acoustical Society of America% #83: 257\--264.
 
-MAN_BEGIN (U"Johannesma (1972)", U"djmw", 19980123)
-NORMAL (U"P.I.M. Johannesma (1972): \"The pre-response stimulus ensemble of "
-	"neurons in the cochlear nucleus.\" In %%Symposium on Hearing Theory% "
-	"(IPO, Eindhoven, Holland), 58\\--69.")
-MAN_END
+################################################################################
+"Henze & Wagner (1997)"
+© David Weenink 2021-08-03
 
-MAN_BEGIN (U"Johnson (1998)", U"djmw", 20000525)
-NORMAL (U"D.E. Johnson (1998): %%Applied multivariate methods%.")
-MAN_END
+N. Henze & T. Wagner (1997): “A new approach to the BHEP tests for multivariate normality”,
+%%Journal of Multivariate Analysis% #62: 1\--23.
 
-MAN_BEGIN (U"Keating & Esposito (2006)", U"djmw", 20130620)
-NORMAL (U"P.A. Keating & C. Esposito (2006): \"Linguistic voice quality.\" %%UCLA Working Papers in Phonetics% #105: 85\\--91.")
-MAN_END
+################################################################################
+"Herbst et al. (2014)"
+© David Weenink 2019-08-29
 
-MAN_BEGIN (U"Khuri (1998)", U"djmw", 20120702)
-NORMAL (U"A. Khuri (1998): \"Unweighted sums of squares in unbalanced analysis of variance.\", %%Journal of Statistical Planning "
-	"and Inference% #74: 135\\--147.")
-MAN_END
+C. Herbst, J. Lohscheller, J. \S<vec, N. Henrich, G. Weissengruber & W. Tecumseh Fitch (2014):
+“Glottal opening and closing events investigated by electroglottography and super-high-speed video recordings”,
+%%The Journal of Experimental Biology% #217: 955\--963.
 
-MAN_BEGIN (U"Kim & Kim (2006)", U"djmw", 20110617)
-NORMAL (U"D.H. Kim & M.-J. Kim (2006): \"An extension of polygon clipping to resolve degenerate cases.\" %%Computer-Aided Design & Applications% #3: 447\\--456.")
-MAN_END
+################################################################################
+"Herbst (2019)"
+© David Weenink 2019-08-26
 
-MAN_BEGIN (U"Kostlan & Gokhman (1987)", U"djmw", 20170530)
-NORMAL (U"E. Kostlan & D. Gokhman (1987): \"A program for calculating the incomplete gamma function.\" %%Technical report, Dept. of Mathematics, Univ. of California, Berkeley, 1987.")
-MAN_END
+C. Herbst (2019): “Electroglottography \-- an update”, %%Journal of Voice%: In press.
 
-MAN_BEGIN (U"Krishnamoorthy & Yu (2004)", U"djmw", 20090813)
-NORMAL (U"K. Krishnamoorthy & J. Yu (2004): \"Modified Nel and Van der Merwe test for multivariate "
-	"Behrens-Fisher problem.\" %%Statistics & Probability Letters% #66: 161\\--169.")
-MAN_END
+################################################################################
+"Holighaus et al. (2013)"
+© David Weenink 2021-04-26
 
-MAN_BEGIN (U"Lamel et al. (1986)", U"djmw", 19980123)
-NORMAL (U"L.F. Lamel, R.H. Kassel & S. Sennef (1986): \"Speech Database "
-	"Development: Design and Analysis of the Acoustic-Phonetic Corpus.\" "
-	"%%Proc. DARPA Speech Recognition Workshop%, Report No. SAIC-86/1546, "
-	"100\\--119.")
-MAN_END
+N. Holighaus, M. Dörfler, G. A. Velasco & T. Grill (2013): “A framework for invertible, real-time constant-Q transforms”,
+%%IEEE Transactions on Audio, Speech, and Language Processing% #21: 775\--785.
+
+################################################################################
+"Hormann & Agathos (2001)"
+© David Weenink 2011-06-17
+
+K. Hormann & A. Agathos (2001): “The point in polygon problem for arbitrary polygons”,
+%%Computational Geometry% #20: 131\--144.
+
+################################################################################
+"Irino & Patterson (1997)"
+© David Weenink 2010-05-17
+
+T. Irino & R.D. Patterson (1997): “A time-domain, level-dependent auditory filter: The gammachirp”,
+%%Journal of the Acoustical Society of America% #101: 412\--419.
+
+################################################################################
+"Itakura & Saito (1968)"
+© David Weenink 2019-06-17
+
+F. Itakura & S. Saito (1968): “Analysis synthesis telephony based on the maximum likelihood method”,
+In %%Proc. 6th International Congress on Acoustics%, Los Alamitos, CA: IEEE: C-17\--20.
+
+################################################################################
+"Janecek et al. (2011)"
+© David Weenink 2019-03-12
+
+A. Janecek, S. Schulze Grotthoff & W.N. Gangsterer (2011):
+“LIBNMF \-- a library for nonnegative matrix factorization”, %%Computing and Informatics% #30: 205\--224.
+
+################################################################################
+"Johannesma (1972)"
+© David Weenink 1998-01-23
+
+Peter I.M. Johannesma (1972): “The pre-response stimulus ensemble of neurons in the cochlear nucleus.”
+In %%Symposium on Hearing Theory% (IPO, Eindhoven, Netherlands), 58\--69.
+
+################################################################################
+"Johnson (1998)"
+© David Weenink 2000-05-25
+
+D.E. Johnson (1998): %%Applied multivariate methods%.
+
+################################################################################
+"Keating & Esposito (2006)"
+© David Weenink 2013-06-20
+
+P.A. Keating & C. Esposito (2006): “Linguistic voice quality”, %%UCLA Working Papers in Phonetics% #105: 85\--91.
+
+################################################################################
+"Khuri (1998)"
+© David Weenink 2012-07-02
+
+A. Khuri (1998): “Unweighted sums of squares in unbalanced analysis of variance”,
+%%Journal of Statistical Planning and Inference% #74: 135\--147.
+
+################################################################################
+"Kim & Kim (2006)"
+© David Weenink 2011-06-17
+
+D.H. Kim & M.-J. Kim (2006): “An extension of polygon clipping to resolve degenerate cases”,
+%%Computer-Aided Design & Applications% #3: 447\--456.
+
+################################################################################
+"Kostlan & Gokhman (1987)"
+© David Weenink 2017-05-30
+
+E. Kostlan & D. Gokhman (1987): “A program for calculating the incomplete gamma function”,
+%%Technical Report, Dept. of Mathematics, Univ. of California%, Berkeley.
+
+################################################################################
+"Krishnamoorthy & Yu (2004)"
+© David Weenink 2009-08-13
+
+K. Krishnamoorthy & J. Yu (2004): “Modified Nel and Van der Merwe test for multivariate
+Behrens-Fisher problem”, %%Statistics & Probability Letters% #66: 161\--169.
+
+################################################################################
+"Lamel, Kassel & Seneff (1986)"
+© David Weenink 1998-01-23, Paul Boersma 2025
+
+Lori F. Lamel, Robert H. Kassel & Stephanie Seneff (1986):
+“Speech database development: Design and analysis of the acoustic-phonetic corpus.”
+%%Proc. DARPA Speech Recognition Workshop%, Report No. SAIC-86/1546, 100\--119.
+
+Reprinted in @@Garofolo, Lamel, Fisher, Fiscus, Pallett & Dahlgren (1993)@.
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Lee & Seung (2001)", U"djmw", 20190312)
 NORMAL (U"D.D. Lee & S.H. Seung (2001): \"Algorithms for non-negative matrix factorization.\" "
