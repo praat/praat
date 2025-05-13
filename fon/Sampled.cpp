@@ -1,10 +1,10 @@
 /* Sampled.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2021,2023,2024 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2021,2023-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -343,15 +343,15 @@ double Sampled_getIntegral_standardUnit (constSampled me, double xmin, double xm
 	return Function_convertSpecialToStandardUnit (me, integral, levelNumber, averagingUnit);
 }
 
-static void Sampled_getSum2AndDefinitionRange
-	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, double mean, bool interpolate, double *out_sum2, double *out_definitionRange)
+static void Sampled_getSumOfSquaredAndDefinitionRange
+	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, double mean, bool interpolate, double *out_sumOfSquared, double *out_definitionRange)
 {
 	/*
 		This function computes the area under the linearly interpolated squared difference curve between xmin and xmax.
 		Outside [x1-dx/2, xN+dx/2], the curve is undefined and neither times nor values are counted.
 		In [x1-dx/2,x1] and [xN,xN+dx/2], the curve is linearly extrapolated.
 	*/
-	longdouble sum2 = 0.0, definitionRange = 0.0;
+	longdouble sumOfSquared = 0.0, definitionRange = 0.0;
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
 		if (interpolate) {
@@ -364,7 +364,7 @@ static void Sampled_getSum2AndDefinitionRange
 						value -= mean;
 						value *= value;
 						definitionRange += 1.0;
-						sum2 += value;
+						sumOfSquared += value;
 					}
 				}
 				/*
@@ -378,23 +378,23 @@ static void Sampled_getSum2AndDefinitionRange
 						rightValue -= mean;
 						rightValue *= rightValue;
 						definitionRange -= 0.5;   // delete constant extrapolation over 0.5 sample
-						sum2 -= 0.5 * rightValue;
+						sumOfSquared -= 0.5 * rightValue;
 						if (isdefined (leftValue)) {
 							leftValue -= mean;
 							leftValue *= leftValue;
 							definitionRange += phase;   // add current fraction
-							sum2 += phase * (rightValue + 0.5 * phase * (leftValue - rightValue));   // interpolate to outside sample
+							sumOfSquared += phase * (rightValue + 0.5 * phase * (leftValue - rightValue));   // interpolate to outside sample
 						} else {
 							if (phase > 0.5)
 								phase = 0.5;
 							definitionRange += phase;   // add current fraction, but never more than 0.5
-							sum2 += phase * rightValue;
+							sumOfSquared += phase * rightValue;
 						}
 					} else if (isdefined (leftValue) && phase > 0.5) {
 						leftValue -= mean;
 						leftValue *= leftValue;
 						definitionRange += phase - 0.5;
-						sum2 += (phase - 0.5) * leftValue;
+						sumOfSquared += (phase - 0.5) * leftValue;
 					}
 				}
 				if (xmax < rightEdge) {   // otherwise, constant extrapolation is OK
@@ -405,23 +405,23 @@ static void Sampled_getSum2AndDefinitionRange
 						leftValue -= mean;
 						leftValue *= leftValue;
 						definitionRange -= 0.5;   // delete constant extrapolation over 0.5 sample
-						sum2 -= 0.5 * leftValue;
+						sumOfSquared -= 0.5 * leftValue;
 						if (isdefined (rightValue)) {
 							rightValue -= mean;
 							rightValue *= rightValue;
 							definitionRange += phase;   // add current fraction
-							sum2 += phase * (leftValue + 0.5 * phase * (rightValue - leftValue));   // interpolate to outside sample
+							sumOfSquared += phase * (leftValue + 0.5 * phase * (rightValue - leftValue));   // interpolate to outside sample
 						} else {
 							if (phase > 0.5)
 								phase = 0.5;
 							definitionRange += phase;   // add current fraction, but never more than 0.5
-							sum2 += phase * leftValue;
+							sumOfSquared += phase * leftValue;
 						}
 					} else if (isdefined (rightValue) && phase > 0.5) {
 						rightValue -= mean;
 						rightValue *= rightValue;
 						definitionRange += phase - 0.5;
-						sum2 += (phase - 0.5) * rightValue;
+						sumOfSquared += (phase - 0.5) * rightValue;
 					}
 				}
 			} else {   // no sample centres between xmin and xmax
@@ -441,12 +441,12 @@ static void Sampled_getSum2AndDefinitionRange
 							rightValue -= mean;
 							rightValue *= rightValue;
 							definitionRange += phase2 - phase1;
-							sum2 += (phase2 - phase1) * (leftValue + 0.5 * (phase1 + phase2) * (rightValue - leftValue));
+							sumOfSquared += (phase2 - phase1) * (leftValue + 0.5 * (phase1 + phase2) * (rightValue - leftValue));
 						} else if (phase1 < 0.5) {
 							if (phase2 > 0.5)
 								phase2 = 0.5;
 							definitionRange += phase2 - phase1;
-							sum2 += (phase2 - phase1) * leftValue;
+							sumOfSquared += (phase2 - phase1) * leftValue;
 						}
 					} else if (isdefined (rightValue) && phase2 > 0.5) {
 						rightValue -= mean;
@@ -454,7 +454,7 @@ static void Sampled_getSum2AndDefinitionRange
 						if (phase1 < 0.5)
 							phase1 = 0.5;
 						definitionRange += phase2 - phase1;
-						sum2 += (phase2 - phase1) * rightValue;
+						sumOfSquared += (phase2 - phase1) * rightValue;
 					}
 				}
 			}
@@ -469,7 +469,7 @@ static void Sampled_getSum2AndDefinitionRange
 						value -= mean;
 						value *= value;
 						definitionRange += 1.0;
-						sum2 += value;
+						sumOfSquared += value;
 					}
 				}
 				if (imin == imax) {
@@ -479,7 +479,7 @@ static void Sampled_getSum2AndDefinitionRange
 						value -= mean;
 						value *= value;
 						definitionRange += phase;
-						sum2 += phase * value;
+						sumOfSquared += phase * value;
 					}
 				} else {
 					if (imin >= 1) {
@@ -489,7 +489,7 @@ static void Sampled_getSum2AndDefinitionRange
 							value -= mean;
 							value *= value;
 							definitionRange += phase;
-							sum2 += phase * value;
+							sumOfSquared += phase * value;
 						}
 					}
 					if (imax <= my nx) {
@@ -499,26 +499,32 @@ static void Sampled_getSum2AndDefinitionRange
 							value -= mean;
 							value *= value;
 							definitionRange += phase;
-							sum2 += phase * value;
+							sumOfSquared += phase * value;
 						}
 					}
 				}
 			}
 		}
 	}
-	if (out_sum2)
-		*out_sum2 = double (sum2);
+	if (out_sumOfSquared)
+		*out_sumOfSquared = double (sumOfSquared);
 	if (out_definitionRange)
 		*out_definitionRange = double (definitionRange);
 }
 
+double Sampled_getIntegralOfSquared (constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
+	double sumOfSquared, definitionRange;
+	Sampled_getSumOfSquaredAndDefinitionRange (me, xmin, xmax, levelNumber, unit, 0.0, interpolate, & sumOfSquared, & definitionRange);
+	return sumOfSquared * my dx;
+}
+
 double Sampled_getStandardDeviation (constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
-	double sum, sum2, definitionRange;
+	double sum, sumOfSquared, definitionRange;
 	Sampled_getSumAndDefinitionRange (me, xmin, xmax, levelNumber, unit, interpolate, & sum, & definitionRange);
 	if (definitionRange < 2.0)
 		return undefined;
-	Sampled_getSum2AndDefinitionRange (me, xmin, xmax, levelNumber, unit, sum / definitionRange, interpolate, & sum2, & definitionRange);
-	return sqrt (sum2 / (definitionRange - 1.0));
+	Sampled_getSumOfSquaredAndDefinitionRange (me, xmin, xmax, levelNumber, unit, sum / definitionRange, interpolate, & sumOfSquared, & definitionRange);
+	return sqrt (sumOfSquared / (definitionRange - 1.0));
 }
 
 double Sampled_getStandardDeviation_standardUnit (constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate) {

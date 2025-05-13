@@ -272,11 +272,11 @@ autoSound Sound_extractChannels (constSound me, constINTVECVU const& channels) {
 	}
 }
 
-static double getSumOfSquares (constSound me, double xmin, double xmax, integer *n) {
+static double getSumOfSquares (constSound me, double tmin, double tmax, integer *n) {
 	Melder_assert (me);
-	Function_unidirectionalAutowindow (me, & xmin, & xmax);
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	integer imin, imax;
-	*n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
+	*n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if (*n <= 0)
 		return undefined;
 	longdouble sumOfSquares = 0.0;
@@ -290,21 +290,22 @@ static double getSumOfSquares (constSound me, double xmin, double xmax, integer 
 	return double (sumOfSquares);
 }
 
-double Sound_getRootMeanSquare (constSound me, double xmin, double xmax) {
+double Sound_getRootMeanSquare (constSound me, double tmin, double tmax) {
 	integer n;
-	const double sumOfSquares = getSumOfSquares (me, xmin, xmax, & n);
+	const double sumOfSquares = getSumOfSquares (me, tmin, tmax, & n);
 	return isdefined (sumOfSquares) ? sqrt (sumOfSquares / (n * my ny)) : undefined;
 }
 
-double Sound_getEnergy (constSound me, double xmin, double xmax) {
-	integer n;
-	const double sumOfSquares = getSumOfSquares (me, xmin, xmax, & n);
-	return isdefined (sumOfSquares) ? sumOfSquares * my dx / my ny : undefined;
+double Sound_getEnergy (constSound me, double tmin, double tmax) {
+	/* mutable accumulate */ double integralOfSquared = 0.0;
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		integralOfSquared += Sampled_getIntegralOfSquared (me, tmin, tmax, ichan, 0, false);
+	return isdefined (integralOfSquared) ? integralOfSquared / my ny : undefined;
 }
 
-double Sound_getPower (constSound me, double xmin, double xmax) {
+double Sound_getPower (constSound me, double tmin, double tmax) {
 	integer n;
-	const double sumOfSquares = getSumOfSquares (me, xmin, xmax, & n);
+	const double sumOfSquares = getSumOfSquares (me, tmin, tmax, & n);
 	return isdefined (sumOfSquares) ? sumOfSquares / (n * my ny) : undefined;
 }
 
@@ -1102,8 +1103,8 @@ void Sound_scaleIntensity (mutableSound me, double newAverageIntensity) {
 	my z.all()  *=  factor;
 }
 
-void Sound_overrideSamplingFrequency (mutableSound me, double rate) {
-	my dx = 1.0 / rate;
+void Sound_overrideSamplingFrequency (mutableSound me, double newSamplingFrequency) {
+	my dx = 1.0 / newSamplingFrequency;
 	my x1 = my xmin + 0.5 * my dx;
 	my xmax = my xmin + my nx * my dx;
 }

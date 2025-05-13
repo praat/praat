@@ -2,11 +2,11 @@
 #define _Sampled_h_
 /* Sampled.h
  *
- * Copyright (C) 1992-2005,2007,2011,2013-2020,2024 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2013-2020,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -98,6 +98,8 @@ double Sampled_getIntegral
 	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate);
 double Sampled_getIntegral_standardUnit
 	(constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate);
+double Sampled_getIntegralOfSquared
+	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate);
 double Sampled_getStandardDeviation
 	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate);
 double Sampled_getStandardDeviation_standardUnit
