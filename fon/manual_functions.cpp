@@ -3825,7 +3825,7 @@ Syntax and semantics
 
 ################################################################################
 "`random_initializeWithSeedUnsafelyButPredictably`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2025
 
 A function that can be used in @@Formulas@.
 
@@ -3833,6 +3833,8 @@ Syntax and semantics
 ====================
 #`random_initializeWithSeedUnsafelyButPredictably` (%`seed`)
 : produce (from now on) a reproducible sequence of random numbers.
+
+The effects of this function can be undone by @`random_initializeSafelyAndUnpredictably`.
 
 ################################################################################
 "`readFile`"
