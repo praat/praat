@@ -2,11 +2,11 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2005,2006-2008,2010-2019,2021-2024 Paul Boersma
+ * Copyright (C) 1992-2005,2006-2008,2010-2019,2021-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -154,6 +154,8 @@ autoSound Sounds_convolve (constSound me, constSound thee, kSounds_convolve_scal
 autoSound Sounds_crossCorrelate (constSound me, constSound thee, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 autoSound Sounds_crossCorrelate_short (constSound me, constSound thee, double tmin, double tmax, bool normalize);
 autoSound Sound_autoCorrelate (constSound me, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+
+void Sound_shiftTimesToBetweenZeroAndPhysicalDuration (mutableSound me);
 
 double Sound_getRootMeanSquare (constSound me, double xmin, double xmax);
 double Sound_getEnergy (constSound me, double xmin, double xmax);

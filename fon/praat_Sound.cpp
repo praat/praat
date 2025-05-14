@@ -1,10 +1,10 @@
 /* praat_Sound.cpp
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -1385,6 +1385,12 @@ DIRECT (MODIFY_Sound_subtractMean) {
 	MODIFY_EACH_END
 }
 
+DIRECT (MODIFY_Sound_shiftTimesToBetweenZeroAndPhysicalDuration) {
+	MODIFY_EACH (Sound)
+		Sound_shiftTimesToBetweenZeroAndPhysicalDuration (me);
+	MODIFY_EACH_END
+}
+
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Manipulation, U"Sound: To Manipulation", U"Manipulation") {
 	POSITIVE (timeStep, U"Time step (s)", U"0.01")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
@@ -2471,6 +2477,7 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 0, U"Formula (part)...", nullptr, 1, MODIFY_Sound_formula_part);
 		praat_addAction1 (classSound, 0, U"-- add & mul --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"Add...", nullptr, 1, MODIFY_Sound_add);
+		praat_addAction1 (classSound, 0, U"Shift times to between zero and physical duration", U"Shift times to...", 3, MODIFY_Sound_shiftTimesToBetweenZeroAndPhysicalDuration);
 		praat_addAction1 (classSound, 0, U"Subtract mean", nullptr, 1, MODIFY_Sound_subtractMean);
 		praat_addAction1 (classSound, 0, U"Multiply...", nullptr, 1, MODIFY_Sound_multiply);
 		praat_addAction1 (classSound, 0, U"Multiply by window...", nullptr, 1, MODIFY_Sound_multiplyByWindow);
