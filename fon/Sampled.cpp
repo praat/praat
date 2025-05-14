@@ -180,7 +180,7 @@ double Sampled_getQuantile (constSampled me, double xmin, double xmax, double qu
 	}
 }
 
-static void Sampled_getSumAndDefinitionRange
+static void getSumAndDefinitionRange
 	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate, double *out_sum, double *out_definitionRange)
 {
 	/*
@@ -194,7 +194,7 @@ static void Sampled_getSumAndDefinitionRange
 		if (interpolate) {
 			integer imin, imax;
 			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax) > 0) {
-				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
+				const double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 				for (integer isamp = imin; isamp <= imax; isamp ++) {
 					const double value = my v_getValueAtSample (isamp, levelNumber, unit);   // a fast way to integrate a linearly interpolated curve; works everywhere except at the edges
 					if (isdefined (value)) {
@@ -321,29 +321,7 @@ static void Sampled_getSumAndDefinitionRange
 		*out_definitionRange = double (definitionRange);
 }
 
-double Sampled_getMean (constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
-	double sum, definitionRange;
-	Sampled_getSumAndDefinitionRange (me, xmin, xmax, levelNumber, unit, interpolate, & sum, & definitionRange);
-	return definitionRange <= 0.0 ? undefined : sum / definitionRange;
-}
-
-double Sampled_getMean_standardUnit (constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate) {
-	const double mean = Sampled_getMean (me, xmin, xmax, levelNumber, averagingUnit, interpolate);
-	return Function_convertSpecialToStandardUnit (me, mean, levelNumber, averagingUnit);
-}
-
-double Sampled_getIntegral (constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
-	double sum, definitionRange;
-	Sampled_getSumAndDefinitionRange (me, xmin, xmax, levelNumber, unit, interpolate, & sum, & definitionRange);
-	return sum * my dx;
-}
-
-double Sampled_getIntegral_standardUnit (constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate) {
-	const double integral = Sampled_getIntegral (me, xmin, xmax, levelNumber, averagingUnit, interpolate);
-	return Function_convertSpecialToStandardUnit (me, integral, levelNumber, averagingUnit);
-}
-
-static void Sampled_getSumOfSquaredAndDefinitionRange
+static void getSumOfSquaredAndDefinitionRange
 	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, double mean, bool interpolate, double *out_sumOfSquared, double *out_definitionRange)
 {
 	/*
@@ -512,18 +490,60 @@ static void Sampled_getSumOfSquaredAndDefinitionRange
 		*out_definitionRange = double (definitionRange);
 }
 
+double Sampled_getMean (constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
+	double sum, definitionRange;
+	getSumAndDefinitionRange (me, xmin, xmax, levelNumber, unit, interpolate, & sum, & definitionRange);
+	return definitionRange <= 0.0 ? undefined : sum / definitionRange;
+}
+
+double Sampled_getMeanOfSquared (constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
+	double sumOfSquared, definitionRange;
+	getSumOfSquaredAndDefinitionRange (me, xmin, xmax, levelNumber, unit, 0.0, interpolate, & sumOfSquared, & definitionRange);
+	return definitionRange <= 0.0 ? undefined : sumOfSquared / definitionRange;
+}
+
+double Sampled_getMean_standardUnit (constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate) {
+	const double mean = Sampled_getMean (me, xmin, xmax, levelNumber, averagingUnit, interpolate);
+	return Function_convertSpecialToStandardUnit (me, mean, levelNumber, averagingUnit);
+}
+
+#if 0
+double Sampled_getMeanOfSquared_standardUnit (constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate) {
+	const double meanOfSquared = Sampled_getMeanOfSquared (me, xmin, xmax, levelNumber, averagingUnit, interpolate);
+	return Function_convertSpecialToStandardUnit (me, meanOfSquared, levelNumber, averagingUnit);   // TODO: unsquare
+}
+#endif
+
+double Sampled_getIntegral (constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
+	double sum, definitionRange;
+	getSumAndDefinitionRange (me, xmin, xmax, levelNumber, unit, interpolate, & sum, & definitionRange);
+	return sum * my dx;
+}
+
 double Sampled_getIntegralOfSquared (constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
 	double sumOfSquared, definitionRange;
-	Sampled_getSumOfSquaredAndDefinitionRange (me, xmin, xmax, levelNumber, unit, 0.0, interpolate, & sumOfSquared, & definitionRange);
+	getSumOfSquaredAndDefinitionRange (me, xmin, xmax, levelNumber, unit, 0.0, interpolate, & sumOfSquared, & definitionRange);
 	return sumOfSquared * my dx;
 }
 
+double Sampled_getIntegral_standardUnit (constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate) {
+	const double integral = Sampled_getIntegral (me, xmin, xmax, levelNumber, averagingUnit, interpolate);
+	return Function_convertSpecialToStandardUnit (me, integral, levelNumber, averagingUnit);
+}
+
+#if 0
+double Sampled_getIntegralOfSquared_standardUnit (constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate) {
+	const double integral = Sampled_getIntegral (me, xmin, xmax, levelNumber, averagingUnit, interpolate);
+	return Function_convertSpecialToStandardUnit (me, integral, levelNumber, averagingUnit);   // TODO: unsquare
+}
+#endif
+
 double Sampled_getStandardDeviation (constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
 	double sum, sumOfSquared, definitionRange;
-	Sampled_getSumAndDefinitionRange (me, xmin, xmax, levelNumber, unit, interpolate, & sum, & definitionRange);
+	getSumAndDefinitionRange (me, xmin, xmax, levelNumber, unit, interpolate, & sum, & definitionRange);
 	if (definitionRange < 2.0)
 		return undefined;
-	Sampled_getSumOfSquaredAndDefinitionRange (me, xmin, xmax, levelNumber, unit, sum / definitionRange, interpolate, & sumOfSquared, & definitionRange);
+	getSumOfSquaredAndDefinitionRange (me, xmin, xmax, levelNumber, unit, sum / definitionRange, interpolate, & sumOfSquared, & definitionRange);
 	return sqrt (sumOfSquared / (definitionRange - 1.0));
 }
 

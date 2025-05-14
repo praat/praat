@@ -92,14 +92,20 @@ double Sampled_getQuantile
 	(constSampled me, double xmin, double xmax, double quantile, integer levelNumber, int unit);
 double Sampled_getMean
 	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate);
+double Sampled_getMeanOfSquared
+	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate);
 double Sampled_getMean_standardUnit
+	(constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate);
+double Sampled_getMeanOfSquared_standardUnit
 	(constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate);
 double Sampled_getIntegral
 	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate);
-double Sampled_getIntegral_standardUnit
-	(constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate);
 double Sampled_getIntegralOfSquared
 	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate);
+double Sampled_getIntegral_standardUnit
+	(constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate);
+double Sampled_getIntegralOfSquared_standardUnit
+	(constSampled me, double xmin, double xmax, integer levelNumber, int averagingUnit, bool interpolate);
 double Sampled_getStandardDeviation
 	(constSampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate);
 double Sampled_getStandardDeviation_standardUnit

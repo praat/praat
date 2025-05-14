@@ -1087,13 +1087,74 @@ ensures that the result is a continuous function of %t_1 and %t_2,
 i.e., a very small change in %t_1 or %t_2 can only lead to a very small change in the computed energy
 (instead, simply summing over all samples whose centre falls between %t_1 and %t_2 would result instead in a sudden jump
 in the computed energy whenever %t_1 or %t_2 crosses a sample centre,
-which would be unphysical behaviour and therefore not how Praat should behave).
+which would be unphysical behaviour and therefore not how Praat should behave;
+see the @@energy integration continuity test@).
 
 Edge cases
 ==========
 
 If the sound is not defined everywhere between %t_1 and %t_2, then the energy is not defined there either.
-Those times are skipped in the integral.
+Those times are skipped in the integral, i.e. they count as if they have zero energy.
+
+################################################################################
+"energy integration continuity test"
+© Paul Boersma 2025-05-14
+
+{
+	\`{random_initializeWithSeedUnsafelyButPredictably} (89678363)
+	samplingFrequency = 44100
+	my.Sound = \@{Create Sound from formula:} "sineWithNoise", 1, 0.0, 1.0,
+	... samplingFrequency, ~ 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)
+}
+
+What is the biggest step between two consecutive samples?
+{
+	difference.Sound = \@{Copy:} "difference"
+	\@{Formula:} ~ if col = ncol then 0 else self [col + 1] - self [col] fi
+	biggestAbsoluteWaveformStepBetweenSamples = \@{Sound: ||Get absolute extremum:} 0, 0, "none"
+	\`{appendInfoLine}: "## biggest absolute waveform step between samples: ",
+	... biggestAbsoluteWaveformStepBetweenSamples, " Pa"
+}
+
+This corresponds to the following biggest energy step between two consecutive samples:
+{
+	biggestAbsoluteEnergyStepBetweenSamples = biggestAbsoluteWaveformStepBetweenSamples ^ 2 / samplingFrequency
+	\`{appendInfoLine}: "## biggest absolute energy step between samples: ",
+	... biggestAbsoluteEnergyStepBetweenSamples, " Pa²s"
+}
+
+We’ll divide up every sample into 10 ministeps:
+{
+	oversampling = 10
+}
+
+Between any consecutive ministeps, the energy step should not exceed one tenth
+of the biggest energy step between two consecutive samples:
+{
+	biggestAbsoluteEnergyMinistep = biggestAbsoluteEnergyStepBetweenSamples / oversampling
+	\`{appendInfoLine}: "## biggest absolute energy ministep: ",
+	... biggestAbsoluteEnergyMinistep, " Pa²s"
+}
+
+Large test:
+{
+	\`{stopwatch}
+	minidt = 1.0 / samplingFrequency / oversampling
+	tmin = 1e-9   ; not 0.0, in order to prevent autowindowing
+	previousEnergy = \#@{Sound: ||Get energy:} 0, tmin
+	for i from 1 to 10000
+		energy = \#@{Sound: ||Get energy:} 0, tmin + i * minidt
+		energyGain = energy - previousEnergy
+		if i < 100
+			\`{appendInfoLine}: i, " ", energy, " ", energyGain
+		endif
+		step = \`{abs} (energyGain)
+		\`{assert} step > 0.0
+		\`{assert} step < 1.0000000000001 * biggestAbsoluteEnergyMinistep   ; also captures undefined samples
+		previousEnergy = energy
+	endfor
+	\`{appendInfoLine}: "## time elapsed: ", \`{fixed$} (\`{stopwatch} * 1000, 3), " ms"
+}
 
 ################################################################################
 "Sound: Get energy in air"

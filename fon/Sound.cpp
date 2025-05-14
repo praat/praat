@@ -272,28 +272,17 @@ autoSound Sound_extractChannels (constSound me, constINTVECVU const& channels) {
 	}
 }
 
-static double getSumOfSquares (constSound me, double tmin, double tmax, integer *n) {
-	Melder_assert (me);
-	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	*n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-	if (*n <= 0)
-		return undefined;
-	longdouble sumOfSquares = 0.0;
-	for (integer ichan = 1; ichan <= my ny; ichan ++) {
-		constVECVU const& channel = my z.row (ichan);
-		for (integer i = imin; i <= imax; i ++) {
-			const longdouble value = channel [i];
-			sumOfSquares += value * value;
-		}
-	}
-	return double (sumOfSquares);
+void Sound_shiftTimesToBetweenZeroAndPhysicalDuration (mutableSound me) {
+	my xmin = 0.0;
+	my x1 = 0.5 * my dx;
+	my xmax = my nx * my dx;
 }
 
 double Sound_getRootMeanSquare (constSound me, double tmin, double tmax) {
-	integer n;
-	const double sumOfSquares = getSumOfSquares (me, tmin, tmax, & n);
-	return isdefined (sumOfSquares) ? sqrt (sumOfSquares / (n * my ny)) : undefined;
+	/* mutable accumulate */ double meanOfSquared = 0.0;
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		meanOfSquared += Sampled_getMeanOfSquared (me, tmin, tmax, ichan, 0, false);
+	return isdefined (meanOfSquared) ? sqrt (meanOfSquared / my ny) : undefined;
 }
 
 double Sound_getEnergy (constSound me, double tmin, double tmax) {
@@ -304,27 +293,31 @@ double Sound_getEnergy (constSound me, double tmin, double tmax) {
 }
 
 double Sound_getPower (constSound me, double tmin, double tmax) {
-	integer n;
-	const double sumOfSquares = getSumOfSquares (me, tmin, tmax, & n);
-	return isdefined (sumOfSquares) ? sumOfSquares / (n * my ny) : undefined;
+	/* mutable accumulate */ double meanOfSquared = 0.0;
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		meanOfSquared += Sampled_getMeanOfSquared (me, tmin, tmax, ichan, 0, false);
+	return isdefined (meanOfSquared) ? meanOfSquared / my ny : undefined;
 }
 
 double Sound_getEnergyInAir (constSound me) {
-	integer n;
-	const double sumOfSquares = getSumOfSquares (me, 0.0, 0.0, & n);
-	return isdefined (sumOfSquares) ? sumOfSquares * my dx / (400.0 * my ny) : undefined;
+	/* mutable accumulate */ double integralOfSquared = 0.0;
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		integralOfSquared += Sampled_getIntegralOfSquared (me, 0.0, 0.0, ichan, 0, false);
+	return isdefined (integralOfSquared) ? integralOfSquared / (400.0 * my ny) : undefined;
 }
 
 double Sound_getIntensity_dB (constSound me) {
-	integer n;
-	const double sumOfSquares = getSumOfSquares (me, 0.0, 0.0, & n);
-	return isdefined (sumOfSquares) && sumOfSquares != 0.0 ? 10.0 * log10 (sumOfSquares / (n * my ny) / 4.0e-10) : undefined;
+	/* mutable accumulate */ double meanOfSquared = 0.0;
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		meanOfSquared += Sampled_getMeanOfSquared (me, 0.0, 0.0, ichan, 0, false);
+	return isdefined (meanOfSquared) && meanOfSquared != 0.0 ? 10.0 * log10 (meanOfSquared / (4.0e-10 * my ny)) : undefined;
 }
 
 double Sound_getPowerInAir (constSound me) {
-	integer n;
-	const double sumOfSquares = getSumOfSquares (me, 0, 0, & n);
-	return ( isdefined (sumOfSquares) ? sumOfSquares / (n * my ny) / 400.0 : undefined );
+	/* mutable accumulate */ double meanOfSquared = 0.0;
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		meanOfSquared += Sampled_getMeanOfSquared (me, 0.0, 0.0, ichan, 0, false);
+	return ( isdefined (meanOfSquared) ? meanOfSquared / (400.0 * my ny) : undefined );
 }
 
 autoSound Matrix_to_Sound_mono (constMatrix me, integer rowNumber) {
