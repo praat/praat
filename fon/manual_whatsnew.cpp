@@ -29,6 +29,9 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.33# (18 May 2025)
+• Repaired an old bug that made spectrogram computation in the Sound window crash under some uncommon combinations of settings.
+
 ##6.4.32# (14 May 2025)
 • Better continuity of integration of energy (finally corresponds to manual).
 • Scripting: more reliable @`random_initializeWithSeedUnsafelyButPredictably` (works even after an odd number of @`randomGauss`).
