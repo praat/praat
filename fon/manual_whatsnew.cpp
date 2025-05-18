@@ -30,6 +30,7 @@ R"~~~(
 Latest changes in Praat.
 
 ##6.4.33# (18 May 2025)
+• H1-minus-H2 in the voice report.
 • Repaired an old bug that made spectrogram computation in the Sound window crash under some uncommon combinations of settings.
 
 ##6.4.32# (14 May 2025)
