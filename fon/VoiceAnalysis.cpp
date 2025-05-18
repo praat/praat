@@ -1,10 +1,10 @@
 /* VoiceAnalysis.cpp
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2020,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -18,26 +18,28 @@
 
 #include "VoiceAnalysis.h"
 #include "AmplitudeTier.h"
+#include "H1minusH2Tier.h"
 
 double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
-	integer numberOfPeriods = pointNumbers.size() - 1;
+	/* mutable adjust */ integer numberOfPeriods = pointNumbers.size() - 1;
 	if (numberOfPeriods < 2)
 		return undefined;
 	longdouble sum = 0.0;
 	for (integer i = pointNumbers.first + 1; i < pointNumbers.last; i ++) {
 		const double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
-		const double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
+		const double intervalFactor = ( p1 > p2 ? p1 / p2 : p2 / p1 );
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
 			sum += fabs (p1 - p2);
 		} else {
 			numberOfPeriods --;
 		}
 	}
-	if (numberOfPeriods < 2) return undefined;
+	if (numberOfPeriods < 2)
+		return undefined;
 	return double (sum / (numberOfPeriods - 1)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
@@ -46,20 +48,22 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
-	integer numberOfPeriods = pointNumbers.size() - 1;
+	/* mutable adjust */ integer numberOfPeriods = pointNumbers.size() - 1;
 	if (numberOfPeriods < 2)
 		return undefined;
 	longdouble sum = 0.0;
 	for (integer i = pointNumbers.first + 1; i < pointNumbers.last; i ++) {
-		const double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
-		const double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
+		const double p1 = my t [i] - my t [i - 1];
+		const double p2 = my t [i + 1] - my t [i];
+		const double intervalFactor = ( p1 > p2 ? p1 / p2 : p2 / p1 );
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
 			sum += fabs (p1 - p2);
 		} else {
 			numberOfPeriods --;
 		}
 	}
-	if (numberOfPeriods < 2) return undefined;
+	if (numberOfPeriods < 2)
+		return undefined;
 	return double (sum / (numberOfPeriods - 1));
 }
 
@@ -68,13 +72,16 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
-	integer numberOfPeriods = pointNumbers.size() - 1;
+	/* mutable adjust */ integer numberOfPeriods = pointNumbers.size() - 1;
 	if (numberOfPeriods < 3)
 		return undefined;
 	longdouble sum = 0.0;
 	for (integer i = pointNumbers.first + 2; i < pointNumbers.last; i ++) {
-		const double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
-		const double intervalFactor1 = p1 > p2 ? p1 / p2 : p2 / p1, intervalFactor2 = p2 > p3 ? p2 / p3 : p3 / p2;
+		const double p1 = my t [i - 1] - my t [i - 2];
+		const double p2 = my t [i] - my t [i - 1];
+		const double p3 = my t [i + 1] - my t [i];
+		const double intervalFactor1 = ( p1 > p2 ? p1 / p2 : p2 / p1 );
+		const double intervalFactor2 = ( p2 > p3 ? p2 / p3 : p3 / p2 );
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax
 		    && intervalFactor1 <= maximumPeriodFactor && intervalFactor2 <= maximumPeriodFactor))
 		{
@@ -83,7 +90,8 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 			numberOfPeriods --;
 		}
 	}
-	if (numberOfPeriods < 3) return undefined;
+	if (numberOfPeriods < 3)
+		return undefined;
 	return double (sum / (numberOfPeriods - 2)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
@@ -92,22 +100,20 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
-	integer numberOfPeriods = pointNumbers.size() - 1;
+	/* mutable adjust */ integer numberOfPeriods = pointNumbers.size() - 1;
 	if (numberOfPeriods < 5)
 		return undefined;
 	longdouble sum = 0.0;
 	for (integer i = pointNumbers.first + 5; i <= pointNumbers.last; i ++) {
-		const double
-			p1 = my t [i - 4] - my t [i - 5],
-			p2 = my t [i - 3] - my t [i - 4],
-			p3 = my t [i - 2] - my t [i - 3],
-			p4 = my t [i - 1] - my t [i - 2],
-			p5 = my t [i] - my t [i - 1];
-		const double
-			f1 = p1 > p2 ? p1 / p2 : p2 / p1,
-			f2 = p2 > p3 ? p2 / p3 : p3 / p2,
-			f3 = p3 > p4 ? p3 / p4 : p4 / p3,
-			f4 = p4 > p5 ? p4 / p5 : p5 / p4;
+		const double p1 = my t [i - 4] - my t [i - 5];
+		const double p2 = my t [i - 3] - my t [i - 4];
+		const double p3 = my t [i - 2] - my t [i - 3];
+		const double p4 = my t [i - 1] - my t [i - 2];
+		const double p5 = my t [i] - my t [i - 1];
+		const double f1 = ( p1 > p2 ? p1 / p2 : p2 / p1 );
+		const double f2 = ( p2 > p3 ? p2 / p3 : p3 / p2 );
+		const double f3 = ( p3 > p4 ? p3 / p4 : p4 / p3 );
+		const double f4 = ( p4 > p5 ? p4 / p5 : p5 / p4 );
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax &&
 			p4 >= pmin && p4 <= pmax && p5 >= pmin && p5 <= pmax &&
 			f1 <= maximumPeriodFactor && f2 <= maximumPeriodFactor && f3 <= maximumPeriodFactor && f4 <= maximumPeriodFactor))
@@ -117,14 +123,15 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 			numberOfPeriods --;
 		}
 	}
-	if (numberOfPeriods < 5) return undefined;
+	if (numberOfPeriods < 5)
+		return undefined;
 	return double (sum / (numberOfPeriods - 4)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
 double PointProcess_getJitter_ddp (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	double rap = PointProcess_getJitter_rap (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+	const double rap = PointProcess_getJitter_rap (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 	return ( isdefined (rap) ? 3.0 * rap : undefined );
 }
 
@@ -134,7 +141,7 @@ double PointProcess_Sound_getShimmer_local (PointProcess me, Sound thee, double 
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_local (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_local_u (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -151,7 +158,7 @@ double PointProcess_Sound_getShimmer_local_dB (PointProcess me, Sound thee, doub
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_local_dB (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_local_dB_u (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -168,7 +175,7 @@ double PointProcess_Sound_getShimmer_apq3 (PointProcess me, Sound thee, double t
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_apq3 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_apq3_u (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -185,7 +192,7 @@ double PointProcess_Sound_getShimmer_apq5 (PointProcess me, Sound thee, double t
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_apq5 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_apq5_u (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -202,7 +209,7 @@ double PointProcess_Sound_getShimmer_apq11 (PointProcess me, Sound thee, double 
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_apq11 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_apq11_u (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -219,9 +226,8 @@ double PointProcess_Sound_getShimmer_dda (PointProcess me, Sound thee, double tm
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		double apq3 = AmplitudeTier_getShimmer_apq3 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
-		return
-			isdefined (apq3) ? 3.0 * apq3 : undefined;
+		const double apq3 = AmplitudeTier_getShimmer_apq3_u (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		return ( isdefined (apq3) ? 3.0 * apq3 : undefined );
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -239,12 +245,12 @@ void PointProcess_Sound_getShimmer_multi (PointProcess me, Sound thee, double tm
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		if (local)    *local    =       AmplitudeTier_getShimmer_local    (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
-		if (local_dB) *local_dB =       AmplitudeTier_getShimmer_local_dB (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
-		if (apq3)     *apq3     =       AmplitudeTier_getShimmer_apq3     (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
-		if (apq5)     *apq5     =       AmplitudeTier_getShimmer_apq5     (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
-		if (apq11)    *apq11    =       AmplitudeTier_getShimmer_apq11    (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
-		if (dda)      *dda      = 3.0 * AmplitudeTier_getShimmer_apq3     (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (local)    *local    =       AmplitudeTier_getShimmer_local_u    (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (local_dB) *local_dB =       AmplitudeTier_getShimmer_local_dB_u (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (apq3)     *apq3     =       AmplitudeTier_getShimmer_apq3_u     (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (apq5)     *apq5     =       AmplitudeTier_getShimmer_apq5_u     (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (apq11)    *apq11    =       AmplitudeTier_getShimmer_apq11_u    (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (dda)      *dda      = 3.0 * AmplitudeTier_getShimmer_apq3_u     (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -352,6 +358,15 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		MelderInfo_writeLine (U"   Mean autocorrelation: ", Melder_fixed (meanAutocorrelation, 6));
 		MelderInfo_writeLine (U"   Mean noise-to-harmonics ratio: ", Melder_fixed (meanNHR, 6));
 		MelderInfo_writeLine (U"   Mean harmonics-to-noise ratio: ", Melder_fixed (meanHNR_dB, 3), U" dB");
+		/*
+			H1 minus H2.
+		*/
+		autoH1minusH2Tier h1minusH2 = PointProcess_Sound_to_H1minusH2Tier (pulses, sound, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+		const double meanOfThePoints = RealTier_getMean_points (h1minusH2.get(), tmin, tmax);
+		const double meanOfTheCurve = RealTier_getMean_curve (h1minusH2.get(), tmin, tmax);
+		MelderInfo_writeLine (U"H1-minus-H2:");
+		MelderInfo_writeLine (U"   Mean of the points: ", Melder_fixed (meanOfThePoints, 3), U" dB");
+		MelderInfo_writeLine (U"   Mean of the curve: ", Melder_fixed (meanOfTheCurve, 3), U" dB");
 	} catch (MelderError) {
 		Melder_throw (sound, U" & ", pitch, U" & ", pulses, U": voice report not computed.");
 	}

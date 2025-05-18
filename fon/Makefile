@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 19 April 2025
+# Paul Boersma, 18 May 2025
 
 include ../makefile.defs
 
@@ -21,7 +21,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    Excitation.o Cochleagram.o Cochleagram_and_Excitation.o Excitation_to_Formant.o \
    Sound_to_Cochleagram.o Spectrum_to_Excitation.o \
    VocalTract.o VocalTract_to_Spectrum.o \
-   Sound_enhance.o VoiceAnalysis.o \
+   Sound_enhance.o VoiceAnalysis.o H1minusH2Tier.o \
    WordList.o SpellingChecker.o \
    FujisakiPitch.o \
    ExperimentMFC.o manual_ExperimentMFC.o praat_ExperimentMFC.o \
