@@ -4487,10 +4487,10 @@ NORMAL (U"First the intensity contour is evaluated and the intervals above and b
 NORMAL (U"Experience showed that first removing short intensity bursts instead of short silences gave better results than doing it the other way around.")
 ENTRY (U"Important")
 NORMAL (U"The effectiveness of the %%Minimum silent interval duration% and %%Minimum sounding interval duration% "
-	"depends on the effective analysis window duration that was used to determine the intensity contour. "
+	"depends on the effective window length that was used to determine the intensity contour. "
 	"For example, if you have chosen 100 Hz for the “Pitch floor” parameter in the @@Sound: To Intensity...@ analysis, "
-	"the effective analysis window duration was 32 ms. Don't expect to find sounding "
-	"or silent intervals with a duration smaller than this effective analysis window duration.")
+	"the effective window length was 32 ms. Don't expect to find sounding "
+	"or silent intervals with a duration smaller than this effective window length.")
 MAN_END
 
 MAN_BEGIN (U"ConstantQLogFSpectrogram", U"djmw", 20211111)

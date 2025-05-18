@@ -992,7 +992,7 @@ MAN_BEGIN (U"Sound: To Formant (robust)...", U"djmw", 20111027)
 INTRO (U"A command that creates a @@Formant@ object from every selected @@Sound@. ")
 ENTRY (U"Settings")
 NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Formant ceiling (Hz), "
-	"##Window length (s)# and ##Pre emphasis from (Hz)# are as in @@Sound: To Formant (burg)...@. "
+	"##Window length (s)# and ##Pre-emphasis from (Hz)# are as in @@Sound: To Formant (burg)...@. "
 	" The following settings determine aspects of the iterative formant frequency refinement.")
 TERM (U"%%Number of std. dev.%,")
 DEFINITION (U"determines the number of standard deviations from where selective weighing of samples starts. ")

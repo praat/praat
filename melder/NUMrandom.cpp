@@ -114,6 +114,7 @@ class NUMrandom_State { public:
 				(UINT64_C (6364136223846793005) * (array [index - 1] ^ (array [index - 1] >> 62))
 				+ (uint64) index);
 		}
+		secondAvailable = false;   // ensure consistent starting state even after calling NUMrandomGauss an odd number of times
 		return array [NN - 1];
 	}
 

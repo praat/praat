@@ -2979,18 +2979,18 @@ autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, integer maxi
 		const integer numberOfDeltaFormants = 1;
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.get());
-		autoFormant f = Sound_to_Formant_burg (sound.get(), timeStep, maximumNumberOfFormants,
-		                                       maximumFormantFrequency, windowLength, preEmphasisFrequency);
-		autoFormantGrid fgrid = Formant_downto_FormantGrid (f.get());
-		autoPitch p = Sound_to_Pitch (sound.get(), timeStep, pitchFloor, pitchCeiling);
-		autoPitchTier ptier = Pitch_to_PitchTier (p.get());
-		autoIntensity i = Sound_to_Intensity (sound.get(), pitchFloorForIntensity, timeStep, subtractMean);
-		autoIntensityTier itier = Intensity_downto_IntensityTier (i.get());
+		autoFormant formant = Sound_to_Formant_burg (sound.get(), timeStep, maximumNumberOfFormants,
+				maximumFormantFrequency, windowLength, preEmphasisFrequency);
+		autoFormantGrid formantGrid = Formant_downto_FormantGrid (formant.get());
+		autoPitch pitch = Sound_to_Pitch (sound.get(), timeStep, pitchFloor, pitchCeiling);
+		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
+		autoIntensity intensity = Sound_to_Intensity (sound.get(), pitchFloorForIntensity, timeStep, subtractMean);
+		autoIntensityTier intensityTier = Intensity_downto_IntensityTier (intensity.get());
 		autoKlattGrid thee = KlattGrid_create (my xmin, my xmax, numberOfFormants, numberOfNasalFormants, numberOfNasalAntiFormants,
 				numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants);
-		KlattGrid_replacePitchTier (thee.get(), ptier.get());
-		KlattGrid_replaceFormantGrid (thee.get(), kKlattGridFormantType::ORAL, fgrid.get());
-		KlattGrid_replaceVoicingAmplitudeTier (thee.get(), itier.get());
+		KlattGrid_replacePitchTier (thee.get(), pitchTier.get());
+		KlattGrid_replaceFormantGrid (thee.get(), kKlattGridFormantType::ORAL, formantGrid.get());
+		KlattGrid_replaceVoicingAmplitudeTier (thee.get(), intensityTier.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no simple KlattGrid created.");

@@ -1,10 +1,10 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2024 Paul Boersma
+ * Copyright (C) 1992-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -348,9 +348,9 @@ static void showMeter (SoundRecorder me, const short *buffertje, integer nsamp) 
 			for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++)
 				sound -> z [ichan] [isamp] = * (p ++) / 32768.0;
 		Sound_multiplyByWindow (sound.get(), kSound_windowShape::KAISER_2);
-		double intensity = Sound_getIntensity_dB (sound.get());
+		const double intensity = Sound_getIntensity_dB (sound.get());
 		autoSpectrum spectrum = Sound_to_Spectrum (sound.get(), true);
-		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.get(), 1.0);
+		const double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.get(), 1.0);
 		trace (nsamp, U" samples, intensity ", intensity, U" dB, centre of gravity ", centreOfGravity, U" Hz");
 		Graphics_setWindow (my graphics.get(),
 			my instancePref_meter_centreOfGravity_minimum(), my instancePref_meter_centreOfGravity_maximum(),

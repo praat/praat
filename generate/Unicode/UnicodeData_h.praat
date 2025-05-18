@@ -1,5 +1,5 @@
 # UnicodeData_h.praat
-# Paul Boersma 2025
+# Paul Boersma, 18 May 2025
 
 Text writing preferences: "UTF-8"
 
@@ -15,7 +15,11 @@ for irow from 2 to numberOfRows
 	name$ = Get value: irow, "name"
 	if name$ = "<control>"
 		dum1$ = Get value: irow, "dum1"
-		name$ = "CONTROL_" + dum1$
+		if dum1$ = ""
+			name$ = "CONTROL_" + code$
+		else
+			name$ = "CONTROL_" + dum1$
+		endif
 	endif
 	if left$ (name$) <> "<"
 		positionOfParenthesis = index (name$, "(")
