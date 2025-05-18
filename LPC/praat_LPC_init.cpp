@@ -16,17 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20030613 Latest modification
- djmw 20040414 Forms texts.
- djmw 20060428 Latest modification
- djmw 20061218 Changed to Melder_information<x> format.
- djmw 20070902 Melder_error<1...>
- djmw 20071011 REQUIRE requires L"".
- djmw 20080313 Cepstrum_formula
- djmw 20100212 Analysis window length is now "Window length"
-*/
-
 #include "Cepstrumc.h"
 #include "Cepstrogram.h"
 #include "Cepstrum_and_Spectrum.h"

@@ -69,7 +69,7 @@ autoSpectrogram Sound_to_Spectrogram_e (
 		integer numberOfFreqs = Melder_ifloor (fmax / freqStep);
 		if (numberOfFreqs < 1)
 			Melder_throw (U"No frequency bins in spectrogram analysis. "
-					U"Raise the maximum frequency, or raise the analysis window duration. (Or lower the frequency step, if you have that.)");
+					U"Raise the maximum frequency, or raise the window length. (Or lower the frequency step, if you have that.)");
 		integer nsampFFT = 1;
 		while (nsampFFT < nsamp_window || nsampFFT < 2 * numberOfFreqs * (nyquist / fmax))
 			nsampFFT *= 2;
@@ -85,7 +85,7 @@ autoSpectrogram Sound_to_Spectrogram_e (
 		//Melder_assert (numberOfFreqs >= 1);
 		if (numberOfFreqs < 1)
 			Melder_throw (U"No frequency bins in spectrogram analysis. "
-					U"Raise the maximum frequency, or raise the analysis window duration. (Or lower the frequency step, if you have that.)");
+					U"Raise the maximum frequency, or raise the window length. (Or lower the frequency step, if you have that.)");
 
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, numberOfTimes, timeStep, t1,
 				0.0, fmax, numberOfFreqs, freqStep, 0.5 * (freqStep - binWidth_hertz));

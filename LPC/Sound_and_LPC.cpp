@@ -200,9 +200,9 @@ void checkLPCAnalysisParameters_e (double sound_dx, integer sound_nx, double phy
 	conststring32 minimumDurationRounded = Melder_fixed (predictionOrder * sound_dx , 5);
 	const integer approximateNumberOfSamplesPerWindow = Melder_roundDown (physicalAnalysisWidth / sound_dx);
 	Melder_require (approximateNumberOfSamplesPerWindow > predictionOrder,
-		U"Analysis window duration too short. For a prediction order of ", predictionOrder,
-		U", the analysis window duration should be greater than ", minimumDurationRounded,
-		U" s. Please increase the analysis window duration or lower the prediction order.");
+		U"Analysis window too short. For a prediction order of ", predictionOrder,
+		U", the window length should be greater than ", minimumDurationRounded,
+		U" s. Please increase the window length or lower the prediction order.");
 }
 
 
