@@ -144,7 +144,7 @@ static void tryToComputeSpectrogram (SoundAnalysisArea me) {
 		autoSound sound = extractSoundOrNull (me, my startWindow() - margin, my endWindow() + margin);
 		if (! sound)
 			return;
-		my d_spectrogram = Sound_to_Spectrogram (sound.get(),
+		my d_spectrogram = Sound_to_Spectrogram_e (sound.get(),
 			my instancePref_spectrogram_windowLength(),
 			my instancePref_spectrogram_viewTo(),
 			(my endWindow() - my startWindow()) / my instancePref_spectrogram_timeSteps(),

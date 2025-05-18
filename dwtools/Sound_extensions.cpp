@@ -1,10 +1,10 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2023 David Weenink, 2017,2024 Paul Boersma
+ * Copyright (C) 1993-2023 David Weenink, 2017,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -1568,7 +1568,7 @@ autoTextGrid Sound_to_TextGrid_speechActivity_lsfm (Sound me, double timeStep, d
 		const double effectiveAnalysisWidth = std::max (0.02, 2.0 * timeStep);
 		const double minimumFreqStep = 20.0;
 		const double maximumTimeOversampling = 8.0, maximumFreqOversampling = 8.0;
-		autoSpectrogram spectrogram = Sound_to_Spectrogram (me, effectiveAnalysisWidth, fmax, timeStep, minimumFreqStep,
+		autoSpectrogram spectrogram = Sound_to_Spectrogram_e (me, effectiveAnalysisWidth, fmax, timeStep, minimumFreqStep,
 			kSound_to_Spectrogram_windowShape::HANNING, maximumTimeOversampling, maximumFreqOversampling);
 		autoMatrix lsfmMatrix = Spectrogram_getLongtermSpectralFlatness (spectrogram.get(), longTermWindow, shorttimeWindow, fmin, fmax);
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"VAD", U"");
