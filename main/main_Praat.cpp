@@ -38,7 +38,7 @@ static void logo (Graphics graphics) {
 	Graphics_text (graphics, 0.5, 0.41, Melder_cat (U"version ", Melder_appVersionSTR(),
 			U" (", Melder_appMonthSTR(), U" ", Melder_appDay(), U", ", Melder_appYear(), U")"));
 	Graphics_setFontSize (graphics, 12.0);
-	constexpr bool isArm64 =
+	[[maybe_unused]] constexpr bool isArm64 =
 		#if defined (__aarch64__) || defined (_M_ARM64_)
 			true;
 		#else

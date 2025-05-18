@@ -87,11 +87,11 @@ procedure testCornerCases
 	.notEnoughSamples = Create Sound from formula: "Shorty", 1, 0, 
 	... 0.002, .samplingFrequency, ~ 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)
 
-	.error$ = "Analysis window duration too short."
+	.error$ = "Analysis window too short."
 		... + " For a prediction order of " + string$ (.predictionOrder)
-		... + ", the analysis window duration should be greater than "
+		... + ", the window length should be greater than "
 		... + fixed$ (.predictionOrder / .samplingFrequency, 5)
-		... + " s. Please increase the analysis window duration or "
+		... + " s. Please increase the window length or "
 		... + "lower the prediction order."
 
 	# asserterror cannot deal with varables, we need the evaluation quotes ' '

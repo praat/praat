@@ -1838,7 +1838,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrogram, U"Sound: To Spectrogram", U"Sou
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSpectrogram result = Sound_to_Spectrogram (me, windowLength,
+		autoSpectrogram result = Sound_to_Spectrogram_e (me, windowLength,
 				maximumFrequency, timeStep, frequencyStep, windowShape, 8.0, 8.0);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
