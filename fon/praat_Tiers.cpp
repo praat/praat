@@ -1,10 +1,10 @@
 /* praat_Tiers.cpp
  *
- * Copyright (C) 1992-2018,2020-2024 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -16,6 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "H1minusH2Tier.h"
 #include "Ltas.h"
 #include "PitchTier_to_PointProcess.h"
 #include "PitchTier_to_Sound.h"
@@ -75,7 +76,7 @@ FORM (REAL_AmplitudeTier_getShimmer_local, U"AmplitudeTier: Get shimmer (local)"
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AmplitudeTier)
-		double result = AmplitudeTier_getShimmer_local (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
+		const double result = AmplitudeTier_getShimmer_local_u (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
 	QUERY_ONE_FOR_REAL_END (U" (local shimmer)")
 }
 
@@ -86,7 +87,7 @@ FORM (REAL_AmplitudeTier_getShimmer_local_dB, U"AmplitudeTier: Get shimmer (loca
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AmplitudeTier)
-		double result = AmplitudeTier_getShimmer_local_dB (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
+		const double result = AmplitudeTier_getShimmer_local_dB_u (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
 	QUERY_ONE_FOR_REAL_END (U" dB (local shimmer)")
 }
 
@@ -97,7 +98,7 @@ FORM (REAL_AmplitudeTier_getShimmer_apq3, U"AmplitudeTier: Get shimmer (apq3)", 
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AmplitudeTier)
-		double result = AmplitudeTier_getShimmer_apq3 (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
+		const double result = AmplitudeTier_getShimmer_apq3_u (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
 	QUERY_ONE_FOR_REAL_END (U" (apq3 shimmer)")
 }
 
@@ -108,7 +109,7 @@ FORM (REAL_AmplitudeTier_getShimmer_apq5, U"AmplitudeTier: Get shimmer (apq5)", 
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AmplitudeTier)
-		double result = AmplitudeTier_getShimmer_apq5 (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
+		const double result = AmplitudeTier_getShimmer_apq5_u (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
 	QUERY_ONE_FOR_REAL_END (U" (apq5 shimmer)")
 }
 
@@ -119,7 +120,7 @@ FORM (REAL_AmplitudeTier_getShimmer_apq11, U"AmplitudeTier: Get shimmer (apq11)"
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AmplitudeTier)
-		double result = AmplitudeTier_getShimmer_apq11 (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
+		const double result = AmplitudeTier_getShimmer_apq11_u (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
 	QUERY_ONE_FOR_REAL_END (U" (apq11 shimmer)")
 }
 
@@ -130,7 +131,7 @@ FORM (REAL_AmplitudeTier_getShimmer_dda, U"AmplitudeTier: Get shimmer (dda)", U"
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AmplitudeTier)
-		double result = AmplitudeTier_getShimmer_dda (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
+		const double result = AmplitudeTier_getShimmer_dda_u (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
 	QUERY_ONE_FOR_REAL_END (U" (dda shimmer)")
 }
 
@@ -140,7 +141,7 @@ FORM (REAL_AmplitudeTier_getValueAtTime, U"Get AmplitudeTier value", U"Amplitude
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AmplitudeTier)
-		double result = RealTier_getValueAtTime (me, time);
+		const double result = RealTier_getValueAtTime (me, time);
 	QUERY_ONE_FOR_REAL_END (U" Pa")
 }
 	
@@ -149,7 +150,7 @@ FORM (REAL_AmplitudeTier_getValueAtIndex, U"Get AmplitudeTier value", U"Amplitud
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AmplitudeTier)
-		double result = RealTier_getValueAtIndex (me, pointNumber);
+		const double result = RealTier_getValueAtIndex (me, pointNumber);
 	QUERY_ONE_FOR_REAL_END (U" Pa")
 }
 */
@@ -1544,6 +1545,16 @@ DIRECT (NEW1_PointProcess_Sound_to_AmplitudeTier_point) {
 	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_", my name.get());
 }
 
+FORM (NEW1_PointProcess_Sound_to_H1minusH2Tier, U"PointProcess & Sound: To H1minusH2Tier", nullptr) {
+	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
+	OK
+DO
+	CONVERT_ONE_AND_ONE_TO_ONE (PointProcess, Sound)
+		autoH1minusH2Tier result = PointProcess_Sound_to_H1minusH2Tier (me, you, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_", my name.get())
+}
+
 FORM (NEW1_PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", nullptr) {
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
 	POSITIVE (bandwidth, U"Band width (Hz)", U"100.0")
@@ -1781,7 +1792,7 @@ void praat_Tiers_init () {
 	Thing_recognizeClassesByName (classPointProcess,
 		classRealPoint, classRealTier,
 		classPitchTier, classIntensityTier, classDurationTier, classAmplitudeTier,
-		classSpectrumTier,
+		classSpectrumTier, classH1minusH2Tier,
 		classFormantPoint, classFormantTier, classFormantGrid,
 		nullptr);
 
@@ -2218,6 +2229,8 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, U"Analyse", nullptr, 0, n
 			nullptr, 0, NEW1_PointProcess_Sound_to_AmplitudeTier_point);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To AmplitudeTier (period)...",
 			nullptr, 0, NEW1_PointProcess_Sound_to_AmplitudeTier_period);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To H1minusH2Tier...",
+			nullptr, 0, NEW1_PointProcess_Sound_to_H1minusH2Tier);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Ltas...",
 			nullptr, 0, NEW1_PointProcess_Sound_to_Ltas);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Ltas (only harmonics)...",
