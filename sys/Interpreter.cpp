@@ -62,12 +62,15 @@ Thing_implement (InterpreterVariable, SimpleString, 0);
 static autoInterpreterVariable InterpreterVariable_create (conststring32 key) {
 	try {
 		if (key [0] == U'e' && key [1] == U'\0')
-			Melder_throw (U"You cannot use 'e' as the name of a variable (e is the constant 2.71...).");
+			Melder_throw (U"You cannot use “e” as the name of a variable (e is the constant 2.71...).");
 		if (key [0] == U'p' && key [1] == U'i' && key [2] == U'\0')
-			Melder_throw (U"You cannot use 'pi' as the name of a variable (pi is the constant 3.14...).");
+			Melder_throw (U"You cannot use “pi” as the name of a variable (pi is the constant 3.14...).");
 		if (key [0] == U'u' && key [1] == U'n' && key [2] == U'd' && key [3] == U'e' && key [4] == U'f' && key [5] == U'i' &&
 			key [6] == U'n' && key [7] == U'e' && key [8] == U'd' && key [9] == U'\0')
-			Melder_throw (U"You cannot use 'undefined' as the name of a variable.");
+			Melder_throw (U"You cannot use “undefined” as the name of a variable.");
+		if (key [0] == U's' && key [1] == U't' && key [2] == U'o' && key [3] == U'p' && key [4] == U'w' && key [5] == U'a' &&
+			key [6] == U't' && key [7] == U'c' && key [8] == U'h' && key [9] == U'\0')
+			Melder_throw (U"You cannot use “stopwatch” as the name of a variable.");
 		autoInterpreterVariable me = Thing_new (InterpreterVariable);
 		my string = Melder_dup (key);
 		return me;

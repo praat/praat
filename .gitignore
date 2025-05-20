@@ -26,6 +26,7 @@ makefile.defs
 praat
 Praat
 Praat.exe
+Praat.app
 
 # files created by R scripts in the test folders
 .Rdata
