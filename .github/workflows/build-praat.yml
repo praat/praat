@@ -110,14 +110,14 @@ jobs:
             targetos: "macOS13"
             version: Ventura
             extension: .dmg
-            latest_tag: "v6.4.30"
-            latest_zip: "praat6430_xcodeproj.zip"
+            latest_tag: "v6.4.34"
+            latest_zip: "praat6434_xcodeproj.zip"
           - runner: macos-15
             targetos: "macOS15"
             version: Sequoia-arm64
             extension: .dmg
-            latest_tag: "v6.4.30"
-            latest_zip: "praat6430_xcodeproj.zip"
+            latest_tag: "v6.4.34"
+            latest_zip: "praat6434_xcodeproj.zip"
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
@@ -126,10 +126,6 @@ jobs:
         run: |
           curl -LO https://github.com/praat/praat/releases/download/${{ matrix.latest_tag }}/${{ matrix.latest_zip }}
           unzip ${{ matrix.latest_zip }} -d .
-
-      - name: Fix wrong portaudio path
-        run: |
-          sed -i '' 's|../../../support/external/portaudio/portaudio 20210406/src/common/||g' praat.xcodeproj/project.pbxproj
 
       - name: Set up Xcode version
         run: |
