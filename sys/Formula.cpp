@@ -169,6 +169,7 @@ enum { NO_SYMBOL_,
 		REALVECTOR_, POSITIVEVECTOR_, INTEGERVECTOR_, NATURALVECTOR_,
 		HEADING_, COMMENT_, END_PAUSE_,
 		LOWER_CASE_APP_NAME_STR_, UPPER_CASE_APP_NAME_STR_,
+		CLOCK_,
 		APP_VERSION_, APP_VERSION_STR_, APP_YEAR_, APP_MONTH_, APP_MONTH_STR_, APP_DAY_,
 		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_FOLDER_STR_, CHOOSE_DIRECTORY_STR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
@@ -328,6 +329,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"realvector", U"positivevector", U"integervector", U"naturalvector",
 	U"heading", U"comment", U"endPause",
 	U"lowerCaseAppName$", U"upperCaseAppName$",
+	U"clock",
 	U"appVersion", U"appVersion$", U"appYear", U"appMonth", U"appMonth$", U"appDay",
 	U"chooseReadFile$", U"chooseWriteFile$", U"chooseFolder$", U"chooseDirectory$",
 	U"demoWindowTitle", U"demoShow", U"demoWaitForInput", U"demoPeekInput", U"demoInput", U"demoClickedIn",
@@ -1716,7 +1718,7 @@ static void parsePowerFactor () {
 			//theOptimize = 1;
 			newparse (NUMBER_);
 			parsenumber (0.0);   // initialize the sum
-            const bool isParenthesis = fitArguments ();
+			const bool isParenthesis = fitArguments ();
 			const integer symbol2 = newread;
 			if (symbol2 == NUMERIC_VARIABLE_) {   // an existing variable
 				newparse (VARIABLE_REFERENCE_);
@@ -7907,6 +7909,12 @@ static void do_upperCaseAppNameStr () {
 		U"The function “upperCaseAppName$” requires 0 arguments, not ", n->number, U".");
 	return pushString (Melder_dup (Melder_upperCaseAppName()));
 }
+static void do_clock () {
+	const Stackel n = pop;
+	Melder_require (n->number == 0,
+		U"The function “clock” requires 0 arguments, not ", n->number, U".");
+	return pushNumber (Melder_clock ());
+}
 static void do_appVersion () {
 	const Stackel n = pop;
 	Melder_require (n->number == 0,
@@ -9022,6 +9030,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case END_PAUSE_: { do_endPause ();
 } break; case LOWER_CASE_APP_NAME_STR_: { do_lowerCaseAppNameStr ();
 } break; case UPPER_CASE_APP_NAME_STR_: { do_upperCaseAppNameStr ();
+} break; case CLOCK_: { do_clock ();
 } break; case APP_VERSION_: { do_appVersion ();
 } break; case APP_VERSION_STR_: { do_appVersionStr ();
 } break; case APP_YEAR_: { do_appYear ();

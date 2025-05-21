@@ -87,6 +87,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`chooseReadFile$` (%`title$`) – pops up a file selection window for opening (or appending to) an existing file
 , @`chooseWriteFile$` (%`title$`, %`defaultFilename$`) – pops up a file selection window for saving to a new file
 , @`clearinfo` – clear the Info window
+, @`clock` ( ) – typically the number of seconds since system start-up
 , @`col` – the columns number (of the current cell) in a Formula command
 , @`col$` [%`i`] – the name of column %i of an object
 , @`col#` (%`matrix##`, %`columnNumber`) - extract one column from a matrix
@@ -1265,6 +1266,33 @@ Syntax and semantics
 ====================
 #`clearinfo`
 : clear the @@Info window@.
+
+################################################################################
+"`clock`"
+© Paul Boersma 2025
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`clock` ( )
+: the number of seconds since system start-up, with microsecond precision.
+
+Examples
+========
+{
+	t = \#{clock}()
+	for i to 1000
+	endfor
+	\`{appendInfoLine}: "Time elapsed: ", \#{clock}() - t, " seconds"
+}
+{
+	t = \#{clock}()
+	for i to 1000
+	endfor
+	timeElapsed = \#{clock}() - t
+	\`{appendInfoLine}: "Time elapsed: ", \`{fixed$} (1000 * timeElapsed, 3), " ms"
+}
 
 ################################################################################
 "`col`"

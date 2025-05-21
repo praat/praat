@@ -148,7 +148,9 @@ void GuiShell_setTitle (GuiShell me, conststring32 title /* cattable */) {
 
 void GuiShell_drain (GuiShell me) {
 	#if gtk
-		gdk_window_process_all_updates ();
+		//gdk_window_process_all_updates ();
+		while (gtk_events_pending ())
+			gtk_main_iteration ();
 	#elif motif
 		UpdateWindow (my d_xmShell -> window);
 	#elif cocoa
