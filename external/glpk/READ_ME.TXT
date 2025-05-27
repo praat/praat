@@ -1,5 +1,8 @@
 Praats/external/glpk/READ_ME.TXT
 Paul Boersma, 26 June 2010
+24 May 2025: Paul Boersma added a paragraph about the change in
+   the license from "LGPL 2.1 or later" to "GPL 3 or later."
+
 This file describes the adaptations to the glpk 4.44 sources
 that are needed to make them compatible with Praat.
 
@@ -17,6 +20,9 @@ Because of a name clash with the C library in CodeWarrior
 ("error" is a member of the FILE structure),
 I replaced the "error" macro with "mpl_error" in all glpmpl* files.
 
+Below are the announcements of the AMD and COLAMD libraries.
+Their licenses are LGPL 2.1 or later. Following Section 3 of
+the LGPL 2.1, Praat turns "LGPL 2.1 or later" into "GPL 3 or later".
 
 ########################################################################
 
