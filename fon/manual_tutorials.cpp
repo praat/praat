@@ -1148,10 +1148,11 @@ NORMAL (U"You will normally write the TextGrid to disk with @@Save as text file.
 NORMAL (U"However you saved it, you can read the TextGrid into Praat later with @@Read from file...@.")
 MAN_END
 
-MAN_BEGIN (U"Intro 8. Manipulation", U"ppgb", 20021212)
+MAN_BEGIN (U"Intro 8. Manipulation", U"ppgb", 20021212) //2025
 LIST_ITEM (U"@@Intro 8.1. Manipulation of pitch")
 LIST_ITEM (U"@@Intro 8.2. Manipulation of duration")
 LIST_ITEM (U"@@Intro 8.3. Manipulation of intensity")
+LIST_ITEM (U"@@Intro 8.4. Manipulation of formants")
 MAN_END
 
 MAN_BEGIN (U"Intro 8.1. Manipulation of pitch", U"ppgb", 20220814)
