@@ -4,7 +4,7 @@
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -2546,12 +2546,15 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 	const double pitchCeiling_overt = Function_convertToNonlogarithmic (Thing_dummyObject (Pitch),
 			pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
 	const double pitchViewFrom = my dynamic_instancePref_pitch_viewFrom(), pitchViewTo = my dynamic_instancePref_pitch_viewTo();
-	const double pitchViewFrom_overt = ( pitchViewFrom < pitchViewTo ? pitchViewFrom : pitchFloor_overt );
+	const bool verticalScaleIsLogarithmic = Function_isUnitLogarithmic (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) pitchUnit);
+	const double pitchViewFrom_overt = (
+		pitchViewFrom >= pitchViewTo ? pitchFloor_overt :
+		pitchViewFrom == 0.0 && verticalScaleIsLogarithmic ? pitchViewTo / 1000.0 :
+		pitchViewFrom
+	);
 	const double pitchViewTo_overt = ( pitchViewFrom < pitchViewTo ? pitchViewTo : pitchCeiling_overt );
-	const double pitchViewFrom_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch),
-			Pitch_LEVEL_FREQUENCY, (int) pitchUnit) ? log10 (pitchViewFrom_overt) : pitchViewFrom_overt;
-	const double pitchViewTo_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch),
-			Pitch_LEVEL_FREQUENCY, (int) pitchUnit) ? log10 (pitchViewTo_overt) : pitchViewTo_overt;
+	const double pitchViewFrom_hidden = ( verticalScaleIsLogarithmic ? log10 (pitchViewFrom_overt) : pitchViewFrom_overt );
+	const double pitchViewTo_hidden = ( verticalScaleIsLogarithmic ? log10 (pitchViewTo_overt) : pitchViewTo_overt );
 
 	if (my endWindow() - my startWindow() > my instancePref_longestAnalysis()) {
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
@@ -2559,7 +2562,7 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 		Graphics_setFontSize (my graphics(), 10);
 		Graphics_setTextAlignment (my graphics(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (my graphics(), 0.5, 0.67,   U"(To see the analyses, zoom in to at most ", Melder_half (my instancePref_longestAnalysis()), U" seconds,");
-		Graphics_text (my graphics(), 0.5, 0.33,   U"or raise the \"longest analysis\" setting with \"Show analyses\" in the Analyses menu.)");
+		Graphics_text (my graphics(), 0.5, 0.33,   U"or raise the “longest analysis” setting with “Show analyses” in the Analyses menu.)");
 		Graphics_setFontSize (my graphics(), 12);
 		return;
 	}
