@@ -1,0 +1,100 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Downloading Praat for Linux</title></head><body bgcolor="#CCCCFF">
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Downloading Praat for Linux
+</b></font></table></table>
+
+<hr><h3>1. Downloading the Linux edition</h3>
+<p>The most straightforward way to obtain the newest version of the <b>Linux</b> edition of <b>Praat</b>
+is to download Praat from this page. Click on the appropriate compressed archive:</p>
+<dl>
+<dd><b>normal edition</b> (for interactive work as well as scripting):<br>
+&nbsp;- for Intel64/AMD64/x64 (on Ubuntu 22.04 and later): <b><a href=praat6434_linux-intel64.tar.gz>praat6434_linux-intel64.tar.gz</a></b> (20 May 2025; 28.3 MB) &nbsp; <b><-- you probably want this</b><br>
+&nbsp;- for ARM64/AArch64 (on Ubuntu 22.04 and later): <b><a href=praat6434_linux-arm64.tar.gz>praat6434_linux-arm64.tar.gz</a></b> (20 May 2025; 27.2 MB)<br>
+&nbsp;- for s390x: <b><a href=praat6434_linux-s390x.tar.gz>praat6434_linux-s390x.tar.gz</a></b> (20 May 2025; 29.0 MB)
+<dd>&nbsp;
+<dd><b>barren server edition</b> (no GUI, no network, no sound, no graphics):<br>
+&nbsp;- for Intel64/AMD64/x64 (on Ubuntu 22.04 and later): <b><a href=praat6434_linux-intel64-barren.tar.gz>praat6434_linux-intel64-barren.tar.gz</a></b> (20 May 2025; 29.0 MB)<br>
+&nbsp;- for ARM64/AArch64 (on Ubuntu 22.04 and later): <b><a href=praat6434_linux-arm64-barren.tar.gz>praat6434_linux-arm64-barren.tar.gz</a></b> (20 May 2025; 27.8 MB)<br>
+&nbsp;- for s390x: <b><a href=praat6434_linux-s390x-barren.tar.gz>praat6434_linux-s390x-barren.tar.gz</a></b> (20 May 2025; 29.4 MB)
+</dl>
+<p>Unpack with <b>gunzip</b> and <b>tar xvf</b>. This will create the executable file <b>praat</b>.
+You can remove the <b>tar</b> file.</p>
+
+You could also simply do <b>sudo apt install praat</b> if you are on Ubuntu, although you may obtain a years-old version.
+Or you may get Praat from <a href=http://packages.debian.org/unstable/science/praat>Debian</a>,
+or compile it yourself (64-bit or 32-bit) from the <a href=download_sources.html>source code</a>.</p>
+
+<hr><h3>2. How to start</h3>
+<p>Praat will work fine wherever it is on your disk; just type <b>./praat</b> into a terminal window.</p>
+<p>If Praat doesn’t start immediately (i.e. it may complain about missing <code>.so</code> files),
+then you may have to install one or more standard (system or audio) libraries on which Praat depends:</p>
+
+<code style="white-space:pre-wrap">   sudo apt install libc++1      # the C++ standard library
+   sudo apt install libgtk-3-0   # the graphics toolkit
+   sudo apt install libpulse0    # the Pulse audio server
+   sudo apt install libasound2   # the ALSA audio library
+   sudo apt install libjack0     # the Jack audio library
+   sudo apt install libcanberra-gtk-module     # needed only if your system complains about missing this
+
+</code>
+
+or click the icon.
+If you use Praat for the first time, choose <b>Intro</b> from the Help menu.</p>
+
+<hr><h3>3. Phonetic symbols</h3>
+<p>If you want to see good phonetic characters,
+you have to install the Charis SIL and Doulos SIL fonts,
+for instance from the packages <b>fonts-sil-charis</b> and <b>fonts-sil-doulos</b> on Debian or Ubuntu:</p>
+
+<code>
+&nbsp;&nbsp;&nbsp;sudo apt install fonts-sil-charis<br>
+&nbsp;&nbsp;&nbsp;sudo apt install fonts-sil-doulos
+</code>
+
+<p>If you cannot install those packages, you can download the two fonts
+from <a href=http://www.sil.org>Summer Institute of Linguistics</a> and follow the installation instructions there.</p>
+
+<hr><h3>4. Running Praat from the command line</h3>
+<p>To run Praat from a terminal window,
+write a Praat script and specify that script on the command line, optionally with arguments, e.g.:</p>
+<code>&nbsp;&nbsp;&nbsp;praat --run playsinewave.praat 377 0.9</code>
+<p>For details see <a href=http://www.fon.hum.uva.nl/praat/manual/Scripting_6_9__Calling_from_the_command_line.html>Calling from the command line</a> in the Scripting manual.</p>
+
+<hr><h3>5. Known possible problems, and their solution</h3>
+<p><b>1. Sound not working?</b></p>
+<p>Audio on Linux is notoriously fragile. Praat either uses PulseAudio or Alsa,
+and you choose between these with Praat -> Preferences -> Sound playing preferences.
+If neither option works,
+the Ubuntu website suggests <a href="https://help.ubuntu.com/community/SoundTroubleshootingProcedure">16 steps</a> that you may try
+to get audio to work.</p>
+
+<hr><h3>6. Debian info</h3>
+
+<p>Praat is <a href=https://packages.debian.org/source/sid/praat>included</a> in
+the Debian distribution. To install Praat on your Debian computer, do</p>
+
+<code>&nbsp;&nbsp;&nbsp;aptitude install praat</code>
+
+<p>The Debian package includes a <code>praat-open-files</code>
+command that allows opening files from the command line inside a Praat
+process that is already running.
+
+<p>Recent upstream versions of the Praat package backported to the stable
+and testing distributions of Debian are available in an
+<a href=http://praat.cefala.org>APT repository</a>.</p>
+
+<hr><h3>7. Editions of Praat for older computers or older operating system versions</h3>
+<ul>
+<li>We do not create Praat editions for 32-bit Linux any longer (except for <a href=download_raspberrypi.html>Raspberry Pi</a>).
+The last one is <a href=old/6115/praat6115_linux32.tar.gz>Praat 6.1.15</a> of 20 May 2020.
+If that is too old for you, you could try to compile a newer version by yourself from the sources.
+<li>The last version for Ubuntu 20.04 is Praat 6.4.31 of 3 May 2025:<br>
+&nbsp;- for Intel64/AMD64/x64: <a href=old/6431/praat6431_linux-intel64.tar.gz>praat6431_linux-intel64.tar.gz</a>, <a href=old/6431/praat6431_linux-arm64-barren.tar.gz>praat6431_linux-arm64-barren.tar.gz</a><br>
+&nbsp;- for ARM64/AArch64: <a href=old/6431/praat6431_linux-arm64.tar.gz>praat6431_linux-arm64.tar.gz</a> , <a href=old/6431/praat6431_linux-intel64-barren.tar.gz>praat6431_linux-intel64-barren.tar.gz</a>
+</ul>
+
+<hr>
+by Paul Boersma.<br>
+Back to the <a href=/praat/>Praat home page</a>.
+</body></html>
