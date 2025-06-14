@@ -6698,8 +6698,14 @@ static void do_fixed_STR () {
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
 		autostring32 result = Melder_dup (Melder_fixed (value->number, Melder_iround (precision->number)));
 		pushString (result.move());
+	} else if (value->which == Stackel_NUMERIC_VECTOR && precision->which == Stackel_NUMBER) {
+		autostring32 result = Melder_dup (Melder_fixed (value->numericVector, Melder_iround (precision->number)));
+		pushString (result.move());
+	} else if (value->which == Stackel_NUMERIC_MATRIX && precision->which == Stackel_NUMBER) {
+		autostring32 result = Melder_dup (Melder_fixed (value->numericMatrix, Melder_iround (precision->number)));
+		pushString (result.move());
 	} else {
-		Melder_throw (U"The function “fixed$” requires two numbers (value and precision), not ", value->whichText(), U" and ", precision->whichText(), U".");
+		Melder_throw (U"The function “fixed$” requires a number or a vector or a matrix, and a number (the precision), not ", value->whichText(), U" and ", precision->whichText(), U".");
 	}
 }
 static void do_percent_STR () {

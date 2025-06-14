@@ -1471,7 +1471,9 @@ inline autoBYTEMAT copy_BYTEMAT (constBYTEMATVU source) {
 }
 
 conststring32 Melder_VEC (constVECVU const& value, bool horizontal = false);
+conststring32 Melder_fixed (constVECVU const& value, integer precision, bool horizontal = false);
 conststring32 Melder_MAT (constMATVU const& value);
+conststring32 Melder_fixed (constMATVU const& value, integer precision);
 
 inline void operator<<= (INTVECVU const& target, constINTVECVU const& source) {
 	Melder_assert (target.size == source.size);

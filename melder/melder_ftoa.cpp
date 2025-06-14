@@ -493,6 +493,17 @@ conststring32 Melder_VEC (constVECVU const& value, const bool horizontal) {
 			MelderString_append (string, value [i], horizontal ? U' ' : U'\n');
 	return string -> string;
 }
+conststring32 Melder_fixed (constVECVU const& value, integer precision, const bool horizontal) {
+	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS)
+		iTensorBuffer = 0;
+	MelderString *string = & theTensorBuffers [iTensorBuffer];
+	MelderString_empty (string);
+	if (! NUMisEmpty (value))
+		for (integer i = 1; i <= value.size; i ++)
+			MelderString_append (string, Melder_fixed (value [i], precision), horizontal ? U' ' : U'\n');
+	return string -> string;
+}
+
 conststring32 Melder_MAT (constMATVU const& value) {
 	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS)
 		iTensorBuffer = 0;
@@ -511,6 +522,25 @@ conststring32 Melder_MAT (constMATVU const& value) {
 	}
 	return string -> string;
 }
+conststring32 Melder_fixed (constMATVU const& value, integer precision) {
+	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS)
+		iTensorBuffer = 0;
+	MelderString *string = & theTensorBuffers [iTensorBuffer];
+	MelderString_empty (string);
+	if (! NUMisEmpty (value)) {
+		for (integer irow = 1; irow <= value.nrow; irow ++) {
+			for (integer icol = 1; icol <= value.ncol; icol ++) {
+				MelderString_append (string, Melder_fixed (value [irow] [icol], precision));
+				if (icol < value.ncol)
+					MelderString_appendCharacter (string, U' ');
+			}
+			if (irow < value.nrow)
+				MelderString_appendCharacter (string, U'\n');
+		}
+	}
+	return string -> string;
+}
+
 conststring32 Melder_STRVEC (constSTRVEC const& value) {
 	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS)
 		iTensorBuffer = 0;

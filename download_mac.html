@@ -1,0 +1,113 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Downloading Praat for Macintosh</title></head><body bgcolor="#CCCCFF">
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Downloading Praat for Macintosh
+</b></font></table></table>
+
+<hr><h3>1. Downloading the Macintosh edition</h3>
+<p>To download the latest version of the <b>MacOS</b> edition of <b>Praat</b>,
+click once on the following disk image file:</p>
+<dl>
+<dd>64-bit edition (MacOS 10.11-10.15 and macOS 11-15, for Intel and Apple Silicon): <b><a href=praat6434_mac.dmg>praat6434_mac.dmg</a></b> (20 May 2025; 46.0 MB)
+</dl>
+<p>After downloading, your web browser might open the <b>.dmg</b> file directly; you will then see the program <b>Praat</b> or <b>Praat.app</b>.
+If your browser did not open the <b>.dmg</b> file,
+then you should double-click the <b>.dmg</b> file in the <b>Downloads</b> window (or in the <b>Downloads</b> folder in your home directory);
+after double-clicking you may see the program <b>Praat</b> or <b>Praat.app</b> directly,
+or you may see a disk icon called <b>Praat6434</b>, which when you open it will show you the program <b>Praat</b> or <b>Praat.app</b>.
+To install Praat, just drag the program <b>Praat</b> or <b>Praat.app</b> to your <b>Applications</b> folder (or anywhere else).</p>
+
+<hr><h3>2. How to start</h3>
+<p>To start up the Praat program, just double-click it.
+If you use Praat for the first time, choose <b>Intro</b> from the Help menu.</p>
+<p><b>If you have trouble starting Praat for the first time:</b><br>
+To protect you against harmful software, MacOS enforces increasingly severe security measures,
+initially trusting only apps that you downloaded from the App Store.
+This is a good thing, but it does make it increasingly difficult to start up reliable applications
+that you download from outside the App Store, such as Praat.
+Your Mac can throw a variety of messages at you:</p>
+<ul>
+<li>If your Mac says “Praat.app is an application downloaded from the Internet. Are you sure you want to open it?”,
+you can just click Open.
+<li>If your Mac says
+“Your security settings allow you to install only apps that you downloaded from the App Store”,
+then you go to the Apple menu -> System Preferences -> Security &amp; Privacy, and set “Allow apps downloaded from:”
+to “App Store and identified developers” (you may have to “click the lock” to make this change).
+After this, you should be fine, because the Praat app has been “signed” by us,
+and we are indeed certified Mac developers.
+<li>If your Mac says “Praat cannot be opened because it is from an unidentified developer;
+your security preferences allow installation of only apps from the App Store and identified developers”,
+than your Mac may not have access to the Internet to check our credentials,
+but you should still be able to open Praat by clicking on the Praat icon with the right-hand mouse button
+(or with ctrl-click if your mouse has only one button) and choosing Open.
+<li>If your Mac says “Praat cannot be opened because Apple cannot check it for malicious software;
+this software needs to be updated; contact the developer for more information”,
+than this means that Apple has somehow not managed to “notarize” Praat,
+but you should still be able to open Praat by going to Apple menu -> System Preferences -> Security &amp; Privacy,
+seeing the message “Praat was blocked from use because it is not from an identified developer”, and clicking “Open anyway”
+(you may have to “click the lock to make changes”).
+</ul>
+
+<hr><h3>3. Phonetic symbols</h3>
+<p>If you want to see good-quality phonetic characters on your screen and in your clipboard,
+you have to install the Charis SIL and/or the Doulos SIL font.
+These fonts were created by the <a href=http://www.sil.org>Summer Institute of Linguistics</a>.
+To install them, first download the archives:
+<dl>
+<dd><b><a href=CharisSIL-6.200.zip>CharisSIL-6.200.zip</a></b> (February 2023)
+<dd><b><a href=DoulosSIL-6.200.zip>DoulosSIL-6.200.zip</a></b> (February 2023)
+</dl>
+<p>Then unpack the <b>.zip</b> files, if your web browser has not already done that.
+This will give you folders called <b>CharisSIL-6.200</b> and <b>DoulosSIL-6.200</b>.
+When you open these folders, you will see TrueType fonts such as
+<b>CharisSIL-Regular.ttf</b>, <b>CharisSIL-Bold.ttf</b>, <b>CharisSIL-Italic.ttf</b>, and <b>CharisSIL-BoldItalic.ttf</b>, and <b>DoulosSIL-Regular.ttf</b>.
+For each of these five fonts, double-click it, wait for the Font Book window to appear, and then click Install Font.</p>
+
+<hr><h3>4. Problems with sound</h3>
+<p><b>Recording.</b> If your recorded sound is all zeroes,
+then you may have disallowed Praat to access the microphone; in that case,
+go to System Preferences -> Security &amp; Privacy -> Microphone and put a check mark next to the Praat symbol.</p>
+<p><b>Playing on macOS 11 BigSur or macOS 12 Monterey.</b> If there is a click or crack at the end of a sound,
+go to Praat -> Preferences -> Sound playing preferences, and set Silence After to 0.5 seconds or so.</p>
+<p><b>Playing on macOS 10.14 or 10.15.</b> It is possible that your sounds play terribly, with cracks, repetitions and pauses.
+A likely cause is a macOS bug that you can solve: open Audio MIDI Setup (in Applications -> Utilities),
+go to MacBook internal loudspeakers (or so) -> Output, change the Format from 48000 Hz to 44100 Hz,
+and play a sound again in Praat, which should now sound correctly. Even though your Mac
+will change this setting back to 48000 Hz, sound output is likely to continue to sound correctly.</p>
+
+<hr><h3>5. Tuning Praat to your Macintosh</h3>
+<p>Sounds are recorded into a buffer whose size you can set with “Sound recording preferences”.</p>
+<p>The best way to produce pictures is to use the clipboard or “Save as PDF file...”
+in the Picture window.
+Both the clipboard and “Save as PDF file...” produce PDF pictures.
+Most word-processing programs newer than 2006 accept such PDF pictures, at least on the Mac;
+if you use Microsoft Word 2008 or later, make sure to save your document as a <b>.docx</b> file,
+because if you save it as a <b>.doc</b> file, Word will convert the inserted PDF pictures into mediocre bitmaps.</p>
+
+<hr><h3>6. Running Praat from the command line</h3>
+<p>To run Praat from a terminal window,
+write a Praat script and specify that script on the command line, optionally with arguments, e.g.:</p>
+<code>&nbsp;&nbsp;&nbsp;/Applications/Praat.app/Contents/MacOS/Praat --run playsinewave.praat 377 0.9</code>
+<p>For details see <a href=http://www.fon.hum.uva.nl/praat/manual/Scripting_6_9__Calling_from_the_command_line.html>Calling from the command line</a> in the Scripting manual.</p>
+
+<hr><h3>7. Editions of Praat for older computers or operating system versions</h3>
+<p>On a modern computer you would use <a href=praat6434_mac.dmg>Praat 6.4.34</a>, as suggested above.
+If that does not work on your computer, you can probably try an older version:</p>
+<ul>
+<li>On MacOS 10.9 or 10.10, try <a href=old/6309/praat6309_mac.dmg>Praat 6.3.09</a> of 2 March 2023.
+<li>On MacOS 10.7 or 10.8, try <a href=old/6116/praat6116_mac64.dmg>Praat 6.1.16</a> of 6 June 2020.
+<li>On MacOS 10.5 or 10.6 with an Intel processor, try <a href=old/6016/praat6016_mac32.dmg>Praat 6.0.16</a> of 5 April 2016.
+<li>If you want to copy-paste to Word 2004, or to open the audio in a movie, or to open Sound Designer II files, try <a href=old/5314/praat5314_mac.dmg>Praat 5.3.14</a> of 28 April 2012.
+<li>On MacOS 10.5 with a PowerPC processor, try <a href=old/5217/praat5217_mac.dmg>Praat 5.2.17</a> of 2 March 2011.
+<li>On MacOS 10.4, try <a href=old/5217/praat5217_mac.dmg>Praat 5.2.17</a> of 2 March 2011.
+<li>On MacOS 10.2 or 10.3, try Praat 5.1.19 (<a href=old/5119/praat5119_mac.dmg>dmg</a> or <a href=old/5119/praat5119_mac.sit>sit</a>) of 21 October 2009.
+<li>On MacOS 10.1, try <a href=old/4113/PraatM_4113.sit>Praat 4.1.13</a> of 22 October 2003.
+<li>On System 8.5 to 9.2, try <a href=old/4501/praat4501_mac9.sit>praat4501_mac9.sit</a> of 28 October 2006
+and install the fonts from <a href=silipa93.sit>silipa93.sit</a>. Use File/Info in the Finder to give Praat one third of your computer's memory.
+<li>On System 7, try <a href=old/4223/praat4223_mac7.sit>praat4223_mac7.sit</a> of 17 November 2004
+and install the fonts from <a href=silipa93.sit>silipa93.sit</a>. Use File/Info in the Finder to give Praat one third of your computer's memory.
+</ul>
+
+<hr>
+Back to the <a href=/praat/>Praat home page</a>.
+</body></html>
