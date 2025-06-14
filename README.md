@@ -41,7 +41,7 @@ For more information, consult the extensive manual in Praat (under Help),
 and the website [praat.org](http://praat.org), which has Praat tutorials in several languages.
 
 ## Downloads
-- [Download Praat for Mac](./docs/download_mac.html)
+- [Download Praat for Mac](./download_mac.html)
 
 ## 1. Binary executables
 
