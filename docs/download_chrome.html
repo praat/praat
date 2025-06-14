@@ -1,0 +1,264 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Downloading Praat for Chromebook</title></head><body bgcolor="#CCCCFF">
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Downloading Praat for Chromebook
+</b></font></table></table>
+
+<p><b>WARNING: A Chromebook is not a full-fledged desktop computer;
+Praat may more or less run, but some things may go wrong.
+The same goes for other programs that you may need as a phonetician,
+such as the program R for statistics (e.g. in November 2021,
+a random undefined variable prevented lme4 from installing from source).
+If you can avoid it, do not use a Chromebook for your studies or research.</b></p>
+
+<hr><h3>1. Praat on a Chromebook? First install Linux</h3>
+<p>You can install Praat on several types of Chromebooks, though probably not on all.
+We do not (yet?) provide an Android edition of Praat,
+which, if it existed, you would be able to install via Google Play.
+What we do provide are various Linux editions of Praat.</p>
+<p>To install Praat-for-Linux on your Chromebook, you first have to make sure
+that Linux has been installed: click on the right bottom of your screen,
+then on the Settings wheel, then <b>Advanced</b>, then <b>Developers</b>,
+then scroll down to <b>Linux</b> and click on the triangle.
+If you see a button <b>Remove</b> or <b>Uninstall</b>,
+then Linux was apparently already installed. If instead you see a button <b>Install</b>,
+then click that and wait until Linux has been installed.</b>
+<p>If Linux is installed correctly, a folder called <b>Linux files</b>
+should appear in your <b>Files</b> window. To see the Files window,
+click your Launcher (bottom left of your screen), then click on the up arrow,
+then click on <b>Files</b>. Under <b>My files</b>, you should then see the folder
+<b>Linux files</b>.</p>
+
+<hr><h3>2. The easiest installation of the latest Praat version on an Intel64 or ARM64 computer</h3>
+<p>Once Linux has been installed, click on the <b>Launcher</b>
+(bottom left of your screen) and type <b>Terminal</b>.
+You see a Terminal window on you screen, showing a prompt like</p>
+<code>
+yourname@penguin:~$
+</code>
+<p>The Terminal window is an app for typing Linux commands, and to install Praat you will
+have to type some Linux commands into this Terminal window. The first thing to get to know
+is the type of processor that your computer has. After the penguin prompt, you type</p>
+<code>
+&nbsp;&nbsp;&nbsp;uname -a
+</code>
+<p>(which stands for something like “give me all of the system name”),
+followed by pressing the Enter key.
+You should get an answer similar to what I got on my 2019 HP Chromebook:</p>
+<code>
+Linux penguin 4.19.69-06666-gfkhsdgfh #1 SMP PREEMPT Fri Sep 6 22:15:24 PDT 2019 x86_64 GNU/Linux
+</code>
+<p>In this example, the next-to-last word is <b>x86_64</b>,
+which means that my HP Chromebook is powered by an Intel64 (i.e. 64-bit Intel) processor.
+If you also see <b>x86_64</b> on <i>your</i> Chromebook, then you are lucky,
+because a Linux edition for Intel64 processors is available from
+the download page that you are reading now. Here it is:</p>
+<dl>
+<dd><b><a href=praat6434_chrome-intel64.tar.gz>praat6434_chrome-intel64.tar.gz</a></b> (20 May 2025; 26.1 MB)
+</dl>
+<p>If the next-to-last word is <b>aarch64</b> instead,
+this means that your Chromebook is powered by an ARM64 (i.e. 64-bit ARM) processor.
+Again, you are lucky, because a Linux edition for ARM64 processors is also available:</p>
+<dl>
+<dd><b><a href=praat6434_chrome-arm64.tar.gz>praat6434_chrome-arm64.tar.gz</a></b> (20 May 2025; 24.9 MB)
+</dl>
+
+<p>When you download one of these two files, it will appear in your <b>Downloads</b> folder,
+which is another folder under <b>My files</b> (if the file doesn’t download when you click on it,
+then try right-click and choose <b>Save link as...</b> in your browser).</p>
+
+<p>Once the file praat6434_chrome-intel64.tar.gz or praat6434_chrome-arm64.tar.gz
+is in your <b>Downloads</b> folder, drag it from your <b>Downloads</b> folder to your <b>Linux files</b> folder.</p>
+
+<p>After you confirm that your <b>Linux files</b> folder contains praat6434_chrome-intel64.tar.gz (or its ARM64 friend),
+you are ready to install Praat via the Terminal. Thus, open your Terminal app again and type:</p>
+<code>
+&nbsp;&nbsp;&nbsp;ls -al
+</code>
+<p>which stands for something like “list all files”. After you press the Enter key,
+the resulting list shows a number of hidden files, with names that start with “.”,
+but it should also show you the file that you downloaded, probably in a line like this:</p>
+<code>
+-rw-r--r-- 1 yourname yourname 14764270 Nov  7 09:52 praat6434_chrome-intel64.tar.gz
+</code>
+<p>Here, 14764270 is the size of the file in bytes (i.e., the file is 14.7 MB big), “Nov 7 09:52” is the date and time
+at which the file was created (i.e. downloaded or copied), and “yourname” is the name
+of the owner of the file, i.e. you.</p>
+<p>This file is not yet the Praat app. The extension <b>.gz</b> means that the file
+has been compressed by <b>gzip</b>,
+so you have to uncompress it by typing the following command into the Terminal window
+(i.e. type the text, followed by Enter):</p>
+<code>
+&nbsp;&nbsp;&nbsp;gunzip praat6434_chrome-intel64.tar.gz
+</code>
+<p>After this command, do</p>
+<code>
+&nbsp;&nbsp;&nbsp;ls -al
+</code>
+<p>again, and you see that the file has been unpacked to something that is 55.2 MB big:</p>
+<code>
+-rw-r--r-- 1 yourname yourname 55200000 Jan &nbsp;3 00:51 praat6434_chrome-intel64.tar
+</code>
+<p>This file is still not the Praat app. The extension <b>.tar</b> means that the file
+has been archived by <b>tar</b>,
+so you have to unpack it again with the following command:</p>
+<code>
+&nbsp;&nbsp;&nbsp;tar xvf praat6434_chrome-intel64.tar
+</code>
+<p>where <b> xvf</b> stands for eXtract - Verbose - File. After this command, do</p>
+<code>
+&nbsp;&nbsp;&nbsp;ls -al
+</code>
+<p>again, and you see that finally a file called <b>praat</b> has been created
+(the <b>tar</b> is also still there; you can also see both files
+in the <b>Linux files</b> folder):</p>
+<code>
+-rwxr-xr-x 1 yourname yourname 55235168 Jan &nbsp;3 00:51 praat<br>
+-rw-r--r-- 1 yourname yourname 55200000 Jan &nbsp;3 00:51 praat6434_chrome-intel64.tar
+</code>
+<p>You see that the file <b>praat</b> has the date and time at which it was originally
+created by the authors of Praat. The three little <i>x</i>es in <b>-rwxr-xr-x</b> mean
+that the file <b>praat</b> is executable, so you can now type</p>
+<code>
+&nbsp;&nbsp;&nbsp;./praat
+</code>
+<p>and Praat should show up with its Objects window and its Picture window.
+You may have to try to put a Help window on the screen to turn the mouse cursor
+from something invisible into a cross.
+If you use Praat for the first time, choose <b>Intro</b> from the Help menu.</p>
+
+<p>In case you wonder where you are, try the command</p>
+<code>
+&nbsp;&nbsp;&nbsp;pwd
+</code>
+<p>which means something like “Print Working Directory”. The answer will be something like</p>
+<code>
+/home/yourname
+</code>
+<p>This is the name by which the <b>Linux files</b> folder is known to Linux!
+So they are the same folder, known under two different names,
+depending on whether you look from the ChromeOS side or from the Linux side.</p>
+<p>You no longer need the file praat6434_chrome-intel64.tar. You can throw it away by typing</p>
+<code>
+&nbsp;&nbsp;&nbsp;rm praat6434_chrome-intel64.tar
+</code>
+<p>where <code>rm</code> stands for “remove”.</p>
+
+<p>(If your processor is ARM64, then replace “intel64” with “arm64” in all places above.)</p>
+
+<hr><h3>3. What can go wrong?</h3>
+<p><b>3a. If you do not see the <i>x</i>es</b></p>
+<p>If instead of</p>
+<code>
+-rwxr-xr-x 1 yourname yourname 55235168 Jan &nbsp;3 00:51 praat<br>
+-rw-r--r-- 1 yourname yourname 55200000 Jan &nbsp;3 00:51 praat6434_chrome-intel64.tar
+</code>
+<p>you see</p>
+<code>
+-rw-r--r-- 1 yourname yourname 55235168 Jan &nbsp;3 00:51 praat<br>
+-rw-r--r-- 1 yourname yourname 55200000 Jan &nbsp;3 00:51 praat6434_chrome-intel64.tar
+</code>
+<p>then the file <b>praat</b> is not executable, i.e. the command</p>
+<code>
+&nbsp;&nbsp;&nbsp;./praat
+</code>
+<p>gives you an error message. This situation can happen if you change the above procedure,
+for instance if you unpack Praat in the <b>Downloads</b> folder or
+in a folder under <b>Google Drive</b>. This is because ChromeOS wants to protect you against
+unknowingly putting programs (e.g. viruses) on your computer: any file you download is
+made non-executable by removing the <i>x</i>es. Only the Linux part of your computer does not
+have this protection, which is why you can install Praat under <b>Linux files</b>.</p>
+<p>If you do end up with a non-executable <b>praat</b> in your Linux folder,
+you can make it executable by typing</p>
+<code>
+&nbsp;&nbsp;&nbsp;chmod ugo+x praat
+</code>
+<p>(which stands for “CHange the MODe for User, Group and World to eXecutable”)
+into your Terminal, and confirm that you got three <i>x</i>es.</p>
+
+<p><b>3b. If Praat complains that some libraries (dependencies) are not found</b></p>
+<p>The correct installation of Praat relies on the presence of several software
+libraries, which may or may not be present on your computer. If Praat complains
+that something is missing, then you can try to install some additional
+components with the following commands:</p>
+<code>
+&nbsp;&nbsp;&nbsp;sudo apt install gtk-3<br>
+&nbsp;&nbsp;&nbsp;sudo apt install libasound2 libasound2-plugins<br>
+&nbsp;&nbsp;&nbsp;sudo apt install pulseaudio<br>
+&nbsp;&nbsp;&nbsp;sudo apt install gtk+-2.0 &nbsp; (if you install version 6.1.16; see below under 9)
+</code>
+<p>and then try to start Praat again (please notify us if anything is still missing).</p>
+
+<p>(If your processor is ARM64, then replace “intel64” with “arm64” in all places above.)</p>
+
+<hr><h3>4. How to start Praat the second time</h3>
+<p>After installation and the first run have succeeded, then the next time
+you only have to start your Terminal and type</p>
+<code>
+&nbsp;&nbsp;&nbsp;./praat
+</code>
+
+<hr><h3>5. Installing other Chromebook editions (under Linux)</h3>
+<p>If you do not have a 64-bit Intel processor,
+you can still probably install Praat, by typing</p>
+<code>
+&nbsp;&nbsp;&nbsp;sudo apt install praat
+</code>
+<p>into your Linux terminal. At the moment of writing (November 3, 2021),
+this will give you Praat version 6.0.48 (February 17, 2019).</p>
+<p>If you want a newer version,
+you can get that from <a href=http://packages.debian.org/unstable/science/praat>Debian</a>
+or <a href=https://packages.debian.org/source/sid/praat>Debian</a>.
+Recent upstream versions of the Praat package backported to the stable
+and testing distributions of Debian are available in an
+<a href=http://praat.cefala.org>APT repository</a>.
+These methods are probably for experts only.</p>
+
+<hr><h3>6. Phonetic symbols</h3>
+<p>If you want to see good phonetic characters,
+it is best to install the Charis SIL and the Doulos SIL font:</p>
+
+<code>
+&nbsp;&nbsp;&nbsp;sudo apt install fonts-sil-charis<br>
+&nbsp;&nbsp;&nbsp;sudo apt install fonts-sil-doulos
+</code>
+
+<hr><h3>7. Running Praat from the command line</h3>
+<p>To run Praat from a terminal window,
+write a Praat script and specify that script on the command line, optionally with arguments, e.g.:</p>
+<code>&nbsp;&nbsp;&nbsp;praat --run playsinewave.praat 377 0.9</code>
+<p>For details see <a href=http://www.fon.hum.uva.nl/praat/manual/Scripting_6_9__Calling_from_the_command_line.html>Calling from the command line</a> in the Scripting manual.</p>
+
+<hr><h3>8. Known possible problems, and their solution</h3>
+<p><b>8a. Sound recording</b></p>
+<p>Linux for Chromebook does support the microphone,
+but you will have to switch the microphone on in the Linux settings.</p>
+<p>If, when recording, you get a message about an unsupported sample rate,
+try 48000 Hz instead of 44100 Hz.</p>
+<p>If your recorded sound sounds all jittery and creaky,
+try select the “sysdefault” microphone (in Praat’s recording window),
+or perhaps the “default” microphone, and perhaps try both 44100 and 48000 Hz for the sample rate.</p>
+<p><b>8b. Window titles</b></p>
+<p>On Windows, Linux and the Mac you will see a window’s or dialog’s title
+in its title bar, e.g. “Create Sound from formula” or “1. Sound sineWithNoise”.
+ChromeOS refuses to show window titles,
+<a href=https://bugs.chromium.org/p/chromium/issues/detail?id=918314>probably on purpose</a>.
+Praat therefore tries to include an underlined bold text below the title bar.
+Once your windows start to show their titles twice, this will mean
+that the ChromeOS people decided to show window titles after all,
+and you are invited to notify the authors of Praat of this,
+so that they can remove their “surrogate window title label widget”.</p>
+<p><b>8c. Running cursor</b></p>
+<p>If the cursor does not run when you are playing a sound in the Sound window,
+you may want to start up Praat with X11 instead of Wayland:</p>
+<code>
+&nbsp;&nbsp;&nbsp;GDK_BACKEND=x11 ./praat
+</code>
+
+<hr><h3>9. Older editions of Praat</h3>
+<p>If your Praat windows look strange, try <a href=old/6116/praat6116_chrome64.tar.gz>praat6116_chrome64.tar.gz</a> of 6 June 2020.</p>
+
+<hr>
+by Paul Boersma.<br>
+Back to the <a href=/praat/>Praat home page</a>.
+</body></html>
