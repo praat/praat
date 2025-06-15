@@ -1,0 +1,46 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Eigen: Extract eigenvector...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Eigen: Extract eigenvector...
+</b></font></table></table>
+<p>Extract a specified eigenvector from the <a href="Eigen.html">Eigen</a> as a <a href="Matrix.html">Matrix</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Eigenvector number</b>
+<dd>determines the eigenvector.</dd>
+<dt><b>Number of rows</b>
+<dd>determines the number of rows of the newly created Matrix. If left 0, the number of rows is determined from the dimension, i.e. the number of elements, of the eigenvector and the <b>numberOfColumns</b> argument as the <i>dimension</i> / <i>numberOfColumns</i>, rounded to the next larger integer.</dd>
+<dt><b>Number of columns</b>
+<dd>determines the number of columns of the newly created Matrix. If left 0, the number of columns is determined by from the dimension, i.e. the number of elements, of the eigenvector and the <b>numberOfRows</b> argument as  <i>dimension</i> / <i>numberOfRows</i>, rounded to the next larger integer.
+If both <b>Number of rows</b> and <b>Number of columns</b> are zero, a Matrix with only one row and <i>dimension</i> columns will be created.</dd>
+</dl>
+<h2>Examples</h2>
+<p>Suppose we have an eigenvector of dimension 3 with elements {0.705, 0.424, 0.566}, then the newly created Matrix will depend on the <b>Number of rows</b> and <b>Number of columns</b> argument as follows:</p>
+<p>If <i>numberOfRows</i>=0 and <i>numberOfColumns</i>=0, then the Matrix will have 1 row and 3 columns:</p>
+<code>   0.705 0.424 0.566<br></code>
+<p>If <i>numberOfRows</i>=3 and <i>numberOfColumns</i>=0, then the Matrix will have 3 rows and 1 column:</p>
+<code>   0.705<br></code>
+<code>   0.424<br></code>
+<code>   0.566<br></code>
+<p>If <i>numberOfRows</i>=2 and <i>numberOfColumns</i>=2, then the Matrix will have 2 rows and 2 columns:</p>
+<code>   0.705 0.424<br></code>
+<code>   0.566 0.0<br></code>
+<p>If <i>numberOfRows</i>=4 and <i>numberOfColumns</i>=3, then the we get:</p>
+<code>   0.705 0.424 0.566<br></code>
+<code>   0.0   0.0   0.0 <br></code>
+<code>   0.0   0.0   0.0 <br></code>
+<code>   0.0   0.0   0.0 <br></code>
+<hr>
+<address>
+	<p>© djmw 20160617</p>
+</address>
+</body>
+</html>

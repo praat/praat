@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Create INDSCAL Carroll & Wish example...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Create INDSCAL Carroll & Wish example...
+</b></font></table></table>
+<p>Creates eight <a href="Dissimilarity.html">Dissimilarity</a> objects that bear names "1" ... "8".</p>
+<p>These objects contain the interpoint distances for a twodimensional 3&#215;3 <a href="Configuration.html">Configuration</a> of points, labelled A, B, C, ... I. All Dissimilarity objects are based on the following underlying configuration.</p>
+<p align=middle><img height=400 width=400 src=Create_INDSCAL_Carroll___Wish_example____1.png></p><p>The eight sources weigh this configuration in the following manner:</p>
+<p align=middle><img height=400 width=400 src=Create_INDSCAL_Carroll___Wish_example____2.png></p><p>For each source, the distances were subjected to the transformation: </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>dissimilarity</i><sub><i>ij</i></sub> = <i>distance</i><sub><i>ij</i></sub> + <i>noiseRange</i> &#183; <b>u</b>, </table>
+<p>where <b>u</b> is a uniform random variable between 0 and 1.</p>
+<p>Now you can do the following for example:</p>
+<dl>
+<dt>Select all the Dissimilarity objects and choose <a href="Dissimilarity__To_Distance___.html">To Distance...</a>.
+<dd>Uncheck scale (add "additive constant").</dd>
+<dt>Select all the Distance objects and choose <a href="Distance__To_Configuration__indscal____.html">To Configuration (indscal)...</a>.
+<dd>and an <a href="INDSCAL_analysis.html">INDSCAL analysis</a> will be performed. In order to reproduce the saliences, you have to uncheck the "Normalize scalar products" option.</dd>
+</dl>
+<p>This example was adapted from <a href="Carroll___Wish__1974_.html">Carroll & Wish (1974)</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Multidimensional_scaling.html">Multidimensional scaling</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 19971201</p>
+</address>
+</body>
+</html>

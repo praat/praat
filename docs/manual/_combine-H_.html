@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>combine#</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+combine#
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>combine#</font></code></b> (...)
+<dd>combine numbers, vectors and matrices into a new vector.</dd>
+</dl>
+<h2>Examples</h2>
+<code>   <a href="_assert_.html">assert</a> <b>combine#</b> (7, 4, 99) = { 7, 4, 99 }<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>combine#</b> ({ 7, 4 }, 99) = { 7, 4, 99 }<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>combine#</b> ({ 7, 4 }, { 99, 103, 1 }) = { 7, 4, 99, 103, 1 }<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>combine#</b> ({{ 7, 4 }, { 99, 103 }}, 1, { 8, -1, 2 }) =<br></code>
+<code>   ... { 7, 4, 99, 103, 1, 8, -1, 2 }<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Functions.html">Functions</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023</p>
+</address>
+</body>
+</html>

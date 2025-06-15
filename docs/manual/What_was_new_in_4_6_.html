@@ -1,0 +1,145 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>What was new in 4.6?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+What was new in 4.6?
+</b></font></table></table>
+<p><b>4.6</b> (12 May 2007)</p>
+<p><b>4.5.26</b> (8 May 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound files: reading FLAC audio files (implemented by Erez Volk).</dd>
+</dl>
+<p><b>4.5.25</b> (7 May 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Table__Rows_to_columns___.html">Table: Rows to columns...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Table__Collapse_rows___.html">Table: Collapse rows...</a> (renamed from <b>Pool</b>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Table__Formula__column_range____.html">Table: Formula (column range)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; OT learning: OTGrammar window shows harmonies.</dd>
+</dl>
+<p><b>4.5.24</b> (27 April 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; OT learning: added decision strategy MaximumEntropy; this has the same harmony determination method as Harmonic Grammar (include the additive constraint noise), but there is some more variability, in that every candidate gets a relative probability of exp(harmony).</dd>
+</dl>
+<p><b>4.5.23</b> (26 April 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Macintosh: much smaller sizes (in kilobytes) of spectrograms for printing and clipboard; this improves the compatibility with other programs such as Microsoft Word for large spectrograms.</dd>
+</dl>
+<p><b>4.5.22</b> (25 April 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Macintosh: improved drawing of spectrograms for printing and clipboard (this was crippled in 4.5.18, but now it is better than before 4.5.18).</dd>
+</dl>
+<p><b>4.5.21</b> (24 April 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; OT learning: corrected HarmonicGrammar (and LinearOT) learning procedure to the stochastic gradient ascent method applied by <a href="Jäger__2003_.html">Jäger (2003)</a> to MaxEnt grammars.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: removed a bug that could make selection checking (in command windows) unreliable after a script was run.</dd>
+</dl>
+<p><b>4.5.20</b> (19 April 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: allow assignments like <code><font size=+1>pitch = To Pitch... 0 75 600</font></code>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; PitchTier Formula: guard against undefined values.</dd>
+</dl>
+<p><b>4.5.19</b> (2 April 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: allow comments with &#8220;<code><font size=+1>#</font></code>&#8221; and &#8220;<code><font size=+1>;</font></code>&#8221; in forms.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows audio playing: attempt at more compatibility with Vista.</dd>
+</dl>
+<p><b>4.5.18</b> (30 March 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Macintosh: better image drawing (more grey values).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More tabulation commands.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More SpectrumTier commands.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Picture window: keyboard shortcut for <a href="Erase_all.html">Erase all</a>.</dd>
+</dl>
+<p><b>4.5.17</b> (19 March 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Picture window: can change arrow size.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Several <b>List</b> commands.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Spectrum: To SpectrumTier (peaks)</b>.</dd>
+</dl>
+<p><b>4.5.16</b> (22 February 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound-to-Intensity: made resistant against undefined settings.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: made Ctrl-. available as a shortcut.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: made it more likely to find the correct fonts.</dd>
+</dl>
+<p><b>4.5.15</b> (12 February 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows XP: worked around a bug in Windows XP that could cause Praat to crash when the user moved the mouse pointer over a file in the Desktop in the file selector. The workaround is to temporarily disable file info tips when the file selector window is on the screen.</dd>
+</dl>
+<p><b>4.5.14</b> (5 February 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: some new predefined string variables like <code><font size=+1>preferencesDirectory$</font></code>.</dd>
+</dl>
+<p><b>4.5.13</b> (3 February 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; For stereo sounds, pitch analysis is based on correlations pooled over channels (rather than on correlations of the channel average).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; For stereo sounds, spectrogram analysis is based on power density averaged across channels (rather than on the power density of the channel average).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: removed a bug introduced in 4.5.06 that caused some variables not to be substituted.</dd>
+</dl>
+<p><b>4.5.12</b> (30 January 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Made cross-correlation pitch analysis as fast as it used to be before 4.5.11.</dd>
+</dl>
+<p><b>4.5.11</b> (29 January 2007)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound objects can be stereo, for better playback quality (most analyses will work on the averaged mono signal).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Macintosh: recording a sound now uses CoreAudio instead of SoundManager, for more compatibility with modern recording devices, and the possibility to record with a sampling frequency of 96 kHz.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="ManPages.html">ManPages</a> allow picture scripts with separate object lists.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: better scroll bars in object list for Lesstif (Debian).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: made <a href="Create_Strings_as_file_list___.html">Create Strings as file list...</a> work on Reiser.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="sendpraat.html">sendpraat</a> scripts correctly wait until sounds have played.</dd>
+</dl>
+<p><b>4.5.08</b> (20 December 2006)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; ExperimentMFC: can use stereo sounds.</dd>
+</dl>
+<p><b>4.5.07</b> (16 December 2006)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Macintosh: playing a sound now uses CoreAudio instead of SoundManager.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Phonetic symbols: &#712;primary stress and &#712;secon&#716;dary stress.</dd>
+</dl>
+<p><b>4.5.06</b> (13 December 2006)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Support for 32-bit floating-point WAV files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: removed several kinds of restrictions on string length.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SSCP: Draw confidence ellipse: corrected a bug that would sometimes not draw the ellipse when <i>N</i> was very large.</dd>
+</dl>
+<p><b>4.5.05</b> (5 December 2006)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Macintosh scripting: European symbols such as &#246; and &#233; and &#231; are now allowed in file names in scripts and in MacRoman-encoded file names sent by other programs through the sendpraat subroutine.</dd>
+</dl>
+<p><b>4.5.04</b> (1 December 2006)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Change_gender___.html">Sound: Change gender...</a>: corrected a bug that often caused a female-to-male conversion to sound monotonous.</dd>
+</dl>
+<p><b>4.5.03</b> (29 November 2006)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Table: added independent-samples t-test.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: corrected a bug introduced in 4.5.02 that prevented sounds from playing and other weird things.</dd>
+</dl>
+<p><b>4.5.02</b> (16 November 2006)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected yet another bug in the new <a href="Sound__To_TextGrid__silences____.html">Sound: To TextGrid (silences)...</a>.</dd>
+</dl>
+<p><b>4.5.01</b> (28 October 2006)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound window: the pitch drawing method is <b>Curves</b>, <b>Speckles</b>, or <b>Automatic</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected another bug in the new <a href="Sound__To_TextGrid__silences____.html">Sound: To TextGrid (silences)...</a>.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2006,2007</p>
+</address>
+</body>
+</html>

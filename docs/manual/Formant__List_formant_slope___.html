@@ -1,0 +1,53 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formant: List formant slope...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formant: List formant slope...
+</b></font></table></table>
+<p>A command available in the <a href="Query_submenu.html">Query submenu</a> if you select a <a href="Formant.html">Formant</a> object. The Info window will show the characteristics of the slope of the chosen interval as a vector with a number of values.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Formant number</b>,
+<dd>defines the formant whose slope characteristics you want.</dd>
+<dt><b>Time range (s)</b>,
+<dd>defines the start time and the end time of the segment on which the slope should be determined.</dd>
+<dt><b>Slope curve</b>
+<dd>defines the kind of curve you want to fit on the formant points to determine the slope characteristics. The options available are <b>Exponential plus constant</b>, <b>Parabolic</b> and <b>Sigmoid plus constant</b>.</dd>
+</dl>
+<h2>The vector result</h2>
+<p>The vector values are determined from the fit of the formant track with a an <b>exponential plus constant</b> function <i>F</i>(<i>t</i>) = <i>a</i>+<i>b</i>&#183;exp(<i>c</i>&#183;<i>t</i>), or a <b>parabolic</b> function <i>F</i>(<i>t</i>) = <i>a</i>+<i>b</i>&#183;t+<i>c</i>&#183;t<sup>2</sup>, or a <b>sigmoid plus constant</b> function <i>F</i>(<i>t</i>) = <i>a</i>+<i>b</i> / (1 + exp(- (<i>t</i> -c) / d)) on the chosen interval [<i>t</i><sub>min</sub>, <i>t</i><sub>max</sub>].</p>
+<dl>
+<dt><b>1. Average slope (Hz / s)</b>
+<dd>defined as (<i>F</i><sub>start</sub> - <i>F</i><sub>end</sub>) / (<i>t</i><sub>max</sub> - <i>t</i><sub>min</sub>), where <i>F</i><sub>start</sub> and <i>F</i><sub>end</sub> are the start and end values of the fitted function <i>F</i>(<i>t</i>) and <i>t</i><sub>max</sub> and <i>t</i><sub>min</sub> are the start and end times of the interval.</dd>
+<dt><b>2. <i>R</i><sup>2</sup></b>
+<dd>The <i>R</i><sup>2</sup> value of the fit defined as <i>R</i><sup>2</sup> = 1 - <i>varianceAfter</i> / <i>varianceBefore</i>.</dd>
+<dt><b>3. <i>F</i><sub>start</sub></b>
+<dd>the frequency in hertz of the function <i>F</i>(<i>t</i><sub>min</sub>).</dd>
+<dt><b>4. <i>F</i><sub>end</sub></b>
+<dd>the frequency in hertz of the function <i>F</i>(<i>t</i><sub>max</sub>).</dd>
+<dt><b>5. <i>a</i></b>
+<dd>the parameter <i>a</i> (hertz) of the function <i>F</i>(<i>t</i>).</dd>
+<dt><b>6. <i>b</i></b>
+<dd>the parameter <i>b</i> of the function <i>F</i>(<i>t</i>).</dd>
+<dt><b>7. <i>c</i></b>
+<dd>the parameter <i>c</i> ( / s) of the function <i>F</i>(<i>t</i>).</dd>
+<dt><b>8. <i>d</i></b>
+<dd>the parameter <i>d</i> of the function <i>F</i>(<i>t</i>), if the sigmoid plus constant function was chosen.</dd>
+</dl>
+<h2>Remarks about the interpretation of the fit parameters.</h2>
+<p>The returned average slope parameter is reliable only if the formant trajectory is clearly not constant and there is a large difference between the <i>F</i><sub>start</sub> and the <i>F</i><sub>end</sub> values. In cases where the formant trajectory shows a noisy pattern all return values have a large error margin and the determined average slope can also be unreliable.</p>
+<h2>Algorithm</h2>
+<p>The algorithm to fit the <i>non-linear</i> exponential plus constant and the sigmoid plus constant functions to a series of (time, frequency) values by a non-iterative algorithm is described in <a href="Jacquelin__2009_.html">Jacquelin (2009)</a>.</p>
+<hr>
+<address>
+	<p>© djmw 20210813</p>
+</address>
+</body>
+</html>

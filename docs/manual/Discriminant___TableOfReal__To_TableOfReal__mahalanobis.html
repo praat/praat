@@ -1,0 +1,44 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Discriminant & TableOfReal: To TableOfReal (mahalanobis)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Discriminant & TableOfReal: To TableOfReal (mahalanobis)...
+</b></font></table></table>
+<p>Calculate <a href="Mahalanobis_distance.html">Mahalanobis distance</a>s for the selected <a href="TableOfReal.html">TableOfReal</a> with respect to one group in the selected <a href="Discriminant.html">Discriminant</a> object.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Group label</b>
+<dd>defines which group mean to use for the distance calculation.</dd>
+<dt><b>Pool covariance matrices</b>
+<dd>when on, use a pooled covariance matrix instead of the group covariance matrix.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>See <a href="Covariance___TableOfReal__To_TableOfReal__mahalanobis__.html">Covariance & TableOfReal: To TableOfReal (mahalanobis)...</a>.</p>
+<h2>Example</h2>
+<p>Calculate the number of datapoints that are within the one-sigma elipses of two different groups, i.e. the number of data points that are in the overlapping area. </p>
+<p>Suppose the group labels are &#248; and &#655;.</p>
+<code>   pols50m = Create TableOfReal (Pols 1973): "no"<br></code>
+<code>   Formula: ~ log10 (self)<br></code>
+<code>   discriminant = To Discriminant<br></code>
+<code>   selectObject: pols50m, discriminant<br></code>
+<code>   t1 = To TableOfReal (mahalanobis): "\o/", "no"<br></code>
+<code>   selectObject: pols50m, discriminant<br></code>
+<code>   t2 = To TableOfReal (mahalanobis): "\yc", "no"<br></code>
+<p>Now we count when both the t1 and t2 values are smaller than 1 (sigma):</p>
+<code>   Copy: "tr"<br></code>
+<code>   Formula: ~ object [t1] &lt; 1 and object [t2] &lt; 1<br></code>
+<code>   Extract rows where column: 1, "equal to", 1<br></code>
+<code>   no = Get number of rows"<br></code>
+<hr>
+<address>
+	<p>© djmw 20170828</p>
+</address>
+</body>
+</html>

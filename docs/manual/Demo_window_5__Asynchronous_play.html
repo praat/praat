@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Demo window 5. Asynchronous play</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Demo window 5. Asynchronous play
+</b></font></table></table>
+<p>If you select a Sound and execute the command</p>
+<code>   <a href="Sound__Play.html">Play</a><br></code>
+<p>Praat will play the whole sound before proceeding to the next line of your script. You will often instead want Praat to continue running your script while the sound is playing. To accomplish that, use the <a href="_asynchronous_.html"><b><code><font size=+1>asynchronous</font></code></b></a> directive:</p>
+<code>   <a href="Create_Sound_as_pure_tone___.html">Create Sound as pure tone:</a> “tone”, 1, 0, 0.2, 44100, 440, 0.2, 0.01, 0.01<br></code>
+<code>   <b><a href="_asynchronous_.html">asynchronous</a></b> <a href="Sound__Play.html">Play</a><br></code>
+<code>   <a href="Remove.html">Remove</a><br></code>
+<p>The sound will continue to play, even after the Sound object has been removed.</p>
+<p>Please note that a following Play command will interrupt the playing of the first:</p>
+<code>   while <a href="_demoWaitForInput_.html">demoWaitForInput</a> ()<br></code>
+<code>       if <a href="_demoClicked_.html">demoClicked</a> ()<br></code>
+<code>           <a href="Create_Sound_as_pure_tone___.html">Create Sound as pure tone:</a> “tone”, 1, 0, 3.0, 44100,<br></code>
+<code>           ... <a href="_randomGauss_.html">randomGauss</a> (440, 100), 0.2, 0.01, 0.01<br></code>
+<code>           <b><a href="_asynchronous_.html">asynchronous</a></b> <a href="Sound__Play.html">Play</a><br></code>
+<code>           <a href="Remove.html">Remove</a><br></code>
+<code>       endif<br></code>
+<code>   endwhile<br></code>
+<p>The first sound will stop playing soon after the user clicks for the second time.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Demo_window.html">Demo window</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2009–2023</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>What was new in 6.0?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+What was new in 6.0?
+</b></font></table></table>
+<p><b>6.0</b> (28 October 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: use PulseAudio as the server for playing sound.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: removed <code><font size=+1>Praatcon.exe</font></code>, because Praat.exe can now be used from the command line.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Praat can now open files from the command line on all platforms.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The API change that requires raising the major Praat version to 6: no longer any need for <code><font size=+1>Praatcon.exe</font></code>, because Praat itself can now run a script from the command line on all platforms.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; See <a href="Scripting_6_9__Calling_from_the_command_line.html">Scripting 6.9. Calling from the command line</a> for all command line options.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SpeechSynthesizer: corrected a potentially crashing bug.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac Retina graphics: made function drawing (e.g. in the TextGrid window) twice as fast.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; LongSound: corrected playing of more than 2 channels.</dd>
+</dl>
+<p><b>5.4.22</b> (8 October 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound files: added support for MP3 files with ID3 version 2 headers.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Table__Line_graph_where___.html">Table: Line graph where...</a>: removed a bug that caused nothing to be drawn if the number of columns was larger than the number of rows and the column index was larger than the number of rows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: corrected horizontal spacing in graphical text on El Capit&#225;n.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: corrected a bug that would cause Praat to crash if a PNG file could not be saved (from a script).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: enabled PNG saving from Praatcon.</dd>
+</dl>
+<p><b>5.4.21</b> (29 September 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected a bug introduced in 5.4.20 that could cause the Sound window to crash.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Repaired a very old hang with pulses in the Sound window.</dd>
+</dl>
+<p><b>5.4.20</b> (26 September 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected the graphical representation of numbers with exponents (wrong since 5.4.10).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: prevented flashing console window in <a href="_runScript_.html"><b><code><font size=+1>runScript</font></code></b></a> ().</dd>
+</dl>
+<p><b>5.4.19</b> (16 September 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; LongSound: corrected saving of 8-bit files as 16-bit.</dd>
+</dl>
+<p><b>5.4.18</b> (7 September 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Regular expressions: if the pattern is illegal, you'll now get an error message instead of an empty string.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; LongSound: removed a bug introduced in 1999 that could play long stereo sounds much too fast if they had unusual sampling frequencies. This bug has become more noticeable on the Mac since January 2015.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Guard better against sound files that contain 0 samples.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: faster look-up of variables.</dd>
+</dl>
+<p><b>5.4.17</b> (20 August 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: removed a bug that could cause Praat to crash when calling <code><font size=+1>writeFile</font></code> () with an empty text.</dd>
+</dl>
+<p><b>5.4.16</b> (16 August 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: removed a bug by which graphical text passed over the right edge in TextGrid intervals.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: removed a bug that allowed the general <b>Zoom</b> and <b>Close</b> commands to be accessible from a script.</dd>
+</dl>
+<p><b>5.4.15</b> (1 August 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Introduced several command line options that make it easier to call Praat from a web server.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; 64-bit Mac: removed a bug introduced in 5.4.11 that caused incorrect spacing of vertical text in picture files.</dd>
+</dl>
+<p><b>5.4.14</b> (24 July 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows and 32-bit Mac: removed a bug introduced in 5.4.12 that could cause weird behavior (even crashing) when pressing the Tab key in the script window or in the manual.</dd>
+</dl>
+<p><b>5.4.13</b> (22 July 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The Demo window can now save itself to a PNG or PDF file.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: removed a bug introduced in 5.4.10 whereby Praatcon would write garbled text to the console.</dd>
+</dl>
+<p><b>5.4.12</b> (10 July 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: removed a bug introduced in 5.4.10 whereby SpeechSynthesizer would only pronounce the first letter of the text.</dd>
+</dl>
+<p><b>5.4.11</b> (8 July 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: removed a bug introduced in 5.4.10 whereby the file selection window could try to open a file with a garbled name.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug whereby the PointProcess window would crash when showing a perfectly silent sound.</dd>
+</dl>
+<p><b>5.4.10</b> (27 June 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in version 4.5.09 (January 2007) that caused incorrect upsampling of stereo sounds when the upsampling factor was exactly 2. This bug has caused incorrect playing of stereo sounds with a sampling frequency of 22050 Hz on the Mac since January 2015.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in 2011 that could cause Praat to crash when you scrolled the LongSound window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>TextGrid: Count intervals where...</b> and <b>TextGrid: Count points where...</b>.</dd>
+</dl>
+<p><b>5.4.09</b> (1 June 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: the tab key can be used to play sounds on more computers.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: TextGrid files with non-BMP characters are now read correctly.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: files with names that contain non-BMP characters are now saved correctly.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Updated manual.</dd>
+</dl>
+<p><b>5.4.08</b> (24 March 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound window: removed a bug that caused a crash in <b>Editor info</b>.</dd>
+</dl>
+<p><b>5.4.07</b> (22 March 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: <b>Add interval</b> now does the same thing as <b>Add boundary</b> if a time stretch is selected.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: better redrawing in TextGrid window.</dd>
+</dl>
+<p><b>5.4.06</b> (21 February 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 200 dpi.</dd>
+</dl>
+<p><b>5.4.05</b> (13 February 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Better support for big integer numbers on Windows XP.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound window: guarded against empty view ranges for the intensity curve.</dd>
+</dl>
+<p><b>5.4.04</b> (28 December 2014)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows audio playback: if the sound has more channels than the audio hardware, distribute them evenly.</dd>
+</dl>
+<p><b>5.4.03</b> (18 December 2014)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid reading: Praat now corrects some incomplete TextGrid files created by others.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Better support for text files larger than 2 GB.</dd>
+</dl>
+<p><b>5.4.02</b> (26 November 2014)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: repaired a bug by which quote characters typed into the script window could become curly instead of straight.</dd>
+</dl>
+<p><b>5.4.01</b> (9 November 2014)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="MelSpectrogram.html">MelSpectrogram</a>, <a href="BarkSpectrogram.html">BarkSpectrogram</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: removed a bug that could cause too many flashes when scrolling a Sound window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: repaired a bug that could cause a crash in the <a href="VowelEditor.html">VowelEditor</a> window.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2014,2015</p>
+</address>
+</body>
+</html>

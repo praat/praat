@@ -1,0 +1,44 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Confusion: Group responses...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Confusion: Group responses...
+</b></font></table></table>
+<p>Groups a number of responses into one new category.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Responses</b>
+<dd>defines the responses that will be grouped.</dd>
+<dt><b>New label</b>
+<dd>defines the new label for the grouped responses.</dd>
+<dt><b>New label position</b>
+<dd>the column number for the new group label.</dd>
+</dl>
+<h2>Example</h2>
+<p>Given the following selected Confusion:</p>
+<code>          u    i    a   ! The response labels<br></code>
+<code>    u     6    2    1   ! Responses on stimulus `u`<br></code>
+<code>    i     3    4    2   ! Responses on stimulus `i`<br></code>
+<code>    a     1    4    4   ! Responses on stimulus `a`<br></code>
+<p>After the command <b>Group responses: "a i", "front", 1</b>, the new Confusion will be:</p>
+<code>      front    i    ! The new response labels<br></code>
+<code>    u     7    2    ! Responses on stimulus `u`<br></code>
+<code>    i     5    4    ! Responses on stimulus `i`<br></code>
+<code>    a     5    4    ! Responses on stimulus `a`<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Confusion.html">Confusion</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20140117</p>
+</address>
+</body>
+</html>

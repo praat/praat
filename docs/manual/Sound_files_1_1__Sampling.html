@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound files 1.1. Sampling</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound files 1.1. Sampling
+</b></font></table></table>
+<p>When a sound signal from a microphone or on a tape needs to be read into a computer, it is <i>digitized</i>, which means that it is <i>sampled</i> and <i>quantized</i>.</p>
+<p>Sampling is the discretization of the time domain of the signal: each second of the signal is divided up into 44100, 48000 or 96000 slices (or any other suitable number), and a <i>sample value</i> is associated with each slice. For instance, a continuous 377-Hz sine wave is expressed by</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>x</i>(<i>t</i>) = sin (2<i>&#960;</i> 377 <i>t</i>)</table>
+<p>If the <i>sampling frequency</i> (or <i>sample rate</i>) is 44100 Hz, this sine wave will be sampled at points spaced &#916;<i>t</i> = 1/44100 second apart, and the sample values will be</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>x</i><sub><i>i</i></sub> = sin (2<i>&#960;</i> 377 (<i>t</i><sub>0</sub> + <i>i</i> &#916;<i>t</i>))</table>
+<p>where <i>t</i><sub>0</sub> is the time after which sampling begins. &#916;<i>t</i> is called the <i>sample period</i>.</p>
+<p>Quantization is handled in the next section (<a href="Sound_files_1_2__Quantization.html">&#167;1.2</a>).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound_files.html">Sound files</a>
+<li><a href="Sound_files_1__General_structure.html">Sound files 1. General structure</a>
+<li><a href="Sound_files_1_4__The_header.html">Sound files 1.4. The header</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20220102</p>
+</address>
+</body>
+</html>

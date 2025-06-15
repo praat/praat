@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Covariances: Report multivariate mean difference...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Covariances: Report multivariate mean difference...
+</b></font></table></table>
+<p>Reports the probability that the two multivariate means of the selected <a href="Covariance.html">Covariance</a>s are equal.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Covariances are equal</b>
+<dd>determines whether the test is performed as if the two covariance matrices are equal or not.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>For equal covariance matrices the test is via Hotelling's T<sup>2</sup> as described in <a href="Morrison__1990_.html">Morrison (1990,</a> page 141). The test statistic is <i>F</i> = (<i>N</i><sub>1</sub>+<i>N</i><sub>2</sub>-<i>p</i>-1)/((<i>N</i><sub>1</sub>+<i>N</i><sub>2</sub>-2)<i>p</i>)&#183; T<sup>2</sup>, with <i>p</i> and <i>N</i><sub>1</sub>+<i>N</i><sub>2</sub>-<i>p</i>-1 degrees of freedom.</p>
+<p>If the covariance matrices are not equal, we apply a correction on the number of degrees of freedom as proposed by <a href="Krishnamoorthy___Yu__2004_.html">Krishnamoorthy & Yu (2004)</a>. The test statistic in this case is <i>F</i> = (&#957;-<i>p</i>+1)/(<i>p&#957;</i>)&#183; T<sup>2</sup>, with <i>p</i> and &#957; degrees of freedom. Here &#957; is a corrected number of degrees of freedom. </p>
+<p>(The test for unequal covariances simplifies to Welch's approximate solution for the univariate t-test with unequal variances.) </p>
+<hr>
+<address>
+	<p>© djmw 20090627</p>
+</address>
+</body>
+</html>

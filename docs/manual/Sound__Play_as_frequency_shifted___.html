@@ -1,0 +1,27 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Play as frequency shifted...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Play as frequency shifted...
+</b></font></table></table>
+<p>Plays the selected <a href="Sound.html">Sound</a> with all frequencies shifted by the same amount. This trick can be used to make audible those sounds that are normally not audible at all by human beings, like for example ultrasounds or infrasounds.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Shift by (Hz)</b>
+<dd>the amount by which frequencies are shifted. A positive number shifts frequencies up, a negative number shifts frequencies down. </dd>
+</dl>
+<h2><b>Example</b></h2>
+<p>Rodents produce sounds with frequencies far outside the human audible range. Some meaningfull squeaks of these animals are present in the frequency range from 54 kHz up to sometimes 100kHz. By choosing a shift value of -54000 Hz and a sampling frequency of 44100 Hz, all frequencies between 54000 Hz and (54000+22050=) 76050 Hz  will be shifted down by 54000 Hz. The rodents&#8217; frequencies in the interval from 54000 Hz to 76050 Hz will therefore be mapped to the frequency interval between 0 and 22050 Hz. </p>
+<hr>
+<address>
+	<p>© djmw 20230801</p>
+</address>
+</body>
+</html>

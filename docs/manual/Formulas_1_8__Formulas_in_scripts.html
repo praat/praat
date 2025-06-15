@@ -1,0 +1,62 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas 1.8. Formulas in scripts</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas 1.8. Formulas in scripts
+</b></font></table></table>
+<p>In scripts, you can assign numeric expressions to numeric variables, string expressions to string variables, and array expressions to array variables. You can also use numeric, string and array variables in expressions.</p>
+<h2>Example: report a square</h2>
+<p>Choose <a href="New_Praat_script.html">New Praat script</a> from the <a href="Praat_menu.html">Praat menu</a>. A script editor window will become visible. Type the following lines into that window:</p>
+<code>   x = 99<br></code>
+<code>   x2 = x * x<br></code>
+<code>   writeInfoLine: “The square of ”, x, “ is ”, x2, “.”<br></code>
+<p>This is an example of a simple <a href="Praat_script.html">Praat script</a>; it assigns the results of the numeric formulas <code><font size=+1>99</font></code> and <code><font size=+1>x * x</font></code> to the numeric variables <i><code><font size=+1>x</font></code></i> and <i><code><font size=+1>x2</font></code></i>. Note that the formula <code><font size=+1>x * x</font></code> itself refers to the variable <i><code><font size=+1>x</font></code></i>. To run (execute) this script, type <a href="Keyboard_shortcuts.html">Command-R</a> or choose <b>Run</b> from the Run menu. Praat will then write the following text into the Info window:</p>
+<code>   The square of 99 is 9801.<br></code>
+<p>For more information on scripts, see the <a href="Scripting.html">Scripting</a> tutorial.</p>
+<h2>Example: rename the city of Washington</h2>
+<p>Type the following text into the script editor window:</p>
+<code>   current$ = “Bush”<br></code>
+<code>   previous$ = “Clinton”<br></code>
+<code>   famous$ = “Lincoln”<br></code>
+<code>   newCapital$ = current$ + mid$ (famous$, 2, 3) + right$ (previous$, 3)<br></code>
+<code>   writeInfoLine: “The new capital will be ”, newCapital$, “.”<br></code>
+<p>This script assigns the results of four string expressions to the four string variables <code><font size=+1>current$</font></code>, <code><font size=+1>previous$</font></code>, <code><font size=+1>famous$</font></code>, and <code><font size=+1>newCapital$</font></code>. The dollar sign is the notation for a string variable or for a function whose result is a string (like <code><font size=+1>left$</font></code>). Note that the formula in the fourth line refers to three existing variables.</p>
+<p>To see what the new name of the capital will be, choose <b>Run</b>.</p>
+<h2>Example: report five squares</h2>
+<p>Type the following script:</p>
+<code>   x# = { 1, 2, 3, 4, 5 }<br></code>
+<code>   x2# = x# * x#<br></code>
+<code>   writeInfoLine: “The squares of ”, x#, “ are ”, x2#, “.”<br></code>
+<p>Praat will then write the following text into the Info window:</p>
+<code>   The squares of 1 2 3 4 5 are 1 4 9 16 25.<br></code>
+<h2>Example: numeric expressions in settings in scripts</h2>
+<p>As in real settings windows, you can use numeric expressions in all numeric fields. The example of two pages back becomes:</p>
+<code>   Create Sound from formula: “sine”, 1, 0, 10000 / 44100, 44100, ~ 0.9 * sin (2*pi*377*x)<br></code>
+<h2>Example: string expressions in settings in scripts</h2>
+<p>As in real settings windows, you can use string expressions in all text fields:</p>
+<code>   soundName$ = “hello”<br></code>
+<code>   Read from file: soundName$ + “.wav”<br></code>
+<h2>Example: numeric expressions in creation in scripts</h2>
+<p>Suppose you want to generate a sine wave whose frequency is held in a variable. This is the way:</p>
+<code>   frequency = 377<br></code>
+<code>   Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, ~ 0.9 * sin (2*pi*frequency*x)<br></code>
+<p>In this example, Praat will protest if <code><font size=+1>x</font></code> is a variable as well (<i><code><font size=+1>x</font></code></i>), because that would be ambiguous with the <code><font size=+1>x</font></code> that refers to the time in the sound (see <a href="Formulas_1_7__Formulas_for_modification.html">Formulas 1.7. Formulas for modification</a>).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas.html">Formulas</a>
+<li><a href="Formulas_1__My_first_formulas.html">Formulas 1. My first formulas</a>
+<li><a href="Formulas_1_5__Formulas_in_settings_windows.html">Formulas 1.5. Formulas in settings windows</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20170916</p>
+</address>
+</body>
+</html>

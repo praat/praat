@@ -1,0 +1,49 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>spline</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+spline
+</b></font></table></table>
+<p>A spline function <i>f</i> is a piecewise polynomial function defined on an interval [<i>x</i><sub><i>min</i></sub>, <i>x</i><sub><i>max</i></sub>] with specified continuity constraints, i.e., when the interval [<i>x</i><sub><i>min</i></sub>, <i>x</i><sub><i>max</i></sub>] is subdivided by points <i>&#958;</i><sub><i>i</i></sub> such that <i>x</i><sub><i>min</i></sub> = <i>&#958;</i><sub>1</sub> &lt; ... &lt; <i>&#958;</i><sub><i>q</i></sub> = <i>x</i><sub><i>max</i></sub>, then within each subinterval [<i>&#958;</i><sub><i>j</i></sub>, <i>&#958;</i><sub><i>j</i>+1</sub>) the function is a polynomial <i>P</i><sub><i>j</i></sub> of specified degree <i>k</i>.</p>
+<p>A <i>knot sequence</i> <i>t</i> = {<i>t</i><sub>1</sub>, ..., <i>t</i><sub><i>n</i>+<i>k</i></sub>}, where <i>n</i> is the number of free parameters that specify the spline function, is derived from the <i>&#958;</i><sub><i>i</i></sub> by placing knots at the boundary values <i>&#958;</i><sub><i>i</i></sub> according to the order of continuity at that boundary. The most common continuity characteristics imposed on <i>f</i> request that for adjacent polynomials the derivatives up to order <i>k</i>&#8722;2 match. For example, the knot sequence of a spline of order <i>k</i> for a partition of [<i>x</i><sub><i>min</i></sub>, <i>x</i><sub><i>max</i></sub>] into three intervals (<i>q</i> = 4) will be <i>t</i><sub>1</sub> = ... = <i>t</i><sub><i>k</i></sub> = <i>x</i><sub><i>min</i></sub> (= <i>&#958;</i><sub>1</sub>), <i>t</i><sub><i>k</i>+1</sub> = <i>&#958;</i><sub>2</sub>, <i>t</i><sub><i>k</i>+2</sub> = <i>&#958;</i><sub>3</sub> , <i>t</i><sub><i>k</i>+3</sub> = ... = <i>t</i><sub><i>k</i>+<i>k</i>+2</sub> = <i>x</i><sub><i>max</i></sub> (= <i>&#958;</i><sub>4</sub>). This is called a <i>simple</i> knot sequence, because all interior knots are simple. The number of free parameters <i>n</i> for this case obeys a simple formula:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>n</i> = <i>numberOfInteriorKnots</i> + <i>order</i>.</table>
+<p>With suitable basis functions, for example, the M-spline family <i>M</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>, <i>t</i>), <i>i</i>=1..<i>n</i>, we can write any spline <i>f</i> in the form:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i> = &#8721;<sub><i>i</i>=1..<i>n</i></sub> <i>a</i><sub><i>i</i></sub><i>M</i><sub><i>i</i></sub>,</table>
+<p>where the <i>M</i><sub><i>i</i></sub> are defined by the following recursive formulas:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>M</i><sub><i>i</i></sub>(<i>x</i>|1,<i>t</i>) = 1 / (<i>t</i><sub><i>i</i>+1</sub> &#8722; <i>t</i><sub><i>i</i></sub>),           <i>t</i><sub><i>i</i></sub> &#8804; <i>x</i> &lt; <i>t</i><sub><i>i</i>+1</sub>, 0 otherwise</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>M</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>,<i>t</i>) = <i>k</i> [(<i>x</i>&#8722;<i>t</i><sub><i>i</i></sub>)<i>M</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>&#8722;1,<i>t</i>) + (<i>t</i><sub><i>i</i>+<i>k</i></sub>&#8722;<i>x</i>)<i>M</i><sub><i>i</i>+1</sub>(<i>x</i>|<i>k</i>&#8722;1,<i>t</i>)] / ((<i>k</i>&#8722;1)(<i>t</i><sub><i>i</i>+<i>k</i></sub>&#8722;<i>t</i><sub><i>i</i></sub>))</table>
+<p>These <i>M</i><sub><i>i</i></sub> are localized because <i>M</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>,<i>t</i>) &gt; 0 only when <i>t</i><sub><i>i</i></sub> &#8804; <i>x</i> &lt; <i>t</i><sub><i>i</i>+<i>k</i></sub> and zero otherwise. Also, we have &#8747; <i>M</i><sub><i>i</i></sub>(<i>x</i>)<i>dx</i> = 1. Because of this localization a change in coefficient <i>a</i><sub><i>i</i></sub> will only effect <i>f</i> within this interval.</p>
+<p>The following picture shows an M-spline of order 3 on the interval [0, 1], with three interior knots at 0.3, 0.5 and 0.6.</p>
+<p align=middle><img height=500 width=500 src=spline_1.png></p><p>Because the M-splines are nonnegative, <i>monotone</i> splines<i></i> can be derived from them by <i>integration</i>:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>I</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>,<i>t</i>) = &#8747;<sub><i>xmin</i></sub><sup><i>x</i></sup> <i>M</i><sub><i>i</i></sub>(<i>u</i>|<i>k</i>,<i>t</i>) <i>du</i></table>
+<p>Because each <i>M</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>, <i>t</i>) is a piecewise polynomial of degree <i>k</i>&#8722;1, each <i>I</i><sub><i>i</i></sub> will be of degree <i>k</i>. Now we can write:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i> = &#8721;<sub><i>i</i>=1..<i>n</i></sub> <i>b</i><sub><i>i</i></sub> <i>I</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>,<i>t</i>)</table>
+<p>We can use an M-spline of order <i>k</i>+1 with a simple knot sequence <i>t</i>, for which <i>t</i><sub><i>j</i></sub> &#8804; x &lt; <i>t</i><sub><i>j</i>+1</sub>, to put the I-spline of order <i>k</i> into a more convenient form:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>I</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>,<i>t</i>) = 0,     <i>i</i> &gt; <i>j</i></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>I</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>,<i>t</i>) = &#8721;<sub><i>m</i>=<i>i</i>+1..<i>j</i></sub> (<i>t</i><sub><i>m</i>+<i>k</i>+1</sub>&#8722;<i>t</i><sub><i>m</i></sub>)<i>M</i><sub><i>m</i></sub>(<i>x</i>|<i>k</i>+1,<i>t</i>)/(<i>k</i>+1),     <i>j</i>&#8722;<i>k</i> &#8804; <i>i</i> &#8804; <i>j</i></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>I</i><sub><i>i</i></sub>(<i>x</i>|<i>k</i>,<i>t</i>) = 1,     <i>i</i> &lt; <i>j</i>&#8722;<i>k</i></table>
+<p>The following figure shows the I-splines that were derived from the M-splines above.</p>
+<p align=middle><img height=500 width=500 src=spline_2.png></p><p>These spline formulas were taken from <a href="Ramsay__1988_.html">Ramsay (1988)</a> and the errors in his I-spline formulas were corrected.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_ISpline___.html">Create ISpline...</a>
+<li><a href="Create_MSpline___.html">Create MSpline...</a>
+<li><a href="Dissimilarity___Configuration__Draw_regression__i-splin.html">Dissimilarity & Configuration: Draw regression (i-spline mds)...</a>
+<li><a href="Dissimilarity__To_Configuration__i-spline_mds____.html">Dissimilarity: To Configuration (i-spline mds)...</a>
+<li><a href="ISpline.html">ISpline</a>
+<li><a href="MDS_models.html">MDS models</a>
+<li><a href="MSpline.html">MSpline</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20121101</p>
+</address>
+</body>
+</html>

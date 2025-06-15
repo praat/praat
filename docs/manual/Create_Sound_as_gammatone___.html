@@ -1,0 +1,52 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Create Sound as gammatone...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Create Sound as gammatone...
+</b></font></table></table>
+<p>A command to create a <a href="Sound.html">Sound</a> as a <a href="gammatone.html">gammatone</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Name</b>
+<dd>the name of the resulting Sound object.</dd>
+<dt><b>Minimum time (s)</b> and <b>Maximum time (s)</b>
+<dd>the start and end time of the resulting Sound.</dd>
+<dt><b>Sampling frequency (Hz)</b>
+<dd>the <a href="sampling_frequency.html">sampling frequency</a> of the resulting Sound.</dd>
+<dt><b>Gamma</b>
+<dd>determines the exponent of the polynomial.</dd>
+<dt><b>Frequency (Hz)</b> and <b>Bandwidth (Hz)</b>
+<dd>determine the frequency and damping of the cosine wave in the gammatone.</dd>
+<dt><b>Initial phase (radians)</b>
+<dd>the initial phase of the cosine wave.</dd>
+<dt><b>Addition factor</b> (standard value: 0)
+<dd>determines the degree of asymmetry in the spectrum of the gammatone. The zero default value gives a gammatone. A value unequal to zero results in a so called <i>gammachirp</i>. A negative value is used in auditory filter modelling to guarantee the usual direction of filter asymmetry, which corresponds to an upward glide in instantaneous frequency.</dd>
+<dt><b>Scale amplitudes</b>
+<dd>determines whether the amplitudes will be scaled to fit in the range (-1, 1).</dd>
+</dl>
+<h2>Purpose</h2>
+<p>to create a Sound according to the following formula:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>t</i><sup><i>&#947;</i>&#8211;1</sup> e<sup>&#8211;2<i>&#960;</i>&#183;<i>bandwidth</i>&#183;<i>t</i></sup> cos (2<i>&#960;&#183;frequency&#183;t</i> + <i>additionFactor</i>&#183;ln(<i>t</i>) + <i>initialPhase</i>),</table>
+<p>The <i>gammachirp</i> function has a monotonically frequency-modulated carrier (the chirp) with instantaneous frequency </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>instantaneousFrequency</i>(<i>t</i>) = <i>frequency</i> + <i>additionFactor</i> / (2&#183;&#960;&#183;<i>t</i>)</table>
+<p>and an envelope that is a gamma distribution function. It is a theoretically optimal auditory filter, in the sense that it leads to minimal uncertainty in the joint time and scale representation of auditory signal analysis.</p>
+<p>For faithful modelling of the inner ear, <a href="Irino___Patterson__1997_.html">Irino & Patterson (1997)</a> conclude that a value of approximately 1.5 * ERB (<i>frequency</i>) is appropriate for <i>bandwidth</i>. ERB stands for <a href="equivalent_rectangular_bandwidth.html">equivalent rectangular bandwidth</a>. Their formula for ERB is:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>ERB(<i>f</i>) = 6.23 10<sup>&#8211;6</sup> <i>f</i><sup>2</sup> + 93.39 10<sup>&#8211;3</sup> <i>f</i> + 28.52.</table>
+<p>To avoid <a href="aliasing.html">aliasing</a> in the chirp sound, a sound is only generated during times where the instantaneous frequency is greater than zero and smaller than the <a href="Nyquist_frequency.html">Nyquist frequency</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="New_menu.html">New menu</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20161013</p>
+</address>
+</body>
+</html>

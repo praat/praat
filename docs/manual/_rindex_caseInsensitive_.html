@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>rindex_caseInsensitive</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+rindex_caseInsensitive
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>rindex_caseInsensitive</font></code></b> (<i><code><font size=+1>string$</font></code></i>, <i><code><font size=+1>part$</font></code></i>)
+<dd>return the last location of the substring <i><code><font size=+1>part$</font></code></i> inside <i><code><font size=+1>string$</font></code></i>, or 0 if not found.</dd>
+<dt><b><code><font size=+1>rindex_caseInsensitive</font></code></b> (<i><code><font size=+1>strings$#</font></code></i>, <i><code><font size=+1>s$</font></code></i>)
+<dd>look up whether and where <i><code><font size=+1>s$</font></code></i> last occurs in <i><code><font size=+1>strings$#</font></code></i>.</dd>
+</dl>
+<h2>Case insensitivity</h2>
+<p>For determining where the substring is located, it doesn&#8217;t matter whether <i><code><font size=+1>string$</font></code></i> and/or <i><code><font size=+1>part$</font></code></i> are in lower case or upper case. Here is a comparison with <a href="_rindex_.html"><b><code><font size=+1>rindex</font></code></b></a>:</p>
+<code>   assert <a href="_rindex_.html">rindex</a> ("hello", "L") = 0<br></code>
+<code>   assert <b>rindex_caseInsensitive</b> ("hello", "L") = 4<br></code>
+<code>   assert <a href="_rindex_.html">rindex</a> ("heLlo", "L") = 3<br></code>
+<code>   assert <b>rindex_caseInsensitive</b> ("heLlo", "L") = 4<br></code>
+<code>   assert <a href="_rindex_.html">rindex</a> ("helLo", "L") = 4<br></code>
+<code>   assert <b>rindex_caseInsensitive</b> ("helLo", "L") = 4<br></code>
+<code>   assert <a href="_rindex_.html">rindex</a> ("heLLo", "L") = 4<br></code>
+<code>   assert <b>rindex_caseInsensitive</b> ("heLLo", "L") = 4<br></code>
+<h2>See also</h2>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="_index_caseInsensitive_.html"><b><code><font size=+1>index_caseInsensitive</font></code></b></a> for the <i>first</i> occurrence</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="_rindex_.html"><b><code><font size=+1>rindex</font></code></b></a> for <i>case-sensitive</i> matching</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Functions.html">Functions</a>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023</p>
+</address>
+</body>
+</html>

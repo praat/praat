@@ -1,0 +1,54 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>non-negative matrix factorization</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+non-negative matrix factorization
+</b></font></table></table>
+<p>The <b>non-negative matrix factorization</b><b></b> or <b>NMF</b> is a factorization of a data matrix <b><i>D</i></b>, whose elements are all non-negative, into a feature matrix <b><i>F</i></b> and a weights matrix <b><i>W</i></b> such that <b><i>D</i></b> &#8776; <b><i>F</i></b> <b><i>W</i></b>, where the elements of <b><i>F</i></b> and <b><i>W</i></b> are also all non-negative.</p>
+<h2>Algorithms for computing NMF</h2>
+<p>More background on the algorithms used can be found in <a href="Berry_et_al___2007_.html">Berry et al. (2007)</a></p>
+<p>The algorithms fall into three general classes:</p>
+<dl>
+<dt><b>1. Multiplicative updates</b>,
+<dt><b>2. Alternating Least squares</b>,
+<dt><b>3. Projected Gradient.</b>
+</dl>
+<h2>Multiplicative Updates</h2>
+<code>   initialize F and W<br></code>
+<code>   while iter &lt; maxinter and not convergence<br></code>
+<code>      (MU) W = W .* (F'*D) ./ (F'*F*W + 10^^−9^)<br></code>
+<code>      (MU) F = F .* (D*W') ./ (F*W*W' + 10^^−9^)<br></code>
+<code>      test for convergence<br></code>
+<code>   endwhile<br></code>
+<p>In the multiplicative update (MU) steps above "*" means ordinary matrix multiplication while ".*" and "./" mean elementwise matrix operations. The factors 10<sup>-9</sup> guard against division by zero.</p>
+<h2>Alternating Least Squares</h2>
+<p>The optimization of <b>D &#8776; F*W</b> is not convex in both <b>F</b> and <b>W</b> it is convex in either <b>F</b> or <b>W</b>. Therefor given one, the other can be found by a simple least squares (LS) algorithm. This can be done in an alternating fashion.</p>
+<p>The Aternating Least Squares (ALS) algorithm is as follows:</p>
+<code>   initialize F<br></code>
+<code>   while iter &lt; maxinter and not convergence<br></code>
+<code>      (LS) Solve for W in matrix equation F'*F*W = F'*D<br></code>
+<code>      (NONNEG) Set all negative elements in W to 0<br></code>
+<code>      (LS) Solve for F in matrix equation W*W'*F' = W*D'<br></code>
+<code>      (NONNEG) Set all negative elements in F to 0<br></code>
+<code>      test for convergence<br></code>
+<code>   endwhile<br></code>
+<p></p>
+<ul>
+<li><a href="Matrix__To_NMF__ALS____.html">Matrix: To NMF (ALS)...</a>
+<li><a href="Matrix__To_NMF__IS____.html">Matrix: To NMF (IS)...</a>
+<li><a href="Matrix__To_NMF__m_u_____.html">Matrix: To NMF (m.u.)...</a>
+<li><a href="NMF.html">NMF</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20230801</p>
+</address>
+</body>
+</html>

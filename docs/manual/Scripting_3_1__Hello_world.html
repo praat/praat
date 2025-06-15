@@ -1,0 +1,63 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 3.1. Hello world</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 3.1. Hello world
+</b></font></table></table>
+<p>Many manuals of computer programming languages start with their answer on the following question:</p>
+<p><i>How do I write the text &#8220;Hello world&#8221; on the screen?</i></p>
+<p>For the Praat scripting language, there are two answers.</p>
+<h2>1. &#8220;Hello world&#8221; in the Info window</h2>
+<p>The simplest answer is that you open the ScriptEditor window with <b>New Praat script</b> from the <b>Praat</b> menu, then type the following line into the ScriptEditor window:</p>
+<code>   writeInfoLine: “Hello world”<br></code>
+<p>and finally choose <b>Run</b> from the <b>Run</b> menu.</p>
+<p>When you try this, the result should be that the Info window comes to the front, and that it shows the text <code><font size=+1>Hello world</font></code>:</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_1__Hello_world_1.png></p><p>Now suppose that you want to write two lines instead of just one, so you try a script with two lines:</p>
+<code>   writeInfoLine: “Hello world”<br></code>
+<code>   writeInfoLine: “How do you do?”<br></code>
+<p>This turns out not to do what you want: it seems to write only the text &#8220;How do you do?&#8221;. This happens because the <b>writeInfoLine</b> function first erases the Info window, then writes the line of text. So the first line of the script did write the text &#8220;Hello world&#8221;, but the second line wiped it out and wrote &#8220;How do you do?&#8221; instead. The script that does what you want is</p>
+<code>   writeInfoLine: “Hello world”<br></code>
+<code>   appendInfoLine: “How do you do?”<br></code>
+<p>Now the result will be</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_1__Hello_world_2.png></p><p>This works because <a href="_appendInfoLine_.html"><b><code><font size=+1>appendInfoLine</font></code></b></a> writes a line without erasing the Info window first.</p>
+<p>Finally, try the following script:</p>
+<code>   appendInfoLine: “Another try”<br></code>
+<code>   appendInfoLine: “Goodbye”<br></code>
+<p>The result could be</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_1__Hello_world_3.png></p><p>In other words, <a href="_appendInfoLine_.html"><b><code><font size=+1>appendInfoLine</font></code></b></a> writes lines into the Info window without erasing it, even if you run a script anew. This is why many Praat scripts that write into the Info window do a <b>writeInfoLine</b> first, and follow it with a series of <a href="_appendInfoLine_.html"><b><code><font size=+1>appendInfoLine</font></code></b></a> calls.</p>
+<p>For more information on these commands, see <a href="Scripting_6_2__Writing_to_the_Info_window.html">Scripting 6.2. Writing to the Info window</a>.</p>
+<h2>2. &#8220;Hello world&#8221; in the Picture window.</h2>
+<p>You can also show text in the Picture window. If you are an experienced Praat user, you have probably used the comamnd <b>Text top...</b> before. You can use it do draw a text at the top of the current <i>viewport</i>, which is the part of the Picture window where the next drawing will occur and which is marked by the pink <i>margins</i>. Thus, when you select the top 4&#215;3 inches of the Picture window (with the mouse), set the font size to 12 (with the Pen menu), and run the script</p>
+<code>   Text top: “yes”, “Hello world”<br></code>
+<p>then you&#8217;ll see</p>
+<p align=middle><img height=450 width=600 src=Scripting_3_1__Hello_world_4.png></p><p>So this works the same as when you choose <b>Text top...</b> from the <b>Margins</b> menu by hand, with <b>Far</b> switched on.</p>
+<p>If you want your script to always show the same text at the same position, with nothing else in the picture, then you can make your script a bit more extensive:</p>
+<code>   Erase all<br></code>
+<code>   Times<br></code>
+<code>   Font size: 12<br></code>
+<code>   Select outer viewport: 0, 4, 0, 3<br></code>
+<code>   Text top: “yes”, “Hello world”<br></code>
+<p>In this script, line 1 erases the Picture window, so that nothing besides your text can appear in the Picture window.</p>
+<p>Line 2 executes the command <b>Times</b> from the <b>Font</b> menu, so that the script will always draw the text in Times, even if you choose <b>Helvetica</b> in the Font menu with the mouse before you run the script (after the script has run, you&#8217;ll see that <b>Times</b> is chosen in the Font menu).</p>
+<p>Line 3 executes the command <b>Font size...</b> from the <b>Font</b> menu, setting the font size to 12 and setting the width of the pink margins accordingly.</p>
+<p>Line 4 executes the command <a href="Select_outer_viewport___.html">Select outer viewport...</a> from the Select menu. This performs an action that you would normally do by dragging the mouse, namely selecting the part of the Picture window that runs from 0 to 4 inches horizontally and from 0 to 3 inches vertically. After running the script, the <i>viewport</i> is indeed [0, 4] &#215; [0, 3], as you can clearly see from the pink margins above.</p>
+<p>Line 5 finally writes the text.</p>
+<p>For more information on these commands, see <a href="Picture_window.html">Picture window</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_3__Simple_language_elements.html">Scripting 3. Simple language elements</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140111</p>
+</address>
+</body>
+</html>

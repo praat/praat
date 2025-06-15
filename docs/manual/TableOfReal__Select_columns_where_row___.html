@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: Select columns where row...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: Select columns where row...
+</b></font></table></table>
+<p>Copy columns from the selected <a href="TableOfReal.html">TableOfReal</a> object to a new TableOfReal object.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Columns</b>
+<dd>defines the indices of the columns to be selected. Ranges can be defined with a colon ":". Columns will be selected in the specified order.</dd>
+<dt><b>Row condition</b>
+<dd>specifies a condition for the selection of rows. If the condition evaluates as <i>true</i> for a particular row, the selected elements in this row will be copied. See <a href="Matrix__Formula___.html">Matrix: Formula...</a> for the kind of expressions that can be used here.</dd>
+</dl>
+<h2>Examples</h2>
+<code>   Select columns where row: "1 2 3", "1"<br></code>
+<code>   Select columns where row: "1 : 3", "1"<br></code>
+<p>Two alternative expressions to copy the first three columns to a new table with the same number of rows.</p>
+<code>   Select columns where row: "3 : 1", "1"<br></code>
+<p>Copy the first three columns to a new table with the same number of rows. The new table will have the 3 columns reversed.</p>
+<code>   Select columns where row: "1:6 9:11", "self[row,8]&gt;0"<br></code>
+<p>Copy the first six columns and columns 9, 10, and 11 to a new table. Copy only elements from rows where the element in column 8 is greater than zero.</p>
+<hr>
+<address>
+	<p>© djmw 20140117</p>
+</address>
+</body>
+</html>

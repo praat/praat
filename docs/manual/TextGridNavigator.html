@@ -1,0 +1,104 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TextGridNavigator</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TextGridNavigator
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. A <b>TextGridNavigator</b> is a multi-tier search machine.</p>
+<h2>What is a multi-tier search machine?</h2>
+<p>A multi-tier search machine enables you to find an interval (or a point) on a tier, based on criteria that can have a specified relation with intervals (or points) on the same tier or on other tiers of the TextGrid. Matches on each tier are based on the labels in a tier. Matches found on different tiers are combined based on time. The match criteria for each tier are specified in the tier's <a href="NavigationContext.html">NavigationContext</a>. </p>
+<h2>Example 1: Single-tier topic search: </h2>
+<p>We create a TextGridNavigator that searches for the occurrence in tier 1 of one of the labels in a <i>topic</i> set that consists of the labels { "a", "e", "i", "o", "u" }. If a label in tier 1 equals one of the labels in this topic set we have a match. The command to create the TextGridNavigator for the selected TextGrid is:</p>
+<code>   To TextGridNavigator (topic only): 1,<br></code>
+<code>   ... { "a", "e", "i", "o", "u" }, "is equal to", "OR",<br></code>
+<code>   ... "Match start to Match end"<br></code>
+<p>In this case the tier's <b>NavigationContext</b> is very simple as the searching / matching only involves labels of the topic set. After the TextGridNavigator has been created it doesn't need the TextGrid anymore because tier 1 has been copied into the navigator object. The following code would find all the intervals that match and get their start time, end time and label. </p>
+<code>   Find first<br></code>
+<code>   index = Get index: tierNumber, "topic"<br></code>
+<code>   while index &gt; 0<br></code>
+<code>      selectObject: textgrid<br></code>
+<code>      startTime = Get start time: tierNumber, "topic"<br></code>
+<code>      endTime = Get end time: tierNumber, "topic"<br></code>
+<code>      label$ = Get label: tierNumber, "topic"<br></code>
+<code>      ...<br></code>
+<code>      selectObject: navigator<br></code>
+<code>      Find next<br></code>
+<code>      index = Get index: tierNumber, "topic"<br></code>
+<code>   endwhile<br></code>
+<p>The <b>Find first</b> command finds the index of the first interval (or point) in the tier that matches. The <b>Get index</b> command returns this index. Besides giving the index of the topic match it can also return indices of before or after matches. If no match was found it returns zero. <b>Find next</b> finds the next interval that matches.</p>
+<p>Instead of finding the indices one at a time in a <i>while</i> loop until we are done, we could use alternatives and query for a list of all indices or times where the labels match. We then know beforehand how many matches we have and therefore we can use a <i>for</i> loop.</p>
+<code>   tierNumber = 1<br></code>
+<code>   navigator = To TextGridNavigator (topic only): tierNumber,<br></code>
+<code>   ... { "a", "e", "i", "u", "o" }, "is equal to", "OR",<br></code>
+<code>   ... "Match start to Match end"<br></code>
+<code>   startTimes# = List start times: "topic"<br></code>
+<code>   labels$# = List labels: "Topic"<br></code>
+<code>   endTimes# = List end times: "topic"<br></code>
+<code>   for index to size (startTimes#)<br></code>
+<code>      duration = endTimes# [index] - startTimes# [index]<br></code>
+<code>      &lt;your code&gt;<br></code>
+<code>   endfor<br></code>
+<p>We could also combine the start and end times into one query list:</p>
+<code>   domains## = List domains: "Topic start to Topic end"<br></code>
+<code>   numberOfMatches = numberOfRows (domains##)<br></code>
+<p>and use it in a loop as, for example,</p>
+<code>   for index to numberOfMatches<br></code>
+<code>      duration = domains##  [index, 2] - domains## [index, 1]<br></code>
+<code>      &lt;your code&gt;<br></code>
+<code>   endfor<br></code>
+<h2>Example 2: Single-tier before + topic + after search </h2>
+<p>A more complex example could query for a vowel from the same <i>topic</i> set as we used above but only matches if additionally it is immediately preceded by an unvoiced plosive from a <i>Before</i> set, like e.g. { "p", "t", "k" }, and also is immediately followed by a nasal from an <i>After</i> set, like { "m", "n" }. The command to create this navigator once the TextGrid is selected is: </p>
+<code>   tierNumber = 1<br></code>
+<code>   To TextGridNavigator: tierNumber,<br></code>
+<code>   ... { "a", "e", "i", "o", "u" }, "is equal to", "OR",<br></code>
+<code>   ... { "p", "t", "k" }, "is equal to", "OR",<br></code>
+<code>   ... { "m", "n" }, "is equal to", "OR",<br></code>
+<code>   ... "before and after", "false", "Topic start to Topic end"<br></code>
+<p>This example and the one above involve only searches on one tier and both follow the same scheme: they search for a <i>topic label</i> which may be preceded by a <i>before label</i> and/or followed by an <i>after label</i>. The <i>topic</i>, <i>before</i> and <i>after label</i> belong to different sets (the three sets may of course have labels in common). With a choice from a number of use criterions like <b>Before or After, not both</b> or <b>Before and After</b> you specify how the corresponding label sets will be used during the matching.</p>
+<p>For each tier in the TextGrid, we can define a tier search based on tier-specific sets of <i>topic labels</i>, and/ or tier-specific <i>before</i> and <i>after</i> labels<i></i>. Besides these maximally three sets of labels, we also need to specify the kind of match that we want. This is all specified in a tier's <a href="NavigationContext.html">NavigationContext</a>. </p>
+<h2>Example 3: Multi-tier search by combining single-tier searches</h2>
+<p>A multi-tier search navigator can be created by successively adding one or more single tier searches to an already existing TextGridNavigator. Each tier added for searching should have a unique tier number. To combine the matches on different tiers we have to chose how to relate these matches on the basis of time because time is the only feature that all tiers have in common as they all have the same time domain. Suppose the TextGrid has two tiers: the first is a phoneme tier like we used in the previous example and the second is a syntactic tier where intervals may be labeled as "Noun", "Determiner", "Verb" etc. We want to restrict the vowel search on tier 1 to only those vowels that are within an interval at tier 2 that is labeled as "Noun" and is preceded by an interval labeled "Determiner". The only complexity of a multi-tier TextGrid navigator is within its creation process. The following script shows how to create the two-tier navigator.</p>
+<code>   phonemeTierNumber = 1<br></code>
+<code>   syntaxTierNumber = 2<br></code>
+<code>   selectObject: texgrid<br></code>
+<code>   navigator = To TextGridNavigator: phonemeTierNumber,<br></code>
+<code>   ... { "a", "e", "i", "o", "u" }, "is equal to", "OR",<br></code>
+<code>   ... { "p", "t", "k" }, "is equal to", "OR",<br></code>
+<code>   ... { "m", "n" }, "is equal to", "OR",<br></code>
+<code>   ... "before and after", "false", "Topic start to Topic end"<br></code>
+<code>   selectObject: texgrid, navigator<br></code>
+<code>   Add search tier: syntaxTierNumber,<br></code>
+<code>   ... { "Noun" }, "is equal to", "OR",<br></code>
+<code>   ... { "Determiner" }, "is equal to", "OR",<br></code>
+<code>   ... { }, "is equal to", "OR",<br></code>
+<code>   ... "before", "false", "Topic start to Topic end",<br></code>
+<code>   ... overlaps before and after<br></code>
+<p>The script starts by creating the navigator for the <i>topic</i> tier, tier number 1, that we already discussed in <b>Example 2</b> which searches for vowels in a plosive-nasal context. The <i>match domain</i>, i.e. that time interval in the topic tier that will be used as the anchor for the comparisons with the match domains of other tiers, is chosen as <b>Topic start to Topic end</b>. This means that, in case of a match on this tier, the start and end times of the match equal the start and end times of the matched vowel interval, respectively. More options exist for the choice of the match domain. The chosen match domain on the <i>topic</i> tier will <i>always</i> serve as the anchor for the comparisons with matches on other tiers. The <b>Add search tier</b> command adds a tier to the navigator that will be searched for combinations of a "Noun" label preceded by a "Determiner" label. The <a href="NavigationContext.html">NavigationContext</a> for this tier therefore consists of only a <i>topic</i> set and a <i>before</i> set and both have only one member. The matches on the added search tier will be used to limit the number of matches on the <i>topic</i> tier by checking if a specified time relation between the match domains on both tiers exist. Suppose that on both tiers we have a match which means that on the <i>topic</i> tier we found a vowel that is preceded by a plosive and followed by a nasal, and, on the syntax tier we found an interval labeled "Noun" that is preceded by an interval labeled "Determiner". The start and end time of the match domain on the topic tier equal the start and end time of the vowel interval; name them <i>tmin1</i> and <i>tmax1</i>, respectively. The match domain on the syntax tier will be the interval [<i>tmin2</i>, <i>tmax2</i>], where <i>tmin2</i> and <i>tmax2</i> are the start and end time of the interval labeled "Noun" because we also have chosen the <b>Topic start to Topic end</b> option as the match domain for the syntax tier. How to combine these two separate matches on the two different tiers will be determined by the last option of the <b>Add search tier</b> command which was chosen as <b>overlaps before and after</b>. Now, only if <i>tmin2</i> &lt; <i>tmin1</i> and <i>tmax2</i> &gt; <i>tmax1</i> the two intervals have the desired alignment and the match would succeed. </p>
+<p>We can, of course, make our match stricter and demand that, for example, the complete three phoneme match of the topic tier is located within the match domain of the syntax tier by issuing the following command:</p>
+<code>   selectObject: navigator<br></code>
+<code>   Modify match domain: phonemeTierNumber, "Before start to Topic end"<br></code>
+<p>Even more stricter to exact alignment:</p>
+<code>   Modify match domain alignment: syntaxTierNumber, "touches before and after"<br></code>
+<h2>Using the TextGridNavigator with other TextGrids</h2>
+<p>If the TextGrids in your corpus have identical structure, i.e. your search tiers all have the same tier number you can simply reuse your already defined navigator.</p>
+<code>   selectObject: navigator, otherTextGrid<br></code>
+<code>   Replace search tiers<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="TextGrid__To_TextGridNavigator___.html">TextGrid: To TextGridNavigator...</a>
+<li><a href="TextGridNavigator___TextGrid__Add_search_tier___.html">TextGridNavigator & TextGrid: Add search tier...</a>
+<li><a href="TextGridNavigator___TextGrid__Replace_search_tiers.html">TextGridNavigator & TextGrid: Replace search tiers</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20230801</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Axes...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Axes...
+</b></font></table></table>
+<p>One of the commands in the <b>Margins</b> and <b>World</b> menus of the <a href="Picture_window.html">Picture window</a>.</p>
+<h2>Purpose</h2>
+<p>To view and change the current world coordinates of the horizontal and vertical axes.</p>
+<h2>Usage</h2>
+<p>The axes are normally changed by every drawing operation in the dynamic menu, i.e., by object-specific drawing commands with titles like <b>Draw...</b> and <b>Paint...</b> (the drawing commands in the Picture window, like <b>Paint rectangle...</b>, do not change the axes).</p>
+<p>You would use the <b>Axes...</b> command if your data are not in an object.</p>
+<h2>Example</h2>
+<p>The following script would draw a person's vowel triangle:</p>
+<code>   # Put F1 (between 300 and 800 Hz) along the horizontal axis,<br></code>
+<code>   # and F2 (between 600 and 3600 Hz) along the vertical axis.<br></code>
+<code>   <b>Axes:</b> 300, 800, 600, 3600<br></code>
+<code>   # Draw a rectangle inside the current viewport (selected area),<br></code>
+<code>   # with text in the margins, and tick marks in steps of 100 Hz along the F1 axis,<br></code>
+<code>   # and in steps of 200 Hz along the F2 axis.<br></code>
+<code>   Draw inner box<br></code>
+<code>   Text top: "no", "Daniël's Dutch vowel triangle"<br></code>
+<code>   Text bottom: "yes", "%F_1 (Hz)"<br></code>
+<code>   Text left: "yes", "%F_2 (Hz)"<br></code>
+<code>   Marks bottom every: 1, 100, "yes", "yes", "yes", ""<br></code>
+<code>   Marks left every: 1, 200, "yes", "yes", "yes", ""<br></code>
+<code>   # Draw large phonetic symbols at the vowel points.<br></code>
+<code>   Text special: 340, "Centre", 688, "Half", "Times", 24, "0", "u"<br></code>
+<code>   Text special: 481, "Centre", 1195, "Half", "Times", 24, "0", "ø"<br></code>
+<code>   # Etcetera<br></code>
+<p>This example would draw the texts "Dani&#235;l's Dutch vowel triangle", "<i>F</i><sub>1</sub> (Hz)", and "<i>F</i><sub>2</sub> (Hz)" in the margins, and the texts "u" and "&#248;" at the appropriate positions inside the drawing area.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Demo_window_1__My_first_Demo_window_script.html">Demo window 1. My first Demo window script</a>
+<li><a href="Demo_window_2__Getting_user_input.html">Demo window 2. Getting user input</a>
+<li><a href="Draw_line___.html">Draw line...</a>
+<li><a href="Draw_rectangle___.html">Draw rectangle...</a>
+<li><a href="Draw_rounded_rectangle___.html">Draw rounded rectangle...</a>
+<li><a href="Insert_picture_from_file___.html">Insert picture from file...</a>
+<li><a href="Paint_rectangle___.html">Paint rectangle...</a>
+<li><a href="Paint_rounded_rectangle___.html">Paint rounded rectangle...</a>
+<li><a href="World_menu.html">World menu</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140107</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>phonToDifferenceLimens</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+phonToDifferenceLimens
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>phonToDifferenceLimens</font></code></b> (<i><code><font size=+1>x</font></code></i>)
+<dd>convert a sensation level <i><code><font size=+1>x</font></code></i> in phon units into an intensity difference limen level.</dd>
+</dl>
+<h2>Definition</h2>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><code><font size=+1>phonToDifferenceLimens</font></code> (<i>phon</i>) = 30 &#183; ((61/60)<sup> <i>phon</i></sup> &#8722; 1)</table>
+<h2>Related function</h2>
+<p><b><code><font size=+1>phonToDifferenceLimens</font></code></b> is the inverse of <a href="_differenceLimensToPhon_.html"><b><code><font size=+1>differenceLimensToPhon</font></code></b></a>.</p>
+<h2>Derivation</h2>
+<p>In first approximation, humans can detect an intensity difference of 1 phon, i.e. if two sounds that differ only in intensity are played a short time after each other, people can generally detect their intensity difference if it is greater than 1 phon.</p>
+<p>But the sensitivity is somewhat better for louder sounds. According to <a href="Jesteadt__Wier___Green__1977_.html">Jesteadt, Wier & Green (1977)</a>, the relative difference limen of intensity is given by</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>DLI = &#916;<i>I</i> / <i>I</i> = 0.463 &#183; (<i>I</i> / <i>I</i><sub>0</sub>)<sup>&#8722;0.072</sup></table>
+<p>In this formula, <i>I</i> is the intensity of the sound in Watt/m<sup>2</sup>, <i>I</i><sub>0</sub> is the intensity of the auditory threshold (i.e. 10<sup>&#8722;12</sup> Watt/m<sup>2</sup> at 1000 Hz), and &#916;<i>I</i> is the just noticeable difference.</p>
+<p><a href="Boersma__1998_.html">Boersma (1998: 109)</a> calculates a difference-limen scale from this. Given an intensity <i>I</i>, the number of difference limens above threshold is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub><i>I</i>0</sub><sup><i>I</i></sup> <i>dx</i> &#916;<i>I</i>(<i>x</i>) = (1 / 0.463) &#8747;<sub><i>I</i>0</sub><sup><i>I</i></sup> <i>dx</i> <i>I</i><sub>0</sub><sup>&#8722;0.072</sup> <i>x</i><sup>0.072&#8722;1</sup></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>= (1 / (0.463 &#183; 0.072)) ((<i>I</i> / <i>I</i><sub>0</sub>)<sup>0.072</sup> &#8722; 1)</table>
+<p>The sensation level in phon is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>SL = 10 log<sub>10</sub> (<i>I</i> / <i>I</i><sub>0</sub>)</table>
+<p>so that the number of difference limens above threshold is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(1 / (0.463 &#183; 0.072)) (10<sup>(0.072 / 10) (10 log (<i>I</i> / <i>I</i><sub>0</sub>))</sup> &#8722; 1) = 30 &#183; (1.0167<sup>SL</sup> &#8722; 1)</table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas_5__Mathematical_functions.html">Formulas 5. Mathematical functions</a>
+<li><a href="Functions.html">Functions</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2002, 2023</p>
+</address>
+</body>
+</html>

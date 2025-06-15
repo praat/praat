@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formants: Extract smoothest part (constrained)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formants: Extract smoothest part (constrained)...
+</b></font></table></table>
+<p>Extracts the best matching part from the slected <a href="Formant.html">Formant</a>s.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Minimum F1 (Hz)</b>
+<dd>suppresses models whose average first formant frequency, <i>f1</i>, is below <i>minimumF1</i> by a factor sqrt (<i>minimumF1</i> - <i>f1</i> + 1). You can use this constraint to disfavour models with a low average first formant. Sometimes due to the generally high frequency of the /a/ a lower harmonic of the fundamental frequency is taken as a candidate for the first formant. You can suppress these models with this constraint.</dd>
+<dt><b>Maximum F1 (Hz)</b>
+<dd>suppresses models whose average first formant frequency, <i>f1</i>, is above <i>maximumF1</i> by a factor sqrt (<i>f1</i> - <i>maximumF1</i> + 1).You can use this constraint to disfavour models in which the first formant is missing. </dd>
+<dt><b>Minimum F2 (Hz)</b>
+<dd>suppresses models whose average second formant frequency, <i>f2</i>, is below <i>minimumF2</i> by a factor sqrt (<i>minimumF2</i> - <i>f2</i> + 1). This constraint might be used for high front vowels that normally have a large distance between the first and second formant. </dd>
+<dt><b>Maximum F2 (Hz)</b>
+<dd>suppresses models whose average second formant frequency, <i>f2</i>, is above <i>maximumF2</i> by a factor sqrt (<i>f2</i> - <i>maximumF2</i> + 1). This factor is sometimes necessary to suppress models for high back vowels where the second formant is "missing", i.e. where the third formant is playing the role of the second. </dd>
+<dt><b>Minimum F3 (Hz)</b>
+<dd>suppress models whose average third formant frequency, <i>f3</i>, is below <i>minimumF3</i> by a factor sqrt (<i>minimumF3</i> - <i>f3</i> + 1). This constraint might sometimes be usefull to suppress low lying third formants that can occur for /a/-like vowels.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20140424</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>What was new in 6.3?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+What was new in 6.3?
+</b></font></table></table>
+<p><b>6.3</b> (15 November 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Number-aware sorting for labels when drawing tables.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <a href="_sort-S-H_.html"><b><code><font size=+1>sort$#</font></code></b></a> (), <a href="_shuffle-S-H_.html"><b><code><font size=+1>shuffle$#</font></code></b></a> (), <a href="_sort_numberAware-S-H_.html"><b><code><font size=+1>sort_numberAware$#</font></code></b></a> ().</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Fixed a crash when saving (or copying) a DTW object.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: fixed a crash when using <code><font size=+1>Close</font></code> after <a href="_editor_.html"><b><code><font size=+1>editor</font></code></b></a>.</dd>
+</dl>
+<p><b>6.2.23</b> (8 October 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Fix a crash introduced in August 2020 when in the Sound window you would select a part, then click <b>sel</b>, then select a part, then do <b>Cut</b>, then click <b>bak</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Rename</b> should leave an object&#8217;s ID in the title of the editor window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows graphics should support a resolution of 690 dots per inch.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Editor scripting: corrected a bug introduced in 6.2.15 whereby an added editor script would lose the editor context if it contained a form, after <b>Apply</b> was clicked.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Editor windows (such as the Sound window): showing a dialog window that calls a script (e.g. <b>Log script 3</b>, <b>Log script 4</b> or an added command) should remove the previous version of that window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac editor windows: dialog windows that call scripts should disappear when the editor goes away (as on Windows and Linux).</dd>
+</dl>
+<p><b>6.2.22</b> (6 October 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Playing cursor in Pitch, PitchTier, KlattGrid and PointProcess windows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected a bug introduced in 6.2.15 whereby an added editor script would lose the editor context if it contained a form, after <b>OK</b> was clicked.</dd>
+</dl>
+<p><b>6.2.21</b> (1 October 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected a bug introduced in 6.2.15 whereby a sub-window in <b>Inspect</b> would crash upon clicking <b>Change</b>.</dd>
+</dl>
+<p><b>6.2.20</b> (24 September 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More balanced colours.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Hierarchical menus in editor windows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound window scripting: understand <code><font size=+1>editor$</font></code> again in log format (bug since 6.2.15).</dd>
+</dl>
+<p><b>6.2.19</b> (12 September 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Visible window queries in <b>Time</b> menu.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Correct execution of added Objects window script after running a failing editor script (decades-old bug).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Made <b>Erase first</b> work again (bug introduced in 6.2.15).</dd>
+</dl>
+<p><b>6.2.18</b> (2 September 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SoundRecorder: support for up to 20 (instead of 8) input devices.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; FormantPath window: can now be viewed even without a Sound.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows audio: SoundRecorder prevents high CPU usage when not recording.</dd>
+</dl>
+<p><b>6.2.17</b> (23 August 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; FormantPath window: more information shown.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows audio: compatible with speakers that do not support mono.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Editor scripts: made two old commands available again (removed in 6.2.15).</dd>
+</dl>
+<p><b>6.2.16</b> (18 August 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; FormantPath window: non-editable TextGrid.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting the Demo window on the Mac: better guarantees that <code><font size=+1>demoShow</font></code> () actually drains on current systems.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid works again with LongSound (bug introduced in 6.2.15).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Editor scripts work again from menus (bug introduced in 6.2.15).</dd>
+</dl>
+<p><b>6.2.15</b> (14 August 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Legends in editor windows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The menus <b>Time</b> and <b>Play</b> are new in editor windows, and the menus <b>Spectrum</b> and <b>Formant</b> were renamed to <b>Spectrogram</b> and <b>Formants</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More menu commands in editor windows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Rid frames around areas in editor window, except if editable.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The FormantPath window can include a copy of a TextGrid.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Restored horizontal and vertical dragging in tier areas (had been absent for two years).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed several small bugs (and probably introduced a couple of new ones) in editor windows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Restored the original Praat icon.</dd>
+</dl>
+<p><b>6.2.14</b> (24 May 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: repaired a bug introduced in 6.2.10 by which a click in the boundary insertion circle would copy the contents of a new interval from another tier (if that other tier stood selected).</dd>
+</dl>
+<p><b>6.2.13</b> (18 May 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Playing a sound on the Mac: prevented an audible click at the end of audio output (appending a silence at the end is no longer needed).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; FormantPath window: more flexible visualization.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; New versions of PortAudio and Unicode.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed the sendpraat directive.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed several small interface bugs, and improved manual.</dd>
+</dl>
+<p><b>6.2.12</b> (17 April 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Table__Get_sum___.html">Table: Get sum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting an editor window can now query analyses that are not visible (e.g. after zooming).</dd>
+</dl>
+<p><b>6.2.11</b> (8 April 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: Demo window could hang with use of Chinese keyboard (after <b>Play</b>).</dd>
+</dl>
+<p><b>6.2.10</b> (17 March 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: restored the splitting of labels.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Save Demo Window as PDF file...</b> (<b>Goodies</b> menu).</dd>
+</dl>
+<p><b>6.2.09</b> (15 February 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: support for a screen resolution of 204 dpi.</dd>
+</dl>
+<p><b>6.2.08</b> (5 February 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: more checks on audio devices when playing sounds.</dd>
+</dl>
+<p><b>6.2.07</b> (28 January 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Prevented a rare crash in the TextGrid window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: corrected a bug introduced in 6.2.04 by which some file names were unreadable.</dd>
+</dl>
+<p><b>6.2.06</b> (20 January 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: prevent Demo window from hanging on copy or paste.</dd>
+</dl>
+<p><b>6.2.05</b> (5 January 2022)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Calling Praat from the command line: the switch <code><font size=+1>--send</font></code> sends a script to a different already running GUI instance of Praat; this is more flexible than using <i>sendpraat</i>, because <code><font size=+1>--send</font></code> will start a new instance of Praat if Praat is not yet running.</dd>
+</dl>
+<p><b>6.2.04</b> (18 December 2021)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Praat now includes eSpeak 1.51, raising the number of supported languages from 100 to 130.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: support for <code><font size=+1>infile</font></code>, <code><font size=+1>outfile</font></code> and <code><font size=+1>folder</font></code> fields in forms.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Calling Praat from the command line: the switch <code><font size=+1>--open</font></code> now adds files to an already running instance of Praat; this was already the case on Windows, but it now works in the same way on the Mac and on Linux.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting on Mac: multiline text fields in forms have scroll bars and behave like other fields.</dd>
+</dl>
+<p><b>6.2.03</b> (3 December 2021)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: made Enter key work as expected (i.e. character selection) on Japanese keyboards in multi-line text fields in dialogs and TextGrid window.</dd>
+</dl>
+<p><b>6.2.02</b> (2 December 2021)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Fixed a hang if there were negative pitch values in <a href="Sound__Change_gender___.html">Sound: Change gender...</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Fixed a crash if the size of a PCA did not match the size of a TableOfReal.</dd>
+</dl>
+<p><b>6.2.01</b> (17 November 2021)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound window: corrected a bug that caused a thick waveform during or after playing.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2021,2022</p>
+</address>
+</body>
+</html>

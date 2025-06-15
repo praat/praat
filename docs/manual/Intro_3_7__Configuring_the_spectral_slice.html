@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intro 3.7. Configuring the spectral slice</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intro 3.7. Configuring the spectral slice
+</b></font></table></table>
+<h2>Spectral slice at the cursor</h2>
+<p>What Praat does precisely, depends on your Spectrogram settings. Suppose that the <i>window length</i> setting is 0.005 seconds (5 milliseconds). If the <i>window shape</i> is not Gaussian, Praat will extract the part of the sound that runs from 2.5 milliseconds before the cursor to 2.5 ms after the cursor. Praat then multiplies this 5 ms long signal by the window shape, then computes a spectrum with the method of <a href="Sound__To_Spectrum___.html">Sound: To Spectrum...</a>, which is put into the Objects window and opened in an editor window. If the window shape is Gaussian, Praat will extract a part of the sound that runs from 5 milliseconds before the cursor to 5 ms after the cursor. The spectrum will then be based on a &#8220;physical&#8221; window length of 10 ms, although the &#8220;effective&#8221; window length is still 5 ms (see <a href="Intro_3_2__Configuring_the_spectrogram.html">Intro 3.2. Configuring the spectrogram</a> for details).</p>
+<h2>Spectral slice from a selection</h2>
+<p>What Praat does precisely, again depends on the <i>window shape</i> of your Spectrogram settings. Suppose that your selection is 50 ms long. Praat will extract the entire selection, then multiply this 50 ms long signal by the window shape, then compute a spectrum, put it into the Objects window and open it an editor window. This procedure is equivalent to choosing <b>Extract windowed selection...</b> (with a <i>relative duration</i> of 1.0), followed by <b>To Spectrum...</b> (with <i>fast</i> switched on), followed by <b>Edit</b>.</p>
+<p>If the window is Gaussian, Praat will still only use the selection, without doubling its duration. This means that the spectrum that you see in this case will mainly be based on the centre half of the selection, and the signal near the edges will be largely ignored.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Intro_3__Spectral_analysis.html">Intro 3. Spectral analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110128</p>
+</address>
+</body>
+</html>

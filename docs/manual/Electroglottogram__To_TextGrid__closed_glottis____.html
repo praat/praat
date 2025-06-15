@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Electroglottogram: To TextGrid (closed glottis)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Electroglottogram: To TextGrid (closed glottis)...
+</b></font></table></table>
+<p>Calculates the intervals where the glottis is closed from the selected <a href="Electroglottogram.html">Electroglottogram</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Pitch floor (Hz)</b>
+<dd>intervals with a lower pitch will not be considered. </dd>
+<dt><b>Pitch ceiling (Hz)</b>
+<dd>intervals with a higher pitch will not be considered.</dd>
+<dt><b>Closing threshold</b>
+<dd>the moment of closing of the vocal folds will be taken at a fixed point between a cycle's peak and valley amplitude level.</dd>
+<p align=middle><img height=300 width=400 src=Electroglottogram__To_TextGrid__closed_glottis_____1.png></p><dd>The picture shows, for a <i>closingThreshold</i> value of 0.3, the Closed Glottis Interval that starts at time <i>t</i><sub>1</sub> and ends at time <i>t</i><sub>2</sub>. These times were found by calculating the two level crossings at amplitude <i>valley+closingThreshold(peak&#8211;valley)</i>.</dd>
+<dt><b>Peak threshold</b>
+<dd>cycles with peaks whose relative amplitudes with respect to the maximum peak are lower than this value are not considered.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The algorithm first tries to find peaks and valleys, guided by the settings for the pitch floor and ceiling. From the level crossings before and after a peak the times of glottal closing and opening are determined.</p>
+<h2>Warning</h2>
+<p>Getting exact timing of the <i>glottal closure instants</i><i></i> (GCI) and <i>glottal opening instants</i> (GOI) from the Electroglottogram is problematic because as <a href="Herbst__2019_.html">Herbst (2019)</a> notes: the vocal folds do not vibrate as a uniform mass. Rather, their vibration is characterized by phase differences along both the inferior&#8211;superior and anterior&#8211;posterior dimensions. These phase differences cause time-delayed contacting and de-contacting of the vocal folds along the respective axes. There is thus no specific instant of glottal closing and opening, but rather an interval during which the closing and opening, respectively, occur. </p>
+<hr>
+<address>
+	<p>© djmw 20221115</p>
+</address>
+</body>
+</html>

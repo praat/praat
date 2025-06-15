@@ -1,0 +1,59 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Spectrum...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Spectrum...
+</b></font></table></table>
+<p>A command that appears in the <b>Spectrum</b> menu if you select one or more <a href="Sound.html">Sound</a> objects. It turns the selected Sound into a <a href="Spectrum.html">Spectrum</a> by an over-all spectral analysis, a <i>Fourier transform</i>.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Fast</b>
+<dd>determines whether zeroes are appended to the sound such that the number of samples is a power of two. This can appreciably speed up the Fourier transform.</dd>
+</dl>
+<h2>Mathematical procedure</h2>
+<p>For the Fourier transform, the Praat-defined <a href="time_domain.html">time domain</a> of the <a href="Sound.html">Sound</a> is ignored. Instead, its time domain is considered to run from <i>t</i>=0 to <i>t</i>=<i>T</i>, where <i>t</i>=0 is supposed to be aligned with the first sample, and <i>T</i> is the total duration of the samples, i.e. <i>N</i>&#916;<i>t</i>, where <i>N</i> is the number of samples and &#916;<i>t</i> is the <a href="sampling_period.html">sampling period</a>. Thus, the last sample lies at <i>t</i>=<i>T</i>&#8211;&#916;<i>t</i>.</p>
+<p>For a sound <i>x</i>(<i>t</i>), defined for all times <i>t</i> in the domain (0, <i>T</i>), the complex spectrum <i>X</i>(<i>f</i>) for any frequency <i>f</i> is the forward Fourier transform of <i>x</i>(<i>t</i>), with a negative exponent:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>X</i>(<i>f</i>) = &#8747;<sub>0</sub><sup><i>T</i></sup> <i>x</i>(<i>t</i>) <i>e</i><sup>-2<i>&#960;ift</i></sup> <i>dt</i></table>
+<p>If the Sound is expressed in Pascal (Pa), the Spectrum is expressed in Pa&#183;s, or Pa/Hz. Since a <a href="Spectrum.html">Spectrum</a> object can only contain a finite number of frequency samples, it is only computed for frequencies that are multiples of &#916;<i>f</i> = 1/<i>T</i>. The number of those frequencies is determined by the number of samples <i>N</i> of the sound.</p>
+<p>If <i>N</i> is odd, there will be <i>N</i> frequency samples. For instance, if the sound has 20,457 samples, the spectrum will be computed at the frequencies -10,228&#916;<i>f</i>, -10,227&#916;<i>f</i>, ..., &#8211;&#916;<i>f</i>, 0, +&#916;<i>f</i>, ..., +10,227&#916;<i>f</i>, +10,228&#916;<i>f</i>. If we suppose that a frequency sample represents a frequency bin with a width of &#916;<i>f</i>, we see that the frequency samples span adjacent frequency ranges, e.g. the first sample runs from -10,228.5&#916;<i>f</i> to -10,227.5&#916;<i>f</i>, the second from -10,227.5&#916;<i>f</i> to -10,226.5&#916;<i>f</i>. Together, the frequency samples span the frequency domain of the spectrum, which runs from -<i>F</i> to +<i>F</i>, where <i>F</i> = 10,228.5&#916;<i>f</i>. We can see that this frequency equals one half of the <a href="sampling_frequency.html">sampling frequency</a> of the original sound: <i>F</i> = 10,228.5&#916;<i>f</i> = 10,228.5/<i>T</i> = 10,228.5/(20,457&#916;<i>t</i>) = 0.5/&#916;<i>t</i>. This is the so-called <a href="Nyquist_frequency.html">Nyquist frequency</a>.</p>
+<p>If <i>N</i> is even, there will be <i>N</i>+1 frequency samples. For instance, if the sound has 32,768 samples, the spectrum will be computed at the frequencies -16,384&#916;<i>f</i>, -16,383&#916;<i>f</i>, ..., -&#916;<i>f</i>, 0, +&#916;<i>f</i>, ..., +16,383&#916;<i>f</i>, +16,384&#916;<i>f</i>. Again, the frequency samples span adjacent frequency ranges, but the first and last samples are only half as wide as the rest, i.e. the first sample runs from -16,384&#916;<i>f</i> to -16,383.5&#916;<i>f</i>, the second from -16,383.5&#916;<i>f</i> to -16,382.5&#916;<i>f</i>, and the last from +16,383.5&#916;<i>f</i> to +16,384&#916;<i>f</i>. Together, the frequency samples again span the frequency domain of the spectrum, which runs from &#8211;<i>F</i> to +<i>F</i>, where <i>F</i> = 16,384&#916;<i>f</i> = 0.5/&#916;<i>t</i>, the Nyquist frequency.</p>
+<h2>Storage</h2>
+<p>In a <a href="Spectrum.html">Spectrum</a> object, Praat stores the real and imaginary parts of the complex spectrum separately. The real part is equal to the cosine transform:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>re <i>X</i>(<i>f</i>) = &#8747;<sub>0</sub><sup><i>T</i></sup> <i>x</i>(<i>t</i>) cos (2<i>&#960;ft</i>) <i>dt</i></table>
+<p>The imaginary part is equal to the reverse of the sine transform:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>im <i>X</i>(<i>f</i>) = &#8211; &#8747;<sub>0</sub><sup><i>T</i></sup> <i>x</i>(<i>t</i>) sin (2<i>&#960;ft</i>) <i>dt</i></table>
+<p>The complex spectrum can be reconstructed from the real and imaginary part as follows:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>X</i>(<i>f</i>) = re <i>X</i>(<i>f</i>) + <i>i</i> im <i>X</i>(<i>f</i>)</table>
+<p>Since the cosine is a symmetric function of <i>t</i> and the sine is an antisymmetric function of <i>t</i>, the complex spectrum for a negative frequency is the complex conjugate of the complex spectrum for the corresponding positive frequency:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>X</i>(-<i>f</i>) = re <i>X</i>(-<i>f</i>) + <i>i</i> im <i>X</i>(-<i>f</i>) = re <i>X</i>(<i>f</i>) - <i>i</i> im <i>X</i>(<i>f</i>) = <i>X</i><sup>*</sup>(<i>f</i>)</table>
+<p>For purposes of storage, therefore, the negative frequencies are superfluous. For this reason, the Spectrum object stores re <i>X</i>(<i>f</i>) and im <i>X</i>(<i>f</i>) only for frequencies <i>f</i> = 0, &#916;<i>f</i>, 2&#916;<i>f</i>... In the case of a sound with 20,457 samples, the Spectrum object contains the real part of <i>X</i>(0) (its imaginary part is always zero), and the real and imaginary parts of <i>X</i>(<i>f</i>) for frequencies from &#916;<i>f</i> to 10,228&#916;<i>f</i>, which makes in total 1+2&#183;10,228 = 20,457 real values. In the case of a sound with 32,768 samples, the Spectrum object contains the real parts of <i>X</i>(0) and <i>X</i>(16,384&#916;<i>f</i>) (their imaginary parts are always zero), and the real and imaginary parts of <i>X</i>(<i>f</i>) for frequencies from &#916;<i>f</i> to 16,383&#916;<i>f</i>, which makes in total 2+2&#183;16,383 = 32,768 real values.</p>
+<p>Since the negative frequencies have been removed, the frequency domain now runs from 0 to <i>F</i>. This means that the first frequency bin is now only 0.5&#916;<i>f</i> wide (i.e. as wide as the last bin for even-<i>N</i> spectra), which has consequences for computations of energies.</p>
+<h2>Behaviour</h2>
+<p>If you perform <a href="Spectrum__To_Sound.html">Spectrum: To Sound</a> on the resulting Spectrum object, a Sound is created that is equal to the original Sound (or to the original Sound with appended zeroes).</p>
+<h2>Properties</h2>
+<p>The frequency integral over the squared Spectrum equals the time integral over the squared Sound:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub>-<i>F</i></sub><sup>+<i>F</i></sup> |<i>X</i>(<i>f</i>)|<sup>2</sup> <i>df</i> = &#8747;<sub>0</sub><sup><i>T</i></sup> |<i>x</i>(<i>t</i>)|<sup>2</sup> <i>dt</i></table>
+<p>This is called <i>Parceval's theorem</i>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Fast_Fourier_Transform.html">Fast Fourier Transform</a>
+<li><a href="Intro_3_7__Configuring_the_spectral_slice.html">Intro 3.7. Configuring the spectral slice</a>
+<li><a href="Intro_3_8__The_Spectrum_object.html">Intro 3.8. The Spectrum object</a>
+<li><a href="Sound__Filter__formula____.html">Sound: Filter (formula)...</a>
+<li><a href="Sound__Filter__pass_Hann_band____.html">Sound: Filter (pass Hann band)...</a>
+<li><a href="Sound__Filter__stop_Hann_band____.html">Sound: Filter (stop Hann band)...</a>
+<li><a href="Spectrum__Get_centre_of_gravity___.html">Spectrum: Get centre of gravity...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20041123</p>
+</address>
+</body>
+</html>

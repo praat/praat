@@ -1,0 +1,22 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>DataModeler</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+DataModeler
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. A <b>DataModeler</b> tries to fit <i>N</i> data points (<i>x</i><sub><i>i</i></sub>, <i>y</i><sub><i>i</i></sub>) as lying on a particular kind  of model function f(<i>x</i>; <b><i>p</i></b>) that depends on <i>M</i> <i>parameters</i> <b><i>p</i></b>.  The parameters <b><i>p</i></b> are determined by minimizing the chi squared function <i>&#967;</i><sup>2</sup>(<b>p</b><i></i>)=&#931; ((<i>y</i><sub><i>i</i></sub> - <i>f</i>(<i>x</i><sub><i>i</i></sub>, <b><i>p</i></b>))/<i>&#963;</i><sub><i>i</i></sub>)<sup>2</sup>, where the sum is over all <i>N</i> data points. </p>
+<p>If the individual uncertainties <i>&#963;</i><sub><i>i</i></sub>of the data are not known before hand, the model parameter are determined by assuming that all uncertainties <i>&#963;</i><sub><code><font size=+1>i</sub></font></code> are equal. However an independent assessment of the goodness-of-fit cannot be determined in this case.  A good guess for <i>&#963;</i><sup>2</sup> for this case could be <i>&#963;</i><sup>2</sup>=&#931;  (<i>y</i><sub><i>i</i></sub> - <i>f</i>(<i>x</i><sub><i>i</i></sub>, <b><i>p</i></b>))<sup>2</sup>.</p>
+<h2>Drawing</h2>
+<hr>
+<address>
+	<p>© David Weenink, 2024</p>
+</address>
+</body>
+</html>

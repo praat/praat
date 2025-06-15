@@ -1,0 +1,62 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 3.1. A simple discrimination experiment</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 3.1. A simple discrimination experiment
+</b></font></table></table>
+<p>The <a href="ExperimentMFC_2_1__The_experiment_file.html">example experiment</a> was an <i>identification</i> experiment: the subject had identify a single sound as one element of a set of categories. Phoneticians will often do <i>discrimination</i> experiments, which are experiments in which a stimulus consists of multiple sub-stimuli played in sequence, and the subject has to judge the similarity between these sub-stimuli.</p>
+<p>The simplest discrimination task has only two sub-stimuli, and the subject has to say whether these are the <i>same</i> or <i>different</i>. Suppose you have vowel-like sounds along an F1 continuum with seven steps, say 300, 320, 340, 360, 380, 400, and 420 hertz, and you are interested in knowing how well the listeners can distinguish these. As your stimuli, you create pairs of these sounds, separated by 0.8 seconds of silence. It is important to include stimuli in which the sounds are identical, e.g. stimuli in which both sounds have an F1 of 340 Hz (see the literature on signal detection theory). Since sounds that are very different acoustically will always be heard as different, you do not include pairs in which the distance is larger than 60 Hz. The experiment file will look like this:</p>
+<code>   "ooTextFile"<br></code>
+<code>   "ExperimentMFC 7"<br></code>
+<code>   blank while playing? &lt;no&gt;<br></code>
+<code>   stimuli are sounds? &lt;yes&gt;<br></code>
+<code>   "stimuli/"  ".wav"<br></code>
+<code>   carrier phrase ""  ""<br></code>
+<code>   initial silence duration 0.5 seconds<br></code>
+<code>   medial silence duration 0.8 seconds  ! inter-stimulus interval<br></code>
+<code>   final silence duration 0 seconds<br></code>
+<code>   37 different stimuli<br></code>
+<code>      "300,300"  ""  "300,320"  ""  "300,340"  ""  "300,360"  ""<br></code>
+<code>      "320,300"  ""  "320,320"  ""  "320,340"  ""  "320,360"  ""  "320,380"  ""<br></code>
+<code>      "340,300"  ""  "340,320"  ""  "340,340"  ""  "340,360"  ""  "340,380"  ""  "340,400"  ""<br></code>
+<code>      "360,300"  ""  "360,320"  ""  "360,340"  ""  "360,360"  ""  "360,380"  ""  "360,400"  ""  "360,420"  ""<br></code>
+<code>      "380,320"  ""  "380,340"  ""  "380,360"  ""  "380,380"  ""  "380,400"  ""  "380,420"  ""<br></code>
+<code>      "400,340"  ""  "400,360"  ""  "400,380"  ""  "400,400"  ""  "400,420"  ""<br></code>
+<code>      "420,360"  ""  "420,380"  ""  "420,400"  ""  "420,420"  ""<br></code>
+<code>   10 replications per stimulus<br></code>
+<code>   break after every 50 stimuli<br></code>
+<code>   &lt;PermuteBalancedNoDoublets&gt;<br></code>
+<code>   "Click to start."<br></code>
+<code>   "Say whether these sounds were the same or different."<br></code>
+<code>   "You can have a short break if you like. Click to proceed."<br></code>
+<code>   "The experiment has finished. Call the experimenter."<br></code>
+<code>   0 replays<br></code>
+<code>   replay button 0 0 0 0 "" ""<br></code>
+<code>   ok button 0 0 0 0 "" ""<br></code>
+<code>   oops button 0 0 0 0 "" ""<br></code>
+<code>   responses are sounds? &lt;no&gt; "" "" "" "" 0 0 0<br></code>
+<code>   2 response categories<br></code>
+<code>      0.1 0.4 0.35 0.65 "same" 24 "" "same"<br></code>
+<code>      0.6 0.9 0.35 0.65 "different" 24 "" "different"<br></code>
+<code>   0 goodness categories<br></code>
+<p>In this example, the subject will have to click 370 times. After every 50 times, she will have the opportunity to sip her tea. A 0.5-seconds silence is played before every stimulus, so that the listener will not hear the stimulus immediately after her mouse click.</p>
+<p>The experimenter does not have to create the stimulus pairs as sound files. You can specify multiple sound files by separating them with commas. Thus, "320,300" means that Praat will play the files <b>320.wav</b> and <b>300.wav</b>. These two substimuli will be separated here by a silence of 0.8 seconds, called the <i>inter-stimulus interval</i> (or <i>stimulusMedialSilenceDuration</i>).</p>
+<p>Note that the text in this file is rather different from the previous example. It does not matter whether you write <i><code><font size=+1>numberOfDifferentStimuli</font></code></i>, or <i><code><font size=+1>different stimuli</font></code></i>, or anything else; Praat ignores these texts as long as they do not contain numbers, quoted strings, or things between &lt;&gt;.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_3__More_examples.html">ExperimentMFC 3. More examples</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20160925</p>
+</address>
+</body>
+</html>

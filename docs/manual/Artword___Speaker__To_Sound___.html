@@ -1,0 +1,67 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Artword & Speaker: To Sound...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Artword & Speaker: To Sound...
+</b></font></table></table>
+<p>A command to synthesize a <a href="Sound.html">Sound</a> object from the selected <a href="Speaker.html">Speaker</a> and the selected <a href="Artword.html">Artword</a>.</p>
+<p>This is the command that performs the actual articulatory synthesis. See <a href="Articulatory_synthesis.html">Articulatory synthesis</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Sampling frequency (Hz)</b>
+<dd>the number of times per second that the equilibrium widths and lengths and the tensions of the muscles are recomputed from the Artword. This will also be the sampling frequency of the resulting sound and of the optional resulting tube widths, air pressures, and air velocities. The standard value is 22050 Hz.</dd>
+<dt><b>Oversampling</b>
+<dd>the number of times that the aerodynamic quantities and the state of the tube walls will be recomputed during each sample period. The standard value is 25.</dd>
+<dt><b>Width 1</b>, <b>Width 2</b>, <b>Width 3</b>
+<dd>the numbers (see below) of the tubes whose widths you want to monitor. E.g., if <b>Width 1</b> is 36, the synthesizer will create a Sound object named <code><font size=+1>width36</font></code>, which contains the width of tube 36 (the lower glottis) as a function of time, expressed in metres. To prevent the creation of a <code><font size=+1>width</font></code> object, specify <code><font size=+1>0</font></code> (the standard value).</dd>
+<dt><b>Pressure 1</b>, <b>Pressure 2</b>, <b>Pressure 3</b>
+<dd>the numbers (see below) of the tubes whose air pressures you want to monitor. E.g., if <b>Pressure 3</b> is 37, the synthesizer will create a Sound object named <code><font size=+1>pressure37</font></code>, which contains the air pressure of tube 37 (the upper glottis) as a function of time, expressed in Pascal. To prevent the creation of a <code><font size=+1>pressure</font></code> object, specify <code><font size=+1>0</font></code> (the standard value).</dd>
+<dt><b>Velocity 1</b>, <b>Velocity 2</b>, <b>Velocity 3</b>
+<dd>the numbers (see below) of the tubes whose air velocities you want to monitor. E.g., if <b>Velocity 1</b> is 60, the synthesizer will create a Sound object named <code><font size=+1>velocity60</font></code>, which contains the air velocity of tube 60 (in the mouth) as a function of time, expressed in metres per second. To prevent the creation of a <code><font size=+1>velocity</font></code> object, specify <code><font size=+1>0</font></code> (the standard value).</dd>
+</dl>
+<h2>Stability</h2>
+<p>The internal sampling frequency for the aerodynamics is the specified <b>Sampling frequency</b>, multiplied by the specified <b>Oversampling</b>. With the standard settings, this is 22050 times 25 = 550750 Hz.</p>
+<p>To ensure the stability of the synthesis, this internal sampling frequency should not be less than the velocity of sound (353 m/s) divided by the length of the shortest tube. For the standard <b>Female</b>, <b>Male</b>, and <b>Child</b> speakers, the shortest tube is the upper glottis, which has a length of 0.7, 1.0, and 0.3 millimetres, respectively. The minimum internal sampling frequencies, therefore, are 504286, 353000, and 1176667 hertz, respectively.</p>
+<h2>Time resolution</h2>
+<p>To capture the microscopic pressure changes in the glottis, you will want maximum time resolution. For a female speaker, you could set <b>Sampling frequency</b> to 550750 Hz, and <b>Oversampling</b> to 1.</p>
+<h2>Tube numbers</h2>
+<p>Here are the tube numbers that you can use for the <b>Width</b>, <b>Pressure</b>, and <b>Velocity</b> settings:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1..23: lungs (from bottom to top)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">24..29: bronchi (from bottom to top)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">30..35: trachea (from bottom to top)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">36: lower glottis</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">37: upper glottis (not for a one-mass model)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">38..49: pharynx (from bottom to top)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">50..51: nasopharyngeal branching</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">52..64: mouth (from back to front)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">65..78: nose (from back to front)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">79..86: conus elasticus (only for a 10-mass model)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">87..89: glottal shunt between the arytenoids (from bottom to top)</dd>
+</dl>
+<p>Some structural properties:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Tube 1 is closed at the bottom.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Tubes 64 (lips) and 78 (nostrils) radiate into the air.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The nasopharyngeal branch is at tubes 50, 51, and 65. They are constrained to have equal lengths.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; For a one-mass model of the vocal cords, tube 36 is connected to 38.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; For a 10-mass model, tubes 32..35 are replaced with 79..86, so that tube 31 is connected to 79, and 86 is connected to 36.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; A glottal shunt will be implemented if the speaker&#8217;s <code><font size=+1>shunt.Dx</font></code> attribute is not zero. A branch is then made from tubes 34 and 35 (or 85 and 86) to 87, and from tube 89 to 38 and 39.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_Speaker___.html">Create Speaker...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20040331</p>
+</address>
+</body>
+</html>

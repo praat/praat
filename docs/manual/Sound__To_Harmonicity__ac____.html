@@ -1,0 +1,43 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Harmonicity (ac)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Harmonicity (ac)...
+</b></font></table></table>
+<p>A command that creates a <a href="Harmonicity.html">Harmonicity</a> object from every selected <a href="Sound.html">Sound</a> object.</p>
+<h2>Purpose</h2>
+<p>to perform a short-term HNR analysis.</p>
+<h2>Algorithm</h2>
+<p>The algorithm performs an acoustic periodicity detection on the basis of an accurate autocorrelation method, as described in <a href="Boersma__1993_.html">Boersma (1993)</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><i>Time step</i> (standard value: 0.01 s)
+<dd>the measurement interval (frame duration), in seconds.</dd>
+<dt><i>Pitch floor</i> (standard value: 75 Hz)
+<dd>determines the length of the analysis window.</dd>
+<dt><i>Silence threshold</i> (standard value: 0.1)
+<dd>frames that do not contain amplitudes above this threshold (relative to the global maximum amplitude), are considered silent.</dd>
+<dt><i>Number of periods per window</i> (standard value: 4.5)
+<dd>4.5 is best for speech: HNR values up to 37 dB are guaranteed to be detected reliably; 6 periods per window raises this figure to more than 60 dB, but the algorithm becomes more sensitive to dynamic changes in the signal.</dd>
+</dl>
+<h2>Usage</h2>
+<p>You will normally use <a href="Sound__To_Harmonicity__cc____.html">Sound: To Harmonicity (cc)...</a> instead of this command, because that has a much better time resolution (though its sensitivity is 60, not 80 dB).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Periodicity_menu.html">Periodicity menu</a>
+<li><a href="Voice_4__Additive_noise.html">Voice 4. Additive noise</a>
+<li><a href="What_was_new_in_3_9_.html">What was new in 3.9?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20030916</p>
+</address>
+</body>
+</html>

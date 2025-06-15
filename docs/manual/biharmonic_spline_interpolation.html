@@ -1,0 +1,28 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>biharmonic spline interpolation</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+biharmonic spline interpolation
+</b></font></table></table>
+<p>A biharmonic spline interpolation is an interpolation of irregularly spaced two-dimensional data points. The interpolating surface is a linear combination of Green functions centered at each data point. The amplitudes of the Green functions are found by solving a linear system of equations.</p>
+<p>The surface <i>s</i>(<b><i>x</i></b>) is expressed as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>s</i>(<b><i>x</i></b>)=&#931;<sub><i>j</i><i></i>=1</sub><sup>n</sup> <i>w</i><sub><i>j</i></sub> <i>g</i>(<b><i>x</i></b>, <b><i>x</i></b><sub><i>j</i></sub>),</table>
+<p>where <i>n</i> is the number of data points <b><i>x</i></b><sub><i>j</i></sub> = (<i>x</i><sub><i>j</i></sub>, <i>y</i><sub><i>j</i></sub>), <i>g</i>(<b><i>x</i></b>, <b><i>x</i></b><sub><i>j</i></sub>) is Green's function and <i>w</i><sub><i>j</i></sub> is the weight of data point <i>j</i>. The weights <i>w</i><sub><i>j</i></sub> are determined by requiring that the surface <i>s</i>(<b><i>x</i></b>) passes exactly through the <i>n</i> data points, i.e.</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>s</i>(<b><i>x</i></b><sub><i>i</i></sub>)=&#931;<sub><i>j</i><i></i>=1</sub><sup>n</sup> <i>w</i><sub><i>j</i></sub> <i>g</i>(<b><i>x</i></b><sub><i>i</i></sub>, <b><i>x</i></b><sub><i>j</i></sub>), <i>i</i> = 1, 2, ..., <i>n</i>.</table>
+<p>This yields an <i>n</i>&#215;<i>n</i> square linear system of equations which can be solved for the <i>w</i><sub><i>j</i></sub>.</p>
+<p>For twodimensional data Green's function is:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>g</i>(<b><i>x</i></b><sub><i>i</i></sub>, <b><i>x</i></b><sub><i>j</i></sub>) = |<b><i>x</i></b><sub><i>i</i></sub> - <b><i>x</i></b><sub><i>j</i></sub>|<sup>2</sup> (ln |<b><i>x</i></b><sub><i>i</i></sub> - <b><i>x</i></b><sub><i>j</i></sub>| - 1.0).</table>
+<p>See <a href="Sandwell__1987_.html">Sandwell (1987)</a> and <a href="Deng___Tang__2011_.html">Deng & Tang (2011)</a> for more information.</p>
+<hr>
+<address>
+	<p>© djmw 20170915</p>
+</address>
+</body>
+</html>

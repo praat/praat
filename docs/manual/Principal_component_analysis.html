@@ -1,0 +1,59 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Principal component analysis</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Principal component analysis
+</b></font></table></table>
+<p>This tutorial describes how you can perform principal component analysis with Praat.</p>
+<p>Principal component analysis (PCA) involves a mathematical procedure that transforms a number of (possibly) correlated variables into a (smaller) number of uncorrelated variables called <i>principal components</i>. The first principal component accounts for as much of the variability in the data as possible, and each succeeding component accounts for as much of the remaining variability as possible.</p>
+<h2>1. Objectives of principal component analysis</h2>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; To discover or to reduce the dimensionality of the data set.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; To identify new meaningful underlying variables.</dd>
+</dl>
+<h2>2. How to start</h2>
+<p>We assume that the multi-dimensional data have been collected in a <a href="TableOfReal.html">TableOfReal</a> data matrix, in which the rows are associated with the cases and the columns with the variables. The TableOfReal is therefore interpreted as <i>numberOfRows</i> data vectors, each data vector has <i>numberofColumns</i> elements.</p>
+<p>Traditionally, principal component analysis is performed on the <a href="Covariance.html">Covariance</a> matrix or on the <a href="Correlation.html">Correlation</a> matrix. These matrices can be calculated from the data matrix. The covariance matrix contains scaled <a href="SSCP.html">sums of squares and cross products</a>. A correlation matrix is like a covariance matrix but first the variables, i.e. the columns, have been standardized.  We will have to standardize the data first if the variances of variables differ much, or if the units of measurement of the variables differ. You can standardize the data in the TableOfReal by choosing <a href="TableOfReal__Standardize_columns.html">Standardize columns</a>.</p>
+<p>To perform the analysis, we select the TabelOfReal data matrix in the list of objects and choose <a href="TableOfReal__To_PCA.html">To PCA</a>. This will result in a new PCA object in the list of objects.</p>
+<p>We can now make a <a href="Scree_plot.html">scree</a> plot of the eigenvalues, <a href="Eigen__Draw_eigenvalues___.html">Draw eigenvalues...</a> to get an indication of the importance of each eigenvalue. The exact contribution of each eigenvalue (or a range of eigenvalues) to the "explained variance" can also be queried: <a href="PCA__Get_fraction_variance_accounted_for___.html">Get fraction variance accounted for...</a>. You might also check for the equality of a number of eigenvalues: <a href="PCA__Get_equality_of_eigenvalues___.html">Get equality of eigenvalues...</a>.</p>
+<h2>3. Determining the number of components to keep</h2>
+<p>There are two methods to help you to choose the number of components to keep. Both methods are based on relations between the eigenvalues.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Plot the eigenvalues, <a href="Eigen__Draw_eigenvalues___.html">Draw eigenvalues...</a>. If the points on the graph tend to level out (show an "elbow"), these eigenvalues are usually close enough to zero that they can be ignored.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Limit the number of components to that number that accounts for a certain fraction of the total variance. For example, if you are satisfied with 95% of the total variance explained, then use the number you get by the query <a href="PCA__Get_number_of_components__VAF____.html">Get number of components (VAF)...</a> 0.95<b></b>.</dd>
+</dl>
+<h2>4. Getting the principal components</h2>
+<p>Principal components are obtained by projecting the multivariate datavectors on the space spanned by the eigenvectors. This can be done in two ways:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Directly from the TableOfReal without first forming a <a href="PCA.html">PCA</a> object: <a href="TableOfReal__To_Configuration__pca____.html">To Configuration (pca)...</a>. You can then draw the Configuration or display its numbers. </dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Select a PCA and a TableOfReal object together and choose <a href="PCA___TableOfReal__To_Configuration___.html">To Configuration...</a>. In this way you project the TableOfReal onto the PCA's eigenspace.</dd>
+</dl>
+<h2>5. Mathematical background on principal component analysis</h2>
+<p>The mathematical technique used in PCA is called eigen analysis: we solve for the eigenvalues and eigenvectors of a square symmetric matrix with sums of squares and cross products. The eigenvector associated with the largest eigenvalue has the same direction as the first principal component. The eigenvector associated with the second largest eigenvalue determines the direction of the second principal component. The sum of the eigenvalues equals the trace of the square matrix and the maximum number of eigenvectors equals the number of rows (or columns) of this matrix.</p>
+<h2>6. Algorithms</h2>
+<p>If our starting point happens to be a symmetric matrix like the covariance matrix, we solve for the eigenvalue and eigenvectors by first performing a Householder reduction to tridiagonal form, followed by the QL algorithm with implicit shifts.</p>
+<p>If, conversely, our starting point is the data matrix <b><i>A</i></b> , we do not have to form explicitly the matrix with sums of squares and cross products, <b><i>A</i></b>&#8242;<b><i>A</i></b>. Instead, we proceed by a numerically more stable method, and form the <a href="singular_value_decomposition.html">singular value decomposition</a> of <b><i>A</i></b>, <b><i>U</i></b> <b><i>D</i></b> <b><i>V</i></b>&#8242;. The matrix <b><i>V</i></b> then contains the eigenvectors, and the squared diagonal elements of <b><i>D</i></b> contain the eigenvalues.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Acknowledgments.html">Acknowledgments</a>
+<li><a href="Configuration.html">Configuration</a>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Sound__To_Sound__whiten_channels____.html">Sound: To Sound (whiten channels)...</a>
+<li><a href="Statistics.html">Statistics</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+<li><a href="What_was_new_in_3_9_.html">What was new in 3.9?</a>
+<li><a href="What_was_new_in_4_4_.html">What was new in 4.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20160222</p>
+</address>
+</body>
+</html>

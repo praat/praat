@@ -1,0 +1,44 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PairDistribution: To Stringses...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PairDistribution: To Stringses...
+</b></font></table></table>
+<p>A command to generate a number of string pairs from the selected <a href="PairDistribution.html">PairDistribution</a> object. This command will create two aligned <a href="Strings.html">Strings</a> objects of equal size.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Number</b> (standard: 1000)
+<dd>the number of the strings in either resulting Strings object.</dd>
+<dt><b>Name of first Strings</b> (standard: "input")
+<dd>the name of the resulting Strings object associated with the first string of each pair.</dd>
+<dt><b>Name of second Strings</b> (standard: "output")
+<dd>the name of the resulting Strings object associated with the second string of each pair.</dd>
+</dl>
+<h2>Example</h2>
+<p>Suppose the PairDistribution contains the following:</p>
+<code>   4 pairs<br></code>
+<code>   "at+ma"  "atma"  100<br></code>
+<code>   "at+ma"  "apma"    0<br></code>
+<code>   "an+pa"  "anpa"   20<br></code>
+<code>   "an+pa"  "ampa"   80<br></code>
+<p>The resulting Strings object "input" may then contain:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>at+ma, an+pa, an+pa, at+ma, at+ma, an+pa, an+pa, an+pa, an+pa, at+ma, ...</table>
+<p>The Strings object "output" may then contain:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>atma,  ampa,  ampa,  atma,  atma,  ampa,  anpa,  ampa,  ampa,  atma, ...</table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="OT_learning_3_1__Data_from_a_pair_distribution.html">OT learning 3.1. Data from a pair distribution</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20030916</p>
+</address>
+</body>
+</html>

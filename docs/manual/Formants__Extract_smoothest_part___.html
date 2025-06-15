@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formants: Extract smoothest part...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formants: Extract smoothest part...
+</b></font></table></table>
+<p>Extracts the part from one of the selected formants which shows the smoothest formant tracks in a given interval. </p>
+<h2>Settings</h2>
+<p align=middle><img height=340 width=500 src=Formants__Extract_smoothest_part____1.png></p><dl>
+<dt><b>Time range (s)</b>
+<dd>determines the position of the intervals that have to be compared.</dd>
+<dt><b>Fitter formant range</b>
+<dd>determines which formant tracks will be modelled with a polynomial function. The goodness of fit of these models will be used in the comparison.</dd>
+<dt><b>Order of polynomials</b>
+<dd>determines the maximum order of the polynomials that are used in modelling each formant track. Order 0 means a model which is a constant function; this model needs only one parameter. Order 1 means a model that is a straight line function; this order needs two parameters. Order 2 means that an additional parabolic function is used in the modelling; order 2 needs therefore 3 parameters. In general an order <i>p</i> model needs <i>p</i>+1 parameters.</dd>
+<dt><b>Use bandwidths to model formant tracks</b>
+<dd>Bandwidths give an indication about the sharpness of a spectral peak. Sharp peaks have small bandwidths and, vice versa, broad peaks have large bandwidths. The width of a peak can also be interpreted as a measure of certainty for its formant frequency value. Setting this option <i>on</i>, the default setting, means that you force the modelling function to be closer to frequencies that are well defined, i.e. that have sharp peaks, than to the frequencies of broad peaks, if choices have to be made. The consequence is that in the model sharp peaks will be better represented than broad peaks.</dd>
+<dt><b>Bandwidths for stress test</b>
+<dd>determines whether for the stress determination the formant frequencies are still needed. Not using them anymore probably gives a better indication of the stress of a track.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20140313</p>
+</address>
+</body>
+</html>

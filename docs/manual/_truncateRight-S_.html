@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>truncateRight$</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+truncateRight$
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>truncateRight$</font></code></b> (<i><code><font size=+1>string$</font></code></i>, <i><code><font size=+1>maximumNewWidth</font></code></i>)
+<dd>remove characters from the left of <i><code><font size=+1>string$</font></code></i> until the result is at least as short as <i><code><font size=+1>maximumNewWidth</font></code></i>:</dd>
+</dl>
+<code>   <a href="_assert_.html">assert</a> <b>truncateRight$</b> ("hello", 3) = "hel"<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>truncateRight$</b> ("hello", 5) = "hello"<br></code>
+<p>No padding takes place, so the resulting string may be shorter than <i><code><font size=+1>maximumNewWidth</font></code></i>:</p>
+<code>   <a href="_assert_.html">assert</a> <b>truncateRight$</b> ("hello", 12) = "hello"<br></code>
+<p>Note that <i><code><font size=+1>maximumNewWidth</font></code></i> cannot be negative:</p>
+<code>   <a href="_asserterror_.html">asserterror</a> Can never truncate a string down to -3 characters.<br></code>
+<code>   a$ = <b>truncateRight$</b> ("hello", -3)<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Functions.html">Functions</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2024</p>
+</address>
+</body>
+</html>

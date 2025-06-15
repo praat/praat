@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Sound (derivative)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Sound (derivative)...
+</b></font></table></table>
+<p>Calculates the derivative of a <a href="Sound.html">Sound</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Low-pass frequency (Hz)</b>
+<dd>defines the highest frequency to keep in the derivative. Because taking a derivative is comparable to multiplying the strength of each frequency component by its frequency value it has the effect of high-pass filtering. E.g. a 10000 Hz component is amplified 100 times stronger than a 100 Hz component. Low-pass filtering then becomes essential for removing high-frequency noise.  </dd>
+<dt><b>Smoothing (Hz)</b>
+<dd>defines the width of the transition area between fully passed and fully suppressed frequencies. Frequencies below <i>lowpassFrequency</i> will be fully passed, frequencies larger than <i>lowpassFrequency</i>+<i>smoothing</i> will be fully suppressed.</dd>
+<dt><b>New absolute peak</b>
+<dd>the new absolute peak of the derivative. By specifying a value smaller than 1.0 the derivative can be made audible without distortion. If you want to listen to the derivative without distortion, it is absolutely necessary to scale the peak to a value somewhat smaller than 1.0, like 0.99. For example, for a pure sine tone with a frequency of 300 Hz and an amplitude of 1.0 whose formula is <i>s(t) = sin(2&#960;300t)</i> the derivative with respect to time <i>t</i><i></i> is <i>2&#960;300 cos(2&#960;300t)</i> .The result is a cosine of 300 Hz with a huge amplitude of <i>2&#960;300</i>. You can prevent any scaling by supplying a value of 0.0.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The derivative of a wave form <i>x</i>(<i>t</i>) is most easily calculated in the spectral domain. According to Fourier theory, if <i>x</i>(<i>t</i>) = &#8747;<i>X</i>(<i>f</i>)exp(2&#960;<i>ift</i>) <i>dt</i>, then d<i>x</i>(<i>t</i>)/d<i>t</i> = &#8747;<i>X(</i><i>f</i><i></i>)2&#960;<i>if</i> exp(2&#960;<i>ift</i>)d<i>t</i>, where <i>X</i>(<i>f</i>) is the spectrum of the <i>x</i>(<i>t).</i></p>
+<p>Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and imaginary components and then transform back to the time domain we get the derivative.</p>
+<p>The multiplication of the spectral components with the factor 2&#960;<i>if</i> will result in a new <i>X</i>&#8242;(<i>f</i>) whose components will be: Re(<i>X&#8242;</i>(<i>f</i>)) = -2&#960;<i>f</i> Im (<i>X</i>(<i>f</i>)) and Im(<i>X&#8242;</i>(<i>f</i>)) =2&#960;<i>f</i> Re(<i>X</i>(<i>f</i>)).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Electroglottogram__Derivative___.html">Electroglottogram: Derivative...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20230801</p>
+</address>
+</body>
+</html>

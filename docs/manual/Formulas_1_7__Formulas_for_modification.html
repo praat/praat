@@ -1,0 +1,94 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas 1.7. Formulas for modification</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas 1.7. Formulas for modification
+</b></font></table></table>
+<p>Analogously to the formulas that you can use for creating new objects (see the previous page), you can use formulas for modifying existing objects. You do this with the command <b>Formula...</b> that you can find in the <a href="Modify.html">Modify</a> menu when you select an object.</p>
+<h2>Modifying a Sound with a formula</h2>
+<p>Record a sound with your microphone and talk very lowly. If you don't know how to record a sound in Praat, consult the <a href="Intro.html">Intro</a>. Once the Sound object is in the list, click <b>Play</b>. The result will sound very soft. Then choose <b>Formula...</b> from the Modify menu and type</p>
+<code>   self * 3<br></code>
+<p>Click OK, then click <b>Play</b> again. The sound is much louder now. You have multiplied the amplitude of every sample in the sound with a factor of 3.</p>
+<h2>Replacing the contents of a Sound with a formula</h2>
+<p>If you don&#8217;t use <code><font size=+1>self</font></code> in your formula, the formula does not refer to the existing contents of the Sound. Hence, the formula </p>
+<code>   1/2 * sin (2 * pi * 377 * x)<br></code>
+<p>will simply replace your recorded speech with a 377-Hz sine wave.</p>
+<h2>Modifying a Matrix with a formula</h2>
+<p>Many objects can be thought of as matrices: they consist of a number of rows and columns with data in every cell:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Sound.html">Sound</a>: one row; columns represent samples.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Spectrum.html">Spectrum</a>: two rows (first row is real part, second row is imaginary part); columns represent frequencies.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Spectrogram.html">Spectrogram</a>, <a href="Cochleagram.html">Cochleagram</a>: rows represent frequencies; columns represent times.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Excitation.html">Excitation</a>: one row; columns represent frequency bands.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Harmonicity.html">Harmonicity</a>: one row; columns represent time frames.</dd>
+</dl>
+<p>The formula is performed on every column of every row. The formula</p>
+<code>   self^2<br></code>
+<p>will square all matrix elements.</p>
+<p>The formula first works on the first row, and in that row from the first column on; this can work recursively. The formula</p>
+<code>   self + self [row, col - 1]<br></code>
+<p>integrates each row.</p>
+<h2>Referring to the current position in the object</h2>
+<p>You can refer to the current position in a Matrix (or Sound, etc.) by index or by <i>x</i> and <i>y</i> values:</p>
+<dl>
+<dt><b><code><font size=+1>row</font></code></b>
+<dd>the current row</dd>
+<dt><b><code><font size=+1>col</font></code></b>
+<dd>the current column</dd>
+<dt><b><code><font size=+1>x</font></code></b>
+<dd>the <i>x</i> value associated with the current column:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for a Sound, Spectrogram, Cochleagram, or Harmonicity: time, as in the 377-Hz sine wave example above</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for a Spectrum: frequency (Hz)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for an Excitation: frequency (Bark)</dd>
+<dt><b><code><font size=+1>y</font></code></b>
+<dd>the <i>y</i> value associated with the current row:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for a Spectrogram: frequency (Hz)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for a Cochleagram: frequency (Bark)</dd>
+</dl>
+<h2>Referring to the contents of the object itself</h2>
+<p>You can refer to values in the current Matrix (or Sound, etc.) by index.</p>
+<dl>
+<dt><b><code><font size=+1>self</font></code></b>
+<dd>refers to the value in the current Matrix at the current row and column, or to the value in the current Sound at the current sample.</dd>
+<dt><b><code><font size=+1>self</font></code></b> [<i><code><font size=+1>column-expression</font></code></i>]
+<dd>refers to the value in the current Sound (or Intensity etc.) at the current sample (or frame). The <i><code><font size=+1>column-expression</font></code></i> is rounded to the nearest integer. If the index is out of range (less than 1 or greater than <i>n</i><sub><i>x</i></sub>), the expression evaluates as 0.</dd>
+</dl>
+<p><b>Example</b>. An integrator is</p>
+<code>      self [col - 1] + self * dx<br></code>
+<dl>
+<dt><b><code><font size=+1>self</font></code></b> [<i><code><font size=+1>row-expression</font></code></i>, <i><code><font size=+1>column-expression</font></code></i>]
+<dd>refers to the value in the current Matrix (or Spectrogram etc.) at the specified row and column. The expressions are rounded to the nearest integers.</dd>
+</dl>
+<p>You can refer to values in the current Matrix (or Spectrogram, etc.) by <i>x</i> and <i>y</i> position:</p>
+<dl>
+<dt><b><code><font size=+1>self</font></code></b> (<i><code><font size=+1>x-expression</font></code></i>, <i><code><font size=+1>y-expression</font></code></i>)
+<dd>the expressions are linearly interpolated between the four nearest matrix points.</dd>
+</dl>
+<p>You can refer to values in the current Sound (or Intensity etc.) by <i>x</i> position:</p>
+<dl>
+<dt><b><code><font size=+1>self</font></code></b> (<i><code><font size=+1>x-expression</font></code></i>)
+<dd>the expression is linearly interpolated between the two nearest samples (or frames).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_col_.html"><code><font size=+1>col</font></code></a>
+<li><a href="_row_.html"><code><font size=+1>row</font></code></a>
+<li><a href="_x_.html"><code><font size=+1>x</font></code></a>
+<li><a href="_y_.html"><code><font size=+1>y</font></code></a>
+<li><a href="Formulas.html">Formulas</a>
+<li><a href="Formulas_1__My_first_formulas.html">Formulas 1. My first formulas</a>
+<li><a href="Formulas_1_8__Formulas_in_scripts.html">Formulas 1.8. Formulas in scripts</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20170916</p>
+</address>
+</body>
+</html>

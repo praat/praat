@@ -1,0 +1,41 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To ConstantQLogFSpectrogram...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To ConstantQLogFSpectrogram...
+</b></font></table></table>
+<p>A command that creates a <a href="ConstantQLogFSpectrogram.html">ConstantQLogFSpectrogram</a> from a selected <a href="Sound.html">Sound</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Lowest frequency (Hz)</b>
+<dd>defines the lowest frequency about which information will be obtained. This frequency has to be chosen well above zero hertz (because of the logarithmic frequency scale there are an infinite number of octaves between any lowest frequency and zero hertz). </dd>
+<dt><b>Maximum frequency (Hz)</b>
+<dd>The maximum frequency you are interested in. The default will be the Nyquist frequency of the sound. </dd>
+<dt><b>Number of frequecy bins / octave</b>
+<dd>determines the frequency division as the number of frequency bins that will be used for each octave. For the analysis of music generally a multiple of 12 will be used.</dd>
+<dt><b>Frequency resolution (bins)</b>
+<dd>determines, together with the number of frequency bins per octave, the <i>quality factor</i> used in the analysis.The quality factor Q of a filter is defined as its central frequency divided by its bandwidth. The bandwith of a filter, i.e its domain, will be be set as twice the frequency resolution in bins. Therefore, the corresponding quality factor will be: </dd>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>qualityFactor</i> = 1 / (2<sup>(<i>frequencyResolutionBins</i> / <i>numberOfFrequencyBinsPerOctave</i>)</sup> - 2<sup>(&#8211;<i>frequencyResolutionBins</i> / <i>numberOfFrequencyBinsPerOctave</i>)</sup>). </table>
+<dl>
+<dd>For a frequency resolution of 1 bin and a frequency division of 24 frequency bins per octave we get a quality factor of 14.26, for a frequency division of 48 bins per octave we get a quality factor of 34.6. The larger the quality factor the more frequency selective the filters will be and consequently, in the time domain, the longer their analysis window has to be. (Strictly speaking, the bandwidth of a filter is defined as the width of the filter at an intensity -3 dB below its top. The actual bandwidth depends on the form of the used filter function.)</dd>
+<dt><b>Time oversampling factor</b>
+<dd>determines the number of frames in each frequency bin. Any number larger than 1 will increase the number of frames in a bin by approximately this factor.  </dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The algorithm for constructing the invertable constant-Q transform is described in <a href="Velasco_et_al___2011_.html">Velasco et al. (2011)</a> and in <a href="Holighaus_et_al___2013_.html">Holighaus et al. (2013)</a>. </p>
+<p>First the sound is transformed to the frequency domain with an FFT. The filtering is then performed in the frequency domain. For the <i>k</i><sup>th</sup> frequency bin the frequencies between <i>lowestFrequency</i>&#183;2<sup>(<i>k</i>-1)/<i>numberOfFrequencyBinsPerOctave</i>)</sup> and  <i>lowestFrequency</i>&#183;2<sup>(<i>k</i>+1)/<i>numberOfFrequencyBinsPerOctave</i>)</sup> are transformed back with an inverse <a href="FFT.html">FFT</a>. The resulting coefficients are copied to the frames of the frequency bin. Because of the logarithmic frequency scale, the number of coefficients in a frequency bin will increase with bin number. </p>
+<p></p>
+<hr>
+<address>
+	<p>© djmw 20211111</p>
+</address>
+</body>
+</html>

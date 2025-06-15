@@ -1,0 +1,45 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Resample...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Resample...
+</b></font></table></table>
+<p>A command that creates new <a href="Sound.html">Sound</a> objects from the selected Sounds.</p>
+<h2>Purpose</h2>
+<p>High-precision resampling from any sampling frequency to any other sampling frequency.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Sampling frequency (Hz)</b>
+<dd>the new sampling frequency, in hertz.</dd>
+<dt><b>Precision</b>
+<dd>the depth of the interpolation, in samples (standard is 50). This determines the quality of the interpolation used in resampling.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>If <b>Precision</b> is 1, the method is linear interpolation, which is inaccurate but fast.</p>
+<p>If <b>Precision</b> is greater than 1, the method is sin(<i>x</i>)/<i>x</i> (&#8220;<i>sinc</i>&#8221;) interpolation, with a depth equal to <b>Precision</b>. For higher <b>Precision</b>, the algorithm is slower but more accurate.</p>
+<p>If <b>Sampling frequency</b> is less than the sampling frequency of the selected sound, an anti-aliasing low-pass filtering is performed prior to resampling.</p>
+<h2>Behaviour</h2>
+<p>A new Sound will appear in the list of objects, bearing the same name as the original Sound, followed by the sampling frequency. For instance, the Sound <code><font size=+1>hallo</font></code> will give a new Sound <code><font size=+1>hallo_10000</font></code>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a>
+<li><a href="Sound__To_LPC__autocorrelation____.html">Sound: To LPC (autocorrelation)...</a>
+<li><a href="Sound__To_LPC__burg____.html">Sound: To LPC (burg)...</a>
+<li><a href="Sound__To_LPC__covariance____.html">Sound: To LPC (covariance)...</a>
+<li><a href="Sound__To_LPC__marple____.html">Sound: To LPC (marple)...</a>
+<li><a href="Sound__To_PowerCepstrogram___.html">Sound: To PowerCepstrogram...</a>
+<li><a href="Source-filter_synthesis_4__Using_existing_sounds.html">Source-filter synthesis 4. Using existing sounds</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2004-03-30</p>
+</address>
+</body>
+</html>

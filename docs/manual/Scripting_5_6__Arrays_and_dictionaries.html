@@ -1,0 +1,41 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 5.6. Arrays and dictionaries</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 5.6. Arrays and dictionaries
+</b></font></table></table>
+<p>You can use arrays of numeric and string variables:</p>
+<code>   <b>for</b> i <b>from</b> 1 <b>to</b> 5<br></code>
+<code>      square [i] = i * i<br></code>
+<code>      text$ [i] = mid$ ("hello", i)<br></code>
+<code>   <b>endfor</b><br></code>
+<p>After this, the variables <code><font size=+1>square[1]</font></code>, <code><font size=+1>square[2]</font></code>, <code><font size=+1>square[3]</font></code>, <code><font size=+1>square[4]</font></code>, <code><font size=+1>square[5]</font></code>, <code><font size=+1>text$[1]</font></code>, <code><font size=+1>text$[2]</font></code>, <code><font size=+1>text$[3]</font></code>, <code><font size=+1>text$[4]</font></code>, and <code><font size=+1>text$[5]</font></code> contain the values 1, 4, 9, 16, 25, "h", "e", "l", "l", and "o", respectively:</p>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: "Some squares:"<br></code>
+<code>   <b>for</b> i <b>from</b> 1 <b>to</b> 5<br></code>
+<code>      <b>appendInfoLine</b>: “The square of ”, i, “ is ”, square [i]<br></code>
+<code>   <b>endfor</b><br></code>
+<p>In the examples above, the <i>index</i> into the array was always a number.  A <i>hash</i> or <i>dictionary</i> is an array variable where the index is a string:</p>
+<code>   age [“John”] = 36<br></code>
+<code>   age [“Babs”] = 39<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: “John is ”, age [“John”], “ years old.”<br></code>
+<h2>See also</h2>
+<p>You can use any number of array and dictionary variables in a script, but for many applications, namely whenever it were useful to look at a numeric array as a single object, it may be better to use vectors and matrices (see <a href="Scripting_5_7__Vectors_and_matrices.html">Scripting 5.7. Vectors and matrices</a>) or to use Matrix or Sound objects.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_5__Language_elements_reference.html">Scripting 5. Language elements reference</a>
+<li><a href="What_was_new_in_5_3_.html">What was new in 5.3?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20170718</p>
+</address>
+</body>
+</html>

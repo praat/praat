@@ -1,0 +1,51 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>box plot</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+box plot
+</b></font></table></table>
+<p>A box plot provides a simple graphical summary of data. These plots originate from the work of <a href="Tukey__1977_.html">Tukey (1977)</a>.</p>
+<h2>Definitions</h2>
+<p>The following figure shows an annotated box plot.</p>
+<p align=middle><img height=500 width=500 src=box_plot_1.png></p><p>To understand the box plot we need the following definitions:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>q25</i> = lower quartile, 25% of the data lie below this value</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>q50</i> = median, 50% of the data lie below this value</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>q75</i> = upper quartile, 25% of the data lie above this value</dd>
+</dl>
+<p>The following definitions all depend on these quantiles:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>hspread</i> = |<i>q75</i> &#8211; <i>q25</i>| (50% interval)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>lowerOuterFence</i> = <i>q25</i> &#8211; 3.0 * <i>hspread</i> (not in figure)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>lowerInnerFence</i> = <i>q25</i> &#8211; 1.5 * <i>hspread</i> (not in figure)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>upperInnerFence</i> = <i>q75</i> + 1.5 * <i>hspread</i></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>upperOuterFence</i> = <i>q75</i> + 3.0 * <i>hspread</i></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>lowerWhisker</i> = smallest data value larger than <i>lowerInnerFence</i></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>upperWhisker</i> = largest data value smaller than <i>upperInnerFence</i></dd>
+</dl>
+<p>The box plot is a summary of the data in which:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; the horizontal lines of the rectangle correspond to  <i>q25</i>, <i>q50</i> and <i>q75</i>, respectively.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; the dotted line corresponds to the mean.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; the outliers outside the <i>outerFences</i> are drawn with an 'o'.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; the outliers in the intervals (<i>lowerOuterFence</i>, <i>lowerInnerFence</i>) and (<i>upperInnerFence</i>, <i>upperOuterFence</i>) are drawn with an '*'.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; the whisker lines outside the rectangle connect <i>q25</i> with <i>lowerWhisker</i>, and, <i>q75</i> with <i>upperWhisker</i>, respectively. With no outliers present, the whiskers mark minimum and/or maximum of the data.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Table__Box_plots___.html">Table: Box plots...</a>
+<li><a href="TableOfReal__Draw_box_plots___.html">TableOfReal: Draw box plots...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20111010</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>What was new in 3.8?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+What was new in 3.8?
+</b></font></table></table>
+<h2>Praat 3.8, 12 January 1999</h2>
+<p>Phonetics library</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; New objects: <a href="LongSound.html">LongSound</a> (view and label long sound files), with editor; PairDistribution.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="overlap-add.html">Overlap-add</a> manipulation of voiceless intervals, version 2: quality much better now; target duration is exactly as expected from Duration tier or specified lengthening in <a href="Sound__Lengthen__overlap-add____.html">Sound: Lengthen (overlap-add)...</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Audio: Escape key stops audio playing (on Mac also Command-period).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="SoundRecorder.html">SoundRecorder</a>: allows multiple recordings without close; Play button; Write buttons; buffer size can be set.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Reverse a Sound or a selection of a Sound.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Get_nearest_zero_crossing___.html">Sound: Get nearest zero crossing...</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Formant: Scatter plot (reversed axes)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>TextGrid &amp; Pitch: Speckle separately...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Extract Sound selection (preserve times)</b> in TextGridEditor.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More query commands for Matrix, TableOfReal, Spectrum, PointProcess.</dd>
+</dl>
+<p>Phonology library</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; 25-page OT learning tutorial.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Made the OT learner 14 times as fast.</dd>
+</dl>
+<p>Platforms</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; May 23: Windows beta version.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; April 24: Windows alpha version.</dd>
+</dl>
+<p>Files</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Read more Kay, Sun (.au), and WAV sound files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Read_Strings_from_raw_text_file___.html">Read Strings from raw text file...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_Strings_as_file_list___.html">Create Strings as file list...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Read IntervalTier from Xwaves...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; hidden <b>Read from old Windows Praat picture file...</b></dd>
+</dl>
+<p>Graphics</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Use colours (instead of only greys) in <b>Paint ellipse...</b> etc.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More true colours (maroon, lime, navy, teal, purple, olive).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Direct printing from Macintosh to PostScript printers.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Hyperpage printing to PostScript printers and PostScript files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Phonetic symbols: raising sign, lowering sign, script g, corner, ligature, pointing finger.</dd>
+</dl>
+<p>Shell</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; November 4: all dialogs are modeless (which is new for Unix and Mac).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; September 27: <a href="sendpraat.html">sendpraat</a> for Windows.</dd>
+</dl>
+<p>Scripting</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; January 7: scriptable editors.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; October 7: file I/O in scripts.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; August 23: script language includes all the important functions for string handling.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; June 24: string variables in scripts.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; June 22: faster look-up of script variables.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; June 22: unlimited number of script variables.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; April 5: suspended chopping of trailing spaces.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; March 29: enabled formulas as arguments to dialogs (also interactive).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1999</p>
+</address>
+</body>
+</html>

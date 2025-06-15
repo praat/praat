@@ -1,0 +1,46 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Multiply by window...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Multiply by window...
+</b></font></table></table>
+<p>A command to multiply each selected <a href="Sound.html">Sound</a> object by a window shape.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Window shape</b>
+<dd>one of 12 possible window shapes.</dd>
+</dl>
+<h2>Window shapes</h2>
+<p>Suppose we have the following sound:</p>
+<code>   Create Sound from formula: "sweep", 1, 0.0, 0.1, 44100, ~ sin(2*pi*1000*x^2)<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Multiply_by_window____1.png></p><p>The shape of a <b>Hanning window</b> is</p>
+<code>   Create Sound from formula: "window", 1, 0.0, 0.1, 44100, ~ 1<br></code>
+<code>   Multiply by window: "Hanning"<br></code>
+<code>   Draw: 0, 0, 0.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Multiply_by_window____2.png></p><p>If you multiply these with each other, the result will be</p>
+<code>   selectObject: "Sound sweep"<br></code>
+<code>   Multiply by window: "Hanning"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Multiply_by_window____3.png></p><p>In short:</p>
+<p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____4.png></p><p>Other windows:</p>
+<p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____5.png></p><p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____6.png></p><p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____7.png></p><p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____8.png></p><p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____9.png></p><p>The following one does nothing:</p>
+<p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____10.png></p><p>These two have an effective duration that is 50 percent shorter:</p>
+<p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____11.png></p><p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____12.png></p><p>And these are narrower again:</p>
+<p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____13.png></p><p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____14.png></p><p align=middle><img height=250 width=750 src=Sound__Multiply_by_window____15.png></p><h3>Links to this page</h3>
+<ul>
+<li><a href="Sound__Extract_part___.html">Sound: Extract part...</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2024</p>
+</address>
+</body>
+</html>

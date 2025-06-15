@@ -1,0 +1,31 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Spectrum: To Ltas (1-to-1)</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Spectrum: To Ltas (1-to-1)
+</b></font></table></table>
+<p>A command for converting each selected <a href="Spectrum.html">Spectrum</a> object into an <a href="Ltas.html">Ltas</a> object without loss of frequency resolution.</p>
+<h2>Algorithm</h2>
+<p>Each band <i>b</i><sub><i>i</i></sub> in the Ltas is computed from a single frequency sample <i>s</i><sub><i>i</i></sub> in the Spectrum as follows:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>b</i><sub><i>i</i></sub> = 2 ((re (<i>s</i><sub><i>i</i></sub>))<sup>2</sup> + (im (<i>s</i><sub><i>i</i></sub>))<sup>2</sup>) / 4.0&#183;10<sup>-10</sup></table>
+<p>If the original Spectrum is expressible in Pa / Hz (sound pressure in air), the Ltas values are in "dB/Hz" relative to the auditory threshold at 1000 Hz (2&#183;10<sup>-5</sup> Pa).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Ltas__Get_frequency_of_maximum___.html">Ltas: Get frequency of maximum...</a>
+<li><a href="Ltas__Get_frequency_of_minimum___.html">Ltas: Get frequency of minimum...</a>
+<li><a href="Ltas__Get_maximum___.html">Ltas: Get maximum...</a>
+<li><a href="Ltas__Get_minimum___.html">Ltas: Get minimum...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20141001</p>
+</address>
+</body>
+</html>

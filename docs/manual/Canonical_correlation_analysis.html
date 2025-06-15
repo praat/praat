@@ -1,0 +1,81 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Canonical correlation analysis</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Canonical correlation analysis
+</b></font></table></table>
+<p>This tutorial will show you how to perform canonical correlation analysis with Praat.</p>
+<h2>1. Objective of canonical correlation analysis</h2>
+<p>In canonical correlation analysis we try to find the correlations between two data sets. One data set is called the <i>dependent</i> set, the other the <i>independent</i> set. In Praat these two sets must reside in one <a href="TableOfReal.html">TableOfReal</a> object. The lower numbered columns of this table will then be interpreted as the dependent part, the rest of the columns as the independent part. The dimension of (i.e. the number of columns in) the dependent part may not exceed the dimension of the independent part.</p>
+<p>As an example, we will use the dataset from <a href="Pols_et_al___1973_.html">Pols et al. (1973)</a> with the frequencies and levels of the first three formants from the 12 Dutch monophthongal vowels as spoken in a /h_t/ context by 50 male speakers. We will try to find the canonical correlation between formant frequencies (the <i>dependent</i> part) and levels (the <i>independent</i> part). The dimension of both groups of variates is 3. In the introduction of the <a href="Discriminant_analysis.html">discriminant analysis</a> tutorial you can find how to get these data, how to take the logarithm of the formant frequency values and how to standardize them. The following script summarizes:</p>
+<code>   pols50m = Create TableOfReal (Pols 1973): "yes"<br></code>
+<code>   Formula: ~ if col &lt; 4 then log10 (self) else self endif<br></code>
+<code>   Standardize columns<br></code>
+<p>Before we start with the <i>canonical</i> correlation analysis we will first have a look at the <i>Pearson</i> correlations of this table and  calculate the <a href="Correlation.html">Correlation</a> matrix. It is given by:</p>
+<code>          F1     F2     F3     L1     L2     L3<br></code>
+<code>   F1   1     -0.338  0.191  0.384 -0.505 -0.014<br></code>
+<code>   F2  -0.338  1      0.190 -0.106  0.526 -0.568<br></code>
+<code>   F3   0.191  0.190  1      0.113 -0.038  0.019<br></code>
+<code>   L1   0.384 -0.106  0.113  1     -0.038  0.085<br></code>
+<code>   L2  -0.505  0.526 -0.038 -0.038  1      0.128<br></code>
+<code>   L3  -0.014 -0.568  0.019  0.085  0.128  1<br></code>
+<p>The following script summarizes:</p>
+<code>   selectObject: pols50m<br></code>
+<code>   To Correlation<br></code>
+<code>   Draw as numbers: 1, 0, "decimal", 3<br></code>
+<p>The correlation matrix shows that high correlations exist between some formant frequencies and some levels. For example, the correlation coefficient between F2 and L2 equals 0.526.</p>
+<p>In a canonical correlation analysis of the dataset above, we try to find the linear combination <i>u</i><sub>1</sub> of <i>F</i><sub>1</sub>, <i>F</i><sub>2</sub> and <i>F</i><sub>3</sub> that correlates maximally with the linear combination <i>v</i><sub>1</sub> of <i>L</i><sub>1</sub>, <i>L</i><sub>2</sub> and <i>L</i><sub>3</sub>. When we have found these <i>u</i><sub>1</sub> and <i>v</i><sub>1</sub> we next try to find a new combination <i>u</i><sub>2</sub> of the formant frequencies and a new combination <i>v</i><sub>2</sub> of the levels that have maximum correlation. These <i>u</i><sub>2</sub> and <i>v</i><sub>2</sub> should be uncorrelated with <i>u</i><sub>1</sub> and <i>v</i><sub>1</sub>. When we express the above with formulas we have:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>u</i><sub>1</sub> = <i>y</i><sub>11</sub><i>F</i><sub>1</sub>+<i>y</i><sub>12</sub><i>F</i><sub>2</sub> + <i>y</i><sub>13</sub><i>F</i><sub>3</sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>v</i><sub>1</sub> = <i>x</i><sub>11</sub><i>L</i><sub>1</sub>+<i>x</i><sub>12</sub><i>L</i><sub>2</sub> + <i>x</i><sub>13</sub><i>L</i><sub>3</sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#961;(<i>u</i><sub>1</sub>, <i>v</i><sub>1</sub>) = maximum, &#961;(<i>u</i><sub>2</sub>, <i>v</i><sub>2</sub>) = submaximum, </table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#961;(<i>u</i><sub>2</sub>, <i>u</i><sub>1</sub>) = &#961; (<i>u</i><sub>2</sub>, <i>v</i><sub>1</sub>) = &#961; (<i>v</i><sub>2</sub>, <i>v</i><sub>1</sub>) = &#961; (<i>v</i><sub>2</sub>, <i>u</i><sub>1</sub>) = 0,</table>
+<p>where the &#961;(<i>u</i><sub>i</sub>, <i>v</i><sub>i</sub>) are the correlations between the <a href="canonical_variate.html">canonical variate</a>s <i>u</i><sub>i</sub> and <i>v</i><sub>i</sub> and the <i>y</i><sub><i>ij</i></sub>'s and <i>x</i><sub><i>ij</i></sub>'s are the <b>canonical coefficients</b> for the dependent and the independent variates, respectively.</p>
+<h2>2. How to perform a canonical correlation analysis</h2>
+<p>Select the TableOfReal and choose from the dynamic menu the option <a href="TableOfReal__To_CCA___.html">To CCA...</a>. This command is available in the "Multivariate statistics" action button. We fill out the form and supply 3 for <i>Dimension of dependent variate</i>. The resulting CCA object will bear the same name as the TableOfReal object. The following script summarizes:</p>
+<code>   selectObject: pols50m<br></code>
+<code>   cca = To CCA: 3<br></code>
+<h2>3. How to get the canonical correlation coefficients</h2>
+<p>You can get the canonical correlation coefficients by querying the CCA object. You will find that the three canonical correlation coefficients, &#961;(<i>u</i><sub>1</sub>, <i>v</i><sub>1</sub>), &#961;(<i>u</i><sub>2</sub>, <i>v</i><sub>2</sub>) and &#961;(<i>u</i><sub>3</sub>, <i>v</i><sub>3</sub>) are  approximately 0.86, 0.53 and 0.07, respectively. The following script summarizes:</p>
+<code>   cc1 = Get correlation: 1<br></code>
+<code>   cc2 = Get correlation: 2<br></code>
+<code>   cc3 = Get correlation: 3<br></code>
+<code>   writeInfoLine: "cc1 = ", cc1, ", cc2 = ", cc2, ", cc3 = ", cc3<br></code>
+<h2>4. How to obtain canonical scores</h2>
+<p>Canonical <b>scores</b>, also named <a href="canonical_variate.html">canonical variate</a>s, are the linear combinations:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>u</i><sub><i>i</i></sub> = <i>y</i><sub><i>i1</i></sub><i>F</i><sub>1</sub>+<i>y</i><sub><i>i2</i></sub><i>F</i><sub>2</sub> + <i>y</i><sub><i>i3</i></sub><i>F</i><sub>3</sub>, and,</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>v</i><sub><i>i</i></sub> = <i>x</i><sub><i>i1</i></sub><i>L</i><sub>1</sub>+<i>x</i><sub><i>i2</i></sub><i>L</i><sub>2</sub> + <i>x</i><sub><i>i3</i></sub><i>L</i><sub>3</sub>,</table>
+<p>where the index <i>i</i> runs from 1 to the number of correlation coefficients.</p>
+<p>You can get the canonical scores by selecting a CCA object together with the TableOfReal object and choose <a href="CCA___TableOfReal__To_TableOfReal__scores____.html">To TableOfReal (scores)...</a></p>
+<p>When we now calculate the <b>Correlation</b> matrix of these canonical variates we get the following table:</p>
+<code>          u1     u2     u3     v1     v2     v3<br></code>
+<code>   u1     1      .      .    0.860    .      .<br></code>
+<code>   u2     .      1      .      .    0.531    .<br></code>
+<code>   u3     .      .      1      .      .    0.070<br></code>
+<code>   v1   0.860    .      .      1      .      .<br></code>
+<code>   v2     .    0.531    .      .      1      .<br></code>
+<code>   v3     .      .    0.070    .      .      1<br></code>
+<p>The scores with a dot are zero to numerical precision. In this table the only correlations that differ from zero are the canonical correlations. The following script summarizes:</p>
+<code>   selectObject: cca, pols50m<br></code>
+<code>   To TableOfReal (scores): 3<br></code>
+<code>   To Correlation<br></code>
+<code>   Draw as numbers if: 1, 0, "decimal", 2, ~ abs(self) &gt; 1e-14<br></code>
+<h2>5. How to predict one dataset from the other</h2>
+<p><a href="CCA___TableOfReal__Predict___.html">CCA & TableOfReal: Predict...</a></p>
+<p>Additional information can be found in <a href="Weenink__2003_.html">Weenink (2003)</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="CCA.html">CCA</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20181118</p>
+</address>
+</body>
+</html>

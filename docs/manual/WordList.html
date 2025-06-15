@@ -1,0 +1,78 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>WordList</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+WordList
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. An object of class WordList contains a sorted list of strings in a system-independent format. WordList objects can be used for spelling checking after conversion to a <a href="SpellingChecker.html">SpellingChecker</a> object.</p>
+<h2>1. How to create a WordList object</h2>
+<p>You will normally create a WordList object by reading a binary WordList file. You'll use the generic <a href="Read_from_file___.html">Read from file...</a> command from the <b>Open</b> menu.</p>
+<p>See below under 3 for how to create such a file.</p>
+<h2>2. What you can do with a Wordlist object</h2>
+<p>The main functionality of a WordList is its ability to tell you whether it contains a certain string. If you select a WordList, you can query the existence of a specific word by using the <b>Has word</b> command. You supply the word and press OK. If the WordList does contain the word, the value "1" will be written to the Info window; otherwise, the value "0" will be written.</p>
+<h2>3. How to create a binary WordList file</h2>
+<p>You can create a binary WordList file from a simple text file that contains a long list of words. Perhaps such a text file has been supplied by a lexicographic institution in your country; because of copyright issues, such word lists cannot be distributed with the Praat program. To convert the simple text file into a compressed WordList file, you basically take the following steps:</p>
+<code>   Read Strings from raw text file: "lexicon.txt"<br></code>
+<code>   Sort<br></code>
+<code>   To WordList<br></code>
+<code>   Save as binary file: "lexicon.WordList"<br></code>
+<p>I'll explain these steps in detail. For instance, a simple text file may contain the following list of words:</p>
+<code>   cook<br></code>
+<code>   cooked<br></code>
+<code>   cookie<br></code>
+<code>   cookies<br></code>
+<code>   cooking<br></code>
+<code>   cooks<br></code>
+<code>   Copenhagen<br></code>
+<code>   København<br></code>
+<code>   München<br></code>
+<code>   Munich<br></code>
+<code>   ångström<br></code>
+<p>These are just 11 words, but the procedure will work fine if you have a million of them, and enough memory in your computer.</p>
+<p>You can read the file into a <a href="Strings.html">Strings</a> object with <a href="Read_Strings_from_raw_text_file___.html">Read Strings from raw text file...</a> from the <b>Open</b> menu in the Objects window. The resulting <a href="Strings.html">Strings</a> object contains 11 strings in the above order, as you can verify by viewing them with <a href="Inspect.html">Inspect</a>.</p>
+<p>If you select the Strings, you can click the <b>To WordList</b> button. However, you will get the following complaint:</p>
+<code>      String "Copenhagen" not sorted. Please sort first.<br></code>
+<p>This complaint means that the strings have not been sorted in Unicode sorting order. So you click <b>Sort</b>, and the Strings object becomes:</p>
+<code>   Copenhagen<br></code>
+<code>   København<br></code>
+<code>   Munich<br></code>
+<code>   München<br></code>
+<code>   cook<br></code>
+<code>   cooked<br></code>
+<code>   cookie<br></code>
+<code>   cookies<br></code>
+<code>   cooking<br></code>
+<code>   cooks<br></code>
+<code>   ångström<br></code>
+<p>The strings are now in Unicode sorting order, in which capitals come before lower-case letters, and composite characters follow the latter.</p>
+<p>Clicking <b>To WordList</b> now succeeds, and a WordList object appears in the list. If you save it to a text file (with the Save menu), you will get the following file:</p>
+<code>   File type = "ooTextFile"<br></code>
+<code>   Object class = "WordList"<br></code>
+<code>   <br></code>
+<code>   string = "Copenhagen<br></code>
+<code>   København<br></code>
+<code>   Munich<br></code>
+<code>   München<br></code>
+<code>   cook<br></code>
+<code>   cooked<br></code>
+<code>   cookie<br></code>
+<code>   cookies<br></code>
+<code>   cooking<br></code>
+<code>   cooks<br></code>
+<code>   ångström\" <br></code>
+<p>Note that any double quotes (") that appear inside the strings, will be doubled, as is done everywhere inside strings in Praat text files.</p>
+<p>After you have created a WordList text file, you can create a WordList object just by reading this file with <a href="Read_from_file___.html">Read from file...</a> from the <b>Open</b> menu.</p>
+<p>The WordList object has the advantage over the Strings object that it won't take up more memory than the original word list. This is because the WordList is stored as a single string: a contiguous list of strings, separated by new-line symbols.</p>
+<hr>
+<address>
+	<p>© ppgb 20190616</p>
+</address>
+</body>
+</html>

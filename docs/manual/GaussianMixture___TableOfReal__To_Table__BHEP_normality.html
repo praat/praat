@@ -1,0 +1,27 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>GaussianMixture & TableOfReal: To Table (BHEP normality tests)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+GaussianMixture & TableOfReal: To Table (BHEP normality tests)...
+</b></font></table></table>
+<p>Tests the data in the <a href="TableOfReal.html">TableOfReal</a> that belong to the components of the <a href="GaussianMixture.html">GaussianMixture</a> for normality according to an adapted version of the <a href="BHEP_multivariate_normality_test.html">BHEP multivariate normality test</a>.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Beta</b>
+<dd>determines the smoothing parameter of the data. If <i>beta</i> equals zero the smoothing is determined automatically for each component of the mixture separately as: </dd>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>beta</i> = 1/(&#8730;2) (2<i>p</i>+1)<sup>1/(<i>p</i>+4)</sup> <i>n</i><sup>1/(<i>p</i>+4)</sup>,</table>
+<p>where <i>n</i> is the effective number of elements in the component, and <i>p</i> is the dimension of the data.</p>
+<hr>
+<address>
+	<p>© djmw 20190728</p>
+</address>
+</body>
+</html>

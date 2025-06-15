@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formant: Draw tracks...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formant: Draw tracks...
+</b></font></table></table>
+<p>A command to draw the selected <a href="Formant.html">Formant</a> objects to the <a href="Picture_window.html">Picture window</a>.</p>
+<h2>Behaviour</h2>
+<p>Every formant value is drawn as one or two short line segments, connected, if possible, with a line segment of the corresponding formant values in the adjacent frames.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>From time (s)</b>
+<dt><b>To time (s)</b>
+<dd>the time domain of the drawing. If <b>To time</b> is not greater than <b>From time</b>, the entire formant contour is drawn.</dd>
+<dt><b>Maximum frequency (Hz)</b>
+<dd>the height of the <i>y</i> axis. For speech, 5000 Hz is a usual value.</dd>
+<dt><b>Garnish</b>
+<dd>determines whether axes, numbers, and texts ("Time", "Formant frequency") will be drawn in the margins around the picture. Turn this button off if you prefer to garnish your picture by yourself with the <a href="Margins.html">Margins</a> menu.</dd>
+</dl>
+<h2>Usage</h2>
+<p>Unlike <a href="Formant__Speckle___.html">Formant: Speckle...</a>, this procedure assumes that e.g. the second formant in frame <i>i</i> has something to do with the second formant in frame <i>i</i>+1. To make this assumption more plausible, use <a href="Formant__Track___.html">Formant: Track...</a> first.</p>
+<hr>
+<address>
+	<p>© ppgb 19980321</p>
+</address>
+</body>
+</html>

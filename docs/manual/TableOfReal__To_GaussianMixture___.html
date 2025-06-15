@@ -1,0 +1,45 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: To GaussianMixture...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: To GaussianMixture...
+</b></font></table></table>
+<p>Creates a <a href="GaussianMixture.html">GaussianMixture</a> from the selected <a href="TableOfReal.html">TableOfReal</a> by an <a href="expectation-maximization.html">expectation-maximization</a> procedure.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Number of components</b>
+<dd>defines the number of Gaussians in the mixture.</dd>
+<dt><b>Tolerance of minimizer</b>
+<dd>defines when to stop optimizing. If the relative difference between the likelihoods at two successive iteration steps differs by less then the tolerance we stop, i.e. when |(<i>L</i>(<i>i</i>-1)-<i>L</i>(<i>i</i>))/<i>L</i>(<i>i</i>)| &lt; <i>tolerance</i>.</dd>
+<dt><b>Maximum number of iterations</b>
+<dd>defines another stopping criterion. The EM iteration will stop when either the tolerance is reached or the maximum number of iterations. If zero is chosen, no iteration will be performed and the GaussianMixture will be initialized with the initial guess.</dd>
+<dt><b>Stability coefficient lambda</b>
+<dd>defines the fraction of the total covariance that will be added to the each of the mixture covariance matrices during the EM iteration. This may prevent one or more of these matrices to become singular.</dd>
+<dt><b>Covariance matrices are</b>
+<dd>defines whether the complete covariance matrices in the mixture have to be calculated or only the diagonal.</dd>
+<dt><b>Criterion based on</b>
+<dd>defines how the <a href="GaussianMixture___TableOfReal__Get_likelihood_value___.html">likelihood of the data given the model is calculated</a>.</dd>
+</dl>
+<h2>Expectation&#8211;Maximization Algorithm</h2>
+<p>The Expectation&#8211;Maximization (EM) algorithm is an iterative procedure to maximize the likelihood of the data given a model. For a GaussianMixture, the parameters in the model are the centers and the covariances of all components in the mixture and their mixing probabilities.</p>
+<p>The number of parameters depends on the number of components in the mixture and the dimension of the data. For a full covariance matrix we have to find <i>dimension</i><i></i>(<i>dimension</i><i></i>+1)/2 matrix elements and another <i>dimension</i> vector elements for its center. This makes the total number of parameters that have to be estimated for a mixture with <b>Number of components</b> components equal to <i>numberOfComponents</i> &#183; <i>dimension</i><i></i>(<i>dimension</i><i></i>+3)/2 + <i>numberOfComponents</i>.</p>
+<p>For diagonal covariance matrices the number of parameters reduces considerably.</p>
+<p>The EM iteration has to start with a sensible initial guess for all the parameters. For the initial guess, we derive our centers from positions on the 1-&#963; ellipse in the plane spanned by the first two principal components. We then make all covariance matrices equal to a scaled-down version of the total covariance matrix, where the scaling factor depends on the number of components and the quotient of the between and within variance. Initially all mixing probabilities will be chosen equal.</p>
+<p>How to proceed from the initial guess with the EM to find the optimal values for all the parameters in the Gaussian mixture is explained in great detail by <a href="Bishop__2006_.html">Bishop (2006)</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="GaussianMixture___TableOfReal__Improve_likelihood___.html">GaussianMixture & TableOfReal: Improve likelihood...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20150930</p>
+</address>
+</body>
+</html>

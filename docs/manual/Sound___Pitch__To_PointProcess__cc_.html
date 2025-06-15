@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound & Pitch: To PointProcess (cc)</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound & Pitch: To PointProcess (cc)
+</b></font></table></table>
+<p>A command to create a <a href="PointProcess.html">PointProcess</a> from the selected <a href="Sound.html">Sound</a> and <a href="Pitch.html">Pitch</a> objects.</p>
+<h2>Purpose</h2>
+<p>to interpret an acoustic periodicity contour as the frequency of an underlying point process (such as the sequence of glottal closures in vocal-fold vibration).</p>
+<h2>Algorithm</h2>
+<p>The voiced intervals are determined on the basis of the voiced/unvoiced decisions in the <a href="Pitch.html">Pitch</a> object. For every voiced interval, a number of <i>points</i> (or glottal pulses) is found as follows:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. The first point <i>t</i><sub>1</sub> is the absolute extremum of the amplitude of the <b>Sound</b>, between <i>t</i><sub><i>mid</i></sub> &#8211; <i>T</i><sub>0</sub> / 2 and <i>t</i><sub><i>mid</i></sub> + <i>T</i><sub>0</sub> / 2, where <i>t</i><sub><i>mid</i></sub> is the midpoint of the interval, and <i>T</i><sub>0</sub> is the period at <i>t</i><sub><i>mid</i></sub>, as can be interpolated from the <b>Pitch</b> contour.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. From this point, we recursively search for points <i>t</i><sub><i>i</i></sub> to the left until we reach the left edge of the interval. These points must be located between <i>t</i><sub><i>i</i>&#8211;1</sub> &#8211; 1.2 <i>T</i><sub>0</sub>(<i>t</i><sub><i>i</i>&#8211;1</sub>) and <i>t</i><sub><i>i</i>&#8211;1</sub> &#8211; 0.8 <i>T</i><sub>0</sub>(<i>t</i><sub><i>i</i>&#8211;1</sub>), and the cross-correlation of the amplitude in its environment [<i>t</i><sub><i>i</i></sub> &#8211; <i>T</i><sub>0</sub>(<i>t</i><sub><i>i</i></sub>) / 2; <i>t</i><sub><i>i</i></sub> + <i>T</i><sub>0</sub>(<i>t</i><sub><i>i</i></sub>) / 2] with the amplitude of the environment of the existing point <i>t</i><sub><i>i</i>&#8211;1</sub> must be maximal (we use parabolic interpolation between samples of the correlation function).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. The same is done to the right of <i>t</i><sub>1</sub>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. Though the voiced/unvoiced decision is initially taken by the <b>Pitch</b> contour, points are removed if their correlation value is less than 0.3; furthermore, one extra point may be added at the edge of the voiced interval if its correlation value is greater than 0.7.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Manipulation.html">Manipulation</a>
+<li><a href="Sound___Pitch__To_PointProcess__peaks____.html">Sound & Pitch: To PointProcess (peaks)...</a>
+<li><a href="Sound__To_PointProcess__periodic__cc____.html">Sound: To PointProcess (periodic, cc)...</a>
+<li><a href="Voice_6__Automating_voice_analysis_with_a_script.html">Voice 6. Automating voice analysis with a script</a>
+<li><a href="What_s_new_.html">What's new?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 19980322</p>
+</address>
+</body>
+</html>

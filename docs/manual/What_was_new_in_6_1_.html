@@ -1,0 +1,318 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>What was new in 6.1?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+What was new in 6.1?
+</b></font></table></table>
+<p><b>6.1</b> (13 July 2019)</p>
+<p><b>6.0.57</b> (1 July 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Repaired a crash when an editor window zoomed in to a zero time range.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Repaired a crash when playing a matrix movie with one row or a constant value.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Repaired a crash when reconstructing a TableOfReal from a PCA.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: allow comments after <code><font size=+1>else</font></code>, <code><font size=+1>endif</font></code>, <code><font size=+1>endfor</font></code>...</dd>
+</dl>
+<p><b>6.0.56</b> (20 June 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: file dropping on the Praat icon works for higher-Unicode file names.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SpellingChecker: Unicode support.</dd>
+</dl>
+<p><b>6.0.55</b> (13 June 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Unicode normalization in file names.</dd>
+</dl>
+<p><b>6.0.54</b> (6 June 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in 6.0.51 that could cause incorrect axes in Demo window.</dd>
+</dl>
+<p><b>6.0.53</b> (26 May 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Much faster playing of short parts of long sounds that need resampling.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Better handling of broken CSV files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; 64-bit floating-point WAV files.</dd>
+</dl>
+<p><b>6.0.52</b> (2 May 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in 6.0.51 that could cause turning a Discriminant into a Configuration to crash.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in contour grey drawing in August 2017.</dd>
+</dl>
+<p><b>6.0.51</b> (29 April 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Script window: Use Selection for Find.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in 6.0.41 that could cause Praat to crash after removing an element from a Strings or a row from a TableOfReal.</dd>
+</dl>
+<p><b>6.0.50</b> (31 March 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Manual updates, speed, more tests.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <a href="_rowSums-H_.html"><b><code><font size=+1>rowSums#</font></code></b></a> (), <a href="_columnSums-H_.html"><b><code><font size=+1>columnSums#</font></code></b></a> (); <a href="_randomGauss-H-H_.html"><b><code><font size=+1>randomGauss##</font></code></b></a> () finally with four arguments.</dd>
+</dl>
+<p><b>6.0.49</b> (2 March 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in 6.0.41 whereby a script could misreport an undefined table value.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in 6.0.44 whereby an MFCC's maximum frequency could be ignored.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Pitch: Tabulate candidates.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SoundSet.</dd>
+</dl>
+<p><b>6.0.48</b> (17 February 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in 6.0.44 whereby Praat could crash when drawing a function without any points.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug whereby Praat would not start up on macOS 10.10 (because of required GPU libraries).</dd>
+</dl>
+<p><b>6.0.47</b> (8 February 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in 6.0.44 whereby a cepstral peak prominence would be computed incorrectly.</dd>
+</dl>
+<p><b>6.0.46</b> (3 January 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a crashing bug in the LongSound window introduced in 6.0.44.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug causing incorrect conversion from Formant to LPC introduced in 6.0.44.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More space for actions in buttons window.</dd>
+</dl>
+<p><b>6.0.45</b> (1 January 2019)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a crashing bug in EditDistanceTable introduced in 6.0.44.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a crashing bug in KlattGrid drawing introduced in 6.0.44.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug introduced in 6.0.44 whereby old HMM files were read incorrectly.</dd>
+</dl>
+<p><b>6.0.44</b> (31 December 2018)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Bug fixes and speed.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Bug fixes and speed.</dd>
+</dl>
+<p><b>6.0.43</b> (8 September 2018)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a very old bug that could create invalid TextGrids during forced alignment.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: repaired a bug introduced in 6.0.41 that caused a crash in several places (such as when changing the sample rate in the SoundRecorder) when Praat had been started with a double click.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: repaired a bug introduced in 6.0.41 that caused Praat to crash when exiting.</dd>
+</dl>
+<p><b>6.0.42</b> (15 August 2018)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Repaired a bug introduced in 6.0.41 that caused a crash in pause windows.</dd>
+</dl>
+<p><b>6.0.41</b> (6 August 2018)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Interoperability: the Windows edition can now communicate with other software in UTF-8.</dd>
+</dl>
+<p><b>6.0.40</b> (11 May 2018)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <code><font size=+1><a href="Scripting_4_3__Querying_objects.html">`selected#`</a></font></code>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Table window: cell selection.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Unicode-savvy regular expressions.</dd>
+</dl>
+<p><b>6.0.39</b> (3 April 2018)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More string matching (case-insensitive, word-level).</dd>
+</dl>
+<p><b>6.0.38</b> (29 March 2018)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Concordance: <b>TextGrid: Tabulate occurrences...</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Some <a href="Independent_Component_Analysis_on_EEG.html">Independent Component Analysis on EEG</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed many small bugs.</dd>
+</dl>
+<p><b>6.0.37</b> (3 February 2018)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Graphics: fixed crashing bug with \un trigraph (_).</dd>
+</dl>
+<p><b>6.0.36</b> (11 November 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Many more languages for SpeechSynthesizer and automatic alignment (new eSpeak).</dd>
+</dl>
+<p><b>6.0.35</b> (16 October 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Fixed a bug introduced in 6.0.23 by which <b>Remove right boundary</b> would sometimes incorrectly refuse.</dd>
+</dl>
+<p><b>6.0.34</b> (10 October 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: arrays in menu commands in scripts.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Inspect</b>: made a button visible that had disappeared in 6.0.33.</dd>
+</dl>
+<p><b>6.0.33</b> (26 September 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Pitch: Subtract linear fit...</b>: correct a bug that prevented computation in the ERB domain.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: made <code><font size=+1>object[xx].xmin</font></code> work again.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug in <b>Polynomial: Evaluate...</b> introduced in 6.0.32.</dd>
+</dl>
+<p><b>6.0.32</b> (16 September 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Table: allow spaces in column names.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Settings windows no longer replace your visible expressions with their resulting values.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: formulas using the tilde.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Optimality Theory learning: corrected a bug introduced in 6.0.30 that could cause the editor to crash on the Mac.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; EEG: corrected a bug that could cause an infinite loop when doing principal component analysis.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: faster interpreter.</dd>
+</dl>
+<p><b>6.0.31</b> (21 August 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: more vectors and matrices.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Numerics: faster and more precise sums, means, standard deviations.</dd>
+</dl>
+<p><b>6.0.30</b> (22 July 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug that caused an incorrect title for a PitchTier or PointProcess window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed a bug that caused Praat to crash when doing a linear regression on a Table with no rows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <code><font size=+1>object[]</font></code>, <a href="Scripting_5_7__Vectors_and_matrices.html">vectors</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Graphics: better text drawing details.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: possibility to compile Praat without a GUI but with graphics file output.</dd>
+</dl>
+<p><b>6.0.29</b> (24 May 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound window: channel muting.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: support for Chinese, Japanese, Korean, Indic, Arabic and Hebrew characters in TextGrids and elsewhere.</dd>
+</dl>
+<p><b>6.0.28</b> (23 March 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <a href="_demoPeekInput_.html"><b><code><font size=+1>demoPeekInput</font></code></b></a> () for animations in combination with <a href="_sleep_.html"><b><code><font size=+1>sleep</font></code></b></a> ().</dd>
+</dl>
+<p><b>6.0.27</b> (18 March 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid: fewer error messages in concatenation of multiple TextGrids.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <a href="_sleep_.html"><b><code><font size=+1>sleep</font></code></b></a> () to pause Praat temporarily: useful for animations in combination with <a href="_demoShow_.html"><b><code><font size=+1>demoShow</font></code></b></a> ().</dd>
+</dl>
+<p><b>6.0.26</b> (2 March 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: more corrections in <a href="_demoShow_.html"><b><code><font size=+1>demoShow</font></code></b></a> () and <code><font size=+1>blankWhilePlaying</font></code>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; PraatBarren: better error message when an attempt is made to run PraatBarren interactively.</dd>
+</dl>
+<p><b>6.0.25</b> (11 February 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: made <a href="_demoShow_.html"><b><code><font size=+1>demoShow</font></code></b></a> () and <code><font size=+1>blankWhilePlaying</font></code> compatible with MacOS 10.12 Sierra.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac SoundRecorder: more sampling frequencies, on behalf of external USB microphones.</dd>
+</dl>
+<p><b>6.0.24</b> (23 January 2017)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Fixed a bug introduced in 6.0.23 by which <b>Remove right boundary</b> would choose the wrong tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: click to insert a phonetic symbol from an IPA chart.</dd>
+</dl>
+<p><b>6.0.23</b> (12 December 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: fixed a bug that caused Praat to crash when playing a sound of more than 7 channels.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Change Gender: fixed a bug introduced in 6.0.22 by which the pitch range factor could not be 0.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Improvements in the manual and in texts.</dd>
+</dl>
+<p><b>6.0.22</b> (15 November 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: correct error messages for expressions like: <code><font size=+1>5 + “hello”</font></code></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Command line: the --open option works correctly in the GUI if you open multiple files.</dd>
+</dl>
+<p><b>6.0.21</b> (25 September 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; ExperimentMFC: you can now specify font sizes and response keys for goodness judgments.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Table: when drawing ellipses, a font size of 0 can now be used to prevent drawing the labels.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: dragging selections repaired for System 10.11.6 (but we advise to upgrade to 10.12).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: re-enabled Return key for confirming some dialog boxes.</dd>
+</dl>
+<p><b>6.0.20</b> (3 September 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Can open UTF-8 text files with Byte Order Mark.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting improvement: function names can now be used as names of indexed variables.</dd>
+</dl>
+<p><b>6.0.19</b> (13 June 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac: dragging selections repaired for System 10.11.5.</dd>
+</dl>
+<p><b>6.0.18</b> (23 May 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: better dotted lines.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: again better automatic alignment.</dd>
+</dl>
+<p><b>6.0.17</b> (21 April 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: better automatic alignment.</dd>
+</dl>
+<p><b>6.0.16</b> (5 April 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: &#8220;hashes&#8221;: variables can now be indexed with strings rather than only with numbers.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: fewer out-of-order messages in automatic alignment.</dd>
+</dl>
+<p><b>6.0.15</b> (21 March 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: removed a bug whereby Praat could do automatic alignment only on sounds sampled at 44.1 kHz.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: improved the location of the final boundary in automatic alignment.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Table window: added a preference for the interpretation of graphical style symbols (<code><font size=+1>%#^_@</font></code>).</dd>
+</dl>
+<p><b>6.0.14</b> (11 February 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: corrected a bug by which the Tab short-cut for playing a sound would not work if the NumLock key was on.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: corrected a bug that could cause Praat to crash if the Tab key was pressed in a dialog window.</dd>
+</dl>
+<p><b>6.0.13</b> (31 January 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: corrected a bug that could cause Praat to crash when closing a script window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: progress bars with movies.</dd>
+</dl>
+<p><b>6.0.12</b> (24 January 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows 32-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: better <a href="_demoShow_.html"><b><code><font size=+1>demoShow</font></code></b></a> ().</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: working Matrix movies and articulatory synthesizer movies.</dd>
+</dl>
+<p><b>6.0.11</b> (18 January 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected a bug that could cause Praat to crash when drawing a Spectrum with undefined values.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: corrected a bug by which some text in the Sound window would sometimes not be drawn.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit demo window: improved the working of <a href="_demoShow_.html"><b><code><font size=+1>demoShow</font></code></b></a> ().</dd>
+</dl>
+<p><b>6.0.10</b> (8 January 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected a bug that would cause Praat to crash when starting an ExperimentMFC window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: corrected a bug that would cause black selections in the Sound window.</dd>
+</dl>
+<p><b>6.0.09</b> (1 January 2016)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows 64-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.</dd>
+</dl>
+<p><b>6.0.08</b> (5 December 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows command line: the <code><font size=+1>--a</font></code> option can be used when redirecting the output to pipes and files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux command line: the <code><font size=+1>--run</font></code> option is not needed in the Terminal when redirecting output (unless you redirect standard output, standard input <i>and</i> standard error).</dd>
+</dl>
+<p><b>6.0.07</b> (30 November 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: repaired dragging selections (which got broken in the El Capitan fix in 6.0.06).</dd>
+</dl>
+<p><b>6.0.06</b> (29 November 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac 64-bit: correct early Info window updates and <a href="_demoShow_.html"><b><code><font size=+1>demoShow</font></code></b></a> () in El Capitan.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Manual updates.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected some small memory leaks.</dd>
+</dl>
+<p><b>6.0.05</b> (8 November 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; A manual page that describes <a href="TextGrid_file_formats.html">TextGrid file formats</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected a bug that prevented some KlattGrid tiers from being edited.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; 32-bit Linux: correct use of PulseAudio (note: 6.0.04 on Debian already had this correct).</dd>
+</dl>
+<p><b>6.0.04</b> (1 November 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected a bug that caused an incorrect number in FFNet files; unreadable FFNet files can be sent to the Praat authors for repair.</dd>
+</dl>
+<p><b>6.0.03</b> (31 October 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected a bug that caused Praat to crash when the Soundrecorder window was closed.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: when calling Praat from the command line, added the <code><font size=+1>--run</font></code> option to force script execution.</dd>
+</dl>
+<p><b>6.0.02</b> (30 October 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Corrected the redrawing of analyses in the Sound window after a change in the sound.</dd>
+</dl>
+<p><b>6.0.01</b> (29 October 2015)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: fixed a bug that caused Praat to crash at start-up in some Windows versions.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2015–2019</p>
+</address>
+</body>
+</html>

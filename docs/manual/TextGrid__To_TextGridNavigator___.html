@@ -1,0 +1,28 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TextGrid: To TextGridNavigator...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TextGrid: To TextGridNavigator...
+</b></font></table></table>
+<p>A command to create a new <a href="TextGridNavigator.html">TextGridNavigator</a> object for the selected <a href="TextGrid.html">TextGrid</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Tier number</b>
+<dd>defines the tier of the TextGrid that will be used for the navigation. This tier will be copied into the TextGridNavigator. This tier will be called the <i>topic tier</i>.</dd>
+<dt>Next follow the settings for the <a href="NavigationContext.html">navigation context</a>. You can define a full context-sensitive search on the selected tier. This means that whether a label in an interval matches may depend on whether the label of the preceeding interval matches a certain condition and / or whether the label in the succeeding interval matches a possibly different condition. 
+<dt><b>Match domain</b>
+<dd>defines the start and end times of the match domain on this tier. Various options exist, the default, <b>Topic start to Topic end</b> takes the start time and end time of the interval that matches the topic. As is explained in the <a href="TextGridNavigator.html">TextGridNavigator</a> matching in multi-tier search is based on time intervals,  therefore this option is irrelevant for single-tier searches.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20210723</p>
+</address>
+</body>
+</html>

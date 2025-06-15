@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Candidate modelling settings...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Candidate modelling settings...
+</b></font></table></table>
+<p>A command in the <b>Candidates</b> menu of the <a href="FormantPathEditor.html">FormantPathEditor</a> window.</p>
+<dl>
+<dt><b>Coefficients by track</b>
+<dd>determines how many coefficients will be used in the modelling of a formant track. The second number determines the number of coefficients for the modelling of formant 2, and so on. For example, if you specify "4 3 3", the first three formants will be modelled. Formant 1 will be modelled with 4 coefficients which means that a third order polynomial is used for modelling. Formant 2 and formant 3 are modelled with 3 coefficients which means that their tracks will be modelled as parabolas.</dd>
+<dt><b>Variance exponent</b>
+<dd>determines the power of the first term in the overall stress criterion <b>S</b>. The best model is the one with the lowest value for the stress <i>S</i>.</dd>
+</dl>
+<p>The stress criterion <b>S</b> is defined in <a href="Weenink__2015_.html">Weenink (2015)</a> as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>S</i> = (<i>s</i><sup>2</sup> / <i>k</i>)<sup><i>varianceExponent</i></sup> (<i>&#967;</i><sup>2</sup> / <i>d</i>),</table>
+<p>where <i>s</i><sup>2</sup> is the sum of the squares of the standard errors of all the coefficients of the modelled formant tracks within one Formant object, <i>k</i> is the total number of coefficients of these tracks, in the example given above <i>k</i> is 10 (= 4 + 3 + 3), &#967;<sup>2</sup> is the sum of the chi squares of each track, <i>d</i> is the sum of the degrees of freedom of each track. Because the standard error <i>s</i> is proportional to bandwidth and &#967;<sup>2</sup> is inversely proportional to bandwidth, the expression for <i>S</i> grows approximately as 2&#183;<i>varianceExponent</i>-2 with bandwidth. Setting the <i>varianceExponent</i> somewhat larger than one guarantees that for two tracks whose formants only differ in their bandwidths, the track with the larger bandwidths obtains a larger value for the stress value <i>S</i>.</p>
+<hr>
+<address>
+	<p>© djmw 20221129</p>
+</address>
+</body>
+</html>

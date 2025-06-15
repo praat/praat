@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Regular expressions 3. Anchors</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Regular expressions 3. Anchors
+</b></font></table></table>
+<p>Anchors let you specify a very specific position within the search text.</p>
+<dl>
+<dt><b>^</b>   Try to match the (following) regex at the beginning of the string.
+<dd>&nbsp;&nbsp;&nbsp;Example: "^ab" matches "ab" only at the beginning of a line and not, for example, in the line "cab".</dd>
+<dt><b>$</b>   Try to match the (following) regex at the end of the string.
+<dt><b>&lt;</b>    Try to match the regex at the <i>start</i> of a word.
+<dd>The character class that defines a <i>word</i> can be found at the <a href="Regular_expressions_6__Convenience_escape_sequences.html">convenience escape sequences</a> page.</dd>
+<dt><b>&gt;</b>    Try to match the regex at the <i>end</i> of a word.
+<dt><b>\B</b>   Not a word boundary
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Regular_expressions.html">Regular expressions</a>
+<li><a href="Regular_expressions_1__Special_characters.html">Regular expressions 1. Special characters</a>
+</ul>
+<hr>
+<address>
+	<p>© DAvid Weenink & Paul Boersma 20180401</p>
+</address>
+</body>
+</html>

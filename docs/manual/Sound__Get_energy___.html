@@ -1,0 +1,56 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Get energy...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Get energy...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="Sound.html">Sound</a> object.</p>
+<h2>Availability</h2>
+<p>This command becomes available in the Query submenu when you select one Sound. Like most query commands, it is greyed out if you select two Sounds or more.</p>
+<h2>Behaviour</h2>
+<p>If you execute this command, Praat should write the energy of the selected Sound (in the time interval you are asking for) into the Info window. If the unit of sound amplitude is Pa (Pascal), the unit of energy will be Pa<sup>2</sup>&#183;s.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Time range (s)</b>
+<dd>the time range (<i>t</i><sub>1</sub>, <i>t</i><sub>2</sub>). Values outside this range are ignored. If <i>t</i><sub>1</sub> is not less than <i>t</i><sub>2</sub>, the entire time domain of the sound is considered.</dd>
+</dl>
+<h2>Definition</h2>
+<p>The energy is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub><i>t1</i></sub><sup><i>t2</i></sup> <i>x</i><sup>2</sup>(<i>t</i>) <i>dt</i></table>
+<p>where <i>x</i>(<i>t</i>) is the amplitude of the sound. For stereo sounds, it is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub><i>t1</i></sub><sup><i>t2</i></sup> (<i>x</i><sup>2</sup>(<i>t</i>) + <i>y</i><sup>2</sup>(<i>t</i>))/2 <i>dt</i></table>
+<p>where <i>x</i>(<i>t</i>) and <i>y</i>(<i>t</i>) are the two channels; this definition, which averages (rather than sums) over the channels, ensures that if you convert a mono sound to a stereo sound, the energy will stay the same.</p>
+<h2>Related commands</h2>
+<p>For an interpretation of the energy as the sound energy in air, see <a href="Sound__Get_energy_in_air.html">Sound: Get energy in air</a>. For the power, see <a href="Sound__Get_power___.html">Sound: Get power...</a>.</p>
+<h2>Implementation</h2>
+<p>In Praat, a Sound is defined only at a finite number of time points, spaced evenly. For instance, a three-seconds long Sound with a sampling frequency of 10 kHz is defined at 30,000 time points, which usually (e.g. when you create the Sound with <a href="Create_Sound_from_formula___.html">Create Sound from formula...</a>) lie at 0.00005, 0.00015, 0.00025 ... 2.99975, 2.99985 and 2.99995 seconds. The simple way Praat looks at this is that the first <i>sample</i> is centred around 0.00005 seconds, and the amplitude of that sample (<i>x</i><sub>1</sub>) represents <i>x</i>(<i>t</i>) for <i>t</i> between 0 and 0.00010 seconds. Likewise, the second sample is centred around 0.00015 seconds but can be said to run from 0.00010 to 0.00020 seconds, and the 30,000th and last sample is centred around 2.99995 seconds and its amplitude (<i>x</i><sub>30000</sub>) represents all times between 2.99990 and 3.00000 seconds. This example sound <i>x</i>(<i>t</i>) is therefore defined for all times between 0 and 3 seconds, but is undefined before 0 seconds or after 3 seconds.</p>
+<p>The energy of the whole example sound is therefore</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub>0</sub><sup>3</sup> <i>x</i><sup>2</sup>(<i>t</i>) <i>dt</i></table>
+<p>and we approximate this as a sum over all 30,000 samples:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8721;<sub><i>i</i>=1</sub><sup>30000</sup> <i>x</i><sub><i>i</i></sub><sup>2</sup> <i>&#916;t</i><sub><i>i</i></sub></table>
+<p>where <i>&#916;t</i><sub><i>i</i></sub> is the duration of the <i>i</i>th sample, i.e. 0.0001 seconds for every sample.</p>
+<p>Now consider what happens if we want to know the energy between <i>t</i><sub>1</sub> = 0.00013 and <i>t</i><sub>2</sub> = 0.00054 seconds. The first sample of the sound falls entirely outside this interval; 70 percent of the second sample falls within the interval, namely the part from 0.00013 to 0.00020 seconds; all of the third, fourth and fifth samples fall within the interval; and 40 percent of the sixth sample falls within the interval, namely the part from 0.00050 to 0.00054 seconds (note that the centre of this sixth sample, which is at 0.00055 seconds, even lies outside the interval). The energy is then</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8721;<sub><i>i</i>=2</sub><sup>6</sup> <i>x</i><sub><i>i</i></sub><sup>2</sup> <i>&#916;t</i><sub><i>i</i></sub></table>
+<p>where <i>&#916;t</i><sub>3</sub> = <i>&#916;t</i><sub>4</sub> = <i>&#916;t</i><sub>5</sub> = 0.0001 seconds, but <i>&#916;t</i><sub>2</sub> is only 0.00007 seconds (namely the part of the second sample that falls between <i>t</i><sub>1</sub> and <i>t</i><sub>2</sub>), and <i>&#916;t</i><sub>6</sub> is only 0.00004 seconds (namely the part of the sixth sample that falls between <i>t</i><sub>1</sub> and <i>t</i><sub>2</sub>).</p>
+<p>This way of integrating the squared signal (technically, a Riemann sum over a partition [of the interval from <i>t</i><sub>1</sub> to <i>t</i><sub>2</sub>] that is regular everywhere except at the edges and has central tags everywhere except at the edges) ensures that the result is a continuous function of <i>t</i><sub>1</sub> and <i>t</i><sub>2</sub>, i.e., a very small change in <i>t</i><sub>1</sub> or <i>t</i><sub>2</sub> can only lead to a very small change in the computed energy (instead, simply summing over all samples whose centre falls between <i>t</i><sub>1</sub> and <i>t</i><sub>2</sub> would result instead in a sudden jump in the computed energy whenever <i>t</i><sub>1</sub> or <i>t</i><sub>2</sub> crosses a sample centre, which would be unphysical behaviour and therefore not how Praat should behave; see the <a href="energy_integration_continuity_test.html">energy integration continuity test</a>).</p>
+<h2>Edge cases</h2>
+<p>If the sound is not defined everywhere between <i>t</i><sub>1</sub> and <i>t</i><sub>2</sub>, then the energy is not defined there either. Those times are skipped in the integral, i.e. they count as if they have zero energy.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound__Get_intensity__dB_.html">Sound: Get intensity (dB)</a>
+<li><a href="Sound__Get_power_in_air.html">Sound: Get power in air</a>
+<li><a href="Sound__Get_root-mean-square___.html">Sound: Get root-mean-square...</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2021-07-19</p>
+</address>
+</body>
+</html>

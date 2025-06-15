@@ -1,0 +1,41 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Discriminant & TableOfReal: To ClassificationTable...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Discriminant & TableOfReal: To ClassificationTable...
+</b></font></table></table>
+<p>A command to use the selected <a href="Discriminant.html">Discriminant</a> to classify each row from the selected <a href="TableOfReal.html">TableOfReal</a>. The newly created <a href="ClassificationTable.html">ClassificationTable</a> will then contain the posterior probabilities of group membership.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Pool covariance matrices</b>
+<dd>when on, all group covariance matrices are pooled and distances will be determined on the basis of only this pooled covariance matrix (see below).</dd>
+</dl>
+<h2>Details</h2>
+<p>The posterior probabilities of group membership <i>p</i><sub><i>j</i></sub> for a vector <b>x</b> are defined as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>p</i><sub><i>j</i></sub> = <i>p</i>(<i>j</i>|<b><i>x</i></b>) = exp (&#8211;<i>d</i><sub><i>j</i></sub><sup>2</sup>(<b><i>x</i></b>) / 2) / &#8721;<sub><i>k</i>=1..<i>numberOfGroups</i></sub> exp (&#8211;<i>d</i><sub><i>k</i></sub><sup>2</sup>(<b><i>x</i></b>) / 2),</table>
+<p>where <i>d</i><sub><i>i</i></sub><sup>2</sup> is the generalized squared distance function:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>d</i><sub><i>i</i></sub><sup>2</sup>(<b><i>x</i></b>) = ((<b><i>x</i></b>&#8211;<b><i>&#956;</i></b><sub><i>i</i></sub>)&#8242; <b>&#931;</b><sub><i>i</i></sub><sup>-1</sup> (<b><i>x</i></b>&#8211;<b><i>&#956;</i></b><sub><i>i</i></sub>) + ln determinant (<b>&#931;</b><sub><i>i</i></sub>)) / 2 &#8211; ln <i>aprioriProbability</i><sub><i>i</i></sub></table>
+<p>that depends on the individual covariance matrix <b>&#931;</b><sub><i>i</i></sub> and the mean <b><i>&#956;</i></b><sub><i>i</i></sub> for group <i>i</i>.</p>
+<p>When the covariances matrices are <i>pooled</i>, the squared distance function can be reduced to:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>d</i><sub><i>i</i></sub><sup>2</sup>(<b><i>x</i></b>) = ((<b><i>x</i></b>&#8211;<b><i>&#956;</i></b><sub><i>i</i></sub>)&#8242; <b>&#931;</b><sup>-1</sup> (<b><i>x</i></b>&#8211;<b><i>&#956;</i></b><sub><i>i</i></sub>) &#8211; ln <i>aprioriProbability</i><sub><i>i</i></sub>,</table>
+<p>and <b>&#931;</b> is now the pooled covariance matrix.</p>
+<p>The a priori probabilities normally will have values that are related to the number of <i>training</i> vectors <i>n</i><sub><i>i</i></sub> in each group:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>aprioriProbability</i><sub><i>i</i></sub> = <i>n</i><sub><i>i</i></sub> / &#931;<sub><i>k</i>=1..<i>numberOfGroups</i></sub> <i>n</i><sub><i>k</i></sub></table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Discriminant___PatternList__To_Categories___.html">Discriminant & PatternList: To Categories...</a>
+<li><a href="Discriminant_analysis.html">Discriminant analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

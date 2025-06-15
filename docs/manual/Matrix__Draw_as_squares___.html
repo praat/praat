@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Matrix: Draw as squares...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Matrix: Draw as squares...
+</b></font></table></table>
+<p>A command to draw a <a href="Matrix.html">Matrix</a> object into the <a href="Picture_window.html">Picture window</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Xmin</b>
+<dt><b>Xmax</b>
+<dd>the windowing domain in the <i>x</i> direction. Elements outside will not be drawn. <i>Autowindowing</i>: if (<i>Xmin</i> &#8805; <i>Xmax</i>), the entire <i>x</i> domain [<i>x</i><sub><i>min</i></sub>, <i>x</i><sub><i>max</i></sub>] of the Matrix is used.</dd>
+<dt><b>Ymin</b>
+<dt><b>Ymax</b>
+<dd>the windowing domain in the <i>y</i> direction. Elements outside will not be drawn. <i>Autowindowing</i>: if (<i>Ymin</i> &#8805; <i>Ymax</i>), the entire <i>y</i> domain [<i>y</i><sub><i>min</i></sub>, <i>y</i><sub><i>max</i></sub>] of the Matrix is used.</dd>
+<dt><b>Garnish</b>
+<dd>determines whether axes are drawn around the picture. Turn this button off if you prefer to garnish your picture by yourself with the <a href="Margins.html">Margins</a> menu.</dd>
+</dl>
+<h2>Behaviour</h2>
+<p>For every element of the Matrix inside the specified windowing domain, an opaque white or black rectangle is painted (white if the value of the element is positive, black if it is negative), surrounded by a thin black box. The <i>area</i> of the rectangle is proportional to the value of the element.</p>
+<h2>Trick</h2>
+<p>If you prefer the <i>sides</i> of the rectangle (instead of the area) to be proportional to the value of the element, you can use the formula "<code><font size=+1>self^2</font></code>" before drawing (see <a href="Matrix__Formula___.html">Matrix: Formula...</a>).</p>
+<hr>
+<address>
+	<p>© ppgb 19980319</p>
+</address>
+</body>
+</html>

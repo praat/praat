@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Regular expressions 5. Special control characters</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Regular expressions 5. Special control characters
+</b></font></table></table>
+<p>Special control characters in a <a href="Regular_expressions.html">regular expression</a> specify characters that are difficult to type.</p>
+<dl>
+<dt><b></b>\a  alert (bell).
+<dt><b></b>\b  backspace.
+<dt><b></b>\e  ASCII escape character.
+<dt><b></b>\f  form feed (new page).
+<dt><b></b>\n  newline.
+<dt><b></b>\r  carriage return.
+<dd>&nbsp;&nbsp;&nbsp;Example : a search for "\r\n" followed by a replace "\r" changes Windows text files to Macintosh text files.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example : a search for "\r" followed by a replace "\n" changes Macintosh text files to Unix text files.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example : a search for "\r\n" followed by a replace "\n" changes Windows text files to Unix text files.</dd>
+<dt><b></b>\t  horizontal tab.
+<dt><b></b>\v  vertical tab.
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Regular_expressions_1__Special_characters.html">Regular expressions 1. Special characters</a>
+<li><a href="Regular_expressions_8__Substitution_special_characters.html">Regular expressions 8. Substitution special characters</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20010708</p>
+</address>
+</body>
+</html>

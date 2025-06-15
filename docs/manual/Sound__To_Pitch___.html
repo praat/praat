@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Pitch...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Pitch...
+</b></font></table></table>
+<p>A <a href="hidden_commands.html">hidden command</a> that creates a <a href="Pitch.html">Pitch</a> object from every selected <a href="Sound.html">Sound</a> object.</p>
+<h2>Purpose</h2>
+<p>to perform a pitch analysis, optimized for speech.</p>
+<h2>Settings</h2>
+<p>The settings that control the recruitment of the candidates are:</p>
+<dl>
+<dt><b>Time step (s)</b> (standard value: 0.0)
+<dd>the measurement interval (frame duration), in seconds. If you supply 0.0, Praat will use a time step of 0.75 / (<i>pitch floor</i>), e.g. 0.01 seconds if the pitch floor is 75 Hz; in this example, Praat computes 100 pitch values per second.</dd>
+<dt><b>Pitch floor (Hz)</b> (standard value: 75 Hz)
+<dd>candidates below this frequency will not be recruited. This parameter determines the length of the analysis window: it will be 3 longest periods long, i.e., if the pitch floor is 75 Hz, the window will be 3/75 = 0.04 seconds long.</dd>
+</dl>
+<p>Note that if you set the time step to zero, the analysis windows for consecutive measurements will overlap appreciably: Praat will always compute 4 pitch values within one window length, i.e., the degree of <i>oversampling</i> is 4.</p>
+<dl>
+<dt><b>Pitch ceiling (Hz)</b> (standard value: 600 Hz)
+<dd>candidates above this frequency will be ignored.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>This is the algorithm described at <a href="Sound__To_Pitch__raw_autocorrelation____.html">Sound: To Pitch (raw autocorrelation)...</a>, with all the parameters not mentioned above set to their standard values.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro_4_5__The_Pitch_object.html">Intro 4.5. The Pitch object</a>
+<li><a href="Manipulation.html">Manipulation</a>
+<li><a href="Script_for_listing_F0_statistics.html">Script for listing F0 statistics</a>
+<li><a href="Script_for_listing_time_F0_intensity.html">Script for listing time–F0–intensity</a>
+<li><a href="Sound__Autocorrelate___.html">Sound: Autocorrelate...</a>
+<li><a href="Sound__To_FormantFilter___.html">Sound: To FormantFilter...</a>
+<li><a href="Sound__To_KlattGrid__simple____.html">Sound: To KlattGrid (simple)...</a>
+<li><a href="Sound__To_Spectrogram__pitch-dependent____.html">Sound: To Spectrogram (pitch-dependent)...</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1996,2003,2023,2024</p>
+</address>
+</body>
+</html>

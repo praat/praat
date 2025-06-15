@@ -1,0 +1,86 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Log files</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Log files
+</b></font></table></table>
+<p>With some commands in the <a href="Analyses_menu.html">Analyses menu</a> of the <a href="SoundEditor.html">SoundEditor</a> and <a href="TextGridEditor.html">TextGridEditor</a>, you can write combined information about times, pitch values, formants, and intensities to the <a href="Info_window.html">Info window</a> and/or to a log file.</p>
+<p>A log file is a text file on disk. It consists of a number of similar lines, whose format you determine with the log settings in the Analyses menu.</p>
+<p>Every time you press <a href="Keyboard_shortcuts.html">F12</a> (or choose <b>Log 1</b> from the Analysis menu), Praat will write a line to the Info window and/or to log file 1. If you press <a href="Keyboard_shortcuts.html">Shift-F12</a> (or choose <b>Log 2</b> from the Analysis menu), Praat will write a line to the Info window and/or to log file 2.</p>
+<p>With the <b>log settings</b> command window, you determine the following:</p>
+<dl>
+<dt><b>Write log 1 to</b>
+<dd>this determines whether your log line will be written to log file 1 only, to the Info window only, or to both.</dd>
+<dt><b>Log file 1</b>
+<dd>the name of the log file. Click Browse to select a file to write to. On most platforms you can also use a home-relative name such as <code><font size=+1>~/Desktop/pitchLog.txt</font></code>.</dd>
+<dt><b>Log 1 format</b>
+<dd>the format of the line that Praat will write. See below.</dd>
+</dl>
+<p>The same goes for log file 2.</p>
+<h2>Usage</h2>
+<p>The logging facility has been implemented in Praat especially for former users of Kay CSL, who have been used to doing it for years and like to continue doing it in Praat. Otherwise, you may prefer to use the <a href="TextGridEditor.html">TextGridEditor</a> to mark time points and run an automatic analysis afterwards.</p>
+<p>If you do want to use the logging facility, you typically start by deleting any old log file (by choosing <b>Delete log file 1</b> or <b>Delete log file 2</b>), if you want to re-use the file name. Otherwise, you can change the log file name (with <b>Log settings...</b>). After this, you will move the cursor to various time locations and press <a href="Keyboard_shortcuts.html">F12</a> (or <a href="Keyboard_shortcuts.html">Shift-F12</a>) each time, so that information about the current time will be written to the log file.</p>
+<h2>Example 1: pitch logging</h2>
+<p>Suppose you want to log the time of the cursor and the pitch value at the cursor. You could use the following log format:</p>
+<code>   Time 'time:6' seconds, pitch 'f0:2' hertz<br></code>
+<p>If you now click at 3.456789876 seconds, and the pitch happens to be 355.266 hertz at that time, the following line will be appended to the log file and/or to the Info window:</p>
+<code>   Time 3.456790 seconds, pitch 355.27 hertz.<br></code>
+<p>The parts ":6" and ":2" denote the number of digits after the decimal point. If you leave them out, the values will be written with a precision of 17 digits.</p>
+<p>The words 'time' and 'f0' mean exactly the same as the result of the commands <b>Get cursor</b> and <b>Get pitch</b>. Therefore, if instead of setting a cursor line you selected a larger piece of the sound, 'time' will give the centre of the selection and 'f0' will give the mean pitch in the selection.</p>
+<p>Beware of the following pitfall: if your pitch units are not hertz, but semitones, then 'f0' will give the result in semitones. A format as in this example will then be misleading.</p>
+<h2>Example 2: formant logging</h2>
+<p>Suppose you want to log the start and finish of the selection, its duration, and the mean values of the first three formants, all separated by tab stops for easy importation into Microsoft&#174; Excel&#8482;. You could use the following log format:</p>
+<code>   't1:4''tab$''t2:4''tab$''f1:0''tab$''f2:0''tab$''f3:0'<br></code>
+<p>You see that 't1' and 't2' are the start and finish of the selection, respectively, and that they are written with 4 digits after the decimal point. By using ":0", the three formant values are rounded to whole numbers in hertz. The word <code><font size=+1>tab$</font></code> is the tab stop.</p>
+<h2>Loggable values</h2>
+<p>The following values can be logged:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>time</font></code>: the time of the cursor, or the centre of the selection.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>t1</font></code>: the start of the selection ("B").</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>t2</font></code>: the end of the selection ("E").</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>dur</font></code>: the duration of the selection.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>freq</font></code>: the frequency at the frequency cursor.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>f0</font></code>: the pitch at the cursor time, or the mean pitch in the selection.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>f1</font></code>, <code><font size=+1>f2</font></code>, <code><font size=+1>f3</font></code>, <code><font size=+1>f4</font></code>, <code><font size=+1>f5</font></code>: the first/second/third/fourth/fifth formant at the cursor time, or the mean first/second/third/fourth/fifth formant in the selection.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>b1</font></code>, <code><font size=+1>b2</font></code>, <code><font size=+1>b3</font></code>, <code><font size=+1>b4</font></code>, <code><font size=+1>b5</font></code>: the bandwidth of the first/second/third/fourth/fifth formant at the cursor time or at the centre of the selection.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>intensity</font></code>: the intensity at the cursor time, or the mean intensity in the selection, in dB.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>power</font></code>: the spectral power at the cursor cross, in Pa<sup>2</sup>/Hz.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>tab$</font></code>: the tab stop.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><code><font size=+1>editor$</font></code>: the title of the editor window (i.e. the name of the visible Sound or TextGrid).</dd>
+</dl>
+<h2>More flexibility in logging</h2>
+<p>You may sometimes require information in your log file that cannot be generated directly by the loggable values above. Suppose, for instance, that you want to log the values for F1 and F2-F1 at the points where you click. You could write the following script:</p>
+<code>   f1 = Get first formant<br></code>
+<code>   f2 = Get second formant<br></code>
+<code>   f21 = f2 - f1<br></code>
+<code>   appendInfoLine: fixed$ (f1, 0), " ", fixed$ (f21, 0)<br></code>
+<code>   appendFileLine: "D:\Praat logs\Formant log.txt", fixed$ (f1, 0), tab$, fixed$ (f21, 0)<br></code>
+<p>With this script, the information would be appended both to the Info window and to the file "Formant log.txt" on your desktop.</p>
+<p>You can make this script accessible with <a href="Keyboard_shortcuts.html">Option-F12</a> (or <a href="Keyboard_shortcuts.html">Command-F12</a>) by saving the script and specifying the name of the script file in the <b>Log script 3</b> (or <b>4</b>) field in the <b>Log settings...</b> window.</p>
+<p>These scripts may take arguments. Suppose, for instance, that you want to specify a vowel symbol as you press <a href="Keyboard_shortcuts.html">Option-F12</a>. The following script will take care of that:</p>
+<code>   form: "Save vowel and formants"<br></code>
+<code>      word: "Vowel", "a"<br></code>
+<code>   endform<br></code>
+<code>   f1 = Get first formant<br></code>
+<code>   f2 = Get second formant<br></code>
+<code>   f21 = f2 - f1<br></code>
+<code>   appendInfoLine: vowel$, " ", fixed$ (f1, 0), " ", fixed$ (f21, 0)<br></code>
+<code>   appendFileLine: "~/Praat logs/Vowels and formants log", vowel$, tab$, fixed$ (f1, 0), tab$, fixed$ (f21, 0)<br></code>
+<p>Beware of the following pitfall: because of the nature of scripts, you should not try to do this when you have two editor windows with the same name. We cannot predict which of the two windows will answer the <b>Get</b> queries...</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_4_0_.html">What was new in 4.0?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20230122</p>
+</address>
+</body>
+</html>

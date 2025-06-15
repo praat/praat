@@ -1,0 +1,79 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OTGrammar</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OTGrammar
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. See the <a href="OT_learning.html">OT learning</a> tutorial.</p>
+<h2>Inside an OTGrammar</h2>
+<p>With <a href="Inspect.html">Inspect</a>, you will see the following attributes:</p>
+<dl>
+<dt><i>constraints</i>
+<dd>a list of constraints. Each constraint contains the following attributes:</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>name</i>
+<dd>&nbsp;&nbsp;&nbsp;the fixed name of the constraint, for instance "P<font size=-1>ARSE</font>".</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>ranking</i>
+<dd>&nbsp;&nbsp;&nbsp;the continuous ranking value; will change during learning.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>disharmony</i>
+<dd>&nbsp;&nbsp;&nbsp;the effective ranking value during stochastic evaluation; with a non-zero evaluation noise, this will be different from <i>ranking</i>.</dd>
+<dt><i>fixedRankings</i>
+<dd>an often empty list of locally ranked pairs of constraints. Each local-ranking pair contains the following attributes:</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>higher</i>
+<dd>&nbsp;&nbsp;&nbsp;the index of the universally higher-ranked of the two constraints, a number between 1 and the number of constraints.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>lower</i>
+<dd>&nbsp;&nbsp;&nbsp;the index of the universally lower-ranked of the two constraints.</dd>
+<dt><i>tableaus</i>
+<dd>a list of tableaus. Each tableau contains the following attributes:</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>input</i>
+<dd>&nbsp;&nbsp;&nbsp;the input string of the tableau. For production grammaras, the underlying form of the utterance, for example |an+pa| or |b&#633;&#618;&#331; + <font size=-1>PAST</font>|.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>candidates</i>
+<dd>&nbsp;&nbsp;&nbsp;a list of output candidates. Each output candidate consists of:</dd>
+<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>output</i>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the output string of the tableau. In two-level phonology: the surface form of the utterance, for example [anpa] or [ampa] or [b&#633;&#596;&#720;t] or [b&#633;&#230;&#331;]. In multi-level phonology: the combination of phonological surface and phonetic results, for example /anpa/[anpa] or /ampa/[ampa] or /b&#633;&#596;&#720;t/[b&#633;&#596;&#720;t] or /b&#633;&#230;&#331;/[b&#633;&#230;&#331;].</dd>
+<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>marks</i>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a list of the number of violations of each constraint for this output form. If there are 13 constraints, this list will contain 13 integer numbers for each candidate.</dd>
+</dl>
+<h2>OTGrammar creation</h2>
+<p>You can easily create some <b>OTGrammar</b> examples from the <a href="New_menu.html">New menu</a>, or type your own grammars into a text file and read the file into Praat. See the <a href="OT_learning.html">OT learning</a> tutorial.</p>
+<h2>OTGrammar actions</h2>
+<p>You can perform the following actions on selected <b>OTGrammar</b> objects:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="OTGrammar__Generate_inputs___.html">OTGrammar: Generate inputs...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="OTGrammar__Input_to_output___.html">OTGrammar: Input to output...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="OTGrammar__Input_to_outputs___.html">OTGrammar: Input to outputs...</a> (compute the output distribution for a given input)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="OTGrammar__To_output_Distributions___.html">OTGrammar: To output Distributions...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="OTGrammar___Strings__Inputs_to_outputs___.html">OTGrammar & Strings: Inputs to outputs...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="OTGrammar__Learn_one___.html">OTGrammar: Learn one...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="OTGrammar___2_Strings__Learn___.html">OTGrammar & 2 Strings: Learn...</a></dd>
+</dl>
+<p>You can view an <b>OTGrammar</b> in an <a href="OTGrammarEditor.html">OTGrammarEditor</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_NoCoda_grammar.html">Create NoCoda grammar</a>
+<li><a href="Create_tongue-root_grammar___.html">Create tongue-root grammar...</a>
+<li><a href="OT_learning_1__Kinds_of_grammars.html">OT learning 1. Kinds of grammars</a>
+<li><a href="OT_learning_2_1__Viewing_a_grammar.html">OT learning 2.1. Viewing a grammar</a>
+<li><a href="OT_learning_2_2__Inside_the_grammar.html">OT learning 2.2. Inside the grammar</a>
+<li><a href="OT_learning_2_7__Tableau_pictures.html">OT learning 2.7. Tableau pictures</a>
+<li><a href="OT_learning_2_9__Output_distributions.html">OT learning 2.9. Output distributions</a>
+<li><a href="OT_learning_3_1__Data_from_a_pair_distribution.html">OT learning 3.1. Data from a pair distribution</a>
+<li><a href="OT_learning_3_2__Data_from_another_grammar.html">OT learning 3.2. Data from another grammar</a>
+<li><a href="OT_learning_4__Learning_an_ordinal_grammar.html">OT learning 4. Learning an ordinal grammar</a>
+<li><a href="OT_learning_6__Shortcut_to_grammar_learning.html">OT learning 6. Shortcut to grammar learning</a>
+<li><a href="OT_learning_7__Learning_from_overt_forms.html">OT learning 7. Learning from overt forms</a>
+<li><a href="OTGrammar___PairDistribution__Find_positive_weights___.html">OTGrammar & PairDistribution: Find positive weights...</a>
+<li><a href="Robust_Interpretive_Parsing.html">Robust Interpretive Parsing</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20141001</p>
+</address>
+</body>
+</html>

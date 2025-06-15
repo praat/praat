@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Spectrum: Tabulate (verbose)</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Spectrum: Tabulate (verbose)
+</b></font></table></table>
+<p>The command <b>Tabulate (verbose)</b> becomes available under Tabulate when you select exactly one <a href="Spectrum.html">Spectrum</a> object.</p>
+<p>When you choose <b>Tabulate (verbose)</b>, a new <a href="Table.html">Table</a> (with the same name as the Spectrum) will appear in the list of objects. When you <b>View &amp; Edit</b> this Table, you will see:</p>
+<dl>
+<dt>A column called <b>bin</b>.
+<dd>This contains the bin number, running from 1 to the number of frequency bins in the Spectrum.</dd>
+<dt>A column called <b>frequency (Hz)</b>.
+<dd>This is the frequency that is associated with the bin. In a Spectrum that you created from a <a href="Sound.html">Sound</a>, the frequency that is associated with bin 1 is 0 Hz, and the frequency that is associated with the last bin is the <a href="Nyquist_frequency.html">Nyquist frequency</a> of that Sound (i.e. half the sampling frequency). The frequency step between consecutive bins is always the same, and we call this step the <i>bin step</i>, abbreviated as <i>df</i>. Thus, bin 2 is centred at <i>df</i>, bin 3 at 2<i>df</i>, bin 4 at 3<i>df</i>, and so on.</dd>
+<dt>A column called <b>re (Pa/Hz)</b>.
+<dd>This is the real part of the complex value of the spectrum in the bin.</dd>
+<dt>A column called <b>im (Pa/Hz)</b>.
+<dd>This is the imaginary part of the complex value of the spectrum in the bin.</dd>
+<dt>A column called <b>energy spectral density (Pa<sup>2</sup>s/Hz)</b>.
+<dd>For most bins this is computed as the square of the real part plus the square of the imaginary part. For bin 1 (where the imaginary part is zero) this is computed as 2 times the square of the real part. If the number of the last bin is odd, the imaginary part will be zero, and the energy spectral density is computed as 2 times the square of the real part. For an explanation of the factor of 2, see below.</dd>
+<dt>A column called <b>startOfBinWithinDomain (Hz)</b>.
+<dd>The first bin starts at 0 Hz and ends at 0.5<i>df</i>, i.e. in the middle of the centres of bin 1 and bin 2. The second bin starts at 0.5<i>df</i> and ends at 1.5<i>df</i>, the third starts at 1.5<i>df</i> and ends at 2.5<i>df</i>. This column lists the beginnings of the bins. The part &#8220;within domain&#8221; refers to the fact that all bins represent both positive and negative frequencies, but we count only the frequencies in the domain of the Spectrum, which runs from 0 Hz to the Nyquist frequency.</dd>
+<dt>A column called <b>endOfBinWithinDomain (Hz)</b>.
+<dd>This column is explained just above.</dd>
+<dt>A column called <b>binWidthWithinDomain (Hz)</b>.
+<dd>Bin 1 runs from 0 Hz to 0.5<i>df</i>, so it has a width of 0.5<i>df</i>. Bin 2 runs from 0.5<i>df</i> to 1.5<i>df</i>, so it has a width of <i>df</i>; the same goes for almost all remaining bins. As for the last bin: if there are an odd number <i>N</i> of bins, then bin <i>N</i> runs from (<i>N</i> &#8722; 1.5)&#183;<i>df</i> to (<i>N</i> &#8722; 1.0)&#183;<i>df</i> (which is the Nyquist frequency), so its width is 0.5<i>df</i>.</dd>
+<dt>A column called <b>binEnergy (Pa<sup>2</sup>s)</b>.
+<dd>This is the bin&#8217;s energy spectral density times the width of the bin. Thus, you get this mostly from multiplying the energy spectral density column by <i>df</i>, except for bin 1 and (if <i>N</i> is odd) bin <i>N</i>, where the energy spectral density is multiplied by 0.5<i>df</i> instead. The sum of all the values in this column is the total energy of the signal, i.e. it should be equal to the average of the squares of the samples of an original Sound, times the duration of that Sound.</dd>
+<dt>A column called <b>power spectral density (Pa<sup>2</sup>/Hz)</b>.
+<dd>This is the <a href="power_spectral_density.html">power spectral density</a> in the bin. It is computed as the energy spectral density divided by the duration of the original sound, which is the same as multiplication by <i>df</i>. This column is almost the same as the bin energy column, except for bin 1 and (if <i>N</i> is odd) bin <i>N</i>, where it is twice as large.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_2_.html">What was new in 6.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023-05-03</p>
+</address>
+</body>
+</html>

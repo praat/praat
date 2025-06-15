@@ -1,0 +1,60 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Source-filter synthesis 3. The ba-da continuum</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Source-filter synthesis 3. The ba-da continuum
+</b></font></table></table>
+<p>As an example, we are going to create a male [ba]-[da] continuum in six steps. The acoustic difference between [ba] and [da] is the initial <i>F</i><sub>2</sub>, which is 500 Hz for [ba], and 2500 Hz for [da].</p>
+<p>We use the same <a href="PitchTier.html">PitchTier</a> throughout, to model a falling intonation contour:</p>
+<code>   Create PitchTier: “f0”, 0.00, 0.50<br></code>
+<code>   Add point: 0.00, 150<br></code>
+<code>   Add point: 0.50, 100<br></code>
+<p>The first and last 50 milliseconds are voiceless:</p>
+<code>   To PointProcess<br></code>
+<code>   Remove points between: 0.00, 0.05<br></code>
+<code>   Remove points between: 0.45, 0.50<br></code>
+<p>Generate the glottal source signal:</p>
+<code>   To Sound (phonation): 44100, 0.6, 0.05, 0.7, 0.03, 3.0, 4.0<br></code>
+<p>During the labial or coronal closure, the sound is almost silent, so we use an <a href="IntensityTier.html">IntensityTier</a> that models this:</p>
+<code>   Create IntensityTier: “intens”, 0.00, 0.50<br></code>
+<code>   Add point: 0.05, 60<br></code>
+<code>   Add point: 0.10, 80<br></code>
+<p>Generate the source signal:</p>
+<code>   plusObject: “Sound f0”<br></code>
+<code>   Multiply<br></code>
+<code>   Rename: “source”<br></code>
+<p>The ten sounds are generated in a loop:</p>
+<code>   for i from 1 to 10<br></code>
+<code>      f2_locus = 500 + (2500/9) * (i - 1) ; variable names start with lower case!<br></code>
+<code>      Create FormantGrid: “filter”, 0.0, 0.5, 9, 800, 1000, 60, 80<br></code>
+<code>      Remove formant points between: 1, 0.0, 0.5<br></code>
+<code>      Add formant point: 1, 0.05, 100<br></code>
+<code>      Add bandwidth point: 1, 0.05, 50<br></code>
+<code>      Add formant point: 2, 0.05, f2_locus<br></code>
+<code>      Add bandwidth point: 2, 0.05, 100<br></code>
+<code>      plusObject: “Sound source”<br></code>
+<code>      Filter (no scale)<br></code>
+<code>      Rename: “bada” + string$ (i)<br></code>
+<code>      removeObject: “FormantGrid filter”<br></code>
+<code>   endfor<br></code>
+<p>Clean up:</p>
+<code>   removeObject: “Sound source”, “Sound f0”, “IntensityTier intens”,<br></code>
+<code>   ... “PointProcess f0”, “PitchTier f0”<br></code>
+<p>In this example, filtering was done without automatic scaling, so that the resulting signals have equal intensities in the areas where they have equal formants. You will probably want to multiply all these signals with the same value in order to bring their amplitudes in a suitable range between -1 and +1 Pascal.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Source-filter_synthesis.html">Source-filter synthesis</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140421</p>
+</address>
+</body>
+</html>

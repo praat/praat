@@ -1,0 +1,58 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Create Strings from tokens...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Create Strings from tokens...
+</b></font></table></table>
+<p>Create a new <a href="Strings.html">Strings</a> object as a list of tokens.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Name</b>
+<dd>the name of the new Strings object.</dd>
+<dt><b>Text</b>
+<dd>the text to be tokenized.</dd>
+<dt><b>Separators</b>
+<dd>determines the separator characters. If left empty, a space will be used as a separator.</dd>
+</dl>
+<h2>Behaviour</h2>
+<p>Multiple consecutive separators in the text will be treated as one.</p>
+<h2>Examples</h2>
+<dl>
+<dt>Example 1  Create Strings from tokens:} "test", "a b c", " "
+<dd>will produce a Strings object with 3 strings in it: "a", "b" and "c".</dd>
+<dt>Example 2  Create Strings from tokens:} "test", "a   b   c ", " "
+<dd>will also produce a Strings object with 3 strings in it: "a", "b" and "c".</dd>
+<dt>Example 3  Create Strings from tokens:} "test", "a,b,c", ","
+<dd>will produce a Strings object with 3 strings in it: "a", "b" and "c".</dd>
+<dt>Example 4  Create Strings from tokens:} "test", "a, b, c", ","
+<dd>will produce a Strings object with 3 strings in it: "a", " b" and " c" (note the spaces).</dd>
+<dt>Example 5  Create Strings from tokens:} "test", "a, b, c", " ,"
+<dd>will produce a Strings object with 3 strings in it: "a", "b" and "c".</dd>
+<dt>Example 6  Create Strings from tokens:} "test", "a,,b,c", " ,"
+<dd>will also produce a Strings object with 3 strings in it: "a", "b" and "c".</dd>
+<dt>Example 7  Create Strings from tokens:} "test", "a, ,b,c", ","
+<dd>will produce a Strings with 4 strings in it: "a", " ", "b" and "c".</dd>
+<dt>Example 8  Create Strings from tokens:} "test", "a,b,c,", ","
+<dd>will produce a Strings object with 3 strings in it: "a", "b" and "c".</dd>
+<dt>Example 9  Create Strings from tokens:} "test", "a,b,c, ", ","
+<dd>will produce a Strings object with 4 strings in it: "a", "b", "c" and " ".</dd>
+<dt>Example 10  Create Strings from tokens:} "test", "A string" + tab<code><font size=+1></font></code> + "of ..tokens" + newline<code><font size=+1></font></code> + "and some  more tokens", " .," + tab<code><font size=+1></font></code> + newline<code><font size=+1></font></code>
+<dd>will produce a Strings object with 8 strings in it: "A", "string", "of", "tokens", "and", "some", "more" and "tokens".</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="New_menu.html">New menu</a>
+</ul>
+<hr>
+<address>
+	<p>© David Weenink 2017, Paul Boersma 2023</p>
+</address>
+</body>
+</html>

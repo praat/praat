@@ -1,0 +1,56 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Draw where...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Draw where...
+</b></font></table></table>
+<p>A command to draw only those parts of a <a href="Sound.html">Sound</a> where a condition holds.</p>
+<h2>Settings</h2>
+<p align=middle><img height=363.99999999999994 width=540 src=Sound__Draw_where____1.png></p><dl>
+<dt><b>Time range (s)</b>
+<dd>selects the time domain for the drawing.</dd>
+<dt><b>Vertical range</b>
+<dd>defines the vertical limits; larger amplitudes will be clipped.</dd>
+<dt><b>Draw only those parts where the following condition holds</b>
+<dd>determines the part of the sound that will be drawn. All parts where the formula evaluates to true will be drawn. This formula may <b>not</b> contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.</dd>
+</dl>
+<h2>Example 1</h2>
+<p>The following script draws all amplitudes larger than one in red.</p>
+<code>   Create Sound from formula: "s", "Mono", 0, 1, 2000, ~ 1.8*sin(2*pi*5*x)+randomGauss(0,0.1)<br></code>
+<code>   Colour: "Red"<br></code>
+<code>   Draw where: 0, 0, -2, 2, "no", "Curve", ~ abs(self)&gt;1<br></code>
+<code>   Colour: "Black"<br></code>
+<code>   Draw where: 0, 0, -2, 2, "yes", "Curve", ~ not (abs(self)&gt;1)<br></code>
+<p align=middle><img height=300 width=800 src=Sound__Draw_where____2.png></p><h2>Example 2</h2>
+<p>Draw the second half of a sound:</p>
+<code>   Draw where: 0, 0, -1, 1, "no", "Curve", ~ x &gt; xmin + (xmax - xmin) / 2<br></code>
+<h2>Example 3</h2>
+<p>Draw only positive amplitudes:</p>
+<code>   Draw where: 0, 0, -1, 1, "no", "Curve", ~ self &gt; 0<br></code>
+<h2>Example 4</h2>
+<p>Draw parts where pitch is larger than 300 Hz in red:</p>
+<code>   s = selected ("Sound")<br></code>
+<code>   p = To Pitch: 0, 75, 600<br></code>
+<code>   pt = Down to PitchTier<br></code>
+<code>   selectObject: s<br></code>
+<code>   Colour: ~ Red<br></code>
+<code>   Draw where: 0, 0, -1, 1, "yes", "Curve", ~ object (pt, x) &gt; 300<br></code>
+<code>   Colour: ~ Black<br></code>
+<code>   Draw where: 0, 0, -1, 1, "yes", "Curve", ~ not (object (pt, x) &gt; 300)<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_5_2_.html">What was new in 5.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20170829</p>
+</address>
+</body>
+</html>

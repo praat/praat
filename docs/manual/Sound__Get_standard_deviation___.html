@@ -1,0 +1,31 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Get standard deviation...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Get standard deviation...
+</b></font></table></table>
+<p>A command available in the <a href="Query_submenu.html">Query submenu</a> if you select a <a href="Sound.html">Sound</a> object. The Info window will show the standard deviation (in Pascal) of the sound pressure within a specified window. If the sound contains less than 2 samples, the value is <a href="undefined.html">undefined</a>.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Time range (s)</b>
+<dd>the time range (<i>t</i><sub>1</sub>, <i>t</i><sub>2</sub>). Values outside this range are ignored. If <i>t</i><sub>1</sub> is not less than <i>t</i><sub>2</sub>, the entire time domain of the sound is considered.</dd>
+</dl>
+<h2>Mathematical definition</h2>
+<p>The standard deviation is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>1/(<i>t</i><sub>2</sub>-<i>t</i><sub>1</sub>)  &#8747;<i></i><sub><i>t1</i></sub><sup><i>t2</i></sup> (<i>x</i>(<i>t</i>) - <i>&#956;</i>)<sup>2</sup> <i>dt</i></table>
+<p>where <i>x</i>(<i>t</i>) is the amplitude of the sound, and <i>&#956;</i> is its mean. For our discrete Sound object, the standard deviation is approximated by</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>1/(<i>n</i>&#8722;1) &#8721;<sub><i>i</i>=<i>m</i>..<i>m</i>+<i>n</i>&#8722;1</sub> (<i>x</i><sub><i>i</i></sub> &#8722; <i>&#956;</i>)<sup>2</sup></table>
+<p>where <i>n</i> is the number of sample centres between <i>t</i><sub>1</sub> and <i>t</i><sub>2</sub>. Note the  inus 1 </p>
+<hr>
+<address>
+	<p>© Paul Boersma 2022-12-02</p>
+</address>
+</body>
+</html>

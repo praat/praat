@@ -1,0 +1,85 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>MixingMatrix</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+MixingMatrix
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">type of Objects</a> in Praat. A <b>MixingMatrix</b> shows a mapping of the channels of an input <a href="Sound.html">Sound</a> to the channels of an output Sound. A channel in the input sound is called an <i>input</i> channel. Each output channel is a linear combination of input channels. </p>
+<p>The mixing of input channels can be written as the matrix multiplication <b>R=M&#183;S</b>. Here <b>S</b> is the matrix that represents the input sound, with <i>numberOfInputs</i><i></i> rows and <i>numberOfSamples</i> columns. Each row in <b>S</b> corresponds to one input channel. <b>M</b> is the <i>numberOfOutputChannels</i>&#215; <i>numberOfInputs</i> MixingMatrix and <b>R</b> is the <i>numberOfOutputChannels</i>&#215; <i>numberOfSamples</i> matrix that is the result of the mixing.</p>
+<p>Row <i>i</i> in the MixingMatrix <b>M</b> therefore represents the weights <i>m</i><sub><i>ij</i></sub> of the different input channels <i>j</i> in output channel <i>i</i>, the number of rows of <b>M</b> determines the number of output channels in the resulting <b>R</b>. Column <i>j</i> in <b>M</b> represents the weight factors <i>m</i><sub><i>ij</i></sub> of input <i>j</i> in the different output channels <i>i</i>.</p>
+<h2>Examples</h2>
+<p>Given the following stereo Sound with a tone of 300 Hz in channel 1 and a tone of 600 Hz in channel two: </p>
+<code>   stereo = Create Sound from formula: "s", 2, 0, 1, 44100, "sin(2*pi*row*300*x)"<br></code>
+<dl>
+<dt>Example 1
+</dl>
+<code>   mm1 = Create simple MixingMatrix: "mm1", 2, 1, "1 0"<br></code>
+<code>   selectObject: mm1, stereo<br></code>
+<code>   Mix<br></code>
+<dl>
+<dd>will produce a new <i>mono</i> Sound object that shows a tone with a frequency of 300 Hz.</dd>
+<dd>The example creates a Mixing matrix with one row and two columns. The resulting new Sound object will have only one channel which is the result of adding the two channels from the stereo sound with weights of 1.0 and 0.0, respectively.</dd>
+<dt>Example 2
+</dl>
+<code>   mm2 = Create simple MixingMatrix: "mm2", 2, 1, "0 1"<br></code>
+<code>   selectObject: mm2, stereo<br></code>
+<code>   Mix<br></code>
+<dl>
+<dd>will produce a new mono Sound object that shows a tone with a frequency of 600 Hz.</dd>
+<dt>Example 3
+</dl>
+<code>   mm3 = Create simple MixingMatrix: "mm3", 2, 1, "1 1"<br></code>
+<code>   selectObject: mm3, stereo<br></code>
+<code>   Mix<br></code>
+<dl>
+<dd>will produce a new mono Sound object that shows a complex tone composed of frequencies 300 and 600 Hz. The amplitude of the output sound will be larger than 1</dd>
+<dt>Example 4
+</dl>
+<code>   mm4 = Create simple MixingMatrix: "mm4", 2, 2, "1 0 1 0"<br></code>
+<code>   selectObject: mm4, stereo<br></code>
+<code>   Mix<br></code>
+<dl>
+<dd>will produce a new stereo Sound object that shows a tone of frequency 300 Hz in both channels.</dd>
+<dt>Example 5
+</dl>
+<code>   mm5 = Create simple MixingMatrix: "mm5", 2, 1, "0.5 0.5"<br></code>
+<code>   selectObject: mm5, stereo<br></code>
+<code>   Mix<br></code>
+<dl>
+<dd>will produce a new mono Sound object that shows a complex tone composed of frequencies 300 and 600 Hz. The amplitudes of the output sound are now half the amplitude of the output sound of example 3.</dd>
+<dt>Example 6
+</dl>
+<code>   mono = Create Sound from formula: "s", 1, 0, 1, 44100, "sin(2*pi*300*x)"<br></code>
+<code>   mm6 = Create simple MixingMatrix: "mm6", 1, 2, "1 1"<br></code>
+<code>   selectObject: mm6, mono<br></code>
+<code>   Mix<br></code>
+<dl>
+<dd>will produce from the mono input sound a stereo output sound that shows a tone of frequency 300 Hz in both channels.</dd>
+<dt>Example 7
+</dl>
+<code>   mm7 = Create simple MixingMatrix: "mm7", 2, 2, "0 1 1 0"<br></code>
+<code>   selectObject: mm7, stereo<br></code>
+<code>   Mix<br></code>
+<dl>
+<dd>will interchange the channels.</dd>
+<dt>Example 8
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_simple_MixingMatrix___.html">Create simple MixingMatrix...</a>
+<li><a href="Independent_Component_Analysis_on_EEG.html">Independent Component Analysis on EEG</a>
+<li><a href="MixingMatrix__Multiply_input_channel___.html">MixingMatrix: Multiply input channel...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20170907</p>
+</address>
+</body>
+</html>

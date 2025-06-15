@@ -1,0 +1,57 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Change gender...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Change gender...
+</b></font></table></table>
+<p>A command to create a new <a href="Sound.html">Sound</a> with manipulated characteristics.</p>
+<h2>Settings</h2>
+<p>The quality of the <a href="overlap-add.html">manipulation</a> depends on the pitch measurement.</p>
+<p>The arguments that control the pitch measurement are:</p>
+<dl>
+<dt><b>Pitch floor (Hz)</b> (standard value: 75 Hz)
+<dd>pitch candidates below this frequency will not be considered.</dd>
+<dt><b>Pitch ceiling (Hz)</b> (standard value: 600 Hz)
+<dd>pitch candidates above this frequency will be ignored.</dd>
+</dl>
+<p>The arguments that control the manipulation are:</p>
+<dl>
+<dt><b>Formant shift ratio</b>
+<dd>determines the frequencies of the formants in the newly created Sound. If this ratio equals 1 no frequency shift will occur and the formant frequencies will not change. A ratio of 1.1 will change a male voice to a voice with approximate female formant characteristics. A ratio of 1/1.1 will change a female voice to a voice with approximate male formant characteristics.</dd>
+<dt><b>New pitch median (Hz)</b> (standard value: 0.0 Hz, i.e. same as original)
+<dd>determines what the median pitch of the new Sound will be. The pitch values in the newly created Sound will be calculated from the pitch values in the selected Sound by multiplying them by a factor <i>newPitchMedian / oldPitchMedian</i>. This factor equals 1.0 if the default value for the new pitch median (0.0) is chosen. </dd>
+<dt><b>Pitch range factor</b> (standard value: 1.0)
+<dd>determines an <i>extra</i><i></i> scaling of the new pitch values around the <i>new</i><i></i> pitch median. A factor of 1.0 means that no additional pitch modification will occur (except the obvious one described above). A factor of 0.0 monotonizes the new sound to the new pitch median.</dd>
+<dt><b>Duration factor</b> (standard value: 1.0)
+<dd>The factor with which the sound will be lengthened. The default is 1.0. If you take a value less than 1.0, the resulting sound will be shorter than the original. A value larger than 3.0 will not work.</dd>
+</dl>
+<p>If you want more control over the synthesis you can supply your own Pitch object and use the <a href="Sound___Pitch__Change_gender___.html">Sound & Pitch: Change gender...</a> command. </p>
+<h2>Algorithm</h2>
+<p>The shifting of frequencies is done via manipulation of the sampling frequency. Pitch and duration changes are generated with <a href="overlap-add.html">overlap-add</a> synthesis.</p>
+<p>The new pitch values are calculated in a two step process. We first multiply all the pitches with the factor <i>newPitchMedian / oldPitchMedian</i> according to:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>newPitch</i> = <i>pitch</i> * <i>newPitchMedian</i>  / <i>oldPitchMedian</i>.</table>
+<p>It follows that if the <i>newPitchMedian</i> equals the <i>oldPitchMedian</i> no change in pitch values will occur in the first step.</p>
+<p>Subsequently, the pitch range scale factor determines the final pitch values in the following linear manner:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>finalPitch</i> = <i>newPitchMedian</i> + (<i>newPitch</i> &#8211; <i>newPitchMedian</i>) * <i>pitchRangeScaleFactor</i></table>
+<p>Hence, it follows that no further scaling occurs if <i>pitchRangeScaleFactor</i> equals 1.0.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_4_1_.html">What was new in 4.1?</a>
+<li><a href="What_was_new_in_4_6_.html">What was new in 4.6?</a>
+<li><a href="What_was_new_in_5_2_.html">What was new in 5.2?</a>
+<li><a href="What_was_new_in_5_4_.html">What was new in 5.4?</a>
+<li><a href="What_was_new_in_6_3_.html">What was new in 6.3?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20030205</p>
+</address>
+</body>
+</html>

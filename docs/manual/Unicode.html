@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Unicode</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Unicode
+</b></font></table></table>
+<p>Praat aims at being a fully international program: the texts in Praat&#8217;s TextGrids, Tables, scripts, or Info window (and elsewhere) can contain many types of characters (see <a href="Special_symbols.html">special symbols</a>). For this reason, Praat saves its text files in one of two possible formats: UTF-8 (including ASCII) or UTF-16.</p>
+<h2>ASCII text files</h2>
+<p>If your TextGrid (or Table, or script, or Info window...) contains only characters that can be encoded as ASCII, namely the characters <code><font size=+1>!\"#$%&'()*+,-./0123456789:;<=>?@ ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_</font></code><code><font size=+1> abcdefghijklmnopqrstuvwxyz{|}~</font></code>, then when you say <a href="Save_as_text_file___.html">Save as text file...</a> or <b>Save</b>, Praat will write an ASCII text file, which is a text file in which every character is encoded in a single byte (8 bits). All programs that can read plain text files can read such files produced by Praat.</p>
+<h2>UTF-16 text files</h2>
+<p>If your TextGrid (or Table, or script, or Info window...) contains one or more characters that cannot be encoded as ASCII, for instance West-European characters such as &#229;&#231;&#233;&#246;&#223;&#191;, East-European characters such as &#269;&#322;&#337;&#353;&#367;&#378;, or Hebrew characters such as &#1488;&#1489;&#1490;&#1501;&#64331;&#64309;, then when you say <a href="Save_as_text_file___.html">Save as text file...</a> or <b>Save</b>, Praat will write an UTF-16 text file, which is a text file in which every character is encoded in two bytes (and some very rare characters in four bytes). Many programs can read such text files, for instance NotePad, WordPad, Microsoft Word, and TextWrangler.</p>
+<h2>What if my other programs cannot read UTF-16 text files?</h2>
+<p>If you want to export your Table to Microsoft Excel or to SPSS, or if you want your TextGrid file to be read by somebody else's Perl script, then there will be no problem if your Table contains only ASCII characters (see above). But if your Table contains any other (i.e. non-ASCII) characters, you may be in trouble, because Praat will write the Table as an UTF-16 text file, and not all of the programs just mentioned can read such files yet.</p>
+<p>What you can do is go to <b>Text writing settings...</b> in the <b>Settings</b> submenu of the <b>Praat</b> menu, and there set the output encoding to <b>UTF-8</b>. Praat will from then on save your text files in the UTF-8 format, which means one byte for every ASCII character and 2 to 4 bytes for every non-ASCII character. Especially on Linux, many programs understand UTF-8 text and will display the correct characters. Programs such as SPSS do not understand UTF-8 but will still display ASCII characters correctly; for instance, the names M&#252;nchen and Wa&#322;&#281;sa may appear as M&#195;&#247;nchen and Wa&#197;,&#196;&#8482;sa or so.</p>
+<p>If you can get by with West-European characters (on Windows), then you may choose <b>try ISO Latin-1, then UTF-16</b> for the output encoding. It is possible (but not guaranteed) that programs like SPSS then display your West-European text correctly. This trick is of limited use, because it will not work if your operating system is set to a &#8220;codepage&#8221; differently from ISO Latin-1 (or &#8220;ANSI&#8221;), or if you need East-European or Hebrew characters, or if you want to share your text files with Macintosh users.</p>
+<p>If you already have some UTF-16 text files and you want to convert them to UTF-8 or ISO Latin-1 (the latter only if they do not contain non-West-European characters), then you can read them into Praat and save them again (with the appropriate output encoding setting). Other programs, such a NotePad and TextWrangler, can also do this conversion.</p>
+<p>Finally, it is still possible to make sure that all texts are ASCII, e.g. you type the characters &#223; and &#337; as &#8220;<code><font size=+1>\ss</font></code>&#8221; and &#8220;<code><font size=+1>\o:</font></code>&#8221; respectively. See <a href="Special_symbols.html">special symbols</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="FAQ__Frequently_Asked_Questions_.html">FAQ (Frequently Asked Questions)</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023</p>
+</address>
+</body>
+</html>

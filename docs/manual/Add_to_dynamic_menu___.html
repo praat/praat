@@ -1,0 +1,64 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Add to dynamic menu...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Add to dynamic menu...
+</b></font></table></table>
+<p>A command in the File menu of the <a href="ScriptEditor.html">ScriptEditor</a>.</p>
+<p>With this command, you add a button to the dynamic menu in the <a href="Objects_window.html">Objects window</a>. This button will only be visible if the specified combination of objects is selected. Clicking the button will invoke the specified <a href="Praat_script.html">Praat script</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Class 1</b>
+<dd>the name of the class of the object to be selected. For instance, if a button should only appear if the user selects a Sound, this would be &#8220;Sound&#8221;.</dd>
+<dt><b>Number 1</b>
+<dd>the number of objects of <i>class1</i> that have to be selected. For most built-in commands, this number is unspecified (0); e.g., the user can choose <b>Draw</b>... or <b>To Spectrum</b> regardless of whether she selected 1, 2, 3, or more Sound objects. If the number of selected objects is different from <i>number1</i>, the button will be visible but insensitive.</dd>
+<dt><b>Class 2</b>
+<dd>the name of the class of the second object to be selected, different from <i>class1</i>. Normally the empty string (&#8220;&#8221;).</dd>
+<dt><b>Number 2</b>
+<dd>the number of selected objects of <i>class2</i>.</dd>
+<dt><b>Class 3</b>
+<dd>the name of the class of the third object to be selected, different from <i>class1</i> and <i>class2</i>. Normally the empty string (&#8220;&#8221;).</dd>
+<dt><b>Number 3</b>
+<dd>the number of selected objects of <i>class3</i>.</dd>
+<dt><b>Command</b>
+<dd>the title of the new command button (or label, or submenu title). To get a separator line instead of a command text (only in a submenu), you specify a unique string that starts with a hyphen (&#8220;-&#8221;); the <a href="ButtonEditor.html">ButtonEditor</a> may contain some examples of this. If the command starts with <b>Save as</b> or <b>Append to</b>, it will be placed in the <a href="Save_menu.html">Save menu</a>.</dd>
+<dt><b>After command</b>
+<dd>a button title in the dynamic menu or submenu where you want your new button. If you specify the empty string (&#8220;&#8221;), your button will be put at the bottom. You can specify a push button, a label (subheader), or a cascade button (submenu title) here.</dd>
+<dt><b>Depth</b>
+<dd>0 if you want your button in the main menu, 1 if you want it in a submenu.</dd>
+<dt><b>Script</b>
+<dd>the full path name of the script to invoke. If you saved the script you are editing, its name will already have been filled in here. If you do not specify a script, you will get a separating label or cascading menu title instead, depending on the <i>depth</i> of the following command.</dd>
+</dl>
+<h2>Example</h2>
+<p>If one object of class Sound is selected, you want a new submenu called &#8220;Filters&#8221; after the <b>Convolve</b> button, containing your new commands &#8220;Autocorrelation&#8221; and &#8220;Band filter...&#8221;, separated by a horizontal separator line:</p>
+<code>   Add to dynamic menu: "Sound", 0, "", 0, "", 0, "Filters -",<br></code>
+<code>   ... "Convolve", 0, ""<br></code>
+<code>   Add to dynamic menu: "Sound", 1, "", 0, "", 0, "Autocorrelation",<br></code>
+<code>   ... "Filters -", 1, "/u/praats/demo/autocorrelation.praat"<br></code>
+<code>   Add to dynamic menu: "Sound", 0, "", 0, "", 0, "-- band filter --",<br></code>
+<code>   ... "Autocorrelation", 1, ""<br></code>
+<code>   Add to dynamic menu: "Sound", 1, "", 0, "", 0, "Band filter...",<br></code>
+<code>   ... "-- band filter --", 1, "/u/praats/demo/bandFilter.praat"<br></code>
+<p>Note that &#8220;Filters -&#8221; will be a submenu title, <i>because</i> it is followed by subcommands (<i>depth</i> 1). Note that <i>number1</i> is 1 only for the executable buttons; for the cascade button and the separator line, this number is ignored.</p>
+<h2>Usage convention</h2>
+<p>Please adhere to the convention that command that take arguments, such as &#8220;Band filter...&#8221; above, end in three dots.</p>
+<h2>Using this command in a script</h2>
+<p>To add a dynamic button from a script (perhaps your <a href="initialization_script.html">initialization script</a> or a <a href="plug-ins.html">plug-in</a>), use the hidden shell command <a href="Add_action_command___.html">Add action command...</a> instead.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Add_to_fixed_menu___.html">Add to fixed menu...</a>
+<li><a href="History_mechanism.html">History mechanism</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1998,2006,2011,2014,2023</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>time</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+time
+</b></font></table></table>
+<p>In normal life, time is how late the watch says it is.</p>
+<p>In Praat, this definition is largely irrelevant. Sound files rarely tell us the absolute time of recording. So when you read a sound file into Praat and click <b>View &amp; Edit</b>, you will see that the Sound starts at a time of 0 seconds, and if its duration is 3.5 seconds, you will see that the Sound finishes at a time of 3.5 seconds.</p>
+<p>Besides sounds, many other types of objects in Praat have a time scale as well: spectrograms, pitch contours, formant contours, point processes, and so on. None of these are required to have a time domain that starts at 0 seconds. In the Sound editor window, for example, you can select the part that runs from 1.4. to 1.7 seconds, and "extract" it to the Objects window while "preserving the times". The resulting Sound object will have a start time of 1.4 seconds and an end time of 1.7 seconds, as you can see when you click <b>View &amp; Edit</b>. Spectrograms and pitch contours that you create from this sound will also have a time domain from 1.4 to 1.7 seconds. This time domain is preserved if you save these objects to a text file or to a binary file and read them into Praat again later. Only if you save the Sound object to an audio file (WAV, AIFF), the time information is not preserved in that file; if you read such an audio file into Praat again, the time domain of the new Sound object will run from 0 to 0.3 seconds.</p>
+<p>In order to prevent confusion, Praat always requires times to be expressed in seconds. So if you want to supply a window length of 5 milliseconds (5 ms), you fill in 0.005 or 5e-3. For 83.2 microseconds (83.2 &#956;s), you say 0.0000832, or better 83.2e-6 or 8.32e-5.</p>
+<p>On a clock, time runs around in circles. In Praat's editor windows, time runs from left to right. You can often see only a part of the time scale in the window. To see another part, you <i>scroll</i> backward or forward.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro_3_1__Viewing_a_spectrogram.html">Intro 3.1. Viewing a spectrogram</a>
+<li><a href="spectro-temporal_representation.html">spectro-temporal representation</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110128</p>
+</address>
+</body>
+</html>

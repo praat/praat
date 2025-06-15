@@ -1,0 +1,94 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Demo window 2. Getting user input</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Demo window 2. Getting user input
+</b></font></table></table>
+<p>For almost all applications, you will want the user (or the participant in an experiment) to be able to click on things in the Demo window, or to control the Demo window by pressing keys. Here is a presentation with two screens:</p>
+<code>   <a href="_demo_.html">demo</a> <a href="Erase_all.html">Erase all</a><br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Select_inner_viewport___.html">Select inner viewport:</a> 0, 100, 0, 100<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Axes___.html">Axes:</a> 0, 100, 0, 100<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Paint_rectangle___.html">Paint rectangle:</a> “purple”, 0, 100, 0, 100<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Pink.html">Pink</a><br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Text___.html">Text:</a> 50, “centre”, 50, “half”, “This is the first page”<br></code>
+<code>   <a href="_demoWaitForInput_.html">demoWaitForInput</a> ()<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Erase_all.html">Erase all</a><br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Paint_rectangle___.html">Paint rectangle:</a> “purple”, 0, 100, 0, 100<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Text___.html">Text:</a> 50, “centre”, 50, “half”, “This is the second page”<br></code>
+<p>In this example, you go from the first to the second screen either by clicking with the mouse or by pressing any key. You will usually want to be more selective in your choice of user actions to respond to. The function <a href="_demoWaitForInput_.html"><b><code><font size=+1>demoWaitForInput</font></code></b></a> always returns 1, so that you can use it nicely in a loop, in which you can react selectively:</p>
+<code>   <a href="_label_.html">label</a> FIRST_SCREEN<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Erase_all.html">Erase all</a><br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Black.html">Black</a><br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Times.html">Times</a><br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="24.html">24</a><br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Select_inner_viewport___.html">Select inner viewport:</a> 0, 100, 0, 100<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Axes___.html">Axes:</a> 0, 100, 0, 100<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Paint_rectangle___.html">Paint rectangle:</a> “purple”, 0, 100, 0, 100<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Pink.html">Pink</a><br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Text___.html">Text:</a> 50, “centre”, 50, “half”, “This is the first page”<br></code>
+<code>   while <b><a href="_demoWaitForInput_.html">demoWaitForInput</a></b> ()<br></code>
+<code>       if <a href="_demoClicked_.html">demoClicked</a> ()<br></code>
+<code>           goto SECOND_SCREEN<br></code>
+<code>       elsif <a href="_demoKeyPressed_.html">demoKeyPressed</a> ()<br></code>
+<code>           if <a href="_demoKey-S_.html">demoKey$</a> () = “→” or <a href="_demoKey-S_.html">demoKey$</a> () = “ ”<br></code>
+<code>               goto SECOND_SCREEN<br></code>
+<code>           endif<br></code>
+<code>       endif<br></code>
+<code>   endwhile<br></code>
+<code>   <a href="_label_.html">label</a> SECOND_SCREEN<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Erase_all.html">Erase all</a><br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Paint_rectangle___.html">Paint rectangle:</a> “purple”, 0, 100, 0, 100<br></code>
+<code>   <a href="_demo_.html">demo</a> <a href="Text___.html">Text:</a> 50, “centre”, 50, “half”, “This is the second page”<br></code>
+<code>   while <b><a href="_demoWaitForInput_.html">demoWaitForInput</a></b> ()<br></code>
+<code>       if <a href="_demoClicked_.html">demoClicked</a> ()<br></code>
+<code>           goto END<br></code>
+<code>       elsif <a href="_demoKeyPressed_.html">demoKeyPressed</a> ()<br></code>
+<code>           if <a href="_demoKey-S_.html">demoKey$</a> () = “←”<br></code>
+<code>               goto FIRST_SCREEN<br></code>
+<code>           elsif <a href="_demoKey-S_.html">demoKey$</a> () = “→” or <a href="_demoKey-S_.html">demoKey$</a> () = “ ”<br></code>
+<code>               goto END<br></code>
+<code>           endif<br></code>
+<code>       endif<br></code>
+<code>   endwhile<br></code>
+<code>   <a href="_label_.html">label</a> END<br></code>
+<p>This script allows you to use the arrow keys and the space bar to navigate between the two screens. A shorter version is:</p>
+<code>   <a href="_label_.html">label</a> FIRST_SCREEN<br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Erase_all.html">Erase all</a><br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Black.html">Black</a><br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Times.html">Times</a><br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="24.html">24</a><br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Select_inner_viewport___.html">Select inner viewport:</a> 0, 100, 0, 100<br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Axes___.html">Axes:</a> 0, 100, 0, 100<br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Paint_rectangle___.html">Paint rectangle:</a> \"purple\", 0, 100, 0, 100<br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Pink.html">Pink</a><br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Text___.html">Text:</a> 50, \"centre\", 50, \"half\", \"This is the first page\"<br></code>
+<code>   while <b><a href="_demoWaitForInput_.html">demoWaitForInput</a></b> ()<br></code>
+<code>       goto SECOND_SCREEN <b><a href="_demoInput_.html">demoInput</a></b> (“•→ ”)<br></code>
+<code>   endwhile<br></code>
+<code>   <a href="_label_.html">label</a> SECOND_SCREEN<br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Erase_all.html">Erase all</a><br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Paint_rectangle___.html">Paint rectangle:</a> \"purple\", 0, 100, 0, 100<br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> <a href="Text___.html">Text:</a> 50, \"centre\", 50, \"half\", \"This is the second page\"<br></code>
+<code>   while <b><a href="_demoWaitForInput_.html">demoWaitForInput</a></b> ()<br></code>
+<code>       goto END <b><a href="_demoInput_.html">demoInput</a></b> (“•→ ”)<br></code>
+<code>       goto FIRST_SCREEN <b><a href="_demoInput_.html">demoInput</a></b> (“←”)<br></code>
+<code>   endwhile<br></code>
+<code>   <a href="_label_.html">label</a> END<br></code>
+<p>This uses two tricks, namely the possibility of following the <b><code><font size=+1>goto</font></code></b> statement by a condition and using <a href="_demoInput_.html"><b><code><font size=+1>demoInput</font></code></b></a> to quickly test for multiple possible inputs (the bullet represents a mouse click).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Demo_window.html">Demo window</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2009–2023</p>
+</address>
+</body>
+</html>

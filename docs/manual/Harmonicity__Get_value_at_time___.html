@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Harmonicity: Get value at time...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Harmonicity: Get value at time...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="Harmonicity.html">Harmonicity</a> object to .</p>
+<h2>Return value</h2>
+<p>an estimate (in dB) of the value at a specified time. If this time is outside the time domain or outside the samples of the Harmonicity, the result is <a href="undefined.html">undefined</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Time (s)</b>
+<dd>the time at which the value is to be evaluated.</dd>
+<dt><b>Interpolation</b>
+<dd>the interpolation method, see <a href="vector_value_interpolation.html">vector value interpolation</a>. The standard is &#8220;cubic&#8221; because of the usual nonlinearity (logarithm) in the computation of harmonicity; sinc interpolation would be too stiff and may give unexpected results.</dd>
+</dl>
+<hr>
+<address>
+	<p>© ppgb 20041107</p>
+</address>
+</body>
+</html>

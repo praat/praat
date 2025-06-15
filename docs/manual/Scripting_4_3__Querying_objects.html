@@ -1,0 +1,71 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 4.3. Querying objects</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 4.3. Querying objects
+</b></font></table></table>
+<p>You can get the name of a selected object into a string variable. For instance, the following reads the name of the second selected Sound (as counted from the top of the list of objects) into the variable <i><code><font size=+1>name$</font></code></i>:</p>
+<code>   name$ = <b><a href="_selected-S_.html">selected$</a></b> (“Sound”, 2)<br></code>
+<p>If the Sound was called &#8220;Sound hallo&#8221;, the variable <i><code><font size=+1>name$</font></code></i> will contain the string &#8220;hallo&#8221;. To get the name of the topmost selected Sound object, you can leave out the number:</p>
+<code>   name$ = selected$ (“Sound”)<br></code>
+<p>To get the full name (type + name) of the third selected object, you do:</p>
+<code>   fullName$ = selected$ (3)<br></code>
+<p>To get the full name of the topmost selected object, you do:</p>
+<code>   fullName$ = selected$ ()<br></code>
+<p>To get the type and name out of the full name, you do:</p>
+<code>   type$ = <a href="_extractWord-S_.html">extractWord$</a> (fullName$, “”)<br></code>
+<code>   name$ = <a href="_extractLine-S_.html">extractLine$</a> (fullName$, “ ”)<br></code>
+<p>Negative numbers count from the bottom. Thus, to get the name of the bottom-most selected Sound object, you say</p>
+<code>   name$ = selected$ (“Sound”, -1)<br></code>
+<p>You would use <code><font size=+1>selected$</font></code> () for drawing the object name in a picture:</p>
+<code>   Draw: 0, 0, 0, 0, “yes”<br></code>
+<code>   name$ = selected$ (“Sound”)<br></code>
+<code>   Text top: “no”, “This is sound ” + name$<br></code>
+<p>For identifying previously selected objects, this method is not very suitable, since there may be multiple objects with the same name:</p>
+<code>   # The following two lines are OK:<br></code>
+<code>   soundName$ = selected$ (“Sound”, -1)<br></code>
+<code>   pitchName$ = selected$ (“Pitch”)<br></code>
+<code>   # But the following line is questionable, since it doesn’t<br></code>
+<code>   # necessarily select the previously selected Pitch again:<br></code>
+<code>   selectObject: “Pitch ” + pitchName$<br></code>
+<p>Instead of this error-prone approach, you should get the object&#8217;s unique ID. The correct version of our example becomes:</p>
+<code>   sound = selected (“Sound”, -1)<br></code>
+<code>   pitch = selected (“Pitch”)<br></code>
+<code>   # Correct:<br></code>
+<code>   selectObject: pitch<br></code>
+<p>To get the number of selected Sound objects into a variable, use</p>
+<code>   numberOfSelectedSounds = numberOfSelected (“Sound”)<br></code>
+<p>To get the number of selected objects into a variable, use</p>
+<code>   numberOfSelectedObjects = numberOfSelected ()<br></code>
+<h2>Example: doing something to every selected Sound</h2>
+<code>   sounds# = <b><a href="_selected-H_.html">selected#</a></b> (“Sound”)<br></code>
+<code>   # Median pitches of all selected sounds:<br></code>
+<code>   for i to size (sounds#)<br></code>
+<code>       selectObject: sounds# [i]<br></code>
+<code>       To Pitch (filtered ac): 0.0, 50, 800, 15, “no”, 0.03, 0.09, 0.50, 0.055, 0.35, 0.14<br></code>
+<code>       f0 = Get quantile: 0, 0, 0.50, “Hertz”<br></code>
+<code>       appendInfoLine: f0<br></code>
+<code>       Remove<br></code>
+<code>   endfor<br></code>
+<code>   # Restore selection:<br></code>
+<code>   selectObject (sounds#)<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_selected_.html"><code><font size=+1>selected</font></code></a>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_4__Object_selection.html">Scripting 4. Object selection</a>
+<li><a href="What_was_new_in_6_1_.html">What was new in 6.1?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1999,2004,2006–2008,2011,2013,2014,2018,2023</p>
+</address>
+</body>
+</html>

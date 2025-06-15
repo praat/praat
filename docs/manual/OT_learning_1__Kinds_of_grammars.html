@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OT learning 1. Kinds of grammars</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OT learning 1. Kinds of grammars
+</b></font></table></table>
+<p>This is chapter 1 of the <a href="OT_learning.html">OT learning</a> tutorial.</p>
+<p>According to <a href="Prince___Smolensky__1993_.html">Prince & Smolensky (1993)</a>, an <a href="Optimality_Theory.html">Optimality-Theoretic</a> (<a href="OT.html">OT</a>) grammar consists of a number of ranked <a href="constraints.html">constraints</a>. For every possible input (usually an underlying form), GEN (the generator) generates a (possibly very large) number of <i>output candidates</i>, and the ranking order of the constraints determines the winning candidate, which becomes the single optimal output.</p>
+<p>According to <a href="Prince___Smolensky__1993_.html">Prince & Smolensky (1993)</a> and <a href="Smolensky___Legendre__2006_.html">Smolensky & Legendre (2006)</a>, a Harmonic Grammar (HG) consists of a number of weighted <a href="constraints.html">constraints</a>. The winning candidate, which becomes the single optimal output, is the one with the greatest <i>harmony</i>, which is a measure of goodness determined by the weights of the constraints violated by each candidate.</p>
+<p>In OT, ranking is <i>strict</i>, i.e., if a constraint <i>A</i> is ranked higher than the constraints <i>B</i>, <i>C</i>, and <i>D</i>, a candidate that violates only constraint <i>A</i> will always be beaten by any candidate that respects <i>A</i> (and any higher constraints), even if it violates <i>B</i>, <i>C</i>, and <i>D</i>.</p>
+<p>In HG, weighting is <i>additive</i>, i.e., a candidate that only violates a constraint <i>A</i> with a weight of 100 has a harmony of -100 and will therefore beat a candidate that violates both a constraint <i>B</i> with a weight of 70 and a constraint <i>C</i> with a weight of 40 and therefore has a harmony of only -110. Also, two violations of constraint <i>B</i> (harmony 2 * -70 = -140) are worse than one violation of constraint <i>A</i> (harmony -100).</p>
+<h2>1. Ordinal OT grammars</h2>
+<p>Because only the ranking order of the constraints plays a role in evaluating the output candidates, Prince &amp; Smolensky took an OT grammar to contain no absolute ranking values, i.e., they accepted only an ordinal relation between the constraint rankings. For such a grammar, <a href="Tesar___Smolensky__1998_.html">Tesar & Smolensky (1998)</a> devised an on-line learning algorithm (Error-Driven Constraint Demotion, EDCD) that changes the ranking order whenever the form produced by the learner is different from the adult form (a corrected version of the algorithm can be found in <a href="Boersma__2009b_.html">Boersma (2009b)</a>). Such a learning step can sometimes lead to a large change in the behaviour of the grammar.</p>
+<h2>2. Stochastic OT grammars</h2>
+<p>The EDCD algorithm is fast and convergent. As a model of language acquisition, however, its drawbacks are that it is extremely sensitive to errors in the learning data and that it does not show realistic gradual learning curves. For these reasons, <a href="Boersma__1997_.html">Boersma (1997)</a> proposed stochastic OT grammars in which every constraint has a <i>ranking value</i> along a continuous ranking scale, and a small amount of <i>noise</i> is added to this ranking value at evaluation time. The associated error-driven on-line learning algorithm (Gradual Learning Algorithm, GLA) effects small changes in the ranking values of the constraints with every learning step. An added virtue of the GLA is that it can learn languages with optionality and variation, which was something that EDCD could not do. For how this algorithm works on some traditional phonological problems, see <a href="Boersma___Hayes__2001_.html">Boersma & Hayes (2001)</a>.</p>
+<p>Ordinal OT grammars can be seen as a special case of the more general stochastic OT grammars: they have integer ranking values (<i>strata</i>) and zero evaluation noise. In Praat, therefore, every constraint is taken to have a ranking value, so that you can do stochastic as well as ordinal OT.</p>
+<h2>3. Categorical Harmonic Grammars</h2>
+<p><a href="Jäger__2003_.html">Jäger (2003)</a> and <a href="Soderstrom__Mathis___Smolensky__2006_.html">Soderstrom, Mathis & Smolensky (2006)</a> devised an on-line learning algorithm for Harmonic Grammars (stochastic gradient ascent). As proven by <a href="Fischer__2005_.html">Fischer (2005)</a>, this algorithm is guaranteed to converge upon a correct grammar, if there exists one that handles the data.</p>
+<h2>4. Stochastic Harmonic Grammars</h2>
+<p>There are two kinds of stochastic models of HG, namely MaxEnt (= Maximum Entropy) grammars (<a href="Smolensky__1986_.html">Smolensky (1986)</a>, <a href="Jäger__2003_.html">Jäger (2003)</a>), in which the probablity of a candidate winning depends on its harmony, and Noisy HG (<a href="Boersma___Escudero__2008_.html">Boersma & Escudero (2008)</a>, <a href="Boersma___Pater__2016_.html">Boersma & Pater (2016)</a>), in which noise is added to constraint weights at evaluation time, as in Stochastic OT.</p>
+<p>The algorithm by <a href="Jäger__2003_.html">Jäger (2003)</a> and <a href="Soderstrom__Mathis___Smolensky__2006_.html">Soderstrom, Mathis & Smolensky (2006)</a> can learn languages with optionality and variation (<a href="Boersma___Pater__2016_.html">Boersma & Pater (2016)</a>).</p>
+<h2>The OTGrammar object</h2>
+<p>An OT grammar is implemented as an <a href="OTGrammar.html">OTGrammar</a> object. In an OTGrammar object, you specify all the constraints, all the possible inputs and all their possible outputs.</p>
+<hr>
+<address>
+	<p>© Paul Boersma 20190331</p>
+</address>
+</body>
+</html>

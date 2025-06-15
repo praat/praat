@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: Draw rows as histogram...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: Draw rows as histogram...
+</b></font></table></table>
+<p>A command to draw a histogram from the rows in the selected <a href="TableOfReal.html">TableOfReal</a> object.</p>
+<p>The histogram will consist of <i>groups</i> of bars. The number of groups will be determined by the number of selected columns from the table, while the number of bars within each group will be determined from the number of selected rows.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Row numbers</b> and <b>Column range</b>
+<dd>determine the part of the table that you want to draw. The column range determines the number of bars that you want to draw for each row selected by the <i>Row numbers</i> argument.</dd>
+<dt><b>Ymin</b> and <b>Ymax</b>
+<dd>the drawing boundaries.</dd>
+</dl>
+<p>The following arguments are all relative to the width of a bar in the histogram. </p>
+<dl>
+<dt><b>Horizontal offset</b>
+<dd>the offset from the left and right margin.</dd>
+<dt><b>Distance between bar groups</b>
+<dd>the distance between each group, i.e., the distance between the right side of the last bar in a group to the left side of the first bar in the next group.</dd>
+<dt><b>Distance between bars</b>
+<dd>the distance between the bars in a group.</dd>
+<dt><b>Grey values</b>
+<dd>the grey values of the bars in a group.</dd>
+</dl>
+<h2>Bar positioning</h2>
+<p>If you want to put the labels yourself you will need the following information.</p>
+<p>The width of a bar is determined as follows:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>width</i> = 1 / (<i>nc</i> &#183; <i>nr</i> + 2 &#183; <i>hoffset</i> + (<i>nc</i> - 1)&#183; <i>intergroup</i> +<i>nc</i>&#183;(<i>nr</i> -1)&#183; <i>interbar</i>),</table>
+<p>where <i>nc</i> is the number of columns (groups) to draw, <i>nr</i> is the number of rows to draw (the number of bars within a group), <i>hoffset</i> is the horizontal offset, <i>intergroup</i> the distance between each group and <i>interbar</i> the distance between the bars within a group.</p>
+<p>The spacing between the bars drawn from a row:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>dx</i> = (<i>intergroup</i> + <i>nr</i> + (<i>nr</i> -1) &#183; <i>interbar</i>) *<i></i> width</table>
+<p>The first bar for the <i>k</i>-th row starts at:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>x1</i> = <i>hoffset</i> &#183; <i>width</i> + (<i>k</i> - 1) &#183; (1 + <i>interbar</i>) &#183; <i>width</i></table>
+<hr>
+<address>
+	<p>© djmw 20030619</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 7.2. Scripting an editor from within</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 7.2. Scripting an editor from within
+</b></font></table></table>
+<p>This section shows how you can permanently extend the functionality of an editor.</p>
+<p>As an example, consider the following problem: you want to see a graphic representation of the spectrum of the sound around the cursor position in the SoundEditor. To achieve this, follow these steps:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Create a Sound.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. View it in a SoundEditor by clicking <a href="View___Edit.html">View & Edit</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Choose <b>New editor script</b> from the <a href="File_menu.html">File menu</a> in the SoundEditor. The resulting <a href="ScriptEditor.html">ScriptEditor</a> will have a name like &#8220;untitled script [Sound hallo]&#8221;.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. Type the following lines into the ScriptEditor:</dd>
+</dl>
+<code>           cursor = Get cursor<br></code>
+<code>           Select: cursor - 0.02, cursor + 0.02<br></code>
+<code>           Extract selected sound (windowed): "slice", "Kaiser2", 2, "no"<br></code>
+<code>       <b><a href="_endeditor_.html">endeditor</a></b><br></code>
+<code>       To Spectrum: "yes"<br></code>
+<code>       <a href="View___Edit.html">View & Edit</a><br></code>
+<p>If you choose <b>Run</b> from the <b>Run</b> menu in the ScriptEditor, a region of 40 milliseconds around the current cursor position in the SoundEditor will become selected. This piece will be copied to the list of objects, after applying a double Kaiser window (total length 80 ms). Thus, a Sound named &#8220;slice&#8221; will appear in the list. Subsequently, a Spectrum object also called &#8220;slice&#8221; will appear in the list, and a SpectrumEditor titled &#8220;Spectrum slice&#8221; will finally appear on your screen.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">5. Save the script to disk, e.g. as <code><font size=+1>/us/miep/spectrum.praat</font></code>. The title of the ScriptEditor will change accordingly.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">6. Since you will want this script to be available in all future SoundEditors, you choose <b>Add to menu...</b> from the <b>File</b> menu. For the <i>Window</i>, you specify &#8220;SoundEditor&#8221; (this is preset). For the <i>Menu</i>, you may want to choose &#8220;Spectrum&#8221; instead of the preset value (&#8220;File&#8221;). For the name of the <i>Command</i>, you type something like &#8220;Show spectrum at cursor&#8221; (instead of &#8220;Do it...&#8221;). Then you click <b>OK</b>.</dd>
+</dl>
+<p>The command will be visible in every SoundEditor that you create from now on. To see this, close the one visible SoundEditor, select the original Sound, choose <b>View &amp; Edit</b> again, and inspect the <b>Spectrogram</b> menu. You can now view the spectrum around the cursor just by choosing this menu command.</p>
+<p>After you leave Praat and start it again, the command will continue to appear in the SoundEditor. If you don't like the command any longer, you can remove it with the <a href="ButtonEditor.html">ButtonEditor</a>, which you can start by choosing <b>Buttons</b> from the <b>Settings</b> submenu of the <a href="Praat_menu.html">Praat menu</a>.</p>
+<h2>Improving your script</h2>
+<p>The above spectrum-viewing example has a number of disadvantages. It clutters the object list with a number of indiscriminable Sounds and Spectra called "slice", and the spectrum is shown up to the Nyquist frequency while we may just be interested in the lower 5000 Hz. Furthermore, the original selection in the SoundEditor is lost.</p>
+<p>To improve the script, we open it again with <b>Open editor script...</b> from the <b>File</b> menu in the SoundEditor. After every change, we can run it with <b>Run</b> from the <b>Run</b> menu again; alternatively, we could save it (with <b>Save</b> from the <b>File</b> menu) and choose our new <b>Show spectrum at cursor</b> button (this button will always run the version on disk, never the one viewed in a ScriptEditor).</p>
+<p>To zoom in on the first 5000 Hz, we add the following code at the end of our script:</p>
+<code>   <b><a href="_editor_.html">editor</a></b>: "Spectrum slice"<br></code>
+<code>       Zoom: 0, 5000<br></code>
+<p>To get rid of the &#8220;Sound slice&#8221;, we can add:</p>
+<code>   <b><a href="_endeditor_.html">endeditor</a></b><br></code>
+<code>   <a href="_removeObject_.html">removeObject</a>: "Sound slice"<br></code>
+<p>Note that <a href="_endeditor_.html"><b><code><font size=+1>endeditor</font></code></b></a> is needed to change from the environment of a SpectrumEditor to the environment of the object &amp; picture windows.</p>
+<p>If you now choose the <b>Show spectrum at cursor</b> button for several cursor positions, you will notice that all those editors have the same name. To remedy the ambiguity of the line <code><font size=+1>editor Spectrum slice</font></code>, we give each slice a better name. For example, if the cursor was at 635 milliseconds, the slice could be named &#8220;635ms&#8221;. We can achieve this by changing the extraction in the following way:</p>
+<code>   milliseconds = round (cursor*1000)<br></code>
+<code>   Extract selection sound (windowed): string$ (milliseconds) + "ms", "Kaiser2", 2, "no"<br></code>
+<p>The names of the Sound and Spectrum objects will now have more chance of being unique. Two lines will have to be edited trivially.</p>
+<p>Finally, we will reset the selection to the original. At the top of the script, we add two lines to remember the positions of the selection markers:</p>
+<code>   start = Get start of selection<br></code>
+<code>   end = Get end of selection<br></code>
+<p>At the bottom, we reset the selection:</p>
+<code>   <b><a href="_editor_.html">editor</a></b><br></code>
+<code>       Select: start, end<br></code>
+<p>Note that the <b><code><font size=+1>editor</font></code></b> directive if not followed by the name of an editor, returns the script to the original environment.</p>
+<p>The complete script is:</p>
+<code>       start = Get start of selection<br></code>
+<code>       end = Get end of selection<br></code>
+<code>       cursor = Get cursor<br></code>
+<code>       Select: cursor - 0.02, cursor + 0.02<br></code>
+<code>       # Create a name. E.g. "670ms" means at 670 milliseconds.<br></code>
+<code>       milliseconds = round (cursor*1000)<br></code>
+<code>       Extract windowed selection: string$ (milliseconds) + "ms", "Kaiser2", 2, "no"<br></code>
+<code>   <b><a href="_endeditor_.html">endeditor</a></b><br></code>
+<code>   To Spectrum: "yes"<br></code>
+<code>   View &amp; Edit<br></code>
+<code>   <b><a href="_editor_.html">editor</a></b>: "Spectrum " + string$ (milliseconds) + "ms"<br></code>
+<code>       Zoom: 0, 5000<br></code>
+<code>   <b><a href="_endeditor_.html">endeditor</a></b><br></code>
+<code>   <a href="_removeObject_.html">removeObject</a>: "Sound " + string$ (milliseconds) + "ms"<br></code>
+<code>   <b><a href="_editor_.html">editor</a></b><br></code>
+<code>       Select: start, end<br></code>
+<p>This script is useful as it stands. It is good enough for safe use. For instance, if the created Sound object has the same name as an already existing Sound object, it will be the newly created Sound object that will be removed by <a href="_removeObject_.html"><b><code><font size=+1>removeObject</font></code></b></a>, because in case of ambiguity <a href="_removeObject_.html"><b><code><font size=+1>removeObject</font></code></b></a> always removes the most recently created object of that name.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_7__Scripting_the_editors.html">Scripting 7. Scripting the editors</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023</p>
+</address>
+</body>
+</html>

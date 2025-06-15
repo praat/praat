@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Spectrum (resampled)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Spectrum (resampled)...
+</b></font></table></table>
+<p>A command that creates a <a href="Spectrum.html">Spectrum</a> from the selected <a href="Sound.html">Sound</a> by using a fast approximation of the Discrete Fourier Transform (DFT).</p>
+<p>In general the amount of computation necessary to calculate the spectrum of a sound that consists of <i>N</i> samples, is of the order of <i>O</i>(<i>N</i> log <i>N</i>) multiplications. If the number of samples happens to be an exact power of 2, i.e. <i>N</i>=2<sup>p</sup> and <i>p</i> integer, a special algorithm called the FFT (Fast Fourier Transform) is available to calculate the spectrum very efficiently. In normal situations, however, the number of samples seldom happens to be an exact power of 2 and the calculation of the spectrum then proceeeds much slower, especially if <i>N</i> happens to be a prime number a naive implementation of the DFT would calculate the spectrum in order O(<i>N</i><sup>2</sup>) time. Extending the sound with zero sample values until the number of samples reaches a power of 2 enables us to use the fast FFT algorithm to calculate a fast approximation of the real spectrum. This is the traditional way to calculate the spectrum if you had chosen <b>To Spectrum...</b> with the <i>fast</i> option on. </p>
+<p>However, there is another option to get a sound with a number of samples that equals a power of 2, namely by upsampling the sound with a suitably chosen sampling frequency. We have to calculate the new sampling frequency such that the number of samples in the upsampled sound is exactly a power of 2. Of the new upsampled sound we can use the FFT algorithm to calculate its spectrum <i>without the need to add zero sample values</i>. Because the upsampling results in a spectrum that contains higher frequency components than the spectrum of the original sound we have to process the just calculated spectrum by leaving out these higher frequency components to obtain the desired spectrum.</p>
+<p>This resampled approximation generally performs better than the approximation by adding zero values.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Precision</b>,
+<dd>the depth of the interpolation in samples. This determines the quality of the interpolation used in resampling.</dd>
+</dl>
+<h2>Example</h2>
+<p>The following script shows the three different ways to calculate a Spectrum from a given sound. We deliberately have chosen the number of samples to be prime.</p>
+<code>   sound = Create Sound from formula: "prime", 1, 0.0, 3.9799, 10000, "sin(2.0*pi*3333.0*x)"<br></code>
+<code>   stopwatch<br></code>
+<code>   spectrum_dft = To Spectrum: "no"<br></code>
+<code>   time_dft = stopwatch<br></code>
+<code>   selectObject: sound<br></code>
+<code>   spectrum_resampled = To Spectrum (resampled): 30<br></code>
+<code>   time_resampled = stopwatch<br></code>
+<code>   selectObject: sound<br></code>
+<code>   spectrum_fft = To Spectrum: "yes"<br></code>
+<code>   time_fft = stopwatch<br></code>
+<p>On my computer from 2019 the calculation of <code><font size=+1>spectrum_dft</font></code> happens to be very slow because of its naive <i>O</i>(<i>N</i><sup>2</sup>) algorithm. It takes 2.258 s while the resampled approximation only takes 0.031s and the approximation by adding zero values takes approximately 0.003 s. If the duration of the sound had been 10.0069 s, the number of samples again would be a prime number and the computing times are 14.127 s, 0.059 s and 0.005 s, respectively. This again shows that the naive implementation is very slow compared to the other two. It is also clear that resampling takes some extra time as compared to adding zero sample values. </p>
+<p>The following picture shows the <code><font size=+1>spectrum_dft</font></code> in black colour, the <code><font size=+1>spectrum_fft</font></code> in silver/grey and the <code><font size=+1>spectrum_resampled</font></code> in red. From the two alternative approximations of the spectrum, the resampled one looks a better approximation to the DFT than the one with zeros added.</p>
+<p align=middle><img height=300 width=500 src=Sound__To_Spectrum__resampled_____1.png></p><p>This method was inspired by a script by Ton Wempe.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Spectrum__To_Sound__resampled____.html">Spectrum: To Sound (resampled)...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20220105</p>
+</address>
+</body>
+</html>

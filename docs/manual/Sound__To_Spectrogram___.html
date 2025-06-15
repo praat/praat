@@ -1,0 +1,98 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Spectrogram...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Spectrogram...
+</b></font></table></table>
+<p>A command that creates a <a href="Spectrogram.html">Spectrogram</a> from every selected <a href="Sound.html">Sound</a> object. It performs a <i>short-term spectral analysis</i>, which means that for a number of time points in the Sound, Praat computes an approximation of the spectrum at that time. Each such spectrum is called an <i>analysis frame</i>.</p>
+<p>For tutorial information, see <a href="Intro_3__Spectral_analysis.html">Intro 3. Spectral analysis</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Window length (s)</b>
+<dd>the duration of the analysis window, in seconds. If this is 0.005 seconds, Praat uses for each frame the part of the sound that lies between 0.0025 seconds before and 0.0025 seconds after the centre of that frame (for Gaussian windows, Praat actually uses a bit more than that). The window length determines the <i>bandwidth</i> of the spectral analysis, i.e. the width of the horizontal line in the spectrogram of a pure sine wave. For a Gaussian window, the -3 dB bandwidth is 2*sqrt(6*ln(2))/(<i>&#960;</i>*<i>Window length</i>), or 1.2982804 / <i>Window length</i>. To get a &#8220;broad-band&#8221; spectrogram (bandwidth 260 Hz), set <i>Window length</i> to 5 milliseconds; to get a &#8220;narrow-band&#8221; spectrogram (bandwidth 43 Hz), set it to 30 milliseconds. The other window shapes give slightly different values.</dd>
+<dt><b>Maximum frequency (Hz)</b>
+<dd>the maximum frequency subject to analysis, e.g. 5000 hertz. If it is higher than the Nyquist frequency of the Sound (which is half its sampling frequency), some values in the result will be zero (and will be drawn in white by <a href="Spectrogram__Paint___.html">Spectrogram: Paint...</a>).</dd>
+<dt><b>Time step (s)</b>
+<dd>the distance between the centres of subsequent frames, e.g. 0.002 seconds. This determines the number of frames of the resulting Spectrogram. For instance, if the Sound is 1 second long, and the time step is 2 milliseconds, the Spectrogram will consist of almost 500 frames (not <i>exactly</i> 500, because no reliable spectrum can be measured near the beginning and end of the sound). See below for cases in which the time step of the resulting Spectrogram is different from what you supply here.</dd>
+<dt><b>Frequency step (Hz)</b>
+<dd>the frequency resolution, e.g. 20 Hertz. This determines the number of frequency bands (<i>bins</i>) of the resulting Spectrogram. For instance, if the <i>Maximum frequency</i> is 5000 Hz, and the frequency step is 20 Hz, the Spectrogram will consist of 250 frequency bands. See below for cases in which the frequency step of the resulting Spectrogram is different from what you supply here.</dd>
+<dt><b>Window shape</b>
+<dd>determines the shape of the analysis window. You can choose from: <b>Gaussian</b>, <b>Square</b> (none, rectangular), <b>Hamming</b> (raised sine-squared), <b>Bartlett</b> (triangular), <b>Welch</b> (parabolic), and <b>Hanning</b> (sine-squared). The Gaussian window is superior, as it gives no sidelobes in your spectrogram; it analyzes a factor of 2 slower than the other window shapes, because the analysis is actually performed on twice as many samples per frame.</dd>
+</dl>
+<p>For purposes of computation speed, Praat may decide to change the time step and the frequency step. This is because the time step never needs to be smaller than 1/(8&#8730;<i>&#960;</i>) of the window length, and the frequency step never needs to be smaller than (&#8730;<i>&#960;</i>)/8 of the inverse of the window length. For instance, if the window length is 29 ms, the actual time step will never be less than 29/(8&#8730;<i>&#960;</i>) = 2.045 ms. And if the window length is 5 ms, the actual frequency step will never be less than (&#8730;<i>&#960;</i>)/8/0.005 = 44.31 Hz.</p>
+<h2>Tests of the bandwidth</h2>
+<p>You can check the bandwidth formula with the following procedure:</p>
+<code>   ! create a 1000-Hz sine wave, windowed by a 0.2-seconds Gaussian window.<br></code>
+<code>   Create Sound from formula: "gauss", 1, 0.0, 1.0, 44100, "sin(2*pi*1000*x) * exp(-3*((x-0.5)/0.1)^2)"<br></code>
+<code>   ! compute its spectrum and look at its bandwidth<br></code>
+<code>   To Spectrum: "yes"<br></code>
+<code>   Draw: 980, 1020, 20, 80, "yes"<br></code>
+<code>   Marks bottom every: 1, 2, "yes", "yes", "yes"<br></code>
+<code>   Marks left every: 1, 2, "yes", "yes", "yes"<br></code>
+<code>   ! now you should see a peak at 1000 Hz with a 3 dB bandwidth of 7 Hz (20 dB: 17 Hz)<br></code>
+<code>   ! more precise: compute the position and width of the peak, and write them to the console<br></code>
+<code>   Formula: ~ if x&lt;980 or x&gt;1020 then 0 else self fi<br></code>
+<code>   To Formant (peaks): 20<br></code>
+<code>   List: "no", "yes", 6, "no", 3, "yes", 3, "yes"<br></code>
+<code>   ! now you should be able to read that a peak was found at 999.99982 Hz<br></code>
+<code>   ! with a bandwidth of 6.497 Hz; the theory above predicted 6.491 Hz<br></code>
+<code>   <br></code>
+<code>   ! The same, windowed by a 0.1-seconds Hamming window.<br></code>
+<code>   Create Sound from formula: "Hamming", 1, 0.0, 1.0, 44100, ~ if x&lt;0.4 or x&gt;0.6 then 0 else sin(2*pi*1000*x)*(0.54+0.46*cos(pi*(x-0.5)/0.1)) fi<br></code>
+<code>   To Spectrum: "yes"<br></code>
+<code>   Formula: ~ if x&lt;970 or x&gt;1030 then 0 else self fi<br></code>
+<code>   To Formant (peaks): 20<br></code>
+<code>   List: "no", "yes", 6, "no", 3, "yes", 3, "yes"<br></code>
+<code>   ! peak at 999.99817 Hz, 3 dB bw 6.518 Hz, 20 dB bw 15 Hz, zero bw 20 Hz, sidelobe -42 dB<br></code>
+<code>   <br></code>
+<code>   ! The same, windowed by a 0.1-seconds rectangular window.<br></code>
+<code>   Create Sound from formula: "rectangular", 1, 0.0, 1.0, 44100, ~ if x&lt;0.4 or x&gt;0.6 then 0 else sin(2*pi*1000*x) fi<br></code>
+<code>   To Spectrum: "yes"<br></code>
+<code>   Formula: ~ if x&lt;970 or x&gt;1030 then 0 else self fi<br></code>
+<code>   To Formant (peaks): 20<br></code>
+<code>   List: "no", "yes", 6, "no", 3, "yes", 3, "yes"<br></code>
+<code>   ! peak at 999.99506 Hz, 3 dB bw 4.440 Hz, 20 dB bw 27 Hz, zero bw 10 Hz, sidelobe -14 dB<br></code>
+<code>   <br></code>
+<code>   ! The same, windowed by a 0.1-seconds Hanning window.<br></code>
+<code>   Create Sound from formula: "Hanning", 1, 0.0, 1.0, 44100, ~ if x&lt;0.4 or x&gt;0.6 then 0 else sin(2*pi*1000*x)*(0.5+0.5*cos(pi*(x-0.5)/0.1)) fi<br></code>
+<code>   To Spectrum: "yes"<br></code>
+<code>   Formula: ~ if x&lt;970 or x&gt;1030 then 0 else self fi<br></code>
+<code>   To Formant (peaks): 20<br></code>
+<code>   List: "no", "yes", 6, "no", 3, "yes", 3, "yes"<br></code>
+<code>   ! peak at 999.99945 Hz, 3 dB bw 7.212 Hz, 20 dB bw 16 Hz, zero bw 20 Hz, sidelobe -31 dB<br></code>
+<code>   <br></code>
+<code>   ! The same, windowed by a 0.1-seconds triangular window.<br></code>
+<code>   Create Sound from formula: "triangular", 1, 0.0, 1.0, 44100, ~ if x&lt;0.4 or x&gt;0.6 then 0 else sin(2*pi*1000*x)*(1-abs((x-0.5)/0.1)) fi<br></code>
+<code>   To Spectrum: "yes"<br></code>
+<code>   Formula: ~ if x&lt;970 or x&gt;1030 then 0 else self fi<br></code>
+<code>   To Formant (peaks): 20<br></code>
+<code>   List: "no", "yes", 6, "no", 3, "yes", 3, "yes"<br></code>
+<code>   ! peak at 999.99933 Hz, 3 dB bw 6.384 Hz, 20 dB bw 15 Hz, zero bw 20 Hz, sidelobe -26 dB<br></code>
+<code>   <br></code>
+<code>   ! The same, windowed by a 0.1-seconds parabolic window.<br></code>
+<code>   Create Sound from formula: "parabolic", 1, 0.0, 1.0, 44100, ~ if x&lt;0.4 or x&gt;0.6 then 0 else sin(2*pi*1000*x)*(1-((x-0.5)/0.1)^2) fi<br></code>
+<code>   To Spectrum: "yes"<br></code>
+<code>   Formula: ~ if x&lt;970 or x&gt;1030 then 0 else self fi<br></code>
+<code>   To Formant (peaks): 20<br></code>
+<code>   List: "no", "yes", 6, "no", 3, "yes", 3, "yes"<br></code>
+<code>   ! peak at 999.99921 Hz, 3 dB bw 5.786 Hz, 20 dB bw 12 Hz, zero bw 15 Hz, sidelobe -21 dB<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Fast_Fourier_Transform.html">Fast Fourier Transform</a>
+<li><a href="Intro_3_5__The_Spectrogram_object.html">Intro 3.5. The Spectrogram object</a>
+<li><a href="Sound__Extract_part___.html">Sound: Extract part...</a>
+<li><a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20211015</p>
+</address>
+</body>
+</html>

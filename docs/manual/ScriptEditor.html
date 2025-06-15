@@ -1,0 +1,90 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ScriptEditor</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ScriptEditor
+</b></font></table></table>
+<p>An aid to <a href="Scripting.html">scripting</a>.</p>
+<p>The ScriptEditor is a text editor that allows you to edit, save, and run any <a href="Praat_script.html">Praat script</a>. You can type such a script from scratch, but it is sometimes easier to use the <a href="History_mechanism.html">History mechanism</a>, which automatically records all your commands and mouse clicks, and which can paste these directly into a ScriptEditor.</p>
+<p>To add a script as a button to a fixed or dynamic menu, use <a href="Add_to_fixed_menu___.html">Add to fixed menu...</a> or <a href="Add_to_dynamic_menu___.html">Add to dynamic menu...</a> from the <a href="File_menu.html">File menu</a>.</p>
+<h2>Example 1</h2>
+<p>In this example, we create a fixed button that will play a 0.4-second sine wave with a specified frequency.</p>
+<p>First, we create a ScriptEditor by choosing <a href="New_Praat_script.html">New Praat script</a> from the <a href="Praat_menu.html">Praat menu</a>. Then, we choose <a href="Clear_history.html">Clear history</a> from the <b>Edit</b> menu in the ScriptEditor. We then perform some actions that will create a sine wave, play it, and remove it:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Choose <b>Create Sound as pure tone...</b> from the <a href="New_menu.html">New menu</a> and click OK.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Click <b>Play</b> in the dynamic menu.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Click the fixed <b>Remove</b> button.</dd>
+</dl>
+<p>We then choose <a href="Paste_history.html">Paste history</a> from the <b>Edit</b> menu in the ScriptEditor (or type <a href="Keyboard_shortcuts.html">Command-H</a>). The text will now contain at least the following lines (delete any other lines):</p>
+<code>   Create Sound as pure tone: "tone", 1, 0, 0.4, 44100, 440, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<p>We can run this script again by choosing <b>Run</b> from the <b>Run</b> menu (or typing <a href="Keyboard_shortcuts.html">Command-R</a>). However, this always plays a sine with a frequency of 440 Hz, so we will add the variable "Frequency" to the script, which then looks like:</p>
+<code>   #form Play a sine wave<br></code>
+<code>      #positive Frequency<br></code>
+<code>   #endform<br></code>
+<code>   Create Sound as pure tone: "tone", 1, 0, 0.4, 44100, frequency, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<p>When we choose <b>Run</b>, the ScriptEditor will ask us to supply a value for the "Frequency" variable. We can now play 1-second sine waves with any frequency.</p>
+<p>It is advisable to supply a standard value for each argument in your script. If the duration should be variable, too, the final script could look like:</p>
+<code>   #form Play a sine wave<br></code>
+<code>      #positive Frequency 440<br></code>
+<code>      #positive Duration 1.0<br></code>
+<code>   #endform<br></code>
+<code>   Create Sound as pure tone: "tone", 1, 0, duration, 44100, frequency, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<p>When you run this script, the ScriptEditor will ask you to supply values for the two variables, but the values "440" and "1.0" are already visible in the form window, so that you will get a sensible result if you just click <b>OK</b>.</p>
+<p>If this script is useful to you, you may want to put a button for it in the <a href="New_menu.html">New menu</a>, in the <b>Sound</b> submenu:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Save the script to a file, with <b>Save</b> from the <b>File</b> menu. The file name that you supply, will be shown in the title bar of the ScriptEditor window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Choose <a href="Add_to_fixed_menu___.html">Add to fixed menu...</a> from the <b>File</b> menu. Supply <b>Objects</b> for the <i>window</i>, <b>New</b> for the <i>menu</i>, "Play sine wave..." for the <i>command</i>, <b>Create Sound from formula...</b> for <i>after command</i>, and "1" for the depth (because it is supposed to be in a submenu); the <i>script</i> argument has already been set to the file name that you supplied in step 1.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Click <b>OK</b> and ensure that the button has been added in the <a href="New_menu.html">New menu</a>. This button will still be there after you leave the program and enter it again; to remove it from the menu, use the <a href="ButtonEditor.html">ButtonEditor</a>.</dd>
+</dl>
+<h2>Example 2</h2>
+<p>In this example, we will create a shortcut for the usual complex pitch-analysis command.</p>
+<p>First, we perform the required actions:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Select a Sound object.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Click <b>To Pitch...</b> and set the arguments to your personal standard values.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Click <b>OK</b>. A new <b>Pitch</b> object will appear.</dd>
+</dl>
+<p>We then paste the history into the ScriptEditor, after which this will contain at least a line like (delete all the other lines):</p>
+<code>   To Pitch: 0.01, 150, 900<br></code>
+<p>You can run this script only after selecting one or more Sound objects.</p>
+<p>If this script is useful to you, you may want to put a button for it in the dynamic menu:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Save the script to a file, with <b>Save</b> from the <b>File</b> menu.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Choose <a href="Add_to_dynamic_menu___.html">Add to dynamic menu...</a> from the <b>File</b> menu. Supply "Sound" for <i>class1</i> (because the button is supposed to be available only if a Sound is selected), "0" for <i>number1</i> (because the command is supposed to work for any number of selected Sound objects), "To Pitch (child)" for the <i>command</i>, "To Spectrum" for <i>after command</i>, and "0" for the depth (because it is not supposed to be in a submenu); the <i>script</i> argument has already been set to the file name that you supplied in step 1.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Click <b>OK</b> and ensure that the button is clickable if you select one or more Sound objects. This button will still be available after you leave the program and enter it again; to remove it from the dynamic menus, use the <a href="ButtonEditor.html">ButtonEditor</a>.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Add_action_command___.html">Add action command...</a>
+<li><a href="Add_menu_command___.html">Add menu command...</a>
+<li><a href="Add_to_menu___.html">Add to menu...</a>
+<li><a href="buttons_file.html">buttons file</a>
+<li><a href="hidden_commands.html">hidden commands</a>
+<li><a href="Objects_window.html">Objects window</a>
+<li><a href="Open_Praat_script___.html">Open Praat script...</a>
+<li><a href="plug-ins.html">plug-ins</a>
+<li><a href="Scripting_1__Your_first_scripts.html">Scripting 1. Your first scripts</a>
+<li><a href="Scripting_2__How_to_script_settings_windows.html">Scripting 2. How to script settings windows</a>
+<li><a href="Scripting_7_2__Scripting_an_editor_from_within.html">Scripting 7.2. Scripting an editor from within</a>
+<li><a href="What_was_new_in_3_5_.html">What was new in 3.5?</a>
+<li><a href="What_was_new_in_3_6_.html">What was new in 3.6?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140107</p>
+</address>
+</body>
+</html>

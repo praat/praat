@@ -1,0 +1,46 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Text styles</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Text styles
+</b></font></table></table>
+<p>When drawing text into the <a href="Picture_window.html">Picture window</a> or into an editor, you can use text styles other than regular Roman.</p>
+<h2>Italic, bold, superscript, subscript</h2>
+<p>With the following symbols, you introduce stretches of text drawn in special styles:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<code><font size=+1>%</font></code>: the following letter will be italic.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<code><font size=+1>#</font></code>: the following letter will be bold.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<code><font size=+1>#%</font></code>: the following letter will be bold-italic.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<code><font size=+1>^</font></code>: the following letter will be superscript: <code><font size=+1>%m%c^2</font></code> gives <i>m</i><i>c</i><sup>2</sup>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<code><font size=+1>_</font></code>: the following letter will be subscript. Example: <i>F</i><sub>0</sub> is typed as <code><font size=+1>%F_0</font></code>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<code><font size=+1>%%</font></code>: the following letters will be italic, until the following <code><font size=+1>%</font></code>:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<code><font size=+1>Now %%you% try</font></code>   gives:   Now <i>you</i> try.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;The same goes for <code><font size=+1>##</font></code>, <code><font size=+1>^^</font></code>, and <code><font size=+1>__</font></code>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<code><font size=+1>\s{...}</font></code>: small:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<code><font size=+1>W\s{ARP}</font></code>   gives:   W<font size=-1>ARP</font></dd>
+</dl>
+<p>To draw a % or # or ^ or _ symbol, you type &#8220;<code><font size=+1>\% </font></code>&#8221; or &#8220;<code><font size=+1>\# </font></code>&#8221; or &#8220;<code><font size=+1>\^ </font></code>&#8221; or &#8220;<code><font size=+1>\_ </font></code>&#8221;, respectively: a backslash, the symbol, and a space.</p>
+<h2>See also</h2>
+<p><a href="Special_symbols.html">Special symbols</a></p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Font_menu.html">Font menu</a>
+<li><a href="ManPages.html">ManPages</a>
+<li><a href="OT_learning_2_2__Inside_the_grammar.html">OT learning 2.2. Inside the grammar</a>
+<li><a href="Text___.html">Text...</a>
+<li><a href="Viewport_text___.html">Viewport text...</a>
+<li><a href="What_was_new_in_3_6_.html">What was new in 3.6?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1996,2023,2025</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>What was new in 3.5?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+What was new in 3.5?
+</b></font></table></table>
+<h2>Praat 3.5, 27 May 1997</h2>
+<p>New editors:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="TextGridEditor.html">TextGridEditor</a> replaces and extends LabelEditor: edit points as well as intervals.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="ManipulationEditor.html">AnalysisEditor</a> replaces and extends PsolaEditor: view pitch, spectrum, formant, and intensity analyses in a single window, and allow pitch and duration resynthesis by overlap-add and more (would be undone in 3.9.19).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="SpectrumEditor.html">SpectrumEditor</a> allows you to view and edit spectra.</dd>
+</dl>
+<p>Praat shell:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="History_mechanism.html">History mechanism</a> remembers all the commands that you have chosen, and allows you to put them into a script.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="ScriptEditor.html">ScriptEditor</a> allows you to edit and run any Praat script, and to put it under a button.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; All added and removed buttons are remembered across sessions.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>ButtonEditor</b> allows you to make buttons visible or invisible.</dd>
+</dl>
+<p>Evaluations:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; In his 1996 doctoral thesis, Henning Reetz compared five pitch analysis routines; <a href="Sound__To_Pitch__ac____.html">Sound: To Pitch (ac)...</a> appeared to make the fewest errors. H. Reetz (1996): <i>Pitch Perception in Speech: a Time Domain Approach</i>, Studies in Language and Language Use <b>26</b>, IFOTT, Amsterdam (ICG Printing, Dordrecht).</dd>
+</dl>
+<p>Documentation:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; 140 more man pages (now 330).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Tables and pictures in manual.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Printing the entire manual.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Logo.</dd>
+</dl>
+<p>New types:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Labelling &amp; segmentation: <a href="TextGrid.html">TextGrid</a>, <b>IntervalTier</b>, <b>TextTier</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Analysis &amp; manipulation: <a href="Manipulation.html">Analysis</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Statistics: <a href="TableOfReal.html">TableOfReal</a>, <a href="Distributions.html">Distributions</a>, <b>Transition</b></dd>
+</dl>
+<p>File formats:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Read and write rational numbers in text files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Read 8-bit .au sound files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Read and write raw 8-bit two&#8217;s-complement and offset-binary sound files.</dd>
+</dl>
+<p>Audio:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; 16-bit interactive Sound I/O on Mac.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Record sounds at 9.8 kHz on SGI.</dd>
+</dl>
+<p>New commands:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Two more pitch-analysis routines.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound to PointProcess: collect all maxima, minima, zero crossings.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; PointProcess: set calculus.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid: extract time-point information.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Compute pitch or formants at given time points.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Put pitch, formants etc. in tables en get statistics.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Many more...</dd>
+</dl>
+<p>Macintosh:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; 16-bit interactive sound I/O.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Fast and interpolating spectrogram drawing.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Phonetic Mac screen font included in source code (as a fallback to using SIL Doulos IPA).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Keyboard shortcuts, text editor, help under question mark, etc.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1997</p>
+</address>
+</body>
+</html>

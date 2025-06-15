@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To LPC (covariance)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To LPC (covariance)...
+</b></font></table></table>
+<p>With this command you create a new <a href="LPC.html">LPC</a> from every selected <a href="Sound.html">Sound</a>, using the covariance method.</p>
+<h2>Warning</h2>
+<p>You are advised not to use this command for formant analysis. For formant analysis, instead use <a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a>, which also works via LPC (linear predictive coding). This is because <b>Sound: To Formant (burg)...</b> lets you specify a maximum frequency, whereas the <b>To LPC</b> commands automatically use the <a href="Nyquist_frequency.html">Nyquist frequency</a> as their maximum frequency. If you do use one of the <b>To LPC</b> commands for formant analysis, you may therefore want to downsample the sound first. For instance, if you want five formants below 5500 Hz but your Sound has a sampling frequency of 44100 Hz, you have to downsample the sound to 11000 Hz with the <a href="Sound__Resample___.html">Sound: Resample...</a> command. After that, you can use the <b>To LPC</b> commands, with a prediction order of 10 or 11.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Prediction order</b>
+<dd>the number of linear prediction coefficients, also called the <i>number of poles</i>. Choose this number at least twice as large as the number of spectral peaks that you want to detect.</dd>
+<dt><b>Analysis window duration (s)</b>
+<dd>the effective duration of each analysis frame, in seconds.</dd>
+<dt><b>Time step (s)</b>
+<dd>the time step between two consecutive analysis frames.</dd>
+<dt><b>Pre-emphasis frequency (Hz)</b>
+<dd>a +6dB / octave filtering will be applied above this frequency. A pre-emphasis frequency of 48.47 Hz for a signal with a sampling frequency of 10 kHz approximately corresponds to a value of <i>a</i> = 0.97 for the filter <i>y</i><sub><i>n</i></sub> = <i>x</i><sub><i>n</i></sub> - <i>a</i> &#183; <i>x</i><sub><i>n</i>-1</sub>. The relation between <i>a</i> and the pre-emphasis frequency is: <i>a</i> = exp (&#8211;2&#183;<i>&#960;</i>&#183;<i>preemphasisFrequency</i>/<i>samplingFrequency</i>). If you do not want pre-emphasis, choose a frequency greater than the <a href="Nyquist_frequency.html">Nyquist frequency</a>.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The covariance algorithm is decribed in <a href="Markel___Gray__1976_.html">Markel & Gray (1976)</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formants___LPC_menu.html">Formants & LPC menu</a>
+<li><a href="Sound__LPC_analysis.html">Sound: LPC analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© David Weenink & Paul Boersma 20040407</p>
+</address>
+</body>
+</html>

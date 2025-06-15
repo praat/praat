@@ -1,0 +1,62 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>asserterror</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+asserterror
+</b></font></table></table>
+<p>A keyword that can be used in <a href="Scripting.html">Scripting</a>, to test whether an expected erroe message is indeed generated.</p>
+<h2>Examples</h2>
+<code>   <b>asserterror</b> Unknown variable<br></code>
+<code>   a = 2 * b + 3<br></code>
+<p>The line <code><font size=+1>a = 2 * b + 3</font></code> contains the unknown variable <code><font size=+1>b</font></code>. Therefore, the script would normally issue an error message like</p>
+<code>   Unknown variable:<br></code>
+<code>   « a = 2 * b<br></code>
+<code>   <br></code>
+<code>   Script line 2 not performed or completed:<br></code>
+<code>       « a = 2 * b + 3 »<br></code>
+<code>   Menu command “Run” not completed.<br></code>
+<p>The line with <b><code><font size=+1>asserterror</font></code></b> prevents the error message from being popped up, and instead checks that the error message contains the string &#8220;Unknown variable&#8221;, which it does.</p>
+<p>This one works differently:</p>
+<code>   b = 4<br></code>
+<code>   <b>asserterror</b> Unknown variable<br></code>
+<code>   a = 2 * b + 3<br></code>
+<p>In this case the expected error message does not occur, and the script exits with the following error message:</p>
+<code>   Script assertion fails in line 2: error « Unknown variable » not raised.<br></code>
+<code>   Instead: no error.<br></code>
+<code>   <br></code>
+<code>   Script line 3 not performed or completed:<br></code>
+<code>       « a = 2 * b + 3 »<br></code>
+<code>   Menu command “Run” not completed.<br></code>
+<p>Another case:</p>
+<code>   <b>asserterror</b> What is blabla<br></code>
+<code>   a = Create Sound from blabla: 1, 2, 3<br></code>
+<p>In this case a different error message than the expected error message occurs, and the script exits with the following error message:</p>
+<code>   Script assertion fails in line 1: error « What is blabla » not raised.<br></code>
+<code>   Instead: Command “Create Sound from blabla:” not available for current selection.<br></code>
+<code>   <br></code>
+<code>   Script line 2 not performed or completed:<br></code>
+<code>       « a = Create Sound from blabla: 1, 2, 3 »<br></code>
+<code>   Menu command “Run” not completed.<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_padLeft-S_.html"><code><font size=+1>padLeft$</font></code></a>
+<li><a href="_padOrTruncateLeft-S_.html"><code><font size=+1>padOrTruncateLeft$</font></code></a>
+<li><a href="_padOrTruncateRight-S_.html"><code><font size=+1>padOrTruncateRight$</font></code></a>
+<li><a href="_padRight-S_.html"><code><font size=+1>padRight$</font></code></a>
+<li><a href="_truncateLeft-S_.html"><code><font size=+1>truncateLeft$</font></code></a>
+<li><a href="_truncateRight-S_.html"><code><font size=+1>truncateRight$</font></code></a>
+<li><a href="Functions.html">Functions</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023</p>
+</address>
+</body>
+</html>

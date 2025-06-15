@@ -1,0 +1,52 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Paint where...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Paint where...
+</b></font></table></table>
+<p>A command to paint only those parts of a <a href="Sound.html">Sound</a> where a condition holds. The painted area is the area between the Sound and a horizontal line at a certain level.</p>
+<h2>Settings</h2>
+<p align=middle><img height=404 width=540 src=Sound__Paint_where____1.png></p><dl>
+<dt><b>Colour</b>
+<dd>defines the <a href="Colour.html">colour</a> of the paint.</dd>
+<dt><b>Time range (s)</b>
+<dd>selects the time domain for the drawing.</dd>
+<dt><b>Vertical range</b>
+<dd>defines the vertical limits; larger amplitudes will be clipped.</dd>
+<dt><b>Fill from level</b>
+<dd>defines the level of the horizontal line. </dd>
+<dt><b>Formula</b>
+<dd>determines the part of the sound that will be painted. All parts where the formula evaluates to true will be painted. This formula may <b>not</b> contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.</dd>
+</dl>
+<h2>Example 1</h2>
+<p>The following script paints the area under a sine curve in red and the area above in green.For the first paint the horizontal line is at y=-1, for the second paint the line is at y=+1. The formula always evaluates to true.</p>
+<code>   s = Create Sound from formula: "s", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)<br></code>
+<code>   Paint where: "Red", 0, 0, -1, 1, -1, "yes", ~ 1<br></code>
+<code>   Paint where: "Green", 0, 0, -1, 1, 1, "no", ~ 1 <br></code>
+<p align=middle><img height=500 width=800 src=Sound__Paint_where____2.png></p><h2>Example 2</h2>
+<p>The following script paints the area below zero in red and the area above in green.The horizontal line is now always at y=0 and we use the formula to differentiate the areas.</p>
+<code>   s = Create Sound from formula: "s", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)<br></code>
+<code>   Paint where: "Red", 0, 0, -1, 1, 0, "no", ~ self &gt; 0<br></code>
+<code>   Paint where: "Green", 0, 0, -1, 1, 0, "yes", ~ self &lt; 0<br></code>
+<p align=middle><img height=500 width=800 src=Sound__Paint_where____3.png></p><h2>Example 3</h2>
+<p>To give an indication that the area under a 1/x curve between the points <i>a</i> and <i>b</i> and the area between <i>c</i> and <i>d</i> are equal if <i>b</i>/<i>a</i> = <i>d</i>/<i>c</i>. For example, for <i>a</i>=1, <i>b</i>=2, <i>c</i>=4 and <i>d</i>=8: </p>
+<code>   Create Sound from formula: "1dx", "Mono", 0, 20, 100, ~ 1.0 / x <br></code>
+<code>   Draw: 0, 20, 0, 1.5, "yes", "Curve"<br></code>
+<code>   Paint where: "Grey", 0, 20, 0, 1.5, 0, "yes", ~ (x &gt;= 1 and x &lt; 2) or (x &gt;= 4 and x &lt; 8)<br></code>
+<code>   One mark bottom: 1, "yes", "yes", "no", ""<br></code>
+<code>   One mark bottom: 2, "yes", "yes", "no", ""<br></code>
+<code>   One mark bottom: 4, "yes", "yes", "no", ""<br></code>
+<code>   One mark bottom: 8, "yes", "yes", "no", ""<br></code>
+<p align=middle><img height=500 width=800 src=Sound__Paint_where____4.png></p><hr>
+<address>
+	<p>© djmw 20170829</p>
+</address>
+</body>
+</html>

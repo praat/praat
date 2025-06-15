@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 10. Old functions</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 10. Old functions
+</b></font></table></table>
+<p>The Praat scripting language improves and changes, but old scripts should continue to work correctly. Here are some examples of what you can see in old scripts, and what they mean:</p>
+<p>The meaning of</p>
+<code>   echo Hello, my name is 'name$' and I am 'age' years old.<br></code>
+<p>is</p>
+<code>   writeInfoLine: "Hello, my name is ", name$, " and I am ", age, " years old."<br></code>
+<p>The meaning of</p>
+<code>   Draw... 0 0 0 0 yes Curve<br></code>
+<p>is</p>
+<code>   Draw: 0, 0, 0, 0, "yes", "Curve"<br></code>
+<p>The meaning of</p>
+<code>   Read from file... 'fileName$'<br></code>
+<p>is</p>
+<code>   Read from file: fileName$<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140112</p>
+</address>
+</body>
+</html>

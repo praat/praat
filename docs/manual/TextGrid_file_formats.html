@@ -1,0 +1,269 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TextGrid file formats</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TextGrid file formats
+</b></font></table></table>
+<p>This page describes the syntax and semantics of TextGrid files that Praat can read and/or write.</p>
+<h2>1. The full text format of a minimal TextGrid</h2>
+<p>If you record a Sound with a duration of 2.3 seconds, and then do <b>To TextGrid...</b>, you are asked to provide tier names and to say which of these tiers are point tiers. If you click OK without changing the settings from their standard values, you obtain a TextGrid with two interval tiers, called <i>Mary</i> and <i>John</i>, and one point tier called <i>bell</i>. When you save this TextGrid to disk by choosing <a href="Save_as_text_file___.html">Save as text file...</a> from the <b>New</b> menu, the resulting text file, when opened in a text editor, will look as follows:</p>
+<code>   File type = "ooTextFile"<br></code>
+<code>   Object class = "TextGrid"<br></code>
+<code>   <br></code>
+<code>   xmin = 0<br></code>
+<code>   xmax = 2.3<br></code>
+<code>   tiers? &lt;exists&gt;<br></code>
+<code>   size = 3<br></code>
+<code>   item []:<br></code>
+<code>       item [1]:<br></code>
+<code>           class = "IntervalTier"<br></code>
+<code>           name = "Mary"<br></code>
+<code>           xmin = 0<br></code>
+<code>           xmax = 2.3<br></code>
+<code>           intervals: size = 1<br></code>
+<code>           intervals [1]:<br></code>
+<code>               xmin = 0<br></code>
+<code>               xmax = 2.3<br></code>
+<code>               text = ""<br></code>
+<code>       item [2]:<br></code>
+<code>           class = "IntervalTier"<br></code>
+<code>           name = "John"<br></code>
+<code>           xmin = 0<br></code>
+<code>           xmax = 2.3<br></code>
+<code>           intervals: size = 1<br></code>
+<code>           intervals [1]:<br></code>
+<code>               xmin = 0<br></code>
+<code>               xmax = 2.3<br></code>
+<code>               text = ""<br></code>
+<code>       item [3]:<br></code>
+<code>           class = "TextTier"<br></code>
+<code>           name = "bell"<br></code>
+<code>           xmin = 0<br></code>
+<code>           xmax = 2.3<br></code>
+<code>           points: size = 0<br></code>
+<p>This text file contains the following pieces of data, which Praat will use when reading this file from disk and turning it into a TextGrid object again:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "ooTextFile", which appears in the first line of any text file that you write with <a href="Save_as_text_file___.html">Save as text file...</a>, i.e. not only in text files created from a TextGrid object, but also in text files created from e.g. a Pitch or ExperimentMFC object or from any other of the hundreds of types of objects that Praat can have in its Objects list.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "TextGrid", which designates the type of the object that has been saved to this file.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 0, which is the starting time (in seconds) of this TextGrid.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 2.3, which is the end time (in seconds) of the TextGrid.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The flag &lt;exists&gt;, which tells us that this TextGrid contains tiers (this value would be &lt;absent&gt; if the TextGrid contained no tiers, in which case the file would end here; however, you cannot really create TextGrid objects without tiers in Praat, so this issue can be ignored).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The integer number 3, which is the number of tiers that you created.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "IntervalTier", which designates the type of the first tier (an interval tier, therefore).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "Mary", which is the name you gave to the first tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 0, which is the starting time (in seconds) of the first tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 2.3, which is the end time (in seconds) of the first tier. When you create a TextGrid with an interval tier, the time domain of the interval tier is automatically set equal to the time domain of the whole TextGrid.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The integer number 1, which is the number of intervals in the first tier. Although you did not add any intervals and did not add any text to the first tier, all interval tiers always contain at least one interval, which is created when you create the TextGrid.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 0, which is the starting time (in seconds) of the first (only) interval of the first tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 2.3, which is the end time (in seconds) of the first interval of the first tier. The interval that is automatically created for you when you create a TextGrid with an interval tier, spans the whole tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "", which is the contents of the interval on the first tier. This text is empty.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "IntervalTier", which gives the type of the second tier (again an interval tier).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "John", which is the name you gave to the second tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 0, which is the starting time (in seconds) of the second tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 2.3, which is the end time (in seconds) of the second tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The integer number 1, which is the number of intervals in the second tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 0, which is the starting time (in seconds) of the first (only) interval of the second tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 2.3, which is the end time (in seconds) of the first interval of the second tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "", which is the contents of the interval on the second tier. This text is empty.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "TextTier", which designates the type of the third tier (a point tier this time).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The text "bell", which is the name you gave to the third tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 0, which is the starting time (in seconds) of the third tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The real number 2.3, which is the end time (in seconds) of the third tier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The integer number 0, which is the number of points in the third tier. A newly created point tier contains no points yet.</dd>
+</dl>
+<p>You will have noticed that the file contains a lot of stuff that was not mentioned in this list. All of that stuff are <i>comments</i> that are present only to help the human reader understand the contents of the file: labels for all tiers (such as <code><font size=+1>item [2]</font></code>), labels for the starting times of the TextGrid or a tier or an interval (<code><font size=+1>xmin</font></code>), labels for end times (<code><font size=+1>xmax</font></code>); labels for the number of tiers or intervals or points (<code><font size=+1>size</font></code>), and little numbers enclosed in square brackets to tell the reader where they are (<code><font size=+1>[2]</font></code>).</p>
+<p>When reading a text file containing a TextGrid (or any other object), Praat totally ignores these comments, so if you e.g. replace <code><font size=+1>[2]</font></code> with <code><font size=+1>[4]</font></code> somewhere, Praat will not notice. Praat will consider as data only the following types of information in the file:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; free-standing numbers, such as <code><font size=+1>0</font></code> and <code><font size=+1>2.3</font></code> above, but not <code><font size=+1>[1]</font></code> or <code><font size=+1>[3]</font></code>;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; free-standing text enclosed within double quotes, such as <code><font size=+1>"TextGrid"</font></code> and <code><font size=+1>""</font></code> above;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; free-standing flags, such as <code><font size=+1><exists></font></code> above (this is the only flag that appears in TextGrid files; see <a href="ExperimentMFC.html">ExperimentMFC</a> for a much broader use of flags).</dd>
+</dl>
+<p>In this list, "free-standing" means that the number, text or flag is preceded by the beginning of the file, the beginning of a line, or a space, and that it is followed by the end of the file, the end of a line, or a space.</p>
+<h2>2. The shortest text format of a minimal TextGrid</h2>
+<p>From the description above of what in the file is considered data (namely free-standing numbers, texts and flags) and what is not (namely everything else), you can conclude that Praat will be able to read a much shorter version of the file above. And indeed, when you choose <a href="Save_as_short_text_file___.html">Save as short text file...</a> from the <b>New</b> menu, your file will consist of the following text, with every piece of data alone on a separate line:</p>
+<code>   File type = "ooTextFile"<br></code>
+<code>   Object class = "TextGrid"<br></code>
+<code>   <br></code>
+<code>   0<br></code>
+<code>   2.3<br></code>
+<code>   &lt;exists&gt;<br></code>
+<code>   3<br></code>
+<code>   "IntervalTier"<br></code>
+<code>   "Mary"<br></code>
+<code>   0<br></code>
+<code>   2.3<br></code>
+<code>   1<br></code>
+<code>   0<br></code>
+<code>   2.3<br></code>
+<code>   ""<br></code>
+<code>   "IntervalTier"<br></code>
+<code>   "John"<br></code>
+<code>   0<br></code>
+<code>   2.3<br></code>
+<code>   1<br></code>
+<code>   0<br></code>
+<code>   2.3<br></code>
+<code>   ""<br></code>
+<code>   "TextTier"<br></code>
+<code>   "bell"<br></code>
+<code>   0<br></code>
+<code>   2.3<br></code>
+<code>   0<br></code>
+<p>That&#8217;s much less human-readable than before, but equally computer-readable, at least by Praat. When you write your own TextGrid file recognizer, you should be able to interpret both versions shown above, and also any version that is intermediate between the two, as long as it has the data written as freestanding numbers, texts, and flags. For instance, a human-readable TextGrid file that can be interpreted by Praat could look as follows:</p>
+<code>   "ooTextFile"<br></code>
+<code>   "TextGrid"<br></code>
+<code>   0  2.3  ! time domain of TextGrid<br></code>
+<code>   &lt;exists&gt;<br></code>
+<code>   3 tiers<br></code>
+<code>   "IntervalTier"  "Mary"  ! type and name of tier 1<br></code>
+<code>   0  2.3  ! time domain of tier 1<br></code>
+<code>   1 interval coming<br></code>
+<code>   0  2.3  ""  ! interval 1 on tier 1<br></code>
+<code>   "IntervalTier"  "John"  ! type and name of tier 2<br></code>
+<code>   0  2.3  ! time domain of tier 2<br></code>
+<code>   1 interval coming<br></code>
+<code>   0  2.3  ""  ! interval 1 on tier 2<br></code>
+<code>   "TextTier"  "bell"  ! type and name of tier 3<br></code>
+<code>   0  2.3  ! time domain of tier 3<br></code>
+<code>   0 points coming<br></code>
+<p>Here we see that multiple pieces of data can be together on a line, as long as each of them stands free; the only layout requirement is that the text <code><font size=+1>"ooTextFile"</font></code> has to be alone on the first line.</p>
+<p>Another thing we see is that there is an additional type of comment: everything that follows an exclamation mark on the same line is considered a comment. Thus, although some lines seem to end in a free-standing number (1, 2, or 3), those numbers do not count as data, because they are part of a comment that follows an exclamation mark.</p>
+<h2>3. Reading a TextGrid file</h2>
+<p>Reading the contents of a TextGrid file into your own data structure is fairly easy. For instance, to figure out how many intervals there are in a tier, you do not have to read multiple lines and then backtrack to see where the list of intervals ends. Instead, the number of intervals is given before the intervals are enumerated.</p>
+<h2>4. Writing a TextGrid file</h2>
+<p>Writing the contents of a TextGrid file involves deciding on a level of human readability.</p>
+<h2>5. A TextGrid file with more than the minimal content</h2>
+<p>The above example was about a rather uninteresting TextGrid object, with no text in it. Suppose instead that the sound was a recording of speaker saying a sentence, and your TextGrid annotates the sentence orthographically as well as phonetically, and also annotates two chimes of the bell:</p>
+<p align=middle><img height=300 width=600 src=TextGrid_file_formats_1.png></p><p>When you save this as a full text file, it will look as follows:</p>
+<code>   File type = "ooTextFile"<br></code>
+<code>   Object class = "TextGrid"<br></code>
+<code>   <br></code>
+<code>   xmin = 0<br></code>
+<code>   xmax = 2.3<br></code>
+<code>   tiers? &lt;exists&gt;<br></code>
+<code>   size = 3<br></code>
+<code>   item []:<br></code>
+<code>       item [1]:<br></code>
+<code>           class = "IntervalTier"<br></code>
+<code>           name = "sentence"<br></code>
+<code>           xmin = 0<br></code>
+<code>           xmax = 2.3<br></code>
+<code>           intervals: size = 1<br></code>
+<code>           intervals [1]:<br></code>
+<code>               xmin = 0<br></code>
+<code>               xmax = 2.3<br></code>
+<code>               text = "říkej ""ahoj"" dvakrát"<br></code>
+<code>       item [2]:<br></code>
+<code>           class = "IntervalTier"<br></code>
+<code>           name = "phonemes"<br></code>
+<code>           xmin = 0<br></code>
+<code>           xmax = 2.3<br></code>
+<code>           intervals: size = 3<br></code>
+<code>           intervals [1]:<br></code>
+<code>               xmin = 0<br></code>
+<code>               xmax = 0.7<br></code>
+<code>               text = "r̝iːkɛj"<br></code>
+<code>           intervals [2]:<br></code>
+<code>               xmin = 0.7<br></code>
+<code>               xmax = 1.6<br></code>
+<code>               text = "ʔaɦɔj"<br></code>
+<code>           intervals [3]:<br></code>
+<code>               xmin = 1.6<br></code>
+<code>               xmax = 2.3<br></code>
+<code>               text = "dʋakraːt"<br></code>
+<code>       item [3]:<br></code>
+<code>           class = "TextTier"<br></code>
+<code>           name = "bell"<br></code>
+<code>           xmin = 0<br></code>
+<code>           xmax = 2.3<br></code>
+<code>           points: size = 2<br></code>
+<code>           points [1]:<br></code>
+<code>               number = 0.9<br></code>
+<code>               mark = "ding"<br></code>
+<code>           points [2]:<br></code>
+<code>               number = 1.3<br></code>
+<code>               mark = "dong"<br></code>
+<p>We now see how points on a point tier are written: with their time (<code><font size=+1>number</font></code>) and their text (<code><font size=+1>mark</font></code>). As usual, most of the contents of the file is comments; for instance, older TextGrid files may call the time of the point <code><font size=+1>time</font></code> instead of <code><font size=+1>number</font></code>, but as these are just comments, Praat will ignore these words when reading the file, and so should anybody who programs a TextGrid file parser.</p>
+<p>A thing to note is the doubling of double quotes. The sentence in tier 1 contains double quotes around <i>ahoj</i>, as you can see in the picture above, and you typed only these two double quotes in the TextGrid window to start with. However, the file format uses double quotes to mark texts, so if a text itself contains a double quote, something special has to be done about it lest Praat think that you&#8217;re ending the text. The solution that Praat chooses is that a double quote that appears in a text is written as a <i>doubled</i> double quote in the text file, as above on tier 1.</p>
+<h2>6. Restrictions in a TextGrid object</h2>
+<p>TextGrid objects maintain several invariants, some stronger and some weaker.</p>
+<p>The two strongest invariants within an interval tier are <i>positive duration</i> and <i>adjacency</i>. That is, the end time of each interval has to be greater than the starting time of that same interval, and the starting time of each interval (except the first) has to be equal to the end time of the previous interval. As a result, the union of the time domains of the set of intervals in a tier is a contiguous stretch of time, and no intervals overlap. If a TextGrid file violates these invariants, Praat may refuse to read the file and give an error message instead (or Praat may try to repair the TextGrid, but that is not guaranteed).</p>
+<p>A weaker invariant is that the starting time of the first interval on a tier equals the starting time of that tier, and the end time of the last interval equals the end time of the tier. When you create a TextGrid with Praat, this invariant is automatically maintained, and most types of modifications also maintain it, except sometimes the commands that combine multiple TextGrid objects with different durations into a new TextGrid. Praat will happily read TextGrid files that do not honour this weak invariant, and will also display such a TextGrid reasonably well in a TextGrid window. It is nevertheless advisable for other programs that create TextGrids to honour this weak invariant.</p>
+<p>For a point tier, a strong invariant is that the time of each point (except the first) has to be greater than the time of the previous point. Praat maintains this invariant for instance by refusing to insert a point at the time of an existing point. TextGrid files that violate this invariant may or may not be read by Praat, and may cause strange behaviour in Praat if they are read.</p>
+<p>A further weak invariant is that the starting and end times of each tier equal the starting and end times of the whole TextGrid. This can be violated by combining multiple TextGrids into one, but other programs are advised to create TextGrids that honour this invariant, because TextGrids that violate it may look strange to the user.</p>
+<h2>7. Text encoding</h2>
+<p>Existing TextGrid text files come in various encodings. When creating a parser for TextGrid text files, you should be prepared for reading it in UTF-8 encoding (without Byte Order Mark), or in UTF-16 encoding (either Big-Endian or Little-Endian, with Byte Order Mark). Pre-Unicode TextGrid text files may have a Latin-1 encoding if they were created on Windows or Linux, or a MacRoman encoding if they were created on a Mac, so it would be good to prepare for such old files as well, although it may be difficult to figure out which is which (line separators, as described below, may help).</p>
+<p>When writing a TextGrid text file, you can use UTF-8 encoding (without Byte Order Mark), or UTF-16 encoding (either Big-Endian or Little-Endian, with Byte Order Mark). Please never write a limited encoding such as Latin-1 or MacRoman, which do not support international characters or phonetic characters as in &#8220;<code><font size=+1>ʔaɦɔj</font></code>&#8221;.</p>
+<p>The lines in the file are typically separated by a newline symbol (Linux or modern Mac), or by a Return symbol (old Mac), or by a Return symbol followed by a newline symbol (Windows). When reading a TextGrid text file, you should be prepared for each of these line separators. When writing a TextGrid text file, you can use any of these line separators, because most text editors on all platforms can meanwhile open and view all these versions correctly.</p>
+<h2>8. Interpreting trigraphs</h2>
+<p>The example above contains several phonetic symbols, and it is not always easy to type those into a text field. For this reason, Praat provides <i>trigraphs</i> for most phonetic characters, as well as for many non-ASCII characters used in the languages of the world. For instance, the vowel &#8220;&#596;&#8221; (a &#8220;turned c&#8221;) can be typed as <code><font size=+1>\\ct</font></code> into the TextGrid window as well as anywhere else in Praat where you want to draw graphical text (see <a href="Special_symbols.html">Special symbols</a> for all trigraphs). Thus, the file above could have looked as follows:</p>
+<code>   File type = "ooTextFile"<br></code>
+<code>   Object class = "TextGrid"<br></code>
+<code>   <br></code>
+<code>   xmin = 0<br></code>
+<code>   xmax = 2.3<br></code>
+<code>   tiers? &lt;exists&gt;<br></code>
+<code>   size = 3<br></code>
+<code>   item []:<br></code>
+<code>       item [1]:<br></code>
+<code>           class = "IntervalTier"<br></code>
+<code>           name = "sentence"<br></code>
+<code>           xmin = 0<br></code>
+<code>           xmax = 2.3<br></code>
+<code>           intervals: size = 1<br></code>
+<code>           intervals [1]:<br></code>
+<code>               xmin = 0<br></code>
+<code>               xmax = 2.3<br></code>
+<code>               text = "\r&lt;\i'kej ""ahoj"" dvakr\a't"<br></code>
+<code>       item [2]:<br></code>
+<code>           class = "IntervalTier"<br></code>
+<code>           name = "phonemes"<br></code>
+<code>           xmin = 0<br></code>
+<code>           xmax = 2.3<br></code>
+<code>           intervals: size = 3<br></code>
+<code>           intervals [1]:<br></code>
+<code>               xmin = 0<br></code>
+<code>               xmax = 0.7<br></code>
+<code>               text = "r\T^i\:fk\efj"<br></code>
+<code>           intervals [2]:<br></code>
+<code>               xmin = 0.7<br></code>
+<code>               xmax = 1.6<br></code>
+<code>               text = "\?ga\h^\ctj"<br></code>
+<code>           intervals [3]:<br></code>
+<code>               xmin = 1.6<br></code>
+<code>               xmax = 2.3<br></code>
+<code>               text = "d\vsakra\:ft"<br></code>
+<code>       item [3]:<br></code>
+<code>           class = "TextTier"<br></code>
+<code>           name = "bell"<br></code>
+<code>           xmin = 0<br></code>
+<code>           xmax = 2.3<br></code>
+<code>           points: size = 2<br></code>
+<code>           points [1]:<br></code>
+<code>               number = 0.9<br></code>
+<code>               mark = "ding"<br></code>
+<code>           points [2]:<br></code>
+<code>               number = 1.3<br></code>
+<code>               mark = "dong"<br></code>
+<p>On the screen, this TextGrid looks the same as before:</p>
+<p align=middle><img height=300 width=600 src=TextGrid_file_formats_2.png></p><p>There are several hundreds of such trigraphs, and a few more might be added in the future. When you create a TextGrid file parser and want to interpret the trigraphs in the correct way, it is advisable to have Praat do the conversion for you: read the TextGrid file into Praat, call the menu command <b>Convert to Unicode</b>, and save the TextGrid as a new text file.</p>
+<h2>9. The binary TextGrid file format</h2>
+<p>Besides the TextGrid text file format described above, TextGrid objects can also be saved as binary files with <a href="Save_as_binary_file___.html">Save as binary file...</a>. If you need a description of this format, we can add it here on request. When you want to create only a TextGrid <i>text</i> file parser, and still want to support binary TextGrid files, you can have Praat do the conversion for you: read the binary TextGrid file into Praat with <a href="Read_from_file___.html">Read from file...</a> and save the resulting TextGrid object as a text file with <a href="Save_as_text_file___.html">Save as text file...</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Interoperability.html">Interoperability</a>
+<li><a href="What_was_new_in_6_1_.html">What was new in 6.1?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2018-08-21</p>
+</address>
+</body>
+</html>

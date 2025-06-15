@@ -1,0 +1,86 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas 8. Attributes of objects</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas 8. Attributes of objects
+</b></font></table></table>
+<p>You can refer to several attributes of objects that are visible in the <a href="List_of_Objects.html">List of Objects</a>. To do so, use either the unique ID of the object, or the type and the name of the object. Thus, <code><font size=+1>object[113]</font></code> refers to the object that has the number 113 in the list, and <code><font size=+1>object["Sound hallo"]</font></code> refers to an existing Sound object whose name is &#8220;hallo&#8221; (if there is more than one such object, it refers to the one that was created last).</p>
+<p>To refer to an attribute, you use the period ("."). Thus, <code><font size=+1>object["Sound hallo"].nx</font></code> is the number of samples of the Sound called <code><font size=+1>hallo</font></code>, and <code><font size=+1>1/object["Sound hallo"].dx</font></code> is its sampling frequency.</p>
+<h2>Attributes in the calculator</h2>
+<p>Record a Sound (read the <a href="Intro.html">Intro</a> if you do not know how to do that), and name it <code><font size=+1>mysound</font></code> (or anything else). An object with a name like <code><font size=+1>3. Sound mysound</font></code> will appear in the list. Then type into the <a href="Calculator.html">calculator</a> the formula</p>
+<code>   object[3].nx<br></code>
+<p>or</p>
+<code>   object["Sound mysound"].nx<br></code>
+<p>After you click OK, the Info window will show the number of samples. Since you could have got this result by simply selecting the object and choosing <b>Get number of samples</b> from the <a href="Query_submenu.html">Query submenu</a>, these attribute tricks are not very useful in the calculator. We will see that they are much more useful in creation and modification formulas and in scripts.</p>
+<h2>List of possible attributes</h2>
+<p>The following attributes are available:</p>
+<dl>
+<dt><b><code><font size=+1>xmin</font></code></b>
+<dd>the start of the time domain (usually 0) for a <a href="Sound.html">Sound</a>, <a href="Pitch.html">Pitch</a>, <a href="Formant.html">Formant</a>, <a href="Spectrogram.html">Spectrogram</a>, <a href="Intensity.html">Intensity</a>, <a href="Cochleagram.html">Cochleagram</a>, <a href="PointProcess.html">PointProcess</a>, or <a href="Harmonicity.html">Harmonicity</a> object, in seconds; the lowest frequency (always 0) for a <a href="Spectrum.html">Spectrum</a> object, in hertz; the lowest frequency (usually 0) for an <a href="Excitation.html">Excitation</a> object, in Bark; the left edge of the <i>x</i> domain for a <a href="Matrix.html">Matrix</a> object.</dd>
+<dt><b><code><font size=+1>xmax</font></code></b>
+<dd>the end of the time domain (usually the duration, if <i>xmin</i> is zero) for a Sound, Pitch, Formant, Spectrogram, Intensity, Cochleagram, PointProcess, or Harmonicity object, in seconds; the highest frequency (<a href="Nyquist_frequency.html">Nyquist frequency</a>) for a Spectrum object, e.g. 11025 hertz; the highest frequency for an Excitation object, often 25.6 Bark; the right edge of the <i>x</i> domain for a Matrix object.</dd>
+<dt><b><code><font size=+1>ncol</font></code></b>
+<dd>the number of columns in a <a href="Matrix.html">Matrix</a>, <a href="TableOfReal.html">TableOfReal</a>, or <a href="Table.html">Table</a> object.</dd>
+<dt><b><code><font size=+1>nrow</font></code></b>
+<dd>the number of rows in a <a href="Matrix.html">Matrix</a>, <a href="TableOfReal.html">TableOfReal</a>, or <a href="Table.html">Table</a> object.</dd>
+<dt><b><code><font size=+1>col$</font></code></b> [<i><code><font size=+1>i</font></code></i>]
+<dd>the name of column <i><code><font size=+1>i</font></code></i> in a <a href="TableOfReal.html">TableOfReal</a> or <a href="Table.html">Table</a> object.</dd>
+<dt><b><code><font size=+1>row$</font></code></b> [<i><code><font size=+1>i</font></code></i>]
+<dd>the name of row <i><code><font size=+1>i</font></code></i> in a <a href="TableOfReal.html">TableOfReal</a> object.</dd>
+<dt><b><code><font size=+1>nx</font></code></b>
+<dd>the number of samples in a Sound object; the number of analysis frames in a Pitch, Formant, Spectrogram, Intensity, Cochleagram, or Harmonicity object; the number of frequency bins in a Spectrum or Excitation object; the number of divisions of the <i>x</i> domain for a Matrix object (= <i><code><font size=+1>ncol</font></code></i>).</dd>
+<dt><b><code><font size=+1>dx</font></code></b>
+<dd>the sample period (time distance between consecutive samples) in a Sound object (the inverse of the sampling frequency), in seconds; the time step between consecutive frames in a Pitch, Formant, Spectrogram, Intensity, Cochleagram, or Harmonicity object, in seconds; the width of a frequency bin in a Spectrum object, in hertz; the width of a frequency bin in an Excitation object, in Bark; the horizontal distance between cells in a Matrix object.</dd>
+<dt><b><code><font size=+1>ymin</font></code></b>
+<dd>the lowest frequency (usually 0) for a Spectrogram object, in hertz; the lowest frequency (usually 0) for a Cochleagram object, in Bark; the bottom of the <i>y</i> domain for a Matrix object.</dd>
+<dt><b><code><font size=+1>ymax</font></code></b>
+<dd>the highest frequency for a Spectrogram object, e.g. 5000 hertz; the highest frequency for a Cochleagram object, often 25.6 Bark; the top of the <i>y</i> domain for a Matrix object.</dd>
+<dt><b><code><font size=+1>ny</font></code></b>
+<dd>the number of frequency bands in a Spectrogram or Cochleagram object; for a Spectrum object: always 2 (first row is real part, second row is imaginary part) the number of divisions of the <i>y</i> domain for a Matrix object (= <i><code><font size=+1>nrow</font></code></i>).</dd>
+<dt><b><code><font size=+1>dy</font></code></b>
+<dd>the distance between adjacent frequency bands in a Spectrogram object, in hertz; the distance between adjacent frequency bands in a Cochleagram object, in Bark; the vertical distance between cells in a Matrix object.</dd>
+</dl>
+<h2>Attributes in a creation formula</h2>
+<p>In formulas for creating a new object, you can refer to the attributes of any object, but you will often want to refer to the attributes of the object that is just being created. You can do that in two ways.</p>
+<p>The first way is to use the name of the object, as above. Choose <a href="Create_Sound_from_formula___.html">Create Sound from formula...</a>, supply <i>hello</i> for its name, supply arbitrary values for the starting and finishing time, and type the following formula:</p>
+<code>   (x - object["Sound hello"].xmin) / (object["Sound hello"].xmax - object["Sound hello"].xmin)<br></code>
+<p>When you edit this sound, you can see that it creates a straight line that rises from 0 to 1 within the time domain.</p>
+<p>The formula above will also work if the Sound under creation is called <i>goodbye</i>, and a Sound called <i>hello</i> already exists; of course, in such a case <code><font size=+1>object["Sound hello"].xmax</font></code> refers to a property of the already existing sound.</p>
+<p>If a formula refers to an object under creation, there is a shorter way: you do not have to supply the name of the object at all, so you can simply write</p>
+<code>   (x - xmin) / (xmax - xmin)<br></code>
+<p>The attributes that you can use in this implicit way are <i>xmin</i>, <i>xmax</i>, <i>ncol</i>, <i>nrow</i>, <i>nx</i>, <i>dx</i>, <i>ny</i>, and <i>dy</i>. To disambiguate in case there exists a script variable <i>xmin</i> as well (Praat will complain if this is the case), you can write <code><font size=+1>Self.xmin</font></code>.</p>
+<h2>Attributes in a modification formula</h2>
+<p>In formulas for modifying an existing object, you refer to attributes in the same way as in creation formulas, i.e., you do not have to specify the name of the object that is being modified. The formula</p>
+<code>   self * 20 ^ (- (x - xmin) / (xmax - xmin))<br></code>
+<p>causes the sound to decay exponentially in such a way that it has only 5 percent of its initial amplitude at the end. If you apply this formula to multiple Sound objects at the same time, <code><font size=+1>xmax</font></code> will refer to the finishing time of each Sound separately as that Sound is modified.</p>
+<p>More examples of the use of attributes are on the next page.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_col-S_.html"><code><font size=+1>col$</font></code></a>
+<li><a href="_dx_.html"><code><font size=+1>dx</font></code></a>
+<li><a href="_dy_.html"><code><font size=+1>dy</font></code></a>
+<li><a href="_ncol_.html"><code><font size=+1>ncol</font></code></a>
+<li><a href="_nrow_.html"><code><font size=+1>nrow</font></code></a>
+<li><a href="_nx_.html"><code><font size=+1>nx</font></code></a>
+<li><a href="_ny_.html"><code><font size=+1>ny</font></code></a>
+<li><a href="_row-S_.html"><code><font size=+1>row$</font></code></a>
+<li><a href="_xmax_.html"><code><font size=+1>xmax</font></code></a>
+<li><a href="_xmin_.html"><code><font size=+1>xmin</font></code></a>
+<li><a href="_ymax_.html"><code><font size=+1>ymax</font></code></a>
+<li><a href="_ymin_.html"><code><font size=+1>ymin</font></code></a>
+<li><a href="Formulas.html">Formulas</a>
+<li><a href="What_was_new_in_4_5_.html">What was new in 4.5?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20221202</p>
+</address>
+</body>
+</html>

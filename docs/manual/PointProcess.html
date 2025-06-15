@@ -1,0 +1,118 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PointProcess</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PointProcess
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat.</p>
+<p>A PointProcess object represents a <i>point process</i>, which is a sequence of <i>points</i> <i>t</i><sub><i>i</i></sub> in time, defined on a domain [<i>t</i><sub><i>min</i></sub>, <i>t</i><sub><i>max</i></sub>]. The index <i>i</i> runs from 1 to the number of points. The points are sorted by time, i.e. <i>t</i><sub><i>i</i>+1</sub> &gt; <i>t</i><sub><i>i</i></sub>.</p>
+<h2>PointProcess commands</h2>
+<p>Creation from scratch:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_empty_PointProcess___.html">Create empty PointProcess...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_Poisson_process___.html">Create Poisson process...</a></dd>
+</dl>
+<p>Creation of a pulse train from a pitch contour:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PitchTier__To_PointProcess.html">PitchTier: To PointProcess</a>: area-1 along entire time domain.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Pitch__To_PointProcess.html">Pitch: To PointProcess</a>: same, but excludes voiceless intervals.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound___Pitch__To_PointProcess__cc_.html">Sound & Pitch: To PointProcess (cc)</a>: "pitch-synchronous": near locations of high amplitude.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound___Pitch__To_PointProcess__peaks____.html">Sound & Pitch: To PointProcess (peaks)...</a>: "pitch-synchronous": near locations of high amplitude.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_PointProcess__periodic__cc____.html">Sound: To PointProcess (periodic, cc)...</a>: near locations of high amplitude.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_PointProcess__periodic__peaks____.html">Sound: To PointProcess (periodic, peaks)...</a>: near locations of high amplitude.</dd>
+</dl>
+<p>Creation from converting another object:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Matrix: To PointProcess</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PitchTier__Down_to_PointProcess.html">PitchTier: Down to PointProcess</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="IntensityTier__Down_to_PointProcess.html">IntensityTier: Down to PointProcess</a></dd>
+</dl>
+<p>Hearing:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Play.html">PointProcess: Play</a>: pulse train.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Hum.html">PointProcess: Hum</a>: pulse train with formants.</dd>
+</dl>
+<p>Drawing:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Draw___.html">PointProcess: Draw...</a></dd>
+</dl>
+<p>Editing:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>PointProcess: View &amp; Edit</b>: invokes a <a href="PointEditor.html">PointEditor</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>PointProcess &amp; Sound: View &amp; Edit</b>: invokes a <a href="PointEditor.html">PointEditor</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Inside a <a href="ManipulationEditor.html">ManipulationEditor</a>.</dd>
+</dl>
+<p>Queries:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Get_jitter__local____.html">PointProcess: Get jitter (local)...</a>: periodic jitter.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Get_jitter__local__absolute____.html">PointProcess: Get jitter (local, absolute)...</a>: periodic jitter.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Get_jitter__rap____.html">PointProcess: Get jitter (rap)...</a>: periodic jitter.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Get_jitter__ppq5____.html">PointProcess: Get jitter (ppq5)...</a>: periodic jitter.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Get_jitter__ddp____.html">PointProcess: Get jitter (ddp)...</a>: periodic jitter.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Get_low_index___.html">PointProcess: Get low index...</a>: index of nearest point not after specified time.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Get_high_index___.html">PointProcess: Get high index...</a>: index of nearest point not before specified time.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Get_nearest_index___.html">PointProcess: Get nearest index...</a>: index of point nearest to specified time.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Get_interval___.html">PointProcess: Get interval...</a>: duration of interval around specified time.</dd>
+</dl>
+<p>Set calculations:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcesses__Union.html">PointProcesses: Union</a>: the union of two point processes.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcesses__Intersection.html">PointProcesses: Intersection</a>: the intersection of two point processes.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcesses__Difference.html">PointProcesses: Difference</a>: the difference of two point processes.</dd>
+</dl>
+<p>Modification:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Add_point___.html">PointProcess: Add point...</a>: at a specified time.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Add_points___.html">PointProcess: Add points...</a>: at specified times.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Remove_point___.html">PointProcess: Remove point...</a>: at specified index.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Remove_point_near___.html">PointProcess: Remove point near...</a>: near specified time.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Remove_points___.html">PointProcess: Remove points...</a>: between specified indices.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Remove_points_between___.html">PointProcess: Remove points between...</a>: between specified times.</dd>
+</dl>
+<p>Analysis:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__To_PitchTier___.html">PointProcess: To PitchTier...</a>: pitch values in interval centres.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>PointProcess &amp; Sound: To Manipulation</b></dd>
+</dl>
+<p>Synthesis:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__To_Sound__pulse_train____.html">PointProcess: To Sound (pulse train)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__To_Sound__hum____.html">PointProcess: To Sound (hum)...</a></dd>
+</dl>
+<p>Conversion:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>PointProcess: To Matrix</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Up_to_TextGrid___.html">PointProcess: Up to TextGrid...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Up_to_PitchTier___.html">PointProcess: Up to PitchTier...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Up_to_IntensityTier___.html">PointProcess: Up to IntensityTier...</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas_8__Attributes_of_objects.html">Formulas 8. Attributes of objects</a>
+<li><a href="Intensity___PointProcess__To_IntensityTier___.html">Intensity & PointProcess: To IntensityTier...</a>
+<li><a href="Manipulation.html">Manipulation</a>
+<li><a href="Manipulation__Extract_pulses.html">Manipulation: Extract pulses</a>
+<li><a href="Manipulation__Replace_pulses.html">Manipulation: Replace pulses</a>
+<li><a href="Pitch___PointProcess__To_PitchTier___.html">Pitch & PointProcess: To PitchTier...</a>
+<li><a href="Play.html">Play</a>
+<li><a href="PointProcess__To_Sound__phonation____.html">PointProcess: To Sound (phonation)...</a>
+<li><a href="PointProcess__To_TextGrid__vuv____.html">PointProcess: To TextGrid (vuv)...</a>
+<li><a href="PointProcess__To_TextGrid___.html">PointProcess: To TextGrid...</a>
+<li><a href="Source-filter_synthesis_1__Creating_a_source_from_pitch.html">Source-filter synthesis 1. Creating a source from pitch targets</a>
+<li><a href="time_domain.html">time domain</a>
+<li><a href="Voice_6__Automating_voice_analysis_with_a_script.html">Voice 6. Automating voice analysis with a script</a>
+<li><a href="What_was_new_in_3_6_.html">What was new in 3.6?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110128</p>
+</address>
+</body>
+</html>

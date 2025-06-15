@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: To TableOfReal (means by row labels)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: To TableOfReal (means by row labels)...
+</b></font></table></table>
+<p>A command that appears in the <b>Multivariate statistics</b> menu if you select a <a href="TableOfReal.html">TableOfReal</a>. It calculates the multivariate means for the different row labels from the selected TableOfReal.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Expand</b>
+<dd>when <i>off</i>, then for a table with <i>n</i> rows and <i>m</i> different labels (<i>m</i>&#8804;<i>n</i>), the resulting table will have <i>m</i> rows. When <i>on</i>, the dimensions of the resulting table will be the same as the originating, and corresponding means substituded in each row.</dd>
+</dl>
+<h2>Example</h2>
+<p>The following commands</p>
+<code>   @@Create TableOfReal (Pols 1973)...|Create TableOfReal (Pols 1973)@: "no"<br></code>
+<code>   To TableOfReal (means by row labels): 0<br></code>
+<p>will result in a new TableOfReal that has 12 rows. Each row will contain the mean F1, F2 and F3 values for a particular vowel. These means were obtained from 50 representations of that vowel.</p>
+<p>If we had chosen the <i>expansion</i>:</p>
+<code>   To TableOfReal (means by row labels): "yes"<br></code>
+<p>the resulting TableOfReal would have had 600 rows. This representation  comes in handy when, for example, you have to calculate deviations from the mean.</p>
+<hr>
+<address>
+	<p>© djmw 20140117</p>
+</address>
+</body>
+</html>

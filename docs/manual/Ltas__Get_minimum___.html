@@ -1,0 +1,30 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Ltas: Get minimum...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Ltas: Get minimum...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="Ltas.html">Ltas</a> object.</p>
+<h2>Return value</h2>
+<p>the minimum value (in dB) within a specified frequency range.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>From frequency (Hz))</b>
+<dt><b>To frequency (Hz)</b>
+<dd>the selected frequency domain. Values outside this domain are ignored. If <b>To frequency</b> is not greater than <b>From frequency</b>, the entire frequency domain of the Ltas object is considered.</dd>
+<dt><i>Interpolation</i>
+<dd>the interpolation method (<b>none</b>, <b>parabolic</b>, <b>cubic</b>, <b>sinc70</b>, <b>sinc700</b>) of the <a href="vector_peak_interpolation.html">vector peak interpolation</a>. The standard is <b>none</b> because of the usual large binning. If the Ltas was computed with <a href="Spectrum__To_Ltas__1-to-1_.html">Spectrum: To Ltas (1-to-1)</a>, a <b>parabolic</b> or <b>cubic</b> interpolation would be more appropriate.</dd>
+</dl>
+<hr>
+<address>
+	<p>© ppgb 20200912</p>
+</address>
+</body>
+</html>

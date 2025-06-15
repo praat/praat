@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Script for listing time–F0–intensity</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Script for listing time–F0–intensity
+</b></font></table></table>
+<p>"I want a list of pitch and intensity values at the same times."</p>
+<p>Since <a href="Sound__To_Pitch___.html">Sound: To Pitch...</a> and <a href="Sound__To_Intensity___.html">Sound: To Intensity...</a> do not give values at the same times, you create separate pitch and intensity contours with high time resolution, then interpolate. In the following example, you get pitch and intensity values at steps of 0.01 seconds by interpolating curves that have a time resolution of 0.001 seconds.</p>
+<code>   sound = selected ("Sound")<br></code>
+<code>   tmin = Get start time<br></code>
+<code>   tmax = Get end time<br></code>
+<code>   To Pitch: 0.001, 75, 300<br></code>
+<code>   Rename: "pitch"<br></code>
+<code>   selectObject: sound<br></code>
+<code>   To Intensity: 75, 0.001<br></code>
+<code>   Rename: "intensity"<br></code>
+<code>   writeInfoLine: "Here are the results:"<br></code>
+<code>   for i to (tmax-tmin)/0.01<br></code>
+<code>      time = tmin + i * 0.01<br></code>
+<code>      selectObject: "Pitch pitch"<br></code>
+<code>      pitch = Get value at time: time, "Hertz", "linear"<br></code>
+<code>      selectObject: "Intensity intensity"<br></code>
+<code>      intensity = Get value at time: time, "cubic"<br></code>
+<code>      appendInfoLine: fixed$ (time, 2), " ", fixed$ (pitch, 3), " ", fixed$ (intensity, 3)<br></code>
+<code>   endfor<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting_examples.html">Scripting examples</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20200912</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OT learning 2.3. Defining your own grammar</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OT learning 2.3. Defining your own grammar
+</b></font></table></table>
+<p>By editing a text file created from an example in the <a href="New_menu.html">New menu</a>, you can define your own OT grammars.</p>
+<p>As explained at <a href="Save_as_text_file___.html">Save as text file...</a>, Praat is quite resilient about its text file formats. As long as the strings and numbers appear in the correct order, you can redistribute the data across the lines, add all kinds of comments, or leave the comments out. For the N<font size=-1>O</font>C<font size=-1>ODA</font> example, the text file could also have looked like:</p>
+<code>   "ooTextFile"<br></code>
+<code>   "OTGrammar 2"<br></code>
+<code>   &lt;OptimalityTheory&gt;<br></code>
+<code>   0.0   ! leak<br></code>
+<code>   2   ! number of constraints<br></code>
+<code>   "N\s{O}C\s{ODA}" 100 100  1<br></code>
+<code>   "P\s{ARSE}"       90  90  1<br></code>
+<code>   0   ! number of fixed rankings<br></code>
+<code>   2   ! number of accepted inputs<br></code>
+<code>   "pat" 2      ! input form with number of output candidates<br></code>
+<code>      "pa"  0 1   ! first candidate with violations<br></code>
+<code>      "pat" 1 0   ! second candidate with violations<br></code>
+<code>   "pa" 1       ! input form with number of candidates<br></code>
+<code>      "pa"  0 0<br></code>
+<p>To define your own grammar, you just provide a number of constraints and their rankings, and all the possible input forms with all their output candidates, and all the constraint violations for each candidate. The order in which you specify the constraints is free (you don't have to specify the highest-ranked first), as long as the violations are in the same order; you could also have reversed the order of the two input forms, as long as the corresponding candidates follow them; and, you could also have reversed the order of the candidates within the /pat/ tableau, as long as the violations follow the output forms. Thus, you could just as well have written:</p>
+<code>   "ooTextFile"<br></code>
+<code>   "OTGrammar 2"<br></code>
+<code>   &lt;OptimalityTheory&gt; 0.0<br></code>
+<code>   2<br></code>
+<code>   "P\s{ARSE}"       90  90 1.0<br></code>
+<code>   "N\s{O}C\s{ODA}" 100 100 1.0<br></code>
+<code>   0<br></code>
+<code>   2<br></code>
+<code>   "pa" 1<br></code>
+<code>      "pa"  0 0<br></code>
+<code>   "pat" 2<br></code>
+<code>      "pat" 0 1<br></code>
+<code>      "pa"  1 0<br></code>
+<p>The <code><font size=+1><OptimalityTheory></font></code> thing in the above refers to the <i>decision strategy</i>. In this tutorial I mostly assume OT&#8217;s strict ranking, but you can experiment with Smolensky&#8217;s <code><font size=+1><HarmonicGrammar></font></code> (where the constraint disharmonies represent addable, possibly negative weights), or with Frank Keller&#8217;s <code><font size=+1><LinearOT></font></code> (like Harmonic Grammar, but with the restriction that negative disharmonies do not count), or with <code><font size=+1><PositiveHG></font></code> (like Harmonic Grammar, but with the restriction that disharmonies below 1.0 have weight 1.0), or with <code><font size=+1><ExponentialHG></font></code> (where the weights are exp(disharmony), somewhere between Harmonic Grammar and Linear OT), or with a <code><font size=+1><MaximumEntropy></font></code> grammar (where the probability that a candidate is chosen is proportional to exp(-disharmony)).</p>
+<p>The <code><font size=+1>leak</font></code> thing in the above refers to the amount to which constraint weights (especially in Harmonic Grammar) can leak while learning.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="OT_learning.html">OT learning</a>
+<li><a href="OT_learning_2__The_grammar.html">OT learning 2. The grammar</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110129</p>
+</address>
+</body>
+</html>

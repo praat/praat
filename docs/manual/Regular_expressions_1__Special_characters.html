@@ -1,0 +1,61 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Regular expressions 1. Special characters</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Regular expressions 1. Special characters
+</b></font></table></table>
+<p>The following characters are the <i>meta</i> characters that give special meaning to the regular expression search syntax:</p>
+<dl>
+<dt><b></b>\<b></b>   the backslash <i>escape</i> character.
+<dd>The backslash gives special meaning to the character following it. For example, the combination "\n" stands for the <i>newline</i>, one of the <a href="Regular_expressions_5__Special_control_characters.html">control characters</a>. The combination "\w" stands for a "word" character, one of the <a href="Regular_expressions_6__Convenience_escape_sequences.html">convenience escape sequences</a> while "\1" is one of the <a href="Regular_expressions_8__Substitution_special_characters.html">substitution special characters</a>.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: The regex "aa\n" tries to match two consecutive "a"s at the end of a line, inclusive the newline character itself.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "a\+" matches "a+" and not a series of one or "a"s.</dd>
+<dt><b>^</b>    the caret is the <a href="Regular_expressions_3__Anchors.html">anchor</a> for the start of the string, or the negation symbol.
+<dd>&nbsp;&nbsp;&nbsp;Example: "^a" matches "a" at the start of the string.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "[^0-9]" matches any non digit.</dd>
+<dt><b>$</b>    the dollar sign is the <a href="Regular_expressions_3__Anchors.html">anchor</a> for the end of the string.
+<dd>&nbsp;&nbsp;&nbsp;Example: "b$" matches a "b" at the end of a line.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "^$" matches the empty string.</dd>
+<dt><b>{ }</b>    the opening and closing curly brackets are used as range <a href="Regular_expressions_2__Quantifiers.html">quantifiers</a>.
+<dd>&nbsp;&nbsp;&nbsp;Example: "a{2,3}" matches "aa" or "aaa".</dd>
+<dt><b>[ ]</b>    the opening and closing square brackets define a character class to match a <i>single</i> character.
+<dd>The "^" as the first character following the "[" negates, and the match is for the characters <i>not</i> listed. The "-" denotes a range of characters. Inside a "[  ]" character class construction, most special characters are interpreted as ordinary characters.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "[d-f]" is the same as "[def]" and matches "d", "e" or "f".</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "[a-z]" matches any lower-case characters in the alphabet.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "[^0-9]" matches any character that is not an ASCII digit.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: A search for "[][()?&lt;&gt;$^.*?^]" in the string "[]()?&lt;&gt;$^.*?^" followed by a replace string "r" has the result "rrrrrrrrrrrrr". Here the search string is <i>one</i> character class and all the meta characters are interpreted as ordinary characters without the need to escape them.</dd>
+<dt><b>( )</b>    the opening and closing parenthes3s are used for grouping characters (or other regexes).
+<dd>The groups can be referenced in both the search and the <a href="Regular_expressions_8__Substitution_special_characters.html">substitution</a> phase. There also exist some <a href="Regular_expressions_4__Special_constructs_with_parenthe.html">special constructs with parentheses</a>.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "(ab)\1" matches "abab".</dd>
+<dt><b>.</b>    the dot matches any character except the newline symbol.
+<dd>&nbsp;&nbsp;&nbsp;Example: ".a" matches two consecutive characters where the last one is "a".</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: ".*\.txt$" matches all strings that end in ".txt".</dd>
+<dt><b>*</b>    the asterisk is the match-zero-or-more <a href="Regular_expressions_2__Quantifiers.html">quantifier</a>.
+<dd>&nbsp;&nbsp;&nbsp;Example: "^.*$" matches an entire line. </dd>
+<dt><b>+</b>    the plus sign is the match-one-or-more quantifier.
+<dt><b>?</b>    the question mark is the match-zero-or-one quantifier. The question mark is also used in  <a href="Regular_expressions_4__Special_constructs_with_parenthe.html">special constructs with parentheses</a> and in <a href="Regular_expressions_2__Quantifiers.html">changing match behaviour</a>.
+<dt><b>|</b>    the vertical pipe separates a series of alternatives.
+<dd>&nbsp;&nbsp;&nbsp;Example: "(a|b|c)a" matches "aa" or "ba" or "ca".</dd>
+<dt><b>&lt; &gt;</b>    the smaller and greater signs are <a href="Regular_expressions_3__Anchors.html">anchors</a> that specify a left or right word boundary.
+<dt><b>-</b>    the minus sign indicates a range in a character class (when it is not at the first position after the "[" opening bracket or the last position before the "]" closing bracket.
+<dd>&nbsp;&nbsp;&nbsp;Example: "[A-Z]" matches any uppercase character.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "[A-Z-]" or "[-A-Z]" match any uppercase character or "-".</dd>
+<dt><b>&amp;</b>    the ampersand is the "substitute complete match" symbol.
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Regular_expressions.html">Regular expressions</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20010718</p>
+</address>
+</body>
+</html>

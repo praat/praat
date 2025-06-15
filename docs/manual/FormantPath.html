@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>FormantPath</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+FormantPath
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. A <b>FormantPath</b> object maintains a path through a collection of Formant objects, each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.</p>
+<p>A FormantPath combines a collection of <a href="Formant.html">Formant</a>s with a TextGrid that indicates which of these formants is preferred in a certain time interval. </p>
+<p>As an example we consider a FormantPath that has nine Formant objects in its collection. Suppose these formant objects were the result of nine <a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a> analyses of the <b>same</b> sound, however, with a difference only in the "Formant ceiling (Hz)" parameter setting which was 4093.7, 4303.5, 4524.2, 4756.1, 5000.0, 5256.4, 5525.9, 5809.2, and 6107.0 Hz, respectively. In this way, this collection of Formants functions as a set of alternative analyses where the "Time step", the "Max. number of formants", the "Window length" and the "Pre-emphasis from" are constant for each analysis and only the frequency interval in which the number of formants should fit varies. </p>
+<p>You create a FormantPath from a Sound with the <a href="Sound__To_FormantPath__burg____.html">Sound: To FormantPath (burg)...</a> command. The FormantPath example above could have been created from a Sound by:</p>
+<code>   To FormantPath (burg): 0.005, 5.0, 5000.0, 0.025, 50.0, 0.05, 4<br></code>
+<p>The Formant object which has a ceiling of 5000 Hz, the object at the middle in the set, here corresponds to the result of the "standard" analysis for a male voice where the interval from 0 to 5000 Hz is chosen and we expect, on average, five formant to exist in this interval. </p>
+<p>To choose your own path through the alternatives you can use Praat's <a href="FormantPathEditor.html">FormantPathEditor</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="FormantPath__Down_to_Table__optimal_interval____.html">FormantPath: Down to Table (optimal interval)...</a>
+<li><a href="FormantPath__Down_to_Table__stresses____.html">FormantPath: Down to Table (stresses)...</a>
+<li><a href="What_was_new_in_6_2_.html">What was new in 6.2?</a>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20230225</p>
+</address>
+</body>
+</html>

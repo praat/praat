@@ -1,0 +1,43 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Source-filter synthesis 1. Creating a source from pitch targets</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Source-filter synthesis 1. Creating a source from pitch targets
+</b></font></table></table>
+<p>Creating a glottal source signal for speech synthesis involves creating a <a href="PointProcess.html">PointProcess</a>, which is a series of time points that should represent the exact moments of glottal closure.</p>
+<p>You may want to start with creating a well-defined pitch contour. Suppose you want to create a sound with a duration of half a second with a pitch that falls from 300 to 200 Hz during that time. You first create an empty <a href="PitchTier.html">PitchTier</a> by choosing <a href="Create_PitchTier___.html">Create PitchTier...</a> from the <b>New</b> menu (I call this PitchTier &#8220;empty&#8221; because it does not contain any pitch information yet); you may want to name the PitchTier &#8220;source&#8221; and have it start at 0 seconds and end at 0.5 seconds. Once the PitchTier exists and is selected, you can <b>View &amp; Edit</b> it to add pitch points (pitch targets) to it at certain times (or you choose <a href="PitchTier__Add_point___.html">PitchTier: Add point...</a> from the <b>Modify</b> menu repeatedly). You could add a pitch point of 150 Hz at time 0.0 and a pitch point of 100 Hz at time 0.5. In the PitchTier window, you can see that the pitch curve falls linearly from 150 to 100 Hz during its time domain:</p>
+<p align=middle><img height=250 width=450 src=Source-filter_synthesis_1__Creating_a_source_from_pitch_1.png></p><p>You can hear the falling pitch by clicking on the rectangles in the PitchTier window (or by clicking <b>Play pulses</b>, <b>Hum</b>, or <b>Play sine</b> in the Objects window).</p>
+<p>From this PitchTier, you can create a <a href="PointProcess.html">PointProcess</a> with <a href="PitchTier__To_PointProcess.html">PitchTier: To PointProcess</a>. The resulting PointProcess now represents a series of glottal pulses. To make some parts of this point process voiceless, you can use <a href="PointProcess__Remove_points_between___.html">PointProcess: Remove points between...</a>. It is advisable to make the very beginning and end of this point process voiceless, so that the filtered sound will not start or end abruptly. In the following example, the first and last 20 ms are devoiced, and a stretch of 70 ms in the middle is made voiceless as well, perhaps because you want to simulate a voiceless plosive there:</p>
+<p align=middle><img height=250 width=450 src=Source-filter_synthesis_1__Creating_a_source_from_pitch_2.png></p><p>Now that we have a glottal point process (a glottal pulse train), the only thing left is to turn it into a sound by choosing <a href="PointProcess__To_Sound__phonation____.html">PointProcess: To Sound (phonation)...</a>. If you use the standard settings of this command (but with <b>Adaptation factor</b> set to 0.6), the result will be a <a href="Sound.html">Sound</a> with reasonable glottal flow derivatives centred around each of the original pulses in the point process. You can check this by selecting the Sound and choosing <b>View &amp; Edit</b>:</p>
+<p align=middle><img height=250 width=450 src=Source-filter_synthesis_1__Creating_a_source_from_pitch_3.png></p><p>You will also see that the amplitude of the first two glottal wave shapes of every voiced stretch is (realistically) somewhat smaller than the amplitudes of the following wave shapes; This is the result of setting <b>Adaptation factor</b> to 0.6.</p>
+<p>What you have now is what we call a <i>glottal source signal</i>. It does two things: it contains information on the glottal flow, and it already takes into account one aspect of the <i>filter</i>, namely the radiation at the lips. This combination is standard procedure in acoustic synthesis.</p>
+<p>The glottal source signal sounds as a voice without a vocal tract. The following section describes how you add vocal-tract resonances, i.e. the <i>filter</i>.</p>
+<h2>Automation</h2>
+<p>In a clean Praat script, the procedure described above will look as follows:</p>
+<code>   pitchTier = Create PitchTier: “source”, 0, 0.5<br></code>
+<code>   Add point: 0.0, 150<br></code>
+<code>   Add point: 0.5, 100<br></code>
+<code>   pulses = To PointProcess<br></code>
+<code>   Remove points between: 0, 0.02<br></code>
+<code>   Remove points between: 0.24, 0.31<br></code>
+<code>   Remove points between: 0.48, 0.5<br></code>
+<code>   source = To Sound (phonation): 44100, 0.6, 0.05, 0.7, 0.03, 3.0, 4.0<br></code>
+<code>   removeObject: pitchTier, pulses<br></code>
+<code>   selectObject: source<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Source-filter_synthesis.html">Source-filter synthesis</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140421</p>
+</address>
+</body>
+</html>

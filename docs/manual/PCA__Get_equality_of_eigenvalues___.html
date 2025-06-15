@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PCA: Get equality of eigenvalues...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PCA: Get equality of eigenvalues...
+</b></font></table></table>
+<p>A command to get the probability that some of the eigenvalues of the selected <a href="PCA.html">PCA</a> object are equal. A low probability means that it is not very likely that that these numbers are equal.</p>
+<p>We test the hypothesis <i>H</i><sub>0</sub>: <i>&#955;</i><sub><i>from</i></sub> = ... = <i>&#955;</i><sub><i>to</i></sub> that <i>r</i> (= <i>to</i>&#8211;<i>from</i>+1) of the eigenvalues &#955; of the covariance matrix are equal. The remaining eigenvalues are unrestricted as to their values and multiplicities. The alternative hypothesis to <i>H</i><sub>0</sub> is that some of the eigenvalues in the set are distinct.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Eigenvalue range</b>
+<dd>define the range of eigenvalues to be tested for equality.</dd>
+<dt><b>Conservative test</b>
+<dd>when on, a more conservative estimate for <i>n</i> is chosen (see below).</dd>
+</dl>
+<h2>Details</h2>
+<p>The test statistic is:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#967;<sup>2</sup> = &#8211;<i>n</i> &#931;<sub><i>j</i>=<i>from</i>..<i>to</i></sub> ln <i>eigenvalue</i>[<i>j</i>] + <i>n</i> <i>r</i> ln (&#931;<sub><i>j</i>=<i>from</i>..<i>to</i></sub> <i>eigenvalue</i>[<i>j</i>] / <i>r</i>),</table>
+<p>with <i>r</i>(<i>r</i>+1)/2 &#8211;1 degrees of freedom. Here <i>n</i> = <i>totalNumberOfCases</i> &#8211; 1.</p>
+<p>A special case occurs when the variation in the last <i>r</i> dimensions is spherical. In a slightly more conservative test we may replace <i>n</i> by <i>n</i>&#8211;<i>from</i>&#8211;(2<i>r</i><sup>2</sup>+<i>r</i>+2)/6<i>r</i>.</p>
+<p>Also see <a href="Morrison__1990_.html">Morrison (1990)</a>, page 336.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Principal_component_analysis.html">Principal component analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 19981102</p>
+</address>
+</body>
+</html>

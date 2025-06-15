@@ -1,0 +1,95 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 8. Running multiple experiments</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 8. Running multiple experiments
+</b></font></table></table>
+<p>In all the earlier examples, either the set of stimulus sounds or the set of response sounds stayed the same throughout the experiment. If you want more than one set of stimuli, or more than one set of responses, you can run several experiments after each other, simply by selecting more than one experiment, then clicking <b>Run</b>.</p>
+<p>You can put all these ExperimentMFC objects in one text file. The following example contains two experiments. The second line has to contain the text <code><font size=+1>"Collection"</font></code>, followed by the number of experiments:</p>
+<code>   "ooTextFile"<br></code>
+<code>   "Collection" 2<br></code>
+<code>   <br></code>
+<code>   "ExperimentMFC 7" "i"<br></code>
+<code>   blankWhilePlaying? &lt;no&gt;<br></code>
+<code>   stimuliAreSounds? &lt;no&gt; "" "" "" "" 0 0 0<br></code>
+<code>   numberOfDifferentStimuli = 1<br></code>
+<code>      "i"  "Choose the best %%ee%."<br></code>
+<code>   numberOfReplicationsPerStimulus = 1<br></code>
+<code>   breakAfterEvery = 0<br></code>
+<code>   randomize = &lt;CyclicNonRandom&gt;<br></code>
+<code>   startText = "You are going to choose the best %%ee%. Click to start."<br></code>
+<code>   runText = ""<br></code>
+<code>   pauseText = ""<br></code>
+<code>   endText = "Thank you for choosing the best %%ee%. Click to proceed."<br></code>
+<code>   maximumNumberOfReplays = 0<br></code>
+<code>   replayButton = 0 0 0 0 "" ""<br></code>
+<code>   okButton = 0.8 0.95 0.45 0.55 "OK" ""<br></code>
+<code>   oopsButton = 0 0 0 0 "" ""<br></code>
+<code>   responsesAreSounds? &lt;yes&gt;<br></code>
+<code>   responseFileNameHead = "Sounds/"<br></code>
+<code>   responseFileNameTail = ".wav"<br></code>
+<code>   responseCarrierBefore = ""<br></code>
+<code>   responseCarrierAfter = ""<br></code>
+<code>   responseInitialSilenceDuration = 0.3<br></code>
+<code>   responseMedialSilenceDuration = 0<br></code>
+<code>   responseFinalSilenceDuration = 0<br></code>
+<code>   numberOfDifferentResponses = 6<br></code>
+<code>      0.2 0.3 0.7 0.8 "" 10 "" "i1"<br></code>
+<code>      0.3 0.4 0.7 0.8 "" 10 "" "i2"<br></code>
+<code>      0.4 0.5 0.7 0.8 "" 10 "" "i3"<br></code>
+<code>      0.5 0.6 0.7 0.8 "" 10 "" "i4"<br></code>
+<code>      0.6 0.7 0.7 0.8 "" 10 "" "i5"<br></code>
+<code>      0.7 0.8 0.7 0.8 "" 10 "" "i6"<br></code>
+<code>   numberOfGoodnessCategories = 0<br></code>
+<code>   <br></code>
+<code>   "ExperimentMFC 7" "u"<br></code>
+<code>   blankWhilePlaying? &lt;no&gt;<br></code>
+<code>   stimuliAreSounds? &lt;no&gt; "" "" "" "" 0 0 0<br></code>
+<code>   numberOfDifferentStimuli = 1<br></code>
+<code>      "u"  "Choose the best %%oo%."<br></code>
+<code>   numberOfReplicationsPerStimulus = 1<br></code>
+<code>   breakAfterEvery = 0<br></code>
+<code>   randomize = &lt;CyclicNonRandom&gt;<br></code>
+<code>   startText = "You are going to choose the best %%oo%. Click to start."<br></code>
+<code>   runText = ""<br></code>
+<code>   pauseText = ""<br></code>
+<code>   endText = "All the experiments have finished. You can call the experimenter."<br></code>
+<code>   maximumNumberOfReplays = 0<br></code>
+<code>   replayButton = 0 0 0 0 "" ""<br></code>
+<code>   okButton = 0.8 0.95 0.45 0.55 "OK" ""<br></code>
+<code>   oopsButton = 0 0 0 0 "" ""<br></code>
+<code>   responsesAreSounds? &lt;yes&gt;<br></code>
+<code>   responseFileNameHead = "Sounds/"<br></code>
+<code>   responseFileNameTail = ".wav"<br></code>
+<code>   responseCarrierBefore = ""<br></code>
+<code>   responseCarrierAfter = ""<br></code>
+<code>   responseInitialSilenceDuration = 0.3<br></code>
+<code>   responseMedialSilenceDuration = 0<br></code>
+<code>   responseFinalSilenceDuration = 0<br></code>
+<code>   numberOfDifferentResponses = 6<br></code>
+<code>      0.2 0.3 0.7 0.8 "" 10 "" "u1"<br></code>
+<code>      0.3 0.4 0.7 0.8 "" 10 "" "u2"<br></code>
+<code>      0.4 0.5 0.7 0.8 "" 10 "" "u3"<br></code>
+<code>      0.5 0.6 0.7 0.8 "" 10 "" "u4"<br></code>
+<code>      0.6 0.7 0.7 0.8 "" 10 "" "u5"<br></code>
+<code>      0.7 0.8 0.7 0.8 "" 10 "" "u6"<br></code>
+<code>   numberOfGoodnessCategories = 0<br></code>
+<p>In this example, the participant first has to choose the best /i/ from among six [i]-like sounds, which are in the sound files <code><font size=+1>i1.wav</font></code> through <code><font size=+1>i6.wav</font></code>. After that, she has to choose the best /u/ from among six [u]-like sounds, which are in the sound files <code><font size=+1>u1.wav</font></code> through <code><font size=+1>u6.wav</font></code>. The percent signs in <code><font size=+1>%%ee%</font></code> mean that <i>ee</i> will be italicized.</p>
+<p>If you read this file with <b>Read from file...</b>, you will see two ExperimentMFC objects, named <code><font size=+1>i</font></code> and <code><font size=+1>u</font></code>. They both stand selected. You then click <b>Run</b>, and after the participant finishes, you select both ExperimentMFC objects again (probably they still stand selected), and click <b>Extract results</b>. You will then get two <b>ResultMFC</b> objects.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20160925</p>
+</address>
+</body>
+</html>

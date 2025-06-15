@@ -1,0 +1,92 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Sound (blind source separation)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Sound (blind source separation)...
+</b></font></table></table>
+<p>Analyze the selected multi-channel sound into its independent components by an iterative method.</p>
+<p>The <a href="blind_source_separation.html">blind source separation</a> method to find the independent components tries to simultaneously diagonalize a number of <a href="CrossCorrelationTable.html">CrossCorrelationTable</a>s that are calculated from the multi-channel sound at different lag times.</p>
+<h2>Settings</h2>
+<p align=middle><img height=380 width=540 src=Sound__To_Sound__blind_source_separation_____1.png></p><dl>
+<dt><b>Time range (s)</b>
+<dd>defines the time range over which the <b>CrossCorrelationTable</b>s of the sound will be calculated.</dd>
+<dt><b>Number of cross-correlations</b>
+<dd>defines the number of <b>CrossCorrelationTable</b>s to be calculated.</dd>
+<dt><b>Lag times</b>
+<dd>defines the lag time <i>&#964;</i><sub>0</sub> for the <b>CrossCorrelationTable</b>s. These tables are calculated at lag times <i>&#964;</i><sub>k</sub>=(<i>k</i> - 1)<i>&#964;</i><sub>0</sub>, where <i>k</i> runs from 1 to <i>numberOfCrosscorrelations</i>.</dd>
+<dt><b>Maximum number of iterations</b>
+<dd>defines a stopping criterion for the iteration. The iteration will stops when this number is reached.</dd>
+<dt><b>Tolerance</b>
+<dd>defines another stopping criterion that depends on the method used.</dd>
+<dt><b>Diagonalization method</b>
+<dd>defines the method to determine the independent components.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>This method tries to decompose the sound according to the <i>instantaneous</i> mixing model</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>Y</b>=<b>A</b>&#183;<b>X</b>.</table>
+<p>In this model <b>Y</b> is a matrix with the selected multi-channel sound, <b>A</b> is a so-called <i>mixing matrix</i> and <b>X</b> is a matrix with the independent components. Essentially the model says that each channel in the multi-channel sound is a linear combination of the independent sound components in <b>X</b>. If we would know the mixing matrix <b>A</b> we could easily solve the model above for <b>X</b> by standard means. However, if we don't know <b>A</b> and we don't know <b>X</b>, the decomposition of <b>Y</b> is underdetermined.  This means there are an infinite number of possible combinations of <b>A</b> and <b>X</b> that result in the same <b>Y</b>. </p>
+<p>One approach to solve the equation above is to make assumptions about the statistical properties of the components in the matrix <b>X</b>: it turns out that a sufficient assumption is to assume that the components in <b>X</b> at each time instant are <i>statistically independent</i>. This is not an unrealistic assumption in many cases, although in practice it need not be exactly the case. Another assumption is that the mixing matrix is constant, which means that the mixing conditions did not change during the recoding of the sound.</p>
+<p>The theory says that statistically independent signals are not correlated (although the reverse is not always true: signals that are not correlated don't have to be statistically independent). The methods implemented here all follow this lead as follows. If we calculate the <a href="CrossCorrelationTable.html">CrossCorrelationTable</a> for the left and the right side signals of the equation above, then, for the multi-channel sound <b>Y</b> this will result in a cross-correlation matrix <b>C</b>. For the right side we obtain <b>A</b>&#183;<b>D</b>&#183;<b>A</b>&#8242;, where <b>D</b> is a diagonal matrix because all the cross-correlations between different independent components are zero by definition. This results in the following identity: </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>C</b>(&#964;)=<b>A</b>&#183;<b>D</b>(&#964;)&#183;<b>A</b>&#8242;, for all values of the lag time &#964;.</table>
+<p>This equation says that, given the model, the cross-correlation matrix can be diagonalized for all values of the lag time <i>by the same transformation matrix</i> <b>A</b>.</p>
+<p>If we calculate the cross-correlation matrices for a number of different lag times, say 20, we then have to obtain the matrix <b>A</b> that diagonalizes them all. Unfortunately there is no closed form solution that diagonalizes more than two matrices at the same time and we have to resort to iterative algorithms for joint diagonalization. </p>
+<p>Two of these algorithms are the <b>qdiag</b> method as described in <a href="Vollgraf___Obermayer__2006_.html">Vollgraf & Obermayer (2006)</a> and the <b>ffdiag</b> method as described in <a href="Ziehe_et_al___2004_.html">Ziehe et al. (2004)</a>. </p>
+<p>Unfortunately the convergence criteria of these two algorithms cannot easily be compared as the criterion for the <b>ffdiag</b> algorithm is the relative change of the square root of the sum of the squared off-diagonal elements of the transformed cross-correlation matrices and the criterion for <b>qdiag</b> is the largest change in the eigenvectors norm during an iteration.</p>
+<h2>Example</h2>
+<p>We start by creating a speech synthesizer that need to create two sounds. We will mix the two sounds and finally our blind source separation software will try to undo our mixing by extracting the two original sounds as well as possible from the two mixtures.</p>
+<code>   synth = Create SpeechSynthesizer: "English (Great Britain)", "Female1"<br></code>
+<code>   s1 = To Sound: "This is some text", "no"<br></code>
+<p>The first speech sound was created from the text "This is some text" at a speed of 175 words per minute.</p>
+<code>   selectObject: synth<br></code>
+<code>   Speech output settings: 44100, 0.01, 1.2, 1.0, 145, "IPA"<br></code>
+<code>   Estimate speech rate from speech: "no"<br></code>
+<code>   s2 = To Sound.: "Abracadabra, abra", "no"<br></code>
+<p>The second sound "Abracadabra, abra" was synthesized at 145 words per minute with a somewhat larger pitch excursion (80) than the previous sound (50).</p>
+<code>   plusObject: s1<br></code>
+<code>   stereo = Combine to stereo<br></code>
+<p>We combine the two separate sounds into one stereo sound because our blind source separation works on multichannel sounds only.</p>
+<code>   mm = Create simple MixingMatrix: "mm", 2, 2, "1.0 2.0 2.0 1.0"<br></code>
+<p>A two by two MixingMatrix is created.</p>
+<code>   plusObject: stereo<br></code>
+<code>   Mix<br></code>
+<p>The last command, Mix, creates a new two-channel sound where each channel is a linear mixture of the two channels in the stereo sound, i.e. channel 1 is the sum of s1 and s2 with mixture strengths of 1 and 2, respectively. The second channel is also the sum of s1 and s2 but now with mixture strengths 2 and 1, respectively.</p>
+<code>   To Sound (blind source separation): 0.1, 1, 20, 0.0002, 100, 0.001, "ffdiag"<br></code>
+<p>The two channels in the new sound that results from this command contain a reasonable approximation of the two originating sounds.</p>
+<p>In the top panel the two speech sounds "This is some text" and "abracadabra, abra". The middle panel shows the two mixed sounds while the lower panel shows the two sounds after unmixing.</p>
+<p align=middle><img height=600 width=600 src=Sound__To_Sound__blind_source_separation_____2.png></p><p>The first two panels will not change between different sessions of praat. The last panel, which shows the result of the blind source separation, i.e. unmixing, will not always be the same because of two things. In the first place the unmixing always starts with an initialisation with random values of the parameters that we have to determine for the blind source separation. Therefore the iteration sequence will never be the same and the final outcomes might differ. In the second place, as was explained in the <a href="blind_source_separation.html">blind source separation</a> manual, the unmixing is only unique up to a scale factor and a permutation. Therefore the channels in the unmixed sound do not necessarily correspond to the corresponding channel in our "original" stereo sound.</p>
+<p>The complete script:</p>
+<code>   syn = Create SpeechSynthesizer: "English (Great Britain)", "Female1"<br></code>
+<code>   s1 = To Sound: "This is some text", "no"<br></code>
+<code>   selectObject: syn<br></code>
+<code>   Speech output settings: 44100, 0.01, 1.2, 1.0, 145, "IPA"<br></code>
+<code>   Estimate speech rate from speech: "no"<br></code>
+<code>   s2 = To Sound: "abracadabra, abra", "no"<br></code>
+<code>   plusObject: s1<br></code>
+<code>   stereo = Combine to stereo<br></code>
+<code>   Select inner viewport: 1, 6, 0.1, 1.9<br></code>
+<code>   Draw: 0, 0, 0, 0, "no", "Curve"<br></code>
+<code>   Draw inner box<br></code>
+<code>   mm = Create simple MixingMatrix: "mm", 2, 2, "1.0 2.0 2.0 1.0"<br></code>
+<code>   plusObject: stereo<br></code>
+<code>   mixed = Mix<br></code>
+<code>   Select inner viewport: 1, 6, 2.1, 3.9<br></code>
+<code>   Draw: 0, 0, 0, 0, "no", "Curve"<br></code>
+<code>   Draw inner box<br></code>
+<code>   unmixed = To Sound (bss): 0.1, 1, 20, 0.00021, 100, 0.001, "ffdiag"<br></code>
+<code>   Select inner viewport: 1, 6, 4.1, 5.9<br></code>
+<code>   Draw: 0, 0, 0, 0, "no", "Curve"<br></code>
+<code>   Draw inner box<br></code>
+<code>   removeObject: unmixed, syn, stereo, s1, s2, mixed, mm<br></code>
+<hr>
+<address>
+	<p>© djmw 20190811</p>
+</address>
+</body>
+</html>

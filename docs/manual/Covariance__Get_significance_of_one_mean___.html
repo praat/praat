@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Covariance: Get significance of one mean...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Covariance: Get significance of one mean...
+</b></font></table></table>
+<p>Gets the level of significance for one mean from the selected <a href="Covariance.html">Covariance</a> object being different from a hypothesized mean.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Index</b>
+<dd>the position of the element in the means vector (centroid) that you want to test. </dd>
+<dt><b>Value</b>
+<dd>the hypothesized mean <i>&#956;</i> (see below).</dd>
+</dl>
+<h2>Behaviour</h2>
+<p>This is the standard test on means when the variance is unknown. The test statistic is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>t</i> = (<i>mean</i> - <i>&#956;</i>) &#8730;<i></i>(N / <i>s</i><sup>2</sup>),</table>
+<p>which has the Student <i>t</i> distribution with <i>ndf</i> = <i>N</i>-1 degrees of freedom.</p>
+<p>In the formulas above, <i>mean</i> is the element of the mean vector at position <i>index</i>, <i>&#956;</i> is the hypothesized mean, <i>N</i> is the number of observations, <i>s</i><sup>2</sup> is the variance at position [<i>index</i>] [<i>index</i>] in the covariance matrix.</p>
+<p>The returned probability <i>p</i> is the <i>two-sided</i> probability</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>p</i> = 2 * studentQ (<i>t</i>, <i>ndf</i>)</table>
+<p>A low probability <i>p</i> means that the difference is significant.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="T-test.html">T-test</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

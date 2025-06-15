@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Pre-emphasize (in-place)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Pre-emphasize (in-place)...
+</b></font></table></table>
+<p>A command to change the spectral slope of every selected <a href="Sound.html">Sound</a> object.</p>
+<p>The reverse of <a href="Sound__De-emphasize__in-place____.html">Sound: De-emphasize (in-place)...</a>.</p>
+<p>This is the in-place version of <a href="Sound__Filter__pre-emphasis____.html">Sound: Filter (pre-emphasis)...</a>, i.e., it does not create a new Sound object but modifies an existing object.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>From frequency (Hz)</b>
+<dd>the frequency <i>F</i> above which the spectral slope will increase by 6 dB/octave.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The pre-emphasis factor <i>&#945;</i> is computed as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#945;</i> = exp (-2 <i>&#960;</i> <i>F</i> &#916;<i>t</i>)</table>
+<p>where &#916;<i>t</i> is the sampling period of the sound. Every sample <i>x</i><sub><i>i</i></sub> of the sound, except <i>x</i><sub>1</sub>, is then changed, going down from the last sample:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>x</i><sub><i>i</i></sub> = <i>x</i><sub><i>i</i></sub> - <i>&#945;</i> <i>x</i><sub><i>i</i>-1</sub></table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Filtering.html">Filtering</a>
+<li><a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a>
+<li><a href="Sound__To_PowerCepstrogram___.html">Sound: To PowerCepstrogram...</a>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2022-04-07</p>
+</address>
+</body>
+</html>

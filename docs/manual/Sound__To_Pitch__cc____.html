@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Pitch (cc)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Pitch (cc)...
+</b></font></table></table>
+<p>A <a href="hidden_commands.html">hidden command</a> that creates a <a href="Pitch.html">Pitch</a> object from every selected <a href="Sound.html">Sound</a> object.</p>
+<p>The parameters are in the following order:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Time step (s)</b> (standard value: 0.0)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Pitch floor (Hz)</b> (standard value: 75 Hz)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Max. number of candidates</b> (standard value: 15)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Very accurate</b> (standard value: <i>off</i>)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Silence threshold</b> (standard value: 0.03)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Voicing threshold</b> (standard value: 0.45)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Octave cost</b> (standard value: 0.01 per octave)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Octave-jump cost</b> (standard value: 0.35)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Voiced / unvoiced cost</b> (standard value: 0.14)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Pitch ceiling (Hz)</b> (standard value: 600 Hz)</dd>
+</dl>
+<p>With the advent of <a href="Sound__To_Pitch__filtered_cross-correlation____.html">Sound: To Pitch (filtered cross-correlation)...</a> in 2023, this command was replaced with <a href="Sound__To_Pitch__raw_cross-correlation____.html">Sound: To Pitch (raw cross-correlation)...</a>.</p>
+<h2>Transitioning</h2>
+<p>While <b>Sound: To Pitch (cc)...</b> will still work in scripts, you may like to transition to <a href="Sound__To_Pitch__raw_cross-correlation____.html">Sound: To Pitch (raw cross-correlation)...</a>. Please note that the <i>Pitch ceiling</i> parameter was moved immediately after <i>Pitch floor</i>, where it fits more logically. For example, you can replace the line</p>
+<code>   <b>To Pitch (cc):</b> 0.0, 75, 15, “off”, 0.03, 0.45, 0.01, 0.35, 0.14, 600<br></code>
+<p>with the entirely equivalent line</p>
+<code>   <b><a href="Sound__To_Pitch__raw_cross-correlation____.html">To Pitch (raw cross-correlation):</a></b> 0.0, 75, 600, 15, “off”, 0.03, 0.45, 0.01, 0.35, 0.14<br></code>
+<hr>
+<address>
+	<p>© Paul Boersma 1996,2003,2023,2024</p>
+</address>
+</body>
+</html>

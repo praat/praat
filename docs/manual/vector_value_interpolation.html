@@ -1,0 +1,82 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>vector value interpolation</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+vector value interpolation
+</b></font></table></table>
+<p>An algorithm for estimating the value of a sampled signal at a specified location.</p>
+<h2>Overview</h2>
+<p>The signal is described with the sequence <i>y</i><sub><i>i</i></sub>, <i>i</i> = 1...<i>n</i>, where <i>n</i> is the number of samples. Each sample <i>i</i> is associated with an <i>x</i> location (typically, time) given by <i>x</i><sub><i>i</i></sub> = <i>x</i><sub>1</sub> + (<i>i</i> - 1) <i>dx</i>, where <i>dx</i> is the sample period, so that the real-valued sample number associated with a given time <i>x</i> is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>s</i> = (<i>x</i> - <i>x</i><sub>1</sub>) / <i>dx</i> + 1</table>
+<p>If the resulting <i>s</i> is an integer number, the <i>y</i> value must be <i>y</i><sub><i>s</i></sub>. Otherwise, the estimated <i>y</i> value <i>y</i>(<i>s</i>) must be interpolated from nearby values of <i>y</i>. The precision of the result depends on the <i>interpolation method</i> of this algorithm.</p>
+<h2>1. Lowest precision: round to sample</h2>
+<p>If the interpolation method is &#8220;nearest&#8221;, we take the value of the nearest point in either direction:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>near</i> &#8801; round (<i>s</i>)</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i>(<i>s</i>) &#8776; <i>y</i><sub><i>near</i></sub></table>
+<h2>2. Middle precision: linear interpolation</h2>
+<p>If you know or assume that the function that underlies your points is continuous, the "rounding" interpolation would be poor, because the rounded value would abruptly change at the centres between the sample points.</p>
+<p>For a linear interpolation, therefore, we use the attested values on both sides (<i>left</i> and <i>right</i>) of <i>s</i>:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>s</i><sub><i>l</i></sub> &#8801; floor (<i>s</i>) ;   <i>s</i><sub><i>r</i></sub> &#8801; <i>s</i><sub><i>l</i></sub> + 1</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i>(<i>s</i>) &#8776; <i>y</i><sub><i>l</i></sub> + (<i>s</i> - <i>s</i><sub><i>l</i></sub>) &#183; (<i>y</i><sub><i>r</i></sub> - <i>y</i><sub><i>l</i></sub>)</table>
+<p>where <b>floor</b> (<i>x</i>) computes the greatest integer not greater than <i>x</i>. This interpolation is continuous.</p>
+<h2>3. Higher precision: cubic interpolation</h2>
+<p>If you know or assume that the function that underlies your points is <i>smooth</i>, i.e. its derivative is defined for every <i>x</i>, linear interpolation would probably be poor, because the derivative of the interpolated function would abruptly change at every sample point.</p>
+<p>The next higher interpolation (&#8220;cubic&#8221;), therefore, is differentiable at sample points. To enforce this, we define the derivatives <i>y</i>&#8242;<sub><i>l</i></sub> and <i>y</i>&#8242;<sub><i>r</i></sub> at the left and right sample points on the basis of <i>their</i> immediate neighbours (i.e., the algorithm needs four sample points), perhaps by a parabolic interpolation through these three points. A parabolic interpolation has the advantage that the extrema will be computed correctly if the underlying function can be approximated by a parabola near its extremes (see <a href="vector_peak_interpolation.html">vector peak interpolation</a>).</p>
+<p>Because the derivative of a parabolic function is a linear function of <i>x</i>, the derivatives at the left and right sample points are simply estimated as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i>&#8242;<sub><i>l</i></sub> &#8776; (<i>y</i><sub><i>r</i></sub> - <i>y</i><sub><i>l</i>-1</sub>) / 2 ;   <i>y</i>&#8242;<sub><i>r</i></sub> &#8776; (<i>y</i><sub><i>r</i>+1</sub> - <i>y</i><sub><i>l</i></sub>) / 2</table>
+<p>Now that we know <i>y</i><sub><i>l</i></sub>, <i>y</i><sub><i>r</i></sub>, <i>y</i>&#8242;<sub><i>l</i></sub>, and <i>y</i>&#8242;<sub><i>r</i></sub>, we can fit these values with a third-degree (<i>cubic</i>) polynomial:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>As</i><sub><i>l</i></sub><sup>3</sup> + <i>Bs</i><sub><i>l</i></sub><sup>2</sup> + <i>Cs</i><sub><i>l</i></sub> + <i>D</i> = <i>y</i><sub><i>l</i></sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>As</i><sub><i>r</i></sub><sup>3</sup> + <i>Bs</i><sub><i>r</i></sub><sup>2</sup> + <i>Cs</i><sub><i>r</i></sub> + <i>D</i> = <i>y</i><sub><i>r</i></sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>3<i>As</i><sub><i>l</i></sub><sup>2</sup> + 2<i>Bs</i><sub><i>l</i></sub> + <i>C</i> = <i>y</i>&#8242;<sub><i>l</i></sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>3<i>As</i><sub><i>r</i></sub><sup>2</sup> + 2<i>Bs</i><sub><i>r</i></sub> + <i>C</i> = <i>y</i>&#8242;<sub><i>r</i></sub></table>
+<p>If we shift the <i>x</i> axis to the left sample point, we can reduce the four equations to</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>D</i> = <i>y</i><sub><i>l</i></sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>A</i> + <i>B</i> + <i>C</i> + <i>D</i> = <i>y</i><sub><i>r</i></sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>C</i> = <i>y</i>&#8242;<sub><i>l</i></sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>3<i>A</i> + 2<i>B</i> + <i>C</i> = <i>y</i>&#8242;<sub><i>r</i></sub></table>
+<p>so that the interpolated value <i>y</i>(<i>s</i>) at any point <i>s</i> between <i>s</i><sub><i>l</i></sub> and <i>s</i><sub><i>r</i></sub> is estimated as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(<i>y</i>&#8242;<sub><i>r</i></sub> + <i>y</i>&#8242;<sub><i>l</i></sub> - 2<i>y</i><sub><i>r</i></sub> + 2<i>y</i><sub><i>l</i></sub>) <i>&#966;</i><sub><i>l</i></sub><sup>3</sup> + (3<i>y</i><sub><i>r</i></sub> - 3<i>y</i><sub><i>l</i></sub> - 2<i>y</i>&#8242;<sub><i>l</i></sub> - <i>y</i>&#8242;<sub><i>r</i></sub>) <i>&#966;</i><sub><i>l</i></sub><sup>2</sup> + <i>y</i>&#8242;<sub><i>l</i></sub> <i>&#966;</i><sub><i>l</i></sub> + <i>y</i><sub><i>l</i></sub></table>
+<p>where <i>&#966;</i><sub><i>l</i></sub> &#8801; <i>s</i> - <i>s</i><sub><i>l</i></sub>. Some rearrangement gives</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i>(<i>s</i>) &#8776; <i>y</i><sub><i>l</i></sub> <i>&#966;</i><sub><i>r</i></sub> + <i>y</i><sub><i>r</i></sub> <i>&#966;</i><sub><i>l</i></sub> +</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>- <i>&#966;</i><sub><i>l</i></sub> <i>&#966;</i><sub><i>r</i></sub> [1/2 (<i>y</i>&#8242;<sub><i>r</i></sub> - <i>y</i>&#8242;<sub><i>l</i></sub>) + (<i>&#966;</i><sub><i>l</i></sub> - 1/2) (<i>y</i>&#8242;<sub><i>l</i></sub> + <i>y</i>&#8242;<sub><i>r</i></sub> - 2(<i>y</i><sub><i>r</i></sub> - <i>y</i><sub><i>l</i></sub>))]</table>
+<p>where <i>&#966;</i><sub><i>r</i></sub> &#8801; 1 - <i>&#966;</i><sub><i>l</i></sub>. From this formula we see:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. The first two terms define the linear interpolation.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. If the underlying function is linear, so that <i>y</i>&#8242;<sub><i>l</i></sub> equals <i>y</i>&#8242;<sub><i>r</i></sub> and both equal <i>y</i><sub><i>r</i></sub> - <i>y</i><sub><i>l</i></sub>, the higher-degree terms are zero.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. If <i>y</i>&#8242;<sub><i>l</i></sub> + <i>y</i>&#8242;<sub><i>r</i></sub> equals 2(<i>y</i><sub><i>r</i></sub> - <i>y</i><sub><i>l</i></sub>), the third-degree term is zero, so that the interpolated function is parabolic.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. At the left and right points, one of the <i>&#966;</i> is 0 and the other is 1, so that at these boundary points, <i>y</i> is computed with exact precision.</dd>
+</dl>
+<h2>4. Highest precision: sinc interpolation</h2>
+<p>If the interpolation method is &#8220;sinc70&#8221; or &#8220;sinc700&#8221;, the algorithm assumes that the signal is a sum of sinc functions, so that a number of points (the <i>interpolation depth</i>: 70 or 700) on each side of <i>s</i> must be taken into account.</p>
+<p>Because the interpolation depth must be finite, the sum of sinc functions is multiplied by a Hanning window:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>s</i><sub><i>l</i></sub> &#8801; floor (<i>s</i>);   <i>s</i><sub><i>r</i></sub> &#8801; <i>s</i><sub><i>l</i></sub> + 1</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#966;</i><sub><i>l</i></sub> &#8801; <i>s</i> - <i>s</i><sub><i>l</i></sub>;   <i>&#966;</i><sub><i>r</i></sub> &#8801; 1 - <i>&#966;</i><sub><i>l</i></sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i>(<i>s</i>) &#8776; &#8721;<sub><i>i</i>=1...<i>N</i></sub> <i>y</i><sub><i>r</i>-<i>i</i></sub> sinc (<i>&#960;</i>(<i>&#966;</i><sub><i>l</i></sub>+<i>i</i>-1)) (1/2 + 1/2 cos (<i>&#960;</i>(<i>&#966;</i><sub><i>l</i></sub>+<i>i</i>-1)/(<i>&#966;</i><sub><i>l</i></sub>+<i>N</i>))) +</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>+ &#8721;<sub><i>i</i>=1...<i>N</i></sub> <i>y</i><sub><i>l</i>+<i>i</i></sub> sinc (<i>&#960;</i>(<i>&#966;</i><sub><i>r</i></sub>+<i>i</i>-1)) (1/2 + 1/2 cos (<i>&#960;</i>(<i>&#966;</i><sub><i>r</i></sub>+<i>i</i>-1)/(<i>&#966;</i><sub><i>r</i></sub>+<i>N</i>)))</table>
+<p>where the sinc function is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>sinc (0) &#8801; 1;   sinc (<i>x</i>) &#8801; sin <i>x</i> / <i>x</i>   for <i>x</i> &#8800; 0</table>
+<p>If <i>s</i> is less than the interpolation depth or greater than <i>n</i> + 1 minus the interpolation depth, the depth is reduced accordingly.</p>
+<p>This method is appropriate for signals that result from sampling a continuous signal after it has been low-pass filtered at the <a href="Nyquist_frequency.html">Nyquist frequency</a>. See:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Sound__Get_value_at_time___.html">Sound: Get value at time...</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formant__Get_value_at_time___.html">Formant: Get value at time...</a>
+<li><a href="Harmonicity__Get_value_at_time___.html">Harmonicity: Get value at time...</a>
+<li><a href="Intensity__Get_value_at_time___.html">Intensity: Get value at time...</a>
+<li><a href="Ltas__Get_value_at_frequency___.html">Ltas: Get value at frequency...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20200912</p>
+</address>
+</body>
+</html>

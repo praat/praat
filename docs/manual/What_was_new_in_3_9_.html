@@ -1,0 +1,97 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>What was new in 3.9?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+What was new in 3.9?
+</b></font></table></table>
+<h2>Praat 3.9, 18 October 2000</h2>
+<p>Editors:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Shift-click and shift-drag extend or shrink selection in editor windows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Grouped editors can have separate zooming and scrolling (FunctionEditor preferences).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Cursor follows playing sound in editors; interruption by Escape key moves the cursor.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGridEditor: optimized for transcribing large corpora: text field, directly movable boundaries, more visible text in tiers, <a href="SpellingChecker.html">SpellingChecker</a>, type while the sound is playing, complete keyboard navigation, control font size, control text alignment, shift-click near boundary adds interval to selection.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Stereo display in LongSound and TextGrid editors.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; LongSoundEditor and TextGridEditor: write selection to audio file.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SoundEditor: added command <b>Extract selection (preserve times)</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; IntervalTierEditor, DurationTierEditor.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Added many query commands in editors.</dd>
+</dl>
+<p>Phonetics library:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Formant__burg____.html">Sound: To Formant...</a>: sample-rate-independent formant analysis.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Harmonicity__ac____.html">Sound: To Harmonicity...</a> (glottal-to-noise excitation ratio).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Pitch: support for ERB units, draw all combinations of line/speckle and linear/logarithmic/semitones/mels/erbs, optionally with TextGrid, Subtract linear fit.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Spectrum: Draw along logarithmic frequency axis.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid: modification commands, Extract part, Shift to zero, Scale times (with Sound or LongSound).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Matrix__To_TableOfReal.html">Matrix: To TableOfReal</a>, <b>Matrix: Draw contour...</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Concatenate Sound and LongSound objects.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; File formats: save PitchTier in spreadsheet format, read CGN syntax files (XML version), text files now completely file-server-safe (independent from Windows/Macintosh/Unix line separators).</dd>
+</dl>
+<p>Statistics and numerics library:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Principal_component_analysis.html">Principal component analysis</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Discriminant_analysis.html">Discriminant analysis</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Polynomial.html">Polynomial</a>: drawing, <a href="Roots.html">root</a> finding etc.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="TableOfReal__Draw_box_plots___.html">TableOfReal: Draw box plots...</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Covariance__To_TableOfReal__random_sampling____.html">Covariance: To TableOfReal (random sampling)...</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="SSCP__Get_sigma_ellipse_area___.html">SSCP: Get sigma ellipse area...</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Query <a href="DTW.html">DTW</a> for &#8220;weighted distance&#8221; of time warp.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Distributions: To Strings (exact)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Strings: Randomize</b></dd>
+</dl>
+<p>Phonology library:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>OTGrammar: To PairDistribution</b>.</dd>
+</dl>
+<p>Graphics:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Full support for colour inkjet printers on Windows and Macintosh.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Full support for high-resolution colour clipboards and metafiles for Windows and Macintosh programs that support them (this include MS Word for Windows, but unfortunately not MS Word for Macintosh).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Colour in EPS files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Interpolating grey images, i.e. better zoomed spectrograms.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: support for 24-bits screens.</dd>
+</dl>
+<p>Audio:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Asynchronous sound play.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: solved problems with /dev/mixer (&#8220;Cannot read MIC gain.&#8221;) on many computers.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Added possibility of zero padding for sound playing, in order to reduce clicks on some Linux and Sun computers.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; LongSound supports mono and stereo, 8-bit and 16-bit, <i>&#956;</i>-law and A-law, big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files. &#8226;v<b>Read two Sounds from stereo file...</b> supports 8-bit and 16-bit, <i>&#956;</i>-law and A-law, big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SoundRecorder writes to 16-bit AIFC, WAV, NeXT/Sun, and NIST mono and stereo files.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound &amp; LongSound: write part or whole to mono or stereo audio file.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Read Sound from raw Alaw file.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Artword &amp; Speaker (&amp; Sound) movie: real time on all platforms.</dd>
+</dl>
+<p>Scripting:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Formulas_5__Mathematical_functions.html">Formulas 5. Mathematical functions</a>: added statistical functions: <i>&#967;</i><sup>2</sup>, Student T, Fisher F, binomial, and their inverse functions.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: program <b><code><font size=+1>praatcon</font></code></b> for use as a Unix-style console application.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows and Unix: Praat can be run with a command-line interface without quitting on errors.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Unix &amp; Windows: can use &lt;stdout&gt; as a file name (supports pipes for binary data).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="sendpraat.html">sendpraat</a> now also for Macintosh.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Scripting_6_7__Sending_a_message_to_another_program.html">sendsocket</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Read_from_file___.html">Read from file...</a> recognizes script files if they begin with &#8220;<code><font size=+1>#!</font></code>&#8221;.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Script links in <a href="ManPages.html">ManPages</a>.</dd>
+</dl>
+<p>Documentation</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Tutorials on all subjects available through <a href="Intro.html">Intro</a>.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2000</p>
+</address>
+</body>
+</html>

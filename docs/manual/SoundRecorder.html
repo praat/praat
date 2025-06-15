@@ -1,0 +1,45 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>SoundRecorder</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+SoundRecorder
+</b></font></table></table>
+<p>With the Praat SoundRecorder window you can record a mono or stereo sound for subsequent viewing and analysis in Praat. The SoundRecorder appears on your screen if you choose <a href="Record_mono_Sound___.html">Record mono Sound...</a> or <a href="Record_stereo_Sound___.html">Record stereo Sound...</a> from the <a href="New_menu.html">New menu</a>.</p>
+<p>Depending on your system, the SoundRecorder window may allow you to choose the sampling frequency, the input gain, and the input device (microphone, line, or digital). The sound input level is monitored continuously with one or two meters. The resulting sound has 16 bits per sample, like sounds on an audio CD.</p>
+<h2>Usage</h2>
+<p>To record the sound, use the Record and Stop buttons in the SoundRecorder window. Click <b>Save to list</b> to copy the recorded sound to the object window (or <b>Save left channel to list</b> or <b>Save right channel to list</b> to copy the left or right channel if you have a stereo sound). The name of the resulting Sound object will be taken from the text field next to the button clicked.</p>
+<h2>Size of the recording buffer</h2>
+<p>The size of the recording buffer determines how many seconds of sound you can record. For instance, if the recording buffer is 20 megabytes (the standard value), you can record 220 seconds in stereo (440 seconds in mono) at a sampling frequency of 22050 Hz, or 110 seconds in stereo (220 seconds in mono) at a sampling frequency of 44100 Hz. You can change the size of the recording buffer with <b>Praat</b> &#8594; <b>Settings</b> &#8594; <b>Sound recording settings...</b>.</p>
+<h2>Recording sounds on the Mac or in Linux</h2>
+<p>On the Mac or in Linux, you can record from the list on the left in the SoundRecorder window. The list can contain several devices, such as the internal microphone, a line input, or external USB devices. Audio tracks on a CD can be opened directly with <a href="Read_from_file___.html">Read from file...</a> or <a href="Open_long_sound_file___.html">Open long sound file...</a>.</p>
+<h2>Recording sounds in Windows</h2>
+<p>In Windows 10, you can choose your input device by right-clicking on the loudspeaker icon in the Start bar, then choosing <b>Open Sound settings</b> &#8594; <b>Choose your input device</b>. In Windows 11, you right-click the loudspeaker icon and choose <b>Sound settings</b> &#8594; <b>Choose a device for speaking or recording</b> instead." To set some input properties, right-click the loudspeaker icon, then on Windows 10 you choose <b>Sounds</b> &#8594; <b>Recording</b> &#8594; <b>Properties</b>, while on Windows 11 you choose <b>Sound settings</b> &#8594; <b>Advanced</b> &#8594; <b>All sound devices</b> &#8594; <b>Input devices</b> &#8594; <b>Microphone</b>.</p>
+<h2>Watching the input level</h2>
+<p>While recording, you can watch the input level as a green rectangle whose size changes. Whenever the input is loud, the top of the rectangle becomes yellow; if it turns red, the sound may have been clipped. In the Meter menu you can choose other visualizations, such as a moving ball that measures spectral centre of gravity (horizontally) versus intensity (vertically).</p>
+<h2>The File menu</h2>
+<p>If your computer has little memory, a very long recorded sound might be too big to be copied to the list of objects. Fortunately, the File menu contains commands to save the recording to a sound file on disk, so that you will never have to lose your recording. You can later open such a long sound file in Praat with <a href="Open_long_sound_file___.html">Open long sound file...</a> from the Open menu.</p>
+<h2>Sound pressure calibration</h2>
+<p>Your computer's sound-recording software returns integer values between -32768 and 32767. Praat divides them by 32768 before putting them into a Sound object, so that the values in the Sound objects are always between -1 and +1.</p>
+<p>The Praat program considers these numbers to be air pressures in units of Pascal, but they are probably not the actual true air pressures that went into the microphone. For how to obtain the true air pressures, perform a <a href="sound_pressure_calibration.html">sound pressure calibration</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro_1_1__Recording_a_sound.html">Intro 1.1. Recording a sound</a>
+<li><a href="Intro_2_1__Saving_a_sound_to_disk.html">Intro 2.1. Saving a sound to disk</a>
+<li><a href="Play.html">Play</a>
+<li><a href="Sound.html">Sound</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+<li><a href="What_was_new_in_3_8_.html">What was new in 3.8?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2020-11-20,2024</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 4.2. The OK button</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 4.2. The OK button
+</b></font></table></table>
+<p>The <a href="ExperimentMFC_2_1__The_experiment_file.html">example experiment</a> contained the following lines:</p>
+<code>   okButton = 0 0 0 0 "" ""<br></code>
+<p>This means that that experiment did not have an <b>OK</b> button. To add an OK button in the lower right corner of the screen, you do something like</p>
+<code>   okButton = 0.8 0.95 0.05 0.15 "OK" ""<br></code>
+<p>If you supply a right edge (here 0.95) that is greater than the left edge (here 0.8), Praat will know that you want to show an <b>OK</b> button.</p>
+<p>The behaviour of the experiment changes appreciably if you include an <b>OK</b> button. If you do not include an <b>OK</b> button, Praat will present the next stimulus as soon as the participant has clicked a response category (and a goodness category, if there are such). If you do include an <b>OK</b> button, it will become visible to the participant as soon as she has chosen a response category (and a goodness category, if there are such). The participant can then click the <b>OK</b> button, but she can also choose to click the response (and goodness buttons) a bit more first.</p>
+<p>The OK button seems to be useful only if there is also a replay button, or if the response categories are sounds (see <a href="ExperimentMFC_6__Responses_are_sounds.html">ExperimentMFC 6. Responses are sounds</a>).</p>
+<p>To assign a keyboard shortcut (here, the space bar) to the OK button, do something like</p>
+<code>   okButton = 0.8 0.95 0.05 0.15 "OK" " "<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_4__Special_buttons.html">ExperimentMFC 4. Special buttons</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20051205</p>
+</address>
+</body>
+</html>

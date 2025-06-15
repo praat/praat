@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>CrossCorrelationTable</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+CrossCorrelationTable
+</b></font></table></table>
+<p>One of the types of objects in Praat. A <b>CrossCorrelationTable</b> represents the cross-correlations between a number of signals. Cell [<i>i</i>,<i>j</i>] of a CrossCorrelationTable contains the cross-correlation between the <i>i</i>-th and the <i>j</i>-th signal. For example, the CrossCorrelationTable of an <i>n</i>-channel sound is a <i>n</i>&#215;<i>n</i> table where the number in cell [<i>i</i>,<i>j</i>] is the cross-correlation of channel <i>i</i> with channel <i>j</i> (for a particular lag time <i>&#964;</i>).</p>
+<p>A CrossCorrelationTable has a square matrix whose cells contain the cross-correlations between the signals and a centroid vector with the average value of each signal.</p>
+<h2>Remarks</h2>
+<p>Sometimes in the statistical literature, the cross-correlation between signals is also called "covariance". However, the only thing a <a href="Covariance.html">Covariance</a> has in common with a CrossCorrelationTable is that both are symmetric matrices. The differences between a CrossCorrelationTable and a Covariance are:</p>
+<dl>
+<dt>1. A Covariance matrix is always positive-definite; for a cross-correlation table this is only guaranteed if the lag time <i>&#964;</i> = 0.
+<dt>2. The elements <i>c<sub>ij</sub></i> in a Covariance always satisfy |<i>c<sub>ij</sub></i>/&#8730;(<i>c<sub>ii</sub></i>&#183;<i>c<sub>jj</sub></i>)| &#8804; 1; this is generally not the case for cross-correlations.
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="CrossCorrelationTableList.html">CrossCorrelationTableList</a>
+<li><a href="CrossCorrelationTableList__Create_test_set___.html">CrossCorrelationTableList: Create test set...</a>
+<li><a href="Sound__To_Covariance__channels____.html">Sound: To Covariance (channels)...</a>
+<li><a href="Sound__To_CrossCorrelationTable___.html">Sound: To CrossCorrelationTable...</a>
+<li><a href="Sound__To_Sound__blind_source_separation____.html">Sound: To Sound (blind source separation)...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20170908</p>
+</address>
+</body>
+</html>

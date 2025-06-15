@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>initialization script</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+initialization script
+</b></font></table></table>
+<p>Your initialization script is a normal <a href="Praat_script.html">Praat script</a> that is run as soon as you start Praat.</p>
+<p>On Unix or macOS, you create an initialization script by creating a file named <code><font size=+1>praat-startUp</font></code> in the folder <code><font size=+1>/usr/local</font></code>, or putting a file <code><font size=+1>.praat-user-startUp</font></code> or <code><font size=+1>praat-user-startUp</font></code> in your home folder (if you rename the Praat executable, these names have to change as well).</p>
+<p>If you have more than one of these files, they are run in the above order.</p>
+<p>On Windows, you create an initialization script by creating a file named <code><font size=+1>praat-user-startUp</font></code> in your home folder, which could be <code><font size=+1>C:\Users\Miep</font></code> if you are Miep.</p>
+<p>If you have both of these files, they are run in the above order.</p>
+<h2>Example</h2>
+<p>If you like to be greeted by your husband when Praat starts up, you could put the following lines in your initialization script:</p>
+<code>   if windows<br></code>
+<code>       Read from file: "C:\Users\Miep\helloMiep.wav"<br></code>
+<code>   elsif macintosh<br></code>
+<code>       Read from file: "/Users/miep/helloMiep.wav"<br></code>
+<code>   else<br></code>
+<code>       Read from file: "/home/miep/helloMiep.wav"<br></code>
+<code>   endif<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<h2>What not to use an initialization script for</h2>
+<p>You could set preferences like the default font in your initialization script, but these will be automatically remembered between invocations of Praat anyway (in your <a href="preferences_file.html">preferences file</a>), so this would often be superfluous, or indeed confusing.</p>
+<p>For installing sets of menu commands at start-up you will probably prefer to use <a href="plug-ins.html">plug-ins</a> rather than a single start-up file.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Add_action_command___.html">Add action command...</a>
+<li><a href="Add_menu_command___.html">Add menu command...</a>
+<li><a href="Add_to_dynamic_menu___.html">Add to dynamic menu...</a>
+<li><a href="Add_to_fixed_menu___.html">Add to fixed menu...</a>
+<li><a href="Add_to_menu___.html">Add to menu...</a>
+<li><a href="ButtonEditor.html">ButtonEditor</a>
+<li><a href="hidden_commands.html">hidden commands</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1997,2004,2006,2014,2015,2020,2023</p>
+</address>
+</body>
+</html>

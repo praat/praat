@@ -1,0 +1,55 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>individual difference scaling</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+individual difference scaling
+</b></font></table></table>
+<p>The purpose of individual difference scaling is to represent objects, whose dissimilarities are given, as points in a metrical space. The distances in the space should be in accordance with the dissimilarities as well as is possible. Besides the configuration a <a href="Salience.html">Salience</a> matrix is calculated.</p>
+<p>The basic Euclidean model is:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>&#948;</i><sub><i>ijk</i></sub> &#8776; (&#8721;<sub><i>s</i>=1..<i>r</i></sub> <i>w</i><sub><i>ks</i></sub>(<i>x</i><sub><i>is</i></sub> &#8211; <i>x</i><sub><i>js</i></sub>)<sup>2</sup>)<sup>1/2</sup></dd>
+</dl>
+<p>Here &#948;<sub><i>ijk</i></sub> is the (known) dissimilarity between <i>objects</i> <i>i</i> and <i>j</i>, as measured on <i>data</i> <i>source</i> <i>k</i>. The <i>x</i>'s are the <i>coordinates</i> of the objects in an <i>r</i>-dimensional space and the <i>w</i>'s are weights or saliences. Because straight minimization of the expression above is difficult, one applies transformations on this expression. Squaring both sides gives the model:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>&#948;</i><sup>2</sup><sub><i>ijk</i></sub> &#8776; &#8721;<sub><i>s</i>=1..<i>r</i></sub> <i>w</i><sub><i>ks</i></sub>(<i>x</i><sub><i>is</i></sub> &#8211; <i>x</i><sub><i>js</i></sub>)<sup>2</sup></dd>
+</dl>
+<p>and the corresponding least squares loss function:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8721;<sub><i>k</i>=1..<i>numberOfSources</i></sub> &#8721;<sub><i>i</i>=1..<i>numberOfPoints</i></sub> &#8721;<sub><i>j</i>=1..<i>numberOfPoints</i></sub> (<i>&#948;</i><sup>2</sup><sub><i>ijk</i></sub> &#8211; <i>d</i><sup>2</sup><sub><i>ijk</i></sub>)<sup>2</sup></dd>
+</dl>
+<p>This loss function is minimized in the (ratio scale option of the) <b>ALSCAL</b> program of <a href="Takane__Young___de_Leeuw__1976_.html">Takane, Young & de Leeuw (1976)</a>.</p>
+<p>The transformation used by <a href="Carroll___Chang__1970_.html">Carroll & Chang (1970)</a> in the INDSCAL model, transforms the data from each source into scalar products of vectors. For the dissimilarities:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>&#946;</i><sub><i>ijk</i></sub> = &#8211;{ <i>&#948;</i><sup>2</sup><sub><i>ijk</i></sub> &#8211; <i>&#948;</i><sup>2</sup><sub><i>i</i>.<i>k</i></sub> &#8211; <i>&#948;</i><sup>2</sup><sub>.<i>jk</i></sub> + <i>&#948;</i><sup>2</sup><sub>..<i>k</i></sub> } / 2,</dd>
+</dl>
+<p>where dots replacing indices indicate averaging over the range of that index. In the same way for the distances:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>z</i><sub><i>ijk</i></sub> = &#8211;{ <i>d</i><sup>2</sup><sub><i>ijk</i></sub> &#8211;  <i>d</i><sup>2</sup><sub><i>i</i>.<i>k</i></sub> &#8211;  <i>d</i><sup>2</sup><sub><i></i>.<i>jk</i></sub> +  <i>d</i><sup>2</sup><sub><i></i>..<i>k</i></sub> } / 2.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>&#946;</i><sub><i>ijk</i></sub> &#8776; <i>z</i><sub><i>ijk</i></sub> = &#8721;<sub><i>s</i>=1..<i>numberOfDimensions</i></sub> <i>w</i><sub><i>ks</i></sub> <i>x</i><sub><i>is</i></sub> <i>x</i><sub><i>js</i></sub></dd>
+</dl>
+<p>Translated into matrix algebra, the equation above translates to:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>B</i><sub><i>k</i></sub> &#8776; <i>Z</i><sub><i>k</i></sub> = <i>X</i> <i>W</i><sub><i>k</i></sub> <i>X</i>&#8242;,</dd>
+</dl>
+<p>where <i>X</i> is a <i>numberOfPoints</i> &#215; <i>numberOfDimensions</i> configuration matrix, <i>W</i><sub><i>k</i></sub>, a non-negative <i>numberOfDimensions</i> &#215; <i>numberOfDimensions</i> matrix with weights, and <i>B</i><sub><i>k</i></sub> the <i>k</i><sup>th</sup> slab of <i>&#946;</i><sub><i>ijk</i></sub>.</p>
+<p>This translates to the following INDSCAL loss function:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i>(<i>X</i>, <i>W</i><sub>1</sub>,..., <i>W</i><sub><i>numberOfSources</i></sub>) = &#8721;<sub><i>k</i>=1..<i>numberOfSources</i></sub> | <i>B</i><sub><i>k</i></sub> &#8211; <i>X</i><i>W</i><sub><i>k</i></sub><i>X</i>&#8242; |<sup>2</sup></table>
+<p></p>
+<ul>
+<li><a href="Distance__To_Configuration__ytl____.html">Distance: To Configuration (ytl)...</a>
+<li><a href="INDSCAL_analysis.html">INDSCAL analysis</a>
+<li><a href="Multidimensional_scaling.html">Multidimensional scaling</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 19970502</p>
+</address>
+</body>
+</html>

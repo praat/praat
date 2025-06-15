@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To PowerCepstrogram...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To PowerCepstrogram...
+</b></font></table></table>
+<p>A command that creates a <a href="PowerCepstrogram.html">PowerCepstrogram</a> from every selected <a href="Sound.html">Sound</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Pitch floor (Hz)</b>
+<dd>determines the effective length of the analysis window as three periods of this pitch, e.g. if the pitch floor is 60 Hz, the analysis window will be 3/60 = 0.05 seconds long.</dd>
+<dt><b>Time step (s)</b>
+<dd>defines the distance between the centres of subsequent frames. This determines the number of frames in the resulting PowerCepstrogram.</dd>
+<dt><b>Maximum frequency (Hz)</b>
+<dd>the maximum frequency subject to analysis.</dd>
+<dt><b>Pre-emphasis from (Hz)</b>
+</dl>
+<h2>Algorithm</h2>
+<p>The sound will first be resampled to twice the value of the <i>Maximum frequency</i>, with the algorithm described at <a href="Sound__Resample___.html">Sound: Resample...</a>. After this, pre-emphasis is applied with the algorithm described at <a href="Sound__Pre-emphasize__in-place____.html">Sound: Pre-emphasize (in-place)...</a>. For each analysis window a Gaussian window is applied and the <b>Spectrum</b> is calculated. The Spectrum is then transformed to a <b>PowerCepstrum</b> with the procedure described at <a href="Spectrum__To_PowerCepstrum.html">Spectrum: To PowerCepstrum</a>. Finally, the values from the PowerCepstrum are stored in the vertical slice of the PowerCepstrogram.</p>
+<hr>
+<address>
+	<p>© djmw 20200403</p>
+</address>
+</body>
+</html>

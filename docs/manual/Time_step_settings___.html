@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Time step settings...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Time step settings...
+</b></font></table></table>
+<p>A command in the <b>Analysis</b> menu of the <a href="SoundEditor.html">SoundEditor</a> and <a href="TextGridEditor.html">TextGridEditor</a> to determine the time interval between consecutive measurements of pitch, formants, and intensity.</p>
+<h2>Automatic time steps</h2>
+<p>It is recommended that you set the <i>Time step strategy</i> to <b>Automatic</b>. In this way, Praat computes just enough pitch, formant, and intensity values to draw reliable pitch, formant, and intensity contours. In general, Praat will compute 4 values within an analysis window (&#8220;four times oversampling&#8221;).</p>
+<p>As described in <a href="Sound__To_Pitch__filtered_ac____.html">Sound: To Pitch (filtered ac)...</a>, Praat's standard time step for pitch analysis is 0.75 divided by the pitch floor, e.g., if the pitch floor is 50 Hz, the time step will be 0.015 seconds. In this way, there will be 4 pitch measurements within an analysis window, which is 3 / (50 Hz) = 60 milliseconds long.</p>
+<p>As described in <a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a>, Praat's standard time step for formant measurements is the <i>Window length</i> divided by 4, e.g. if the window length is 0.025 seconds, the time step will be 6.25 milliseconds.</p>
+<p>As described in <a href="Sound__To_Intensity___.html">Sound: To Intensity...</a>, Praat's standard time step for intensity measurements is 0.8 divided by the pitch floor, e.g. if the pitch floor is 50 Hz, the time step will be 16 milliseconds. In this way, there will be 4 intensity measurements within an intensity analysis window, which is 3.2 / (50 Hz) = 64 milliseconds long.</p>
+<h2>Fixed time step</h2>
+<p>You can override the automatic time step by setting the <i>Time step strategy</i> to <b>Fixed</b>. The <i>Fixed time step</i> setting then determines the time step that Praat will use: if you set it to 0.001 seconds, Praat will compute pitch, formant, and intensity values for every millisecond. Beware that this can slow down the editor window appreciably, because this step is much smaller than usual values of the automatic time step (see above).</p>
+<p>Enlarging the time step to e.g. 0.1 seconds will speed up the editor window but may render the pitch, formant, and intensity curves less exact (they become <i>undersampled</i>), which will influence your measurements and the locations of the pulses.</p>
+<p>If there are fewer than 2.0 pitch measurement points per analysis window, Praat will draw the pitch curve as separate little blue disks rather than as a continuous blue curve, in order to warn you of the undersampling. E.g. if the pitch floor is 75 Hz, Praat will draw the pitch curve as disks if the time step is greater than 0.02 seconds.</p>
+<h2>View-dependent time step</h2>
+<p>Another way to override the standard time step is by setting the <i>Time step strategy</i> to <b>View-dependent</b>. The <i>Number of time steps per view</i> setting then determines the time step that Praat will use: if you set it to 100, Praat will always compute 100 pitch, formant, and intensity values within the view window. More precisely: if you zoom the view window to 3 seconds, Praat will show you 100 pitch, formant, and intensity points at distances of 0.03 seconds (or fewer than 100, if you are near the left or right edge of the signal). As with the <i>Fixed time step</i> setting, Praat will draw the pitch as separate disks in case of undersampling. You may want to use this setting if you want the pitch curve to be drawn equally fast independently of the degree of zooming.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_4_2_.html">What was new in 4.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20231115</p>
+</address>
+</body>
+</html>

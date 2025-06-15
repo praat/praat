@@ -1,0 +1,66 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Create Sound as Shepard tone...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Create Sound as Shepard tone...
+</b></font></table></table>
+<p>One of the commands that create a <a href="Sound.html">Sound</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Name</b>
+<dd>the name of the resulting Sound object.</dd>
+<dt><b>Minimum time (s)</b> and <b>Maximum time (s)</b>
+<dd>the start and end time of the resulting Sound.</dd>
+<dt><b>Sampling frequency (Hz)</b>
+<dd>the <a href="sampling_frequency.html">sampling frequency</a> of the resulting Sound.</dd>
+<dt><b>Lowest frequency (Hz)</b>
+<dd>the frequency of the lowest component in the tone complex.</dd>
+<dt><b>Number of components</b>
+<dd>the number of frequency components in the tone complex.</dd>
+<dt><b>Frequency change (semitones/s)</b>
+<dd>determines how many semitones the frequency of each component will change in one second. The number of seconds needed to change one octave will then be 12 divided by <b>Frequency change</b>. You can make rising, falling and monotonous tone complexes by choosing a positive, negative or zero value.</dd>
+<dt><b>Amplitude range<i></i> (dB)</b>
+<dd>determines the relative size in decibels of the maximum and the minimum amplitude of the components in a tone complex. These relative amplitudes will then be 10<sup>&#8211;<i>amplitudeRange</i>/20</sup>. </dd>
+<dt><b>Octave shift fraction (0-1)</b>
+<dd>shifts all frequency components by this fraction at the start. You will probably only need this if you want to generate static tone complexes as the example script below shows.</dd>
+</dl>
+<h2>Purpose</h2>
+<p>To create a Sound that is a continuous variant of the sound sequences used by <a href="Shepard__1964_.html">Shepard (1964)</a> in his experiment about the circularity in judgments of relative pitch.</p>
+<p>The tone consists of many sinusoidal components whose frequencies might increase exponentially in time. All frequencies are always at successive intervals of an octave and sounded simultaneously. Thus the frequency of each component above the lowest is at each moment in time exactly twice the frequency of the one just below. The amplitudes are large for the components of intermediate frequency only, and tapered off gradually to subthreshold levels for the components at the highest and lowest extremes of frequency.</p>
+<p>For a rising tone complex, the Sound is generated according to the following specification:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>s</i>(<i>t</i>) = &#8721;<sub><i>i</i>=1..<i>numberOfComponents</i></sub> <i>A</i><sub><i>i</i></sub>(<i>t</i>) sin (arg<sub><i>i</i></sub>(<i>t</i>)), where</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>arg<sub><i>i</i></sub>(<i>t</i>) = &#8747; 2<i>&#960;</i> f<sub><i>i</i></sub>(<i>&#964;</i>) <i>d&#964;</i> , and</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>f<sub><i>i</i></sub>(<i>t</i>) = <i>lowestFrequency</i> &#183; 2<sup>(<i>i</i> &#8722; 1 + octaveShiftFraction + <i>t</i>/(12/<i>frequencyChange_st</i>)</sup>, with</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>A</i><sub><i>i</i></sub>(<i>t</i>) = 10<sup>((<i>L</i><sub>min</sub> + (<i>L</i><sub>max</sub> &#8722; <i>L</i><sub>min</sub>) (1 &#8211; cos 2<i>&#960;</i><i>&#952;</i><sub><i>i</i></sub>(<i>t</i>)) / 2) / 20)</sup>, where,</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>L</i><sub>max</sub> = 0, <i>L</i><sub>min</sub> = 10<sup>&#8211;<i>amplitudeRange</i>/20</sup>, and,</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#952;</i><sub><i>i</i></sub>(<i>t</i>) = 2&#960; log2 (<i>f</i>(<i>t</i>) / <i>lowestFrequency</i>) / <i>numberOfComponents</i>.</table>
+<p>The maximum frequency that can be reached during a sweep by any single tone is:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>maximumFrequency</i> = <i>lowestFrequency</i>&#183;2<sup><i>numberOfComponents</i></sup>.</table>
+<p>A component that reaches the maximum frequency falls instantaneously to the lowest frequency and then starts rising again.</p>
+<p>The absolute <a href="sound_pressure_level.html">sound pressure level</a> of the resulting sound will not be set, it is only guaranteed that the peak value is just below 1. You can always scale the intensity with the <b>Scale Intensity...</b> command.</p>
+<h2>Example</h2>
+<p>The following script generates 12 static Shepard tone complexes, 1 semitone 'apart', with a cosine window to temper the abrupt start and finish.</p>
+<code>   fadeTime = 0.010<br></code>
+<code>   for i to 12<br></code>
+<code>      fraction = (i-1)/12<br></code>
+<code>      Create Sound as Shepard tone: "s" + string$ (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction<br></code>
+<code>      Fade in: 0, 0, fadeTime, "no"<br></code>
+<code>      Fade out: 0, 0.1, -fadeTime, "no"<br></code>
+<code>   endfor<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="New_menu.html">New menu</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20230801</p>
+</address>
+</body>
+</html>

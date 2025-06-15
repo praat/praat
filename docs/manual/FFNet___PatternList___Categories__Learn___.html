@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>FFNet & PatternList & Categories: Learn...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+FFNet & PatternList & Categories: Learn...
+</b></font></table></table>
+<p>You can choose this command after selecting one <a href="PatternList.html">PatternList</a>, one <a href="Categories.html">Categories</a> and one <a href="FFNet.html">FFNet</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Maximum number of epochs</b>
+<dd>the maximum number of times that the complete <b>PatternList</b> dataset will be presented to the neural net.</dd>
+<dt><b>Tolerance of minimizer</b>
+<dd>when the difference in costs between two successive learning cycles is smaller than this value, the minimization process will be stopped.</dd>
+</dl>
+<p><b>Cost function</b></p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">Minimum-squared-error:</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;&nbsp;<i>costs</i> = &#8721;<sub><i>allPatterns</i></sub> &#8721;<sub><i>allOutputs</i></sub> (<i>o</i><sub><i>k</i></sub> - d<sub><i>k</i></sub>)<sup>2</sup>, where</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>o</i><sub><i>k</i></sub> : actual output of unit <i>k</i></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>d</i><sub><i>k</i></sub> : desired output of unit <i>k</i></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">Minimum-cross-entropy:</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;&nbsp;<i>costs</i> = - &#8721;<sub><i>allPatterns</i></sub> &#8721;<sub><i>allOutputs</i></sub> (<i>d</i><sub><i>k</i></sub> &#183; ln <i>o</i><sub><i>k</i></sub> + (1-<i>d</i><sub><i>k</i></sub>) &#183; ln (1-<i>o</i><sub><i>k</i></sub>))</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The minimization procedure is a variant of conjugate gradient minimization, see for example <a href="Press_et_al___1992_.html">Press et al. (1992)</a>, chapter 10, or <a href="Nocedal___Wright__1999_.html">Nocedal & Wright (1999)</a>, chapter 5.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Feedforward_neural_networks_1_1__The_learning_phase.html">Feedforward neural networks 1.1. The learning phase</a>
+<li><a href="Feedforward_neural_networks_2__Quick_start.html">Feedforward neural networks 2. Quick start</a>
+<li><a href="Feedforward_neural_networks_4__Command_overview.html">Feedforward neural networks 4. Command overview</a>
+<li><a href="FFNet___PatternList___ActivationList__Get_average_costs.html">FFNet & PatternList & ActivationList: Get average costs...</a>
+<li><a href="FFNet___PatternList___ActivationList__Get_total_costs__.html">FFNet & PatternList & ActivationList: Get total costs...</a>
+<li><a href="FFNet___PatternList___Categories__Get_average_costs___.html">FFNet & PatternList & Categories: Get average costs...</a>
+<li><a href="FFNet___PatternList___Categories__Get_total_costs___.html">FFNet & PatternList & Categories: Get total costs...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040511</p>
+</address>
+</body>
+</html>

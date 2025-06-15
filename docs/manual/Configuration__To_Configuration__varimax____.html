@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Configuration: To Configuration (varimax)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Configuration: To Configuration (varimax)...
+</b></font></table></table>
+<p>A command that rotates the selected <a href="Configuration.html">Configuration</a> object to a new Configuration object whose coordinates have maximum <i>squared</i> variance. </p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Normalize rows</b>
+<dd>when selected, the distances of all points to the origin will be made equal before iteration starts. We remember these scale factors and restore the original distances after the iteration process has stopped.</dd>
+<dt><b>Quartimax</b>
+<dd>when selected, the sum of fourth powers, normalized or raw, will be maximized. </dd>
+<dt><b>Maximum number of iterations</b>
+<dd>sets a limit to the number of iterations. One iteration consists of <i>numberOfDimensions</i>&#183; (<i>numberOfDimensions</i>&#8211;1)/2 planar rotations of all pairs of dimensions.</dd>
+<dt><b>Tolerance</b>
+<dd>also determines when the iteration stops. This happens if |<i>v</i><sub><i>i</i></sub>&#8211;<i>v</i><sub><i>i</i>+1</sub>| &lt; <i>tolerance</i> &#183; <i>v</i><sub><i>i</i></sub>, where <i>v</i><sub><i>i</i></sub> is the squared variance for the <i>i</i><sup>th</sup> iteration.</dd>
+</dl>
+<p>The iteration process stops when either the <i>maximum number of iterations</i> is reached or the <i>tolerance</i> criterion is met, which ever one is first.</p>
+<h2>Algorithm</h2>
+<p>The Varimax rotation procedure was first proposed by <a href="Kaiser__1958_.html">Kaiser (1958)</a>. Given a <i>numberOfPoints</i> &#215; <i>numberOfDimensions</i> configuration <b>A</b>, the procedure tries to find an orthonormal rotation matrix <b>T</b> such that the sum of variances of the columns of <b>B</b>*<b>B</b> is a maximum, where <b>B</b> = <b>A</b><b>T</b> and * is the element wise (Hadamard) product of matrices. A direct solution for the optimal <b>T</b> is not available, except for the case when <i>numberOfDimensions</i> equals two. Kaiser suggested an iterative algorithm based on planar rotations, i.e., alternate rotations of all pairs of columns of <b>A</b>.</p>
+<p>However, this procedure is not without problems: the varimax function may have stationary points that are not even local maxima. We have incorporated an algorithm of <a href="Ten_Berge__1995_.html">Ten Berge (1995)</a> that prevents this unpleasant situation from happening.</p>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

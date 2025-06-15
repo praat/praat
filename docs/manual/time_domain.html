@@ -1,0 +1,49 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>time domain</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+time domain
+</b></font></table></table>
+<p>This manual page assumes that you have read the <a href="Intro.html">Intro</a>.</p>
+<p>Many objects in Praat are <i>functions of time</i>. Examples are: <a href="Sound.html">Sound</a>, <a href="Pitch.html">Pitch</a>, <a href="Spectrogram.html">Spectrogram</a>, <a href="Formant.html">Formant</a>, <a href="Intensity.html">Intensity</a>, <a href="TextGrid.html">TextGrid</a>, <a href="PitchTier.html">PitchTier</a>, <a href="DurationTier.html">DurationTier</a>, <a href="Harmonicity.html">Harmonicity</a>, <a href="PointProcess.html">PointProcess</a>.</p>
+<p>In Praat, these functions have a contiguous <b>time domain</b>, i.e. a single time stretch with a <a href="start_time.html">start time</a> and an <a href="end_time.html">end time</a>. The <a href="total_duration.html">total duration</a> of such a function is the difference between the start time and the end time. There are up to five ways to see the time domain of an object.</p>
+<h2>The time domain in editor windows</h2>
+<p>If you select an object that is a function of time and click <b>View &amp; Edit</b>, an editor window will appear on the screen. The rectangle at the bottom will show the start time, the end time, and the total duration.</p>
+<h2>The time domain in the picture window</h2>
+<p>If you select an object that is a function of time and choose one of the <b>Draw</b> commands, the window that pops up will invite you to supply a time range. If you keep this time range at its standard setting (from 0.0 to 0.0 seconds), Praat will draw the object for the whole time domain and print the start time and the end time below the horizontal axis (if <b>Garnish</b> is on):</p>
+<p align=middle><img height=250 width=500 src=time_domain_1.png></p><p align=middle><img height=250 width=500 src=time_domain_2.png></p><h2>The time domain in the Info window</h2>
+<p>If you select an object that is a function of time and click <b>Info</b>, the Info window will tell you the start time, the end time, and the total duration (among other properties of the object).</p>
+<h2>Time domain query commands</h2>
+<p>If you select an object that is a function of time, the following three commands will become available in the <a href="Query_submenu.html">Query submenu</a>:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><b>Get start time</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><b>Get end time</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><b>Get total duration</b></dd>
+</dl>
+<p>If you choose one of these commands, the Info window will tell you the result, expressed in seconds. These commands are most useful in a Praat script. Example:</p>
+<code>   selectObject: "Pitch hello"<br></code>
+<code>   startTime = Get start time<br></code>
+<code>   endTime = Get end time<br></code>
+<code>   centreTime = (startTime + endTime) / 2<br></code>
+<code>   writeInfoLine: "This Pitch runs from ", startTime, " to ", endTime, " seconds,"<br></code>
+<code>   appendInfoLine: "and the centre of its time domain is at ", centreTime, " seconds."<br></code>
+<h2>Details for hackers</h2>
+<p>If you select an object that is a function of time and you click <a href="Inspect.html">Inspect</a>, you can see how the time domain information is stored in the object: the start time is the object's <b>xmin</b> attribute and the end time is its <b>xmax</b> attribute. The total duration is not stored in the object, because it can easily be computed as <b>xmax</b> minus <b>xmin</b>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_FormantGrid___.html">Create FormantGrid...</a>
+<li><a href="Sound__To_Spectrum___.html">Sound: To Spectrum...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20221202</p>
+</address>
+</body>
+</html>

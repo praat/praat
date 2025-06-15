@@ -1,0 +1,31 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To CrossCorrelationTable...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To CrossCorrelationTable...
+</b></font></table></table>
+<p>A command that creates a <a href="CrossCorrelationTable.html">CrossCorrelationTable</a> form every selected <a href="Sound.html">Sound</a> object.</p>
+<h2>Settings</h2>
+<p align=middle><img height=220.00000000000003 width=540 src=Sound__To_CrossCorrelationTable____1.png></p><dl>
+<dt><b>Time range (s)</b>,
+<dd>determines the time range over which the table is calculated.</dd>
+<dt><b>Lag time (s)</b>,
+<dd>determines the lag time.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The cross-correlation between channel <i>i</i> and channel <i>j</i> for lag time &#964; is defined as the discretized <b>integral</b></p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>cross-corr (<i>c</i><sub><i>i</i></sub>, <i>c</i><sub><i>j</i></sub>) [<i>&#964;</i>] &#8801; &#8721;<sub><i>t</i></sub> <i>c</i><sub><i>i</i></sub>[<i>t</i>] <i>c</i><sub><i>j</i></sub>[<i>t</i>+<i>&#964;</i>] <i>&#916;t</i>,</table>
+<p>where <i>t</i> and <i>t</i>+<i>&#964;</i> are discrete times and <i>&#916;t</i> is the <a href="sampling_period.html">sampling period</a>. </p>
+<hr>
+<address>
+	<p>© djmw 20110212</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>CANDECOMP</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+CANDECOMP
+</b></font></table></table>
+<h2>An algorithm to solve the INDSCAL problem.</h2>
+<p>In the analysis of the INDSCAL three-way data matrix (<i>numberOfPoints</i> &#215; <i>numberOfDimensions</i> &#215; <i>numberOfSources</i>) we seek to minimize the function: </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i>(<i>X</i>, <i>W</i><sub>1</sub>,..., <i>W</i><sub><i>numberOfSources</i></sub>) = &#8721;<sub><i>i</i>=1..<i>numberOfSources</i></sub> | <i>S</i><sub><i>i</i></sub> &#8211; <i>X</i><i>W</i><sub><i>i</i></sub><i>X</i>&#8242; |<sup>2</sup></table>
+<p>where <i>S</i><sub><i>i</i></sub> is a known symmetric <i>numberOfPoints</i> &#215; <i>numberOfPoints</i> matrix with scalar products of distances for source <i>i</i>, <i>X</i> is the unknown configuration <i>numberOfPoints</i> &#215; <i>numberOfDimensions</i> matrix, <i>X</i>&#8242; its transpose, and, <i>W</i><sub><i>i</i></sub> is the diagonal <i>numberOfDimensions</i> &#215; <i>numberOfDimensions</i> weight matrix for source <i>i</i>. The function above has no analytical solution for <i>X</i> and the <i>W</i><sub><i>i</i></sub>. It can be solved, however, by an iterative procedure which Carroll &amp; Chang have christened CANDECOMP (CANonical DECOMPosition). This method minimizes, instead of the function given above, the following function:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>g</i>(<i>X</i>, <i>Y</i>, <i>W</i><sub>1</sub>,..., <i>W</i><sub><i>numberOfSources</i></sub>) = &#8721;<sub><i>i</i>=1..<i>numberOfSources</i></sub> | <i>S</i><sub><i>i</i></sub> &#8211; <i>X</i><i>W</i><sub><i>i</i></sub><i>Y</i>&#8242; |<sup>2</sup></dd>
+</dl>
+<p>where <i>X</i> and <i>Y</i> are both <i>numberOfPoints</i> &#215; <i>numberOfDimensions</i> configuration matrices.</p>
+<p>The algorithm proceeds as follows:</p>
+<p>1. Initialize the <code><font size=+1>W</font></code> matrices and the configuration matrix <i>X</i>. This can for example be done according to a procedure given in <a href="Young__Takane___Lewyckyj__1978_.html">Young, Takane & Lewyckyj (1978)</a>.</p>
+<p>2. An alternating least squares minimization process is started as described that sequentially updates <i>Y</i>, <i>X</i> an <i>W</i> (<a href="Carroll___Chang__1970_.html">Carroll & Chang (1970)</a>):</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2.1. Solve for a new <i>Y</i> given <i>X</i> and the <i>W</i><sub><i>i</i></sub></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2.2. Solve for a new <i>X</i> given the <i>W</i><sub><i>i</i></sub> and the new <i>Y</i>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2.3. Solve for the <i>W</i><sub><i>i</i></sub> given the new <i>X</i> and <i>Y</i>.</dd>
+</dl>
+<p>Evaluate the goodness-of-fit criterion and either repeat the minimization sequence (2.1&#8211;2.3) or continue.</p>
+<p>3. Done: make <i>Y</i> equal to <i>X</i> and solve a last time for the <i>W</i><sub><i>i</i></sub>.</p>
+<p>Note: during the minimization the following constraints are effective:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">The configuration should be centered.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">The sum of squared coordinates in the configuration space is one for each dimension, i.e., the configuration always has unit variance in each dimension.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="INDSCAL_analysis.html">INDSCAL analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 19971201</p>
+</address>
+</body>
+</html>

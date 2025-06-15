@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Printing</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Printing
+</b></font></table></table>
+<h2>1a. Printing on Windows</h2>
+<p>On Windows, the best results will be obtained on PostScript printers, since these have built-in facilities for images (e.g. spectrograms) and rotated text. If a PostScript printer is available, Praat will usually write direct PostScript commands to that printer (see <a href="PostScript_settings___.html">PostScript settings...</a> if you want to switch this off). Praat also supports non-PostScript printers, such as most colour inkjet printers.</p>
+<p>If you don't have a PostScript printer, and you still want PostScript quality, you can save the picture to an EPS file (<a href="Save_as_EPS_file___.html">Save as EPS file...</a>). You can then view this file with the freely available GhostView<sup>&#8482;</sup> program, which you can download from <code><font size=+1>http://pages.cs.wisc.edu/~ghost/</font></code>, or convert it to PDF with either GhostView or Adobe<sup>&#174;</sup> Acrobat<sup>&#8482;</sup> Distiller<sup>&#8482;</sup>, which is more reliable than GhostView but is also expensive.</p>
+<h2>1b. Printing on Macintosh</h2>
+<p>On the Mac, Praat will print in PDF, both to PostScript and non-PostScript printers.</p>
+<h2>1c. Printing on Linux</h2>
+<p>On Linux, when you tell Praat to print a picture or manual page, Praat will write the picture to a temporary PostScript file and send this file to a printer with the <i>print command</i>, which you can change with <a href="PostScript_settings___.html">PostScript settings...</a>. You do not need a PostScript printer to print PostScript directly, because the <b>lpr</b> program sends PostScript files through the GhostScript program, which is a part of all modern Linux distributions. The print command is typically <code><font size=+1>lpr %s</font></code>. By changing the print command (with <a href="PostScript_settings___.html">PostScript settings...</a>), you can change it to something fancier. For instance, if you want to save the woods and print two pages on one sheet of paper, you change it to <code><font size=+1>cat %s | mpage -2 -o -f -m0 | lpr</font></code>.</p>
+<h2>2. Indirect printing with your word processor</h2>
+<p>If you save your picture to an EPS file, you will be able to include it as a picture in your favourite word processor (Microsoft<sup>&#174;</sup> Word<sup>&#8482;</sup>, LaTeX...). See <a href="Save_as_EPS_file___.html">Save as EPS file...</a>.</p>
+<p>On the Mac it is better to save your picture to a PDF file, which both Microsoft<sup>&#174;</sup> Word<sup>&#8482;</sup> (when using the <code><font size=+1>.docx</font></code> format) and LaTeX can process. See <a href="Save_as_PDF_file___.html">Save as PDF file...</a>.</p>
+<h2>3. Indirect printing through the clipboard</h2>
+<p>On Windows, pictures included in your word processor via <a href="Copy_to_clipboard.html">Copy to clipboard</a> or <a href="Save_as_Windows_metafile___.html">Save as Windows metafile...</a> will print fine, though not as nicely as EPS files.</p>
+<p>On the Mac, pictures included in your word processor (post-2006 versions) via <a href="Copy_to_clipboard.html">Copy to clipboard</a> will print just as nicely as PDF files (use the <code><font size=+1>.docx</font></code> format in Microsoft Word).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Acknowledgments.html">Acknowledgments</a>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Print___.html">Print...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20120430</p>
+</address>
+</body>
+</html>

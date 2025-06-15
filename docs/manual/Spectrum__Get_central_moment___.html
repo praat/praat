@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Spectrum: Get central moment...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Spectrum: Get central moment...
+</b></font></table></table>
+<p>A command to query the selected <a href="Spectrum.html">Spectrum</a> object.</p>
+<p>If the complex spectrum is given by <i>S</i>(<i>f</i>), the <i>n</i>th central spectral moment is given by</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub>0</sub><sup>&#8734;</sup>  (<i>f</i> &#8211; <i>f</i><sub><i>c</i></sub>)<sup><i>n</i></sup> |<i>S</i>(<i>f</i>)|<sup><i>p</i></sup> <i>df</i></table>
+<p>divided by the "energy"</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub>0</sub><sup>&#8734;</sup>  |<i>S</i>(<i>f</i>)|<sup><i>p</i></sup> <i>df</i></table>
+<p>In this formula, <i>f</i><sub><i>c</i></sub> is the spectral centre of gravity (see <a href="Spectrum__Get_centre_of_gravity___.html">Spectrum: Get centre of gravity...</a>). Thus, the <i>n</i>th central moment is the average of (<i>f</i> &#8211; <i>f</i><sub><i>c</i></sub>)<sup><i>n</i></sup> over the entire frequency domain, weighted by |<i>S</i>(<i>f</i>)|<sup><i>p</i></sup>. For <i>p</i> = 2, the weighting is done by the power spectrum, and for <i>p</i> = 1, the weighting is done by the absolute spectrum. A value of <i>p</i> = 2/3 has been seen as well.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Moment</b>
+<dd>the number <i>n</i> in the formulas above. A number of 3 gives you the third central spectral moment. It is not impossible to ask for fractional moments, e.g. <i>n</i> = 1.5.</dd>
+<dt><b>Power</b>
+<dd>the quantity <i>p</i> in the formula above. Common values are 2, 1, or 2/3.</dd>
+</dl>
+<h2>Usage</h2>
+<p>For <i>n</i> = 1, the central moment should be zero, since the centre of gravity <i>f</i><sub><i>c</i></sub> is computed with the same <i>p</i>. For <i>n</i> = 2, you get the variance of the frequencies in the spectrum; the standard deviation of the frequency is the square root of this. For <i>n</i> = 3, you get the non-normalized spectral skewness; to normalize it, you can divide by the 1.5 power of the second moment. For <i>n</i> = 4, you get the non-normalized spectral kurtosis; to normalize it, you can divide by the square of the second moment and subtract 3. Praat can directly give you the quantities mentioned here:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Get_centre_of_gravity___.html">Spectrum: Get centre of gravity...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Get_standard_deviation___.html">Spectrum: Get standard deviation...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Get_skewness___.html">Spectrum: Get skewness...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Get_kurtosis___.html">Spectrum: Get kurtosis...</a></dd>
+</dl>
+<hr>
+<address>
+	<p>© ppgb 20020323</p>
+</address>
+</body>
+</html>

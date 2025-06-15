@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Spectrum: Filter (pass Hann band)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Spectrum: Filter (pass Hann band)...
+</b></font></table></table>
+<p>A command to modify every selected <a href="Spectrum.html">Spectrum</a> object.</p>
+<p>The complex values in the <b>Spectrum</b> are multiplied by real-valued sine shapes and straight lines, according to the following figure:</p>
+<p align=middle><img height=300 width=500 src=Spectrum__Filter__pass_Hann_band_____1.png></p><h2>Settings</h2>
+<dl>
+<dt><b>From frequency (Hz)</b> (standard value: 500 Hz)
+<dd>the lower edge of the pass band (<i>f</i><sub>1</sub> in the figure). The value zero is special: the filter then acts as a low-pass filter.</dd>
+<dt><b>To frequency (Hz)</b> (standard value: 1000 Hz)
+<dd>the upper edge of the pass band (<i>f</i><sub>2</sub> in the figure). The value zero is special: the filter then acts as a high-pass filter.</dd>
+<dt><b>Smoothing (Hz)</b> (standard value: 100 Hz)
+<dd>the width of the region between pass and stop (<i>w</i> in the figure).</dd>
+</dl>
+<h2>Usage</h2>
+<p>Because of its symmetric Hann-like shape, the filter is especially useful for decomposing the Spectrum into consecutive bands. For instance, we can decompose the spectrum into the bands 0-500 Hz, 500-1000 Hz, 1000-2000 Hz, and 2000-"0" Hz:</p>
+<p align=middle><img height=300 width=500 src=Spectrum__Filter__pass_Hann_band_____2.png></p><p>By adding the four bands together, we get the original spectrum again.</p>
+<p>A complementary filter is described at <a href="Spectrum__Filter__stop_Hann_band____.html">Spectrum: Filter (stop Hann band)...</a>.</p>
+<p>See the <a href="Filtering.html">Filtering</a> tutorial for information on the need for smoothing and a comparative discussion of various filters.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound__Filter__pass_Hann_band____.html">Sound: Filter (pass Hann band)...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20030916</p>
+</address>
+</body>
+</html>

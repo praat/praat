@@ -1,0 +1,84 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>SoundEditor</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+SoundEditor
+</b></font></table></table>
+<p>An <a href="Editors.html">Editor</a> for viewing and editing a <a href="Sound.html">Sound</a> object. Most of the functions of this editor are described in the <a href="Intro.html">Intro</a>.</p>
+<h2>The markers</h2>
+<p>To set the cursor, use the left mouse button. A short horizontal line will also be shown at the left edge (in cyan); the extension of this line crosses the cursor line at the sound's function value (seen as a cyan dot). This function value (shown at the left in cyan) is the sinc-interpolated value, and is generally different from the value that you would expect when looking at the linearly interpolated version of the sampled sound.</p>
+<p>To select a part of the time domain, use the <a href="time_selection.html">time selection</a> mechanism.</p>
+<h2>Playing</h2>
+<p>To play any part of the sound, click in one of the rectangles below or above the sound window (there can be 1 to 8 of these rectangles), or choose a command from the Play menu.</p>
+<p>To mute one or more channels (of a multi-channel sound), <a href="Command-click.html">Command-click</a> on the &#128264; icon at the right side of the corresponding channel number. The icon will turn to &#128263;. In subsequent playing actions, the channel will not be played. Another <a href="Command-click.html">Command-click</a> on a muted channel icon will activate the channel again.</p>
+<h2>Publishing</h2>
+<p>To perform analyses on the selection, or save it to a file, create an independent Sound as a copy of the selection, by clicking on the button that will copy the selection to the List of Objects; the resulting Sound will be called &#8220;Sound untitled&#8221;.</p>
+<h2>Editing</h2>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Cut: cut the selection to the clipboard, for later pasting into the same or another Sound.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Copy selection to Sound clipboard: copy the selection to the clipboard, for later pasting into the same or another Sound.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Paste after selection: paste the clipboard to the cursor or after the selection.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Set selection to zero: set the selected samples to zero.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Reverse selection: reverse the selected part of the sound.</dd>
+</dl>
+<p>You can undo these commands with Undo (<a href="Keyboard_shortcuts.html">Command-Z</a>).</p>
+<h2>The Group button</h2>
+<p>To synchronize a SoundEditor window with other windows that show a time signal, push the Group button in all the windows that you want to synchronize. You cannot Cut from or Paste into a synchronized SoundEditor window.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Advanced_pulses_settings___.html">Advanced pulses settings...</a>
+<li><a href="Analyses_menu.html">Analyses menu</a>
+<li><a href="Extract_visible_formant_contour.html">Extract visible formant contour</a>
+<li><a href="Extract_visible_intensity_contour.html">Extract visible intensity contour</a>
+<li><a href="Extract_visible_pitch_contour.html">Extract visible pitch contour</a>
+<li><a href="Extract_visible_spectrogram.html">Extract visible spectrogram</a>
+<li><a href="FormantPathEditor.html">FormantPathEditor</a>
+<li><a href="Formants_menu.html">Formants menu</a>
+<li><a href="Get_first_formant.html">Get first formant</a>
+<li><a href="Get_pitch.html">Get pitch</a>
+<li><a href="Get_second_formant.html">Get second formant</a>
+<li><a href="Intro_2_2__Viewing_and_editing_a_sound.html">Intro 2.2. Viewing and editing a sound</a>
+<li><a href="Intro_3_1__Viewing_a_spectrogram.html">Intro 3.1. Viewing a spectrogram</a>
+<li><a href="Intro_3_6__Viewing_a_spectral_slice.html">Intro 3.6. Viewing a spectral slice</a>
+<li><a href="Intro_4_1__Viewing_a_pitch_contour.html">Intro 4.1. Viewing a pitch contour</a>
+<li><a href="Intro_4_3__Querying_the_pitch_contour.html">Intro 4.3. Querying the pitch contour</a>
+<li><a href="Intro_4_5__The_Pitch_object.html">Intro 4.5. The Pitch object</a>
+<li><a href="Intro_5_1__Viewing_formant_contours.html">Intro 5.1. Viewing formant contours</a>
+<li><a href="Intro_5_3__Querying_the_formant_contours.html">Intro 5.3. Querying the formant contours</a>
+<li><a href="Intro_5_4__The_Formant_object.html">Intro 5.4. The Formant object</a>
+<li><a href="Intro_6_1__Viewing_an_intensity_contour.html">Intro 6.1. Viewing an intensity contour</a>
+<li><a href="Log_files.html">Log files</a>
+<li><a href="LongSoundEditor.html">LongSoundEditor</a>
+<li><a href="pitch_analysis_by_filtered_autocorrelation.html">pitch analysis by filtered autocorrelation</a>
+<li><a href="pitch_analysis_by_filtered_cross-correlation.html">pitch analysis by filtered cross-correlation</a>
+<li><a href="pitch_analysis_by_raw_autocorrelation.html">pitch analysis by raw autocorrelation</a>
+<li><a href="pitch_analysis_by_raw_cross-correlation.html">pitch analysis by raw cross-correlation</a>
+<li><a href="Pitch_menu.html">Pitch menu</a>
+<li><a href="Pitch_settings___.html">Pitch settings...</a>
+<li><a href="Play.html">Play</a>
+<li><a href="Show_formant.html">Show formant</a>
+<li><a href="Show_intensity.html">Show intensity</a>
+<li><a href="Show_pitch.html">Show pitch</a>
+<li><a href="Show_pulses.html">Show pulses</a>
+<li><a href="Show_spectrogram.html">Show spectrogram</a>
+<li><a href="Spectrogram_menu.html">Spectrogram menu</a>
+<li><a href="Spectrogram_settings___.html">Spectrogram settings...</a>
+<li><a href="TextGridEditor.html">TextGridEditor</a>
+<li><a href="Time_step_settings___.html">Time step settings...</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+<li><a href="Voice.html">Voice</a>
+<li><a href="What_was_new_in_3_6_.html">What was new in 3.6?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 20220814,2023-06-08</p>
+</address>
+</body>
+</html>

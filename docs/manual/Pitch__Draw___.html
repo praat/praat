@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Pitch: Draw...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Pitch: Draw...
+</b></font></table></table>
+<p>A command for drawing the selected <a href="Pitch.html">Pitch</a> objects into the <a href="Picture_window.html">Picture window</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>From time (s)</b>
+<dt><b>To time (seconds)</b>
+<dd>the time domain along the horizontal axis. If these are both zero, the time domain of the <b>Pitch</b> itself is taken (autowindowing).</dd>
+<dt><b>Minimum frequency (Hz)</b>
+<dt><b>Maximum frequency (Hz)</b>
+<dd>the frequency range along the vertical axis. <b>Maximum frequency</b> must be greater than <b>Minimum frequency</b>.</dd>
+</dl>
+<h2>Behaviour</h2>
+<p>In unvoiced frames, nothing will be drawn.</p>
+<p>In voiced frames, the pitch frequency associated with the frame is thought to represent the time midpoint of the frame, but frequencies will be drawn at all time points in the frame, as follows:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; If two adjacent frames are both voiced, the frequency of the time points between the midpoints of the frames is linearly interpolated from both midpoints.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; If a voiced frame is adjacent to another voiced frame on one side, and to a voiceless frame on the other side, the frequencies in the half-frame on the unvoiced side will be linearly extrapolated from the midpoints of the two voiced frames involved.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; If a voiced frame is adjacent to two unvoiced frames, a horizontal line segment will be drawn at the frequency of the midpoint.</dd>
+</dl>
+<hr>
+<address>
+	<p>© ppgb 19960910</p>
+</address>
+</body>
+</html>

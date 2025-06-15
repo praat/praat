@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PointProcess: To Sound (pulse train)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PointProcess: To Sound (pulse train)...
+</b></font></table></table>
+<p>A command to convert every selected <a href="PointProcess.html">PointProcess</a> into a <a href="Sound.html">Sound</a>.</p>
+<h2>Algorithm</h2>
+<p>A pulse is generated at every point in the point process. This pulse is filtered at the Nyquist frequency of the resulting <b>Sound</b> by converting it into a sampled <b>sinc</b> function.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Sampling frequency (Hz)</b>
+<dd>the sampling frequency of the resulting Sound object, e.g. 44100 hertz.</dd>
+<dt><b>Adaptation factor</b>
+<dd>the factor by which a pulse height will be multiplied if the pulse time is not within <b>Adaptation time</b> from the pre-previous pulse, and by which a pulse height will again be multiplied if the pulse time is not within <b>Adaptation time</b> from the previous pulse. This factor is against abrupt starts of the pulse train after silences, and is 1.0 if you do want abrupt starts after silences.</dd>
+<dt><b>Adaptation time (s)</b>
+<dd>the minimal period that will be considered a silence, e.g. 0.05 seconds.</dd>
+<dt><b>Interpolation depth</b>
+<dd>the extent of the sinc function to the left and to the right of the peak, e.g. 2000 samples.</dd>
+</dl>
+<p>Example: if <b>Adaptation factor</b> is 0.6, and <b>Adaptation time</b> is 0.02 s, then the heights of the first two pulses after silences of at least 20 ms will be multiplied by 0.36 and 0.6, respectively.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="PointProcess__Play.html">PointProcess: Play</a>
+<li><a href="PointProcess__To_Sound__hum____.html">PointProcess: To Sound (hum)...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20070225</p>
+</address>
+</body>
+</html>

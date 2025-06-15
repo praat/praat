@@ -1,0 +1,82 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 3.6. “For” loops</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 3.6. “For” loops
+</b></font></table></table>
+<p>The power of a procedural programming language is most easily illustrated with the <i>for-loop</i>.</p>
+<p>Take the example of the <a href="Scripting_3_5__String_queries.html">previous page</a>, whereas you wanted to know the text in the third interval of the first tier of a selected TextGrid. It&#8217;s easy to imagine that you actually want the texts of <i>all the first five</i> intervals. With knowledge from the previous sections, you could write it like this:</p>
+<code>   writeInfoLine: “The texts in the first five intervals:”<br></code>
+<code>   text$ = Get label of interval: 1, 1<br></code>
+<code>   appendInfoLine: “Interval 1: ”, text$<br></code>
+<code>   text$ = Get label of interval: 1, 2<br></code>
+<code>   appendInfoLine: “Interval 2: ”, text$<br></code>
+<code>   text$ = Get label of interval: 1, 3<br></code>
+<code>   appendInfoLine: “Interval 3: ”, text$<br></code>
+<code>   text$ = Get label of interval: 1, 4<br></code>
+<code>   appendInfoLine: “Interval 4: ”, text$<br></code>
+<code>   text$ = Get label of interval: 1, 5<br></code>
+<code>   appendInfoLine: “Interval 5: ”, text$<br></code>
+<p>The result will be something like</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_6___For__loops_1.png></p><p>This can be done more nicely. The first step is to realize that the sentences starting with <code><font size=+1>text$</font></code> are similar to each other, and the sentence starting with <code><font size=+1>appendInfoLine</font></code> are also similar to each other. They only differ in the interval number, and can therefore be made <i>identical</i> by using a variable for the interval number, like this:</p>
+<code>   writeInfoLine: “The texts in the first five intervals:”<br></code>
+<code>   intervalNumber = 1<br></code>
+<code>   text$ = Get label of interval: 1, intervalNumber<br></code>
+<code>   appendInfoLine: “Interval ”, intervalNumber, “: ”, text$<br></code>
+<code>   intervalNumber = 2<br></code>
+<code>   text$ = Get label of interval: 1, intervalNumber<br></code>
+<code>   appendInfoLine: “Interval ”, intervalNumber, “: ”, text$<br></code>
+<code>   intervalNumber = 3<br></code>
+<code>   text$ = Get label of interval: 1, intervalNumber<br></code>
+<code>   appendInfoLine: “Interval ”, intervalNumber, “: ”, text$<br></code>
+<code>   intervalNumber = 4<br></code>
+<code>   text$ = Get label of interval: 1, intervalNumber<br></code>
+<code>   appendInfoLine: “Interval ”, intervalNumber, “: ”, text$<br></code>
+<code>   intervalNumber = 5<br></code>
+<code>   text$ = Get label of interval: 1, intervalNumber<br></code>
+<code>   appendInfoLine: “Interval ”, intervalNumber, “: ”, text$<br></code>
+<p>A new trick that you see here is that as a numeric argument (<b>Interval number</b>, the second argument to <b>Get label of interval...</b>), you can use not only a number (as in all previous examples), but also a variable (<i><code><font size=+1>intervalNumber</font></code></i>). The rest of the script should be known stuff by now.</p>
+<p>The script above is long, but it can be made much shorter with the use of a <i>for-loop</i>:</p>
+<code>   writeInfoLine: “The texts in the first five intervals:”<br></code>
+<code>   for intervalNumber from 1 to 5<br></code>
+<code>      text$ = Get label of interval: 1, intervalNumber<br></code>
+<code>      appendInfoLine: “Interval ”, intervalNumber, “: ”, text$<br></code>
+<code>   endfor<br></code>
+<p>The two lines that were repeated five times in the previous version now show up with indentation between a <code><font size=+1>for</font></code> line and its corresponding <code><font size=+1>endfor</font></code>. Those two lines (the <code><font size=+1>text$</font></code> and the <code><font size=+1>appendInfoLine</font></code> line) are executed five times: for <i><code><font size=+1>intervalNumber</font></code></i> equal to 1, for <i><code><font size=+1>intervalNumber</font></code></i> equal to 2, for <i><code><font size=+1>intervalNumber</font></code></i> equal to 3, for <i><code><font size=+1>intervalNumber</font></code></i> equal to 4, and for <i><code><font size=+1>intervalNumber</font></code></i> equal to 5, in that order.</p>
+<p>In the above example, using a loop does not do much more than save eight lines, at the cost of adding two new lines. But imagine the case in which you want to list <i>all</i> the texts in the intervals: the version without the loop is no longer possible. By contrast, the version <i>with</i> the loop is still possible, because we have the command <b>Get number of intervals...</b>, which gives us the number of intervals in the specified tier (here, tier 1). So you do:</p>
+<code>   numberOfIntervals = Get number of intervals: 1<br></code>
+<code>   writeInfoLine: “The texts in all ”, numberOfIntervals, “ intervals:”<br></code>
+<code>   for intervalNumber from 1 to numberOfIntervals<br></code>
+<code>      text$ = Get label of interval: 1, intervalNumber<br></code>
+<code>      appendInfoLine: “Interval ”, intervalNumber, “: ”, text$<br></code>
+<code>   endfor<br></code>
+<p>This may yield something like</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_6___For__loops_2.png></p><p>This is the first script in this tutorial that is useful in itself. On the basis of it you can create all kinds of ways to list the texts in intervals. Here is how you would also list the durations of those intervals:</p>
+<code>   numberOfIntervals = Get number of intervals: 1<br></code>
+<code>   writeInfoLine: “The durations and texts in all ”, numberOfIntervals, “ intervals:”<br></code>
+<code>   for intervalNumber from 1 to numberOfIntervals<br></code>
+<code>      startTime = Get start point: 1, intervalNumber<br></code>
+<code>      endTime = Get end point: 1, intervalNumber<br></code>
+<code>      duration = endTime - startTime<br></code>
+<code>      text$ = Get label of interval: 1, intervalNumber<br></code>
+<code>      appendInfoLine: “Interval ”, intervalNumber, “ is ”, duration, “ seconds long and contains the text: ”, text$<br></code>
+<code>   endfor<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_3__Simple_language_elements.html">Scripting 3. Simple language elements</a>
+<li><a href="Scripting_3_7__Layout.html">Scripting 3.7. Layout</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140111</p>
+</address>
+</body>
+</html>

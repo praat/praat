@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Filter (de-emphasis)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Filter (de-emphasis)...
+</b></font></table></table>
+<p>A command to filter every selected <a href="Sound.html">Sound</a> object. The resulting Sound object has a lower spectral slope.</p>
+<p>The reverse of <a href="Sound__Filter__pre-emphasis____.html">Sound: Filter (pre-emphasis)...</a>. For an example, see <a href="Source-filter_synthesis.html">Source-filter synthesis</a>.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>From frequency (Hz)</b>
+<dd>the frequency <i>F</i> above which the spectral slope will decrease by 6 dB/octave.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The de-emphasis factor <i>&#945;</i> is computed as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#945;</i> = exp (-2 <i>&#960;</i> <i>F</i> <i>&#916;t</i>)</table>
+<p>where <i>&#916;t</i> is the sampling period of the sound. The new sound <i>y</i> is then computed recursively as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i><sub>1</sub> = <i>x</i><sub>1</sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i><sub><i>i</i></sub> = <i>x</i><sub><i>i</i></sub> + <i>&#945;</i> <i>y</i><sub><i>i</i>&#8722;1</sub></table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Filtering.html">Filtering</a>
+<li><a href="Sound__De-emphasize__in-place____.html">Sound: De-emphasize (in-place)...</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2003-03-09</p>
+</address>
+</body>
+</html>

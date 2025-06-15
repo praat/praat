@@ -1,0 +1,70 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>number</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+number
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>number</font></code></b> (<i><code><font size=+1>a$</font></code></i>)
+<dd>interpret a string as a number.</dd>
+</dl>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0.0") = 0<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0.00123") = 0.00123   ; decimal point<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("12e34") = 1.2e+35   ; exponent introduced by "e" or "E"<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("junk") = undefined   ; i.e. not zero as in C++ !<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("  -0.0000000123junk") = -1.23e-08   ; maximize digits, then ignore<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("1.0e+309") = undefined<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("1.0e-309") &lt;&gt; 0   ; denormalized<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("1.0e-319") &lt;&gt; 0   ; denormalized<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("1.0e-329") = 0   ; underflow<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278") = 32278<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278") = -32278<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278.64785") = 32278.64785<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278.64785") = -32278.64785<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278.647e85") = 32278.647e85<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278.647e85") = -32278.647e85<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278.647e-85") = 32278.647e-85<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278.647e-85") = -32278.647e-85<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278.647e-305") = 32278.647e-305<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278.647e-305") = -32278.647e-305<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278.647e-315") = 32278.647e-315<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278.647e-315") = -32278.647e-315<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278.647e-325") = 32278.647e-325<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278.647e-325") = -32278.647e-325<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278.647e305") = 32278.647e305<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278.647e305") = -32278.647e305<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278.647e315") = 32278.647e315<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278.647e315") = -32278.647e315<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("32278.647e325") = 32278.647e325<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-32278.647e325") = -32278.647e325<br></code>
+<p>Hexadecimal:</p>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0x32278") = 0x32278<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0x123") = 291<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0x000001ABCDEFGH") = 0x00001abcdef   ; maximize digits, then ignore<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0x123.456") = 291.27099609375<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0x123.abc") = 291.6708984375   ; hexadecimal point<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0x123.abcp-1") = 145.83544921875   ; exponent introduced by "p" or "P"<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0x123.abcP-2") = 72.917724609375<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0x123.abcp-12") = 0.07120871543884277   ; the exponent is decimal !<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("0x123.abcp-1A2") = 145.83544921875   ; the exponent is decimal !<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>number</b> ("-0x1afp-2") = -107.75   ; from `cppreference.com`<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Functions.html">Functions</a>
+<li><a href="What_s_new_.html">What's new?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023,2024</p>
+</address>
+</body>
+</html>

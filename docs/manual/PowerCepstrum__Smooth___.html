@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PowerCepstrum: Smooth...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PowerCepstrum: Smooth...
+</b></font></table></table>
+<p>A command to smooth the selected <a href="PowerCepstrum.html">PowerCepstrum</a> by averaging values at successive quefrencies.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Quefrency averaging window (s)</b>
+<dd>determines the width of the averaging window in the quefrency domain. By chosing a value of zero, you can prevent any smoothing in the quefrency dimension.</dd>
+<dt><b>Number of iterations</b>
+<dd>determines how often the averaging will take place. If chosen 2, for example, the output PowerCepstrum after the first averaging will be averaged once again.</dd>
+</dl>
+<h2>Examples</h2>
+<p>The figure below is the PowerCepstrum taken from an artificial /a/ vowel synthesized as follows:</p>
+<code>   Create KlattGrid from vowel: "a", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000<br></code>
+<code>   To Sound<br></code>
+<code>   To PowerCepstrogram: 60, 0.002, 5000, 50<br></code>
+<code>   To PowerCepstrum (slice): 0.1<br></code>
+<code>   prominence = Get peak prominence: 60, 333.3, "Parabolic", 0.001, 0.05, "Straight", "Robust slow"<br></code>
+<code>   Draw: 0, 0, 0, 110, "yes"<br></code>
+<code>   Text top: "no", "Peak prominence = " + fixed$ (prominence, 2) + " dB"<br></code>
+<p align=middle><img height=300 width=500 src=PowerCepstrum__Smooth____1.png></p><p>After 1 iteration with an averaging window of 0.0005 s the PowerCepstrum is:</p>
+<p align=middle><img height=300 width=500 src=PowerCepstrum__Smooth____2.png></p><p>After 2 iterations with an averaging window of 0.0005 s the PowerCepstrum is:</p>
+<p align=middle><img height=300 width=500 src=PowerCepstrum__Smooth____3.png></p><hr>
+<address>
+	<p>© djmw 20191005</p>
+</address>
+</body>
+</html>

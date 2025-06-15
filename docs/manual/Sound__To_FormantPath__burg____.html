@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To FormantPath (burg)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To FormantPath (burg)...
+</b></font></table></table>
+<p>A command that creates a <a href="FormantPath.html">FormantPath</a> object from each selected <a href="Sound.html">Sound</a> . </p>
+<h2><b>Settings</b></h2>
+<p>The settings for <b>Time step (s)</b>, <b>Maximum number of formants</b>, <b>Window length (s)</b> and <b>Pre-emphasis from (Hz)</b> are as you would set them with the <a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a> method. The defaults are 0.005 seconds, 5.0 formants, 0.025 seconds, and 50.0 Hz, respectively.</p>
+<dl>
+<dt><b>Middle formant ceiling (Hz)</b>
+<dd>determines the middle formant ceiling frequency in Hz. You normaly would use 5500.0 Hz for an average female voice and 5000.0 Hz for an average male voice as you would do for the <b>Formant ceiling (Hz)</b> setting in <b>To Formant (burg)...</b>. However, instead of performing only one analysis with a fixed ceiling, we perform multiple analyses, each with a different ceiling frequency. The number of analyses with a <i>lower</i> formant ceiling than the <i>middle formant ceiling</i> is equal to the number of analyses with a <i>higher</i> formant ceiling than the <i>middle formant ceiling</i>. </dd>
+<dt><b>Ceiling step size</b>
+<dd>defines the increase or decrease in the formant ceiling between two successive analyses as exp(<i>ceilingStepSize</i>) when we step up, or as exp(-<i>ceilingStepSize</i>) when we step down.</dd>
+<dt><b>Number of steps up / down</b>
+<dd>determines the number of steps we go up as well as the number of steps we go down with respect to the <i>middle</i> formant ceiling<i></i>. The ceiling frequency for the <i>i</i><sup>th</sup> step down is <i>middleFormantCeiling</i>&#183;exp (-<i>i</i>&#183;<i>ceilingStepSize</i>) and for the <i>i</i><sup>th</sup> step up is <i>middleFormantCeiling</i>&#183;exp (+<i>i</i>&#183;<i>ceilingStepSize</i>). The total number of analyses is always 2&#183;<i>numberOfStepsUpDown</i>+1.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The following algorithm describes what is going on. </p>
+<code>   ceiling [numberOfStepsUpDown + 1] = middleCeiling<br></code>
+<code>   for istep from 1 to 2 * numberOfStepsUpDown + 1<br></code>
+<code>      if istep &lt;= numberOfStepsUpDown<br></code>
+<code>         ceiling [istep] = middleFormantCeiling * exp (-(numberOfStepsUpDown - istep + 1) * ceilingStepSize)<br></code>
+<code>      elsif istep &gt; numberOfStepsUpOrDown + 1<br></code>
+<code>         ceiling [istep] = middleFormantCeiling * exp ((istep - numberOfStepsUpDown - 1) * ceilingStepSize)<br></code>
+<code>      selectObject: sound<br></code>
+<code>      formant [istep] = To Formant (burg): timeStep, maxNumberOfFormants, ceiling [istep], windowLength, preEmphasis<br></code>
+<code>   endfor<br></code>
+<p>This description is approximate because in the "To Formant" step we have to guarantee that all the Formant objects get the same time sampling.</p>
+<hr>
+<address>
+	<p>© djmw 20230225</p>
+</address>
+</body>
+</html>

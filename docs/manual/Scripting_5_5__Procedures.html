@@ -1,0 +1,222 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 5.5. Procedures</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 5.5. Procedures
+</b></font></table></table>
+<p>Sometimes in a Praat script, you will want to perform the same thing more than once. In <a href="Scripting_5_4__Loops.html">&#167;5.4</a> we saw how <i>loops</i> can help there. In this section we will see how <i>procedures</i> (also called <i>subroutines</i>) can help us.</p>
+<p>Imagine that you want to play a musical note with a frequency of 440 Hz (an &#8220;A&#8221;) followed by a note that is one octave higher, i.e. has a frequency of 880 Hz (an &#8220;a&#8221;). You could achieve this with the following script:</p>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 440, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 880, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<p>This script creates a sound with a sine wave with an amplitude of 0.4 and a frequency of 440 Hz, then plays this sound, then changes the sound into a sine wave with a frequency of 880 Hz, then plays this changed sound, and then removes the Sound object from the object list.</p>
+<p>This script is perfect if all you want to do is to play those two notes and nothing more. But now imagine that you want to play such an octave jump not only for a note of 440 Hz, but also for a note of 400 Hz and for a note of 500 Hz. You could use the following script:</p>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 440, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 880, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 400, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 800, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 500, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 1000, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<p>This script works but is no longer perfect. It contains many similar lines, and is difficult to read.</p>
+<p>Here is where <i>procedures</i> come in handy. With procedures, you can re-use similar pieces of code. To make the three parts of the above script more similar, I&#8217;ll rewrite it using two variables (<i><code><font size=+1>frequency</font></code></i> and <i><code><font size=+1>octaveHigher</font></code></i>):</p>
+<code>   frequency = 440<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   octaveHigher = 2 * frequency<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   frequency = 400<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   octaveHigher = 2 * frequency<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   frequency = 500<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<code>   octaveHigher = 2 * frequency<br></code>
+<code>   Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<p>You can now see that seven lines of the script appear identically three times. I'll put those seven lines into a <i>procedure</i> that I name <b><code><font size=+1>playOctave</font></code></b>:</p>
+<code>   <b>procedure</b> playOctave<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>       octaveHigher = 2 * frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>   <b>endproc</b><br></code>
+<p>As you see, a <i>procedure definition</i> in Praat consists of three parts:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. a line with the word <b><code><font size=+1>procedure</font></code></b>, followed by the name of the procedure, followed by a pair of parentheses;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. the <i>body</i> of the procedure (here: seven lines);</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. a line with the word <b><code><font size=+1>endproc</font></code></b>.</dd>
+</dl>
+<p>You can put a procedure definition anywhere in your script; the beginning or end of the script are common places.</p>
+<p>The bodies of procedures are executed only if you <i>call</i> the procedure explicitly, which you can do anywhere in the rest of your script:</p>
+<code>   frequency = 440<br></code>
+<code>   @playOctave<br></code>
+<code>   frequency = 400<br></code>
+<code>   @playOctave<br></code>
+<code>   frequency = 500<br></code>
+<code>   @playOctave<br></code>
+<code>   <b>procedure</b> playOctave<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>       octaveHigher = 2 * frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>   <b>endproc</b><br></code>
+<p>This script works as follows. First, the number 440 is assigned to the variable <i><code><font size=+1>frequency</font></code></i> in line 1. Then, execution of the script arrives at the <b><code><font size=+1>@</font></code></b> (&#8220;call&#8221;) statement of line 2. Praat then knows that it has to jump to the procedure called <i><code><font size=+1>playOctave</font></code></i>, which is found on line 7. The execution of the script then proceeds with the first line of the procedure body, where a Sound is created. Then, the other lines of the procedure body are also executed, ending with the removal of the Sound. Then, the execution of the script arrives at the <b><code><font size=+1>endproc</font></code></b> statement. Here, Praat knows that it has to jump back to the line after the line that the procedure was called from; since the procedure was called from line 2, the execution proceeds at line 3 of the script. There, the number 400 is assigned to the variable <i><code><font size=+1>frequency</font></code></i>. In line 4, execution will jump to the procedure again, and with the next <b><code><font size=+1>endproc</font></code></b> the execution will jump back to line 5. There, 500 is assigned to <i><code><font size=+1>frequency</font></code></i>, followed by the third jump to the procedure. the third <b><code><font size=+1>endproc</font></code></b> jumps back to the line after the third <b><code><font size=+1>@</font></code></b>, i.e. to line 7. Here the execution of the script will stop, because there are no more executable commands (the procedure definition at the end is not executed again).</p>
+<h2>Arguments</h2>
+<p>The above example contains something awkward. The procedure <i><code><font size=+1>playOctave</font></code></i> requires that the variable <i><code><font size=+1>frequency</font></code></i> is set to an appropriate value, so before calling <i><code><font size=+1>playOctave</font></code></i> you always have to insert a line like</p>
+<code>   frequency = 440<br></code>
+<p>This can be improved upon. In the following version of the script, the procedure <i><code><font size=+1>playOctave</font></code></i> requires an explicit <i>argument</i>:</p>
+<code>   @playOctave: 440<br></code>
+<code>   @playOctave: 400<br></code>
+<code>   @playOctave: 500<br></code>
+<code>   <b>procedure</b> playOctave: frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>       octaveHigher = 2 * frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>   <b>endproc</b><br></code>
+<p>This works as follows. The first line of the procedure now not only contains the name (<i><code><font size=+1>playOctave</font></code></i>), but also a list of variables (here only one: <i><code><font size=+1>frequency</font></code></i>). In the first line of the script, the procedure <i><code><font size=+1>playOctave</font></code></i> is called with the <i>argument</i> 440. Execution then jumps to the procedure, where the argument 440 is assigned to the variable <i><code><font size=+1>frequency</font></code></i>, which is then used in the body of the procedure.</p>
+<h2>Encapsulation and local variables</h2>
+<p>Although the size of the script has now been reduced to 12 lines, which cannot be further improved upon, there is still something wrong with it. Imagine the following script:</p>
+<code>   frequency = 300<br></code>
+<code>   @playOctave: 440<br></code>
+<code>   @playOctave: 400<br></code>
+<code>   @playOctave: 500<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: frequency<br></code>
+<code>   <b>procedure</b> playOctave: frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>       octaveHigher = 2 * frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>   <b>endproc</b><br></code>
+<p>You might have thought that this script will write &#8220;300&#8221; to the Info window, because that is what you expect if you look at the first five lines. However, the procedure will assign the values 440, 400, and 500 to the variable <i><code><font size=+1>frequency</font></code></i>, so that the script will actually write &#8220;500&#8221; to the Info window, because 500 is the last (fourth!) value that was assigned to the variable <i><code><font size=+1>frequency</font></code></i>.</p>
+<p>What you would want is that variables that are used inside procedures, such as <i><code><font size=+1>frequency</font></code></i> and <i><code><font size=+1>octaveHigher</font></code></i> here, could somehow be made not to &#8220;clash&#8221; with variable names used outside the procedure. A trick that works would be to include the procedure name into the names of these variables:</p>
+<code>   frequency = 300<br></code>
+<code>   @playOctave: 440<br></code>
+<code>   @playOctave: 400<br></code>
+<code>   @playOctave: 500<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: frequency<br></code>
+<code>   <b>procedure</b> playOctave: playOctave.frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, playOctave.frequency, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>       playOctave.octaveHigher = 2 * playOctave.frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, playOctave.octaveHigher, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>   <b>endproc</b><br></code>
+<p>This works. The six tones will be played, and  00"will be written to the Info window. But the formulation is a bit wordy, isn't it?</p>
+<p>Fortunately, Praat allows an abbreviated version of these long names: just leave &#8220;playOctave&#8221; off from the names of the variables, but keep the period (<code><font size=+1>.</font></code>):</p>
+<code>   frequency = 300<br></code>
+<code>   @playOctave: 440<br></code>
+<code>   @playOctave: 400<br></code>
+<code>   @playOctave: 500<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: frequency<br></code>
+<code>   <b>procedure</b> playOctave: .frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, .frequency, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>       .octaveHigher = 2 * .frequency<br></code>
+<code>       Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, .octaveHigher, 0.2, 0.01, 0.01<br></code>
+<code>       Play<br></code>
+<code>       Remove<br></code>
+<code>   <b>endproc</b><br></code>
+<p>This is the final version of the script. It works because Praat knows that you are using the variable names <i><code><font size=+1>.frequency</font></code></i> and <i><code><font size=+1>.octaveHigher</font></code></i> in the context of the procedure <i><code><font size=+1>playOctave</font></code></i>, so that Praat knows that by these variable names you actually mean to refer to <i><code><font size=+1>playOctave.frequency</font></code></i> and <i><code><font size=+1>playOctave.octaveHigher</font></code></i>.</p>
+<p>It is advisable that you use such &#8220;local&#8221; variable names for all <i>parameters</i> of a procedure, i.e. for the variables listed after the <b><code><font size=+1>procedure</font></code></b> word (e.g. <i><code><font size=+1>.frequency</font></code></i>), as well as for all variables that you create in the procedure body (e.g. <i><code><font size=+1>.octaveHigher</font></code></i>). In this way, you make sure that you don't inadvertently use a variable name that is also used outside the procedure and thereby perhaps inadvertently change the value of a variable that you expect to be constant across a procedure call.</p>
+<h2>A list of numeric and string arguments</h2>
+<p>You can use multiple arguments, separated by commas, and string arguments (with a dollar sign in the variable name):</p>
+<code>   @listSpeaker: “Bart”, 38<br></code>
+<code>   @listSpeaker: “Katja“, 24<br></code>
+<code>   <b>procedure</b> listSpeaker: .name$, .age<br></code>
+<code>       appendInfoLine: “Speaker ”, .name$, “ is ”, .age, “ years old.”<br></code>
+<code>   <b>endproc</b><br></code>
+<p>or</p>
+<code>   @conjugateVerb: “be”, “I am”, “you are”, “she is”<br></code>
+<code>   <b>procedure</b> conjugateVerb: .verb$, .first$, .second$, .third$<br></code>
+<code>       writeInfoLine: “Conjugation of 'to ”, .verb$, “':”<br></code>
+<code>       appendInfoLine: “1sg ”, .first$<br></code>
+<code>       appendInfoLine: “2sg ”, .second$<br></code>
+<code>       appendInfoLine: “3sg ”, .third$<br></code>
+<code>   <b>endproc</b><br></code>
+<p>For the arguments you can use expressions:</p>
+<code>   @playOctave: 400 + 100<br></code>
+<p>As with all string literals, the double quotes in literal string arguments should be doubled:</p>
+<code>   <b>procedure</b> texts: .top$, .bottom$<br></code>
+<code>       Text top: “yes”, .top$<br></code>
+<code>       Text bottom: “yes”, .bottom$<br></code>
+<code>   <b>endproc")</b><br></code>
+<code>   @texts: """ hello"" at the top", """goodbye"" at the bottom"<br></code>
+<p>unless you use curly quotes:</p>
+<code>   @texts: “" hello" at the top”, “"goodbye" at the bottom”<br></code>
+<p>or even</p>
+<code>   @texts: ““ hello” at the top”, ““goodbye” at the bottom”<br></code>
+<h2>Functions</h2>
+<p>The Praat scripting language does not have the concept of a &#8220;function&#8221; like some other scripting languages do. A function is a procedure that returns a number, a string, a vector, a matrix, or a string array. For instance, you can imagine the function <code><font size=+1>squareNumber</font></code> (), which takes a number (e.g. 5) as an argument and returns the square of that number (e.g. 25). Here is an example of how you can do that, using the global availability of local variables:</p>
+<code>   @squareNumber: 5<br></code>
+<code>   writeInfoLine: “The square of 5 is ”, squareNumber.result, “.”<br></code>
+<code>   <b>procedure</b> squareNumber: .number<br></code>
+<code>       .result = .number ^ 2<br></code>
+<code>   <b>endproc</b><br></code>
+<p>Another way to emulate functions is to use a variable name as an argument:</p>
+<code>   @squareNumber: 5, “square5”<br></code>
+<code>   writeInfoLine: “The square of 5 is ”, square5, “.”<br></code>
+<code>   <b>procedure</b> squareNumber: .number, .squareVariableName$<br></code>
+<code>       '.squareVariableName$' = .number ^ 2<br></code>
+<code>   <b>endproc</b><br></code>
+<p>However, this uses variable substitution, a trick better avoided.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_endproc_.html"><code><font size=+1>endproc</font></code></a>
+<li><a href="_procedure_.html"><code><font size=+1>procedure</font></code></a>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_5__Language_elements_reference.html">Scripting 5. Language elements reference</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2017-09-04</p>
+</address>
+</body>
+</html>

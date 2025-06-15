@@ -1,0 +1,163 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>energy integration continuity test</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+energy integration continuity test
+</b></font></table></table>
+<code>   <a href="_random_initializeWithSeedUnsafelyButPredictably_.html">random_initializeWithSeedUnsafelyButPredictably</a> (89678363)<br></code>
+<code>   samplingFrequency = 44100<br></code>
+<code>   my.Sound = <a href="Create_Sound_from_formula___.html">Create Sound from formula:</a> "sineWithNoise", 1, 0.0, 1.0,<br></code>
+<code>   ... samplingFrequency, ~ 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)<br></code>
+<p>What is the biggest step between two consecutive samples?</p>
+<code>   difference.Sound = <a href="Copy___.html">Copy:</a> "difference"<br></code>
+<code>   <a href="Formula___.html">Formula:</a> ~ if col = ncol then 0 else self [col + 1] - self [col] fi<br></code>
+<code>   biggestAbsoluteWaveformStepBetweenSamples = <a href="Sound__Get_absolute_extremum___.html">Get absolute extremum:</a> 0, 0, "none"<br></code>
+<code>   <a href="_appendInfoLine_.html">appendInfoLine</a>: "## biggest absolute waveform step between samples: ",<br></code>
+<code>   ... biggestAbsoluteWaveformStepBetweenSamples, " Pa"<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   ## biggest absolute waveform step between samples: 0.5882017498987074 Pa<br></code>
+<p>This corresponds to the following biggest energy step between two consecutive samples:</p>
+<code>   biggestAbsoluteEnergyStepBetweenSamples = biggestAbsoluteWaveformStepBetweenSamples ^ 2 / samplingFrequency<br></code>
+<code>   <a href="_appendInfoLine_.html">appendInfoLine</a>: "## biggest absolute energy step between samples: ",<br></code>
+<code>   ... biggestAbsoluteEnergyStepBetweenSamples, " Pa²s"<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   ## biggest absolute energy step between samples: 7.845380920269877e-06 Pa²s<br></code>
+<p>We&#8217;ll divide up every sample into 10 ministeps:</p>
+<code>   oversampling = 10<br></code>
+<p>Between any consecutive ministeps, the energy step should not exceed one tenth of the biggest energy step between two consecutive samples:</p>
+<code>   biggestAbsoluteEnergyMinistep = biggestAbsoluteEnergyStepBetweenSamples / oversampling<br></code>
+<code>   <a href="_appendInfoLine_.html">appendInfoLine</a>: "## biggest absolute energy ministep: ",<br></code>
+<code>   ... biggestAbsoluteEnergyMinistep, " Pa²s"<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   ## biggest absolute energy ministep: 7.845380920269877e-07 Pa²s<br></code>
+<p>Large test:</p>
+<code>   <a href="_stopwatch_.html">stopwatch</a><br></code>
+<code>   minidt = 1.0 / samplingFrequency / oversampling<br></code>
+<code>   tmin = 1e-9   ; not 0.0, in order to prevent autowindowing<br></code>
+<code>   previousEnergy = <b><a href="Sound__Get_energy___.html">Get energy:</a></b> 0, tmin<br></code>
+<code>   for i from 1 to 10000<br></code>
+<code>       energy = <b><a href="Sound__Get_energy___.html">Get energy:</a></b> 0, tmin + i * minidt<br></code>
+<code>       energyGain = energy - previousEnergy<br></code>
+<code>       if i &lt; 100<br></code>
+<code>           <a href="_appendInfoLine_.html">appendInfoLine</a>: i, " ", energy, " ", energyGain<br></code>
+<code>       endif<br></code>
+<code>       step = <a href="_abs_.html">abs</a> (energyGain)<br></code>
+<code>       <a href="_assert_.html">assert</a> step &gt; 0.0<br></code>
+<code>       <a href="_assert_.html">assert</a> step &lt; 1.0000000000001 * biggestAbsoluteEnergyMinistep   ; also captures undefined samples<br></code>
+<code>       previousEnergy = energy<br></code>
+<code>   endfor<br></code>
+<code>   <a href="_appendInfoLine_.html">appendInfoLine</a>: "## time elapsed: ", <a href="_fixed-S_.html">fixed$</a> (<a href="_stopwatch_.html">stopwatch</a> * 1000, 3), " ms"<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   1 9.85991670200348e-09 9.85557039548647e-09<br></code>
+<code>   2 1.971548709748995e-08 9.85557039548647e-09<br></code>
+<code>   3 2.9571057492976423e-08 9.855570395486474e-09<br></code>
+<code>   4 3.942662788846291e-08 9.855570395486483e-09<br></code>
+<code>   5 4.928219828394937e-08 9.85557039548646e-09<br></code>
+<code>   6 5.913776867943583e-08 9.85557039548646e-09<br></code>
+<code>   7 6.899333907492231e-08 9.855570395486487e-09<br></code>
+<code>   8 7.88489094704088e-08 9.85557039548648e-09<br></code>
+<code>   9 8.870447986589525e-08 9.855570395486454e-09<br></code>
+<code>   10 9.860525807996193e-08 9.900778214066685e-09<br></code>
+<code>   11 2.1097288939423437e-07 1.1236763131427244e-07<br></code>
+<code>   12 3.23340520708507e-07 1.1236763131427265e-07<br></code>
+<code>   13 4.3570815202277946e-07 1.1236763131427244e-07<br></code>
+<code>   14 5.480757833370524e-07 1.1236763131427297e-07<br></code>
+<code>   15 6.604434146513251e-07 1.123676313142727e-07<br></code>
+<code>   16 7.728110459655973e-07 1.1236763131427217e-07<br></code>
+<code>   17 8.851786772798705e-07 1.1236763131427323e-07<br></code>
+<code>   18 9.975463085941426e-07 1.1236763131427207e-07<br></code>
+<code>   19 1.1099139399084153e-06 1.123676313142727e-07<br></code>
+<code>   20 1.2222479420557002e-06 1.1233400214728491e-07<br></code>
+<code>   21 1.258358958404482e-06 3.611101634878181e-08<br></code>
+<code>   22 1.2944699747532643e-06 3.611101634878223e-08<br></code>
+<code>   23 1.3305809911020463e-06 3.611101634878202e-08<br></code>
+<code>   24 1.3666920074508283e-06 3.611101634878202e-08<br></code>
+<code>   25 1.4028030237996103e-06 3.611101634878202e-08<br></code>
+<code>   26 1.4389140401483923e-06 3.611101634878202e-08<br></code>
+<code>   27 1.4750250564971746e-06 3.611101634878223e-08<br></code>
+<code>   28 1.5111360728459568e-06 3.611101634878223e-08<br></code>
+<code>   29 1.5472470891947388e-06 3.611101634878202e-08<br></code>
+<code>   30 1.5833498977214194e-06 3.610280852668062e-08<br></code>
+<code>   31 1.6008490724530757e-06 1.7499174731656273e-08<br></code>
+<code>   32 1.618348247184732e-06 1.7499174731656273e-08<br></code>
+<code>   33 1.635847421916388e-06 1.749917473165606e-08<br></code>
+<code>   34 1.6533465966480443e-06 1.7499174731656273e-08<br></code>
+<code>   35 1.6708457713797006e-06 1.7499174731656273e-08<br></code>
+<code>   36 1.6883449461113564e-06 1.749917473165585e-08<br></code>
+<code>   37 1.705844120843013e-06 1.7499174731656484e-08<br></code>
+<code>   38 1.7233432955746688e-06 1.749917473165585e-08<br></code>
+<code>   39 1.740842470306325e-06 1.7499174731656273e-08<br></code>
+<code>   40 1.7583484457624646e-06 1.7505975456139537e-08<br></code>
+<code>   41 1.7912687645441031e-06 3.292031878163856e-08<br></code>
+<code>   42 1.8241890833257415e-06 3.2920318781638346e-08<br></code>
+<code>   43 1.8571094021073796e-06 3.2920318781638134e-08<br></code>
+<code>   44 1.890029720889018e-06 3.2920318781638346e-08<br></code>
+<code>   45 1.9229500396706563e-06 3.2920318781638346e-08<br></code>
+<code>   46 1.955870358452295e-06 3.292031878163856e-08<br></code>
+<code>   47 1.9887906772339334e-06 3.292031878163856e-08<br></code>
+<code>   48 2.021710996015572e-06 3.292031878163856e-08<br></code>
+<code>   49 2.05463131479721e-06 3.2920318781638134e-08<br></code>
+<code>   50 2.0875549016141217e-06 3.292358681691155e-08<br></code>
+<code>   51 2.127885731267828e-06 4.033082965370634e-08<br></code>
+<code>   52 2.1682165609215343e-06 4.033082965370634e-08<br></code>
+<code>   53 2.2085473905752407e-06 4.033082965370634e-08<br></code>
+<code>   54 2.248878220228946e-06 4.033082965370549e-08<br></code>
+<code>   55 2.2892090498826525e-06 4.033082965370634e-08<br></code>
+<code>   56 2.3295398795363584e-06 4.0330829653705916e-08<br></code>
+<code>   57 2.3698707091900648e-06 4.033082965370634e-08<br></code>
+<code>   58 2.4102015388437707e-06 4.0330829653705916e-08<br></code>
+<code>   59 2.450532368497477e-06 4.033082965370634e-08<br></code>
+<code>   60 2.490865592939e-06 4.033322444152279e-08<br></code>
+<code>   61 2.5366267804874685e-06 4.576118754846863e-08<br></code>
+<code>   62 2.5823879680359367e-06 4.5761187548468205e-08<br></code>
+<code>   63 2.6281491555844057e-06 4.576118754846905e-08<br></code>
+<code>   64 2.6739103431328743e-06 4.576118754846863e-08<br></code>
+<code>   65 2.7196715306813425e-06 4.5761187548468205e-08<br></code>
+<code>   66 2.765432718229811e-06 4.576118754846863e-08<br></code>
+<code>   67 2.8111939057782794e-06 4.5761187548468205e-08<br></code>
+<code>   68 2.8569550933267484e-06 4.576118754846905e-08<br></code>
+<code>   69 2.902716280875217e-06 4.576118754846863e-08<br></code>
+<code>   70 2.948506879878777e-06 4.579059900356002e-08<br></code>
+<code>   71 3.0609607097784683e-06 1.1245382989969118e-07<br></code>
+<code>   72 3.173414539678161e-06 1.1245382989969288e-07<br></code>
+<code>   73 3.2858683695778527e-06 1.124538298996916e-07<br></code>
+<code>   74 3.3983221994775456e-06 1.1245382989969288e-07<br></code>
+<code>   75 3.510776029377235e-06 1.1245382989968949e-07<br></code>
+<code>   76 3.623229859276929e-06 1.1245382989969372e-07<br></code>
+<code>   77 3.7356836891766204e-06 1.124538298996916e-07<br></code>
+<code>   78 3.848137519076312e-06 1.1245382989969118e-07<br></code>
+<code>   79 3.960591348976005e-06 1.124538298996933e-07<br></code>
+<code>   80 4.073010283500807e-06 1.1241893452480239e-07<br></code>
+<code>   81 4.106336278682792e-06 3.3325995181984736e-08<br></code>
+<code>   82 4.139662273864778e-06 3.332599518198558e-08<br></code>
+<code>   83 4.1729882690467615e-06 3.332599518198389e-08<br></code>
+<code>   84 4.206314264228747e-06 3.332599518198558e-08<br></code>
+<code>   85 4.239640259410732e-06 3.3325995181984736e-08<br></code>
+<code>   86 4.272966254592717e-06 3.3325995181984736e-08<br></code>
+<code>   87 4.306292249774701e-06 3.3325995181984736e-08<br></code>
+<code>   88 4.339618244956687e-06 3.332599518198558e-08<br></code>
+<code>   89 4.372944240138672e-06 3.3325995181984736e-08<br></code>
+<code>   90 4.406255566082368e-06 3.331132594369599e-08<br></code>
+<code>   91 4.406317982166531e-06 6.241608416314356e-11<br></code>
+<code>   92 4.406380398250694e-06 6.241608416314356e-11<br></code>
+<code>   93 4.406442814334857e-06 6.241608416314356e-11<br></code>
+<code>   94 4.406505230419019e-06 6.241608416229652e-11<br></code>
+<code>   95 4.4065676465031825e-06 6.241608416314356e-11<br></code>
+<code>   96 4.406630062587346e-06 6.241608416314356e-11<br></code>
+<code>   97 4.406692478671509e-06 6.241608416314356e-11<br></code>
+<code>   98 4.406754894755672e-06 6.241608416314356e-11<br></code>
+<code>   99 4.406817310839835e-06 6.241608416314356e-11<br></code>
+<code>   ## time elapsed: 67.549 ms<br></code>
+<hr>
+<address>
+	<p>© Paul Boersma 2025-05-14</p>
+</address>
+</body>
+</html>
