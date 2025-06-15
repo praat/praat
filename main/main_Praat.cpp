@@ -20,22 +20,22 @@
 #include "main_Praat.h"
 
 static void logo (Graphics graphics) {
-	Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 0.8);
+	Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setGrey (graphics, 0.95);
-	Graphics_fillRectangle (graphics, 0.0, 1.0, 0.0, 0.8);
+	Graphics_fillRectangle (graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFont (graphics, kGraphics_font::TIMES);
 	Graphics_setFontSize (graphics, 45.0);
 	Graphics_setColour (graphics, Melder_MAROON);
-	Graphics_text (graphics, 0.385, 0.66, U"P");
-	Graphics_text (graphics, 0.448, 0.66, U"\\s{R}");
-	Graphics_text (graphics, 0.510, 0.66, U"\\s{A}");
-	Graphics_text (graphics, 0.575, 0.66, U"\\s{A}");
-	Graphics_text (graphics, 0.628, 0.66, U"\\s{T}");
+	Graphics_text (graphics, 0.385, 0.87, U"P");
+	Graphics_text (graphics, 0.448, 0.87, U"\\s{R}");
+	Graphics_text (graphics, 0.510, 0.87, U"\\s{A}");
+	Graphics_text (graphics, 0.575, 0.87, U"\\s{A}");
+	Graphics_text (graphics, 0.628, 0.87, U"\\s{T}");
 	Graphics_setFontSize (graphics, 18.0);
-	Graphics_text (graphics, 0.5, 0.53, U"%%doing phonetics by computer");
+	Graphics_text (graphics, 0.5, 0.75, U"%%doing phonetics by computer");
 	Graphics_setFontSize (graphics, 14.0);
-	Graphics_text (graphics, 0.5, 0.41, Melder_cat (U"version ", Melder_appVersionSTR(),
+	Graphics_text (graphics, 0.5, 0.60, Melder_cat (U"version ", Melder_appVersionSTR(),
 			U" (", Melder_appMonthSTR(), U" ", Melder_appDay(), U", ", Melder_appYear(), U")"));
 	Graphics_setFontSize (graphics, 12.0);
 	[[maybe_unused]] constexpr bool isArm64 =
@@ -61,19 +61,27 @@ static void logo (Graphics graphics) {
 			U"";
 			#error Unknown OS type.
 		#endif
-	Graphics_text (graphics, 0.5, 0.34, Melder_cat (U"built for ", builtFor));
+	Graphics_text (graphics, 0.5, 0.52, Melder_cat (U"built for ", builtFor));
 	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_setFont (graphics, kGraphics_font::HELVETICA);
 	Graphics_setFontSize (graphics, 10.0);
-	Graphics_text (graphics, 0.5, 0.16, Melder_cat (U"Copyright © 1992–", Melder_appYear(), U" by Paul Boersma and David Weenink"));
+	Graphics_text (graphics, 0.5, 0.35, Melder_cat (U"Copyright © 1992–", Melder_appYear(), U" by Paul Boersma and David Weenink"));
 	Graphics_setFontSize (graphics, 10.0);
-	Graphics_text (graphics, 0.5, 0.09, U"Website: https://www.fon.hum.uva.nl/praat or http://praat.org");
+	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
+	Graphics_text (graphics, 0.39, 0.26, U"Download:");
+	Graphics_text (graphics, 0.39, 0.06, U"Source code:");
+	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
+	Graphics_setFont (graphics, kGraphics_font::COURIER);
+	Graphics_text (graphics, 0.41, 0.26, U"www.fon.hum.uva.nl/praat");
+	Graphics_text (graphics, 0.41, 0.20, U"www.praat.org");
+	Graphics_text (graphics, 0.41, 0.14, U"praat.github.io/praat");
+	Graphics_text (graphics, 0.41, 0.06, U"github.com/praat/praat");
 }
 
 int main (int argc, char *argv []) {
 	try {
 		//TRACE
-		praat_setLogo (130.0, 80.0, logo);
+		praat_setLogo (130.0, 100.0, logo);
 		Melder_stopwatch ();
 		praat_init (U"" stringize (PRAAT_NAME),
 			U"" stringize (PRAAT_VERSION_STR), PRAAT_VERSION_NUM,

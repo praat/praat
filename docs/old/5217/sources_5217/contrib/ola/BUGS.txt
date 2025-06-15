@@ -1,2 +1,0 @@
-Known bugs:
-CPrune: progress indicators are borken

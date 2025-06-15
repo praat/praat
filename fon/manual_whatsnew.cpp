@@ -29,6 +29,11 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.35# (15 June 2025)
+• Pitch analysis: guard against zero pitch floor if logarithmic.
+• Scripting: @`fixed$` () for vectors and matrices.
+• Linux: removed hard-coded background colour.
+
 ##6.4.34# (20 May 2025)
 • Linux: made @`demoShow` () work again on GTK 3.
 • Scripting: @`clock` ().

@@ -1,3 +1,0 @@
-Multithreading on Windows.
-Approx n. search?
-kD-tree?
