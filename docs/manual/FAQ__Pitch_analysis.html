@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>FAQ: Pitch analysis</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+FAQ: Pitch analysis
+</b></font></table></table>
+<p>Please also consult <a href="how_to_choose_a_pitch_analysis_method.html">how to choose a pitch analysis method</a>.</p>
+<p><b>Question</b>: what algorithm is used for pitch analysis?</p>
+<p>Answer: for how the raw pitch analysis method works, see <a href="Sound__To_Pitch__ac____.html">Sound: To Pitch (ac)...</a>. The 1993 article is downloadable from https://www.fon.hum.uva.nl/paul/</p>
+<p><b>Question</b>: why does Praat consider my sound voiceless while I hear it as voiced?</p>
+<p>There are at least five possibilities. Most of them can be checked by zooming in on the <a href="waveform.html">waveform</a>.</p>
+<p>The first possibility is that the pitch has fallen below the <a href="pitch_floor.html">pitch floor</a>. For instance, your pitch floor could be 50 Hz but the English speaker produces creak at the end of the utterance. Or your pitch floor could be 50 Hz but the Chinese speaker is in the middle of a third tone. If this happens, it may help to lower the pitch floor to e.g. 30 Hz (<a href="Pitch_settings___.html">Pitch settings...</a>), although that may also smooth the pitch curve too much in other places.</p>
+<p>The second possibility is that the pitch has moved too fast. This could happen at the end of a Chinese fourth tone, which drops very fast. If this happens, it may help to use <a href="pitch_analysis_by_raw_cross-correlation.html">pitch analysis by raw cross-correlation</a>, although Praat may then hallucinate pitches in other places that you would prefer to consider voiceless.</p>
+<p>The third possibility is that the periods are very irregular, as in some pathological voices. If you want to see a pitch in those cases, it may help to use <a href="pitch_analysis_by_raw_cross-correlation.html">pitch analysis by raw cross-correlation</a>. Or it may help to lower the <b>voicing threshold</b> setting to 0.25 (instead of the standard 0.50) or so (<a href="Pitch_settings___.html">Pitch settings...</a>).</p>
+<p>The fourth possibility is that there is a lot of background noise, as in a recording on a busy street. In such a case, it may help to lower the <b>voicing threshold</b> setting to 0.25 (instead of the standard 0.50) or so. The disadvantage of lowering this setting is that for non-noisy recordings, Praat will become too eager to find voicing in some places that you would prefer to consider voiceless; so make sure to set it back to 0.50 once you have finished analysing the noisy recordings.</p>
+<p>The fifth possibility is that the part analysed as voiceless is much less loud than the rest of the sound, or that the sound contains a loud noise elsewhere. This can be checked by zooming in on the part analysed as voiceless: if Praat suddenly considers it as voiced, this is a sign that this part is much quieter than the rest. To make Praat analyse this part as voiced, you can lower the <b>silence threshold</b> setting to 0.01 (instead of the standard 0.09) or so. The disadvantage of lowering this setting is that Praat may start to consider some distant background sounds (and quiet echos, for instance) as voiced.</p>
+<p><b>Question</b>: why do I get different results for the maximum pitch if...?</p>
+<p>If you select a Sound and choose <a href="Sound__To_Pitch__filtered_ac____.html">Sound: To Pitch (filtered ac)...</a>, the time step will usually be 0.015 seconds. The resulting <a href="Pitch.html">Pitch</a> object will have values for times that are 0.015 seconds apart. If you then click Info or choose <b>Get maximum pitch</b> from the <a href="Query_submenu.html">Query submenu</a>, the result is based on those time points. By contrast, if you choose <b>Get maximum pitch</b> from the <a href="Pitch_menu.html">Pitch menu</a> in the SoundEditor window, the result will be based on the visible points, of which there tend to be a hundred in the visible window. These different time spacings will lead to slightly different pitch contours.</p>
+<p>If you choose <b>Move cursor to maximum pitch</b>, then choose <b>Get pitch</b> from the <a href="Pitch_menu.html">Pitch menu</a>, the result will be different again. This is because <b>Get maximum pitch</b> can do a parabolic interpolation around the maximum, whereas <b>Get pitch</b>, not realizing that the cursor is at a maximum, does a stupid linear interpolation, which tends to lead to lower values.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="FAQ__Frequently_Asked_Questions_.html">FAQ (Frequently Asked Questions)</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20231115</p>
+</address>
+</body>
+</html>

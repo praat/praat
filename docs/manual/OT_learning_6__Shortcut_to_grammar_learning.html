@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OT learning 6. Shortcut to grammar learning</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OT learning 6. Shortcut to grammar learning
+</b></font></table></table>
+<p>Once you have mastered the tedious procedures of making Praat learn stochastic grammars, as described in the previous chapters of this tutorial, you can try a faster procedure, which simply involves selecting an <a href="OTGrammar.html">OTGrammar</a> object together with a <a href="PairDistribution.html">PairDistribution</a> object, and clicking <b>Learn...</b>. Once you click <b>OK</b>, Praat will feed the selected grammar with input/output pairs drawn from the selected distribution, and the grammar will be modified every time its output is different from the given output. Here is the meaning of the arguments:</p>
+<dl>
+<dt><i>Evaluation noise</i> (standard value: 2.0)
+<dd>the standard deviation of the noise added to the ranking of each constraint at evaluation time.</dd>
+<dt><i>Strategy</i> (standard value: Symmetric all)
+<dd>what to do when the learner's output is different from the given output. Possibilities:</dd>
+<dd>&nbsp;&nbsp;&nbsp;Demotion only: lower the ranking of every constraint that is violated more in the correct output than in the learner's output. This algorithm crashes if there is variation in the data, i.e. if some inputs can have more than one possible adult outputs.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Symmetric one: lower the ranking of the highest-ranked constraint that is violated more in the adult output than in the learner's output, and raise the ranking of the highest-ranked constraint that is violated more in the learner's output than in the adult output. This is the "minimal" algorithm described and refuted in <a href="Boersma__1998_.html">Boersma (1998)</a>, chapters 14-15.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Symmetric all: lower the ranking of all constraints that are violated more in the adult output than in the learner's output, and raise the ranking of all constraints that are violated more in the learner's output than in the adult output. This is the algorithm described in <a href="Boersma___Hayes__2001_.html">Boersma & Hayes (2001)</a>.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Weighted uncancelled: the same as "Symmetric all", but the size of the learning step is divided by the number of moving constraints. This makes sure that the average ranking of all the constraints is constant.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Weighted all: the "Symmetric all" strategy can reworded as follows: "lower the ranking of all constraints that are violated in the adult output, and raise the ranking of all constraints that are violated in the learner's output". Do that, but divide the size of the learning step by the number of moving constraints.</dd>
+<dd>&nbsp;&nbsp;&nbsp;EDCD: Error-Driven Constraint Demotion, the algorithm described by <a href="Tesar___Smolensky__1998_.html">Tesar & Smolensky (1998)</a>. All constraints that prefer the adult form and are ranked above the highest-ranked constraint that prefers the learner's form, are demoted to the ranking of that last constraint minus 1.0.</dd>
+<dt><i>Initial plasticity</i> (standard value: 1.0)
+<dt><i>Replications per plasticity</i> (standard value: 100000)
+<dt><i>Plasticity decrement</i> (standard value: 0.1)
+<dt><i>Number of plasticities</i> (standard value: 4)
+<dd>these four arguments determine the <i>learning scheme</i>, i.e. the number of times the grammar will receive data at a certain plasticity. With the standard values, there will be 100000 data while the plasticity is 1.0 (the initial plasticity), 100000 data while the plasticity is 0.1, 100000 data while the plasticity is 0.01, and 100000 data while the plasticity is 0.001. If you want learning at a constant plasticity, set the <i>number of plasticities</i> to 1. Note that for the decision strategies of HarmonicGrammar, LinearOT, PositiveHG or MaximumEntropy the learning step for a constraint equals the plasticity multiplied by the difference between the numbers of violations of this constraint in the adult output and in the learner's output.</dd>
+<dt><i>Rel. plasticity spreading</i> (standard value: 0.1)
+<dd>if this is not 0, the size of the learning step will vary randomly. For instance, if the plasticity is set to 0.01, and the relative plasticity spreading is 0.1, you will get actual learning steps that could be anywhere between 0.007 and 0.013, according to a Gaussian distribution with mean 0.01 and standard deviation 0.001.</dd>
+<dt><i>Honour local rankings</i> (standard value: on)
+<dd>if this is on, the fixed rankings that you supplied in the grammar will be maintained during learning: if a constraint falls below a constraint that is supposed to be universally lower-ranked, this second constraint will be demoted as well.</dd>
+<dt><i>Number of chews</i> (standard value: 1)
+<dd>the number of times that each input-output pair is fed to the grammar. Setting this number to 20 will give a slightly different (perhaps more accurate) result than simply raising the plasticity by a factor of 20.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="OT_learning.html">OT learning</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20070523</p>
+</address>
+</body>
+</html>

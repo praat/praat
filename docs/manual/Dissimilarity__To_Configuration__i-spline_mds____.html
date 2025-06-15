@@ -1,0 +1,50 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Dissimilarity: To Configuration (i-spline mds)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Dissimilarity: To Configuration (i-spline mds)...
+</b></font></table></table>
+<p>A command that creates a <a href="Configuration.html">Configuration</a> object from a <a href="Dissimilarity.html">Dissimilarity</a> object.</p>
+<p>Dissimilarities <i>&#948;</i><sub><i>ij</i></sub> and <a href="disparities.html">disparities</a> <i>d</i>&#8242;<sub><i>ij</i></sub> will be related by a <a href="spline.html">spline</a> function:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>d</i>&#8242;<sub><i>ij</i></sub> = &#8721;<sub><i>k</i>=1..(<i>numberOfInteriorKnots</i>+<i>order</i>)</sub> spline<sub><i>k</i></sub> (<i>knots</i>, <i>order</i>, <i>&#948;</i><sub><i>ij</i></sub>),</table>
+<p>where spline<sub><i>k</i></sub> (&#183;) is the value of the <i>k</i><sup>th</sup> I-spline of order <i>order</i> and knot sequence <i>knot</i> evaluated at <i>&#948;</i><sub><i>ij</i></sub>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Number of dimensions</b>
+<dd>determines the dimensionality of the configuration.</dd>
+<dt><b>Number of interior knots</b>
+<dd>determines the number of segment boundaries. Each interior knot is the boundary between two segments. The splines in each segment will be joined as continuously as possible.</dd>
+<dt><b>Order of I-spline</b>
+<dd>The order of the polynomial basis of the I-spline.</dd>
+</dl>
+<p>Finding the optimal Configuration involves a minimization process:</p>
+<dl>
+<dt><b>Tolerance</b>
+<dd>When successive values for the stress differ by less than <b>Tolerance</b>, the minimization process stops.</dd>
+<dt><b>Maximum number of iterations</b>
+<dd>Minimization stops after this number of iterations has been reached.</dd>
+<dt><b>Number of repetitions</b>
+<dd>If chosen larger than 1, the minimization process will be repeated, each time with another random start configuration. The configuration that results in minimum stress, will be saved.</dd>
+</dl>
+<h2>Hints</h2>
+<p>If <i>numberOfInteriorKnots</i> is zero, polynomial regression will be performed. Therefore , the combination <i>numberOfInteriorKnots</i> = 0 and <i>order</i> = 1 also gives interval scaling (in fact, it is the implementation in this program).</p>
+<p>In the limit when <i>order</i> = 0 and <i>numberOfInteriorKnots</i> = <i>numberOfDissimilarities</i>, monotone regression is performed.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Dissimilarity___Configuration___Weight__To_Configuratio.html">Dissimilarity & Configuration & Weight: To Configuration...</a>
+<li><a href="Dissimilarity___Weight__To_Configuration___.html">Dissimilarity & Weight: To Configuration...</a>
+<li><a href="Dissimilarity___Weight__To_Configuration___.html">Dissimilarity & Weight: To Configuration...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

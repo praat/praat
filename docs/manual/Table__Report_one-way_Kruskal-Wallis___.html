@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Table: Report one-way Kruskal-Wallis...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Table: Report one-way Kruskal-Wallis...
+</b></font></table></table>
+<p>Performs a one-way Kruskal-Wallis analysis on the data in one column of a selected <a href="Table.html">Table</a> and reports the results in the info window. This test is sometimes refered to as a one-way analysis of variance for <i>non-normally distributed</i> data.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Column with data</b>
+<dd>the label of the column whose data will be analyzed.</dd>
+<dt><b>Factor</b>
+<dd>the label of the column with the names of the levels.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The analysis is done on the ranked data and consists of the following steps:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Rank all the <i>N</i> data points together, i.e. rank the data from 1 to <i>N</i>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. The test statistic is:</dd>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>K</i> = (12 / (<i>N</i>(<i>N</i>+1)) &#931;<sub><i>i</i>=1</sub><sup><i>g</i></sup> <i>n</i><sub><i>i</i></sub> (meanRank<sub><i>i</i></sub>)<sup>2</sup> - 3(<i>N</i>+1),</table>
+<dl>
+<dd>where <i>g</i> is the number of levels, <i>n</i><sub><i>i</i></sub> the number of data in <i>i</i>-th level and meanRank<sub><i>i</i></sub> the average rank of the <i>i</i>-th level.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. The <i>p</i> value is <i>approximated by the &#967;<sup>2</sup> (</i>K, <i>g</i> - 1) distribution.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20120617</p>
+</address>
+</body>
+</html>

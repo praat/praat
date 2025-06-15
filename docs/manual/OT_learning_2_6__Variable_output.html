@@ -1,0 +1,72 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OT learning 2.6. Variable output</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OT learning 2.6. Variable output
+</b></font></table></table>
+<p>Each time you press (<a href="Keyboard_shortcuts.html">Command-2</a>), which invokes the command <b>Evaluate (noise 2.0)</b> from the <b>Edit</b> menu, you will see the disharmonies changing. If the distance between the constraint rankings is 10, however, the winning candidates will very probably stay the same.</p>
+<p>So starting from the N<font size=-1>O</font>C<font size=-1>ODA</font> example, we edit the rankings of the constraints again, setting the ranking value of P<font size=-1>ARSE</font> to 88 and that of N<font size=-1>O</font>C<font size=-1>ODA</font> to 85. If we now press <a href="Keyboard_shortcuts.html">Command-2</a> repeatedly, we will get [pat] in most of the cases, but we will see the finger pointing at [pa] in 14 percent of the cases:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      88.000<td width=100 align=middle>      87.421<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      85.000<td width=100 align=middle>      85.585<td width=100 align=middle>       1.000</table></dd>
+<p align=middle><img height=100 width=300 src=OT_learning_2_6__Variable_output_1.png></p></dl>
+<p>but</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      85.000<td width=100 align=middle>      87.128<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      88.000<td width=100 align=middle>      85.076<td width=100 align=middle>       1.000</table></dd>
+<p align=middle><img height=100 width=300 src=OT_learning_2_6__Variable_output_2.png></p></dl>
+<p>As a more functionally oriented example, we consider nasal place assimilation. Suppose that the underlying sequence /an+pa/ surfaces as the assimilated [ampa] in 80 percent of the cases, and as the faithful [anpa] in the remaining 20 percent, while the non-nasal stop /t/ never assimilates. This can be achieved by having the articulatory constraint *G<font size=-1>ESTURE</font> ranked at a short distance above *R<font size=-1>EPLACE</font> (n, m):</p>
+<code>   "ooTextFile"<br></code>
+<code>   "OTGrammar 2"<br></code>
+<code>   decisionStrategy = &lt;OptimalityTheory&gt;<br></code>
+<code>   leak = 0.0<br></code>
+<code>   3 constraints<br></code>
+<code>   "*G\s{ESTURE}"          102.7 0 1<br></code>
+<code>   "*R\s{EPLACE} (n, m)"   100.0 0 1<br></code>
+<code>   "*R\s{EPLACE} (t, p)"   112.0 0 1<br></code>
+<code>   0 fixed rankings<br></code>
+<code>   2 tableaus<br></code>
+<code>   "an+pa" 2<br></code>
+<code>      "anpa"  1 0 0<br></code>
+<code>      "ampa"  0 1 0<br></code>
+<code>   "at+ma" 2<br></code>
+<code>      "atma"  1 0 0<br></code>
+<code>      "apma"  0 0 1<br></code>
+<p>You can create this grammar with <b>Create place assimilation grammar</b> from the <a href="New_menu.html">New menu</a>. In the editor, it will often look like follows:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (t, p)</b><td width=100 align=middle>      112.000<td width=100 align=middle>      109.806<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*G<font size=-1>ESTURE</font></b><td width=100 align=middle>      102.700<td width=100 align=middle>      102.742<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (n, m)</b><td width=100 align=middle>      100.000<td width=100 align=middle>      101.044<td width=100 align=middle>       1.000</table></dd>
+<p align=middle><img height=100 width=400 src=OT_learning_2_6__Variable_output_3.png></p><p align=middle><img height=100 width=400 src=OT_learning_2_6__Variable_output_4.png></p></dl>
+<p>If you keep the Command-2 keys pressed, however, you will see that the tableaus change into something like the following in approximately 20 percent of the cases:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (t, p)</b><td width=100 align=middle>      112.000<td width=100 align=middle>      113.395<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (n, m)</b><td width=100 align=middle>      100.000<td width=100 align=middle>      103.324<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*G<font size=-1>ESTURE</font></b><td width=100 align=middle>      102.700<td width=100 align=middle>      101.722<td width=100 align=middle>       1.000</table></dd>
+<p align=middle><img height=100 width=400 src=OT_learning_2_6__Variable_output_5.png></p><p align=middle><img height=100 width=400 src=OT_learning_2_6__Variable_output_6.png></p></dl>
+<p>We see that /at+ma/ always surfaces at [atma], because *R<font size=-1>EPLACE</font> (t, p) is ranked much higher than the other two, and that the output of /an+pa/ is variable because of the close rankings of *G<font size=-1>ESTURE</font> and *R<font size=-1>EPLACE</font> (n, m).</p>
+<p>If you try this with a Harmonic Grammar or in Linear OT, you will see the same kind of variation. Although in HG, e.g. in <a href="Smolensky___Legendre__2006_.html">Smolensky & Legendre (2006)</a>, the variation is usually obtained at the candidate level, namely by giving each candidate a probability proportional to exp(<i>harmony</i>/<i>temperature</i>), in our version of HG the variation comes about at the constraint level, namely by the noise that is temporarily added to the ranking of each constraint at evaluation time.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="OT_learning.html">OT learning</a>
+<li><a href="OT_learning_2__The_grammar.html">OT learning 2. The grammar</a>
+<li><a href="OT_learning_2_9__Output_distributions.html">OT learning 2.9. Output distributions</a>
+<li><a href="OT_learning_5__Learning_a_stochastic_grammar.html">OT learning 5. Learning a stochastic grammar</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20070725</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 5.7. Vectors and matrices</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 5.7. Vectors and matrices
+</b></font></table></table>
+<h2>1. What is a vector?</h2>
+<p>A <b>numeric vector</b> is an array of numbers, regarded as a single object. For instance, the squares of the first five integers can be collected in the vector { 1, 4, 9, 16, 25 }. In a Praat script, you can put a vector into a variable whose name ends in a number sign (&#8220;<code><font size=+1>#</font></code>&#8221;):</p>
+<code>   squares# = { 1, 4, 9, 16, 25 }<br></code>
+<p>After this, the variable <i><code><font size=+1>squares#</font></code></i> contains the value { 1, 4, 9, 16, 25 }. We say that the vector <i><code><font size=+1>squares#</font></code></i> has five <i>dimensions</i>, i.e. it contains five numbers.</p>
+<p>Whereas in <a href="Scripting_3_2__Numeric_variables.html">Scripting 3.2. Numeric variables</a> we talked about a numeric variable as being analogous to a house where somebody (the numeric <i>value</i>) could live, a numeric vector with five dimensions can be seen as a <i>street</i> that contains five houses, which are numbered with the indexes 1, 2, 3, 4 and 5, each house containing a numeric value. Thus, the street <i><code><font size=+1>squares#</font></code></i> contains the following five houses: <i><code><font size=+1>squares#</font></code></i> [1], <i><code><font size=+1>squares#</font></code></i> [2], <i><code><font size=+1>squares#</font></code></i> [3], <i><code><font size=+1>squares#</font></code></i> [4] and <i><code><font size=+1>squares#</font></code></i> [5]. Their values (the numbers that currently live in these houses) are 1, 4, 9, 16 and 25, respectively.</p>
+<p>To list the five values with a loop, you could do:</p>
+<code>   writeInfoLine: “Some squares:”<br></code>
+<code>   for i from 1 to size (squares#)<br></code>
+<code>      appendInfoLine: “The square of ”, i, “ is ”, squares# [i]<br></code>
+<code>   endfor<br></code>
+<p>Instead of the above procedure to get the vector <i><code><font size=+1>squares#</font></code></i>, with a pre-computed list of five squares, you could compute the five values with a formula, as in the example of <a href="Scripting_5_6__Arrays_and_dictionaries.html">Scripting 5.6. Arrays and dictionaries</a>. However, in order to put a value into an element of the vector, you have to create the vector first (i.e., you have to build the whole street before you can put something in a house), so we start by creating a vector with five zeroes in it:</p>
+<code>   squares# = zero# (5)<br></code>
+<p>After this, <i><code><font size=+1>squares#</font></code></i> is the vector { 0, 0, 0, 0, 0 }, i.e., the value of each element is zero. Now that the vector (street) exists, we can put values into (populate) the five elements (houses):</p>
+<code>   for i from 1 to size (squares#)<br></code>
+<code>      squares# [i] = i * i<br></code>
+<code>   #endfor<br></code>
+<p>After this, the variable <i><code><font size=+1>squares#</font></code></i> has the value { 1, 4, 9, 16, 25 }, as before, but now we had the computer compute the squares.</p>
+<h2>2. Creating a vector</h2>
+<p>You can create a vector in many ways. The first way we saw was with a <b>vector literal</b>, i.e. a series of numbers (or numeric formulas) between braces:</p>
+<code>   lengths# = { 1.83, 1.795, 1.76 }<br></code>
+<p>The second way we saw was to create a series of <b>zeroes</b>. To create a vector consisting of 10,000 zeroes, you do</p>
+<code>   zero# (10000)<br></code>
+<p>Another important type of vector is a series of random numbers. To create a vector consisting of 10,000 values drawn from a <b>Gaussian distribution</b> with true mean 0.0 and true standard deviation 1.0, you could do</p>
+<code>   noise# = randomGauss# (10000, 0.0, 1.0)<br></code>
+<p>To create a vector consisting of 10,000 values drawn from a <b>uniform distribution of real numbers</b> with true minimum 0.0 and true maximum 1.0, you use</p>
+<code>   randomUniform# (10000, 0.0, 1.0)<br></code>
+<p>To create a vector consisting of 10,000 values drawn from a <b>uniform distribution of integer numbers</b> with true minimum 1 and true maximum 10, you use</p>
+<code>   randomInteger# (10000, 1, 10)<br></code>
+<p>To create a vector containing the integer numbers 1 through 64, you use</p>
+<code>   to# (64)<br></code>
+<p>To create a vector containing the integer numbers 10 through 20, you use</p>
+<code>   from_to# (10, 20)<br></code>
+<p>To create a vector containing linearly increasing (not necessarily integer) numbers from 10 through 20 in steps of 2, you use</p>
+<code>   from_to_by# (10, 20, 2)<br></code>
+<p>To create five linearly increasing numbers between 0 and 10 (i.e. { 0, 2.5, 5, 7.5, 10 }), you use</p>
+<code>   from_to_count# (0, 10, 5)<br></code>
+<p>To divide the range between 0 and 12 symmetrically with step 5 (i.e. { 1, 6, 11 }), you use</p>
+<code>   between_by# (0, 12, 5)<br></code>
+<p>To divide the range between 0 and 10 into five equal parts and list their centres (i.e. { 1, 3, 5, 7, 9 }), you use</p>
+<code>   between_count# (0, 10, 5)<br></code>
+<p>To sort the numbers in a vector (e.g. { 7.4, 1.3, 3.6 }), you use</p>
+<code>   sort# ({ 7.4, 1.3, 3.6 })<br></code>
+<p>which yields { 1.3, 3.6, 7.4 }.</p>
+<p>To randomly shuffle the numbers in a vector (e.g. { 7.4, 1.3, 3.6 }), you use</p>
+<code>   shuffle# ({ 7.4, 1.3, 3.6 })<br></code>
+<p>which can yield { 1.3, 7.4, 3.6 } or any of the five other orders of the elements.</p>
+<p>Vectors can also be created by some menu commands. For instance, to get vectors representing the times and pitch frequencies of the frames in a Pitch object, you can do</p>
+<code>   selectObject: myPitch<br></code>
+<code>   times# = List all frame times<br></code>
+<code>   pitches# = List values in all frames: “Hertz”<br></code>
+<h2>3. Turning a vector into a number</h2>
+<p>For the vector defined above, you can compute the <b>sum</b> of the five values as</p>
+<code>   sum (squares#)<br></code>
+<p>which gives 55. You compute the <b>average</b> of the five values as</p>
+<code>   mean (squares#)<br></code>
+<p>which gives 11. You compute the <b>standard deviation</b> of the values as </p>
+<code>   stdev (squares#)<br></code>
+<p>which gives 9.669539802906858 (the standard deviation is undefined for vectors with fewer than 2 elements). The <b>center of gravity</b> of the distribution defined by regarding the five values as relative frequencies as a function of the index from 1 to 5 is computed by</p>
+<code>   center (squares#)<br></code>
+<p>which gives 4.090909090909091 (for a vector with five elements, the result will always be a number between 1.0 and 5.0). You compute the <b>inner product</b> of two equally long vectors as follows:</p>
+<code>   other# = { 2, 1.5, 1, 0.5, 0 }<br></code>
+<code>   result = inner (squares#, other#)<br></code>
+<p>which gives 1*2 + 4*1.5 + 9*1 + 16*0.5 + 25*0 = 25. The formula for this is &#8721;<sub><i>i</i>=1</sub><sup>5</sup> <i>squares</i>[<i>i</i>] * <i>other</i>[<i>i</i>], so that an alternative piece of code could be</p>
+<code>   result = sumOver (i to 5, squares# [i] * other# [i])<br></code>
+<h2>4. Converting vectors to vectors</h2>
+<code>   a# = squares# + 5   ; adding a number to each element of a vector<br></code>
+<p>causes <i><code><font size=+1>a#</font></code></i> to become the vector { 6, 9, 14, 21, 30 }.</p>
+<code>   b# = a# + { 3.14, 2.72, 3.16, -1, 7.5 }   ; adding two vectors of the same length<br></code>
+<p>causes <i><code><font size=+1>b#</font></code></i> to become the vector { 9.14, 11.72, 17.16, 20, 37.5 }.</p>
+<code>   c# = b# / 2   ; dividing each element of a vector<br></code>
+<p>causes <i><code><font size=+1>c#</font></code></i> to become the vector { 4.57, 5.86, 8.58, 10, 18.75 }.</p>
+<code>   d# = b# * c#   ; elementwise multiplication<br></code>
+<p>causes <i><code><font size=+1>d#</font></code></i> to become the vector { 41.7698, 68.6792, 147.2328, 200, 703.125 }.</p>
+<p>A vector can also be given to a <b>menu command</b> that returns another vector. For instance, to get a vector representing the pitch frequencies at 0.01-second intervals in a Pitch object, you can do</p>
+<code>   selectObject: myPitch<br></code>
+<code>   tmin = Get start time<br></code>
+<code>   tmax = Get end time<br></code>
+<code>   times# = between_by# (tmin, tmax, 0.01)<br></code>
+<code>   pitches# = List values at times: times#, "hertz", "linear"<br></code>
+<h2>5. What is a matrix?</h2>
+<p>A <b>numeric matrix</b> is a two-indexed array of numbers, regarded as a single object. In a Praat script, you can put a matrix into a variable whose name ends in two number signs (&#8220;<code><font size=+1>##</font></code>&#8221;):</p>
+<code>   confusion## = {{ 3, 6, 2 }, { 8, 2, 1 }}<br></code>
+<p>After this, the variable <i><code><font size=+1>confusion##</font></code></i> contains the value {{ 3, 6, 2 }, { 8, 2, 1 }}. We say that the matrix <i><code><font size=+1>confusion##</font></code></i> has two <i>rows</i> and three <i>columns</i>, i.e. it contains six numbers.</p>
+<p>Whereas a numeric vector with five dimensions could be seen (see above) as a street that contains five houses, the matrix <i><code><font size=+1>confusion##</font></code></i> can be seen as a city district with two avenues crossed by three streets, where everybody lives on an intersection (the analogies start to get less realistic).</p>
+<h2>6. Creating a matrix</h2>
+<p>You can create a matrix in many ways. The first way we saw was with a <b>matrix literal</b>, i.e. a series of series of numbers (or numeric formulas) between nested braces.</p>
+<p>The second way is as a matrix of <b>zeroes</b>. To create a matrix consisting of 100 rows of 10,000 zeroes, you do</p>
+<code>   a## = zero## (100, 10000)<br></code>
+<p>After this,</p>
+<code>   numberOfRows (a##)<br></code>
+<p>is 100, and</p>
+<code>   numberOfColumns (a##)<br></code>
+<p>is 10000.</p>
+<p>Another important type of matrix is one filled with random numbers. To create a matrix consisting of 100 rows of 10,000 values drawn from a <b>Gaussian distribution</b> with true mean 0.0 and true standard deviation 1.0, you can do</p>
+<code>   noise## = randomGauss## (100, 10000, 0.0, 1.0)<br></code>
+<p>You can create a matrix as the outer product of two vectors:</p>
+<code>   m## = outer## (u#, v#)<br></code>
+<p>which is the same as</p>
+<code>   m## = zeros## (size (u#), size (v#))<br></code>
+<code>   for irow to size (u#)<br></code>
+<code>      for icol to size (v#)<br></code>
+<code>         m## [irow, icol] = u# [irow] * v# [icol]<br></code>
+<code>      endfor<br></code>
+<code>   endfor<br></code>
+<p>or in mathematical notation</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>m</i><sub><i>ij</i></sub> = <i>u</i><sub><i>i</i></sub> <i>v</i><sub><i>j</i></sub>   (<i>i</i> = 1..<i>M</i>, <i>j</i> = 1..<i>N</i>)</table>
+<p>where <i>M</i> is the number of rows and <i>N</i> is the number of columns.</p>
+<h2>7. Computations with matrices</h2>
+<p>You can add matrices:</p>
+<code>   c## = a## + b##<br></code>
+<p>Elementwise multiplication:</p>
+<code>   c## = a## * b##<br></code>
+<p>which does</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>c</i><sub><i>ij</i></sub> = <i>a</i><sub><i>ij</i></sub> <i>b</i><sub><i>ij</i></sub>   (<i>i</i> = 1..<i>M</i>, <i>j</i> = 1..<i>N</i>)</table>
+<p>Matrix multiplication:</p>
+<code>   c## = mul## (a##, b##)<br></code>
+<p>which does</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>m</i><sub><i>ij</i></sub> = &#8721;<sub><i>k</i>=1</sub><sup>K</sup>  <i>a</i><sub><i>ik</i></sub> <i>b</i><sub><i>kj</i></sub>   (<i>i</i> = 1..<i>M</i>, <i>j</i> = 1..<i>N</i>)</table>
+<p>where <i>M</i> is the number of rows of <i>a</i>, <i>N</i> is the number of columns of <i>b</i>, and <i>K</i> is the number of columns of <i>a</i>, which has to be equal to the number if rows of <i>b</i>.</p>
+<p>Matrix-by-vector multiplication:</p>
+<code>   v# = mul# (m##, u#)<br></code>
+<p>which does</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>v</i><sub><i>i</i></sub> = &#8721;<sub><i>j</i>=1</sub><sup>N</sup>  <i>m</i><sub><i>ij</i></sub> <i>u</i><sub><i>j</i></sub>   (<i>i</i> = 1..<i>M</i>)</table>
+<p>where <i>M</i> is the number of rows of <i>m</i>, and <i>N</i> is the number of columns of <i>m</i>, which has to be equal to the dimension of <i>u</i>. Also</p>
+<code>   v# = mul# (u#, m##)<br></code>
+<p>which does</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>v</i><sub><i>j</i></sub> = &#8721;<sub><i>i</i>=1</sub><sup>M</sup>  <i>u</i><sub><i>i</i></sub> <i>m</i><sub><i>ij</i></sub>   (<i>j</i> = 1..<i>N</i>)</table>
+<p>where <i>M</i> is the number of rows of <i>m</i>, which has to be equal to the dimension of <i>u</i>, and <i>N</i> is the number of columns of <i>m</i>.</p>
+<h2>8. String vectors</h2>
+<p>You can create string vectors in the following ways:</p>
+<code>   a$# = { "hello", "goodbye" }<br></code>
+<p>creates a vector with two strings, which you can access as <code><font size=+1>a$# [1]</font></code>, which is &#8220;hello&#8221;, and <code><font size=+1>a$# [2]</font></code>, which is &#8220;goodbye&#8221;.</p>
+<code>   a$# = empty$# (10)<br></code>
+<p>creates a vector with 10 empty strings, which you can access as <code><font size=+1>a$# [1]</font></code> through <code><font size=+1>a$# [10]</font></code>.</p>
+<code>   text$# = readLinesFromFile$# ("hello.txt")<br></code>
+<p>creates a vector with 100 strings if the file <code><font size=+1>hello.text</font></code> contains 100 lines of text.</p>
+<code>   fileNames$# = fileNames$# ("sound/*.wav")<br></code>
+<p>creates a vector containing the names of all WAV files in the folder <code><font size=+1>sound</font></code>.</p>
+<code>   folderNames$# = folderNames$# (".")<br></code>
+<p>creates a vector containing the names of all folders in the folder where the script resides.</p>
+<code>   inks$# = splitByWhitespace$# ("Hello, how are you?")<br></code>
+<p>creates a vector containing the strings &#8220;Hello,&#8221; (including the comma), &#8220;how&#8221;, &#8220;are&#8221;, and &#8220;you?&#8221;.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas_5__Mathematical_functions.html">Formulas 5. Mathematical functions</a>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_5__Language_elements_reference.html">Scripting 5. Language elements reference</a>
+<li><a href="What_was_new_in_6_1_.html">What was new in 6.1?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20230130</p>
+</address>
+</body>
+</html>

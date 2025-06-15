@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: Draw as scalable squares...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: Draw as scalable squares...
+</b></font></table></table>
+<p>A command to draw the cells of the table as squares whose areas conform to the cell's value. </p>
+<h2>Settings</h2>
+<dl>
+<dt><b>From row</b>, <b>To row</b>
+<dd>determine the rows to be drawn.</dd>
+<dt><b>From column</b>, <b>To column</b>
+<dd>determine the columns to be drawn.</dd>
+<dt><b>Origin</b>
+<dd>determines the drawing orientation. For a table with <i>nrow</i> rows and <i>ncol</i> columns:</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>top-left</i>: cel [1] [1] will be at the top left position in the drawing, cell [<i>nrow</i>] [<i>ncol</i>] will be at bottom right position.
+<dt>&nbsp;&nbsp;&nbsp;<i>top-right</i>: cel [1] [1] will be at the top right position in the drawing, cell [<i>nrow</i>] [<i>ncol</i>] will be at bottom left position.
+<dt>&nbsp;&nbsp;&nbsp;<i>bottom-left</i>: cel [1] [1] will be at the bottom left position in the drawing, cell [<i>nrow</i>] [<i>ncol</i>] will be at top right position.
+<dt>&nbsp;&nbsp;&nbsp;<i>bottom-right</i>: cel [1] [1] will be at the bottom right position in the drawing, cell [<i>nrow</i>] [<i>ncol</i>] will be at top left position.
+<dt><b>Cell area scale factor</b>
+<dd>multiplies the area of each cell's square. If this factor is larger than 1.0 some of the squares might overlap.</dd>
+<dt><b>Filling order</b>
+<dd>determines in what order the squares will be drawn. The order is only important if some of the squares overlap, i.e. if the cell area scale factor is larger than 1.0.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>rows</i>: start with the first row, cell [1] [1] to cell [1] [<i>ncol</i>], next the second row, etc...
+<dt>&nbsp;&nbsp;&nbsp;<i>columns</i> start with column 1, cell [1] [1] to cell [<i>nrow</i>] [1], next column 2 etc...
+<dt>&nbsp;&nbsp;&nbsp;<i>increasing values</i>: first sort the cell values in increasing order and then start drawing them, the cell with the smallest value first. 
+<dt>&nbsp;&nbsp;&nbsp;<i>decreasing values</i>: first sort the cell values in decreasing order and then start drawing them, the cell with the largest value first.
+<dt>&nbsp;&nbsp;&nbsp;<i>random</i>: draw cells in random order. If the cell area scale factor is larger than 1.0 this may result in a different graph of the same table for each successive call.
+</dl>
+<hr>
+<address>
+	<p>© djmw 20180304</p>
+</address>
+</body>
+</html>

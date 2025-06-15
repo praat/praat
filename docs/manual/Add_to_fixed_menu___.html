@@ -1,0 +1,52 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Add to fixed menu...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Add to fixed menu...
+</b></font></table></table>
+<p>A command in the File menu of the <a href="ScriptEditor.html">ScriptEditor</a>.</p>
+<p>With this command, you add a button to any fixed menu in the <a href="Objects_window.html">Objects window</a> or in the <a href="Picture_window.html">Picture window</a>. Clicking the added button will invoke the specified <a href="Praat_script.html">Praat script</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Window</b>
+<dd>the name of the window (&#8220;Objects&#8221; or &#8220;Picture&#8221;) that contains the menu that you want to change.</dd>
+<dt><b>Menu</b>
+<dd>the title of the menu that you want to change. If <b>Window</b> is &#8220;Objects&#8221;, you can specify the Praat, New, Open, Help, Goodies, Settings, or Technical menu (for the Save menu, which depends on the objects selected, you would use <a href="Add_to_dynamic_menu___.html">Add to dynamic menu...</a> instead). If <b>Window</b> is &#8220;Picture&#8221;, you can specify the File, Edit, Margins, World, Select, Pen, Font, or Help menu.</dd>
+<dt><b>Command</b>
+<dd>the title of the new menu button. To get a separator line instead of a command text, you specify a unique string that starts with a hyphen (&#8220;-&#8221;); the <a href="ButtonEditor.html">ButtonEditor</a> contains many examples of this.</dd>
+<dt><b>After command</b>
+<dd>a button title in the menu or submenu after which you want your new button to be inserted. If you specify the empty string (&#8220;&#8221;), your button will be put in the main menu.</dd>
+<dt><b>Depth</b>
+<dd>0 if you want your button in the main menu, 1 if you want it in a submenu.</dd>
+<dt><b>Script</b>
+<dd>the full path name of the script to invoke. If you saved the script you are editing, its name will already have been filled in here. If you do not specify a script, you will get a cascading menu title instead.</dd>
+</dl>
+<h2>Example 1</h2>
+<p>In the Matrix submenu of the <a href="New_menu.html">New menu</a>, you want a separator line followed by the command <b>Peaks</b>:</p>
+<code>   Add to fixed menu: "Objects", "New", "-- peaks --", "Create simple Matrix...", 1, ""<br></code>
+<code>   Add to fixed menu: "Objects", "New", "Peaks", "-- peaks --", 1, "/u/praats/demo/peaks.praat"<br></code>
+<h2>Example 2</h2>
+<p>In the <a href="New_menu.html">New menu</a>, you want a submenu called &#8220;Demo&#8221;, with a subitem titled &#8220;Lorenz...&#8221;:</p>
+<code>   Add to fixed menu: "Objects", "New", "Demo", "", 0, ""<br></code>
+<code>   Add to fixed menu: "Objects", "New", "Lorenz...", "Demo", 1, "/u/praats/demo/lorenz.praat"<br></code>
+<h2>Usage convention</h2>
+<p>Please adhere to the convention that commands that take arguments, such as &#8220;Lorenz...&#8221; above, end in three dots.</p>
+<h2>Using this command in a script</h2>
+<p>To add a fixed button from a script (perhaps your <a href="initialization_script.html">initialization script</a> or a <a href="plug-ins.html">plug-in</a>), use the hidden shell command <a href="Add_menu_command___.html">Add menu command...</a> instead. It has the exact same list of parameters.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="History_mechanism.html">History mechanism</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1997,2002,2005,2006,2012,2014,2023</p>
+</address>
+</body>
+</html>

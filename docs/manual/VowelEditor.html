@@ -1,0 +1,85 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>VowelEditor</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+VowelEditor
+</b></font></table></table>
+<p>An Editor for generating vowel-like <a href="Sound.html">Sound</a>s from mouse movements.</p>
+<h2>How to get a sound</h2>
+<p>With the mouse button down, you can move the mouse cursor around in the plane spanned by the first two formants. While you move the cursor around, the positions you trace will be indicated by blue dots. After you release the mouse button, the color of the trajectory will change to black. Next you will hear the vowel-like sound whose first two formants follow this trajectory. (The small bars on the trajectory are time markers. With default settings, time markers are at 50 milliseconds apart and they may give you an indication of the speed by which you traversed the trajectory.)</p>
+<h2>The interface</h2>
+<p>In the lower part of the editor a number of buttons and fields are displayed.</p>
+<dl>
+<dt><b>Play</b>
+<dd>will play the trajectory.</dd>
+<dt><b>Reverse</b>
+<dd>will reverse the trajectory and play it.</dd>
+<dt><b>Publish</b>
+<dd>will publish the sound in the list of objects.</dd>
+<dt><b>Duration (s)</b>
+<dd>allows to modify the duration of the current trajectory. </dd>
+<dt><b>Extend (s)</b>
+<dd>determines the duration of the straight line trajectory that connects the endpoint of the current trajectory with the startpoint of a new trajectory. You may extend the current trajectory by starting a new trajectory with the shift button pressed. After you finished the new trajectory, three trajectories will be appended: the current one, the straight line one and the new one.</dd>
+<dt><b>Start F0 (Hz)</b>
+<dd>determines the fundamental frequency at the start of the trajectory.</dd>
+<dt><b>F0 slope (oct/s)</b>
+<dd>determines how many octaves the pitch will changes during the course of the trajectory.</dd>
+</dl>
+<p>The bottom line in the Editor displays the first and second formant frequency and the fundamental frequency at the start point and the endpoint of the trajectory.</p>
+<h2>Edit menu</h2>
+<dl>
+<dt><b>Set F0...</b>
+<dd>Set pitch and slope.</dd>
+<dt><b>Reverse trajectory</b>
+<dd>Reverses the trajectory (like editor button).</dd>
+<dt><b>Modify trajectory duration...</b>
+<dd>Modifies trajectory duration (like editor field).</dd>
+<dt><b>New trajectory...</b>
+<dd>Set startpoint, endpoint and duration of a new trajectory.</dd>
+<dt><b>Extend trajectory...</b>
+<dd>Extend current trajectory to...</dd>
+<dt><b>Shift trajectory...</b>
+<dd>Shift current trajectory.</dd>
+</dl>
+<h2>View menu</h2>
+<dl>
+<dt><b>F1 &amp; F2 range...</b>
+<dd>Modify the horizontal and vertical scales.</dd>
+<dt><b>Show vowel marks from fixed set...</b>
+<dd>Show the vowel marks in the editor from a fixed set of vowel inventories.</dd>
+<dt><b>Show vowel marks from Table file...</b>
+<dd>Put your own marks in the editor. The Table needs to have at least three mandatory columns labeled "Vowel", "F1" and  "F2" and two optional column labeled "Size" and "Colour". The Vowel column contains the vowel marker labels, the F1 and F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains the font size of the vowel markers, while the Colour column contains the <a href="Colour.html">colour</a> specification of each vowel. The Table has to be in tab-separated format (or saved in Praat as a binary or text Table file).</dd>
+<dt><b>Show trajectory time markers every...</b>
+<dd>Shows time markers as small bars orthogonal to the trajectory. </dd>
+</dl>
+<h2>File menu</h2>
+<dl>
+<dt><b>Preferences...</b>
+<dd>Here you can modify the sharpness of the F1 and F2 peaks and also add a number of higher formants.</dd>
+<dt><b>Publish Sound</b>
+<dd>Make the synthesized sound available in the object menu.</dd>
+<dt><b>Extract FormantTier</b>
+<dt><b>Extract PitchTier</b>
+<dd>Publish the Sound, the PitchTier and the FormantTier from the trajectory.</dd>
+<dt><b>Draw trajectory...</b>
+<dd>Draws the trajectory in the picture window.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Acknowledgments.html">Acknowledgments</a>
+<li><a href="VowelEditor__Show_vowel_marks_from_Table_file___.html">VowelEditor: Show vowel marks from Table file...</a>
+<li><a href="What_was_new_in_6_0_.html">What was new in 6.0?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20200403</p>
+</address>
+</body>
+</html>

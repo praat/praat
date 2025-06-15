@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 2.2. The stimuli</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 2.2. The stimuli
+</b></font></table></table>
+<p>You can see that the <a href="ExperimentMFC_2_1__The_experiment_file.html">example experiment</a> contains four different stimuli: <i>heed</i>, <i>hid</i>, <i>hood</i>, and <i>hud</i>. These are the <i>names</i> of the four stimuli.</p>
+<p>Because in the example experiment stimuli are sounds, each of the four stimuli should be in a sound file. The names of these sound files must be identical to the names of the stimuli, bracketed with <i>stimulusFileNamehead</i> and <i>stimulusFileNameTail</i>. Hence, the stimuli are expected in the following four files:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">Sounds/heed.wav</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">Sounds/hid.wav</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">Sounds/hood.wav</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">Sounds/hud.wav</dd>
+</dl>
+<p>You need not use WAV files. You can also use AIFF files, in which case <code><font size=+1><i>stimulusFileNameTail</i></font></code> would probably be &#8220;.aiff&#8221;, or any other type of sound file that Praat supports. But all sound files must have the same number of channels (i.e. all mono or all stereo) and the same sampling frequency.</p>
+<p>In this example, the experiment will look for the sound files in the folder <b>Sounds</b>, which has to be in the same folder as your experiment file. In other words, &#8220;Sounds/heed.wav&#8221; is a <i>relative file path</i>.</p>
+<p>Instead of a relative path, you can also supply a <i>full file path</i>. Such a path depends on your computer and on your operating system. For instance, if you have a Windows computer and the stimuli are in the folder <b>D:\Corpus\Autumn\Speaker23</b>, you can write</p>
+<code>   fileNameHead = "D:\Corpus\Autumn\Speaker23\"<br></code>
+<p>If you have a Macintosh (OS X) or Unix computer and the stimuli are in <b>/Users/mietta/Sounds/Dutch</b>, you write</p>
+<code>   fileNameHead = "/Users/mietta/Sounds/Dutch/"<br></code>
+<p>But relative file paths will usually be preferred: they are more <i>portable</i>. The advantage of using relative file paths is that you can move your whole experiment (experiment file plus sounds) from one computer to another without changing the experiment file, as long as you put the experiment file in the same folder as where you put the folder <b>Sounds</b>. Or you can put the whole experiment on a USB stick and run the experiment directly from the stick. Since Praat supports the forward slash &#8220;/&#8221; as a folder separator on all computers, you can run the exact same experiment on Macintosh, Windows and Unix computers, independent of the type of computer where you have created your experiment.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_2__The_first_example.html">ExperimentMFC 2. The first example</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20201229</p>
+</address>
+</body>
+</html>

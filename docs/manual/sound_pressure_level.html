@@ -1,0 +1,27 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>sound pressure level</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+sound pressure level
+</b></font></table></table>
+<p>Air pressures are measured in Pascal (Pa), which are Newtons per square metre (N/m<sup>2</sup>). The ambient air pressure is about 100,000 Pa, and the lungs modify this in phonation only by a small amount, namely 200 to 1000 Pa (= 2 to 10 cm H<sub>2</sub>O). Outside your body, the air pressures caused by your speech are much smaller again, namely 0.01 to 1 Pa at 1 metre from your lips. These are comparable to the values that you see for a typical speech recording in Praat's sound window, although these numbers in Praat can be interpreted as true air pressures only if you perform a <a href="sound_pressure_calibration.html">sound pressure calibration</a> (including the multiplication).</p>
+<p>A normative human ear can detect a root-mean-squared air pressure as small as 0.00002 Pa, for a sine wave with a frequency of 1000 Hz. The <i>sound pressure level</i> can be expressed in dB relative to this normative threshold:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>SPL = 10 log<sub>10</sub> { 1/(<i>t</i><sub>2</sub>-<i>t</i><sub>1</sub>) &#8747;<sub>t1</sub><sup>t2</sup> <i>x</i><sup>2</sup>(<i>t</i>) <i>dt</i> / (2&#183;10<sup>-5</sup> Pa)<sup>2</sup> }</table>
+<p>where <i>x</i>(<i>t</i>) is the sound pressure in Pa as a function of time, and <i>t</i><sub>1</sub> and <i>t</i><sub>2</sub> are the times between which the energy (squared air pressure) is averaged. For a calibrated sound, Praat's sound window will show you the SPL as a function of time, if you switch on <b>Show intensity</b> and set its <b>averaging method</b> to <b>energy</b> (with <b>Intensity settings...</b>).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_Sound_as_Shepard_tone___.html">Create Sound as Shepard tone...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20041124</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 2. How to script settings windows</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 2. How to script settings windows
+</b></font></table></table>
+<p>Not all menu commands are as simple as those on the <a href="Scripting_1__Your_first_scripts.html">previous page</a>, which act immediately once you choose them from a menu (e.g. <b>Play</b>, <b>Erase all</b>). Most commands in Praat require the user to supply additional information; these are the commands whose title ends in &#8220;...&#8221;.</p>
+<p>For instance, when you select a Sound, the command <b>Draw...</b> will appear in the <b>Draw</b> menu, and when you click it, Praat will present you with a <i>settings window</i>, which asks you to supply six pieces of additional information, i.e. six so-called <i>settings</i> (or in programming jargon: <i>arguments</i>):</p>
+<p align=middle><img height=300 width=540 src=Scripting_2__How_to_script_settings_windows_1.png></p><p>In this example, all the settings have their standard values: you want to draw the whole time domain of the Sound, you want to have autoscaling vertically, you want to see garnishings around the picture (a box, labelled axes, and numbers), and you want the waveform to be drawn as a curve. Pressing the OK button in the above window is equivalent to executing the following script line:</p>
+<code>   Draw: 0, 0, 0, 0, “yes”, “Curve”<br></code>
+<p>You see that in a script, all of the arguments are supplied after the command, preceded by a colon and separated by commas, in the same order as in the settings window, counted from top to bottom (and, within a line, from left to right). The texts &#8220;(= all)&#8221; and &#8220;(= auto)&#8221; above are just Praat&#8217;s explanations of what it means to type a zero in those fields (namely &#8220;draw all times&#8221; and &#8220;use vertical autoscaling&#8221;, respectively); in a script they are superfluous and you shouldn&#8217;t write them.</p>
+<p>If you want to draw the sound with different settings, say from 1 to 3.2 seconds, scaled between -1 and +1 instead of automatically, with garnishings off, and with the waveform drawn as poles, you would have the following settings window:</p>
+<p align=middle><img height=300 width=540 src=Scripting_2__How_to_script_settings_windows_2.png></p><p>In a script this would look like</p>
+<code>   Draw: 1.0, 3.2, -1, 1, “no”, “Poles”<br></code>
+<h2>1. Numeric arguments</h2>
+<p>The first four arguments in the above examples are <i>numeric arguments</i>: they are (real or integer) numbers. You just write them in the script as you would write them into the settings window.</p>
+<h2>2. Boolean (yes/no) arguments</h2>
+<p>The fifth argument in the above examples (<b>Garnish</b>) is a <i>boolean argument</i> (yes/no choice) and is represented by a <i>check button</i>. In the script you write it as <code><font size=+1>"yes"</font></code> (including the quotes) or <code><font size=+1>"no"</font></code> (or as 1 or 0).</p>
+<h2>3. Multiple-choice arguments</h2>
+<p>The sixth argument in the above examples (<b>Drawing method</b>) is a <i>multiple-choice argument</i> and is represented by an <i>option menu</i>. In the script you write the text of the choice, i.e. <code><font size=+1>"Curve"</font></code> or <code><font size=+1>"Poles"</font></code> in the examples.</p>
+<p>A multiple-choice argument is sometimes represented by a <i>choice box</i> instead of by an option menu. For instance, the last example above could equally well have looked like</p>
+<p align=middle><img height=384 width=540 src=Scripting_2__How_to_script_settings_windows_3.png></p><p>In supplying arguments to a command in a script, there is no difference between an option menu and a radio box. This last example will therefore again look like the following in a script:</p>
+<code>   Draw: 1.0, 3.2, -1, 1, “no”, “Poles”<br></code>
+<h2>4. Text arguments</h2>
+<p>Consider another frequently used menu command, namely <b>Create Sound from formula...</b> in the <b>New</b> menu:</p>
+<p align=middle><img height=404 width=540 src=Scripting_2__How_to_script_settings_windows_4.png></p><p>In a script this would look like:</p>
+<code>   Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, “1/2 * sin(2*pi*377*x)”<br></code>
+<p>Both the first argument (<b>Name</b>) and the sixth argument (<b>Formula</b>) are <i>text arguments</i>. In a script they are written within quotes.</p>
+<h2>5. Formula arguments</h2>
+<p>Sometimes it would be a bit awkward to write a formula that contains double quotes. Imagine you have a <a href="Table.html">Table</a> object with a column &#8220;stimulus&#8221;, a column &#8220;response&#8221;, and a column &#8220;correct&#8221;, and you want to have a 1 in column &#8220;correct&#8221; if the texts in the columns &#8220;stimulus&#8221; and &#8220;response&#8221; are the same, and a 0 otherwise. You would do this by selecting the Table and choosing the <b>Formula...</b> command:</p>
+<p align=middle><img height=244 width=540 src=Scripting_2__How_to_script_settings_windows_5.png></p><p>According to section 4 above, and according to <a href="Formulas_2_2__Representation_of_strings.html">Formulas 2.2. Representation of strings</a>, you would have to write this in the following way in a script:</p>
+<code>   Formula: "correct", "self$ [""response""] = self$ [""stimulus""]"<br></code>
+<p>The required doubling of string-internal double quotes is awkward. Therefore, there exists a special way for typing formula arguments, namely with the tilde ("~"):</p>
+<code>   Formula: "correct", ~ self$ ["response"] = self$ ["stimulus"]<br></code>
+<p>This means that you can write the example of section 4 in an analogous way:</p>
+<code>   Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, ~ 1/2 * sin(2*pi*377*x)<br></code>
+<p>The tilde is probably the preferred way to write formula arguments. You should remember, however, that the result is still a string (i.e. text), and you can treat it as a string with the string methods described later on in this tutorial.</p>
+<p>Another way is to use curly quotes, for instance:</p>
+<code>   Formula: "correct", “self$ ["response"] = self$ ["stimulus"]”<br></code>
+<p>or</p>
+<code>   Formula: "correct", "self$ [“response”] = self$ [“stimulus”]"<br></code>
+<h2>6. File arguments</h2>
+<p>The commands from the Open and Save menus, and several other commands whose names start with <b>Read</b>, <b>Open</b>, or <b>Save</b>, present a <i>file selector window</i> instead of a typical Praat settings window. File selector windows ask the user to supply a single argument: the file name.</p>
+<p>In a script you can either supply the <i>complete path</i> to the file, or supply a <i>relative path</i>.</p>
+<p>A complete path includes both the folder (directory) hierarchy and the name of the file. This goes slightly differently on the Windows platform on the one hand, and on the Mac and Linux platforms on the other. If your user name is Miep, and your home folder contains a folder <code><font size=+1>Sounds</font></code>, and this folder contains a folder <code><font size=+1>Animals</font></code>, and this contains the file <code><font size=+1>miauw.wav</font></code>, you can open that file as follows:</p>
+<code>   Read from file: “C:/Users/Miep/Sounds/Animals/miauw.wav”   ; Windows<br></code>
+<code>   Read from file: “/Users/Miep/Sounds/Animals/miauw.wav”   ; Mac<br></code>
+<code>   Read from file: “/home/miep/Sounds/Animals/miauw.wav”   ; Linux<br></code>
+<p>(the part before your user name may be slightly different on your computer; use your command or terminal window to find out)</p>
+<p>In these examples, &#8220;C&#8221; is the Windows <i>drive letter</i> and <code><font size=+1>/Users/Miep</font></code> or <code><font size=+1>/home/Miep</font></code> is your <i>home folder</i>. Both the home folder and the drive letter can be abbreviated away by using the tilde (&#8220;~&#8221;) in the path (this tilde has nothing to do with the tilde used in formula arguments):</p>
+<code>   Read from file: “~/Sounds/Animals/miauw.wav”<br></code>
+<p>If your <code><font size=+1>Sounds</font></code> folder is not in your home folder but on your desktop, you do</p>
+<code>   Read from file: “~/Desktop/Sounds/Animals/miauw.wav”<br></code>
+<p>(this works because on all three platforms, the desktop folder is a subfolder of your home folder)</p>
+<p>If your Sounds folder is on a USB drive called PORCH, it would be something like:</p>
+<code>   Read from file: “G:/Sounds/Animals/miauw.wav”   ; Windows<br></code>
+<code>   Read from file: “/Volumes/PORCH/Sounds/Animals/miauw.wav”   ; Mac<br></code>
+<code>   Read from file: “/media/PORCH/Sounds/Animals/miauw.wav”   ; Linux<br></code>
+<p>Instead of all these complete path names, you can use <i>relative</i> path names. These are taken as relative to the folder in which your script resides, and help to make your script portable if you move the script along with your data.</p>
+<p>Thus, if your script (after you have saved it!) is in the <code><font size=+1>Animals</font></code> folder mentioned above, i.e. in the same folder as <code><font size=+1>miauw.wav</font></code>, you would simply open the file with</p>
+<code>   Read from file: “miauw.wav”<br></code>
+<p>If your script is in the <code><font size=+1>Sounds</font></code> folder mentioned above, i.e. in the same folder as where the <code><font size=+1>Animals</font></code> folder is, you would open the file with</p>
+<code>   Read from file: “Animals/miauw.aifc”<br></code>
+<p>If your script is in the folder <code><font size=+1>Scripts</font></code> that is inside the <code><font size=+1>Sounds</font></code> folder, i.e. if your script is a sister folder of the <code><font size=+1>Animals</font></code> folder, you would open the file with</p>
+<code>   Read from file: “../Animals/miauw.aifc”<br></code>
+<p>where &#8220;..&#8221; is the general way on all platforms to go one folder up in the hierarchy.</p>
+<p>Note that on Windows you could use the backslash (&#8220;  instead of the forward slash (&#8220;/&#8221;), but with the forward slash your script will work on all three platforms.</p>
+<h2>7. Colour arguments</h2>
+<p>Several commands in the World and Pen menus of the Picture window, as well as many object drawing commands, ask for a colour in the following way:</p>
+<p align=middle><img height=340 width=540 src=Scripting_2__How_to_script_settings_windows_6.png></p><p>For the colour, you can supply, as text, one of the 16 explicit names that also appear in the Pen menu:</p>
+<code>   Paint rectangle: “maroon”, 0.0, 1.0, 0.0, 1.0<br></code>
+<p align=middle><img height=300 width=600 src=Scripting_2__How_to_script_settings_windows_7.png></p><p>Alternatively, you can supply a grey value, as a number between 0.0 (black) and 1.0 (white). The following produces a very light grey:</p>
+<code>   Paint rectangle: 0.9, 0.0, 1.0, 0.0, 1.0<br></code>
+<p align=middle><img height=300 width=600 src=Scripting_2__How_to_script_settings_windows_8.png></p><p>Finally, you can supply an explicit RGB (red&#8211;green&#8211;blue) value, as a &#8220;vector&#8221; of three numbers between 0.0 and 1.0. The following produces dark pink:</p>
+<code>   Paint rectangle: {0.8,0.2,0.4}, 0.0, 1.0, 0.0, 1.0<br></code>
+<p align=middle><img height=300 width=600 src=Scripting_2__How_to_script_settings_windows_9.png></p><h2>8. How to supply arguments automatically</h2>
+<p>Now you know all the ways to write the arguments of commands in a script line. If you dislike manually copying arguments from settings windows into your script, or if you are not sure whether something is a numeric or a string argument, you can use the <a href="History_mechanism.html">history mechanism</a>: choose <a href="Clear_history.html">Clear history</a> from the Edit menu in your <a href="ScriptEditor.html">ScriptEditor</a>, click your command button, edit the arguments, and click <b>OK</b>. The command will be executed. Then choose <a href="Paste_history.html">Paste history</a>, and the command line, including the arguments, will appear in the ScriptEditor at the position of the text cursor. You can build whole new scripts on the basis of this mechanism.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_3__Simple_language_elements.html">Scripting 3. Simple language elements</a>
+</ul>
+<hr>
+<address>
+	<p>Paul Boersma 1999,2004,(“Arguments to commands”),2011,2013,2014,2017,2019,2020,2023</p>
+</address>
+</body>
+</html>

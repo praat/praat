@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Sound (whiten channels)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Sound (whiten channels)...
+</b></font></table></table>
+<p>Transforms the channels of the selected <a href="Sound.html">Sound</a> linearly to make them white, i.e. the new channels will be uncorrelated and their variances equal unity.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Variance fraction to keep</b>,
+<dd>determines, indirectly, how many channels the final sound will have.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>We start by determining the <a href="Sound__To_Covariance__channels____.html">covariance</a> of the selected sound. Next a <a href="Principal_component_analysis.html">principal component analysis</a> determines the eigenvalues and eigenvectors of the covariance matrix. The settings of the variance fraction to keep determines how many eigenvalues and eigenvectors we use for the whitening. This number, <i>p</i>, will also be equal to the number of channels of the resulting whitened sound.</p>
+<p>In mathematical terms. For an <i>n</i>-channel sound, if <b>E</b> is the matrix with the eigenvectors and <b>D</b>=diag (<i>d</i><sub>1</sub>, <i>d</i><sub>2</sub>,..., <i>d</i><sub>n</sub>) is the diagonal matrix with the eigenvalues of the covariance matrix, then the whitening matrix is <b>W</b> = <b>E</b><b>D</b><sup>-1/2</sup><b>E</b>&#8242;, where <b>D</b><sup>-1/2</sup>=diag (<i>d</i><sub>1</sub><sup>-1/2</sup>, ..., <i>d</i><sub>p</sub><sup>-1/2</sup>, 0, ..., 0). Only the <i>p</i> most important eigenvalues have been retained, where <i>p</i> was determined as the smallest integer for which (<i>d</i><sub>1</sub>+<i>d</i><sub>2</sub>+...<i>d</i><sub><i>p</i></sub>)/(<i>d</i><sub>1</sub>+<i>d</i><sub>2</sub>+ ... + <i>d</i><sub><i>n</i></sub>) &gt;= <i>varianceFractionToKeep</i>.</p>
+<p>The resulting sound samples of the whitened sound, <i>w</i><sub><i>ij</i></sub>, are then calculated from the samples of the original sound, <i>s</i><sub><i>kj</i></sub>, as <i>w</i><sub><i>ij</i></sub> = &#931;<sub><i>k</i></sub> W<sub><i>ik</i></sub> <i>s</i><sub><i>kj</i></sub>, where 1 &#8804; <i>i</i> &#8804; <i>p</i>, 1 &#8804; <i>j</i> &#8804; numberOfSamples and 1 &#8804; <i>k</i> &#8804; <i>n</i>.</p>
+<hr>
+<address>
+	<p>© djmw 20120303</p>
+</address>
+</body>
+</html>

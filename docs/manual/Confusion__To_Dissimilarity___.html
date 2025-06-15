@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Confusion: To Dissimilarity...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Confusion: To Dissimilarity...
+</b></font></table></table>
+<p>A command that creates a <a href="Dissimilarity.html">Dissimilarity</a> from every selected <a href="Confusion.html">Confusion</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Normalize</b>
+<dd>when on, normalize rows by dividing each row element by the row sum. In this way you correct for unequal stimulus numbers.</dd>
+<dt><b>No symmetrization</b>, <b>Average</b>, <b>Houtgast</b>
+<dd>determine the symmetrization procedure. See <a href="Confusion__To_Similarity___.html">Confusion: To Similarity...</a></dd>
+<dt><b>Maximum dissimilarity</b>
+<dd>determines the maximum dissimilarity possible. When the default value, 0.0, is chosen, <i>maximumDissimilarity</i> is calculated as the maximum element in the Similarity object.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>We first transform the Confusion to a Similarity. See <a href="Confusion__To_Similarity___.html">Confusion: To Similarity...</a></p>
+<p>To obtain dissimilarities from similarities we "reverse" the latter:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>dissimilarity<sub></i>ij</sub> = <i>maximumDissimilarity</i> &#8211; <i>similarity</i><sub><i>ij</i></sub></table>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

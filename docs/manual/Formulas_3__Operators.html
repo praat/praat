@@ -1,0 +1,123 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas 3. Operators</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas 3. Operators
+</b></font></table></table>
+<p>In formulas you can use the numerical and logical operators that are described on this page. The order of evaluation of the operators is the order that is most usual in programming languages. To force a different order, you use parentheses.</p>
+<p>The operators with the highest precedence are <b>negation</b> (-) and <b>exponentation</b> (^):</p>
+<code>   --6 \-&gt; 6<br></code>
+<code>   2^6 \-&gt; 64<br></code>
+<p>Sequences of negation and exponentiation are evaluated from right to left:</p>
+<code>   2^-6 \-&gt; 0.015625<br></code>
+<code>   -(1+1)^6 \-&gt; -64<br></code>
+<code>   4^3^2 \-&gt; 4^9 \-&gt; 262144<br></code>
+<p>Note that changing the spacing does not change the meaning:</p>
+<code>   4^3 ^ 2 \-&gt; 262144<br></code>
+<p>To change the order of evaluation, you have to use parentheses:</p>
+<code>   (4 ^ 3) ^ 2 \-&gt; 4096<br></code>
+<p>The following construction is not allowed because of an ambiguity between a negative number and negation of a positive number:</p>
+<code>   -2^6 \-&gt; ?<br></code>
+<p>Instead, you use any of the following:</p>
+<code>   (-2)^6 \-&gt; 64<br></code>
+<code>   -(2^6) \-&gt; -64<br></code>
+<code>   -(2)^6 \-&gt; -64<br></code>
+<p>The operators with the next highest precedence are <b>multiplication</b> (*) and <b>division</b> (/). They are evaluated from left to right:</p>
+<code>   1/4*5 \-&gt; 1.25        (from left to right)<br></code>
+<code>   1 / 4*5 \-&gt; 1.25      (spacing does not help)<br></code>
+<code>   1 / (4*5) \-&gt; 0.05    (use parentheses to change the order)<br></code>
+<code>   3 * 2 ^ 4 \-&gt; 48      (exponentiation before multiplication)<br></code>
+<code>   3*2 ^ 4 \-&gt; 48        (this spacing does not matter and is misleading)<br></code>
+<code>   (3 * 2) ^ 4 \-&gt; 1296  (use parentheses to change the order)<br></code>
+<p><b>Integer division</b> operators (<b>div</b> and <b>mod</b>) have the same precedence as * and /, and are likewise evaluated from left to right:</p>
+<code>   54 div 5 \-&gt; 10       (division rounded down)<br></code>
+<code>   54 mod 5 \-&gt; 4        (the remainder)<br></code>
+<code>   54.3 div 5.1 \-&gt; 10   (works for real numbers as well)<br></code>
+<code>   54.3 mod 5.1 \-&gt; 3.3  (the remainder)<br></code>
+<code>   -54 div 5 \-&gt; -11     (division rounded down; negation before division)<br></code>
+<code>   -54 mod 5 \-&gt; 1       (the remainder)<br></code>
+<code>   -(54 div 5) \-&gt; -10   (use parentheses to change the order)<br></code>
+<code>   -(54 mod 5) \-&gt; -4<br></code>
+<code>   3 * 18 div 5 \-&gt; 10   (from left to right)<br></code>
+<code>   3 * (18 div 5) \-&gt; 9<br></code>
+<code>   3 * 18 mod 5 \-&gt; 4<br></code>
+<code>   3 * (18 mod 5) \-&gt; 9<br></code>
+<code>   54 div 5 * 3 \-&gt; 30   (from left to right)<br></code>
+<code>   54 div (5 * 3) \-&gt; 3<br></code>
+<code>   54 mod 5 * 3 \-&gt; 12<br></code>
+<code>   54 mod (5 * 3) \-&gt; 9<br></code>
+<p>The operators with the next highest precedence are <b>addition</b> (+) and <b>subtraction</b> (-), evaluated from left to right:</p>
+<code>   3 - 8 + 7 \-&gt; 2       (from left to right)<br></code>
+<code>   3 - (8 + 7) \-&gt; -12   (use parentheses to change the order)<br></code>
+<code>   3 + 8 * 7 \-&gt; 59      (multiplication before addition)<br></code>
+<code>   (3 + 8) * 7 \-&gt; 77    (use parentheses to change the order)<br></code>
+<code>   3 + - (2 \^  4) \-&gt; -13   (exponentiation, negation, addition)<br></code>
+<code>   3 + 5 / 2 + 3 \-&gt; 8.5<br></code>
+<code>   (3 + 5) / (2 + 3) \-&gt; 1.6<br></code>
+<p>The operators with the next highest precedence are the <b>comparison</b> operators (<code><font size=+1>=, <>, <, >, <=, >=</font></code>). These operators always yield 0 (<i>false</i>) or 1 (<i>true</i>):</p>
+<code>   5 + 6 = 10 \-&gt; 0      (equal)<br></code>
+<code>   5 + 6 = 11 \-&gt; 1<br></code>
+<code>   5 + 6 &lt;&gt; 10 \-&gt; 1     (unequal)<br></code>
+<code>   5 + 6 &lt;&gt; 11 \-&gt; 0<br></code>
+<code>   5 + 6 &lt; 10 \-&gt; 0      (less than)<br></code>
+<code>   5 + 6 &lt; 11 \-&gt; 0<br></code>
+<code>   5 + 6 &gt; 10 \-&gt; 1      (greater than)<br></code>
+<code>   5 + 6 &gt; 11 \-&gt; 0<br></code>
+<code>   5 + 6 &lt;= 10 \-&gt; 0     (less than or equal)<br></code>
+<code>   5 + 6 &lt;= 11 \-&gt; 1<br></code>
+<code>   5 + 6 &gt;= 10 \-&gt; 1     (greater or equal)<br></code>
+<code>   5 + 6 &gt;= 11 \-&gt; 1<br></code>
+<p>The comparison operators are mainly used in <b>if</b>, <b>while</b>, and <b>until</b> conditions.</p>
+<p>The operators of lowest precedence are the <b>logical</b> operators (<b>not</b>, <b>and</b>, and <b>or</b>), of which <b>not</b> has the highest precedence and <b>or</b> the lowest:</p>
+<code>   not 5 + 6 = 10 \-&gt; 1<br></code>
+<code>   x &gt; 5 and x &lt; 10               (is x between 5 and 10?)<br></code>
+<code>   not x &lt;= 5 and not x &gt;= 10     (means the same as the previous line, except if x is undefined)<br></code>
+<code>   not (x &lt;= 5 or x &gt;= 10)        (again means the same, except if x is undefined)<br></code>
+<h2>String comparison</h2>
+<dl>
+<dt><b><code><font size=+1>a$ = b$</font></code></b>
+<dd>gives the value <i>true</i> (= 1) if the strings are equal, and <i>false</i> (= 0) otherwise.</dd>
+<dt><b><code><font size=+1>a$ <> b$</font></code></b>
+<dd>gives the value <i>true</i> if the strings are unequal, and <i>false</i> otherwise.</dd>
+<dt><b><code><font size=+1>a$ < b$</font></code></b>
+<dd>gives <i>true</i> if the string <i><code><font size=+1>a$</font></code></i> precedes the string <i><code><font size=+1>b$</font></code></i> in Unicode sorting order. Thus, "ha" &lt; "hal" and "ha" &lt; "ja" are true, but "ha" &lt; "JA" is false, because all capitals precede all lower-case characters in the Unicode sorting order.</dd>
+<dt><b><code><font size=+1>a$ > b$</font></code></b>
+<dd><i>true</i> if <i><code><font size=+1>a$</font></code></i> comes after <i><code><font size=+1>b$</font></code></i> in Unicode sorting order. </dd>
+<dt><b><code><font size=+1>a$ <= b$</font></code></b>
+<dd>gives the value <i>true</i> if the string <i><code><font size=+1>a$</font></code></i> precedes the string <i><code><font size=+1>b$</font></code></i> in Unicode sorting order, or if the strings are equal.</dd>
+<dt><b><code><font size=+1>a$ >= b$</font></code></b>
+<dd><i>true</i> if <i><code><font size=+1>a$</font></code></i> comes after <i><code><font size=+1>b$</font></code></i> or the two are equal.</dd>
+</dl>
+<h2>String concatenation and truncation</h2>
+<dl>
+<dt><b><code><font size=+1>a$ + b$</font></code></b>
+<dd>concatenates the two strings. After</dd>
+</dl>
+<code>      text$ = "hallo" + "dag"<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>text$</font></code></i> contains the string &#8220;hallodag&#8221;.</dd>
+<dt><b><code><font size=+1>a$ - b$</font></code></b>
+<dd>subtracts the second string from the end of the first. After</dd>
+</dl>
+<code>         soundFileName$ = "hallo.aifc"<br></code>
+<code>         textgridFileName$ = soundFileName$ - ".aifc" + ".TextGrid"<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>textgridFileName$</font></code></i> contains the string "hallo.TextGrid". If the first string <i><code><font size=+1>a$</font></code></i> does not end in the string <i><code><font size=+1>b$</font></code></i>, the result of the subtraction is the string <i><code><font size=+1>a$</font></code></i>.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas.html">Formulas</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20230124</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>RealTier</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+RealTier
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. An RealTier object represents a time-stamped curve, i.e., it contains a series of (<i>time</i>, <i>value</i>) points. The values have no physical units, so a RealTier is a generic, "mathematical", type, just as a <a href="Matrix.html">Matrix</a> is. Special, physically interpretable, kinds of RealTiers are <a href="PitchTier.html">PitchTier</a>, <a href="IntensityTier.html">IntensityTier</a>, <a href="DurationTier.html">DurationTier</a> and <a href="AmplitudeTier.html">AmplitudeTier</a>. You can convert a RealTier to and from these other tier types.</p>
+<p>A RealTier can come in handy if you have time-stamped real-valued data that cannot be interpreted as any of the physical tier types. You can "View &amp; Edit" a RealTier in its own window.</p>
+<h2>How to import a RealTier from raw data</h2>
+<p>While you create a RealTier from the New menu, you will often have data in a text file produced by a different app than Praat. For instance, your text file may look like this, with a header:</p>
+<code>   Time Value<br></code>
+<code>   0.134 67.9<br></code>
+<code>   0.178 -138.6<br></code>
+<code>   0.211 78.9<br></code>
+<code>   0.213 100.0<br></code>
+<code>   0.456 -97.0<br></code>
+<p>You can import this text file as a Table object with <b>Read Table from whitespace-separated file...</b> or perhaps with <b>Read Table from tab-separated file...</b>). You can then choose <b>To RealTier...</b> from the Convert menu. Alternatively, your text file may simply look like this, without header:</p>
+<code>   0.134 67.9<br></code>
+<code>   0.178 -138.6<br></code>
+<code>   0.211 78.9<br></code>
+<code>   0.213 100.0<br></code>
+<code>   0.456 -97.0<br></code>
+<p>You can import this text file as a Matrix object with <a href="Read_Matrix_from_raw_text_file___.html">Read Matrix from raw text file...</a>. You can then choose <b>To RealTier...</b> from the Cast menu.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_2_.html">What was new in 6.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20210612</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Table: Report two-way anova...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Table: Report two-way anova...
+</b></font></table></table>
+<p>Performs a two-way analysis of variance on the data in one column of a selected <i>fully factorial</i> <a href="Table.html">Table</a> and reports the fixed-effects anova table in the info window. </p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Column with data</b>
+<dd>the label of the column who's data will be analyzed.</dd>
+<dt><b>First factor</b>
+<dd>the label of the column with the names of the levels for the first factor.</dd>
+<dt><b>Second factor</b>
+<dd>the label of the column with the names of the levels for the second factor.</dd>
+<dt><b>Table with means</b>
+<dd>if checked, a Table with the mean values of all the levels will be created.</dd>
+</dl>
+<h2>Example</h2>
+<p>Suppose you want to check if fundamental frequency depends on the type of vowel and speaker type. We will use the <a href="Create_formant_table__Peterson___Barney_1952_.html">Peterson & Barney</a> vowel data set to illustrate this. The following script will first create the data set and then produce the two-way anova report.</p>
+<code>   Create formant table (Peterson &amp; Barney 1952)<br></code>
+<code>   Report two-way anova: "F0", "Vowel", "Type"<br></code>
+<p>This will produce the following anova table in the info window:</p>
+<code>   Two-way analysis of "F0" by "Vowel" and "Type".<br></code>
+<code>   <br></code>
+<code>         Source             SS        Df             MS         F         P<br></code>
+<code>          Vowel        73719.4         9        8191.05    7.62537    5.25258e-11<br></code>
+<code>           Type    4.18943e+06         2    2.09471e+06    1950.05              0<br></code>
+<code>   Vowel x Type        6714.34        18        373.019   0.347258       0.994969<br></code>
+<code>          Error    1.60053e+06      1490        1074.18<br></code>
+<code>          Total    5.87039e+06      1519<br></code>
+<p>The analysis shows that F0 strongly depends on the vowel and also on the speaker type and, luckily, we do not have any interaction between the vowel and the speaker type. Besides the anova table there is also shown a table with the mean F0 values for each Vowel-Type combination which looks like:</p>
+<code>                      c         m         w      Mean<br></code>
+<code>           aa       258       124       212       198<br></code>
+<code>           ae       248       125       208       194<br></code>
+<code>           ah       263       129       223       205<br></code>
+<code>           ao       259       127       217       201<br></code>
+<code>           eh       259       128       220       202<br></code>
+<code>           er       264       133       219       205<br></code>
+<code>           ih       270       136       232       213<br></code>
+<code>           iy       270       136       231       212<br></code>
+<code>           uh       273       136       234       214<br></code>
+<code>           uw       278       139       235       218<br></code>
+<code>         Mean       264       131       223       206<br></code>
+<p>The first column of this table shows the vowel codes while the first row shows the speaker types (child, man, woman). The last row and the last column of the table shows the averages for the factors Type and Vowel, respectively. The actual data are unbalanced because we have 300, 660 and 560 replications per column respectively (for each speaker we have two replcations of the data).</p>
+<h2>Algorithm</h2>
+<p>The formulas to handle unbalanced designs come from <a href="Khuri__1998_.html">Khuri (1998)</a>.</p>
+<hr>
+<address>
+	<p>© djmw 20140117</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formant: Track...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formant: Track...
+</b></font></table></table>
+<p>A command to extract a specified number of formant tracks from each selected <a href="Formant.html">Formant</a> object. The tracks represent the cheapest paths through the measured formant values in consecutive frames.</p>
+<h2>How to use</h2>
+<p>In order to be capable of producing three tracks (i.e. F1, F2, and F3), there must be at least three formant candidates in <i>every</i> frame of the Formant object. The typical use of this command, therefore, is to analyse five formants with <a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a> and then use the tracking command to extract three tracks.</p>
+<h2>When to use, when not</h2>
+<p>This command only makes sense if the whole of the formant contour makes sense. For speech, formant contours make sense only for vowels and the like. During some consonants, the Formant object may have fewer than three formant values, and trying to create three tracks through them will fail. You will typically use this command for the contours in diphthongs, if at all.</p>
+<h2>Settings</h2>
+<p>To be able to interpret the settings, you should know that the aim of the procedure is to minimize the sum of the <i>costs</i> associated with the three tracks.</p>
+<dl>
+<dt><b>Number of tracks</b>
+<dd>the number of formant tracks that the procedure must find. If this number is 3, the procedure will try to find tracks for F1, F2, and F3; if the Formant object contains a frame with less than three formants, the tracking procedure will fail.</dd>
+<dt><b>Reference F1 (Hz)</b>
+<dd>the preferred value near which the first track wants to be. For average (i.e. adult female) speakers, this value will be around the average F1 for vowels of female speakers, i.e. 550 Hz.</dd>
+<dt><b>Reference F2 (Hz)</b>
+<dd>the preferred value near which the second track wants to be. A good value will be around the average F2 for vowels of female speakers, i.e. 1650 Hz.</dd>
+<dt><b>Reference F3 (Hz)</b>
+<dd>the preferred value near which the third track wants to be. A good value will be around the average F3 for vowels of female speakers, i.e. 2750 Hz. This argument will be ignored if you choose to have fewer than three tracks, i.e., if you are only interested in F1 and F2.</dd>
+<dt><b>Reference F4 (Hz)</b>
+<dd>the preferred value near which the fourth track wants to be. A good value may be around 3850 Hz, but you will usually not want to track F4, because traditional formant lore tends to ignore it (however inappropriate this may be for the vowel [i]), and because Formant objects often contain not more than three formant values in some frames. So you will not usually specify a higher <i>Number of tracks</i> than 3, and in that case, this argument will be ignored.</dd>
+<dt><b>Reference F5 (Hz)</b>
+<dd>the preferred value near which the five track wants to be. In the unlikely case that you want five tracks, a good value may be around 4950 Hz.</dd>
+<dt><b>Frequency cost (per kiloHertz)</b>
+<dd>the local cost of having a formant value in your track that deviates from the reference value. For instance, if a candidate (i.e. any formant in a frame of the Formant object) has a formant frequency of 800 Hz, and <b>Frequency cost</b> is 1.0/kHz, the cost of putting this formant in the first track is 0.250, because the distance to the reference F1 of 550 Hz is 250 Hz. The cost of putting the formant in the second track would be 0.850 (= (1.650 kHz - 0.600 kHz) &#183; 1.0/kHz), so we see that the procedure locally favours the inclusion of the 800 Hz candidate into the F1 track. But the next two cost factors may override this local preference.</dd>
+<dt><b>Bandwidth cost</b>
+<dd>the local cost of having a bandwidth, relative to the formant frequency. For instance, if a candidate has a formant frequency of 400 Hz and a bandwidth of 80 Hz, and <b>Bandwidth cost</b> is 1.0, the cost of having this formant in any track is (80/400) &#183; 1.0 = 0.200. So we see that the procedure locally favours the inclusion of candidates with low relative bandwidths.</dd>
+<dt><b>Transition cost (per octave)</b>
+<dd>the cost of having two different consecutive formant values in a track. For instance, if a proposed track through the candidates has two consecutive formant values of 300 Hz and 424 Hz, and <b>Transition cost</b> is 1.0/octave, the cost of having this large frequency jump is (0.5 octave) &#183; (1.0/octave) = 0.500.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>This command uses a Viterbi algorithm with multiple planes. For instance, if the selected Formant object contains up to five formants per frame, and you request three tracks, the Viterbi algorithm will have to choose between ten candidates (the number of combinations of three out of five) for each frame.</p>
+<p>The formula for the cost of e.g. track 3, with proposed values <i>F</i><sub>2<i>i</i></sub> (<i>i</i> = 1...<i>N</i>, where <i>N</i> is the number of frames) is:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8721;<sub><i>i</i>=1..<i>N</i></sub> <i>frequencyCost</i>&#183;|<i>F</i><sub>3<i>i</i></sub> &#8211; <i>referenceF3</i>|/1000 +</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>+ &#8721;<sub><i>i</i>=1..<i>N</i></sub> <i>bandWidthCost</i>&#183;<i>B</i><sub>3<i>i</i></sub>/<i>F</i><sub>3<i>i</i></sub> +</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>+ &#8721;<sub><i>i</i>=1..<i>N</i>-1</sub> <i>transitionCost</i>&#183;|log<sub>2</sub>(<i>F</i><sub>3<i>i</i></sub>/<i>F</i><sub>3,<i>i</i>+1</sub>)|</table>
+<p>Analogous formulas compute the cost of track 1 and track 2. The procedure will assign those candidates to the three tracks that minimize the sum of three track costs.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formant__Draw_tracks___.html">Formant: Draw tracks...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20020308</p>
+</address>
+</body>
+</html>

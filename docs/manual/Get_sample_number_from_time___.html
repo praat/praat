@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Get sample number from time...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Get sample number from time...
+</b></font></table></table>
+<p>A command that becomes available in the <a href="Query_submenu.html">Query submenu</a> if you select a <a href="Sound.html">Sound</a> or <a href="LongSound.html">LongSound</a> object.</p>
+<p>The Info window will tell you the sample number belonging to the time that you specify. The result is presented as a real number.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Time (s)</b>
+<dd>the time (in seconds) for which you want to know the sample number.</dd>
+</dl>
+<h2>Example</h2>
+<p>If the sound has a sampling frequency of 10 kHz, the sample number associated with a time of 0.1 seconds will usually be 1000.5.</p>
+<h2>Scripting</h2>
+<p>You can use this command to put the nearest sample number into a script variable:</p>
+<code>   selectObject: "Sound hallo"<br></code>
+<code>   sampleNumber = Get sample number from time... 0.1<br></code>
+<code>   nearestSample = round (sampleNumber)<br></code>
+<p>In this case, the value will not be written into the Info window. To round down or up, use</p>
+<code>   leftSample = floor (sampleNumber)<br></code>
+<code>   rightSample = ceiling (sampleNumber)<br></code>
+<h2>Algorithm</h2>
+<p>the result is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>1 + (<i>time</i> &#8211; <i>t</i><sub>1</sub>) / &#916;<i>t</i></table>
+<p>where <i>t</i><sub>1</sub> is the time associated with the first sample, and &#916;<i>t</i> is the sampling period.</p>
+<h2>Details for hackers</h2>
+<p>If you select a Sound or LongSound and click <a href="Inspect.html">Inspect</a>, you can see how the relation between sample numbers and times is stored in the object: <i>t</i><sub>1</sub> is the <b>x1</b> attribute, and &#916;<i>t</i> is the <b>dx</b> attribute.</p>
+<hr>
+<address>
+	<p>© ppgb 20221202</p>
+</address>
+</body>
+</html>

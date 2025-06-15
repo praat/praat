@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>natural sort order</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+natural sort order
+</b></font></table></table>
+<p>Natural sort order uses the following rules to sort strings: </p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. The space character sorts before numbers; numbers sort before non-numbers. Example: 
+' 5' &lt; '5' &lt; 'a'</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Numbers sort in numerical order; leading zeroes and spaces on numbers are ignored, except as a tie-breaker for numbers that have the same numerical value like ' 5' &lt; ' 5 ' &lt; '5' &lt; '05' &lt; '005'</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Non-numbers sort in the asciibetical order ('Z' before 'a'), like 'A' &lt; 'B' ... &lt; 'Z' &lt; 'a' ... 'z'</dd>
+</dl>
+<h2><b>Examples</b></h2>
+<p>&nbsp;1. The alphabetically sorted 'd1', 'd10', 'd11', 'd2' in natural sort order: 'd1', 'd2', 'd10', 'd11'.</p>
+<p>&nbsp;2. Example from https://github.com/sourcefrog/natsort/blob/master/example-out.txt. The alphabetically sorted list of the following 29 strings '1-02', '1-2', '1-20', '10-20', 'fred', 'jane', 'pic   7', 'pic 4 else', 'pic 5', 'pic 5 ', 'pic 5 something', 'pic 6', 'pic01', 'pic02', 'pic02000', 'pic02a', 'pic05', 'pic100', 'pic100a', 'pic120', 'pic121', 'pic2', 'pic3', 'pic4', 'tom', 'x2-g8', 'x2-y08', 'x2-y7', 'x8-y8' will appear in natural sort order as: </p>
+<p>'1-2', '1-02', '1-20', '10-20', 'fred', 'jane', 'pic01', 'pic2', 'pic02', 'pic02a', 'pic3', 'pic4', 'pic 4 else', 'pic 5', 'pic05', 'pic 5 ', 'pic 5 something', 'pic 6', 'pic   7', 'pic100', 'pic100a', 'pic120', 'pic121', 'pic02000', 'tom', 'x2-g8', 'x2-y7', 'x2-y08', 'x8-y8'.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Table__Box_plots___.html">Table: Box plots...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20221023</p>
+</address>
+</body>
+</html>

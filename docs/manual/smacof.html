@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>smacof</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+smacof
+</b></font></table></table>
+<p>Scaling by Majorizing a Complicated Function, the iterative algorithm to find an optimal Configuration.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1.  Initialize</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;&nbsp;&nbsp;1.a. Get initial Configuration <b>Z</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;&nbsp;&nbsp;1.b. Set stress <i>&#963;</i><sub><i>n</i></sub><sup>[0]</sup> to a very large value.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;&nbsp;&nbsp;1.c. Set iteration counter <i>k</i> = 0</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2.  Increase iteration counter by one: <i>k</i> = <i>k</i> + 1</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3.  Calculate distances <i>d</i><sub><i>ij</i></sub>(<b>Z</b>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4.  Transform dissimilarities <i>&#948;</i><sub><i>ij</i></sub> into disparities <i>d</i>&#8242;<sub><i>ij</i></sub>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">5.  Standardize the disparities so that <i>&#951;</i><sub><i>d</i>&#8242;</sub><sup>2</sup> = <i>n</i>(<i>n</i>&#8211;1)/2.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">6.  Compute the Guttman transform <b>X</b><sup>[<i>k</i>]</sup> of <b>Z</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">7.  Compute new distances <i>d</i><sub><i>ij</i></sub>(<b>X</b><sup>[<i>k</i>]</sup>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">8.  Compute normalized stress <i>&#963;</i><sub><i>n</i></sub> (<b>d</b>&#8242;, <b>X</b><sup>[<i>k</i>]</sup>)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">9.  If |<i>&#963;</i><sub><i>n</i></sub><sup>[<i>k</i>]</sup> &#8211; <i>&#963;</i><sub><i>n</i></sub><sup>[<i>k</i>&#8211;1]</sup>| / <i>&#963;</i><sub><i>n</i></sub><sup>[<i>k</i>&#8211;1]</sup> &lt; <i>&#949;</i> or <i>k</i> &gt; <i>maximumNumberOfIterations</i>, then stop</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">10. Set <b>Z</b> = <b>X</b><sup>[<i>k</i>]</sup>, and go to 2.</dd>
+</dl>
+<p>This algorithm goes back to <a href="De_Leeuw__1977_.html">De Leeuw (1977)</a>.</p>
+<hr>
+<address>
+	<p>© djmw 19980119</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: Draw biplot...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: Draw biplot...
+</b></font></table></table>
+<p>A command to draw a biplot for each column in the selected <a href="TableOfReal.html">TableOfReal</a> object.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Xmin</b>, <b>Xmax</b>, <b>Ymin</b>, <b>Ymax</b>
+<dd>determine the drawing boundaries.</dd>
+<dt><b>Split factor</b>
+<dd>determines the weighing of the row and column structure (see below).</dd>
+</dl>
+<h2>Behaviour</h2>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Get the <a href="singular_value_decomposition.html">singular value decomposition</a> <b>U</b> <b>D</b> <b>V</b>&#8242; of the table.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Calculate weighing factors <i>&#955;</i> for row and columns</dd>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#955;</i><sub>r,1</sub> = <i>&#963;</i><sub>1</sub><sup><i>splitFactor</i></sup></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#955;</i><sub>c,1</sub> = <i>&#963;</i><sub>1</sub><sup>1-<i>splitFactor</i></sup></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#955;</i><sub>r,2</sub> = <i>&#963;</i><sub>2</sub><sup><i>splitFactor</i></sup></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#955;</i><sub>c,2</sub> = <i>&#963;</i><sub>2</sub><sup>1-<i>splitFactor</i></sup></table>
+<dl>
+<dd>where <i>&#963;</i><sub>1</sub> and <i>&#963;</i><sub>2</sub> are the first and the second singular values</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. For the rows (<i>i</i> from 1..<i>numberOfRows</i>) form:</dd>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>xr</i><sub><i>i</i></sub> = <i>U</i><sub><i>i1</i></sub>  <i>&#955;</i><sub><i>r</i>,1</sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>yr</i><sub><i>i</i></sub> = <i>U</i><sub><i>i2</i></sub>  <i>&#955;</i><sub><i>r</i>,2</sub></table>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. For the columns (<i>i</i> from 1..<i>numberOfColumns</i>) form:</dd>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>xc</i><sub><i>i</i></sub> = <i>V</i><sub><i>i1</i></sub>  <i>&#955;</i><sub><i>c</i>,1</sub></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>yc</i><sub><i>i</i></sub> = <i>V</i><sub><i>i2</i></sub>  <i>&#955;</i><sub><i>c</i>,2</sub></table>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">5. Plot the points (<i>xr</i><sub><i>i</i></sub>, yr<sub><i>i</i></sub>) and (<i>xc</i><sub><i>i</i></sub>, yc<sub><i>i</i></sub>) in the same figure with the corresponding row and column labels.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20020603</p>
+</address>
+</body>
+</html>

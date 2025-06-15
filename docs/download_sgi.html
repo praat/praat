@@ -1,0 +1,36 @@
+<html><head><title>Downloading Praat for SGI</title></head><body bgcolor="#CCCCFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Downloading Praat for Silicon Graphics
+</b></font></table></table>
+
+<p>The <b>Silicon Graphics IRIX</b> edition of <b>Praat</b> will work on Indigo, Indy, Onyx, O2, and others.</p>
+
+<p>We have stopped creating new versions of Praat for <b>Silicon Graphics IRIX</b>.
+If you have an SGI workstation, you can still create a new version yourself
+directly from the <a href=download_sources.html>source code</a>.
+The last version that we did create was 4.1:</p>
+<dl>
+<dd><b><a href=old/4100/praat4100_sgi.tar.gz>praat4100_sgi.tar.gz</a></b> (May 28, 2003; 1,824,987 bytes)
+</dl>
+
+<p>Unpack with <b>gunzip</b> and <b>tar xvf</b>.
+This will create the executable file <b>praat</b>.
+You can remove the <b>tar</b> file.</p>
+
+<hr><h3>Tuning your SGI</h3>
+<p>To tune your (older) SGI to Praat (and many other programs that use memory!),
+remove any virtual swap space. This will
+benefit all programs that use <b>calloc</b>:</p>
+<dl>
+<dd><b><code>swap -d /.swap.virtual</code></b>
+</dl>
+<p>Note that the <b>real</b> swap space, also known as <b>virtual memory</b>,
+will still exist after this.</p>
+<p>Tell me whether this was necessary on your computer,
+i.e. whether /.swap.virtual did exist when you first downloaded Praat.</p>
+
+<hr>
+Back to the <a href=/praat/>Praat home page</a>.
+</body>
+</html>

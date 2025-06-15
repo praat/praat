@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>CCA: Get zero correlation probability...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+CCA: Get zero correlation probability...
+</b></font></table></table>
+<p>Get the probability that for the selected <a href="CCA.html">CCA</a> object the chosen canonical correlation coefficient is different from zero.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Index</b>
+<dd>is the index of the canonical correlation coefficient that you want to test.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>Wilks' statistic: the probability that coefficient &#961;<sub><i>index</i></sub> differs from zero is </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&nbsp;<i>probability</i> = chiSquareQ (&#967;<sup>2</sup>, <i>ndf</i>),</table>
+<p>where the <i>number of degrees of freedom</i> parameter equals</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>ndf</i> = (<i>n</i><sub>y</sub> - <i>index</i> +1)(<i>n</i><sub>x</sub> - <i>index</i> +1)</table>
+<p>and the chi-squared parameter is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#967;<sup>2</sup> = &#8211;(<i>numberOfObservations</i> - (<i>n</i><sub>y</sub> + <i>n</i><sub>x</sub> +3)/2) log (&#923;<sub><i>index</i></sub>),</table>
+<p>In the formulas above the variables <i>n</i><sub>y</sub> and <i>n</i><sub>x</sub> are the dimensions of the dependent and the independent data sets whose canonical correlations have been obtained, and Wilks' lambda is:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#923;<sub>index</sub> = &#928;<sub><i>i</i>=<i>index</i>..min(<i>ny</i>,<i>nx</i>)</sub> (1 &#8211; &#961;<sub><i>i</i></sub><sup>2</sup>)</table>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

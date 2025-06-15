@@ -1,0 +1,186 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>solving matrix equations</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+solving matrix equations
+</b></font></table></table>
+<p>In this manual you will learn how to solve different kinds of equations involving matrices and vectors.</p>
+<p>Given a matrix <b>A</b> and a vector <b>y</b>, the types of equations we like to solve are of the form <b>y</b>=<b>A</b>&#183;<b>x</b>, where <b>A</b> and <b>y</b> are given. The task is to find the vector <b>x</b>. The first two subsections show how to deal with this equation with no constraints on the solution vector <b>x</b>. Section 4 will show how to deal with the situation when the solution vector <b>x</b> is constrained.</p>
+<p>In the equation above, the matrix and the vectors have to conform. This means that the number of rows of <b>A</b> should equal the size of the <b>y</b> vector and the size of the solution vector <b>x</b> will always equal the number of colums of <b>A</b>.</p>
+<p>Note: In Praat scripting we don't distinguish in notation between a vector and its transpose.</p>
+<h2>1. Matrix A is square</h2>
+<p>In this case an exact solution for <b>x</b> is possible because if <b>A</b> is "well behaved" we can calculate its inverse and the solution will be <b>x</b> = <b>A</b><sup>&#8722;1</sup>&#183;<b>y</b>. The function <b><code><font size=+1>solve#</font></code></b> (<i><code><font size=+1>a##</font></code></i>, <i><code><font size=+1>y#</font></code></i>)<b></b> is for this type of problem.</p>
+<p>The following example shows an exactly solvable system because <b>A</b> is a square matrix and "well behaved":</p>
+<code>   a## = {{0, 2, 0, 1},<br></code>
+<code>   ...    {2, 2, 3, 2},<br></code>
+<code>   ...    {4,-3, 0, 1},<br></code>
+<code>   ...    {6, 1,-6,-5}}<br></code>
+<code>   y# = {0,-2,-7,6}<br></code>
+<code>   x# = solve# (a##, y#)<br></code>
+<code>   writeInfoLine: x#<br></code>
+<p>My info window shows:</p>
+<p>-0.49999999999999967 1.000000000000001 0.3333333333333344 -2.0000000000000027</p>
+<p>As a check we can calculate the norm of the difference between <b>y</b> and <b>A&#183;x</b>, which should be zero for a perfect solution.</p>
+<code>   appendInfoLine: norm (y# - mul# (a##, x#))<br></code>
+<p>My info window shows 1.0777744118960794e-14, which is almost zero (it is not exactly zero due to rounding errors because real numbers cannot be represented exactly in a computer.</p>
+<h2>2. Matrix A has more rows than columns</h2>
+<p>If the matrix has more rows than colums an exact solution is generally not possible and the best thing we can do is to find a solution vector <b>x</b> that <i>minimizes</i> the squared distance between the vectors <b>y</b> and <b>A</b>&#183;<b>x</b>. The problem now can be posed as: find the vector <b>x</b> that minimizes ||<b>y</b> &#8722; <b>A</b>&#183;<b>x</b>||<sup>2</sup>. This is a regression problem which can be solved using <a href="singular_value_decomposition.html">singular value decomposition</a>.</p>
+<p>The following example shows a 5&#215;2 matrix <b>A</b>. The solution therefore is a vector with two elements.</p>
+<code>   a## = {{-0.84,-0.184},<br></code>
+<code>   ...    { 0.09, 1.26},<br></code>
+<code>   ...    { 0.62,-0.20},<br></code>
+<code>   ...    {-1.48,-1.03},<br></code>
+<code>   ...    { 1.29, 0.03}}<br></code>
+<code>   y# = {-0.19, -0.90, -1.53, -2.30, 0.58}<br></code>
+<code>   x# = solve# (a##, y#)<br></code>
+<code>   writeInfoLine: x#<br></code>
+<p>My info window shows:</p>
+<p>0.5881230621928452 0.21643159712237164</p>
+<p>We can calculate the norm of the difference:</p>
+<code>   appendInfoLine: norm (y# - mul# (a##, x#))<br></code>
+<p>My info window shows:</p>
+<p>2.556992185298919</p>
+<p>This means that no other vector <b>x</b> can be found that has ||<b>y</b> &#8722; <b>A</b>&#183;<b>x</b>|| &lt; 2.556992185298919!</p>
+<h2>3. Matrix A has more columns than rows</h2>
+<p>If the number of colums is larger than the number of rows the system in general is underdetermined, i.e. we can not determine a complete solution vector.</p>
+<h2>4. The x<b></b> vector is constrained</h2>
+<p>If there are additional constraints on the vector <b>x</b> we can handle three different cases:</p>
+<h2>4.1 Constraints on the squared norm of the solution <b>x</b></h2>
+<p>These can be expressed in the following form: <i>minimize</i> ||<b>y</b> &#8722; <b>A</b>&#183;<b>x</b>||<sup>2</sup> + <i>&#945;</i>(<b>x</b>&#8242;<b>x</b> &#8722; <i>&#948;</i>) for some <i>&#945;</i> &gt; 0 and <i>&#948;</i> &#8805; 0. Here the constraint on the squared norm <b>x</b>&#8242;<b>x</b> of <b>x</b> is enforced by adding a penalty function with weighing factor <i>&#945;</i>.</p>
+<p>The function to use is <b><code><font size=+1>solveWeaklyConstrained#</font></code></b> (<i><code><font size=+1>a##</font></code></i>, <i><code><font size=+1>y#</font></code></i>, <i><code><font size=+1>alpha</font></code></i>, <i><code><font size=+1>delta</font></code></i>)</p>
+<p>The function is called "weakly constrained" because the penalty function prohibits a relatively large departure of <b>x</b>&#8242;<b>x</b> from <i>&#948;</i>. If we let &#945; go to infinity we have a constrained least squares regression problem of minimizing ||<b>y</b> &#8722; <b>A</b>&#183;<b>x</b>||<sup>2</sup> subject to <b>x</b>&#8242;<b>x</b> = <i>&#948;</i>. The algorithm we have implemented is described by <a href="Ten_Berge__1991_.html">Ten Berge (1991)</a>.</p>
+<h2>4.1.1 An example from the cited paper with an 6&#215;2 matrix <b>A</b></h2>
+<code>   a## = {{ 4, 1, 0.5},<br></code>
+<code>   ...    { 4,-1,-0.5},<br></code>
+<code>   ...    {-4, 1,-0.5},<br></code>
+<code>   ...    {-4,-1, 0.5},<br></code>
+<code>   ...    { 2, 0,   0},<br></code>
+<code>   ...    {-2, 0,   0}}<br></code>
+<code>   y# = {-1,-1,-1,-1,-1,1}<br></code>
+<code>   alpha = 6.0<br></code>
+<code>   delta = 2 / 3<br></code>
+<code>   x# = solveWeaklyConstrained# (a##, y#, alpha, delta)<br></code>
+<code>   writeInfoLine: x#<br></code>
+<p>My info window shows:</p>
+<p>-0.0563380281690141 -3.341667830688472e-17 0.7616819283108669</p>
+<h2>4.1.2 The solution of the regression without the constraint</h2>
+<p>No constraints are involved if we set <i>&#945;</i> = 0</p>
+<code>   x# = solveWeaklyConstrained# (a##, y#, 0.0, delta)<br></code>
+<code>   writeInfoLine: x#<br></code>
+<p>My info window shows:</p>
+<p>-0.05555555555555557 -5.696494054485392e-17 3.0458443711512004e-16</p>
+<p>The same solution would have appeared if we had used the following code:</p>
+<code>   x# = solve# (a##, y#)<br></code>
+<code>   writeInfoLine: x#<br></code>
+<h2>4.1.3. To enforce a solution where the norm of the solution equals one</h2>
+<p>We choose a very large value for <i>&#945;</i> and set <i>&#948;</i> to 1.0.</p>
+<code>   x# = solveWeaklyConstrained# (a##, y#, 1e100, 1.0)<br></code>
+<code>   writeInfoLine: x#<br></code>
+<p>My info window shows: </p>
+<p>-0.05633802816901411 -3.341667830688472e-17 0.9984117520251988</p>
+<h2>4.2. Constraint of nonnegativity of the solution</h2>
+<p>Here we constrain the elements of the solution to be nonnegative. The problem is stated as <i>minimize</i> ||<b>y</b> &#8722; <b>A</b>&#183;<b>x</b>||<sup>2</sup> where all <i>x</i><sub><i>i</i></sub> &#8805; 0.</p>
+<p>This problem can be solved by an iterative alternating least squares method as described by <a href="Borg___Groenen__1997_.html">Borg & Groenen (1997)</a>. The function to use is <b><code><font size=+1>solveNonnegative#</font></code></b> (<i><code><font size=+1>a##</font></code></i>, <i><code><font size=+1>y#</font></code></i> [, <i><code><font size=+1>x#</font></code></i>], <i><code><font size=+1>maximumNumberOfIterations</font></code></i>, <i><code><font size=+1>tolerance</font></code></i>, <i><code><font size=+1>infoLevel</font></code></i>)</p>
+<p>The parameters have the following meaning:</p>
+<dl>
+<dt><i><code><font size=+1>a##</font></code></i>, <i><code><font size=+1>y#</font></code></i>
+<dd>the <b>A</b> matrix and the <b>y</b> vector.</dd>
+<dt>[, <i><code><font size=+1>x#</font></code></i>]
+<dd>the optional vector to start the iterations. If not given the procedure starts with the zero vector.</dd>
+<dt><i><code><font size=+1>maximumNumberOfIterations</font></code></i>
+<dd>the maximum number of iterations that should be run if the tolerance criterion is not met.</dd>
+<dt><i><code><font size=+1>tolerance</font></code></i>
+<dd>is a criterion value that is needed to decide when to stop the iterations. If <i>d</i>(<i>n</i>) is the squared approximation error in the <i>n</i>-th step of the iteration, i.e. <i>d</i>(<i>n</i>) = ||<b>y</b> &#8722; <b>A</b>&#183;<b>x</b>(<i>n</i>)||<sup>2</sup>, where <b>x</b>(<i>n</i>) is the approximation of <b>x</b> at step <i>n</i>, then the iteration stops if either d(n) == 0 or</dd>
+<dd>|<i>d</i>(<i>n</i>) - <i>d</i>(<i>n</i>-1)| / ||<b>y</b>||<sup>2</sup> &lt; <i>tolerance</i>.</dd>
+<dt><i><code><font size=+1>infoLevel</font></code></i>
+<dd>determines the amount of information that is written to the info window during iterations. No info is written if the value is zero.</dd>
+</dl>
+<p>As an example consider:</p>
+<code>   a## = {{-4, 2, 2}, <br></code>
+<code>          { 2, 4, 2}, <br></code>
+<code>          { 1, 1, 1},<br></code>
+<code>          { 2,-1, 3}}<br></code>
+<code>   y# = {1,2,1,3}<br></code>
+<code>   result# = solveNonnegative# (a##, y#,  100, 1e-17, 0)<br></code>
+<code>   writeInfoLine: result#<br></code>
+<p>My info window shows:</p>
+<p>0.17687074830212887 0 0.8594104308385341</p>
+<p></p>
+<p>The same <i><code><font size=+1>a##</font></code></i> and <i><code><font size=+1>y#</font></code></i> with extra output and only three iterations:</p>
+<code>   result# = solveNonnegative# (a##, y#, 3, 1e-17, 2)<br></code>
+<code>   writeInfoLine: result#<br></code>
+<p>Now my info window shows:</p>
+<p>Iteration: 1, error: 2.7083144168962345</p>
+<p>Iteration: 2, error: 0.22835187182198863</p>
+<p>Iteration: 3, error: 0.019415103584264275</p>
+<p>Number of iterations: 3; Minimum: 0.019415103584264275</p>
+<p>0.18686771227425772 0.0063553925295192215 0.8542134965490019</p>
+<p>The solution is not reached after only 3 iterations. We use the found solution to start a new iteration:</p>
+<code>   result# = solveNonnegative# (a##, y#, result#, 100, 1e-17, 1)<br></code>
+<code>   writeInfoLine: result#<br></code>
+<p>My info window shows</p>
+<p>Number of iterations: 6; Minimum: 0.011337868480725613</p>
+<p>0.17687074830212887 0 0.8594104308385341</p>
+<p>The final solution has been reached after 6 extra iterations.</p>
+<h2>4.3 Constraints on the sparseness of the solution</h2>
+<p>As we have seen above, if the number of columns is larger than the number of rows then a unique solution does not exist in general because the number of unknowns is larger than the number of equations. However, there is an exception:</p>
+<p>If the matrix <b>A</b> has some special properties <i>and</i> the solution vector has to be sparse, i.e. most of its values are zero, then we can find the <b>x</b> that minimizes ||<b>y</b> &#8722; <b>A</b>&#183;<b>x</b>||<sup>2</sup>.</p>
+<p>In general an iterative procedure is needed for the minimization. We have implemented one based on <i>iterative hard thresholding</i> which is described by <a href="Blumensath___Davies__2010_.html">Blumensath & Davies (2010)</a>. </p>
+<p><b><code><font size=+1>solveSparse#</font></code></b> (<i><code><font size=+1>a##</font></code></i>, <i><code><font size=+1>y#</font></code></i> [, <i><code><font size=+1>x#</font></code></i>], <i><code><font size=+1>maximumNumberOfNonzeros</font></code></i>, <i><code><font size=+1>maximumNumberOfIterations</font></code></i>, <i><code><font size=+1>tolerance</font></code></i>, <i><code><font size=+1>infoLevel</font></code></i>)</p>
+<p>The parameters have the following meaning:</p>
+<dl>
+<dt><i><code><font size=+1>a##</font></code></i>, <i><code><font size=+1>y#</font></code></i>
+<dd>the <b>A</b> matrix and the <b>y</b> vector.</dd>
+<dt>[, <i><code><font size=+1>x#</font></code></i>]
+<dd>the optional vector to start the iterations. If not given the procedure starts with the zero vector.</dd>
+<dt><i><code><font size=+1>maximumNumberOfNonzeros</font></code></i>
+<dd>the maximum number of nonzero elements in the solution vector, i.e. the sparsity.</dd>
+<dt><i><code><font size=+1>maximumNumberOfIterations</font></code></i>
+<dd>the maximum number of iterations that should be run if the tolerance criterion is not met.</dd>
+<dt><i><code><font size=+1>tolerance</font></code></i>
+<dd>is a criterion value that is needed to decide when to stop the iterations. If <i>d</i>(<i>n</i>) is the squared approximation error in the <i>n</i>-th step of the iteration, i.e. <i>d</i>(<i>n</i>) = ||<b>y</b> &#8722; <b>A&#183;x</b>(<i>n</i>)||<sup>2</sup>, where <b>x</b>(<i>n</i>) is the approximation of <b>x</b> at step <i>n</i>, then the iteration stops if</dd>
+<dd>|<i>d</i>(<i>n</i>) &#8722; <i>d</i>(<i>n</i>&#8722;1)| / ||<b>y</b>||<sup>2</sup> &lt; <i>tolerance</i>.</dd>
+<dt><i><code><font size=+1>infoLevel</font></code></i>
+<dd>determines the amount of information that is written to the info window during iterations. No info is written if the value is zero.</dd>
+</dl>
+<p>In the following example we first construct a sparse vector <b>x</b>, with random numbers between 0.1 and 10, and a random Gaussian matrix <b>A</b>. From these two we construct our <b>y</b>. We then solve the sparse system and compare its solution <b>xs</b> to the constructed <b>x</b>.</p>
+<code>   nrow = 100<br></code>
+<code>   ncol = 1000<br></code>
+<code>   x# = zero# (ncol)<br></code>
+<code>   for i to size (x#)<br></code>
+<code>      x# [i] = if randomUniform (0,1) &lt; 0.005 then randomUniform (0.1, 10) else 0.0 fi<br></code>
+<code>   endfor<br></code>
+<code>   # On average in x# 5 out of 1000 will be unequal zero.<br></code>
+<code>   a# = randomGauss## (nrow, ncol, 0.0, 1.0 / nrow)<br></code>
+<code>   y# = mul# (a##, x#)<br></code>
+<code>   maximumNumberOfNonzeros = 10<br></code>
+<code>   maximumNumberOfIterations = 200<br></code>
+<code>   tolerance = 1e-17<br></code>
+<code>   info = 0   ; no info<br></code>
+<code>   xs# = solveSparse# (a##, y#, maximumNumberOfNonzeros, maximumNumberOfIterations, tolerance, info)<br></code>
+<code>   # We have found the solution now check<br></code>
+<code>   dif# = x# - xs#<br></code>
+<code>   inner = inner (dif#, dif#)<br></code>
+<code>   writeInfoLine: if inner &gt; 1e-7 then "error" else "OK" endif<br></code>
+<p>My info window shows: OK.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_solve-H-H_.html"><code><font size=+1>solve##</font></code></a>
+<li><a href="_solve-H_.html"><code><font size=+1>solve#</font></code></a>
+<li><a href="_solveNonnegative-H_.html"><code><font size=+1>solveNonnegative#</font></code></a>
+<li><a href="_solveSparse-H_.html"><code><font size=+1>solveSparse#</font></code></a>
+<li><a href="_solveWeaklyConstrained-H_.html"><code><font size=+1>solveWeaklyConstrained#</font></code></a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20230801</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 2.1. The experiment file</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 2.1. The experiment file
+</b></font></table></table>
+<p>An experiment is defined in a simple text file, which we call an <i>experiment file</i>. The following is an example of such an experiment file. The first two lines have to be typed exactly as in this example, the rest depends on your stimuli, on your response categories, and on the way the experiment is to be presented to the listener. The order of the elements in this file cannot be changed, and nothing can be skipped. The first two lines make the file recognizable for Praat as an ExperimentMFC file; the number 7 is the version number of this type of ExperimentMFC file (Praat can still read older ExperimentMFC files with a lower version number).</p>
+<code>   "ooTextFile"<br></code>
+<code>   "ExperimentMFC 7"<br></code>
+<code>   blankWhilePlaying? &lt;no&gt;<br></code>
+<code>   stimuliAreSounds? &lt;yes&gt;<br></code>
+<code>   stimulusFileNameHead = "Sounds/"<br></code>
+<code>   stimulusFileNameTail = ".wav"<br></code>
+<code>   stimulusCarrierBefore = "weSayTheWord"<br></code>
+<code>   stimulusCarrierAfter = "again"<br></code>
+<code>   stimulusInitialSilenceDuration = 0.5 seconds<br></code>
+<code>   stimulusMedialSilenceDuration = 0<br></code>
+<code>   stimulusFinalSilenceDuration = 0.5 seconds<br></code>
+<code>   numberOfDifferentStimuli = 4<br></code>
+<code>      "heed"  ""<br></code>
+<code>      "hid"   ""<br></code>
+<code>      "hood"  ""<br></code>
+<code>      "hud"   ""<br></code>
+<code>   numberOfReplicationsPerStimulus = 3<br></code>
+<code>   breakAfterEvery = 0<br></code>
+<code>   randomize = &lt;PermuteBalancedNoDoublets&gt;<br></code>
+<code>   startText = "This is a listening experiment.<br></code>
+<code>   After hearing a sound, choose the vowel that is most similar to what you heard.<br></code>
+<code>   <br></code>
+<code>   Click to start."<br></code>
+<code>   runText = "Choose the vowel that you heard."<br></code>
+<code>   pauseText = "You can have a short break if you like. Click to proceed."<br></code>
+<code>   endText = "The experiment has finished."<br></code>
+<code>   maximumNumberOfReplays = 0<br></code>
+<code>   replayButton = 0 0 0 0 "" ""<br></code>
+<code>   okButton = 0 0 0 0 "" ""<br></code>
+<code>   oopsButton = 0 0 0 0 "" ""<br></code>
+<code>   responsesAreSounds? &lt;no&gt; "" "" "" "" 0 0 0<br></code>
+<code>   numberOfDifferentResponses = 5<br></code>
+<code>      0.2 0.3 0.7 0.8 "h I d" 40 "" "i"<br></code>
+<code>      0.3 0.4 0.5 0.6 "h E d" 40 "" "e"<br></code>
+<code>      0.4 0.5 0.3 0.4 "h A d" 40 "" "a"<br></code>
+<code>      0.5 0.6 0.5 0.6 "h O d" 40 "" "o"<br></code>
+<code>      0.6 0.7 0.7 0.8 "h U d" 40 "" "u"<br></code>
+<code>   numberOfGoodnessCategories = 5<br></code>
+<code>      0.25 0.35 0.10 0.20 "1 (poor)" 24 ""<br></code>
+<code>      0.35 0.45 0.10 0.20 "2" 24 ""<br></code>
+<code>      0.45 0.55 0.10 0.20 "3" 24 ""<br></code>
+<code>      0.55 0.65 0.10 0.20 "4" 24 ""<br></code>
+<code>      0.65 0.75 0.10 0.20 "5 (good)" 24 ""<br></code>
+<p>This experiment will play 4 different stimuli to the listener, each 3 times. Thus, the listener is confronted with 12 trials.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_2__The_first_example.html">ExperimentMFC 2. The first example</a>
+<li><a href="ExperimentMFC_2_2__The_stimuli.html">ExperimentMFC 2.2. The stimuli</a>
+<li><a href="ExperimentMFC_2_3__The_carrier_phrase.html">ExperimentMFC 2.3. The carrier phrase</a>
+<li><a href="ExperimentMFC_2_7__Response_categories.html">ExperimentMFC 2.7. Response categories</a>
+<li><a href="ExperimentMFC_2_8__Goodness_judgments.html">ExperimentMFC 2.8. Goodness judgments</a>
+<li><a href="ExperimentMFC_3_1__A_simple_discrimination_experiment.html">ExperimentMFC 3.1. A simple discrimination experiment</a>
+<li><a href="ExperimentMFC_4_1__The_replay_button.html">ExperimentMFC 4.1. The replay button</a>
+<li><a href="ExperimentMFC_4_2__The_OK_button.html">ExperimentMFC 4.2. The OK button</a>
+<li><a href="ExperimentMFC_4_3__The_oops_button.html">ExperimentMFC 4.3. The oops button</a>
+<li><a href="ExperimentMFC_5__Stimulus-dependent_texts.html">ExperimentMFC 5. Stimulus-dependent texts</a>
+<li><a href="ExperimentMFC_5_1__The_stimulus-dependent_run_text.html">ExperimentMFC 5.1. The stimulus-dependent run text</a>
+<li><a href="ExperimentMFC_5_2__Stimulus-dependent_response_buttons.html">ExperimentMFC 5.2. Stimulus-dependent response buttons</a>
+<li><a href="ExperimentMFC_6__Responses_are_sounds.html">ExperimentMFC 6. Responses are sounds</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20160925</p>
+</address>
+</body>
+</html>

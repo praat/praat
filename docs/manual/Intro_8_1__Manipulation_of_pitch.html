@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intro 8.1. Manipulation of pitch</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intro 8.1. Manipulation of pitch
+</b></font></table></table>
+<p>To modify the pitch contour of an existing <a href="Sound.html">Sound</a> object, you select this <a href="Sound.html">Sound</a> and click <b>To Manipulation</b>. A <a href="Manipulation.html">Manipulation</a> object will then appear in the list. You can then click <a href="View___Edit.html">View & Edit</a> to raise a <a href="ManipulationEditor.html">ManipulationEditor</a>, which will show the pitch contour (<a href="PitchTier.html">PitchTier</a>) as a series of thick blue dots. To reduce the number of dots, choose <b>Stylize pitch (2 st)</b> from the <b>Pitch</b> menu; it will then be easy to drag the dots around the time&#8211;pitch area (press the Option key to restrict dragging to vertical, and the Command key to restrict dragging to horizontal; mnemonics: Uption, Come Later).</p>
+<p>If you click any of the rectangles (or choose any of the commands from the <b>Play</b> menu), you will hear the modified sound. By shift-clicking, you will hear the original sound.</p>
+<p>To get the modified sound as a separate object, choose <b>Publish resynthesis</b> from the <a href="File_menu.html">File menu</a>.</p>
+<p>If you modify the duration curve as well (see <a href="Intro_8_2__Manipulation_of_duration.html">Intro 8.2. Manipulation of duration</a>), the modified sound will be based on the modified pitch and duration.</p>
+<h2>Cloning a pitch contour</h2>
+<p>To use the pitch contour of one Manipulation object as the pitch contour of another Manipulation object, you first choose <b>Extract pitch tier</b> for the first Manipulation object, then select the resulting PitchTier object together with the other Manipulation object (e.g. by a click on the PitchTier and a <a href="Command-click.html">Command-click</a> on the Manipulation), and choose <b>Replace pitch tier</b>.</p>
+<h2>Precise manipulation of pitch</h2>
+<p>If you know exactly what pitch contour you want, you can create an empty PitchTier with <a href="Create_PitchTier___.html">Create PitchTier...</a> from the New menu, then add points with <a href="PitchTier__Add_point___.html">PitchTier: Add point...</a>.</p>
+<p>For instance, suppose you want to have a pitch that falls from 350 to 150 Hz in one second. You create the PitchTier, then add a point at 0 seconds and a frequency of 350 Hz, and a point at 1 second with a frequency of 150 Hz. You can put this PitchTier into a Manipulation object in the way described above.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Intro_8__Manipulation.html">Intro 8. Manipulation</a>
+<li><a href="Intro_8_3__Manipulation_of_intensity.html">Intro 8.3. Manipulation of intensity</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20220814</p>
+</address>
+</body>
+</html>

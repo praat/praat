@@ -1,0 +1,62 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>binomialQ</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+binomialQ
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>. The complement of the cumulative binomial distribution.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>binomialQ</font></code></b> (<i><code><font size=+1>p</font></code></i>, <i><code><font size=+1>k</font></code></i>, <i><code><font size=+1>n</font></code></i>)
+<dd>compute the probability that in <i><code><font size=+1>n</font></code></i> trials an event with probability <i><code><font size=+1>p</font></code></i> will occur at least <i><code><font size=+1>k</font></code></i> times.</dd>
+</dl>
+<h2>Calculator example</h2>
+<p>A die is suspected to yield more sixes than a perfect die would do. In order to test this suspicion, you throw it 1,000 times. The result is 211 sixes.</p>
+<p>The probability that a perfect die yields at least 211 sixes is, according to <a href="Calculator___.html">Calculator...</a>,</p>
+<code>   appendInfoLine: <b>binomialQ</b> (1/6, 211, 1000)<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   0.0001521645728419145<br></code>
+<p>which should be 0.000152.</p>
+<h2>Script example</h2>
+<p>You convert 1000 values of pitch targets in Hz to the nearest note on the piano keyboard. 597 of those values turn out to be in the A, B, C, D, E, F, or G regions (the white keys), and 403 values turn out to be in the A#, C#, D#, F#, or G# regions (the black keys). Do our subjects have a preference for the white keys? The following script computes the probability that in the case of no preference the subjects would target the white keys at least 597 times. This is compared with a <i>&#967;</i><sup>2</sup> test.</p>
+<code>   a = 597<br></code>
+<code>   b = 403<br></code>
+<code>   p = 7/12   ; no preference<br></code>
+<code>   writeInfoLine: “*** Binomial test ”, a, “, ”, b, “, p = ”, fixed$ (p, 6), “ ***”<br></code>
+<code>   pbin = <b>binomialQ</b> (p, a, a+b)<br></code>
+<code>   appendInfoLine: “P (binomial) = ”, fixed$ (pbin, 6)<br></code>
+<code>   # Chi-square test with Yates correction:<br></code>
+<code>   x2 = (a - 1/2 -   p   * (a+b)) ^ 2 / (  p   * (a+b)) +<br></code>
+<code>   ...  (b + 1/2 - (1-p) * (a+b)) ^ 2 / ((1-p) * (a+b))<br></code>
+<code>   px2 = chiSquareQ (x2, 1)<br></code>
+<code>   appendInfoLine: “P (chi-square) = ”, fixed$ (px2, 6)<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   *** Binomial test 597, 403, p = 0.583333 ***<br></code>
+<code>   P (binomial) = 0.199330<br></code>
+<code>   P (chi-square) = 0.398365<br></code>
+<p>The result is:</p>
+<code>   *** Binomial test 597, 403, p = 0.583333 ***<br></code>
+<code>   P (binomial) = 0.199330<br></code>
+<code>   P (chi-square) = 0.398365<br></code>
+<p>The <i>&#967;</i><sup>2</sup> test is two-sided (it signals a preference for the white or for the black keys), so it has twice the probability of the binomial test.</p>
+<p>We cannot conclude from this test that people have a preference for the white keys. Of course, we cannot conclude either that people <i>don&#8217;t</i> have such a preference.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_binomialP_.html"><code><font size=+1>binomialP</font></code></a>
+<li><a href="_invBinomialQ_.html"><code><font size=+1>invBinomialQ</font></code></a>
+<li><a href="Formulas_5__Mathematical_functions.html">Formulas 5. Mathematical functions</a>
+<li><a href="Functions.html">Functions</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2014, 2023</p>
+</address>
+</body>
+</html>

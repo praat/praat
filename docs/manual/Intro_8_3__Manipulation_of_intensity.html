@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intro 8.3. Manipulation of intensity</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intro 8.3. Manipulation of intensity
+</b></font></table></table>
+<p>You can modify the intensity contour of an existing sound.</p>
+<p>While the pitch and duration of a sound can be modified with the <a href="ManipulationEditor.html">ManipulationEditor</a> (see <a href="Intro_8_1__Manipulation_of_pitch.html">Intro 8.1. Manipulation of pitch</a> and <a href="Intro_8_2__Manipulation_of_duration.html">Intro 8.2. Manipulation of duration</a>), the modification of the intensity curve is done in a different way.</p>
+<p>You can create an <a href="IntensityTier.html">IntensityTier</a> with the command <a href="Create_IntensityTier___.html">Create IntensityTier...</a> from the <a href="New_menu.html">New menu</a>. With <a href="View___Edit.html">View & Edit</a>, you can add points to this tier. You can then "multiply" this tier with a sound, by selecting the <a href="Sound.html">Sound</a> and the IntensityTier together and clicking <a href="Sound___IntensityTier__Multiply.html">Multiply</a>. The points in the IntensityTier represent relative intensities in dB; therefore, the sound pressure values in the Sound are multiplied by 10<sup>(dB/20)</sup>.</p>
+<p>Instead of an IntensityTier, you can use an <a href="AmplitudeTier.html">AmplitudeTier</a>; when you click <b>Multiply</b> for a selected Sound and AmplitudeTier, the sound pressure values in the Sound are directly multiplied by the values in the AmplitudeTier.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Intro_8__Manipulation.html">Intro 8. Manipulation</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110128</p>
+</address>
+</body>
+</html>

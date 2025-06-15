@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Script for listing time–F0 pairs</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Script for listing time–F0 pairs
+</b></font></table></table>
+<p>&#8220;I wish to have a list of time markers in one column and F0 in the other. Those times that have no voiced data should be represented as &#8220;.&#8221; in the F0 column.&#8221;</p>
+<code>   writeInfoLine: "Time:    Pitch:"<br></code>
+<code>   numberOfFrames = Get number of frames<br></code>
+<code>   for iframe to numberOfFrames<br></code>
+<code>      time = Get time from frame: iframe<br></code>
+<code>      pitch = Get value in frame: iframe, "Hertz"<br></code>
+<code>      if pitch = undefined<br></code>
+<code>         appendInfoLine: fixed$ (time, 6)<br></code>
+<code>      else<br></code>
+<code>         appendInfoLine: fixed$ (time, 6), " ", fixed$ (pitch, 3)<br></code>
+<code>      endif<br></code>
+<code>   endfor<br></code>
+<p>If you want to see this in a text file, you can copy and paste from the Info window, or save the Info window, or add a line to the script like</p>
+<code>   appendFile: "out.txt", info$ ( )<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting_examples.html">Scripting examples</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140223</p>
+</address>
+</body>
+</html>

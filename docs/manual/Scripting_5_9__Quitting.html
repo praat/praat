@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 5.9. Quitting</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 5.9. Quitting
+</b></font></table></table>
+<p>Usually, the execution of your script ends when the interpreter has executed the last line that is not within a procedure definition. However, you can also explicitly stop the script:</p>
+<dl>
+<dt><b>exitScript</b> ( )
+<dd>stops the execution of the script in the normal way, i.e. without any messages to the user. Any settings (form) window is removed from the screen (unless Apply was clicked instead of OK).</dd>
+<dt><b>exitScript</b>: <i>error-message</i>
+<dd>stops the execution of the script while sending an error message to the user. You can use the same argument list as with <b>writeInfoLine</b>. Any settings (form) window will stay on the screen.</dd>
+</dl>
+<p>For an example, see <a href="Scripting_6_8__Messages_to_the_user.html">Scripting 6.8. Messages to the user</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_exitScript_.html"><code><font size=+1>exitScript</font></code></a>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_5__Language_elements_reference.html">Scripting 5. Language elements reference</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20190713</p>
+</address>
+</body>
+</html>

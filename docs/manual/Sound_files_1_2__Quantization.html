@@ -1,0 +1,31 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound files 1.2. Quantization</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound files 1.2. Quantization
+</b></font></table></table>
+<p>Apart from sampling (<a href="Sound_files_1_1__Sampling.html">&#167;1.1</a>), digitization also involves quantization, which is the conversion of a sample value into a number that fits into 8, 16, 24 or 32 bits.</p>
+<h2>Saving</h2>
+<p>When exporting a <a href="Sound.html">Sound</a> object as a 16-bit audio file on disk, Praat multiplies the samples of the Sound by 32768, and then rounds them to integer numbers, so that air pressure values between -1.0 and +1.0 Pa will end up being coded as integers between -32768 and +32767. Sample values below -1.0 will be coded as -32768, and sample values above +1.0 will be coded as +32767. To avoid such "clipping", keep the absolute amplitude in your <a href="Sound.html">Sound</a> object below 1.000, perhaps by using <a href="Sound__Scale_peak___.html">Sound: Scale peak...</a> before you save.</p>
+<p>When exporting a <a href="Sound.html">Sound</a> object as a 24-bit audio file on disk, Praat multiplies the samples of the Sound by 8388608 instead.</p>
+<h2>Opening</h2>
+<p>For a 16-bit sound file, the sample values on disk are integers between -32768 and +32767. When turning the file into a <a href="Sound.html">Sound</a> object, Praat converts these integers into real values between -1.0 and +1.0, by dividing the sample values by 32768.0 (i.e. 2<sup>(16 &#8211; 1)</sup>). Praat subsequently regards these real values as air pressures in pascal (see <a href="sound_pressure_calibration.html">sound pressure calibration</a>). For a 24-bit AIFF file, the sample values on disk are integers between -8388608 and +8388607, and Praat divides these by 8388608.0 to get values between -1.0 and +1.0 Pa in the <a href="Sound.html">Sound</a> object.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound_files.html">Sound files</a>
+<li><a href="Sound_files_1__General_structure.html">Sound files 1. General structure</a>
+<li><a href="Sound_files_1_4__The_header.html">Sound files 1.4. The header</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20190517</p>
+</address>
+</body>
+</html>

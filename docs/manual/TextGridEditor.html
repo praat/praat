@@ -1,0 +1,104 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TextGridEditor</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TextGridEditor
+</b></font></table></table>
+<p>One of the <a href="Editors.html">Editors</a> in Praat, for editing a <a href="TextGrid.html">TextGrid</a> object.</p>
+<p>You can optionally include a copy of a <a href="Sound.html">Sound</a> or <a href="LongSound.html">LongSound</a> in this editor, by selecting both the TextGrid and the Sound or LongSound before clicking <b>View &amp; Edit</b>. The Sound or LongSound is shown in the upper part of the window, the tiers in the lower part. A text window at the top shows the text of the <i><b>selected</i></b> interval or point, i.e. the interval or point at the location of the cursor. All tiers are visible, and if you do not zoom in, all boundaries, points, and texts are visible, too. You can do many of the same things that you can do with a <a href="SoundEditor.html">SoundEditor</a> or <a href="LongSoundEditor.html">LongSoundEditor</a>.</p>
+<h2>Positioning the cursor or the selection marks</h2>
+<p>To position the cursor hair, <a href="Click.html">click</a> in the <b>Sound</b>, on a boundary, on a point, or inside an interval.</p>
+<p>To select any part of the time domain, use the <a href="time_selection.html">time selection</a> mechanism; if you do this by clicking in a tier, the selected time domain will snap to the nearest boundary or point.</p>
+<h2>Creating new intervals, boundaries, points, or tiers</h2>
+<p>To create a new interval, create a new boundary in an interval tier.</p>
+<p>To create a new boundary or point in a tier, <a href="Click.html">click</a> inside the cursor circle in that tier, or choose one of the commands in the Boundary/Point menu to insert a boundary at the cursor time on the selected tier (shortcut: Enter) or on any tier (shortcuts: <a href="Keyboard_shortcuts.html">Command-F1</a> through <a href="Keyboard_shortcuts.html">Command-F9</a>). The original text in the interval that is split, is divided up between the two resulting intervals, depending on the position of the text cursor in the text window.</p>
+<p>To create a new tier, choose <b>Add interval tier</b> or <b>Add point tier</b> from the <b>Tier</b> menu.</p>
+<h2>Playing an entire interval, or part of it</h2>
+<p>As in many other editors, you can play a stretch of sound by clicking in any of the rectangles around the drawing area.</p>
+<p>To play an interval of an interval tier, you first <a href="Click.html">click</a> inside it. This will make the interval <i>selected</i>, which means that the visible part of the interval will be drawn in yellow. The cursor will be positioned at the start of the interval, and the time selection will comprise exactly the interval. This means that you can use the Tab key to play the interval. If you press it while a sound is playing, the Tab key will halt the playing sound, and the cursor will move to the time at which the sound stopped playing. This helps you to divide up a long sentence into parts that you can remember long enough to write them down.</p>
+<p>The Tab key will play the selected interval.</p>
+<h2>Editing the text in an interval or at a point</h2>
+<p>To edit the label text of an interval or point:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Select that interval or point by clicking in or on it. The text currently in the interval or point will appear in the text window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Just type the text, and use the mouse and the arrow keys to navigate the text window. Everything you type will become visible immediately in the text window as well as in the selected interval or point.</dd>
+</dl>
+<p>You can use all the <a href="Special_symbols.html">Special symbols</a> that you can use elsewhere in Praat, including mathematical symbols, Greek and Chinese letters, superscripts, and phonetic symbols.</p>
+<h2>Selecting a tier</h2>
+<p>To select a tier, click anywhere inside it. Its number and name will be drawn in red, and a pointing finger symbol (&#9758;) will appear on its left.</p>
+<h2>Selecting a boundary or point</h2>
+<p>To select a boundary on an interval tier, <a href="Click.html">click</a> in its vicinity or inside the following interval; the boundary will be drawn in red. The text in the interval will appear in the text window.</p>
+<p>To select a point on a point tier, <a href="Click.html">click</a> in its vicinity; it will be drawn in red. The text of the point will appear in the text window.</p>
+<h2>Moving one or more boundaries or points</h2>
+<p>To move a boundary or point to another time position, <a href="Drag.html">drag</a> it with the mouse.</p>
+<p>To move all the boundaries and points with the same time (on different tiers) to another time position, <a href="Shift-drag.html">Shift-drag</a> them.</p>
+<p>To move boundaries or points to the exact time position of a boundary or point on an other tier, <a href="Drag.html">drag</a> them into that other tier and into the vicinity of that boundary or point.</p>
+<p>To move boundaries or points to the exact time position of the cursor, <a href="Drag.html">drag</a> them into the vicinity of the cursor.</p>
+<h2>Removing a boundary, point, or tier</h2>
+<p>To remove a selected <b>boundary</b>, choose <b>Remove</b> from the <b>Boundary</b> menu. This creates a new interval which is the union of the two intervals originally adjoining the boundary; the new text of this interval is the concatenation of the two original texts, except if these were equal, in which case the new text equals both original texts.</p>
+<p>To remove a selected <b>point</b>, choose <b>Remove</b> from the <b>Point</b> menu.</p>
+<p>To remove a selected <b>tier</b>, choose <b>Remove entire tier</b> from the <b>Tier</b> menu.</p>
+<h2>Extracting a part of the sound</h2>
+<p>To copy the selected part of the Sound or LongSound as a Sound to the <a href="List_of_Objects.html">List of Objects</a>, choose <b>Extract sound selection</b> from the <b>File</b> menu. You can specify whether you want the time domain of the resulting Sound to match the starting and finishing times of the selection or whether you want the time domain of the resulting Sound to start at zero seconds.</p>
+<p>If you are viewing a LongSound, you can save the selected part of it to a 16-bit sound file (AIFF, AIFC, WAV, NeXT/Sun, NIST) with a command from the File menu.</p>
+<h2>Accelerations</h2>
+<p>To save the <a href="TextGrid.html">TextGrid</a> object as a text file without going to the <a href="Objects_window.html">Objects window</a>: choose <b>Save TextGrid as text file...</b> from the <b>File</b> menu.</p>
+<h2>Searching</h2>
+<p>The Search menu contains the command <b>Find</b> (<a href="Keyboard_shortcuts.html">Command-F</a>), which will allow you to specify a text whose first occurrence will then be looked for in the currently selected tier (starting from the currently selected text in the currently selected interval). The command <b>Find again</b> (<a href="Keyboard_shortcuts.html">Command-G</a>) will search for the next occurrence of the same search text.</p>
+<h2>Checking the spelling</h2>
+<p>You can check the spelling of the intervals in your tiers by including a <a href="SpellingChecker.html">SpellingChecker</a> object as you launch the editor: select TextGrid + (Long)Sound + SpellingChecker, then click <b>View &amp; Edit</b>. The <b>Spell</b> menu will contain the commands <b>Check spelling in tier</b> (<a href="Keyboard_shortcuts.html">Command-N</a>), and <b>Check spelling in interval</b> which will search for the next word in the tier or interval that does not occur in the lexicon.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Advanced_pulses_settings___.html">Advanced pulses settings...</a>
+<li><a href="Analyses_menu.html">Analyses menu</a>
+<li><a href="Extract_visible_formant_contour.html">Extract visible formant contour</a>
+<li><a href="Extract_visible_intensity_contour.html">Extract visible intensity contour</a>
+<li><a href="Extract_visible_pitch_contour.html">Extract visible pitch contour</a>
+<li><a href="Extract_visible_spectrogram.html">Extract visible spectrogram</a>
+<li><a href="Formants_menu.html">Formants menu</a>
+<li><a href="Get_first_formant.html">Get first formant</a>
+<li><a href="Get_pitch.html">Get pitch</a>
+<li><a href="Get_second_formant.html">Get second formant</a>
+<li><a href="Intro_3_6__Viewing_a_spectral_slice.html">Intro 3.6. Viewing a spectral slice</a>
+<li><a href="Intro_4_3__Querying_the_pitch_contour.html">Intro 4.3. Querying the pitch contour</a>
+<li><a href="Intro_4_5__The_Pitch_object.html">Intro 4.5. The Pitch object</a>
+<li><a href="Intro_5_3__Querying_the_formant_contours.html">Intro 5.3. Querying the formant contours</a>
+<li><a href="Intro_5_4__The_Formant_object.html">Intro 5.4. The Formant object</a>
+<li><a href="Intro_6_1__Viewing_an_intensity_contour.html">Intro 6.1. Viewing an intensity contour</a>
+<li><a href="Intro_7__Annotation.html">Intro 7. Annotation</a>
+<li><a href="Log_files.html">Log files</a>
+<li><a href="Phonetic_symbols.html">Phonetic symbols</a>
+<li><a href="Phonetic_symbols__consonants.html">Phonetic symbols: consonants</a>
+<li><a href="Phonetic_symbols__diacritics.html">Phonetic symbols: diacritics</a>
+<li><a href="Phonetic_symbols__vowels.html">Phonetic symbols: vowels</a>
+<li><a href="pitch_analysis_by_filtered_autocorrelation.html">pitch analysis by filtered autocorrelation</a>
+<li><a href="pitch_analysis_by_filtered_cross-correlation.html">pitch analysis by filtered cross-correlation</a>
+<li><a href="pitch_analysis_by_raw_autocorrelation.html">pitch analysis by raw autocorrelation</a>
+<li><a href="pitch_analysis_by_raw_cross-correlation.html">pitch analysis by raw cross-correlation</a>
+<li><a href="Pitch_menu.html">Pitch menu</a>
+<li><a href="Pitch_settings___.html">Pitch settings...</a>
+<li><a href="Play.html">Play</a>
+<li><a href="Show_formant.html">Show formant</a>
+<li><a href="Show_intensity.html">Show intensity</a>
+<li><a href="Show_pitch.html">Show pitch</a>
+<li><a href="Show_pulses.html">Show pulses</a>
+<li><a href="Show_spectrogram.html">Show spectrogram</a>
+<li><a href="Spectrogram_menu.html">Spectrogram menu</a>
+<li><a href="Spectrogram_settings___.html">Spectrogram settings...</a>
+<li><a href="Time_step_settings___.html">Time step settings...</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+<li><a href="What_was_new_in_3_5_.html">What was new in 3.5?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20210228</p>
+</address>
+</body>
+</html>

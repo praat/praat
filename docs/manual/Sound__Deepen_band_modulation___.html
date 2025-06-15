@@ -1,0 +1,91 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Deepen band modulation...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Deepen band modulation...
+</b></font></table></table>
+<p>A command to enhance the fast spectral changes, like <i>F</i><sub>2</sub> movements, in each selected <a href="Sound.html">Sound</a> object.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Enhancement (dB)</b>
+<dd>the maximum increase in the level within each critical band. The standard value is 20 dB.</dd>
+<dt><b>From frequency (Hz)</b>
+<dd>the lowest frequency that shall be manipulated. The bottom frequency of the first critical band that is to be enhanced. The standard value is 300 Hertz.</dd>
+<dt><b>To frequency (Hz)</b>
+<dd>the highest frequency that shall be manipulated (the last critical band may be narrower than the others). The standard value is 8000 Hz.</dd>
+<dt><b>Slow modulation (Hz)</b>
+<dd>the frequency <i>f</i><sub><i>slow</i></sub> below which the intensity modulations in the bands should not be expanded. The standard value is 3 Hz.</dd>
+<dt><b>Fast modulation (Hz)</b>
+<dd>the frequency <i>f</i><sub><i>fast</i></sub> above which the intensity modulations in the bands should not be expanded. The standard value is 30 Hz.</dd>
+<dt><b>Band smoothing (Hz)</b>
+<dd>the degree of overlap of each band into its adjacent bands. Prevents <i>ringing</i>. The standard value is 100 Hz.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>This algorithm was inspired by <a href="Nagarajan__Wang__Merzenich__Schreiner__Johnston__Jenkin.html">Nagarajan, Wang, Merzenich, Schreiner, Johnston, Jenkins, Miller & Tallal (1998)</a>, but not identical to it. Now follows the description.</p>
+<p>Suppose the settings have their standard values. The resulting sound will composed of the unfiltered part of the original sound, plus all manipulated bands.</p>
+<p>First, the resulting sound becomes the original sound, stop-band filtered between 300 and 8000 Hz: after a forward Fourier transform, all values in the <a href="Spectrum.html">Spectrum</a> at frequencies between 0 and 200 Hz and between 8100 Hz and the Nyquist frequency of the sound are retained unchanged. The spectral values at frequencies between 400 and 7900 Hz are set to zero. Between 200 and 400 Hz and between 7900 and 8100 Hz, the values are multiplied by a raised sine, so as to give a smooth transition without ringing in the time domain (the raised sine also allows us to view the spectrum as a sum of spectral bands). Finally, a backward Fourier transform gives us the filtered sound.</p>
+<p>The remaining part of the spectrum is divided into <i>critical bands</i>, i.e. frequency bands one Bark wide. For instance, the first critical band run from 300 to 406 Hz, the second from 406 to 520 Hz, and so on. Each critical band is converted to a pass-band filtered sound by means of the backward Fourier transform.</p>
+<p>Each filtered sound will be manipulated, and the resulting manipulated sounds are added to the stop-band filtered sound we created earlier. If the manipulation is the identity transformation, the resulting sound will be equal to the original sound. But, of course, the manipulation does something different. Here are the steps.</p>
+<p>First, we compute the local intensity of the filtered sound <i>x</i> (<i>t</i>):</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>intensity</i> (<i>t</i>) = 10 log<sub>10</sub> (<i>x</i><sup>2</sup> (<i>t</i>) + 10<sup>-6</sup>)</table>
+<p>This intensity is subjected to a forward Fourier transform. In the frequency domain, we administer a band filter. We want to enhance the intensity modulation in the range between 3 and 30 Hz. We can achieve this by comparing the very smooth intensity contour, low-pass filtered at <i>f</i><sub><i>slow</i></sub> = 3 Hz, with the intensity contour that has enough temporal resolution to see the place-discriminating <i>F</i><sub>2</sub> movements, which is low-pass filtered at <i>f</i><sub><i>fast</i></sub> = 30 Hz. In the frequency domain, the filter is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>H</i> (<i>f</i>) = exp (- (<i>&#945;</i><i>f</i> / <i>f</i><sub><i>fast</i></sub>)<sup>2</sup>) - exp (- (<i>&#945;</i><i>f</i> / <i>f</i><sub><i>slow</i></sub>)<sup>2</sup>)</table>
+<p>where <i>&#945;</i> equals &#8730;ln 2 &#8776; 1 / 1.2011224, so that <i>H</i> (<i>f</i>) has its -6 dB points at <i>f</i><sub><i>slow</i></sub> and <i>f</i><sub><i>fast</i></sub>:</p>
+<code>   alpha = sqrt (ln (2))<br></code>
+<code>   filter = Create Sound from formula: "filter", 1, 0.0, 100.0, 10.0,<br></code>
+<code>   ... ~ exp (- (alpha * x / 30.0) ^ 2) - exp (- (alpha * x / 3.0) ^ 2)<br></code>
+<code>   Red<br></code>
+<code>   Draw: 0, 0, 0.0, 1.0, "no", "curve"<br></code>
+<code>   Black<br></code>
+<code>   Draw inner box<br></code>
+<code>   Text bottom: "yes", "Frequency %f (Hz)"<br></code>
+<code>   Text left: "yes", "Amplitude filter %H (%f)"<br></code>
+<code>   One mark left: 0.0, "yes", "yes", "no", ""<br></code>
+<code>   One mark left: 0.5, "yes", "yes", "yes", ""<br></code>
+<code>   One mark left: 1.0, "yes", "yes", "no", ""<br></code>
+<code>   One mark right: 1.0, "no", "yes", "no", "0 dB"<br></code>
+<code>   One mark right: 0.5, "no", "yes", "no", "\-m6 dB"<br></code>
+<code>   One mark bottom: 3.0, "yes", "yes", "yes", ""<br></code>
+<code>   One mark bottom: 30.0, "yes", "yes", "yes", ""<br></code>
+<p align=middle><img height=300 width=500 src=Sound__Deepen_band_modulation____1.png></p><p>Now, why do we use such a flat filter? Because a steep filter would show ringing effects in the time domain, dividing the sound into 30-ms chunks. If our filter is a sum of exponentials in the frequency domain, it will also be a sum of exponentials in the time domain. The backward Fourier transform of the frequency response <i>H</i> (<i>f</i>) is the impulse response <i>h</i> (<i>t</i>). It is given by</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>h</i> (<i>t</i>) = 2<i>&#960;</i>&#8730;<i>&#960;</i> <i>f</i><sub><i>fast</i></sub>/<i>&#945;</i> exp (-(<i>&#960;</i><i>t</i><i>f</i><sub><i>fast</i></sub>/<i>&#945;</i>)<sup>2</sup>) - 2<i>&#960;</i>&#8730;<i>&#960;</i> <i>f</i><sub><i>slow</i></sub>/<i></i> l exp (-(<i>&#960;</i><i>t</i><i>f</i><sub><i>slow</i></sub>/<i>&#945;</i>)<sup>2</sup>)</table>
+<p>This impulse response behaves well:</p>
+<code>   impulseResponse = Create Sound from formula: "impulseResponse", 1,<br></code>
+<code>   ... -0.2, 0.2, 2500, ~ 2 * pi * sqrt (pi) / alpha *<br></code>
+<code>   ... (30.0 * exp (- (pi * 30.0 / alpha * x) ^ 2) -<br></code>
+<code>   ...   3.0 * exp (- (pi * 3.0 / alpha * x) ^ 2))<br></code>
+<code>   Red<br></code>
+<code>   Draw: 0, 0, -100.0, 400.0, "no", "curve"<br></code>
+<code>   Black<br></code>
+<code>   Draw inner box<br></code>
+<code>   Text bottom: "yes", "Time %t (s)"<br></code>
+<code>   Text left: "yes", "Intensity impulse reponse %h (%t)"<br></code>
+<code>   One mark bottom: -0.2, "yes", "yes", "no", ""<br></code>
+<code>   One mark bottom: 0.0, "yes", "yes", "yes", ""<br></code>
+<code>   One mark bottom: 0.2, "yes", "yes", "no", ""<br></code>
+<code>   One mark left: 0.0, "yes", "yes", "yes", ""<br></code>
+<p align=middle><img height=300 width=500 src=Sound__Deepen_band_modulation____2.png></p><p>We see that any short intensity peak will be enhanced, and that this enhancement will suppress the intensity around 30 milliseconds from the peak. Non-Gaussian frequency-domain filters would have given several maxima and minima in the impulse response, clearly an undesirable phenomenon.</p>
+<p>After the filtered band is subjected to a backward Fourier transform, we convert it into power again:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>power</i> (<i>t</i>) = 10<sup><i>filtered</i> / 2</sup></table>
+<p>The relative enhancement has a maximum that is smoothly related to the basilar place:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>ceiling</i> = 1 + (10<sup><i>enhancement</i> / 20</sup> - 1)  c (1/2 - 1/2 cos (<i>&#960;</i> <i>f</i><sub><i>midbark</i></sub> / 13))</table>
+<p>where <i>f</i><sub><i>midbark</i></sub> is the mid frequency of the band. Clipping is implemented as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>factor</i> (<i>t</i>) = 1 / (1 / <i>power</i> (<i>t</i>) + 1 / <i>ceiling</i>)</table>
+<p>Finally, the original filtered sound <i>x</i> (<i>t</i>), multiplied by this factor, is added to the output.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2010-10-26</p>
+</address>
+</body>
+</html>

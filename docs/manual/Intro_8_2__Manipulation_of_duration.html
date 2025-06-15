@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intro 8.2. Manipulation of duration</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intro 8.2. Manipulation of duration
+</b></font></table></table>
+<p>You can use Praat to modify the relative durations in an existing sound.</p>
+<p>First, you select a <a href="Sound.html">Sound</a> object and click "To Manipulation". A <a href="Manipulation.html">Manipulation</a> object will then appear in the list. You can then click <a href="View___Edit.html">View & Edit</a> to raise a <a href="ManipulationEditor.html">ManipulationEditor</a>, which will show an empty <a href="DurationTier.html">DurationTier</a>. You can add targets to this tier by choosing "Add duration point at cursor" from the "Dur" menu. The targets will show up as blue dots, which you can easily drag around the duration area.</p>
+<p>If you click any of the rectangles (or choose any of the commands from the <a href="Play.html">Play</a> menu), you will hear the modified sound. By shift-clicking, you will hear the original sound.</p>
+<p>To get the modified sound as a separate object, choose <b>Publish resynthesis</b> from the <a href="File_menu.html">File menu</a>.</p>
+<p>If you modify the pitch curve as well (see <a href="Intro_8_1__Manipulation_of_pitch.html">Intro 8.1. Manipulation of pitch</a>), the modified sound will be based on the modified duration and pitch.</p>
+<h2>Precise manipulation of duration</h2>
+<p>If you know exactly the times and relative durations, it is advisable to write a script (see <a href="Scripting.html">Scripting</a>). Suppose, for instance, that you have a 355-ms piece of sound, and you want to shorten the first 85 ms to 70 ms, and the remaining 270 ms to 200 ms.</p>
+<p>In your first 85 ms, your relative duration should be 70/85, and during the last 270 ms, it should be 200/270. The DurationTier does linear interpolation, so it can only approximate these precise times, but fortunately to any precision you like:</p>
+<code>   Create DurationTier: "shorten", 0, 0.085 + 0.270<br></code>
+<code>   Add point: 0.000, 70/85<br></code>
+<code>   Add point: 0.084999, 70/85<br></code>
+<code>   Add point: 0.085001, 200/270<br></code>
+<code>   Add point: 0.355, 200/270<br></code>
+<p>To put this DurationTier back into a Manipulation object, you select the two objects together (e.g. a click on the DurationTier and a <a href="Command-click.html">Command-click</a> on the Manipulation), and choose <b>Replace duration tier</b>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Intro_8__Manipulation.html">Intro 8. Manipulation</a>
+<li><a href="Intro_8_3__Manipulation_of_intensity.html">Intro 8.3. Manipulation of intensity</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20200901</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Regular expressions 8. Substitution special characters</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Regular expressions 8. Substitution special characters
+</b></font></table></table>
+<p>The substitution string is mostly interpreted as ordinary text except for the <a href="Regular_expressions_5__Special_control_characters.html">special control characters</a>, the <a href="Regular_expressions_7__Octal_and_hexadecimal_escapes.html">octal and hexadecimal escapes</a> and the following character combinations:</p>
+<dl>
+<dt><b></b>\1 ... <b></b>\9    are backreferences at sub-expressions 1 ... 9 in the match.
+<dd>Any of the first nine sub-expressions of the match string can be inserted into the replacement string by inserting a &#8220;\&#8221; followed by a digit from 1 to 9 that represents the string matched by a parenthesized expression within the regular expression. The numbering is left to right.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: A search for "(a)(b)" in the string "abc", followed by a replace "\2\1" results in "bac".</dd>
+<dt><b></b>&amp;    reference at entire match.
+<dd>The entire string that was matched by the search operation will be substituted.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: a search for "." in the string "abcd" followed by the replace "&amp;&amp;" doubles every character in the result "aabbccdd".</dd>
+<dt><b></b>\U <b></b>\u    to uppercase.
+<dd>The text inserted by "&amp;" or "\1" ... "\9" is converted to <i>uppercase</i> ("\u" only changes the <i>first</i> character to uppercase).</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: A search for "(aa)" in the string "aabb", followed by a replace "\U\1bc" results in the string "AAbcbb".</dd>
+<dt><b></b>\L <b></b>\l    to lowercase.
+<dd>The text inserted by "&amp;" or "\1" ... "\9" is converted to <i>lowercase</i> ("\l" only changes the <i>first</i> character to lowercase).</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: A search for "(AA)" with a replace "\l\1bc" in the string "AAbb" results in the string "aAbcbb".</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Regular_expressions.html">Regular expressions</a>
+<li><a href="Regular_expressions_1__Special_characters.html">Regular expressions 1. Special characters</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20010708</p>
+</address>
+</body>
+</html>

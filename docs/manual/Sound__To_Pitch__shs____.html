@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Pitch (shs)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Pitch (shs)...
+</b></font></table></table>
+<p>A command that creates a <a href="Pitch.html">Pitch</a> object from every selected <a href="Sound.html">Sound</a> object.</p>
+<h2>Purpose</h2>
+<p>to perform a pitch analysis based on a spectral compression model. The concept of this model is that each spectral component not only activates those elements of the central pitch processor that are most sensitive to the component's frequency, but also elements that have a lower harmonic relation with this component. Therefore, when a specific element of the central pitch processor is most sensitive at a frequency <i>f</i><sub>0</sub>, it receives contributions from spectral components in the signal at integral multiples of <i>f</i><sub>0</sub>.</p>
+<h2>Algorithm</h2>
+<p>The spectral compression consists of the summation of a sequence of harmonically compressed spectra. The abscissa of these spectra is compressed by an integral factor, the rank of the compression. The maximum of the resulting sum spectrum is the estimate of the pitch. Details of the algorithm can be found in <a href="Hermes__1988_.html">Hermes (1988)</a></p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Time step (s)</b> (standard value: 0.01 s)
+<dd>the measurement interval (frame duration), in seconds.</dd>
+<dt><b>Pitch floor (Hz)</b> (standard value: 50 Hz)
+<dd>candidates below this frequency will not be recruited. This parameter determines the length of the analysis window.</dd>
+<dt><b>Max. number of candidates</b> (standard value: 15)
+<dd>The maximum number of candidates that will be recruited.</dd>
+<dt><b>Maximum frequency (Hz)</b> (standard value: 1250 Hz)
+<dd>higher frequencies will not be considered.</dd>
+<dt><b>Max. number of subharmonics</b> (standard value: 15)
+<dd>the maximum number of harmonics that add up to the pitch.</dd>
+<dt><b>Compression factor</b> (standard value: 0.84)
+<dd>the factor by which successive compressed spectra are multiplied before the summation.</dd>
+<dt><b>Number of points per octave</b> (standard value: 48)
+<dd>determines the sampling of the logarithmic frequency scale.</dd>
+<dt><b>Pitch ceiling (Hz)</b> (standard value: 500 Hz)
+<dd>candidates above this frequency will be ignored.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Periodicity_menu.html">Periodicity menu</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 19970402</p>
+</address>
+</body>
+</html>

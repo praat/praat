@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PointProcess: To Sound (phonation)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PointProcess: To Sound (phonation)...
+</b></font></table></table>
+<p>A command to convert every selected <a href="PointProcess.html">PointProcess</a> into a <a href="Sound.html">Sound</a>.</p>
+<h2>Algorithm</h2>
+<p>A glottal waveform is generated at every point in the point process. Its shape depends on the settings <i>power1</i> and <i>power2</i> according to the formula</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>U</i>(<i>x</i>) = <i>x</i><sup><i>power1</i></sup> - <i>x</i><sup><i>power2</i></sup></table>
+<p>where <i>x</i> is a normalized time that runs from 0 to 1 and <i>U</i>(<i>x</i>) is the normalized glottal flow in arbitrary units (the real unit is m<sup>3</sup>/s). If <i>power1</i> = 2.0 and <i>power2</i> = 3.0, the glottal flow shape is that proposed by <a href="Rosenberg__1971_.html">Rosenberg (1971)</a>, upon which for instance the Klatt synthesizer is based (<a href="Klatt___Klatt__1990_.html">Klatt & Klatt (1990)</a>):</p>
+<p align=middle><img height=300 width=450 src=PointProcess__To_Sound__phonation_____1.png></p><p>If <i>power1</i> = 3.0 and <i>power2</i> = 4.0, the glottal flow shape starts somewhat smoother, reflecting the idea that the glottis opens like a zipper:</p>
+<p align=middle><img height=300 width=450 src=PointProcess__To_Sound__phonation_____2.png></p><p>For the generation of speech sounds, we do not take the glottal flow itself, but rather its derivative (this takes into account the influence of radiation at the lips). The glottal flow derivative is given by</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>dU</i>(<i>x</i>)/<i>dx</i> = <i>power1</i> <i>x</i><sup>(<i>power1</i>-1)</sup> - <i>power2</i> <i>x</i><sup>(<i>power2</i>-1)</sup></table>
+<p>The flow derivative clearly shows the influence of the smoothing mentioned above. The unsmoothed curve, with <i>power1</i> = 2.0 and <i>power2</i> = 3.0, looks like:</p>
+<p align=middle><img height=400 width=450 src=PointProcess__To_Sound__phonation_____3.png></p><p>Unlike the unsmoothed curve, the smoothed curve, with <i>power1</i> = 3.0 and <i>power2</i> = 4.0, starts out horizontally:</p>
+<p align=middle><img height=400 width=450 src=PointProcess__To_Sound__phonation_____4.png></p><p>Another setting is the <i>open phase</i>. If it is 0.70, the glottis will be open during 70 percent of a period. Suppose that the PointProcess has a pulse at time 0, at time 1, at time 2, and so on. The pulses at times 1 and 2 will then be turned into glottal flows starting at times 0.30 and 1.30:</p>
+<p align=middle><img height=250 width=450 src=PointProcess__To_Sound__phonation_____5.png></p><p align=middle><img height=250 width=450 src=PointProcess__To_Sound__phonation_____6.png></p><p>The final setting that influences the shape of the glottal flow is the <i>collision phase</i>. If it is 0.03, for instance, the glottal flow derivative will not go abruptly to 0 at a pulse, but will instead decay by a factor of <i>e</i> (&#8776; 2.7183) every 3 percent of a period. In order to keep the glottal flow curve smooth (and the derivative continuous), the basic shape discussed above has to be shifted slightly to the right and truncated at the time of the pulse, to be replaced there with the exponential decay curve; this also makes sure that the average of the derivative stays zero, as it was above (i.e. the area under the positive part of the curve equals the area above the negative part). This is what the curves look like if <i>power1</i> = 3.0, <i>power2</i> = 4.0, <i>openPhase</i> = 0.70 and <i>collisionPhase</i> = 0.03:</p>
+<p align=middle><img height=250 width=450 src=PointProcess__To_Sound__phonation_____7.png></p><p align=middle><img height=250 width=450 src=PointProcess__To_Sound__phonation_____8.png></p><p>These curves have moved 2.646 percent of a period to the right. At time 1, the glottal flow curve turns from a convex polynomial into a concave exponential, and the derivative still has its minimum there.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Sampling frequency (Hz)</b>
+<dd>the sampling frequency of the resulting Sound object, e.g. 44100 hertz.</dd>
+<dt><b>Adaptation factor</b>
+<dd>the factor by which a pulse height will be multiplied if the pulse time is not within <b>Maximum period</b> from the previous pulse, and by which a pulse height will again be multiplied if the previous pulse time is not within <b>Maximum period</b> from the pre-previous pulse. This factor is against abrupt starts of the pulse train after silences, and is 1.0 if you do want abrupt starts after silences.</dd>
+<dt><b>Maximum period (s)</b>
+<dd>the minimal period that will be considered a silence, e.g. 0.05 seconds. Example: if <b>Adaptation factor</b> is 0.6, and <b>Adaptation time</b> is 0.02 s, then the heights of the first two pulses after silences of at least 20 ms will be multiplied by 0.36 and 0.6, respectively.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="KlattGrid.html">KlattGrid</a>
+<li><a href="Source-filter_synthesis_1__Creating_a_source_from_pitch.html">Source-filter synthesis 1. Creating a source from pitch targets</a>
+<li><a href="What_was_new_in_5_3_.html">What was new in 5.3?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20070225</p>
+</address>
+</body>
+</html>

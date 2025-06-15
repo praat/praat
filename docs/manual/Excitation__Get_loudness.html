@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Excitation: Get loudness</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Excitation: Get loudness
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to ask the selected <a href="Excitation.html">Excitation</a> object for its loudness.</p>
+<h2>Return value</h2>
+<p>the loudness in sone units.</p>
+<h2>Algorithm</h2>
+<p>The loudness is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<i>df</i> 2<sup>(<i>e</i>(<i>f</i>) - 40 phon) / 10</sup></table>
+<p>where <i>f</i> is the frequency in Bark, and <i>e</i>(<i>f</i>) the excitation in phon. For our discrete Excitation object, the loudness is computed as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#916;<i>f</i> &#8721; 2<sup>(<i>e</i><sub><i>i</i></sub> - 40) / 10</sup></table>
+<p>where &#916;<i>f</i> is the distance between the excitation channels (in Bark).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound__Get_intensity__dB_.html">Sound: Get intensity (dB)</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 19991016</p>
+</address>
+</body>
+</html>

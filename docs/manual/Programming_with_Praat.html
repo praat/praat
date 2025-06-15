@@ -1,0 +1,49 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Programming with Praat</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Programming with Praat
+</b></font></table></table>
+<p>You can extend the functionality of the Praat program by adding modules written in C or C++ to it. All of Praat's source code is available under the General Public Licence.</p>
+<h2>1. Warning</h2>
+<p>Before trying the task of learning how to write Praat extensions in C or C++, you should be well aware of the possibilities of <a href="Scripting.html">scripting</a>. Many built-in commands in Praat have started their lives as Praat scripts, and scripts are easier to write than extensions in C or C++. If you have a set of scripts, you can distribute them as a <a href="plug-ins.html">plug-in</a>.</p>
+<h2>2. Getting the existing source code</h2>
+<p>You obtain the Praat source code from GitHub (https://github.com/praat), in a file with a name like <code><font size=+1>praat6499_sources.zip</font></code> or <code><font size=+1>praat6499_sources.tar.gz</font></code> (depending on the Praat version), and unpack this by double-clicking. The result will be a set of directories called <code><font size=+1>kar</font></code>, <code><font size=+1>melder</font></code>, <code><font size=+1>external</font></code> (with <code><font size=+1>clapack</font></code>, <code><font size=+1>gsl</font></code>, <code><font size=+1>glpk</font></code>, <code><font size=+1>flac</font></code>, <code><font size=+1>mp3</font></code>, <code><font size=+1>portaudio</font></code>, <code><font size=+1>espeak</font></code>, <code><font size=+1>vorbis</font></code> and <code><font size=+1>opusfile</font></code> in it), <code><font size=+1>sys</font></code>, <code><font size=+1>dwsys</font></code>, <code><font size=+1>stat</font></code>, <code><font size=+1>fon</font></code>, <code><font size=+1>sensors</font></code>, <code><font size=+1>dwtools</font></code>, <code><font size=+1>LPC</font></code>, <code><font size=+1>FFNet</font></code>, <code><font size=+1>gram</font></code>, <code><font size=+1>artsynth</font></code>, <code><font size=+1>EEG</font></code>, <code><font size=+1>main</font></code>, <code><font size=+1>makefiles</font></code>, <code><font size=+1>test</font></code>, <code><font size=+1>dwtest</font></code>, and <code><font size=+1>generate</font></code>, plus a makefile and Xcode project for macOS and a README.md file.</p>
+<h2>3. Building Praat</h2>
+<p>Consult the README file on GitHub for directions to compile and link Praat for your platform.</p>
+<h2>4. Extending Praat</h2>
+<p>To start extending Praat&#8217;s functionality, you can edit <code><font size=+1>main/main_Praat.cpp</font></code>. This example shows you how to create a very simple program with all the functionality of the Praat program, and a single bit more (namely an additional command in the New menu):</p>
+<code>   #include "praatM.h"<br></code>
+<code>   <br></code>
+<code>   DIRECT (HelloFromJane) {<br></code>
+<code>       Melder_information (U"Hello, I am Jane.");<br></code>
+<code>   }<br></code>
+<code>   <br></code>
+<code>   int main (int argc, char **argv) {<br></code>
+<code>       praat_init (U"Praat_Jane", argc, argv);<br></code>
+<code>       INCLUDE_LIBRARY (praat_uvafon_init)<br></code>
+<code>       praat_addMenuCommand (U"Objects", U"New", U"Hello from Jane...", nullptr, 0, DO_HelloFromJane);<br></code>
+<code>       praat_run ();<br></code>
+<code>       return 0;<br></code>
+<code>   }<br></code>
+<h2>5. Learning how to program</h2>
+<p>To see how objects are defined, take a look at <code><font size=+1>sys/Thing.h</font></code>, <code><font size=+1>sys/Daata.h</font></code>, <code><font size=+1>sys/oo.h</font></code>, the <code><font size=+1>XXX_def.h</font></code> files in the <code><font size=+1>fon</font></code> folder, and the corresponding <code><font size=+1>XXX.cpp</font></code> files in the <code><font size=+1>fon</font></code> folder. To see how commands show up on the buttons in the fixed and dynamic menus, take a look at the large interface description file <code><font size=+1>fon/praat_Fon.cpp</font></code>.</p>
+<h2>6. Using the Praat shell only</h2>
+<p>For building the Praat shell (the Objects and Picture windows) only, you need only the code in the nine directories <code><font size=+1>kar</font></code>, <code><font size=+1>melder</font></code>, <code><font size=+1>external/{clapack,gsl,flac,mp3,portaudio,lame,opusfile,vorbis}</font></code>, <code><font size=+1>sys</font></code>, and <code><font size=+1>dwsys</font></code>. You delete the inclusion of <code><font size=+1>praat_uvafon_init</font></code> from <code><font size=+1>main</font></code>. You will be able to build a Praat shell, i.e. an Objects and a Picture window, which has no knowledge of the world, i.e., which does not know any objects that can be included in the list of objects. You could use this Praat shell for modelling your own world and defining your own classes of objects. For advanced programmers only.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting_9__Turning_a_script_into_a_stand-alone_progra.html">Scripting 9. Turning a script into a stand-alone program</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023-04-09, 2024</p>
+</address>
+</body>
+</html>

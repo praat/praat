@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Demo window 3. Getting click locations</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Demo window 3. Getting click locations
+</b></font></table></table>
+<p>You can use the functions <a href="_demoX_.html"><b><code><font size=+1>demoX</font></code></b></a> and <a href="_demoY_.html"><b><code><font size=+1>demoY</font></code></b></a> to see where the user has clicked. These functions respond in world coordinates. To see whether the user has clicked in the sound that occupies the upper half of the screen in the above example, you do for instance</p>
+<code>   while <a href="_demoWaitForInput_.html">demoWaitForInput</a> ()<br></code>
+<code>       if <a href="_demoClicked_.html">demoClicked</a> ()<br></code>
+<code>           <a href="_demo_.html">demo</a> Select outer viewport: 0, 100, 50, 100<br></code>
+<code>           <a href="_demo_.html">demo</a> Axes: 0, 3, -1, 1<br></code>
+<code>           if <b><a href="_demoX_.html">demoX</a></b> () &gt;= 0 and <b><a href="_demoX_.html">demoX</a></b> () &lt; 3 and <b><a href="_demoY_.html">demoY</a></b> () &gt;= -1 and <b><a href="_demoY_.html">demoY</a></b> () &lt; 1<br></code>
+<p>The last line can be shortened to:</p>
+<code>           if <b><a href="_demoClickedIn_.html">demoClickedIn</a></b> (0, 3, -1, 1)<br></code>
+<p>Another example of when you want to know the click location is when you test for a click on a button that you drew on the screen:</p>
+<code>   <b><a href="_demo_.html">demo</a></b> Paint rounded rectangle: “pink”, 30, 70, 16, 24<br></code>
+<code>   <b><a href="_demo_.html">demo</a></b> Text: 50, “centre”, 20, “half”, “Analyse”<br></code>
+<code>   while <b><a href="_demoWaitForInput_.html">demoWaitForInput</a></b> ()<br></code>
+<code>       goto ANALYSE <b><a href="_demoClickedIn_.html">demoClickedIn</a></b> (30, 70, 16, 24)<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Demo_window.html">Demo window</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2009-2023</p>
+</address>
+</body>
+</html>

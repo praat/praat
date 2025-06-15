@@ -1,0 +1,71 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PitchTier: Modify interval...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PitchTier: Modify interval...
+</b></font></table></table>
+<p>Modifies a selected interval from the chosen <a href="PitchTier.html">PitchTier</a> by replacing the contents of the interval by newly defined pitch points.</p>
+<h2>Settings</h2>
+<p align=middle><img height=580.0000000000001 width=540 src=PitchTier__Modify_interval____1.png></p><dl>
+<dt><b>Time range (s)</b>
+<dd>the start and end time of the interval where the changes will be applied.</dd>
+<dt><b>Relative times</b>
+<dd>determine, together with the following option, the times of the new pitch points with respect to the start time of the interval.</dd>
+<dt><b>...are...</b>
+<dd>determines how the times <i>t</i><sub><i>i</i></sub> of the new pitch points are calculated. The time of each new pitch point is determined by adding to the start time of the interval a time calculated from the relative time value. If <i>t</i><sub>min</sub> and <i>t</i><sub>max</sub> are the start and end time of the interval and <i>r</i><sub>i</sub> is the <i>i</i><sup>th</sup> relative time, the times <i>t</i><sub><i>i</i></sub> are calculated according to the options as:</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>fractions</i>
+<dd>&nbsp;&nbsp;&nbsp;<i>t</i><sub><i>i</i></sub> = <i>t</i><sub>min</sub> + <i>r</i><sub><i>i</i></sub> (<i>t</i><sub>max</sub> &#8211; <i>t</i><sub>min</sub>). The relative time values are fractions of the interval duration. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>percentages</i>
+<dd>&nbsp;&nbsp;&nbsp;<i>t</i><sub><i>i</i></sub> = <i>t</i><sub>min</sub>+ 0.01 <i>r</i><sub><i>i</i></sub> (<i>t</i><sub>max</sub> &#8211; <i>t</i><sub>min</sub>). The relative time values are percentages of the interval duration. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>independent</i>
+<dd>&nbsp;&nbsp;&nbsp;<i>t</i><sub><i>i</i></sub> = <i>t</i><sub>min</sub> + <i>r</i><sub><i>i</i></sub>. The relative time values specify an offset in seconds here. </dd>
+<dt><b>The "pitch" values</b>
+<dd>determine, together with the next two options, the frequency value of the new pitch points. Each value here must link to the corresponding time value.</dd>
+<dt><b>...are...</b>
+<dd>determines the interpretation of the "pitch" value. Possible choices are</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>frequencies</i>
+<dd>&nbsp;&nbsp;&nbsp;the values are frequencies in hertz.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>fractions</i>
+<dd>&nbsp;&nbsp;&nbsp;the values are fractions of a pitch value that is specified by the next option. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>percentages</i>
+<dd>&nbsp;&nbsp;&nbsp;the values are percentages of a pitch value that is specified by the next option. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>start and slopes</i>
+<dd>&nbsp;&nbsp;&nbsp;the values are a start frequency followed by slopes in Herz per second.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>slopes and end</i>
+<dd>&nbsp;&nbsp;&nbsp;the values are slopes in herz per second followed by an end frequency in herz.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>music notes</i>
+<dd>&nbsp;&nbsp;&nbsp;the values are music notes specified on the twelve tone scale as a0, a#0, b0, c0, c#0, d0, d#0, e0, f0, f#0, g0, g#0, a1, a#1, ... a4, ..., or g#9. Here the octave is indicated by the number, 0 being the lowest octave and 9 the highest. The a4 is chosen to be at 440 Hz. Therefore, a0 is the note with the lowest frequency, four octaves below the a4 and corresponds to a frequency of 27.5 Hz. As a scale of reference we give a0 = 27.5 Hz, a1 = 55 Hz, a2 = 110 Hz, a3 = 220 Hz, a4 = 440 Hz, a5 = 880 Hz, a6 = 1760 Hz, a7 = 3520 Hz, a8 = 7040 Hz and a9 = 14080 Hz.</dd>
+<dt><b>...which is the...</b>
+<dd>the anchor point value, if used. The following options may be given for the anchor point frequency value:</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>not used</i>
+<dd>&nbsp;&nbsp;&nbsp;no anchor point frequency value is necessary. The previous two options are sufficient to determine the new pitch frequencies. This means that the "pitch" values given cannot be <i>fractions</i> or <i>percentages</i>.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>current</i>
+<dd>&nbsp;&nbsp;&nbsp;the current pitch frequency at the corresponding time.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>start</i>
+<dd>&nbsp;&nbsp;&nbsp;the pitch frequency at the start of the interval.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>end</i>
+<dd>&nbsp;&nbsp;&nbsp;the pitch frequency at the end of the interval.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>mean of the curve</i>
+<dd>&nbsp;&nbsp;&nbsp;the <a href="PitchTier__Get_mean__curve____.html">mean of the curve</a> within the interval.</dd>
+<dt>&nbsp;&nbsp;&nbsp;&nbsp;<i>mean of the points</i>
+<dd>&nbsp;&nbsp;&nbsp;the <a href="PitchTier__Get_mean__points____.html">mean of the points</a> within the interval.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>maximum</i>
+<dd>&nbsp;&nbsp;&nbsp;the maximum pitch frequency in the interval.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>minimum</i>
+<dd>&nbsp;&nbsp;&nbsp;the minimum pitch frequency in the interval.</dd>
+<dt><b>Pitch frequency unit</b>
+<dd>Hertz</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20230801</p>
+</address>
+</body>
+</html>

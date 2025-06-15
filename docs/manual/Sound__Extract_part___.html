@@ -1,0 +1,94 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Extract part...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Extract part...
+</b></font></table></table>
+<p>A command to copy a part of each selected <a href="Sound.html">Sound</a> object to the Objects window.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Time range (s)</b>
+<dd>the time range (<i>t</i><sub>1</sub>, <i>t</i><sub>2</sub>) of the part that has to be extracted.</dd>
+<dt><b>Window shape</b> (standard: &#8220;rectangular&#8221;)
+<dd>one of 12 possible window shapes; see below.</dd>
+<dt><b>Relative width</b> (standard: 1.0)
+<dd>the relative width of the extracted part, as compared to the duration <i>t</i><sub>2</sub> &#8722; <i>t</i><sub>1</sub>. If the relative width is 1.0, then the part from <i>t</i><sub>1</sub> to <i>t</i><sub>2</sub> will be extracted. If the relative width is 2.0, then the part from <i>t</i><sub>1</sub> &#8722; 0.5 <i>dur</i> to <i>t</i><sub>2</sub> + 0.5 <i>dur</i> will be extracted, where <i>dur</i> is <i>t</i><sub>2</sub> &#8722; <i>t</i><sub>1</sub>. See below for when and why this is useful.</dd>
+<dt><b>Preserve times</b> (standard: off)
+<dd>if <i>on</i>, then the time domain of the resulting extracted Sound object will run from <i>t</i><sub>1</sub> to <i>t</i><sub>2</sub>. If <i>off</i>, then the resulting extracted Sound will be time-shifted to start at zero, i.e. its time domain will run from 0 seconds to <i>t</i><sub>2</sub> &#8722; <i>t</i><sub>1</sub>.</dd>
+</dl>
+<h2>Window shapes</h2>
+<p>Suppose we have the following sound, with the part we want to extract (from 0.06 to 0.16 seconds) already marked:</p>
+<code>   sweep = Create Sound from formula: "sweep", 1, 0.0, 0.3, 44100, ~ sin(2*pi*1000*x^2)<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<code>   One mark bottom: 0.06, "yes", "yes", "no", ""<br></code>
+<code>   One mark bottom: 0.16, "yes", "yes", "no", ""<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____1.png></p><p>We now extract the part form 0.05 to 0.15 seconds:</p>
+<code>   Extract part: 0.06, 0.16, "rectangular", 1.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____2.png></p><p>With <i>Preserve times</i> off, we instead get:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "rectangular", 1.0, "no"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____3.png></p><p>These were extracted with a rectangular window. We have many other shapes (see <a href="Sound__Multiply_by_window___.html">Sound: Multiply by window...</a>). With a Hanning window, we get:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "Hanning", 1.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____4.png></p><p>With a Hamming window, we get:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "Hamming", 1.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____5.png></p><p>With a triangular window, we get:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "triangular", 1.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____6.png></p><p>With a parabolic window, we get:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "parabolic", 1.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____7.png></p><p>With a Gaussian1 window, we get:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "Gaussian1", 1.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____8.png></p><p>With a Kaiser1 window, we get:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "Kaiser1", 1.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____9.png></p><p>These last six windows have a comparable effective duration. The names of the last two windows, however, sound as if they want to approximate a Gaussian shape, but they obviously don&#8217;t (they don&#8217;t go to zero fast enough at the edges). We can improve the Gaussianness of the window shape by halving the effective duration. With a Gaussian2 window, we get:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "Gaussian2", 1.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____10.png></p><p>and the very similar Kaiser2 window:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "Kaiser2", 1.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____11.png></p><p>The advantage of these two windows is that they cut away too muich of the signal at the edges. To make the effective window duration similar again, we would like to extract a part that is physically twice as long. We can do that by setting <i>Relative width</i> to 2.0 instead of 1.0. The Gaussian2 window then results in:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "Gaussian2", 2.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<code>   One mark bottom: 0.06, "yes", "yes", "yes", ""<br></code>
+<code>   One mark bottom: 0.16, "yes", "yes", "yes", ""<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____12.png></p><p>and the very similar Kaiser2 window:</p>
+<code>   selectObject: sweep<br></code>
+<code>   Extract part: 0.06, 0.16, "Kaiser2", 2.0, "yes"<br></code>
+<code>   Draw: 0, 0, -1.0, 1.0, "yes", "curve"<br></code>
+<code>   One mark bottom: 0.06, "yes", "yes", "yes", ""<br></code>
+<code>   One mark bottom: 0.16, "yes", "yes", "yes", ""<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Extract_part____13.png></p><p>The Gaussian3, Gaussian4 and Gaussian5 windows approximate the Gaussian shape even better than Gaussian2 and Kaiser2 do, but they require even longer relative widths, namely 3.0, 4.0 and 5.0 respectively.</p>
+<p>In Praat, most acoustical analyses are done with Kaiser2 windows, such as <a href="Sound__To_Spectrogram___.html">Sound: To Spectrogram...</a> and <a href="Sound__To_Pitch__ac____.html">Sound: To Pitch (ac)...</a> (the latter with the <i>Very accurate</i> setting switched on).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Extract_selected_sound__windowed____.html">Extract selected sound (windowed)...</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2024</p>
+</address>
+</body>
+</html>

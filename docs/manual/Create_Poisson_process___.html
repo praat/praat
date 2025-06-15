@@ -1,0 +1,100 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Create Poisson process...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Create Poisson process...
+</b></font></table></table>
+<p>A command to create a <a href="PointProcess.html">PointProcess</a> object that represents a Poisson process. A Poisson process is a stationary point process with a fixed density <i>&#955;</i>, which means that there are, on the average, <i>&#955;</i> events per second.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Start time (s)</b>
+<dd><i>t</i><sub><i>min</i></sub>, the beginning of the time domain, in seconds.</dd>
+<dt><b>End time (s)</b>
+<dd><i>t</i><sub><i>max</i></sub>, the end of the time domain, in seconds.</dd>
+<dt><b>Density (Hz)</b>
+<dd>the average number of points per second (<i>&#955;</i>).</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>First, the number of points <i>N</i> in the time domain is determined. Its expectation value is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#923;</i> = (<i>t</i><sub><i>max</i></sub> &#8211; <i>t</i><sub><i>min</i></sub>) &#183; <i>density</i></table>
+<p>but its actual value is taken from the Poisson distribution:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>P</i>(#points=<i>N</i>) = (<i>&#923;</i><sup><i>N</i></sup> / <i>N</i>!) <i>e</i><sup>&#8211;<i>&#923;</i></sup></table>
+<p>Then, <i>N</i> points are computed throughout the time domain, according to a uniform distribution:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>p</i>(<i>t</i>) = 1 / (<i>t</i><sub><i>max</i></sub> &#8211; <i>t</i><sub><i>min</i></sub>)   for <i>t</i> &#8712; [<i>t</i><sub><i>min</i></sub>, <i>t</i><sub><i>max</i></sub>]</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>p</i>(<i>t</i>) = 0   outside [<i>t</i><sub><i>min</i></sub>, <i>t</i><sub><i>max</i></sub>]</table>
+<h2>Example</h2>
+<p>Suppose that it rains between <i>t</i><sub><i>min</i></sub> = 2.0 seconds and <i>t</i><sub><i>max</i></sub> = 5.0 seconds, with an average of 4.0 drops per second expected to fall on my head. To simulate this process, you can click (or script) the following commands:</p>
+<code>   <b>Create Poisson process:</b> "rain", 2.0, 5.0, 4.0<br></code>
+<code>   <a href="PointProcess__Draw___.html">Draw:</a> 0.0, 6.0, "no"<br></code>
+<code>   <a href="Draw_inner_box.html">Draw inner box</a><br></code>
+<code>   <a href="Marks_bottom_every___.html">Marks bottom every:</a> 1, 1, "yes", "yes", "no"<br></code>
+<code>   <a href="Text_bottom___.html">Text bottom:</a> "yes", "Time (s)"<br></code>
+<code>   <a href="Text_top___.html">Text top:</a> "no", "##Three seconds of rain"<br></code>
+<p align=middle><img height=300 width=600 src=Create_Poisson_process____1.png></p><p>When you refresh this picture, e.g. by clicking on the &#8220;&gt; 1&#8221; button and then on the &#8220;1 &lt;&#8221; button, you will see that the points lie at different time points each time. This variation is due to the <i>stochasticity</i> of the Poisson process: the points occur at random places.</p>
+<p>Also, the <i>number</i> of points varies: on average, there will be 12 points, but there can just as easily be 10 or 15 points. As the rain shower lasts 3.0 seconds, the expected total number of drops on my head is <i>&#955;</i> = 3.0 seconds &#183; 4.0 drops/second = 12.0 drops, but the actual number of points is just as stochastic as their locations in time are.</p>
+<h2>Fast implementation</h2>
+<p>One can simulate the number of points and their times as follows. To show that our fast implementation does exactly the same as <b>Create Poisson process...</b> does, we first make sure that the points lie at reproducible time points:</p>
+<code>   <b><a href="_random_initializeWithSeedUnsafelyButPredictably_.html">random_initializeWithSeedUnsafelyButPredictably</a></b> (1234567654321)<br></code>
+<code>   <b>Create Poisson process:</b> "rain", 2.0, 5.0, 4.0<br></code>
+<code>   <a href="PointProcess__Draw___.html">Draw:</a> 0.0, 6.0, "yes"<br></code>
+<code>   <a href="Text_top___.html">Text top:</a> "no", "##Three reproducible seconds of rain"<br></code>
+<code>   <b><a href="_random_initializeSafelyAndUnpredictably_.html">random_initializeSafelyAndUnpredictably</a></b> ()<br></code>
+<p align=middle><img height=300 width=600 src=Create_Poisson_process____2.png></p><p>These are only 8 points, and their times will not change when you click &#8220;&gt; 1&#8221; followed by &#8220;1 &lt;&#8221;, because Praat&#8217;s random generator is initialized to a fixed state, determined by the arbitrary number 1234567654321 (you can use any number you like, with different results depending on that number) in the first line of the script.</p>
+<p>To replicate how these 8 numbers were created, we first replicate their count:</p>
+<code>   <a href="_random_initializeWithSeedUnsafelyButPredictably_.html">random_initializeWithSeedUnsafelyButPredictably</a> (1234567654321)<br></code>
+<code>   n = <b><a href="_randomPoisson_.html">randomPoisson</a></b> (12.0)<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: n<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   8<br></code>
+<p>We then replicate the actual times according to the algorithm above:</p>
+<code>   times# = <b><a href="_randomUniform-H_.html">randomUniform#</a></b> (n, 2.0, 5.0)<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: times#<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   4.579729920322631 2.105118241757726 4.779601898767309 2.9007638390884494 4.238120168645932 3.5218856536105587 4.323956553442923 2.411391762296705<br></code>
+<p>In a PointProcess, these 8 points will be in sorted order:</p>
+<code>   times# = <b><a href="_sort-H_.html">sort#</a></b> (times#)<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: times#<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   2.105118241757726 2.411391762296705 2.9007638390884494 3.5218856536105587 4.238120168645932 4.323956553442923 4.579729920322631 4.779601898767309<br></code>
+<p>Here you can see, as in the picture, that the interval between the 4th and 5th point is the largest, and the interval between the 5th and 6th point is the smallest.</p>
+<p>We can add these eight points at one stroke to an empty PointProcess:</p>
+<code>   <b><a href="Create_empty_PointProcess___.html">Create empty PointProcess:</a></b> "rain3", 2.0, 5.0<br></code>
+<code>   <b><a href="PointProcess__Add_points___.html">Add points:</a></b> times#<br></code>
+<code>   <a href="PointProcess__Draw___.html">Draw:</a> 0.0, 6.0, "yes"<br></code>
+<code>   <a href="Text_top___.html">Text top:</a> "no", "##Three reproducible seconds of rain,<br></code>
+<code>   ... fast implementation"<br></code>
+<p align=middle><img height=300 width=600 src=Create_Poisson_process____3.png></p><h2>Slow implementation</h2>
+<p>We could also have generated the eight points one by one, and added them immediately to an empty PointProcess:</p>
+<code>   <a href="_random_initializeWithSeedUnsafelyButPredictably_.html">random_initializeWithSeedUnsafelyButPredictably</a> (1234567654321)<br></code>
+<code>   n = <a href="_randomPoisson_.html">randomPoisson</a> (12.0)<br></code>
+<code>   <a href="Create_empty_PointProcess___.html">Create empty PointProcess:</a> "rain4", 2.0, 5.0<br></code>
+<code>   for i to n<br></code>
+<code>       time = <b><a href="_randomUniform_.html">randomUniform</a></b> (2.0, 5.0)<br></code>
+<code>       <b><a href="PointProcess__Add_point___.html">Add point:</a></b> time<br></code>
+<code>   endfor<br></code>
+<code>   <a href="_random_initializeSafelyAndUnpredictably_.html">random_initializeSafelyAndUnpredictably</a> ()<br></code>
+<code>   <a href="PointProcess__Draw___.html">Draw:</a> 0.0, 6.0, "yes"<br></code>
+<code>   <a href="Text_top___.html">Text top:</a> "no", "##Three reproducible seconds of rain,<br></code>
+<code>   ... slow implementation"<br></code>
+<p align=middle><img height=300 width=600 src=Create_Poisson_process____4.png></p><p>This is slower than the fast implementation, because of two causes:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">(1) the for-loop shown in the Praat script above is slower than the for-loop in the C++ implementation of <b>Add points...</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">(2) every call to <b>Add point...</b> causes the new point to be inserted into an existing array of points, so the complexity of the whole procedure is <i>O</i>(<i>N</i><sup>2</sup>) (as the complexity of insertion is <i>O</i>(<i>N</i>)), while <b>Add points...</b> adds all new points to the end of the existing array (<i>O</i>(<i>N</i> &#183; log <i>N</i>)), then sorts the new array just once, which is again <i>O</i>(<i>N</i> &#183; log <i>N</i>).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="New_menu.html">New menu</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2004-10-05, 2023-05-31</p>
+</address>
+</body>
+</html>

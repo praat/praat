@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intro 3.2. Configuring the spectrogram</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intro 3.2. Configuring the spectrogram
+</b></font></table></table>
+<p>With <a href="Spectrogram_settings___.html">Spectrogram settings...</a> from the <b>Spectrogram</b> menu, you can determine how the spectrogram is computed and how it is displayed. These settings will be remembered across Praat sessions. All these settings have standard values ("factory settings"), which appear when you click <b>Standards</b>.</p>
+<dl>
+<dt><i>View range</i> (Hz)
+<dd>the range of frequencies to display. The standard is 0 Hz at the bottom and 5000 Hz at the top. If this maximum frequency is higher than the Nyquist frequency of the Sound (which is half its sampling frequency), some values in the spectrogram will be zero, and the higher frequencies will be drawn in white. You can see this if you record a Sound at 44100 Hz and set the view range from 0 Hz to 25000 Hz.</dd>
+<dt><i>Window length</i>
+<dd>the duration of the analysis window. If this is 0.005 seconds (the standard), Praat uses for each frame the part of the sound that lies between 0.0025 seconds before and 0.0025 seconds after the centre of that frame (for Gaussian windows, Praat actually uses a bit more than that). The window length determines the <i>bandwidth</i> of the spectral analysis, i.e. the width of the horizontal line in the spectrogram of a pure sine wave (see below). For a Gaussian window, the -3 dB bandwidth is 2*sqrt(6*ln(2))/(&#960;*<i>Window length</i>), or 1.2982804 / <i>Window length</i>. To get a &#8220;broad-band&#8221; spectrogram (bandwidth 260 Hz), keep the standard window length of 5 ms; to get a &#8220;narrow-band&#8221; spectrogram (bandwidth 43 Hz), set it to 30 ms (0.03 seconds). The other window shapes give slightly different values.</dd>
+<dt><i>Dynamic range</i> (dB)
+<dd>All values that are more than <i>Dynamic range</i> dB below the maximum (perhaps after dynamic compression, see <a href="Advanced_spectrogram_settings___.html">Advanced spectrogram settings...</a>) will be drawn in white. Values in-between have appropriate shades of grey. Thus, if the highest peak in the spectrogram has a height of 30 dB/Hz, and the dynamic range is 50 dB (which is the standard value), then values below -20 dB/Hz will be drawn in white, and values between -20 dB/Hz and 30 dB/Hz will be drawn in various shades of grey.</dd>
+</dl>
+<h2>The bandwidth</h2>
+<p>To see how the window length influences the bandwidth, first create a 1000-Hz sine wave with <a href="Create_Sound_from_formula___.html">Create Sound from formula...</a> by typing <code><font size=+1>1/2 * sin (2*pi*1000*x)</font></code> as the formula, then click <b>View &amp; Edit</b>. The spectrogram will show a horizontal black line. You can now vary the window length in the spectrogram settings and see how the thickness of the lines varies. The line gets thinner if you raise the window length. Apparently, if the analysis window comprises more periods of the wave, the spectrogram can tell us the frequency of the wave with greater precision.</p>
+<p>To see this more precisely, create a sum of two sine waves, with frequencies of 1000 and 1200 Hz. the formula is <code><font size=+1>1/4 * sin (2*pi*1000*x) + 1/4 * sin (2*pi*1200*x)</font></code>. In the editor, you will see a single thick band if the analysis window is short (5 ms), and two separate bands if the analysis window is long (30 ms). Apparently, the frequency resolution gets better with longer analysis windows.</p>
+<p>So why don't we always use long analysis windows? The answer is that their time resolution is poor. To see this, create a sound that consists of two sine waves and two short clicks. The formula is <code><font size=+1>0.02*(sin(2*pi*1000*x)+sin(2*pi*1200*x)) + (col=10000)+(col=10200)</font></code>. If you view this sound, you can see that the two clicks will overlap in time if the analysis window is long, and that the sine waves overlap in frequency if the analysis window is short. Apparently, there is a trade-off between time resolution and frequency resolution. One cannot know both the time and the frequency with great precision.</p>
+<h2>Advanced settings</h2>
+<p>The Spectrogram menu also contains <a href="Advanced_spectrogram_settings___.html">Advanced spectrogram settings...</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Intro_3__Spectral_analysis.html">Intro 3. Spectral analysis</a>
+<li><a href="Intro_3_7__Configuring_the_spectral_slice.html">Intro 3.7. Configuring the spectral slice</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20220907</p>
+</address>
+</body>
+</html>

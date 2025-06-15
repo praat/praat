@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>SSCP: To CCA...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+SSCP: To CCA...
+</b></font></table></table>
+<p>A command that creates a <a href="CCA.html">canonical correlation</a> object from the selected <a href="SSCP.html">SSCP</a> object.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Dimension of dependent variate (ny)</b>
+<dd>defines a partition of the square <i>n</i> x <i>n</i> SSCP matrix S into the parts S<sub>yy</sub> of dimension <i>ny</i> x <i>ny</i>, S<sub>xx</sub> of dimension <i>nx</i> x <i>nx</i>, and the parts S<sub>xy</sub> and S<sub>yx</sub> of dimensions <i>nx</i> x <i>ny</i> and <i>ny</i> x <i>nx</i>, respectively.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The partition for the square SSCP-matrix is as follows:</p>
+<p align=middle><img height=200 width=200 src=SSCP__To_CCA____1.png></p><p>The canonical correlation equations we have to solve are:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(1)    (<b>S</b><sub><i>yx</i></sub> <b>S</b><sub><i>xx</i></sub><sup>-1</sup> <b>S</b><sub><i>yx</i></sub>&#8242; -&#955; <b>S</b><sub><i>yy</i></sub>)<b>y</b> = <b>0</b></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(2)    (<b>S</b><sub><i>yx</i></sub>&#8242; <b>S</b><sub><i>yy</i></sub><sup>-1</sup> <b>S</b><sub><i>yx</i></sub> -&#955; <b>S</b><sub><i>xx</i></sub>)<b>x</b> = <b>0</b></table>
+<p>where <b>S</b><sub><i>yy</i></sub> [<i>ny</i> &#215; <i>ny</i>] and <b>S</b><sub><i>xx</i></sub> [<i>nx</i> &#215; <i>nx</i>] are symmetric, positive definite matrices belonging to the dependent and the independent variables, respectively. </p>
+<p>These two equations are not independent and we will show that both equations have the same eigenvalues and that the eigenvectors <b>x</b> for equation (2) can be obtained from the eigenvectors <b>y</b> of equation (1).</p>
+<p>We can solve equation (1) in several ways, however, the numerically stablest algorithm is probably by performing first a Cholesky decomposition of <b>S</b><sub>xx</sub> and <b>S</b><sub>yy</sub>, followed by a <a href="generalized_singular_value_decomposition.html">generalized singular value decomposition</a>. The algorithm goes as follows:</p>
+<p>The Cholesky decompositions ("square roots") of <b>S</b><sub>yy</sub> and <b>S</b><sub>xx</sub> are:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>S</b><sub>yy</sub> = <b>U</b>&#8242; <b>U</b> and <b>S</b><sub>xx</sub> = <b>H</b>&#8242; <b>H</b>,</table>
+<p>where <b>U</b> and H are upper triangular matrices. From these decompositions, the inverse for <b>S</b><sub>xx</sub><sup>-1</sup> is easily computed. Let <b>K</b> be the inverse of <b>H</b>, then we can write: </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>S</b><sub>xx</sub><sup>-1</sup> = <b>K</b> <b>K</b>&#8242;.</table>
+<p>We next substitute in equation (1) and rewrite as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>((<b>K</b>&#8242;<b>S</b><sub>yx</sub>&#8242;)&#8242; (<b>K</b>&#8242;<b>S</b><sub>yx</sub>&#8242;) - &#955; <b>U</b>&#8242; <b>U</b>)<b>x</b> = 0</table>
+<p>This equation can be solved for eigenvalues and eigenvectors by the generalized singular value decomposition because it is of the form <b>A</b>&#8242;<b>A</b> -&#955; <b>B</b>&#8242;<b>B</b>.</p>
+<p>Now, given the solution for equation (1) we can find the solution for equation (2) by first multiplying (1) from the left with <b>S</b><sub>yx</sub>&#8242;<b>S</b><sub>yy</sub><sup>-1</sup>, resulting in:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(<b>S</b><sub>yx</sub>&#8242;<b>S</b><sub>yy</sub><sup>-1</sup><b>S</b><sub>yx</sub><b>S</b><sub>xx</sub><sup>-1</sup><b>S</b><sub>yx</sub>&#8242; -&#955; <b>S</b><sub>yx</sub>&#8242;) <b>y</b> = 0</table>
+<p>Now we split of the term <b>S</b><sub>xx</sub><sup>-1</sup><b>S</b><sub>yx</sub>&#8242; and obtain:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(<b>S</b><sub>yx</sub>&#8242;<b>S</b><sub>yy</sub><sup>-1</sup><b>S</b><sub>yx</sub> - &#955; <b>S</b><sub>xx</sub>) <b>S</b><sub>xx</sub><sup>-1</sup><b>S</b><sub>yx</sub>&#8242; <b>y</b> = 0</table>
+<p>This equation is like equation (2) and it has therefore the same eigenvalues and eigenvectors. (We also proved this fact in the algorithmic section of <a href="TableOfReal__To_CCA___.html">TableOfReal: To CCA...</a>.)</p>
+<p>The eigenvectors <b>x</b> is now</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>x</b> = <b>S</b><sub>xx</sub><sup>-1</sup><b>S</b><sub>yx</sub>&#8242; <b>y</b>.</table>
+<hr>
+<address>
+	<p>© djmw 20031103</p>
+</address>
+</body>
+</html>

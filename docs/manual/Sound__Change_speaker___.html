@@ -1,0 +1,43 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Change speaker...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Change speaker...
+</b></font></table></table>
+<p>A command to create a new <a href="Sound.html">Sound</a> with manipulated characteristics.</p>
+<h2>Settings</h2>
+<p>The quality of the <a href="overlap-add.html">manipulation</a> depends on the pitch measurement.</p>
+<p>The arguments that control the pitch measurement are:</p>
+<dl>
+<dt><b>Pitch floor (Hz)</b> (standard value: 75 Hz)
+<dd>pitch candidates below this frequency will not be considered.</dd>
+<dt><b>Pitch ceiling (Hz)</b> (standard value: 600 Hz)
+<dd>pitch candidates above this frequency will be ignored.</dd>
+</dl>
+<p>The arguments that control the manipulation are:</p>
+<dl>
+<dt><b>Multiply formants by</b>
+<dd>determines the formant frequencies of the newly created sound. The formant frequency of the new sound will equal the formant frequencies of the selected sound multiplied by this number. If this number equals 1, formant frequencies will not change. A number of 1.1 will change a male voice to a voice with approximate female formant characteristics. A ratio of 1/1.1 will change a female voice to a voice with approximate male formant characteristics.</dd>
+<dt><b>Multiply pitch by</b>
+<dd>determines what the pitch of the new Sound will be. The pitch values of the new sound will equal the pitch values of the selected sound multiplied by this number. A value of 1.8 will  approximately change a male's pitch to a female's pitch.</dd>
+<dt><b>Multiply pitch range by</b> (standard value: 1.0)
+<dd>determines the pitch range of the newly created sound. A factor of 1.0 means that no additional pitch modification will occur (except the obvious one described above). A factor of 0.0 monotonizes the new sound to the new pitch median. A negative number inverses the pitch range with respect to the median.</dd>
+<dt><b>Multiply duration by</b> (standard value: 1.0)
+<dd>determines how to modify the duration of the newly created sound. A value of 1.0 means that the new sound will have the same duration as the selected sound. A value less than 1.0 will result in a shortened new sound. A value larger than 2.5 will not work.</dd>
+</dl>
+<p>If you want more control over the synthesis you can supply your own Pitch object and use the <a href="Sound___Pitch__Change_speaker___.html">Sound & Pitch: Change speaker...</a> command. </p>
+<h2>Algorithm</h2>
+<p>The shifting of formant frequencies is done via manipulation of the sampling frequency. To multiply all formants by a factor of 1.10 (i.e. raising them by 10 percent), a sampling frequency of 44100 Hz is first raised to 48510 Hz (without changing the samples). After this, the sound is lengthened by a factor of 1.10 and the pitch is lowered by a factor of 1.10, so that the original duration and pitch are restored. After this, the sound is resampled to 44100 Hz (by sinc interpolation).Pitch and duration changes are generated with <a href="overlap-add.html">overlap-add</a> synthesis.</p>
+<hr>
+<address>
+	<p>© djmw 20080515</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Regular expressions</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Regular expressions
+</b></font></table></table>
+<p>This tutorial describes the syntax of regular expressions in Praat. </p>
+<h2>Introduction</h2>
+<p>A <i>regular expression</i> (<i>regex</i>) is a text string that describes a <i>set</i> of strings. Regular expressions are useful as a way to search for patterns in text strings and, optionally, replace them by another pattern.</p>
+<p>Some regular expressions match only one string, i.e., the set they describe has only one member. For example, the regex "ab" matches the string "ab" and no others. Other regular expressions match more than one string, i.e., the set they describe has more than one member. For example, the regex "a*" matches the string made up of any number (including zero) of "a"s. As you can see, some characters match themselves (such as "a" and "b"), and these characters are called <i>ordinary</i> characters. The characters that do not match themselves, such as "*", are called <i>special</i> characters or <i>metacharacters</i>. Many special characters are only special characters in the <i>search</i> regex and are ordinary characters in the substitution regex.</p>
+<p>You can read the rest of this tutorial sequentially with the help of the "&lt;1" and "&gt;1" buttons.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. <a href="Regular_expressions_1__Special_characters.html">Special characters</a> (\ ^ $ { } [ ] ( ) . + ? | - &amp;)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. <a href="Regular_expressions_2__Quantifiers.html">Quantifiers</a> (how often do we match).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. <a href="Regular_expressions_3__Anchors.html">Anchors</a> (where do we match)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. <a href="Regular_expressions_4__Special_constructs_with_parenthe.html">Special constructs with parentheses</a> (grouping constructs)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">5. <a href="Regular_expressions_5__Special_control_characters.html">Special control characters</a> (difficult-to-type characters like \n)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">6. <a href="Regular_expressions_6__Convenience_escape_sequences.html">Convenience escape sequences</a> (\d \D \l \L \s \S \w \W \B)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">7. <a href="Regular_expressions_7__Octal_and_hexadecimal_escapes.html">Octal and hexadecimal escapes</a> (things like \053 or \X2B)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">8. <a href="Regular_expressions_8__Substitution_special_characters.html">Substitution special characters</a> (\1..\9 \U \u \L \l &amp;)</dd>
+</dl>
+<p>More in-depth coverage of regular expressions can be found in <a href="Friedl__1997_.html">Friedl (1997)</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_index_regex_.html"><code><font size=+1>index_regex</font></code></a>
+<li><a href="_replace_regex-S_.html"><code><font size=+1>replace_regex$</font></code></a>
+<li><a href="_rindex_regex_.html"><code><font size=+1>rindex_regex</font></code></a>
+<li><a href="Confusion__Condense___.html">Confusion: Condense...</a>
+<li><a href="Formulas_6__String_functions.html">Formulas 6. String functions</a>
+<li><a href="TableOfReal__Change_column_labels___.html">TableOfReal: Change column labels...</a>
+<li><a href="TableOfReal__Change_row_labels___.html">TableOfReal: Change row labels...</a>
+<li><a href="What_was_new_in_4_0_.html">What was new in 4.0?</a>
+</ul>
+<hr>
+<address>
+	<p>© David Weenink & Paul Boersma 20180401</p>
+</address>
+</body>
+</html>

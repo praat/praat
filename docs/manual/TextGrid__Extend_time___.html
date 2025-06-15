@@ -1,0 +1,30 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TextGrid: Extend time...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TextGrid: Extend time...
+</b></font></table></table>
+<p>Extends the domain of the selected <a href="TextGrid.html">TextGrid</a> object.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Extend domain by</b>
+<dd>defines the amount of time by which the domain will be extended.</dd>
+<dt><b>At</b>
+<dd>defines whether starting times or finishing times will be modified.</dd>
+</dl>
+<h2>Behaviour</h2>
+<p>We add an extra (empty) interval into each <i>interval tier</i>. This is necessary to keep original intervals intact. According to the value of the second argument, the new interval will be added at the beginning or at the end of the tier.</p>
+<p>For <i>point tiers</i> only the domain will be changed.</p>
+<hr>
+<address>
+	<p>© djmw 20020702</p>
+</address>
+</body>
+</html>

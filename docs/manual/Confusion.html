@@ -1,0 +1,88 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Confusion</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Confusion
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat.</p>
+<p>An object of type Confusions represents a confusion matrix, with stimuli as row labels and responses as column labels. The entry at position [<i>i</i>] [<i>j</i>] represents the number of times response <i>j</i> was given to the stimulus <i>i</i>.</p>
+<h2>Creating a Confusion from data in a text file</h2>
+<p>Suppose you have two objects A and B. In one way or another, you have acquired the following  confusions: <i>&#948;</i><sub><i>AA</i></sub> = 6, <i>&#948;</i><sub><i>AB</i></sub> = 2 , <i>&#948;</i><sub><i>BA</i></sub> = 1, and <i>&#948;</i><sub><i>BB</i></sub> = 7.</p>
+<p>You can create a simple text file like the following:</p>
+<code>   "ooTextFile"  ! to make Praat recognize your file<br></code>
+<code>   "Confusion" ! The line that tells Praat about the contents<br></code>
+<code>   2     "A"  "B"  ! Number of columns, and column labels<br></code>
+<code>   2                   ! Number of rows<br></code>
+<code>   "A"    6    2     ! Row label A, A-A value, A-B value<br></code>
+<code>   "B"    1    7     ! Row label B, B-A value, B-B value<br></code>
+<p>This text file can be read with the <a href="Read_from_file___.html">Read from file...</a> command. </p>
+<h2>Commands</h2>
+<p>Creation:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Categories__To_Confusion.html">Categories: To Confusion</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_simple_Confusion___.html">Create simple Confusion...</a></dd>
+</dl>
+<p>Drawing</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Draw as numbers...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Draw as squares...</b></dd>
+</dl>
+<p>Query</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__Get_fraction_correct.html">Get fraction correct</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__Get_stimulus_sum___.html">Confusion: Get stimulus sum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__Get_response_sum___.html">Confusion: Get response sum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Get grand sum</b></dd>
+</dl>
+<p>Modification</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Formula...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__Increase___.html">Confusion: Increase...</a></dd>
+</dl>
+<p>Grouping</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__Group_stimuli___.html">Confusion: Group stimuli...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__Group_responses___.html">Confusion: Group responses...</a></dd>
+</dl>
+<p>Analysis:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__To_Similarity___.html">Confusion: To Similarity...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__To_Dissimilarity__pdf____.html">Confusion: To Dissimilarity (pdf)...</a></dd>
+</dl>
+<h2>Inside a Confusion</h2>
+<p>With <a href="Inspect.html">Inspect</a> you will see the following attributes:</p>
+<dl>
+<dt><i>numberOfRows</i>
+<dd>the number of stimuli.</dd>
+<dt><i>numberOfColumns</i>
+<dd>the number of responses.</dd>
+<dt><i>rowLabels</i>
+<dd>the names of the stimuli.</dd>
+<dt>columnLabels
+<dd>the names of the responses.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ClassificationTable__To_Confusion___.html">ClassificationTable: To Confusion...</a>
+<li><a href="Confusion___ClassificationTable__Increase_confusion_cou.html">Confusion & ClassificationTable: Increase confusion count</a>
+<li><a href="Confusion__Condense___.html">Confusion: Condense...</a>
+<li><a href="Confusion__To_Dissimilarity___.html">Confusion: To Dissimilarity...</a>
+<li><a href="Confusion__To_TableOfReal__marginals_.html">Confusion: To TableOfReal (marginals)</a>
+<li><a href="Discriminant_analysis.html">Discriminant analysis</a>
+<li><a href="Feedforward_neural_networks_2__Quick_start.html">Feedforward neural networks 2. Quick start</a>
+<li><a href="Feedforward_neural_networks_3__FFNet_versus_discriminan.html">Feedforward neural networks 3. FFNet versus discriminant classifier</a>
+<li><a href="INDSCAL_analysis.html">INDSCAL analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20110517</p>
+</address>
+</body>
+</html>

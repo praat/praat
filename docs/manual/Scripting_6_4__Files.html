@@ -1,0 +1,92 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 6.4. Files</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 6.4. Files
+</b></font></table></table>
+<p>You can read from and write to text files from a Praat script.</p>
+<h2>Reading a file</h2>
+<p>You can check the availability of a file for reading with the function</p>
+<code>   <b>fileReadable</b> (<i>fileName$</i>)<br></code>
+<p>which returns 1 (true) if the file exists and can be read, and 0 (false) otherwise. Note that <i><code><font size=+1>fileName$</font></code></i> is taken relatively to the folder where the script is saved; for instance, if your script is in the folder <code><font size=+1>Paolo/project1</font></code>, then the file name &#8220;hello.wav&#8221; refers to <code><font size=+1>Paolo/project1/hello.wav</font></code>, the file name &#8220;yesterday/hello.wav&#8221; refers to <code><font size=+1>Paolo/project1/yesterday/hello.wav</font></code>, and the file name &#8220;../project2/hello.wav&#8221; refers to <code><font size=+1>Paolo/project2/hello.wav</font></code> (&#8220;..&#8221; goes one folder up). You can also use full path names such as <code><font size=+1>C:/Users/Paolo/project1/hello.wav</font></code> on Windows and <code><font size=+1>/Users/Paolo/project1/hello.wav</font></code> on the Mac.</p>
+<p>To read the contents of an existing text file into a string variable or into a numeric variable, you use</p>
+<code>   text$ = <a href="_readFile-S_.html">readFile$</a> ("myFile.txt")<br></code>
+<p>or</p>
+<code>   number = <a href="_readFile_.html">readFile</a> ("myFile.txt")<br></code>
+<p>If the file does not exist, the script terminates with an error message.</p>
+<h2>Example: reading a settings file</h2>
+<p>Suppose that the file <code><font size=+1>height.inf</font></code> may contain an appropriate value for a numeric variable called <code><font size=+1>height</font></code>, which we need to use in our script. We would like to read it with</p>
+<code>   height = readFile ("height.inf")<br></code>
+<p>However, this script will fail if the file <code><font size=+1>height.inf</font></code> does not exist. To guard against this situation, we could check the existence of the file, and supply a default value in case the file does not exist:</p>
+<code>   fileName$ = "height.inf"<br></code>
+<code>   if fileReadable (fileName$)<br></code>
+<code>      height = readFile (fileName$)<br></code>
+<code>   else<br></code>
+<code>      height = 180<br></code>
+<code>   endif<br></code>
+<h2>Writing a file</h2>
+<p>You write into a new text file just as you write into the Info window:</p>
+<code>   writeFileLine: "myFile.txt", "The present year is ", 2000 + 13, "."<br></code>
+<p>and likewise you use <b><code><font size=+1>writeFile</font></code></b> if you don't want a newline symbol at the end of the file. If the file cannot be created, the script terminates with an error message.</p>
+<p>To append text at the end of an existing file, you use</p>
+<code>   appendFileLine: "myFile.txt", "Next year it will be ", 2000 + 14, "."<br></code>
+<p>With <b><code><font size=+1>appendFileLine</font></code></b> (and <b><code><font size=+1>appendFile</font></code></b>, which does not add the newline), we follow the rule that if the file does not yet exist, it is created first.</p>
+<p>You can create a folder (directory) with</p>
+<code>   <b>createFolder</b>: <i>folderPath$</i><br></code>
+<p>where, as with file names, <i><code><font size=+1>folderPath$</font></code></i> can be relative to the folder of the script (e.g. &#8220;<code><font size=+1>data</font></code>&#8221;, or &#8220;<code><font size=+1>yesterday/data</font></code>&#8221;, or &#8220;<code><font size=+1>../project2/yesterday/data</font></code>&#8221;) or an absolute path (e.g. <code><font size=+1>C:/Users/Paolo/project1/yesterday/data</font></code> on Windows or &#8220;/Users/Paolo/project1/yesterday/data&#8221; on the Mac). If the folder already exists, this command does nothing.</p>
+<p>You can delete an existing file with the function</p>
+<code>   <b>deleteFile</b>: <i>fileName$</i><br></code>
+<p>If the file does not exist, this command does nothing.</p>
+<h2>Example: writing a table of squares</h2>
+<p>Suppose that we want to create a file with the following text:</p>
+<code>   The square of 1 is 1<br></code>
+<code>   The square of 2 is 4<br></code>
+<code>   The square of 3 is 9<br></code>
+<code>   ...<br></code>
+<code>   The square of 100 is 10000<br></code>
+<p>We can do this by appending 100 lines:</p>
+<code>   deleteFile: "squares.txt"<br></code>
+<code>   for i to 100<br></code>
+<code>      appendFileLine: "squares.txt", "The square of ", i, " is ", i * i<br></code>
+<code>   endfor<br></code>
+<p>Note that we delete the file before appending to it, in order that we do not append to an already existing file.</p>
+<p>You can append the contents of the Info window to a file with</p>
+<code>   appendFile: "out.txt", info$ ( )<br></code>
+<h2>Folder listings</h2>
+<p>To get the names of the files if a certain type in a certain folder, use</p>
+<code>   fileNames$# = <b>fileNames$#</b>: <i>path$</i><br></code>
+<p>For instance, to read in all the sound files in a specified folder, you could use the following script:</p>
+<code>   folder$ = "/usr/people/miep/sounds"<br></code>
+<code>   fileNames$# = fileNames$# (folder$ + "/*.wav")<br></code>
+<code>   for ifile to size (fileNames$#)<br></code>
+<code>      Read from file: folder$ + "/" + fileNames$# [ifile]<br></code>
+<code>   endfor<br></code>
+<h2>Alternative syntax</h2>
+<p>If, on the basis of the syntax of commands and functions in earlier sections you expected that</p>
+<code>   text$ = readFile$ ("myFile.txt")<br></code>
+<code>   number = readFile ("myFile.txt")<br></code>
+<p>could be written as</p>
+<code>   text$ = readFile$: "myFile.txt"<br></code>
+<code>   number = readFile: "myFile.txt"<br></code>
+<p>then you are right. The syntax with the colon is equivalent to the syntax with the two parentheses. Conversely, instead of</p>
+<code>   <b>deleteFile</b>: <i>fileName$</i><br></code>
+<p>you can also write</p>
+<code>   <b>deleteFile</b> (<i>fileName$</i>)<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_6__Communication_outside_the_script.html">Scripting 6. Communication outside the script</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20201229</p>
+</address>
+</body>
+</html>

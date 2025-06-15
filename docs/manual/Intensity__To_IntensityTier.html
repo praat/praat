@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intensity: To IntensityTier</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intensity: To IntensityTier
+</b></font></table></table>
+<p>A command to convert each selected <a href="Intensity.html">Intensity</a> object to an <a href="IntensityTier.html">IntensityTier</a>.</p>
+<h2>Behaviour</h2>
+<p>Every sample in the <a href="Intensity.html">Intensity</a> object is copied to a point on the <a href="IntensityTier.html">IntensityTier</a>.</p>
+<h2>Postconditions</h2>
+<dl>
+<dd>Equal time domains:</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <i>result</i>. <i>xmin</i> == <i>intensity</i>. <i>xmin</i></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <i>result</i>. <i>xmax</i> == <i>intensity</i>. <i>xmax</i></dd>
+<dd>Equal number of points:</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <i>result</i>. <i>points</i>. <i>size</i> == <i>intensity</i>. <i>nx</i></dd>
+</dl>
+<p>For all points <i>i</i> = 1 ... <i>intensity</i>. <i>nx</i>:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;Explicit times:</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;&nbsp;&nbsp;&#8226; <i>result</i>. <i>points</i>. <i>item</i> [<i>i</i>]. <i>time</i> == <i>intensity</i>. <i>x1</i> + (<i>i</i> &#8211; 1) * <i>intensity</i>. <i>dx</i></dd>
+<dd>&nbsp;&nbsp;&nbsp;Equal number of points:</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;&nbsp;&nbsp;&#8226; <i>result</i>. <i>points</i>. <i>item</i> [<i>i</i>]. <i>value</i> == <i>intensity</i>. <i>z</i> [1] [<i>i</i>]</dd>
+</dl>
+<hr>
+<address>
+	<p>© ppgb 19970321</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>INDSCAL analysis</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+INDSCAL analysis
+</b></font></table></table>
+<p>A method for <a href="individual_difference_scaling.html">individual difference scaling</a> analysis in Praat.</p>
+<p>An INDSCAL analysis can be performed on objects of type Distance.</p>
+<p>If you start with <a href="Dissimilarity.html">Dissimilarity</a> objects you first have to transform them to Distance objects.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__To_Distance___.html">Dissimilarity: To Distance...</a></dd>
+</dl>
+<p>If you start with a <a href="Confusion.html">Confusion</a> you can use:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__To_Dissimilarity__pdf____.html">Confusion: To Dissimilarity (pdf)...</a></dd>
+</dl>
+<h2>Examples</h2>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Distance__To_Configuration__indscal____.html">Distance: To Configuration (indscal)...</a></dd>
+<dd>Perform an INDSCAL analysis on one or more objects of type <a href="Distance.html">Distance</a> to calculate a <a href="Configuration.html">Configuration</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Distance___Configuration__To_Configuration__indscal____.html">Distance & Configuration: To Configuration (indscal)...</a></dd>
+<dd>Perform an INDSCAL analysis on one or more objects of type <a href="Distance.html">Distance</a> to calculate a <a href="Configuration.html">Configuration</a>. Use the selected Configuration object as the initial Configuration in the iteration process.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The function to be minimized in INDSCAL is the following:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i>(<i>X</i>, <i>W</i><sub>1</sub>,..., <i>W</i><sub><i>numberOfSources</i></sub>) = &#8721;<sub><i>i</i>=1..<i>numberOfSources</i></sub> |<i>S</i><sub><i>i</i></sub> &#8211; <i>XW</i><sub><i>i</i></sub><i>X</i>&#8242;|<sup>2</sup></table>
+<p>where <i>X</i> an unknown <i>numberOfPoints</i> x <i>numberOfDimensions</i> configuration matrix, the <i>W</i><sub><i>i</i></sub> are <i>numberOfSources</i> unknown diagonal <i>numberOfDimensions</i> x <i>numberOfDimensions</i> matrices with weights, often called saliences, and the <i>S</i><sub><i>i</i></sub> are known symmetric matrices with scalar products of dimension <i>numberOfPoints</i> x <i>numberOfPoints</i>.</p>
+<p>In the absence of an algorithm that minimizes <i>f</i>, <a href="Carroll___Chang__1970_.html">Carroll & Chang (1970)</a> resorted to the <a href="CANDECOMP.html">CANDECOMP</a> algorithm, which instead of the function given above minimizes the following function:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>g</i>(<i>X</i>, <i>Y</i>, <i>W</i><sub>1</sub>,..., <i>W</i><sub><i>numberOfSources</i></sub>) = &#8721;<sub><i>i</i>=1..<i>numberOfSources</i></sub> |<i>S</i><sub><i>i</i></sub> &#8211; <i>XW</i><sub><i>i</i></sub><i>Y</i>&#8242;|<sup>2</sup>.</table>
+<p>Carroll &amp; Chang claimed that for most practical circumstances <i>X</i> and <i>Y</i> converge to matrices that will be columnwise proportional. However, INDSCAL does not only require symmetry of the solution, but also non-negativity of the weights. Both these aspects cannot be guaranteed with the CANDECOMP algorithm.</p>
+<p><a href="Ten_Berge__Kiers___Krijnen__1993_.html">Ten Berge, Kiers & Krijnen (1993)</a> describe an algorithm that automatically satisfies symmetry because it solves <i>f</i> directly, and, also, can guarantee non-negativity of the weights. This algorithm proceeds as follows:</p>
+<p>Let <b><i>x</i></b><sub><i>h</i></sub> be the <i>h</i>-th column of <i>X</i>. We then write the function <i>f</i> above as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i>(<b><i>x</i></b><sub><i>h</i></sub>, <i>w</i><sub>1<i>h</i></sub>, ..., <i>w</i><sub><i>numberOfSources</i> <i>h</i></sub>) = &#8721;<sub><i>i</i>=1..<i>numberOfSources</i></sub> |<i>S</i><sub><i>ih</i></sub> &#8211; <b><i>x</i></b><sub><i>h</i></sub><i>w</i><sub><i>ih</i></sub><b><i>x</i></b>&#8242;<sub><i>h</i></sub>|<sup>2</sup>,</table>
+<p>with <i>S</i><sub><i>ih</i></sub> defined as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>S</i><sub><i>ih</i></sub> = (<i>S</i><sub><i>i</i></sub> - &#8721;<sub><i>j</i>&#8800;<i>h</i>, <i>j</i>=1..<i>numberOfDimensions</i></sub> <b><i>x</i></b><sub><i>j</i></sub><i>w</i><sub><i>ij</i></sub><b><i>x</i></b>&#8242;<sub><i>j</i></sub>).</table>
+<p>Without loss of generality we may require that</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b><i>x</i></b>&#8242;<sub><i>h</i></sub><b><i>x</i></b><sub><i>h</i></sub> = 1</table>
+<p>Minimizing <i>f</i> over <b><i>x</i></b><sub><i>h</i></sub> is equivalent to minimizing</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8721;<sub><i>i</i>=1..<i>numberOfSources</i></sub> |<i>S</i><sub><i>ih</i></sub>|<sup>2</sup> &#8211; 2tr &#8721; <i>S</i><sub><i>ih</i></sub><b><i>x</i></b><sub><i>h</i></sub><i>w</i><sub><i>ih</i></sub><b><i>x</i></b>&#8242;<sub><i>h</i></sub> + &#8721; <i>w</i><sup>2</sup><sub><i>ih</i></sub></table>
+<p>This amounts to maximizing</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>g</i>(<b><i>x</i></b><sub><i>h</i></sub>) = <b><i>x</i></b>&#8242;<sub><i>h</i></sub>(&#8721; <i>w</i><sub><i>ih</i></sub><i>S</i><sub><i>ih</i></sub>)<b><i>x</i></b><sub><i>h</i></sub></table>
+<p>subject to <b><i>x</i></b>&#8242;<sub><i>h</i></sub><b><i>x</i></b><sub><i>h</i></sub> = 1. The solution for <b><i>x</i></b><sub><i>h</i></sub> is the dominant eigenvector of (&#8721; <i>w</i><sub><i>ih</i></sub><i>S</i><sub><i>ih</i></sub>), which can be determined with the power method (see <a href="Golub___van_Loan__1996_.html">Golub & van Loan (1996)</a>). The optimal value for the <i>w</i><sub><i>ih</i></sub>, given that all other parameters are fixed:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>w</i><sub><i>ih</i></sub> = <b><i>x</i></b>&#8242;<sub><i>h</i></sub><i>S</i><sub><i>ih</i></sub><b><i>x</i></b><sub><i>h</i></sub></table>
+<p>In an alternating least squares procedure we may update columns of <i>X</i> and the diagonals of the <i>W</i> matrices in any sensible order.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_INDSCAL_Carroll___Wish_example___.html">Create INDSCAL Carroll & Wish example...</a>
+<li><a href="Distance___Configuration___Salience__To_Configuration__.html">Distance & Configuration & Salience: To Configuration (indscal)...</a>
+<li><a href="Distance__To_Configuration__ytl____.html">Distance: To Configuration (ytl)...</a>
+<li><a href="Multidimensional_scaling.html">Multidimensional scaling</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20120306</p>
+</address>
+</body>
+</html>

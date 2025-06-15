@@ -1,0 +1,28 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>randomBernoulli##</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+randomBernoulli##
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>randomBernoulli##</font></code></b> (<i><code><font size=+1>nrow</font></code></i>, <i><code><font size=+1>ncol</font></code></i>, <i><code><font size=+1>p</font></code></i>)
+<dd>generate <i><code><font size=+1>nrow</font></code></i> &#215; <i><code><font size=+1>ncol</font></code></i> independent Bernoulli-distributed (<a href="_randomBernoulli_.html"><b><code><font size=+1>randomBernoulli</font></code></b></a>) zeroes and ones.</dd>
+<dt><b><code><font size=+1>randomBernoulli##</font></code></b> (<i><code><font size=+1>model##</font></code></i>, <i><code><font size=+1>p</font></code></i>)
+<dd>create a matrix with the same number of rows and columns as <i><code><font size=+1>model##</font></code></i>, and fill all cells with independent Bernoulli-distributed zeroes and ones. This is shorthand for doing</dd>
+</dl>
+<code>   <b>randomBernoulli##</b> (<a href="_numberOfRows_.html">numberOfRows</a> (<i>model##</i>), <a href="_numberOfColumns_.html">numberOfColumns</a> (<i>model##</i>), <i>p</i>)<br></code>
+<hr>
+<address>
+	<p>© Paul Boersma 2023,2024</p>
+</address>
+</body>
+</html>

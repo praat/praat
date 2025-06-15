@@ -1,0 +1,50 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 1. Your first scripts</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 1. Your first scripts
+</b></font></table></table>
+<p>This page tells you how to create, run and save a script. To get a feel for how it works, you are advised to try out all the steps.</p>
+<h2>1. A minimal script</h2>
+<p>Suppose that you want to create a script that allows you to play a selected Sound object twice. You first create an empty script, by choosing <a href="New_Praat_script.html">New Praat script</a> from the Praat menu in the Objects window. A <a href="ScriptEditor.html">ScriptEditor</a> window will appear on your screen:</p>
+<p align=middle><img height=400 width=600 src=Scripting_1__Your_first_scripts_1.png></p><p>In this window, you type</p>
+<code>   Play<br></code>
+<code>   Play<br></code>
+<p>Now select a Sound in the Objects window. As you expect from selecting a Sound, a <b>Play</b> button will appear in the dynamic menu. If you now choose <b>Run</b> from the Run menu in the ScriptEditor, Praat will play the sound twice. This works because <b>Play</b> is a command that becomes available in the dynamic menu when you select a Sound.</p>
+<h2>2. Some more commands</h2>
+<p>In the above example, you could use <code><font size=+1>Play</font></code> in your script because the <b>Play</b> command was available, i.e. because &#8220;Play&#8221; was the text on a button currently available in the dynamic menu. Apart from these selection-dependent (dynamic) commands, you can also use all fixed commands from the menus of the <a href="Objects_window.html">Objects window</a> and the <a href="Picture_window.html">Picture window</a>. For instance, try the following script:</p>
+<code>   Erase all<br></code>
+<code>   Draw inner box<br></code>
+<code>   Play<br></code>
+<code>   Play<br></code>
+<code>   Erase all<br></code>
+<p>When you run this script, you&#8217;ll see a rectangle appear in the Picture window (that&#8217;s what the command <b>Draw inner box</b> in the <b>Margins</b> menu does), then you&#8217;ll hear the Sound play twice, then you&#8217;ll see the rectangle disappear from the Picture window (that&#8217;s what the command <b>Erase all</b> from the Edit menu does).</p>
+<p>Here we see that the Praat scripting language is an example of a <i>procedural programming language</i>, which means that the five <i>statements</i> are executed in the order in which they appear in the script, i.e. first <b>Erase all</b>, then <b>Draw inner box</b>, then <b>Play</b> twice, and finally <b>Erase all</b>.</p>
+<h2>3. Experimenting with your script</h2>
+<p>You don't have to be afraid of making mistakes. Here are a couple that you can try to make.</p>
+<p>First, try to run the script when a Sound is not selected (e.g. you create a Pitch object from it and keep that selected, or you throw away the Sound). You will notice that Praat gives you an error message saying &#8220;The command &#8220;Play&#8221; is not available for the current selection&#8221;. Indeed, if you select a Pitch or if you select nothing, then no command <b>Play</b> appears in the dynamic menu, so the script cannot execute it. Note that the commands <b>Erase all</b> and <b>Draw inner box</b> are still available, because they continue to be present in the menus of the Picture window; therefore, the script will execute the first two lines (<code><font size=+1>Erase all</font></code> and <code><font size=+1>Draw inner box</font></code>) and stop running at the third line, i.e. at your first <code><font size=+1>Play</font></code>. The result is that the &#8220;box&#8221; will stay visible in the Picture window, because the fifth line of the script, which should erase the box, is never executed.</p>
+<p>Second, try to mistype a command (there&#8217;s a good chance you already did it by accident), e.g. write <code><font size=+1>PLay</font></code> instead of <code><font size=+1>Play</font></code>, or <code><font size=+1>Draw inner bocks</font></code> or whatever. Again, you are likely to get a message saying that that command is not available. Such messages are the most common messages that you&#8217;ll see when writing scripts; now you know that they mean either that you mistyped something or that you made the wrong selection.</p>
+<h2>4. Saving your script</h2>
+<p>The File menu of the ScriptEditor has a command <b>Save</b>, with which you can save your script as a file on disk, for instance under the name &#8220;test.praat&#8221;.</p>
+<p>Please try this with the five-line script you just typed. After saving the script, the name of the script file will appear in the window title:</p>
+<p align=middle><img height=400 width=600 src=Scripting_1__Your_first_scripts_2.png></p><p>After you save your script, you can close the ScriptEditor window without losing the script: you can reopen the script file by using <a href="Open_Praat_script___.html">Open Praat script...</a> from the Praat menu, or by choosing <b>New Praat script</b> again, followed by <b>Open...</b> from the ScriptEditor&#8217;s File menu.</p>
+<p>It advisable to use &#8220;.praat&#8221; as the extension for script file names. On the Mac, if you double-click a &#8220;.praat&#8221; file, Praat will automatically start up and show the script. On the Mac and on Windows, if you drag a &#8220;.praat&#8221; file on the Praat icon, Praat will also start up and show the script.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_2__How_to_script_settings_windows.html">Scripting 2. How to script settings windows</a>
+<li><a href="Scripting_3__Simple_language_elements.html">Scripting 3. Simple language elements</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2000,2002,2004,2005,2008(“My first script”),2011,2013,2014,2020,2023</p>
+</address>
+</body>
+</html>

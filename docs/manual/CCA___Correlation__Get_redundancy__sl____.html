@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>CCA & Correlation: Get redundancy (sl)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+CCA & Correlation: Get redundancy (sl)...
+</b></font></table></table>
+<p>Determine from the selected <a href="CCA.html">CCA</a> and <a href="Correlation.html">Correlation</a> objects the Stewart-Love redundancy for the selected canonical variates.</p>
+<p>The Stewart-Love redundancy for a single <a href="canonical_variate.html">canonical variate</a> is the fraction of variance explained by the selected canonical variate in a set times the fraction of shared variance between the corresponding canonical variates in the two sets.</p>
+<p>The Stewart-Love redundancy for a canonical variate range is the sum of the individual redundancies.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>X or Y</b>
+<dd>determines whether you select the dependent (y) or the independent (x) set.</dd>
+<dt><b>Canonical variate range</b>
+<dd>determines the canonical variates (or canonical variables).</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The formulas can be found on page 170 of <a href="Cooley___Lohnes__1971_.html">Cooley & Lohnes (1971)</a>.</p>
+<p>For example, the redundancy of the dependent set (y) given the independent set (x) for the <i>i</i><sup><i>th</i></sup> canonical variate can be expressed as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>R</i><sub><i>i</i></sub>(y) = <i>varianceFraction</i><sub><i>i</i></sub>(y) * &#961;<sub><i>i</i></sub><sup>2</sup>, </table>
+<p>where <i>varianceFraction</i><sub><i>i</i></sub>(y) is the <a href="CCA___Correlation__Get_variance_fraction___.html">variance fraction</a> explained by the <i>i</i><sup><i>th</i></sup> canonical variate of the dependent set, and &#961;<sub><i>i</i></sub> is the <i>i</i><sup><i>th</i></sup> canonical correlation coefficient.</p>
+<p>The redundancy for the selected canonical variate in the dependent set shows what fraction of the variance in the <i>dependent</i> set is already "explained" by the variance in the <i>independent</i> set, i.e. this fraction could be considered as redundant.</p>
+<p>In the same way we can measure the redundancy of the independent (x) set giving the dependent set (y).</p>
+<h2>Remark</h2>
+<p>In general <i>R</i><sub><i>i</i></sub>(y) &#8800; <i>R</i><sub><i>i</i></sub>(x).</p>
+<hr>
+<address>
+	<p>© djmw 20060323</p>
+</address>
+</body>
+</html>

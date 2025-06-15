@@ -1,0 +1,55 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Formant (burg)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Formant (burg)...
+</b></font></table></table>
+<p>A command that creates a <a href="Formant.html">Formant</a> object from every selected <a href="Sound.html">Sound</a> object. It performs a short-term spectral analysis, approximating the spectrum of each analysis frame by a number of formants.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Time step (s)</b>
+<dd>the time between the centres of consecutive analysis frames. If the sound is 2 seconds long, and the time step is 0.01 seconds, there will be approximately 200 analysis frames. The actual number is somewhat lower (usually 195), because we cannot measure very well near the edges. If you set the time step to 0.0 (the standard), Praat will use a time step that is equal to 25 percent of the analysis window length (see below).</dd>
+<dt><b>Maximum number of formants</b>
+<dd>for most analyses of human speech, you will want to extract 5 formants per frame. This, in combination with the <b>Formant ceiling</b> setting, is the only way in which this procedure will give you results compatible with how people tend to interpret formants for vowels, i.e. in terms of vowel height (F1) and vowel place (F2). Otherwise, the <b>Maximum number of formants</b> can be any multiple of 0.5, you can choose 4, 4.5, 5, 5.5, 6, and so on (see below).</dd>
+<dt><b>Formant ceiling (Hz)</b>
+<dd>the maximum frequency of the formant search range, in hertz. It is crucial that you set this to a value suitable for your speaker. An average adult female speaker has a vocal tract length that requires an average ceiling of 5500 Hz (which is Praat's standard value), an average adult male speaker has a vocal tract length that requires an average ceiling of 5000 Hz, and a young child may have a vocal tract length that requires an average ceiling of 8000 Hz. These are just examples; there is large variation between speakers, and <a href="Escudero__Boersma__Rauber___Bion__2009_.html">Escudero, Boersma, Rauber & Bion (2009)</a> showed that the vocal tract length difference between a person's front vowels and their back vowels may be greater than the average vocal tract length difference between males and females. If you choose a too high ceiling, you may end up with too few formants in the low frequency region, e.g. analysing an [u] as having a single formant near 500 Hz whereas you want two formants at 300 and 600 Hz. You may like to experiment with this setting on steady vowels.</dd>
+<dt><b>Window length (s)</b>
+<dd>the effective duration of the analysis window, in seconds. The actual length is twice this value, because Praat uses a Gaussian-like analysis window with sidelobes below -120 dB. For instance, if the <b>Window length</b> is 0.025 seconds, the actual Gaussian window duration is 0.050 seconds. This window has values below 4% outside the central 0.025 seconds, and its frequency resolution (-3 dB point) is 1.298 / (0.025 s) = 51.9 Hz, as computed with the formula given at <a href="Sound__To_Spectrogram___.html">Sound: To Spectrogram...</a>. This is comparable to the bandwidth of a Hamming window of 0.025 seconds, which is 1.303 / (0.025 s) = 52.1 Hz, but that window (which is the window most often used in other analysis programs) has three spectral lobes of about -42 dB on each side.</dd>
+<dt><b>Pre-emphasis from (Hz)</b>
+<dd>the +3 dB point for an inverted low-pass filter with a slope of +6 dB/octave. If this value is 50 Hz, then frequencies below 50 Hz are not enhanced, frequencies around 100 Hz are amplified by 6 dB, frequencies around 200 Hz are amplified by 12 dB, and so forth. The point of this is that vowel spectra tend to fall by 6 dB per octave; the pre-emphasis creates a flatter spectrum, which is better for formant analysis because we want our formants to match the local peaks, not the global spectral slope. See the <a href="Source-filter_synthesis.html">source-filter synthesis</a> tutorial for a technical explanation, and <a href="Sound__Pre-emphasize__in-place____.html">Sound: Pre-emphasize (in-place)...</a> for the algorithm.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The sound will be resampled to a sampling frequency of twice the value of <i>Formant ceiling</i>, with the algorithm described at <a href="Sound__Resample___.html">Sound: Resample...</a>. After this, pre-emphasis is applied with the algorithm described at <a href="Sound__Pre-emphasize__in-place____.html">Sound: Pre-emphasize (in-place)...</a>. For each analysis window, Praat applies a Gaussian-like window, and computes the LPC coefficients with the algorithm by Burg, as given by <a href="Childers__1978_.html">Childers (1978)</a> and <a href="Press_et_al___1992_.html">Press et al. (1992)</a>. The number of "poles" that this algorithm computes is twice the <i>Maximum number of formants</i>; that's why you can set the <i>Maximum number of formants</i> to any multiple of 0.5).</p>
+<p>The algorithm will initially find <b>Maximum number of formants</b> formants in the whole range between 0 Hz and <b>Formant ceiling</b>. The initially found formants can therefore sometimes have very low frequencies (near 0 Hz) or very high frequencies (near <b>Formant ceiling</b>). Such low or high "formants" tend to be artefacts of the LPC algorithm, i.e., the algorithm tends to use them to match the spectral slope if that slope differs from the 6 dB/octave assumption. Therefore, such low or high "formants" cannot usually be associated with the vocal tract resonances that you are looking for. In order for you to be able to identify the traditional F1 and F2, all formants below 50 Hz and all formants above <b>Formant ceiling</b> minus 50 Hz, are therefore removed. If you don't want this removal, you may experiment with <a href="Sound__To_Formant__keep_all____.html">Sound: To Formant (keep all)...</a> instead. If you prefer an algorithm that always yields the requested number of formants, nicely distributed across the frequency domain, you may try the otherwise rather unreliable Split-Levinson procedure <a href="Sound__To_Formant__sl____.html">Sound: To Formant (sl)...</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="FAQ__Formant_analysis.html">FAQ: Formant analysis</a>
+<li><a href="Formant__Track___.html">Formant: Track...</a>
+<li><a href="FormantPath.html">FormantPath</a>
+<li><a href="Formants___LPC_menu.html">Formants & LPC menu</a>
+<li><a href="Intro_5_2__Configuring_the_formant_contours.html">Intro 5.2. Configuring the formant contours</a>
+<li><a href="Intro_5_4__The_Formant_object.html">Intro 5.4. The Formant object</a>
+<li><a href="Sound__To_Formant__robust____.html">Sound: To Formant (robust)...</a>
+<li><a href="Sound__To_FormantPath__burg____.html">Sound: To FormantPath (burg)...</a>
+<li><a href="Sound__To_KlattGrid__simple____.html">Sound: To KlattGrid (simple)...</a>
+<li><a href="Sound__To_LPC__autocorrelation____.html">Sound: To LPC (autocorrelation)...</a>
+<li><a href="Sound__To_LPC__burg____.html">Sound: To LPC (burg)...</a>
+<li><a href="Sound__To_LPC__covariance____.html">Sound: To LPC (covariance)...</a>
+<li><a href="Sound__To_LPC__marple____.html">Sound: To LPC (marple)...</a>
+<li><a href="Source-filter_synthesis_4__Using_existing_sounds.html">Source-filter synthesis 4. Using existing sounds</a>
+<li><a href="Time_step_settings___.html">Time step settings...</a>
+<li><a href="What_was_new_in_3_9_.html">What was new in 3.9?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20200608</p>
+</address>
+</body>
+</html>

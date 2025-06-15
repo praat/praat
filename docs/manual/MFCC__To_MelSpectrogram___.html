@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>MFCC: To MelSpectrogram...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+MFCC: To MelSpectrogram...
+</b></font></table></table>
+<p>A command to (re)construct a <a href="MelSpectrogram.html">MelSpectrogram</a> object from the selected <a href="MFCC.html">MFCC</a> object.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>From coefficient</b>, <b>To coefficient</b>
+<dd>the range of coefficients that will be used in the reconstruction.</dd>
+<dt><b>Include constant term</b>
+<dd>selects whether or not to include the <i>c</i><sub>0</sub> coefficient in the reconstruction. As can be seen from the formula below, the contribution of the <i>c</i><sub>0</sub> term is equal for each filter.</dd>
+</dl>
+<h2>Details</h2>
+<p>The values <i>P</i><sub><i>j</i></sub> in each frame of the MelSpectrogram will be constructed by applying the inverse Discrete Cosine Transform to the corresponding frame of the MFCC object:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>P</i><sub><i>j</i></sub> = 2/N (<i>c</i><sub>0</sub>/2 + &#931;<sub><i>k</i>=1</sub><sup><i>N</i>-1</sup> <i>c</i><sub><i>k</i></sub> cos (&#960;<i>k</i>(<i>j</i>-0.5)/<i>N</i>))),</table>
+<p>where <i>N</i> represents the number of filters that were used to get the MFCC object, <i>j</i> runs from 1 to <i>N</i>, and coefficients <i>c</i><sub><i>k</i></sub> with <i>k</i> less than <i>fromCoefficient</i> and <i>k</i> larger than <i>toCoefficient</i> take zero values in the evaluation.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="MFCC__To_MelFilter___.html">MFCC: To MelFilter...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20141023</p>
+</address>
+</body>
+</html>

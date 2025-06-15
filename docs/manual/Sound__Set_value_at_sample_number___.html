@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Set value at sample number...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Set value at sample number...
+</b></font></table></table>
+<p>A command to change a specified sample of the selected <a href="Sound.html">Sound</a> object.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Sample number</b>
+<dd>the sample whose value is to be changed. Specify any value between 1 and the number of samples in the Sound. If you specify a value outside that range, you will get an error message.</dd>
+<dt><b>New value</b>
+<dd>the value that is to be put into the specified sample.</dd>
+</dl>
+<h2>Scripting</h2>
+<p>Example:</p>
+<code>   <a href="_selectObject_.html">selectObject</a>: "Sound hallo"<br></code>
+<code>   <b>Set value at sample number:</b> 100, 1/2<br></code>
+<p>This sets the value of the 100th sample to 0.5.</p>
+<hr>
+<address>
+	<p>© Paul Boersma 2014-04-21</p>
+</address>
+</body>
+</html>

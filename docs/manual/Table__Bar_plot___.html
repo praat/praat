@@ -1,0 +1,62 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Table: Bar plot...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Table: Bar plot...
+</b></font></table></table>
+<p>Draws a bar plot from data in one or more columns of the selected <a href="Table.html">Table</a>. In a bar plot the horizontal axis has nominal values (labels). </p>
+<h2>Settings</h2>
+<p align=middle><img height=564 width=540 src=Table__Bar_plot____1.png></p><dl>
+<dt><b>Vertical column(s)</b>
+<dd>you list the table columns that you want to represent in the bar plot. The number of selected columns is the group size.</dd>
+<dt><b>Vertical range</b>
+<dd>determine the lower and upper limit of the display.</dd>
+<dt><b>Column with labels</b>
+<dd>determines the column whose labels will be put at the bottom of the plot.</dd>
+<dt><b>Distance of first bar from border</b>
+<dd>determines how far the first (and last) bar wil be positioned from the borders (in units of the width of one bar).</dd>
+<dt><b>Distance between bar groups</b>
+<dd>determines how far groups of bars are from each other. </dd>
+<dt><b>Distance between bars within group</b>
+<dd>determines the distance between the bars within each group.</dd>
+<dt><b>Colours</b>
+<dd>determines the colours of the bars in a group.</dd>
+<dt><b>Label text angle (degrees)</b>
+<dd>determines the angle of the labels written below the plot. If you have very long label texts you can prevent the label texts from overlapping.</dd>
+</dl>
+<h2>Examples</h2>
+<p><a href="Keating___Esposito__2006_.html">Keating & Esposito (2006)</a> present a bar plot in their fig. 3 from which we estimate the following data table</p>
+<code>   Language        Modal  Breathy<br></code>
+<code>   Chong            -1.5    5<br></code>
+<code>   Fuzhou            2     10<br></code>
+<code>   Green Hmong       3     12<br></code>
+<code>   White Hmong       2     11<br></code>
+<code>   Mon              -1.5    0<br></code>
+<code>   SADV Zapotec     -6     -4<br></code>
+<code>   SLQ Zapotec       3.5   14<br></code>
+<code>   Tlacolula Zapotec 3     13<br></code>
+<code>   Tamang            1      1<br></code>
+<code>   !Xoo              1     14<br></code>
+<p>Given that we have these data in a Table with the three columns labeled "Language", "Modal" and "Breathy", respectively, we can first try to reproduce their figure 3 (a bar plot with both Modal and Breathy columns displayed) </p>
+<p>As you can see the labels in the first column are very long texts and they will surely overlap if plotted at the bottom of a plot. We therefore use a value of 15 degrees for the "Label text angle" parameter. This will make the label texts nonoverlapping. We cannot make this angle much larger, because then the label texts would run out of the viewport. </p>
+<p>The following script line will produce the picture below.</p>
+<code>   Bar plot: "Modal Breathy", -10, 20, "Language", 1.0, 1.0, 0.0, "0.9 0.5", 15.0, "yes"<br></code>
+<p align=middle><img height=300 width=500 src=Table__Bar_plot____2.png></p><p>The essentials of the bart plot in their paper are perfectly reproduced in the figure above. If you want the bars within a group to be placed somewhat more apart, say 0.2 times the bar width, you can set the "Distance between bars in a group" to a value of 0.2:</p>
+<code>   Bar plot: "Modal Breathy", -10, 20, "Language", 1.0, 1.0, 0.2, "0.9 0.5", 15.0, "yes"<br></code>
+<p align=middle><img height=300 width=500 src=Table__Bar_plot____3.png></p><p>Of course we can also work with colours and we can add vertical marks as the following scriptlet shows</p>
+<code>   Bar plot: "Modal Breathy", -10, 20, "Language", 1.0, 1.0, 0.0, "Green Red", 15.0, "yes"<br></code>
+<code>   Marks left every: 1, 5, 1, 1, 1<br></code>
+<code>   Text left: 1, "H__1_-H__2_ (dB)"<br></code>
+<p align=middle><img height=300 width=500 src=Table__Bar_plot____4.png></p><hr>
+<address>
+	<p>© djmw 20230901</p>
+</address>
+</body>
+</html>

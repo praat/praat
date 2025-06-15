@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>HTK parameter file format</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+HTK parameter file format
+</b></font></table></table>
+<p>HTK parameter format files consist of a contiguous sequence of frames preceded by a header. Each frame is a vector of either 2-byte integers or 4-byte floats. 2-byte integers are used for compressed forms and for vector quantised data. All multi-byte numbers are written as Big-endian numbers.</p>
+<p>The HTK file format header is 12 bytes long and contains the following data:</p>
+<dl>
+<dt>numberOfFrames (4-byte integer)
+<dd>The number of analysis frames in a file</dd>
+<dt>samplePeriod (4-byte integer)
+<dd>The sample period in units of 100 ns. A sampling frequency of 10 kHz would correspond to a sample period of 0.0001 s and to a value of 1000 in this field.</dd>
+<dt>frameSize (2-byte integer)
+<dd>The number of bytes per frame.</dd>
+<dt>parameterKind (2-byte integer)
+<dd>A code indication what kind of frames the file contains.</dd>
+</dl>
+<h2>Remarks</h2>
+<p>The HTK parameter files do not contain specific information that identifies them as HTK parameter files. However, the file type can be deduced as follows. If we have any file and interpret the first 12 bytes as the above format specifies then we know that the first three numbers read have to be positive integers, that frameSize has to an even number and that <i>numberOfFrames</i> * <i>frameSize</i> + 12 must be equal to the number of bytes in the file. The chance that a random data file fulfils these conditions is very small.</p>
+<h2>VTRFormants data in HTK parameter format</h2>
+<p>The VTRFormants data of <a href="Deng_et_al___2006_.html">Deng et al. (2006)</a> can serve as reference formant frequency values for (part of) the TIMIT acoustic phonetic corpus. These data are stored in HTK parameter files with extension ".fb". They can be download from <i>http://www.seas.ucla.edu/spapl/VTRFormants.html</i>.</p>
+<p>HTK parameter files do not contain timing information and therefore we can only calculate the domain of the Formant from external information. From the <b>Deng et al. (2006)</b> paper we assume that the data were taken every 10 ms and therefore the best guess for the duration of the Formant equals <i>numberOfFrames</i> * 0.01.The value in these files for the samplePeriod is 10000 which is a factor 10 off from the correct value of 1000 in units of 100 ns.</p>
+<hr>
+<address>
+	<p>© djmw 20210311</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Get frame number from time...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Get frame number from time...
+</b></font></table></table>
+<p>A command that becomes available in the <a href="Query_submenu.html">Query submenu</a> if you select a sound-analysis object that is a function of time and that is evenly sampled in time (<a href="Pitch.html">Pitch</a>, <a href="Formant.html">Formant</a>, <a href="Intensity.html">Intensity</a>, <a href="Harmonicity.html">Harmonicity</a>).</p>
+<p>The Info window will tell you the frame number belonging to the time that you specify. The result is presented as a real number.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Time (s)</b>
+<dd>the time (in seconds) for which you want to know the frame number.</dd>
+</dl>
+<h2>Example</h2>
+<p>If the Pitch object has a time step of 10 ms, and the first frame is centred around 18 ms, the frame number associated with a time of 0.1 seconds is 9.2.</p>
+<h2>Scripting</h2>
+<p>You can use this command to put the nearest frame centre into a script variable:</p>
+<code>   selectObject: "Pitch hallo"<br></code>
+<code>   frame = Get frame from time... 0.1<br></code>
+<code>   nearestFrame = round (frame)<br></code>
+<p>In this case, the value will not be written into the Info window. To round down or up, use</p>
+<code>   leftFrame = floor (frame)<br></code>
+<code>   rightFrame = ceiling (frame)<br></code>
+<h2>Algorithm</h2>
+<p>the result is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>1 + (<i>time</i> &#8211; <i>t</i><sub>1</sub>) / &#916;<i>t</i></table>
+<p>where <i>t</i><sub>1</sub> is the time associated with the centre of the first frame, and &#916;<i>t</i> is the time step.</p>
+<h2>Details for hackers</h2>
+<p>If you select one of the above objects and click <a href="Inspect.html">Inspect</a>, you can see how the relation between frame numbers and times is stored in the object: <i>t</i><sub>1</sub> is the <b>x1</b> attribute, and &#916;<i>t</i> is the <b>dx</b> attribute.</p>
+<hr>
+<address>
+	<p>© ppgb 20221202</p>
+</address>
+</body>
+</html>

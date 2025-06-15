@@ -1,0 +1,74 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sounds: Convolve...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sounds: Convolve...
+</b></font></table></table>
+<p>A command available in the <b>Combine</b> menu when you select two <a href="Sound.html">Sound</a> objects. This command convolves two selected <a href="Sound.html">Sound</a> objects with each other. As a result, a new Sound will appear in the list of objects; this new Sound is the <i>convolution</i> of the two original Sounds.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Amplitude scaling</b>
+<dd>Here you can choose between the &#8220;principled&#8221; options <b>integral</b>, <b>sum</b>, and <b>normalize</b>, which are explained in 1, 2 and 3 below. There is also a &#8220;pragmatic&#8221; option, namely <b>peak 0.99</b>, which scales the resulting sound in such a way that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it (see <a href="Sound__Scale_peak___.html">Sound: Scale peak...</a>).</dd>
+<dt><b>Signal outside time domain is...</b>
+<dd>Here you can choose whether outside their time domains the sounds are considered to be <b>zero</b> (the standard value), or <b>similar</b> to the sounds within the time domains. This is explained in 4 below.</dd>
+</dl>
+<h2>1. Convolution as an integral</h2>
+<p>The convolution <i>f</i>*<i>g</i> of two continuous time signals <i>f</i>(<i>t</i>) and <i>g</i>(<i>t</i>) is defined as the <b>integral</b></p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(<i>f</i>*<i>g</i>) (<i>t</i>) &#8801; &#8747; <i>f</i>(<i>&#964;</i>) <i>g</i>(<i>t</i>&#8722;<i>&#964;</i>) <i>d&#964;</i></table>
+<p>If <i>f</i> and <i>g</i> are sampled signals (as Sounds are in Praat), with the same <a href="sampling_period.html">sampling period</a> <i>&#916;t</i>, the definition is discretized as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(<i>f</i>*<i>g</i>) [<i>t</i>] &#8801; &#8721;<sub><i>&#964;</i></sub> <i>f</i>[<i>&#964;</i>] <i>g</i>[<i>t</i>&#8722;<i>&#964;</i>] <i>&#916;t</i></table>
+<p>where <i>&#964;</i> and <i>t</i>-<i>&#964;</i> are the discrete times at which <i>f</i> and <i>g</i> are defined, respectively.</p>
+<p>Convolution is a commutative operation, i.e. <i>g</i>*<i>f</i> equals <i>f</i>*<i>g</i>. This means that the order in which you put the two Sounds in the object list does not matter: you get the same result either way.</p>
+<h2>2. Convolution as a sum</h2>
+<p>You can see in the formula above that if both input Sounds are expressed in units of Pa, the resulting Sound should ideally be expressed in Pa<sup>2</sup>s. Nevertheless, Praat will express it in Pa, because Sounds cannot be expressed otherwise.</p>
+<p>This basically means that it is impossible to get the amplitude of the resulting Sound correct for all purposes. For this reason, Praat considers a different definition of convolution as well, namely as the <b>sum</b></p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(<i>f</i>*<i>g</i>) [<i>t</i>] &#8801; &#8721;<sub><i>&#964;</i></sub> <i>f</i>[<i>&#964;</i>] <i>g</i>[<i>t</i>&#8722;<i>&#964;</i>]</table>
+<p>The sum definition is appropriate if you want to filter a pulse train with a finite-impulse-response filter and expect the amplitudes of each resulting period to be equal to the amplitude of the filter. Thus, the pulse train</p>
+<code>   Create Sound from formula: "peaks", 1, 0.0, 0.6, 1000, ~ x * (col mod 100 = 0)<br></code>
+<code>   Draw: 0, 0, 0.0, 0.6, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=500 src=Sounds__Convolve____1.png></p><p>convolved with the &#8220;leaky integrator&#8221; filter</p>
+<code>   Create Sound from formula: "leak", 1, 0.0, 1.0, 1000, ~ exp (-x / 0.1)<br></code>
+<code>   Draw: 0, 0, 0.0, 1.0, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=500 src=Sounds__Convolve____2.png></p><p>yields the convolution</p>
+<code>   selectObject: "Sound peaks", "Sound leak"<br></code>
+<code>   Convolve: "sum", "zero"<br></code>
+<code>   Draw: 0, 0, 0.0, 0.8523, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=500 src=Sounds__Convolve____3.png></p><p>The difference between the integral and sum definitions is that in the sum definition the resulting sound is divided by <i>&#916;t</i>.</p>
+<h2>3. Normalized convolution</h2>
+<p>The <i>normalized convolution</i> is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(normalized <i>f</i>*<i>g</i>) (<i>t</i>) &#8801; &#8747; <i>f</i>(<i>&#964;</i>) <i>g</i>(<i>t</i>&#8722;<i>&#964;</i>) <i>d&#964;</i> / &#8730; (&#8747; <i>f</i><sup>2</sup>(<i>&#964;</i>) <i>d&#964;</i> &#8747; <i>g</i><sup>2</sup>(<i>&#964;</i>) <i>d&#964;</i>)</table>
+<h2>4. Shape scaling</h2>
+<p>The boundaries of the integral in 1 are &#8722;&#8734; and +&#8734;. However, <i>f</i> and <i>g</i> are Sound objects in Praat and therefore have finite time domains. If <i>f</i> runs from <i>t</i><sub>1</sub> to <i>t</i><sub>2</sub> and is assumed to be <b>zero</b> before <i>t</i><sub>1</sub> and after <i>t</i><sub>2</sub>, and <i>g</i> runs from <i>t</i><sub>3</sub> to <i>t</i><sub>4</sub> and is assumed to be zero outside that domain, then the convolution will be zero before <i>t</i><sub>1</sub>+<i>t</i><sub>3</sub> and after <i>t</i><sub>2</sub>+<i>t</i><sub>4</sub>, while between <i>t</i><sub>1</sub>+<i>t</i><sub>3</sub> and <i>t</i><sub>2</sub>+<i>t</i><sub>4</sub> it is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(<i>f</i>*<i>g</i>) (<i>t</i>) = &#8747;<sub><i>t1</i></sub><sup><i>t2</i></sup> <i>f</i>(<i>&#964;</i>) <i>g</i>(<i>t</i>&#8722;<i>&#964;</i>) <i>d&#964;</i></table>
+<p>In this formula, the argument of <i>f</i> runs from <i>t</i><sub>1</sub> to <i>t</i><sub>2</sub>, but the argument of <i>g</i> runs from (<i>t</i><sub>1</sub>+<i>t</i><sub>3</sub>)&#8722;<i>t</i><sub>2</sub> to (<i>t</i><sub>2</sub>+<i>t</i><sub>4</sub>)&#8722;<i>t</i><sub>1</sub>, i.e. from <i>t</i><sub>3</sub>&#8722;(<i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub>) to <i>t</i><sub>4</sub>+(<i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub>). This means that the integration is performed over two equal stretches of time during which <i>g</i> must be taken zero, namely a time stretch before <i>t</i><sub>3</sub> and a time stretch after <i>t</i><sub>4</sub>, both of duration <i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub> (equivalent equations can be formulated that rely on two stretches of <i>t</i><sub>4</sub>&#8722;<i>t</i><sub>3</sub> of zeroes in <i>f</i> rather than in <i>g</i>, or on a stretch of <i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub> of zeroes in <i>g</i> and a stretch of <i>t</i><sub>4</sub>&#8722;<i>t</i><sub>3</sub> of zeroes in <i>f</i>.</p>
+<p>If you consider the sounds outside their time domains as <b>similar</b> to what they are within their time domains, instead of <b>zero</b>, the discretized formula in 1 should be based on the average over the jointly defined values of <i>f</i>[<i>&#964;</i>] and <i>g</i>[<i>t</i>&#8722;<i>&#964;</i>], without counting any multiplications of values outside the time domains. Suppose that <i>f</i> is defined on the time domain [0, 1.2] with the value of 1 everywhere, and <i>g</i> is defined on the time domain [0, 3] with the value 1 everywhere. Their convolution under the assumption that they are <b>zero</b> elsewhere is then</p>
+<p align=middle><img height=300 width=500 src=Sounds__Convolve____4.png></p><p>but under the assumption that the sounds are <b>similar</b> (i.e. 1) elsewhere, their convolution should be</p>
+<p align=middle><img height=300 width=500 src=Sounds__Convolve____5.png></p><p>i.e. a constant value of 1.2. This is what you get by choosing the <b>similar</b> option; if <i>f</i> is shorter than <i>g</i>, the first and last parts of the convolution will be divided by a straight line of duration <i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub> to compensate for the fact that the convolution has been computed over fewer values of <i>f</i> and <i>g</i> there.</p>
+<h2>5. Behaviour</h2>
+<p>The start time of the resulting Sound will be the sum of the start times of the original Sounds, the end time of the resulting Sound will be the sum of the end times of the original Sounds, the time of the first sample of the resulting Sound will be the sum of the first samples of the original Sounds, the time of the last sample of the resulting Sound will be the sum of the last samples of the original Sounds, and the number of samples in the resulting Sound will be the sum of the numbers of samples of the original Sounds minus 1.</p>
+<h2>6. Behaviour for stereo and other multi-channel sounds</h2>
+<p>You can convolve e.g. a 10-channel sound either with another 10-channel sound or with a 1-channel (mono) sound.</p>
+<p>If both Sounds have more than one channel, the two Sounds have to have the same number of channels; each channel of the resulting Sound is then computed as the convolution of the corresponding channels of the original Sounds. For instance, if you convolve two 10-channel sounds, the resulting sound will have 10 channels, and its 9th channel will be the convolution of the 9th channels of the two original sounds.</p>
+<p>If one of the original Sounds has multiple channels and the other Sound has only one channel, the resulting Sound will have multiple channels; each of these is computed as the convolution of the corresponding channel of the multiple-channel original and the single channel of the single-channel original. For instance, if you convolve a 10-channel sound with a mono sound, the resulting sound will have 10 channels, and its 9th channel will be the convolution of the mono sound with the 9th channel of the original 10-channel sound.</p>
+<p>The amplitude scaling factor will be the same for all channels, so that the relative amplitude of the channels will be preserved in the resulting sound. For the <b>normalize</b> scaling, for instance, the norm of <i>f</i> in the formula above is taken over all channels of <i>f</i>. For the <b>peak 0.99</b> scaling, the resulting sound will typically have an absolute peak of 0.99 in only one channel, and lower absolute peaks in the other channels.</p>
+<h2>7. Algorithm</h2>
+<p>The computation makes use of the fact that convolution in the time domain corresponds to multiplication in the frequency domain: we first pad <i>f</i> with a stretch of <i>t</i><sub>4</sub>&#8722;<i>t</i><sub>3</sub> of zeroes and <i>g</i> with a stretch of <i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub> of zeroes (see 4 above), so that both sounds obtain a duration of (<i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub>)+(<i>t</i><sub>4</sub>&#8722;<i>t</i><sub>3</sub>); we then calculate the spectra of the two zero-padded sounds by Fourier transformation, then multiply the two spectra with each other, and finally Fourier-transform the result of this multiplication back to the time domain; the result will again have a duration of (<i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub>)+(<i>t</i><sub>4</sub>&#8722;<i>t</i><sub>3</sub>).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Filtering.html">Filtering</a>
+<li><a href="Source-filter_synthesis_4__Using_existing_sounds.html">Source-filter synthesis 4. Using existing sounds</a>
+<li><a href="What_was_new_in_5_2_.html">What was new in 5.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma & David Weenink 2010-04-04,2024</p>
+</address>
+</body>
+</html>

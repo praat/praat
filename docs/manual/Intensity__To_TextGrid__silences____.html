@@ -1,0 +1,43 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intensity: To TextGrid (silences)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intensity: To TextGrid (silences)...
+</b></font></table></table>
+<p>A command that creates a <a href="TextGrid.html">TextGrid</a> in which the silent and sounding intervals of the selected <a href="Intensity.html">Intensity</a> are marked.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Silence threshold (dB)</b>
+<dd>determines the maximum silence intensity value in dB with respect to the maximum intensity. For example, if <i>imax</i> is the maximum intensity in dB then the maximum silence intensity is calculated as <i>imax - silenceThreshold</i>; intervals with an intensity smaller than this value are considered as silent intervals.</dd>
+<dt><b>Minimum silent interval (s)</b>
+<dd>determines the minimum duration for an interval to be considered as silent. If you don't want the closure for a plosive to count as silent then use a large enough value.</dd>
+<dt><b>Minimum sounding interval (s)</b>
+<dd>determines the minimum duration for an interval to be <b>not</b> considered as silent. This offers the possibility to filter out small intense bursts of relatively short duration.</dd>
+<dt><b>Silent interval label</b>
+<dd>determines the label for a silent interval in the TextGrid.</dd>
+<dt><b>Sounding interval label</b>
+<dd>determines the label for a sounding interval in the TextGrid.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>First the intensity contour is evaluated and the intervals above and below the silence threshold are marked as <i>sounding</i> and <i>silent</i>. We then remove sounding intervals with a duration smaller than the <i>Minimum sounding interval duration</i>. This step is followed by joining the neighbouring silent intervals that resulted because of this removal. Finally we remove silent intervals with a duration smaller than the <i>Minimum silent interval duration</i>. This is followed by joining the neighbouring sounding intervals that resulted because of this removal.</p>
+<p>Experience showed that first removing short intensity bursts instead of short silences gave better results than doing it the other way around.</p>
+<h2>Important</h2>
+<p>The effectiveness of the <i>Minimum silent interval duration</i> and <i>Minimum sounding interval duration</i> depends on the effective window length that was used to determine the intensity contour. For example, if you have chosen 100 Hz for the &#8220;Pitch floor&#8221; parameter in the <a href="Sound__To_Intensity___.html">Sound: To Intensity...</a> analysis, the effective window length was 32 ms. Don't expect to find sounding or silent intervals with a duration smaller than this effective window length.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound__To_TextGrid__silences____.html">Sound: To TextGrid (silences)...</a>
+<li><a href="Sound__Trim_silences___.html">Sound: Trim silences...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20061201</p>
+</address>
+</body>
+</html>

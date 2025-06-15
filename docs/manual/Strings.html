@@ -1,0 +1,62 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Strings</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Strings
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. Represents an ordered list of strings.</p>
+<h2>Creation</h2>
+<p>The difficult way is to create a <b>Strings</b> object from a generic Praat text file (if there are non-ASCII symbols, use UTF-8 or UTF-16 format):</p>
+<code>   "ooTextFile"<br></code>
+<code>   "Strings"<br></code>
+<code>   5 ! number of strings<br></code>
+<code>   "Hello"<br></code>
+<code>   "Goodbye"<br></code>
+<code>   "Auf wiedersehen"<br></code>
+<code>   "Tschüss"<br></code>
+<code>   "Arrivederci"<br></code>
+<p>In this example, we see that a double quote within a string should be written twice; the fourth string will therefore be read as <b>Tsch&#252;ss</b>. This file can be read simply with the generic <a href="Read_from_file___.html">Read from file...</a> command from the <b>Open</b> menu.</p>
+<p>An easier way is to use the special command <a href="Read_Strings_from_raw_text_file___.html">Read Strings from raw text file...</a>. The file can then simply look like this:</p>
+<code>   Hello<br></code>
+<code>   Goodbye<br></code>
+<code>   Auf wiedersehen<br></code>
+<code>   Tschüss<br></code>
+<code>   Arrivederci<br></code>
+<p>You can also create a <b>Strings</b> object from a folder listing or from some other objects:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_Strings_as_file_list___.html">Create Strings as file list...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Distributions__To_Strings___.html">Distributions: To Strings...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="OTGrammar__Generate_inputs___.html">OTGrammar: Generate inputs...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="OTGrammar___Strings__Inputs_to_outputs___.html">OTGrammar & Strings: Inputs to outputs...</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_Strings_as_folder_list___.html">Create Strings as folder list...</a>
+<li><a href="Create_Strings_from_tokens___.html">Create Strings from tokens...</a>
+<li><a href="Index__To_Permutation___.html">Index: To Permutation...</a>
+<li><a href="OT_learning_2_9__Output_distributions.html">OT learning 2.9. Output distributions</a>
+<li><a href="OT_learning_3_1__Data_from_a_pair_distribution.html">OT learning 3.1. Data from a pair distribution</a>
+<li><a href="OT_learning_3_2__Data_from_another_grammar.html">OT learning 3.2. Data from another grammar</a>
+<li><a href="OT_learning_4__Learning_an_ordinal_grammar.html">OT learning 4. Learning an ordinal grammar</a>
+<li><a href="OT_learning_5__Learning_a_stochastic_grammar.html">OT learning 5. Learning a stochastic grammar</a>
+<li><a href="OT_learning_7__Learning_from_overt_forms.html">OT learning 7. Learning from overt forms</a>
+<li><a href="PairDistribution__To_Stringses___.html">PairDistribution: To Stringses...</a>
+<li><a href="Strings___Permutation__Permute_strings.html">Strings & Permutation: Permute strings</a>
+<li><a href="Strings__To_Distributions.html">Strings: To Distributions</a>
+<li><a href="Strings__To_Index.html">Strings: To Index</a>
+<li><a href="Strings__To_Permutation___.html">Strings: To Permutation...</a>
+<li><a href="WordList.html">WordList</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20201226</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: LPC analysis</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: LPC analysis
+</b></font></table></table>
+<p>You can perform this analysis by selecting one or more <a href="Sound.html">Sound</a> objects and choosing the appropriate command to generate an <a href="LPC.html">LPC</a>.</p>
+<p>The acronym LPC stands for Linear Predictive Coding.</p>
+<p>In the LPC analysis one tries to predict <i>x</i><sub><i>n</i></sub> on the basis of the <i>p</i> previous samples,</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>x</i>&#8242;<sub><i>n</i></sub> = &#8721; <i>a</i><sub><i>k</i></sub> <i>x</i><sub><i>n-k</i></sub></table>
+<p>then {<i>a</i><sub>1</sub>, <i>a</i><sub>2</sub>, ..., <i>a</i><sub><i>p</i></sub>} can be chosen to minimize the prediction power <i>Q<sub>p</sub></i> where</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>Q<sub>p</sub></i> = E [ |<i>x</i><sub><i>n</i></sub> - <i>x</i>&#8242;<sub><i>n</i></sub>|<sup>2</sup>].</table>
+<p>Several different algorithms exist for minimizing <i>Q<sub>p</sub></i>:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_LPC__autocorrelation____.html">To LPC (autocorrelation)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_LPC__covariance____.html">To LPC (covariance)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_LPC__burg____.html">To LPC (burg)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_LPC__marple____.html">To LPC (marple)...</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Source-filter_synthesis_4__Using_existing_sounds.html">Source-filter synthesis 4. Using existing sounds</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 19970126</p>
+</address>
+</body>
+</html>

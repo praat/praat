@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Get absolute extremum...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Get absolute extremum...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="Sound.html">Sound</a> object.</p>
+<h2>Return value</h2>
+<p>the absolute extremum (in Pascal) within a specified time window.</p>
+<h2>Settings</h2>
+<dl>
+<dt><i>Time range</i> (s)
+<dd>the time range (<i>t</i><sub>1</sub>, <i>t</i><sub>2</sub>). Values outside this range are ignored. If <i>t</i><sub>1</sub> is not less than <i>t</i><sub>2</sub>, the entire time domain of the sound is considered.</dd>
+<dt><i>Interpolation</i>
+<dd>the interpolation method (None, Parabolic, Sinc) of the <a href="vector_peak_interpolation.html">vector peak interpolation</a>. The standard is Sinc70 because a Sound object is normally a sampled band-limited signal, which can be seen as a sum of sinc functions.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="energy_integration_continuity_test.html">energy integration continuity test</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2004-07-11</p>
+</address>
+</body>
+</html>

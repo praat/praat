@@ -1,0 +1,75 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Table: Line graph...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Table: Line graph...
+</b></font></table></table>
+<p>Draws a line graph from the data in a column of the selected <a href="Table.html">Table</a>. In a line plot, the horizontal axis can have a nominal scale or a numeric scale. The data points are connected by line segments.</p>
+<h2>Settings</h2>
+<p align=middle><img height=484 width=540 src=Table__Line_graph____1.png></p><dl>
+<dt><b>Vertical column</b>
+<dd>The column whose data points you want to plot.</dd>
+<dt><b>Vertical range</b>
+<dd>determine the lower and upper limits of the plot.</dd>
+<dt><b>Horizontal column</b>
+<dd>determines the horizontal scale. If you leave it empty, or if the (selected part of the) selected column contains nominal values, i.e. the values are not numeric but text, the horizontal distance between the data points will be constant (i.e. 1) and the nominal values (texts) will be put as labels at the bottom of the horizontal axis. On the other hand, if this column contains only numerical values, the horizontal position of the data points will be determined by the values in this column.</dd>
+<dt><b>Horizontal range</b>
+<dd>determines the left and right limit of the plot.</dd>
+<dt><b>Text</b>
+<dd>The text to put at the position of the data point in the plot.</dd>
+<dt><b>Text font size</b>
+<dd>defines the size of the text.</dd>
+<dt><b>Label text angle (degrees)</b>
+<dd>determines the angle of the labels written <i>below</i> the plot. If you have very long label texts in the "Horizontal column", you can prevent the label texts from overlapping. This only has effect for a horizontal column with nominal values.</dd>
+</dl>
+<h2>Examples</h2>
+<p>The following table was estimated from fig. 3 in <a href="Ganong__1980_.html">Ganong (1980)</a> and represents the fraction /d/ responses as a function of a voice onset time (VOT) continuum. The second column shows the responses in a word - nonword continuum, while the third column shows the responses to a nonword - word continuum.</p>
+<code>   VOT dash-tash dask-task<br></code>
+<code>   -17.5   0.98      0.92<br></code>
+<code>    -7.5   0.95      0.83<br></code>
+<code>    -2.5   0.71      0.33<br></code>
+<code>     2.5   0.29      0.10<br></code>
+<code>     7.5   0.12      0.02<br></code>
+<code>    17.5   0.10      0.02<br></code>
+<p>We can reproduce fig. 3 from Ganong (1980) with the following script, where we labeled the word - nonword curve with "wn" and the nonword - word curve with "nw". We deselect "Garnish" because we want to put special marks at the bottom.</p>
+<code>   Font size: 10
+<br></code>
+<code>   Dotted line
+<br></code>
+<code>   Line graph: "dash-tash", 0, 1, "VOT", -20, 20, "wn", 12, 0, "no"<br></code>
+<code>   Dashed line
+<br></code>
+<code>   Line graph: "dask-task", 0, 1, "VOT", -20, 20, "nw", 12, 0, "no"<br></code>
+<code>   Draw inner box<br></code>
+<code>   One mark bottom: 2.5, "no", "yes", "no", "+2.5"<br></code>
+<code>   One mark bottom: -2.5, "yes", "yes", "no", ""<br></code>
+<code>   One mark bottom: -7.5, "yes", "yes", "no", ""<br></code>
+<code>   One mark bottom: 7.5, "no", "yes", "no", "+7.5"<br></code>
+<code>   One mark bottom: 2.5, "no", "no", "no", "+2.5"<br></code>
+<code>   One mark bottom: -20, "no", "no", "no", "Short VOT"<br></code>
+<code>   One mark bottom: 20, "no", "no", "no", "Long VOT"<br></code>
+<code>   Text bottom: 1, "VOT (ms)"<br></code>
+<code>   Marks left every: 1, 0.2, "yes", "yes", "no"<br></code>
+<code>   Text left: 1, "Prop. of voiced responses"<br></code>
+<p align=middle><img height=300 width=500 src=Table__Line_graph____2.png></p><p>As an example of what happens if you don't supply an argument for the "Horizontal column" we will use the same table as for the previous plot. However the resulting plot may not be as meaningful (note that the horizontal nominal scale makes all points equidistant in the horizontal direction.)</p>
+<code>   Dotted line
+<br></code>
+<code>   Line graph: "dash-tash", 0, 1, "", 0, 0, "wn", 12,  0, "yes"<br></code>
+<code>   One mark bottom: 1, "no", "yes", "no", "Short VOT"<br></code>
+<p align=middle><img height=300 width=500 src=Table__Line_graph____3.png></p><h3>Links to this page</h3>
+<ul>
+<li><a href="Table__Line_graph_where___.html">Table: Line graph where...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20231207</p>
+</address>
+</body>
+</html>

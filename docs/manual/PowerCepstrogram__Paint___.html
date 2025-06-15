@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PowerCepstrogram: Paint...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PowerCepstrogram: Paint...
+</b></font></table></table>
+<p>A command to draw the selected <a href="PowerCepstrogram.html">PowerCepstrogram</a> object(s) in shades of grey.</p>
+<h2>Settings</h2>
+<p align=middle><img height=420 width=500 src=PowerCepstrogram__Paint____1.png></p><dl>
+<dt><b>Time range (s)</b>
+<dd>the time domain along the <i>x</i> axis.</dd>
+<dt><b>Quefrency range (s)</b>
+<dd>the quefency domain along the <i>y</i> axis.</dd>
+<dt><b>Maximum (dB)</b>
+<dd>cells that have cepstral values greater or equal than this value are drawn in black.</dd>
+<dt><b>Autoscaling</b>
+<dd>If <i>on</i>, overrules the effects of the previous option and the following three options. I.e. the global maximum and the global minimum cepstral values determine the maximum blackness and the minimal blackness. Values in-between have apropriate values of grey.</dd>
+<dt><b>Dynamic range (dB)</b>
+<dd>All values more than <i>Dynamic range</i> below the maximum will be drawn in white. Values in-between have apropriate values of grey.</dd>
+<dt><b>Dynamic compression (0-1)</b>
+<dd>determines how much stronger weak frames should be made before drawing. Normally this parameter is between 0 and 1. If it is 0, no dynamic compression will take place. If it is 1, all time frames (vertical bands) will contain cepstral values that are drawn in black. If the global <i>maximum</i> is set at 80 dB, <i>autoscaling</i> is off, <i>dynamic range</i> is 30 dB and <i>dynamic compression</i> is 0.4 then for a frame with a local maximum of 40 dB all values will be lifted by 0.4*(80-40)=16 dB, so that its maximum will be seen at 56 dB (thus making the corresponding cell visible).</dd>
+<dt><b>Garnish</b>
+<dd>Draws a box around the cepstrogram and labels the axes.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20131001</p>
+</address>
+</body>
+</html>

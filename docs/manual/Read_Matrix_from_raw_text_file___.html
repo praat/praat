@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Read Matrix from raw text file...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Read Matrix from raw text file...
+</b></font></table></table>
+<p>A command to read a <a href="Matrix.html">Matrix</a> object from a file on disk.</p>
+<h2>File format</h2>
+<p>The file should contain each row of the matrix on a separate line. Within each row, the elements must be separated by spaces or tabs.</p>
+<p>For instance, the following text file will be read as a Matrix with three rows and four columns:</p>
+<code>   0.19 3 245 123<br></code>
+<code>   18e-6 -3e18 0 0.0<br></code>
+<code>   1.5 2.5 3.5 4.5<br></code>
+<p>The resulting Matrix will have the same domain and sampling as Matrices created with <b>Create simple Matrix...</b>. In the above example, this means that the Matrix will have <i>x</i><sub><i>min</i></sub> = 0.5, <i>x</i><sub><i>max</i></sub> = 4.5, <i>n</i><sub><i>x</i></sub> = 4, <i>dx</i> = 1.0, <i>x</i><sub>1</sub> = 1.0, <i>y</i><sub><i>min</i></sub> = 0.5, <i>y</i><sub><i>max</i></sub> = 3.5, <i>n</i><sub><i>y</i></sub> = 3, <i>dy</i> = 1.0, <i>y</i><sub>1</sub> = 1.0.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="RealTier.html">RealTier</a>
+<li><a href="TableOfReal.html">TableOfReal</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 19980322</p>
+</address>
+</body>
+</html>

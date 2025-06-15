@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Fade out...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Fade out...
+</b></font></table></table>
+<p>A command to gradually decrease the amplitude of a selected <a href="Sound.html">Sound</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Channel</b>
+<dd>determines whether you want to fade all channels or only a selected channel.</dd>
+<dt><b>Time (s)</b>
+<dd>determines where the fade-out will take place. If <i>time</i> is later than the end time of the sound, the end time of the sound wil be used.</dd>
+<dt><b>Fade time (s)</b>
+<dd>determines the start point and the endpoint of the fade-out with respect to the <i>time</i> argument. Depending on the sign of <i>fadeTime</i>, <i>time</i> is either the start or the end position of the fade-out. If <i>fadeTime</i> is positive, fade-out will take place between <i>time</i> and <i>time+fadeTime</i>. If <i>fadeTime</i> is negative, fade-out wil take place between <i>time+fadeTime</i> and <i>time</i>.</dd>
+<dt><b>Silent to end</b>
+<dd>Make the sound silent after the fade-out finishes. </dd>
+</dl>
+<h2>Algorithm</h2>
+<p>Multiplication with the first half period of a (1+cos(<i>x</i>))/2 function.</p>
+<hr>
+<address>
+	<p>© djmw 20121010</p>
+</address>
+</body>
+</html>

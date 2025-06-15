@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Script for listing F0 statistics</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Script for listing F0 statistics
+</b></font></table></table>
+<p>"I need to split the wave into 50 msec sections, and then for each of those sections get the F0 statistics. That is, for each 50 msec section of speech I want to get the average F0, min, max, and standard deviation."</p>
+<p>First you create the complete pitch contour, i.e., you select the Sound and choose <a href="Sound__To_Pitch___.html">To Pitch...</a>. You can then use the commands from the <a href="Query_submenu.html">Query submenu</a> in a loop:</p>
+<code>   startTime = Get start time<br></code>
+<code>   endTime = Get end time<br></code>
+<code>   numberOfTimeSteps = (endTime - startTime) / 0.05<br></code>
+<code>   writeInfoLine: "   tmin     tmax    mean   fmin   fmax  stdev"<br></code>
+<code>   for step to numberOfTimeSteps<br></code>
+<code>      tmin = startTime + (step - 1) * 0.05<br></code>
+<code>      tmax = tmin + 0.05<br></code>
+<code>      mean = Get mean: tmin, tmax, "Hertz"<br></code>
+<code>      minimum = Get minimum: tmin, tmax, "Hertz", "Parabolic"<br></code>
+<code>      maximum = Get maximum: tmin, tmax, "Hertz", "Parabolic"<br></code>
+<code>      stdev = Get standard deviation: tmin, tmax, "Hertz"<br></code>
+<code>      appendInfoLine: fixed$ (tmin, 6), " ", fixed$ (tmax, 6), " ", fixed$ (mean, 2),<br></code>
+<code>      ... " ", fixed$ (minimum, 2), " ", fixed$ (maximum, 2), " ", fixed$ (stdev, 2)<br></code>
+<code>   endfor<br></code>
+<h2>Notes</h2>
+<p>One should not cut the sound up into pieces of 50 ms and then do <b>To Pitch...</b> on each of them, because Praat will not compute F0 values in the first or last 20 ms (or so) of each piece. This is because the analysis requires a window of 40 ms (or so) for every pitch frame. Instead, one typically does the analysis on the whole sound, then queries the resulting large Pitch object. In that way, the information loss of windowing only affects the two 20 ms edges of the whole sound.</p>
+<p>The example writes lines to the <b>Info</b> window. If you want to write to a file instead, you start with something like</p>
+<code>      deleteFile: "~/results/out.txt"<br></code>
+<p>and add lines in the following way:</p>
+<code>      appendFileLine: "~/results/out.txt ", fixed$ (tmin, 6), " ", fixed$ (tmax, 6), " ",<br></code>
+<code>      ... fixed$ (mean, 2), " ", fixed$ (minimum, 2), " ", fixed$ (maximum, 2), " ",<br></code>
+<code>      ... fixed$ (stdev, 2)<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting_examples.html">Scripting examples</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20221202</p>
+</address>
+</body>
+</html>

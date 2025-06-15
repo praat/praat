@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>CrossCorrelationTableList: Create test set...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+CrossCorrelationTableList: Create test set...
+</b></font></table></table>
+<p>Create a collection of <a href="CrossCorrelationTable.html">CrossCorrelationTable</a>s that are all derived from different diagonal matrices by the same transformation matrix.</p>
+<h2>Settings</h2>
+<p align=middle><img height=300 width=540 src=CrossCorrelationTableList__Create_test_set____1.png></p><dl>
+<dt><b>Matrix dimension</b>
+<dd>determines the size of the square matrix with cross-correlations.</dd>
+<dt><b>Number of matrices</b>
+<dd>determines the number of matrices that have to be generated.</dd>
+<dt><b>First is positive-definite</b>
+<dd>guarantees that the first matrix of the series is positive definite.</dd>
+<dt><b>Sigma</b>
+<dd>the standard deviation of the noise that is added to each transformation matrix element. A value of zero makes all the cross-correlation matrices jointly diagonalizable. A value greater than zero makes each transformation matrix a little different and the collection not jointly diagonalizable anymore.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>All the CrossCorrelationTable matrices are generated as <b><i>V</i></b>&#8242; <b><i>D</i></b><sub><i>k</i></sub> <b><i>V</i></b>, where <b><i>D</i></b><sub><i>k</i></sub> is a diagonal matrix with entries randomly chosen from the [-1,1] interval. The matrix <b><i>V</i></b> is a "random" orthogonal matrix obtained from the singular value decomposition of a matrix <b><i>M</i></b> = <b><i>U</i></b> <b><i>D</i></b> <b><i>V</i></b>&#8242;, where the cells of the matrix <b><i>M</i></b> are random Gaussian numbers with mean 0 and standard deviation 1.</p>
+<p>If the first matrix has to be positive definite, the numbers on the diagonal of <b><i>D</i></b><sub>1</sub> are randomly chosen from the [0.1,1] interval.</p>
+<hr>
+<address>
+	<p>© djmw 20230801</p>
+</address>
+</body>
+</html>

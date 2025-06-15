@@ -1,0 +1,44 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Insert picture from file...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Insert picture from file...
+</b></font></table></table>
+<p>A command in the <b>World</b> menu of the <a href="Picture_window.html">Picture window</a>.</p>
+<h2>Purpose</h2>
+<p>To draw a picture file (PNG; on Mac and Windows also JPEG or TIFF; other picture formats may also work) into the Picture window (or into the Demo window).</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>File name</b>
+<dd>the name of the picture file. If you use this command in a script, you can use a relative path name such as <code><font size=+1>pictures/myface.png</font></code> or <code><font size=+1>~/Desktop/hello.png</font></code>.</dd>
+<dt><b>From x</b>
+<dt><b>To x</b>
+<dd>The horizontal location (in world coordinates) where the picture will appear. Use the <a href="Axes___.html">Axes...</a> command to set world coordinates if they have not been set implicitly by an earlier <b>Draw</b> or <b>Paint</b> command. If you set <b>From x</b> and <b>To x</b> to the same value, the picture will be horizontally centred around this <i>x</i> value and obtain a width that preserves the aspect ratio (width-to-height ratio) of the original picture.</dd>
+<dt><b>From y</b>
+<dt><b>To y</b>
+<dd>The vertical location (in world coordinates) where the picture will appear. Use the <a href="Axes___.html">Axes...</a> command to set world coordinates if they have not been set implicitly by an earlier <b>Draw</b> or <b>Paint</b> command. If you set <b>From y</b> and <b>To y</b> to the same value, the picture will be vertically centred around this <i>y</i> value and obtain a height that preserves the aspect ratio (width-to-height ratio) of the original picture.</dd>
+</dl>
+<h2>Behaviour</h2>
+<p>From the description above, you see that if <b>From x</b> is unequal to <b>To x</b> and <b>From y</b> is unequal to <b>To y</b>, the picture will probably obtain an aspect ratio different from the original picture. To preserve the aspect ratio, either make <b>To x</b> equal to <b>From x</b> or make <b>To y</b> equal to <b>From y</b>.</p>
+<p>To show the picture on the same number of pixels as the original, make <b>To x</b> equal to <b>From x</b> and <b>To y</b> equal to <b>From y</b>. Praat will then show the picture with the original width and height (in pixels), centred around the given <i>x</i> and <i>y</i> values.</p>
+<h2>Usage</h2>
+<p>You will usually use this in a script, and often in a script that runs the <a href="Demo_window.html">Demo window</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_5_2_.html">What was new in 5.2?</a>
+<li><a href="What_was_new_in_5_3_.html">What was new in 5.3?</a>
+<li><a href="What_was_new_in_5_4_.html">What was new in 5.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140608</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Matrix: Solve equation...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Matrix: Solve equation...
+</b></font></table></table>
+<p>Solve the general matrix equation <b>A</b> <b>x</b> = <b>b</b> for <b>x</b>.</p>
+<p>The matrix <b>A</b> can be any general <i>m</i> &#215; <i>n</i> matrix, <b>b</b> is a <i>m</i>-dimensional and <b>x</b> a <i>n</i>-dimensional vector. The <a href="Matrix.html">Matrix</a> contains <b>A</b> as its first <i>n</i> columns and <b>b</b> as its last column. The <i>n</i>-dimensional solution is returned as a <b>Matrix</b> with <i>n</i> columns.</p>
+<p>When the number of equations (<i>m</i>) is <i>greater</i> than the number of unknowns (<i>n</i>) the algorithm gives the best least-squares solution. If on the contrary you have <i>fewer</i> equations than unknowns the solution will not be unique.</p>
+<h2>Method</h2>
+<p>Singular value decomposition with backsubstitution. Zero will be substituted for eigenvalues smaller than <i>tolerance</i> &#183; <i>maximumEigenvalue</i> (when the user-supplied <i>tolerance</i> equals 0.0 a value of 2.2 &#183; 10<sup>-16</sup> &#183; <i>numberOfUnknowns</i> will be used as <i>tolerance</i>).</p>
+<p>See for more details: <a href="Golub___van_Loan__1996_.html">Golub & van Loan (1996)</a> chapters 2 and 3.</p>
+<hr>
+<address>
+	<p>© djmw 19961006</p>
+</address>
+</body>
+</html>

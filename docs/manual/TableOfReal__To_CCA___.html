@@ -1,0 +1,55 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: To CCA...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: To CCA...
+</b></font></table></table>
+<p>A command that creates a <a href="CCA.html">CCA</a> object from the selected <a href="TableOfReal.html">TableOfReal</a> object.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Dimension of dependent variate (ny)</b>
+<dd>defines the partition of the table into the two parts whose correlations will be determined. The first <i>ny</i> columns should be the dependent part, the rest of the columns will be interpreted as the independent part (<i>nx</i> columns). In general <i>nx</i> should be larger than or equal to <i>ny</i>.</dd>
+</dl>
+<h2>Behaviour</h2>
+<p>Calculates canonical correlations between the <i>dependent</i> and the <i>independent</i> parts of the table. The corresponding canonical coefficients are also determined.</p>
+<h2>Algorithm</h2>
+<p>The canonical correlation equations for two data sets <b>T</b><sub><i>y</i></sub> [<i>n</i> &#215; <i>p</i>] and <b>T</b><sub><i>x</i></sub> [n &#215; <i>q</i>] are:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(1)    (<b>S</b><sub><i>yx</i></sub> <b>S</b><sub><i>xx</i></sub><sup>-1</sup> <b>S</b><sub><i>yx</i></sub>&#8242; -&#955; <b>S</b><sub><i>yy</i></sub>)<b>y</b> = <b>0</b></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(2)    (<b>S</b><sub><i>yx</i></sub>&#8242; <b>S</b><sub><i>yy</i></sub><sup>-1</sup> <b>S</b><sub><i>yx</i></sub> -&#955; <b>S</b><sub><i>xx</i></sub>)<b>x</b> = <b>0</b></table>
+<p>where <b>S</b><sub><i>yy</i></sub> [<i>p</i> &#215; <i>p</i>] and <b>S</b><sub><i>xx</i></sub> [<i>q</i> &#215; <i>q</i>] are the covariance matrices of data sets <b>T</b><sub><i>y</i></sub> and  <b>T</b><sub><i>x</i></sub>, respectively, <b>S</b><sub><i>yx</i></sub> [<i>p</i> &#215; <i>q</i>] is the matrix of covariances between data sets <b>T</b><sub><i>y</i></sub> and <b>T</b><sub><i>x</i></sub>, and the vectors <b>y</b> and <b>x</b> are the <i>canonical weights</i> or the <i>canonical function coefficients</i> for the dependent and the independent data, respectively. In terms of the (dependent) data set <b>T</b><sub><i>y</i></sub> and the (independent) data set <b>T</b><sub><i>x</i></sub>, these covariances can be written as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>S</b><sub><i>yy</i></sub> =  <b>T</b><sub><i>y</i></sub>&#8242; <b>T</b><sub><i>y</i></sub>,  <b>S</b><sub><i>yx</i></sub> = <b>T</b><sub><i>y</i></sub>&#8242; <b>T</b><sub><i>x</i></sub> and <b>S</b><sub><i>xx</i></sub> =  <b>T</b><sub><i>x</i></sub>&#8242; <b>T</b><sub><i>x</i></sub>.</table>
+<p>The following <a href="singular_value_decomposition.html">singular value decomposition</a>s </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>T</b><sub><i>y</i></sub> = <b>U</b><sub><i>y</i></sub> <b>D</b><sub><i>y</i></sub> <b>V</b><sub><i>y</i></sub>&#8242; and <b>T</b><sub><i>x</i></sub> = <b>U</b><sub><i>x</i></sub> <b>D</b><sub><i>x</i></sub> <b>V</b><sub><i>x</i></sub>&#8242; </table>
+<p>transform equation (1) above into:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(3)    (<b>V</b><sub><i>y</i></sub> <b>D</b><sub><i>y</i></sub> <b>U</b><sub><i>y</i></sub>&#8242;<b>U</b><sub><i>x</i></sub> <b>U</b><sub><i>x</i></sub>&#8242; <b>U</b><sub><i>y</i></sub> <b>D</b><sub><i>y</i></sub> <b>V</b><sub><i>y</i></sub>&#8242; - &#955; <b>V</b><sub><i>y</i></sub> <b>D</b><sub><i>y</i></sub> <b>D</b><sub><i>y</i></sub> <b>V</b><sub><i>y</i></sub>&#8242;)<b>y</b> = 0 </table>
+<p>where we used the fact that:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>S</b><sub><i>xx</i></sub><sup>-1</sup> = <b>V</b><sub><i>x</i></sub> <b>D</b><sub><i>x</i></sub><sup>-2</sup> <b>V</b><sub><i>x</i></sub>&#8242;.</table>
+<p>Equation (3) can be simplified by multiplication from the left by <b>D</b><sub><i>y</i></sub><sup>-1</sup> <b>V</b><sub><i>y</i></sub>' to:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&nbsp;(4)   ((<b>U</b><sub><i>x</i></sub>&#8242; <b>U</b><sub><i>y</i></sub>)&#8242; (<b>U</b><sub><i>x</i></sub>&#8242; <b>U</b><sub><i>y</i></sub>) - &#955; <b>I</b>)<b>D</b><sub><i>y</i></sub> <b>V</b><sub><i>y</i></sub>&#8242; <b>y</b> = <b>0</b></table>
+<p>This equation can, finally, be solved by a substitution of the s.v.d of  <b>U</b><sub><i>x</i></sub>&#8242; <b>U</b><sub><i>y</i></sub> = <b>U</b> <b>D</b> <b>V</b>&#8242;  into (4). This results in</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(5)  (<b>D</b><sup>2</sup> - &#955; <b>I</b>) <b>V</b>&#8242; <b>D</b><sub><i>y</i></sub> <b>V</b><sub><i>y</i></sub>&#8242; <b>y</b> = <b>0</b></table>
+<p>In an analogous way we can reduce eigenequation (2) to:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(6)  (<b>D</b><sup>2</sup> - &#955; <b>I</b>) <b>U</b>&#8242; <b>D</b><sub><i>x</i></sub> <b>V</b><sub><i>x</i></sub>&#8242; <b>x</b> = <b>0</b></table>
+<p>From (5) and (6) we deduce that the eigenvalues in both equations are equal to the squared singular values of the product matrix <b>U</b><sub><i>x</i></sub>&#8242;<b>U</b><sub><i>y</i></sub>. These singular values are also called <i>canonical correlation coefficients</i>. The eigenvectors <b>y</b> and <b>x</b> can be obtained from the columns of the following matrices <b>Y</b> and <b>X</b>:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>Y</b> = <b>V</b><sub><i>y</i></sub> <b>D</b><sub><i>y</i></sub><sup>-1</sup> <b>V</b></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>X</b> = <b>V</b><sub><i>x</i></sub> <b>D</b><sub><i>x</i></sub><sup>-1</sup> <b>U</b></table>
+<p>For example, when the vector <b>y</b> equals the first column of <b>Y</b> and the vector <b>x</b> equals the first column of <b>X</b>, then the vectors <b>u</b> = <b>T</b><sub><i>y</i></sub><b>y</b> and <b>v</b> = <b>T</b><sub><i>x</i></sub><b>x</b> are the linear combinations from <b>T</b><sub><i>y</i></sub> and <b>T</b><sub><i>x</i></sub> that have maximum correlation. Their correlation coefficient equals the first canonical correlation coefficient.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Canonical_correlation_analysis.html">Canonical correlation analysis</a>
+<li><a href="canonical_variate.html">canonical variate</a>
+<li><a href="SSCP__To_CCA___.html">SSCP: To CCA...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20020424</p>
+</address>
+</body>
+</html>

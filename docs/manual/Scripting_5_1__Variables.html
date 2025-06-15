@@ -1,0 +1,86 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 5.1. Variables</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 5.1. Variables
+</b></font></table></table>
+<p>A <i>variable</i> is a location in your computer&#8217;s memory that has a name and where you can store something, as explained in <a href="Scripting_3_2__Numeric_variables.html"> S3.2</a> and <a href="Scripting_3_4__String_variables.html"> S3.4</a>. In a Praat script, you can store numbers and texts, i.e. you can use <i>numeric variables</i> and <i>string variables</i>.</p>
+<h2>Numeric variables</h2>
+<p>Numeric variables can hold integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 or real numbers between -10<sup>308</sup> and +10<sup>308</sup>. The smallest numbers lie near -10<sup>-308</sup> and +10<sup>-308</sup>.</p>
+<p>You use numeric variables in your script like this:</p>
+<code>   length = 10<br></code>
+<code>   Axes: 0, 100, 0, 100<br></code>
+<code>   Draw line: 0, 50, length, 50<br></code>
+<code>   Draw inner box<br></code>
+<p align=middle><img height=200 width=400 src=Scripting_5_1__Variables_1.png></p><p>This draws a line in the Picture window from position (0, 50) to position (<i><code><font size=+1>length</font></code></i>, 50). In the first line, you assign the value 10 to the variable called <i><code><font size=+1>length</font></code></i>, and in the third line you use the value of <i><code><font size=+1>length</font></code></i> as the third argument to the command <b>Draw line...</b>.</p>
+<p>Names of numeric variables must start with a lower-case letter, optionally followed by a sequence of letters, digits, and underscores.</p>
+<h2>String variables</h2>
+<p>You use string variables, which contain text, as follows:</p>
+<code>   title$ = “Dutch nasal place assimilation”<br></code>
+<code>   Text top: “no”, title$<br></code>
+<code>   Draw inner box<br></code>
+<p align=middle><img height=200 width=400 src=Scripting_5_1__Variables_2.png></p><p>This writes the text &#8220;Dutch nasal place assimilation&#8221; above your drawing.</p>
+<p>As in the programming language Basic, the names of string variables end in a dollar sign.</p>
+<h2>Making numeric variables visible</h2>
+<p>You can write the content of numeric variables directly to the info window:</p>
+<code>   x = 2.0<br></code>
+<code>   root = sqrt (x)<br></code>
+<code>   <b><a href="_writeInfoLine_.html">writeInfoLine</a></b>: “The square root of ”, x, “ is ”, root, “.”<br></code>
+<p>When you try this out, this will write the following text to the Info window:</p>
+<code>   The square root of 2 is 1.4142135623730951.<br></code>
+<p>You can fix the number of digits after the decimal point by use of the <a href="_fixed-S_.html"><b><code><font size=+1>fixed$</font></code></b></a> function:</p>
+<code>   x = 2.0<br></code>
+<code>   root = sqrt (x)<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: “The square root of ”, <b><a href="_fixed-S_.html">fixed$</a></b> (x, 3), “ is approximately ”, <b><a href="_fixed-S_.html">fixed$</a></b> (root, 3), “.”<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   The square root of 2.000 is approximately 1.414.<br></code>
+<p>By using 0 decimal digits, you round to whole values:</p>
+<code>   root = sqrt (2)<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: “The square root of 2 is very approximately ”, fixed$ (root, 0), “.”<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   The square root of 2 is very approximately 1.<br></code>
+<p>By using the <code><font size=+1>percent$</font></code> function, you give the result in a percent format:</p>
+<code>   jitter = 0.0156789<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: “The jitter is ”, <b><a href="_percent-S_.html">percent$</a></b> (jitter, 3), “.”<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   The jitter is 1.568%.<br></code>
+<p>The number 0, however, will always be written as 0, and for small numbers the number of significant digits will never be less than 1:</p>
+<code>   jitter = 0.000000156789<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: “The jitter is ”, percent$ (jitter, 3), “.”<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   The jitter is 0.00002%.<br></code>
+<h2>Predefined variables</h2>
+<p>All of the variables you saw earlier in this tutorial were defined at the first moment a value was assigned to them. Some variables, however, are already defined implicitly at the start of your script.</p>
+<p>Some predefined <b>numeric variables</b> are <code><font size=+1>macintosh</font></code>, <code><font size=+1>windows</font></code>, and <code><font size=+1>unix</font></code>, which are 1 if your edition of Praat was built for the Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero. Likewise, we have <code><font size=+1>praat_32bit</font></code> and <code><font size=+1>praat_64bit</font></code>, of which one is 1 and the other 0, depending on whether your edition of Praat was built for 32-bit or 64-bit computers. More precisely, we have <code><font size=+1>praat_intel32</font></code>, <code><font size=+1>praat_intel64</font></code> and <code><font size=+1>praat_arm64</font></code>, one of which is 1 (and the others 0) depending on whether the type of processor chip that your edition of Praat was made for is 32-bit Intel (= x86, i386, i686), or 64-bit Intel (= AMD64), or ARM64 (= Aarch64). Another predefined numeric variable is <code><font size=+1>praatVersion</font></code>, which is something like 6421.</p>
+<p>Some <b>predefined string variables</b> are <code><font size=+1>newline$</font></code>, <code><font size=+1>tab$</font></code>, and <code><font size=+1>shellDirectory$</font></code>. The last one specifies the folder that was the default folder when Praat started up; you can use it in scripts that run from the Unix or Windows command line. Likewise, there exist the predefined string variables <code><font size=+1>homeDirectory$</font></code>, <code><font size=+1>preferencesDirectory$</font></code>, and <code><font size=+1>temporaryDirectory$</font></code>. These three refer to your home folder (which is where you log in), the Praat <a href="preferences_folder.html">preferences folder</a>, and a folder for saving temporary files; if you want to know what they are on your computer, try to write them into a script window. The variable <code><font size=+1>defaultDirectory$</font></code> is available for formulas in scripts; it is the folder that contains the script file. Finally, we have <code><font size=+1>praatVersion$</font></code>, which is something like &#8220;6.4.21&#8221;."</p>
+<p>A disadvantage of predefined variables is that they can be changed, in which case they take on a different meaning. For this reason you are advised to use functions instead (if they exist), because these always have the same meaning:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="_appVersion_.html"><b><code><font size=+1>appVersion</font></code></b></a>() instead of <code><font size=+1>praatVersion</font></code></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="_appVersion-S_.html"><b><code><font size=+1>appVersion$</font></code></b></a>() instead of <code><font size=+1>praatVersion$</font></code></dd>
+</dl>
+<h2>Functions that handle variables</h2>
+<p>To check whether a variable exists, you can use the function</p>
+<code>   variableExists (variableName$)<br></code>
+<p>as in</p>
+<code>   fgh = 567<br></code>
+<code>   assert variableExists ("fgh")<br></code>
+<code>   assert not variableExists ("jhfwbfejfgcds")<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_3_3__Numeric_queries.html">Scripting 3.3. Numeric queries</a>
+<li><a href="Scripting_5__Language_elements_reference.html">Scripting 5. Language elements reference</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2020-12-29,2024</p>
+</address>
+</body>
+</html>

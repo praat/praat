@@ -1,0 +1,59 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>undefined</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+undefined
+</b></font></table></table>
+<p>When you give a query command for a numeric value, Praat sometimes writes the numeric value <b>--undefined--</b> into the <a href="Info_window.html">Info window</a> (two hyphens at both sides of the word). This happens if the value you ask for is not defined, as in the following examples:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; You select a Sound with a finishing time of 1.0 seconds and ask for the minimum point in the wave form between 1.5 and 2.0 seconds (with the query command <b>Get minimum...</b>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; You ask for a pitch value in a voiceless part of the sound (select a <b>Pitch</b>, then choose <b>Get value at time...</b>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; You type into the <a href="Calculator.html">Calculator</a> the following formula: 10^400.</dd>
+</dl>
+<h2>Usage in a script</h2>
+<p>In a Praat script, this value is simply represented as "undefined". You use it to test whether a query command returned a valid number:</p>
+<code>   selectObject: "Pitch hallo"<br></code>
+<code>   meanPitch = Get mean: 0.1, 0.2, "Hertz", "Parabolic"<br></code>
+<code>   if meanPitch = undefined<br></code>
+<code>      # Take some exceptional action.<br></code>
+<code>   else<br></code>
+<code>      # Take the normal action.<br></code>
+<code>   endif<br></code>
+<h2>Details for hackers</h2>
+<p>In text files, this value is written as <b>--undefined--</b>. In binary files, it is written as a big-endian IEEE positive infinity. In memory, it is usually a specific "not-a-number" (NaN), namely the result of dividing 0 by 0, although other NaNs, and also infinities, will equally be reported as --undefined--.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formant__Get_bandwidth_at_time___.html">Formant: Get bandwidth at time...</a>
+<li><a href="Formant__Get_time_of_maximum___.html">Formant: Get time of maximum...</a>
+<li><a href="Formant__Get_time_of_minimum___.html">Formant: Get time of minimum...</a>
+<li><a href="Formant__Get_value_at_time___.html">Formant: Get value at time...</a>
+<li><a href="Formulas_4__Constants.html">Formulas 4. Constants</a>
+<li><a href="Get_high_index_from_time___.html">Get high index from time...</a>
+<li><a href="Get_low_index_from_time___.html">Get low index from time...</a>
+<li><a href="Get_nearest_index_from_time___.html">Get nearest index from time...</a>
+<li><a href="Harmonicity__Get_mean___.html">Harmonicity: Get mean...</a>
+<li><a href="Harmonicity__Get_value_at_time___.html">Harmonicity: Get value at time...</a>
+<li><a href="Harmonicity__Get_value_in_frame___.html">Harmonicity: Get value in frame...</a>
+<li><a href="PointProcess__Get_interval___.html">PointProcess: Get interval...</a>
+<li><a href="PointProcess__Get_jitter__ddp____.html">PointProcess: Get jitter (ddp)...</a>
+<li><a href="PointProcess__Get_jitter__local____.html">PointProcess: Get jitter (local)...</a>
+<li><a href="PointProcess__Get_jitter__local__absolute____.html">PointProcess: Get jitter (local, absolute)...</a>
+<li><a href="PointProcess__Get_jitter__ppq5____.html">PointProcess: Get jitter (ppq5)...</a>
+<li><a href="PointProcess__Get_jitter__rap____.html">PointProcess: Get jitter (rap)...</a>
+<li><a href="Sound__Get_nearest_zero_crossing___.html">Sound: Get nearest zero crossing...</a>
+<li><a href="Sound__Get_standard_deviation___.html">Sound: Get standard deviation...</a>
+<li><a href="Sound__Get_value_at_sample_number___.html">Sound: Get value at sample number...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20170910</p>
+</address>
+</body>
+</html>

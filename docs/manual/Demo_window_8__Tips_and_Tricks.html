@@ -1,0 +1,30 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Demo window 8. Tips and Tricks</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Demo window 8. Tips and Tricks
+</b></font></table></table>
+<p>The initial size of the Demo window when you start it up is 1344&#215;756 pixels, which is 70 percent of a standard wide screen (1920&#215;1080 pixels). This means that if a font looks good at a size of 35 in the initial Demo window, the font will look equally good at a size of 50 when you use a 1920&#215;1080 video projector full-screen.</p>
+<p>If you resize the Demo window with the handle in the bottom left, or if you zoom the window out to the full screen, you may see that the relative positions of the contents of the window will change. Also, clicking on buttons and in parts of the window may yield unexpected <i>x</i> and <i>y</i> values. It is therefore advisable to resize the window only if you are on a page that you can get out of by pressing a key, or by clicking anywhere in the window without using <a href="_demoX_.html"><b><code><font size=+1>demoX</font></code></b></a>, <a href="_demoY_.html"><b><code><font size=+1>demoY</font></code></b></a> or <a href="_demoClickedIn_.html"><b><code><font size=+1>demoClickedIn</font></code></b></a>.</p>
+<p>If you click away the Demo window while it is waiting for input, you get a message saying &#8220;You interrupted the script...&#8221;. If you do not want to see this message, you should make sure that the user can reach the end of the script, for instance by pressing the &#8594; key on the last page. To make sure the user sees that the script has ended, you could end it with <b><code><font size=+1>demo Erase all</font></code></b>.</p>
+<p>Your demo can save its preferences in a folder of your choice, e.g. in <b><code><font size=+1>preferencesDirectory$ + “/../GuineaPigAnalyzer”</font></code></b> if your demo is called GuineaPigAnalyzer. If you want to be less conspicuous and like to use the Praat preferences folder instead, please use the <b><code><font size=+1>apps</font></code></b> subfolder, in this way:</p>
+<code>   <a href="_createFolder_.html">createFolder</a>: preferencesDirectory$ + “/apps”<br></code>
+<code>   <a href="_createFolder_.html">createFolder</a>: preferencesDirectory$ + “/apps/GuineaPigAnalyzer”<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Demo_window.html">Demo window</a>
+<li><a href="Demo_window_4__Full-screen_viewing.html">Demo window 4. Full-screen viewing</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2009–2023</p>
+</address>
+</body>
+</html>

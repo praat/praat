@@ -1,0 +1,64 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 6.5. Calling system commands</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 6.5. Calling system commands
+</b></font></table></table>
+<p>From a Praat script you can call system commands. These are the same commands that you would normally type into a terminal window or into the Windows command line prompt. The syntax is the same as that of the <a href="_writeInfo_.html"><b><code><font size=+1>writeInfo</font></code></b></a> command.</p>
+<p>Most system commands are different on different platforms. For instance, to throw away all WAV files in the folder whose path (relative to the script&#8217;s folder) is in the variable <code><font size=+1>folder$</font></code>, you would write</p>
+<code>   <a href="_runSystem_.html">runSystem</a>: "del ", folder$, "\*.wav"<br></code>
+<p>on Windows, but</p>
+<code>   <a href="_runSystem_.html">runSystem</a>: "rm ", folder$, "/*.wav"<br></code>
+<p>on Macintosh and Linux.</p>
+<p>The script will stop running if a system command returns an error. For instance,</p>
+<code>   <a href="_runSystem_.html">runSystem</a>: "rm ", folder$, "/*.wav"<br></code>
+<p>will stop the script if there are no WAV files in the folder, with a message like &#8220;No such file or directory&#8221;.</p>
+<p>In order to prevent this, you can tell Praat to ignore the return value of  runSystem}.</p>
+<p>Thus, to make sure that the folder contains no WAV files, you would write</p>
+<code>   <b>runSystem_nocheck</b>: "rm ", folder$, "/*.wav"<br></code>
+<h2>Getting the values of system variables</h2>
+<dl>
+<dt><b><code><font size=+1>environment$</font></code></b> (<i><code><font size=+1>symbol-string</font></code></i>)
+<dd>returns the value of an environment variable, e.g.</dd>
+</dl>
+<code>       homeFolder$ = <a href="_environment-S_.html">environment$</a> ("HOME")<br></code>
+<h2>Getting system duration</h2>
+<dl>
+<dt><b><code><font size=+1>stopwatch</font></code></b>
+<dd>returns the time that has elapsed since the previous <b>stopwatch</b>.</dd>
+</dl>
+<p>Here is a Praat script that measures how long it takes to do a hundred thousand assignments on your computer (if you are reading this in Praat&#8217;s own Help, not on the web):</p>
+<code>   stopwatch<br></code>
+<code>   for i to 100000<br></code>
+<code>       a = 1.23456789e123<br></code>
+<code>   endfor<br></code>
+<code>   time = stopwatch<br></code>
+<code>   writeInfoLine: a, " ", fixed$ (time, 3)<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   1.23456789e+123 0.026<br></code>
+<p>How many nanoseconds is that per assignment?</p>
+<code>   writeInfoLine: round (time / 100000 * 1e9)<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   263<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_runSubprocess-S_.html"><code><font size=+1>runSubprocess$</font></code></a>
+<li><a href="_runSubprocess_.html"><code><font size=+1>runSubprocess</font></code></a>
+<li><a href="_runSystem-S_.html"><code><font size=+1>runSystem$</font></code></a>
+<li><a href="Interoperability.html">Interoperability</a>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_6__Communication_outside_the_script.html">Scripting 6. Communication outside the script</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2020,2023</p>
+</address>
+</body>
+</html>

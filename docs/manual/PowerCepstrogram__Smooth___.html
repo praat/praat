@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PowerCepstrogram: Smooth...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PowerCepstrogram: Smooth...
+</b></font></table></table>
+<p>Smoothes the selected <a href="PowerCepstrogram.html">PowerCepstrogram</a> by averaging with a rectangular window. The smoothed PowerCepstrogram is the result of two separate steps. In the first step, cepstra are averaged across time. In the second step, cepstra are averaged across quefrency.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Time averaging window (s)</b>
+<dd>determines the width of the averaging window in the time domain. The result of the smoothing will be that in the new smoothed PowerCepstrogram each cepstral value is the average of the cepstral values within the averaging window that was positioned symmetrically around the center of this frame in the selected PowerCepstrogram. By choosing a value of zero, you can prevent any smoothing in the time dimension. </dd>
+<dt><b>Quefrency averaging window (s)</b>
+<dd>determines the width of the averaging window in the quefrency domain. By chosing a value of zero, you can prevent any smoothing in the quefrency dimension.</dd>
+</dl>
+<h2>Note</h2>
+<p>The following commands should reproduce the smoothing described in the <a href="Hillenbrand___Houde__1996_.html">Hillenbrand & Houde (1996)</a> article, where they use a 20 ms (10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. </p>
+<code>   selectObject ("Sound xxx")<br></code>
+<code>   To PowerCepstrogram: 60.0, 0.002, 5000.0, 50.0<br></code>
+<code>   Smooth: 0.02, 0.001<br></code>
+<hr>
+<address>
+	<p>© djmw 20201216</p>
+</address>
+</body>
+</html>

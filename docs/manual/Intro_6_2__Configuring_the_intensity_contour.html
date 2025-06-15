@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intro 6.2. Configuring the intensity contour</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intro 6.2. Configuring the intensity contour
+</b></font></table></table>
+<p>With <b>Intensity settings...</b> from the <b>Intensity</b> menu, you can control how the intensity contour is computed and how it is shown.</p>
+<h2>The view range</h2>
+<p>By changing these two numbers you can set the vertical scale. The standard setting is from 50 to 100 dB, but if you are interested in the power of the background noise you may want to set it to the range from 0 to 100 dB.</p>
+<h2>The averaging method</h2>
+<p>Averaging is what occurs if you make a <a href="time_selection.html">time selection</a> (rather than setting the cursor at a single time). The green number in dB to the left or right side of the intensity contour will show the average intensity in the selection. The same value is what you get when choosing <b>Get intensity</b> from the <b>Intensity</b> menu. You can choose any of the three averaging methods available for <a href="Intensity__Get_mean___.html">Intensity: Get mean...</a>, or choose for the <b>median</b> value in the selection.</p>
+<h2>Pitch floor</h2>
+<p>The intensity curve is <i>smoothed</i>, since you usually do not want the intensity curve to go up and down with the intensity variations within a pitch period. To avoid such pitch-synchronous variations, the intensity at every time point is a weighted average over many neighbouring time points. The weighting is performed by a Gaussian (&#8220;double Kaiser&#8221;) window that has a duration that is determined by the <b>Pitch floor</b> setting (see <a href="Intro_4_2__Configuring_the_pitch_contour.html">Intro 4.2. Configuring the pitch contour</a>). To see more detail than usual, raise the pitch floor; to get more smoothing than usual, lower it. For more information, see <a href="Sound__To_Intensity___.html">Sound: To Intensity...</a>.</p>
+<h2>Subtract mean pressure or not?</h2>
+<p>Many microphones, microphone preamplifiers, or other components in the recording system can add a constant level to the air pressure (a <i>DC offset</i>). You can see this at quiet locations in the wave form, where the average pressure is not zero but the background noise hovers about some non-zero value. You will usually not want to take this constant pressure seriously, i.e. the intensity curve should normally not take into account the energy provided by this constant pressure level. If you switch on the <b>Subtract mean pressure</b> switch (whose standard setting is also on), the intensity value at a time point is computed by first subtracting the mean pressure around this point, and then applying the Gaussian window.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Intro_6__Intensity_analysis.html">Intro 6. Intensity analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20041123</p>
+</address>
+</body>
+</html>

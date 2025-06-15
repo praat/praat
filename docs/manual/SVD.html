@@ -1,0 +1,25 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>SVD</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+SVD
+</b></font></table></table>
+<p>An object of type <b>SVD</b> represents the <a href="singular_value_decomposition.html">singular value decomposition</a> of a matrix.</p>
+<h2>SVD internals</h2>
+<p>Given <b>A</b>, an <i>m</i> &#215; <i>n</i> matrix with <i>m</i> &gt;= <i>n</i>, the decomposition will be <b>A</b> = <b>U</b> <b>D</b> <b>V</b>&#8242;. </p>
+<p>In the SVD object we store the <i>m</i> &#215; <i>n</i> matrix <b>U</b>, the <i>n</i> &#215; <i>n</i> matrix <b>V</b> and the <i>n</i>-dimensional vector with the singular values. </p>
+<p>If it happens that for the <b>A</b> matrix <i>m</i> &lt; <i>n</i>, i.e. the number of rows is less than the number of columns, then we store the SVD of the transpose of <b>A</b> and flag this internally. In this way we can make sure that for the matrix <b>U</b> the number of columns never exceeds the number of rows and at the same time that the dimension of the matrix <b>V</b> never exceeds the dimension of the matrix <b>U</b>. </p>
+<p>For example the SVD of a 100 &#215; 20 matrix will result in a 100 &#215; 20 matrix <b>U</b>, a 20 &#215; 20 matrix <b>V</b> and 20 singular values, the SVD of a 20 &#215; 100 matrix will also result in a 100 &#215; 20 matrix <b>U</b>, a 20 &#215; 20 matrix <b>V</b> and 20 singular values, however it will be internally flagged as being transposed.</p>
+<hr>
+<address>
+	<p>© djmw 20220111</p>
+</address>
+</body>
+</html>

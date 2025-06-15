@@ -1,0 +1,92 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 3.3. A 4I-oddity experiment</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 3.3. A 4I-oddity experiment
+</b></font></table></table>
+<p>In the four-items-oddity task, the subject will hear four stimuli in sequence, and has to say whether the second or the third is the odd one out. The other three substimuli are identical. An experiment file could look as follows:</p>
+<code>   "ooTextFile"<br></code>
+<code>   "ExperimentMFC 7"<br></code>
+<code>   blankWhilePlaying? &lt;no&gt;<br></code>
+<code>   stimuliAreSounds? &lt;yes&gt;<br></code>
+<code>   stimulusFileNameHead = "stimuli/"<br></code>
+<code>   stimulusFileNameTail = ".wav"<br></code>
+<code>   stimulusCarrierBefore = ""<br></code>
+<code>   stimulusCarrierAfter = ""<br></code>
+<code>   stimulusInitialSilenceDuration = 0.5 seconds<br></code>
+<code>   stimulusMedialSilenceDuration = 0.3 seconds<br></code>
+<code>   numberOfDifferentStimuli = 60<br></code>
+<code>      "300,300,320,300"  ""  "300,320,300,300"  ""<br></code>
+<code>      "300,300,340,300"  ""  "300,340,300,300"  ""<br></code>
+<code>      "300,300,360,300"  ""  "300,360,300,300"  ""<br></code>
+<code>      "320,320,300,320"  ""  "320,300,320,320"  ""<br></code>
+<code>      "320,320,340,320"  ""  "320,340,320,320"  ""<br></code>
+<code>      "320,320,360,320"  ""  "320,360,320,320"  ""<br></code>
+<code>      "320,320,380,320"  ""  "320,380,320,320"  ""<br></code>
+<code>      "340,340,300,340"  ""  "340,300,340,340"  ""<br></code>
+<code>      "340,340,320,340"  ""  "340,320,340,340"  ""<br></code>
+<code>      "340,340,360,340"  ""  "340,360,340,340"  ""<br></code>
+<code>      "340,340,380,340"  ""  "340,380,340,340"  ""<br></code>
+<code>      "340,340,400,340"  ""  "340,400,340,340"  ""<br></code>
+<code>      "360,360,300,360"  ""  "360,300,360,360"  ""<br></code>
+<code>      "360,360,320,360"  ""  "360,320,360,360"  ""<br></code>
+<code>      "360,360,340,360"  ""  "360,340,360,360"  ""<br></code>
+<code>      "360,360,380,360"  ""  "360,380,360,360"  ""<br></code>
+<code>      "360,360,400,360"  ""  "360,400,360,360"  ""<br></code>
+<code>      "360,360,420,360"  ""  "360,420,360,360"  ""<br></code>
+<code>      "380,380,320,380"  ""  "380,320,380,380"  ""<br></code>
+<code>      "380,380,340,380"  ""  "380,340,380,380"  ""<br></code>
+<code>      "380,380,360,380"  ""  "380,360,380,380"  ""<br></code>
+<code>      "380,380,400,380"  ""  "380,400,380,380"  ""<br></code>
+<code>      "380,380,420,380"  ""  "380,420,380,380"  ""<br></code>
+<code>      "400,400,340,400"  ""  "400,340,400,400"  ""<br></code>
+<code>      "400,400,360,400"  ""  "400,360,400,400"  ""<br></code>
+<code>      "400,400,380,400"  ""  "400,380,400,400"  ""<br></code>
+<code>      "400,400,420,400"  ""  "400,420,400,400"  ""<br></code>
+<code>      "420,420,360,420"  ""  "420,360,420,420"  ""<br></code>
+<code>      "420,420,380,420"  ""  "420,380,420,420"  ""<br></code>
+<code>      "420,420,400,420"  ""  "420,400,420,420"  ""<br></code>
+<code>   numberOfReplicationsPerStimulus = 5<br></code>
+<code>   breakAfterEvery = 40<br></code>
+<code>   randomize = &lt;PermuteBalancedNoDoublets&gt;<br></code>
+<code>   startText = "Click to start."<br></code>
+<code>   runText = "Say whether the second or the third sound is different from the rest."<br></code>
+<code>   pauseText = "You can have a short break if you like. Click to proceed."<br></code>
+<code>   endText = "The experiment has finished."<br></code>
+<code>   maximumNumberOfReplays = 0<br></code>
+<code>   replayButton = 0 0 0 0 "" ""<br></code>
+<code>   okButton = 0 0 0 0 "" ""<br></code>
+<code>   oopsButton = 0 0 0 0 "" ""<br></code>
+<code>   responsesAreSounds? &lt;no&gt;<br></code>
+<code>   responseFileNameHead = ""<br></code>
+<code>   responseFileNameTail = ""<br></code>
+<code>   responseCarrierBefore = ""<br></code>
+<code>   responseCarrierAfter = ""<br></code>
+<code>   responseInitialSilenceDuration = 0<br></code>
+<code>   responseMedialSilenceDuration = 0<br></code>
+<code>   responseFinalSilenceDuration = 0<br></code>
+<code>   numberOfResponseCategories = 4<br></code>
+<code>      0.04 0.24 0.4 0.6 "first" 30 "" ""<br></code>
+<code>      0.28 0.48 0.4 0.6 "second" 30 "" "2"<br></code>
+<code>      0.52 0.72 0.4 0.6 "third" 30 "" "3"<br></code>
+<code>      0.76 0.96 0.4 0.6 "fourth" 30 "" ""<br></code>
+<code>   numberOfGoodnessCategories = 0<br></code>
+<p>In this example, the subject has to click 300 times. She sees four buttons, but the first and fourth buttons cannot be chosen. In your ResultsMFC object, you will only see the responses <i>2</i> and <i>3</i>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_3__More_examples.html">ExperimentMFC 3. More examples</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20160925</p>
+</address>
+</body>
+</html>

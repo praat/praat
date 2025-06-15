@@ -1,0 +1,49 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Scale peak...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Scale peak...
+</b></font></table></table>
+<p>A command available in the <b>Modify</b> menu when you select one or more <a href="Sound.html">Sound</a> objects. With this command you multiply the amplitude of each Sound in such a way that its absolute peak becomes the <b>new absolute peak</b> that you specify (see Settings).</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>New absolute peak</b>
+<dd>the new absolute peak of the Sound. The standard value is 0.99: this maximizes the audibility of the Sound (sounds with lower amplitude are weaker) without distorting it (sounds with absolute peaks above 1 are clipped when they are played).</dd>
+</dl>
+<h2>Examples</h2>
+<p>The absolute peak of the following sound is 0.033:</p>
+<code>   Create Sound from formula: "033", 1, 0.0, 0.1, 10000,<br></code>
+<code>   ... ~ -0.02 * (sin (2 * pi * 205 * x) + sin (2 * pi * 5 * x)) + 0.007<br></code>
+<code>   Draw: 0, 0, -0.033, 0.0247, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Scale_peak____1.png></p><p>This sound will play rather weakly. To make it louder, you can do <b>Scale peak...</b> with a <b>new absolute peak</b> of 0.99. Praat will then multiply the waveform by 30, changing the sound to the following:</p>
+<code>   Scale peak: 0.99<br></code>
+<code>   Draw: 0, 0, -0.99, 0.741, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Scale_peak____2.png></p><p>The absolute peak is now 0.99, and the sound will play loudly.</p>
+<p>The reverse is also possible. The absolute peak of the following sound is 19.8:</p>
+<code>   Create Sound from formula: "198", 1, 0.0, 0.1, 10000,<br></code>
+<code>   ... ~ 12 * (sin (2 * pi * 305 * x) + sin (2 * pi * 5 * x)) - 4.2<br></code>
+<code>   Draw: 0, 0, -15.28, 19.8, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Scale_peak____3.png></p><p>This sound will not play correctly: all samples with an amplitude outside the [-1;+1] range will be clipped to -1 or +1. To make this sound nicer to play, you can again do <b>Scale peak...</b> with a <b>new absolute peak</b> of 0.99. Praat will then divide the waveform by 20, changing the sound to the following:</p>
+<code>   Scale peak: 0.99<br></code>
+<code>   Draw: 0, 0, -0.764, 0.99, "yes", "curve"<br></code>
+<p align=middle><img height=300 width=600 src=Sound__Scale_peak____4.png></p><p>The absolute peak is now 0.99, and the sound will play without distortion.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound_files_1_2__Quantization.html">Sound files 1.2. Quantization</a>
+<li><a href="Sound__Autocorrelate___.html">Sound: Autocorrelate...</a>
+<li><a href="Sounds__Convolve___.html">Sounds: Convolve...</a>
+<li><a href="Sounds__Cross-correlate___.html">Sounds: Cross-correlate...</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2010-03-28,2024</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>BarkSpectrogram</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+BarkSpectrogram
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat.</p>
+<p>An object of type BarkSpectrogram represents an acoustic time-frequency representation of a sound: the power spectral density <i>P</i>(<i>z</i>, <i>t</i>). It is sampled into a number of points around equally spaced times <i>t</i><sub><i>i</i></sub> and frequencies <i>z</i><sub><i>j</i></sub> (on a Bark scale).</p>
+<p>&nbsp;The bark to hertz transformation is defined as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>hertz = 650.0 * sinh (bark / 7.0),</table>
+<p>while its inverse is defined as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>bark = 7.0 * log (hertz/650 + sqrt (1 + (hertz/650)<sup>2</sup>).</table>
+<h2>Inside a BarkSpectrogram</h2>
+<p>With <a href="Inspect.html">Inspect</a> you will see that this type contains the same attributes a <a href="Matrix.html">Matrix</a> object.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="BarkFilter.html">BarkFilter</a>
+<li><a href="BarkSpectrogram__Paint_image___.html">BarkSpectrogram: Paint image...</a>
+<li><a href="Sound__To_BarkSpectrogram___.html">Sound: To BarkSpectrogram...</a>
+<li><a href="What_was_new_in_6_0_.html">What was new in 6.0?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20141023</p>
+</address>
+</body>
+</html>

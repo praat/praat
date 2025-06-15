@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: To Discriminant</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: To Discriminant
+</b></font></table></table>
+<p>A command that creates a <a href="Discriminant.html">Discriminant</a> object from every selected <a href="TableOfReal.html">TableOfReal</a> object. Row labels in the table indicate group membership.</p>
+<h2>Algorithm</h2>
+<p>We solve for directions <b>x</b> that are eigenvectors of the generalized eigenvalue equation:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b><i>B</i></b> <b>x</b> - <i>&#955;</i> <b><i>W</i></b> <b>x</b> = 0,</table>
+<p>where <b><i>B</i></b> and <b><i>W</i></b> are the between-groups and the within-groups sums of squares and cross-products matrices, respectively. Both <b><i>B</i></b> and <b><i>W</i></b> are symmetric matrices. Standard formula show that both matrices can also be written as a matrix product. The formula above then transforms to:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b><i>B</i></b><sub>1</sub>&#8242;<b><i>B</i></b><sub>1</sub> <b>x</b> - <i>&#955;</i> <b><i>W</i></b><sub>1</sub>&#8242;<b><i>W</i></b><sub>1</sub> <b>x</b> = 0</table>
+<p>The equation can be solved with the <a href="generalized_singular_value_decomposition.html">generalized singular value decomposition</a>. This procedure is numerically very stable and can even cope with cases when both matrices are singular.</p>
+<p>The a priori probabilities in the Discriminant will be calculated from the number of <i>training</i> vectors <i>n</i><sub><i>i</i></sub> in each group:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>aprioriProbability</i><sub><i>i</i></sub> = <i>n</i><sub><i>i</i></sub> / &#931;<sub><i>k</i>=1..<i>numberOfGroups</i></sub> <i>n</i><sub><i>k</i></sub></table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Discriminant_analysis.html">Discriminant analysis</a>
+<li><a href="TableOfReal__To_Configuration__lda____.html">TableOfReal: To Configuration (lda)...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 19990104</p>
+</address>
+</body>
+</html>

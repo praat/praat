@@ -1,0 +1,46 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Script for analysing pitch with a TextGrid</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Script for analysing pitch with a TextGrid
+</b></font></table></table>
+<p>"I want the mean pitch of every interval that has a non-empty label on tier 5."</p>
+<code>   if numberOfSelected ("Sound") &lt;&gt; 1 or numberOfSelected ("TextGrid") &lt;&gt; 1<br></code>
+<code>      exitScript: "Please select a Sound and a TextGrid first."<br></code>
+<code>   endif<br></code>
+<code>   sound = selected ("Sound")<br></code>
+<code>   textgrid = selected ("TextGrid")<br></code>
+<code>   writeInfoLine: "Result:"<br></code>
+<code>   selectObject: sound<br></code>
+<code>   pitch = To Pitch: 0.0, 75, 600<br></code>
+<code>   selectObject: textgrid<br></code>
+<code>   n = Get number of intervals: 5<br></code>
+<code>   for i to n<br></code>
+<code>      tekst$ = Get label of interval: 5, i<br></code>
+<code>      if tekst$ &lt;&gt; ""<br></code>
+<code>         t1 = Get starting point: 5, i<br></code>
+<code>         t2 = Get end point: 5, i<br></code>
+<code>         selectObject: pitch<br></code>
+<code>         f0 = Get mean: t1, t2, "Hertz"<br></code>
+<code>         appendInfoLine: fixed$ (t1, 3), " ", fixed$ (t2, 3), " ", round (f0), " ", tekst$<br></code>
+<code>         selectObject: textgrid<br></code>
+<code>      endif<br></code>
+<code>   endfor<br></code>
+<code>   selectObject: sound, textgrid<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting_examples.html">Scripting examples</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20201229</p>
+</address>
+</body>
+</html>

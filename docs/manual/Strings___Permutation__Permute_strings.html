@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Strings & Permutation: Permute strings</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Strings & Permutation: Permute strings
+</b></font></table></table>
+<p>Generate a new <a href="Strings.html">Strings</a> with a strings ordering determined by the <a href="Permutation.html">Permutation</a>.</p>
+<p>The number of strings in the <b>Strings</b> and the number of elements in the <b>Permutation</b> have to be equal.</p>
+<h2>Examples</h2>
+<p>1. If the selected Strings has the 4 strings ordered as "heed", "hid", "hood", "hud", and the permutation is (4,3,2,1), the new Strings has the ordering "hud", "hood", "hid", "heed".</p>
+<p>2. In the example that is discussed in the <a href="ExperimentMFC.html">listening experiment</a> section, we have four stimuli "heed.wav", "hid.wav", "hood.wav", "hud.wav" that we want to present three times to each subject with a &lt;PermuteBalancedNoDoublets&gt; randomization strategy, i.e. stimuli presented in blocks of four, randomized, and no two successive stimuli equal. This type of randomization can easily be accomplished with a Permutation object and a Strings.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Fill the Strings object with 12 strings, i.e. three repetitions of the four stimuli. </dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Create a Permutation object with 12 elements and perform  <b><a href="Permutation__Permute_randomly__blocks____.html">Permute randomly (blocks):</a> 0, 0, 4, "yes", "yes"</b>. We randomly permute blocks of size 4 and permute randomly within these blocks and make sure that on the transition from on block to the other no two stimuli are equal. (Of course, the random permutation of the blocks makes no difference here since all the blocks have the same content.)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Select the Strings and the Permutation together and choose <b>Permute strings</b>. Now the new Strings will contain the new ordering of the stimuli.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Index__To_Permutation___.html">Index: To Permutation...</a>
+<li><a href="Strings__To_Permutation___.html">Strings: To Permutation...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20140130</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Ltas: Get mean...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Ltas: Get mean...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="Ltas.html">Ltas</a> object.</p>
+<h2>Return value</h2>
+<p>the mean value (in dB) within a specified frequency range.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>From frequency (Hz))</b>
+<dt><b>To frequency (Hz)</b>
+<dd>the frequency range. Values outside this range are ignored. If <b>To frequency</b> is not greater than <b>From frequency</b>, the entire frequency domain of the Ltas is considered.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The mean value between the frequencies <i>f</i><sub>1</sub> and <i>f</i><sub>2</sub> is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>1/(<i>f</i><sub>2</sub> - <i>f</i><sub>1</sub>)  &#8747;<sub><i>f</i>1</sub><sup><i>f</i>2</sup> <i>df</i> <i>x</i>(<i>f</i>)</table>
+<p>where <i>x</i>(<i>f</i>) is the LTAS as a function of frequency, expressed in dB. For our discrete Ltas object, this mean is approximated by</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>1/<i>n</i> &#8721;<sub><i>i</i>=<i>m</i>..<i>m</i>+<i>n</i>-1</sub> <i>x</i><sub><i>i</i></sub></table>
+<p>where <i>n</i> is the number of band centres between <i>f</i><sub>1</sub> and <i>f</i><sub>2</sub>.</p>
+<hr>
+<address>
+	<p>© ppgb 20041122</p>
+</address>
+</body>
+</html>

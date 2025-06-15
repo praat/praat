@@ -1,0 +1,70 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 5.2. Stimulus-dependent response buttons</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 5.2. Stimulus-dependent response buttons
+</b></font></table></table>
+<p>The <a href="ExperimentMFC_2_1__The_experiment_file.html">example experiment</a> contained the following lines:</p>
+<code>   numberOfDifferentStimuli = 4<br></code>
+<code>      "heed"  ""<br></code>
+<code>      "hid"   ""<br></code>
+<code>      "hood"  ""<br></code>
+<code>      "hud"   ""<br></code>
+<code>   ...<br></code>
+<code>   ...<br></code>
+<code>   numberOfDifferentResponses = 5<br></code>
+<code>      0.2 0.3 0.7 0.8 "h I d" 40 "" "i"<br></code>
+<code>      0.3 0.4 0.5 0.6 "h E d" 40 "" "e"<br></code>
+<code>      0.4 0.5 0.3 0.4 "h A d" 40 "" "a"<br></code>
+<code>      0.5 0.6 0.5 0.6 "h O d" 40 "" "o"<br></code>
+<code>      0.6 0.7 0.7 0.8 "h U d" 40 "" "u"<br></code>
+<p>For every stimulus, the buttons contained the same visible texts, such as "h I d" and "h A d".</p>
+<p>But suppose you have an experiment about the perception of voicing in plosives. The first stimulus starts with an ambiguous /b/ or /p/, and you want the participant to choose between "bath" and "path". The next stimulus starts with an ambiguous /d/ or /t/, and you want the participant to choose between "dart" and "tart". You would go about like this:</p>
+<code>   numberOfDifferentStimuli = 6<br></code>
+<code>      "bpath1"  "|bath|path"<br></code>
+<code>      "bpath2"  "|bath|path"<br></code>
+<code>      "bpath3"  "|bath|path"<br></code>
+<code>      "dtart1"  "|dart|tart"<br></code>
+<code>      "dtart2"  "|dart|tart"<br></code>
+<code>      "dtart3"  "|dart|tart"<br></code>
+<code>   ...<br></code>
+<code>   ...<br></code>
+<code>   numberOfDifferentResponses = 2<br></code>
+<code>      0.2 0.4 0.7 0.8 "" 40 "" "left"<br></code>
+<code>      0.6 0.8 0.7 0.8 "" 40 "" "right"<br></code>
+<p>In this case, the two response buttons show either "path" and "path", or "dart" and "tart".</p>
+<p>In the ResultsMFC (see <a href="ExperimentMFC_2_9__How_an_experiment_proceeds.html">ExperimentMFC 2.9. How an experiment proceeds</a>), the stimuli will be recorded as &#8220;bpath1|bath|path&#8221; and the like, not just as &#8220;bpath1&#8221;. Praat does this in order to be able to cope with balanced designs such as</p>
+<code>      "bpath1"  "|bath|path"<br></code>
+<code>      "bpath1"  "|path|bath"<br></code>
+<p>In other words, the button ordering is considered part of the stimulus.</p>
+<p>This trick can be combined with a stimulus-dependent run text:</p>
+<code>   numberOfDifferentStimuli = 32<br></code>
+<code>      "bpath1"  "Throw a...|bath|path"<br></code>
+<code>      "bpath1"  "Walk a...|bath|path"<br></code>
+<code>      "bpath2"  "Walk a...|bath|path"<br></code>
+<code>      "dtart1"  "Throw a...|dart|tart"<br></code>
+<code>      "dtart1"  "Carry a...|dart|tart"<br></code>
+<code>   ...<br></code>
+<code>   runText = ""<br></code>
+<code>   ...<br></code>
+<code>   numberOfDifferentResponses = 2<br></code>
+<code>      0.2 0.4 0.7 0.8 "" 40 "" "left"<br></code>
+<code>      0.6 0.8 0.7 0.8 "" 40 "" "right"<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_5__Stimulus-dependent_texts.html">ExperimentMFC 5. Stimulus-dependent texts</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20070926</p>
+</address>
+</body>
+</html>

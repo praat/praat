@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 6.3. Query commands</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 6.3. Query commands
+</b></font></table></table>
+<p>If you click the <b>Get mean...</b> command for a Pitch object, the Info window will contain a text like &#8220;150 Hz&#8221; as a result. In a script, you would rather have this result in a variable instead of in the Info window. The solution is simple:</p>
+<code>   mean = Get mean: 0, 0, "Hertz", "Parabolic"<br></code>
+<p>The numeric variable <i>mean</i> now contains the number 150. When assigning to a numeric variable, the interpreter converts the part of the text before the first space into a number.</p>
+<p>You can also assign to string variables:</p>
+<code>   mean$ = Get mean: 0, 0, "Hertz", "Parabolic"<br></code>
+<p>The string variable <i><code><font size=+1>mean$</font></code></i> now contains the entire string &#8220;150 Hz&#8221;.</p>
+<p>This works for every command that would otherwise write into the Info window.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Query_submenu.html">Query submenu</a>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_5_2__Expressions.html">Scripting 5.2. Expressions</a>
+<li><a href="Scripting_6__Communication_outside_the_script.html">Scripting 6. Communication outside the script</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140107</p>
+</address>
+</body>
+</html>

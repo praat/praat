@@ -1,0 +1,26 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 2.9. How an experiment proceeds</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 2.9. How an experiment proceeds
+</b></font></table></table>
+<p>A text file with an ExperimentMFC object can be read into Praat with <a href="Read_from_file___.html">Read from file...</a> (it is not a script but a data file, so do not try to read it with <b>Open Praat script...</b>). You can then choose <b>Run</b>. After the experiment finishes, you can close the experiment window and choose <b>Extract results</b>. The resulting ResultsMFC object contains for each trial the stimulus name (e.g. &#8220;hood&#8221;), the response category (e.g. &#8220;u&#8221;), and the goodness judgment (e.g. 4). You will want to save this ResultsMFC object to a text file with <a href="Save_as_text_file___.html">Save as text file...</a>. You may want to call these text files by the names of the subjects, e.g. <b>ts.ResultsMFC</b> and <b>mj.ResultsMFC</b>. Once you have collected the results of all your subjects, you can read all the results files into Praat with <a href="Read_from_file___.html">Read from file...</a>, then select all the resulting ResultsMFC objects (which will have automatically been named <b>ts</b>, <b>mj</b>, and so on), then choose <b>Collect to table</b>. This will result in a table whose first column contains the names of the subjects, the second column contains the stimulus names, the third column contains the responses, and the last column contains the approximate reaction times (measured from the start of the stimulus sound, i.e. after the initial silence duration). If there are goodness judgments, these will go into the fourth column. The table can be saved as a table file (with <b>Save as tab-separated file...</b>), which can be read by programs like Excel and SPSS.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_2__The_first_example.html">ExperimentMFC 2. The first example</a>
+<li><a href="ExperimentMFC_5_2__Stimulus-dependent_response_buttons.html">ExperimentMFC 5.2. Stimulus-dependent response buttons</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110317</p>
+</address>
+</body>
+</html>

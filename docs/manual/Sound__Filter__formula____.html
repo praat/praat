@@ -1,0 +1,30 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Filter (formula)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Filter (formula)...
+</b></font></table></table>
+<p>A command to convert every selected <a href="Sound.html">Sound</a> object into a filtered sound.</p>
+<p>The filtering is done in the frequency domain. This command is equivalent to the following sequence:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;1. <a href="Sound__To_Spectrum___.html">Sound: To Spectrum...</a> yes</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;2. <a href="Matrix__Formula___.html">Matrix: Formula...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;3. <a href="Spectrum__To_Sound.html">Spectrum: To Sound</a></dd>
+</dl>
+<p>For a comparative discussion of various filtering methods, see the <a href="Filtering.html">Filtering</a> tutorial.</p>
+<p>The example formula is the following:</p>
+<code>   if x&lt;500 or x&gt;1000 then 0 else self fi   ; rectangular band<br></code>
+<p>This formula represents a rectangular pass band between 500 Hz and 1000 Hz (<i>x</i> is the frequency). Rectangular bands are <i>not</i> recommended, since they may lead to an appreciable amount of <i><b>ringing</i></b> in the time domain. The transition between stop and pass band should be smooth, as e.g. in <a href="Sound__Filter__pass_Hann_band____.html">Sound: Filter (pass Hann band)...</a>.</p>
+<hr>
+<address>
+	<p>© Paul Boersma 2004-11-23</p>
+</address>
+</body>
+</html>

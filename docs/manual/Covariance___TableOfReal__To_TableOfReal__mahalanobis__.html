@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Covariance & TableOfReal: To TableOfReal (mahalanobis)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Covariance & TableOfReal: To TableOfReal (mahalanobis)...
+</b></font></table></table>
+<p>Calculate <a href="Mahalanobis_distance.html">Mahalanobis distance</a> for the selected <a href="TableOfReal.html">TableOfReal</a> with respect to the selected <a href="Covariance.html">Covariance</a> object.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Use table centroid</b>
+<dd>Use the mean vector calculated from the columns in the selected TableOfReal instead of the means in the selected Covariance.</dd>
+</dl>
+<h2>Example</h2>
+<p>Count the number of items that are within 1, 2, 3, 4 and 5 standard deviations from the mean.</p>
+<p>We first create a table with only one column and 10000 rows and fill it with numbers drawn from a normal distribution with mean zero and standard deviation one. Its covariance matrix, of course, is one dimensional. We next create a table with Mahalanobis distances.</p>
+<code>   n = 100000<br></code>
+<code>   t0 = Create TableOfReal: "table", n, 1<br></code>
+<code>   Formula: ~ randomGauss (0, 1)<br></code>
+<code>   c = To Covariance<br></code>
+<code>   selectObject: c, t0<br></code>
+<code>   ts = To TableOfReal (mahalanobis): "no"<br></code>
+<code>   <br></code>
+<code>   for nsigma to 5<br></code>
+<code>      selectObject: ts<br></code>
+<code>      extraction = Extract rows where:  ~ self &lt; nsigma<br></code>
+<code>      nr = Get number of rows<br></code>
+<code>      nrp = nr / n * 100<br></code>
+<code>      expect = (1 - 2 * gaussQ (nsigma)) * 100<br></code>
+<code>      writeInfoLine: nsigma, "-sigma: ", nrp, "%, ", expect, "%"<br></code>
+<code>      removeObject: extraction<br></code>
+<code>   endfor<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Discriminant___TableOfReal__To_TableOfReal__mahalanobis.html">Discriminant & TableOfReal: To TableOfReal (mahalanobis)...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20170828</p>
+</address>
+</body>
+</html>

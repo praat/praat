@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>overlap-add</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+overlap-add
+</b></font></table></table>
+<p>A method for manipulating the pitch and duration of an acoustic speech signal. This method was realized by <a href="Moulines___Charpentier__1990_.html">Moulines & Charpentier (1990)</a>, who called it Time-Domain Pitch-Synchronous Overlap-and-Add (TD-PSOLA). Nowadays, PSOLA&#8482; and TD-PSOLA&#8482; are trademarks owned by France Telecom<sup>&#174;</sup>.</p>
+<h2>Overlap-add synthesis</h2>
+<p>When a <a href="Sound.html">Sound</a> is created from a <a href="Manipulation.html">Manipulation</a> object, the following steps are performed:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. From the <a href="PitchTier.html">PitchTier</a>, new points are generated along the entire time domain, with the method of <a href="PitchTier__To_PointProcess.html">PitchTier: To PointProcess</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. The period information in the original pulses (available in the Manipulation object) is used to remove from the new pulses all points that lie within voiceless intervals (i.e., places where the distance between adjacent points in the original pulses is greater than 20 ms).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. The voiceless parts are copied from the source Sound to the target Sound, re-using some parts if the local duration is greater than 1.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. For each target point, we look up the nearest source point. A piece of the source Sound, centred around the source point, is copied to the target Sound at a location determined by the target point, using a bell-shaped window whose left-hand half-length is the minimum of the left-hand periods adjacent to the source and target points (and analogously for the right-hand half-length).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Manipulation__Get_resynthesis__overlap-add_.html">Manipulation: Get resynthesis (overlap-add)</a>
+<li><a href="Manipulation__Play__overlap-add_.html">Manipulation: Play (overlap-add)</a>
+<li><a href="ManipulationEditor.html">ManipulationEditor</a>
+<li><a href="Sound___Pitch__Change_gender___.html">Sound & Pitch: Change gender...</a>
+<li><a href="Sound___Pitch__Change_speaker___.html">Sound & Pitch: Change speaker...</a>
+<li><a href="Sound___Pitch__To_PointProcess__peaks____.html">Sound & Pitch: To PointProcess (peaks)...</a>
+<li><a href="Sound__Change_gender___.html">Sound: Change gender...</a>
+<li><a href="Sound__Change_speaker___.html">Sound: Change speaker...</a>
+<li><a href="Sound__Lengthen__overlap-add____.html">Sound: Lengthen (overlap-add)...</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+<li><a href="What_was_new_in_3_8_.html">What was new in 3.8?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20070816</p>
+</address>
+</body>
+</html>

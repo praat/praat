@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Fade in...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Fade in...
+</b></font></table></table>
+<p>A command to gradually increase the amplitude of a selected <a href="Sound.html">Sound</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Channel</b>
+<dd>determines whether you want to fade all channels or only a selected channel.</dd>
+<dt><b>Time (s)</b>
+<dd>determines where the fade-in will take place. If <i>time</i> is earlier than the start time of the sound, the start time of the sound wil be used.</dd>
+<dt><b>Fade time (s)</b>
+<dd>determines the start point and the endpoint of the fade-in with respect to the <i>time</i> argument. Depending on the sign of <i>fadeTime</i>, <i>time</i> is either the start or the end position of the fade-in. If <i>fadeTime</i> is positive, fade-in will take place between <i>time</i> and <i>time+fadeTime</i>. If <i>fadeTime</i> is negative, fade-in wil take place between <i>time+fadeTime</i> and <i>time</i>.</dd>
+<dt><b>Silent from start</b>
+<dd>when on, makes the sound silent before the fade-in starts. When off, the sound before the fade-in starts will not be changed. </dd>
+</dl>
+<h2>Algorithm</h2>
+<p>Multiplication with the first half period of a (1-cos(x))/2 function. </p>
+<h2>Cross-fading two sounds</h2>
+<p>The following script cross-fades two sounds s1 and s2 at time 1 second and leaves the result in s2.</p>
+<code>      crossFTime = 0.5<br></code>
+<code>      t = 1<br></code>
+<code>      s = Create Sound from formula: "s1", 1, 0, 2, 44100, ~ sin(2*pi*500*x)<br></code>
+<code>      Fade out: 0, t-crossFTime/2, crossFTime, "yes"<br></code>
+<code>      Create Sound from formula: "s2", 1, 0, 2, 44100, ~ sin(2*pi*1000*x)<br></code>
+<code>      Fade in.: 0, t-crossFTime/2, crossFTime, "yes"<br></code>
+<code>      Formula: ~ self + object [s]<br></code>
+<hr>
+<address>
+	<p>© djmw 20170829</p>
+</address>
+</body>
+</html>

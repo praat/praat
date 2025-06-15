@@ -1,0 +1,53 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Harmonicity</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Harmonicity
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat.</p>
+<p>A Harmonicity object represents the degree of acoustic periodicity, also called Harmonics-to-Noise Ratio (HNR). Harmonicity is expressed in dB: if 99% of the energy of the signal is in the periodic part, and 1% is noise, the HNR is 10*log10(99/1) = 20 dB. A HNR of 0 dB means that there is equal energy in the harmonics and in the noise.</p>
+<p>Harmonicity can be used as a measure for:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The signal-to-noise ratio of anything that generates a periodic signal.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Voice quality. For instance, a healthy speaker can produce a sustained [a] or [i] with a harmonicity of around 20 dB, and an [u] at around 40 dB; the difference comes from the high frequencies in [a] and [i], versus low frequencies in [u], resulting in a much higher sensitivity of HNR to jitter in [a] and [i] than in [u]. Hoarse speakers will have an [a] with a harmonicity much lower than 20 dB. We know of a pathological case where a speaker had an HNR of 40 dB for [i], because his voice let down above 2000 Hz.</dd>
+</dl>
+<h2>Harmonicity commands</h2>
+<p>Creation:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Harmonicity__cc____.html">Sound: To Harmonicity (cc)...</a>: cross-correlation method (preferred).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Harmonicity__ac____.html">Sound: To Harmonicity (ac)...</a>: autocorrelation method.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas_1_7__Formulas_for_modification.html">Formulas 1.7. Formulas for modification</a>
+<li><a href="Formulas_8__Attributes_of_objects.html">Formulas 8. Attributes of objects</a>
+<li><a href="Get_frame_number_from_time___.html">Get frame number from time...</a>
+<li><a href="Get_number_of_frames.html">Get number of frames</a>
+<li><a href="Get_time_from_frame_number___.html">Get time from frame number...</a>
+<li><a href="Get_time_step.html">Get time step</a>
+<li><a href="Harmonicity__Formula___.html">Harmonicity: Formula...</a>
+<li><a href="Harmonicity__Get_maximum___.html">Harmonicity: Get maximum...</a>
+<li><a href="Harmonicity__Get_mean___.html">Harmonicity: Get mean...</a>
+<li><a href="Harmonicity__Get_minimum___.html">Harmonicity: Get minimum...</a>
+<li><a href="Harmonicity__Get_standard_deviation___.html">Harmonicity: Get standard deviation...</a>
+<li><a href="Harmonicity__Get_time_of_maximum___.html">Harmonicity: Get time of maximum...</a>
+<li><a href="Harmonicity__Get_time_of_minimum___.html">Harmonicity: Get time of minimum...</a>
+<li><a href="Harmonicity__Get_value_at_time___.html">Harmonicity: Get value at time...</a>
+<li><a href="Harmonicity__Get_value_in_frame___.html">Harmonicity: Get value in frame...</a>
+<li><a href="time_domain.html">time domain</a>
+<li><a href="Voice_4__Additive_noise.html">Voice 4. Additive noise</a>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20030610</p>
+</address>
+</body>
+</html>

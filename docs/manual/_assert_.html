@@ -1,0 +1,60 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>assert</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+assert
+</b></font></table></table>
+<p>A keyword that can be used in <a href="Scripting.html">Scripting</a>, to test whether an expected condition holds.</p>
+<h2>Examples</h2>
+<p>This is an assertion that is satisfied:</p>
+<code>   a = 5*6<br></code>
+<code>   <b>assert</b> a = 30<br></code>
+<code>   writeInfoLine: a<br></code>
+<code style="color:red">=&gt;</code><br>
+<code>   30<br></code>
+<p>This is an assertion that is violated:</p>
+<code>   a = 5*6<br></code>
+<code>   <b>assert</b> a &lt; 10<br></code>
+<code>   writeInfoLine: a<br></code>
+<p>This three-line script stops at the second line with the error message &#8220;<code><font size=+1>Assertion violated in line 2: a < 10</font></code>&#8221;.</p>
+<p>That is, because <i><code><font size=+1>a</font></code></i> is not less than 10 (it&#8217;s 30), the assertion is false, and the script stops, mentioning the line number as well as the text of the assertion (i.e. &#8220;<code><font size=+1>a < 10</font></code>&#8221;).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_arccos_.html"><code><font size=+1>arccos</font></code></a>
+<li><a href="_arccosh_.html"><code><font size=+1>arccosh</font></code></a>
+<li><a href="_arcsin_.html"><code><font size=+1>arcsin</font></code></a>
+<li><a href="_arcsinh_.html"><code><font size=+1>arcsinh</font></code></a>
+<li><a href="_arctan2_.html"><code><font size=+1>arctan2</font></code></a>
+<li><a href="_arctan_.html"><code><font size=+1>arctan</font></code></a>
+<li><a href="_arctanh_.html"><code><font size=+1>arctanh</font></code></a>
+<li><a href="_col-H_.html"><code><font size=+1>col#</font></code></a>
+<li><a href="_combine-H_.html"><code><font size=+1>combine#</font></code></a>
+<li><a href="_max_.html"><code><font size=+1>max</font></code></a>
+<li><a href="_number_.html"><code><font size=+1>number</font></code></a>
+<li><a href="_padLeft-S_.html"><code><font size=+1>padLeft$</font></code></a>
+<li><a href="_padOrTruncateLeft-S_.html"><code><font size=+1>padOrTruncateLeft$</font></code></a>
+<li><a href="_padOrTruncateRight-S_.html"><code><font size=+1>padOrTruncateRight$</font></code></a>
+<li><a href="_padRight-S_.html"><code><font size=+1>padRight$</font></code></a>
+<li><a href="_part-H-H_.html"><code><font size=+1>part##</font></code></a>
+<li><a href="_part-H_.html"><code><font size=+1>part#</font></code></a>
+<li><a href="_row-H_.html"><code><font size=+1>row#</font></code></a>
+<li><a href="_selected-H_.html"><code><font size=+1>selected#</font></code></a>
+<li><a href="_selected-S-H_.html"><code><font size=+1>selected$#</font></code></a>
+<li><a href="_truncateLeft-S_.html"><code><font size=+1>truncateLeft$</font></code></a>
+<li><a href="_truncateRight-S_.html"><code><font size=+1>truncateRight$</font></code></a>
+<li><a href="energy_integration_continuity_test.html">energy integration continuity test</a>
+<li><a href="Functions.html">Functions</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023</p>
+</address>
+</body>
+</html>

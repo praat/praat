@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>EEG</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+EEG
+</b></font></table></table>
+<p>EEG means electro-encephalography: brain potentials recorded via e.g. 32 or 64 electrodes on the scalp. In Praat, an EEG object looks like a combination of a Sound object with e.g. 32 or 64 channels and a TextGrid object that marks the events.</p>
+<h2>1. How to get an EEG object in Praat</h2>
+<p>You typically create an EEG object in Praat by opening a BDF/EDF file with <a href="Read_from_file___.html">Read from file...</a>. Praat tries to read the whole file into memory, so you may want to work with a 64-bit edition of Praat if you want to avoid &#8220;out of memory&#8221; messages.</p>
+<p>After you do <b>Read from file...</b>, an EEG object will appear in the list of objects.</p>
+<h2>2. How to look into an EEG object</h2>
+<p>Once you have an EEG object in the list, you can click <b>View &amp; Edit</b> to look into it. You will typically see the first 8 channels, but you scroll to the other channels by clicking on the up and down arrows. You can scroll and zoom in the same way as in a Sound window.</p>
+<p>The channel names that you see are often A1, A2, ... A32, B1, B2, ... B32, C1, C2, ... C32, and so on. These represent the cap electrodes. If the number of cap electrodes is 32, though, the channel names are Fp1, AF3, ... Cz, and if it is 64, the channel names are Fp1, AF7, ... O2. You can change these names with <b>Set channel name...</b> from the <b>Modify</b> menu.</p>
+<p>Below the cap electrodes you may see a number of channels for the external electrodes. These are typically named EXG1, EXG2, ... EXG8, but you can change these names with <b>Edit external electrode names...</b> from the Modify menu.</p>
+<p>Below the external electrodes you may see a number of special channels, perhaps named GSR1, GSR2, Erg1, Erg2, Resp, Plet, Temp, and Status. These represent recordings from other sensors than the electrodes.</p>
+<p>The Status channel is special. It is the 8-bit digital signal that you fed to your EEG apparatus. When reading the BDF file, Praat extracts all 8 bits from this status signal, and these 8 bits are shown in the EEG window as TextGrid interval tiers named S1, S2, ... S8. These bits are the place to mark events. For instance, in our lab we use S8 to mark any event, S5 to mark a &#8220;standard&#8221; event, and S4 to mark a &#8220;deviant&#8221; event.</p>
+<h2>3. What to do to an EEG object</h2>
+<p>The raw EEG signal that you have read from a file is typically quite noisy and may have a very large DC (direct-current) component as compared to the small vibrations that you are interested in. There are several ways to clean it up.</p>
+<p><b>Subtracting a reference signal.</b> The voltage on the whole scalp may rise and fall in time. You are unlikely to be interested in these global movements; instead, you are likely to be interested only in the voltage movements on the brain-influenced part of the scalp (the cap electrodes) with respect to the voltage movements on the non-brain-influenced part of the scalp (the external electrodes). If you have external electrode recordings that include the left and right mastoids, you can use these channels as a <i>reference signal</i>, i.e., you can use <b>Subtract reference...</b> to subtract the average of the two mastoid channels from all electrode channels (including the external electrodes themselves). If you have no such recordings, you can still regard the average of a range of electrode channels as a reference signal, and use <b>Subtract mean channel...</b> to subtract this from each electrode channel.</p>
+<p><b>Detrending.</b> With <b>Detrend</b>, you subtract from each electrode channel a line in such a way that the first sample and the last sample become zero. Detrending and reference subtraction can be performed in either order.</p>
+<p><b>Filtering.</b> With <b>Filter...</b>, you band-pass filter each electrode channel. Filtering should be done after detrending, but filtering and reference subtraction can be performed in either order.</p>
+<h2>4. How to do an ERP analysis</h2>
+<p>An ERP is an Event-Related Potential. Events are marked somewhere in S1, S2, ... S8. In the above example, we extract all the &#8220;deviant&#8221; events by doing <b>To ERPTier...</b>, setting <b>From time</b> to -0.11 seconds, <b>To Time</b> to 0.39 seconds, and <b>Marker bit</b> to 4. This way, an ERPTier object appears in the list, containing the parts of the EEG signal that lie in a time window of [-0.11, 0.39] seconds around each event on the S4 (deviant) tier. Thus, if S4 contains 150 events, the resulting ERPTier will contain 150 pieces of the original EEG signal (without the extra sensors).</p>
+<p>You are typically interested in the part of each ERP in the ERPTier after the event. That is, you are probably interested in how this part compares to the part not influenced by the event, i.e. the part before the event. To make this comparison easier, you can do <b>Subtract baseline...</b>: the waveform of the ERP will be moved up or down in such a way that the average amplitude of the part between the specified times becomes zero; the times you will typically fill in here are the starting time of the ERP (a negative number) and the time of the event (0.0).</p>
+<p>After you subtract the baseline, the part after the event contains the interesting part of the ERP: even its sign (positive or negative) is meaningful now. Some ERPs, however, will contain very large positive or negative peaks because of eye movements and other disturbing signals. To remove those ERPs from the ERPTier, do <b>Reject artefacts...</b>, while specifying the amount by which you allow the amplitude of an ERP to go above or below zero.</p>
+<p>Once you have an ERPTier, you can extract each of the 150 ERPs from it with <b>Extract ERP...</b>. It is perhaps more interesting to compute the average of all those 150 ERPs with <b>To ERP (mean)</b>. These commands put a new ERP object in the list.</p>
+<p>Once you have an ERP object, you can look into it with <b>View &amp; Edit</b>. If you want to see in the ERP window the scalp distribution at the time of the cursor, or the average scalp distribution in the selected time stretch, you have to switch on <b>Show selection viewer</b> in the <b>Preferences</b> window (available from the File menu).</p>
+<h2>See also</h2>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Independent_Component_Analysis_on_EEG.html">Independent Component Analysis on EEG</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_5_4_.html">What was new in 5.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20180329</p>
+</address>
+</body>
+</html>

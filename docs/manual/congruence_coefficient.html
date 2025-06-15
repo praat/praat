@@ -1,0 +1,30 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>congruence coefficient</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+congruence coefficient
+</b></font></table></table>
+<p>The <i>congruence coefficient</i> is a measure of similarity between two <a href="Configuration.html">Configuration</a>s.</p>
+<p>The congruence coefficient <i>c</i>(<b>X</b>, <b>Y</b>) for the configurations <b>X</b> and <b>Y</b> is defined as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>c</i>(<i>X</i>, <i>Y</i>) = &#8721;<sub><i>i</i>&lt;<i>j</i></sub> <i>w</i><sub><i>ij</i></sub> <i>d</i><sub><i>ij</i></sub>(<b>X</b>) <i>d</i><sub><i>ij</i></sub>(<b>Y</b>) / ([&#8721;<sub><i>i</i>&lt;<i>j</i></sub> <i>w</i><sub><i>ij</i></sub> <i>d</i><sup>2</sup><sub><i>ij</i></sub>(<b>X</b>)]<sup>1/2</sup> [&#8721;<sub><i>i</i>&lt;<i>j</i></sub> <i>w</i><sub><i>ij</i></sub> <i>d</i><sup>2</sup><sub><i>ij</i></sub>(<b>Y</b>)]<sup>1/2</sup>),</table>
+<p>where <i>d</i><sub><i>ij</i></sub>(<b>X</b>) is the distance between the points <i>i</i> and <i>j</i> in configuration <b>X</b> and <i>w</i><sub><i>ij</i></sub> are nonnegative weights (default: <i>w</i><sub><i>ij</i></sub> = 1).</p>
+<p>Since distances are nonnegative, the congruence coefficient has a value between 0 and 1.</p>
+<p>The <i>congruence coefficient</i> is a better measure of the similarity between configurations than the <i>correlation coefficient</i> of the distances. <a href="Borg___Groenen__1997_.html">Borg & Groenen (1997)</a> give a simple example where things go wrong with correlation coefficients: two configurations <b>X</b> and <b>Y</b> with three points each, have distances <i>d</i><sub>12</sub>(<b>X</b>) = 1, <i>d</i><sub>13</sub>(<b>X</b>) = 2, <i>d</i><sub>23</sub>(<b>X</b>) = 3 and <i>d</i><sub>12</sub>(<b>Y</b>) = 2, <i>d</i><sub>13</sub>(<b>Y</b>) = 3, <i>d</i><sub>23</sub>(<b>Y</b>) = 4. These distances have a correlation coefficient of 1. However, in <b>X</b> the three points lie on a straight line and in <b>Y</b> the points form a triangle. This unwanted situation occurs because in the calculation of the correlation coefficient the mean is subtracted from the distances and the resulting values are no longer distances (they may become negative). In calculating the correlation between the distances we should not subtract the mean. In fact, the congruence coefficient is exactly this correlation coefficient calculated with respect to the origin and not with respect to the centroid position (the "mean").</p>
+<p>For further information on how well one number can assess the similarity between two configurations see <a href="Borg___Groenen__1997_.html">Borg & Groenen (1997)</a> section 19.7.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Configuration__To_Similarity__cc_.html">Configuration: To Similarity (cc)</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>NavigationContext</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+NavigationContext
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. The <b>NavigationContext</b> contains the information that the <a href="TextGridNavigator.html">TextGridNavigator</a> needs to search for a match on one tier of a <a href="TextGrid.html">TextGrid</a>.</p>
+<h2>What is inside a NavigationContext?</h2>
+<dl>
+<dt><b>Topic label set</b>
+<dd>defines the labels that we want to find. As an example consider the following set of vowel labels { "u", "o", "a", "i", "e" }. Our intention is to find only those intervals in the specified tier of the TextGrid that match with one of these labels. </dd>
+<dt><b>Topic match criterion</b>
+<dd>defines the type of match you want. To name just a few of the possible options: <b>is equal to</b> or <b>is not equal to</b> or <b>contains</b> or <b>does not contain</b> or <b>starts with</b> or <b>does not start with</b>. Many more match criteria can be chosen and these criteria come in pairs where the second one of the pair is the negation of the first.</dd>
+<dt><b>Combine topic matches with</b>
+<dd>defines whether the match criteria of the labels in the topic set have to be combined by <b>OR</b> or by  <b>AND</b>. Consider the topic set defined above. If the topic match criterion chosen was <b>is equal to</b> then we would want the match for the current interval label in the tier to succeeed only if the expression (currentLabel$ = "u" OR currentLabel$ = "o" OR currentLabel$ = "a" OR currentLabel$ = "i" OR currentLabel$ = "e") evaluates as true, i.e. if one of the labels of the topic set matches the current label in the tier then we would have a match. On the other hand, if the chosen match criterium were the opposite, <b>not equal to</b>, then we would want our match for the current interval label to succeed only if the expression (currentLabel$ &#8800; "u" AND currentLabel$ &#8800; "o" AND currentLabel$ &#8800; "a" AND currentLabel$ &#8800; "i" AND currentLabel$ &#8800; "e") evaluates as true. Therefore, in general, for labels that are single words, a positive match criterion, like <b>is equal to</b>, we would choose <b>OR</b> while for a negative match criterion, like <b>is not equal to</b> we would choose <b>AND</b>. However, for labels that are multi-word both <b>AND</b> as well as <b>OR</b> combinations can be useful.</dd>
+<dt><b>Before label set</b>
+<dd>defines the labels that the label of the preceding interval has to match if the current interval label matches the topic label set. This makes the search context-sensitive because it is not enough that the current interval label matches (in a specified way) the topic set but also the label of the preceding interval has to match the before set. If, for example, the before set contains "p", "t" and "k" then in combination with the topic labels defined above this would limit the search to only those vowels that are preceded by a plosive.</dd>
+<dt><b>Combine before matches with</b>
+<dd>defines, just like for the topic match criterion, the kind of match you are looking for only now for the labels of the <i>before set</i>.</dd>
+<dt><b>Before match boolean</b>
+<dd>defines, also in analogy with the description of the topic match boolean, the relation between the matches of the labels in the <i>before set</i>.</dd>
+<dt><b>After label set</b>
+<dd>defines the labels that the label of the following interval has to match if the current interval label matches the topic label set. An example set could consist of "m" and "n". In combination with the topic set we would search for vowels followed by a nasal.</dd>
+<dt><b>After match criterion</b> and <b>Combine after matches with</b>
+<dd>have the same meaning as defined above for the topic and before sets.</dd>
+<dt><b>Context combination criterion</b>
+<dd>defines how the before and after sets have to be combined in the matching. The possible options are <b>before</b>, or <b>after</b> or <b>before and after</b> or <b>before or after, not both</b> or <b>before or after, or both</b> or finally <b>no before and no after</b>. Given the topic, before and after labels examples defined above, choosing <b>before and after</b> would limit the search to vowels preceded by a plosive and followed by a nasal.</dd>
+<dt><b>Exclude topic labels boolean</b>
+<dd>when on, only the before and / or the after label set will be used in matching. Of course this effect could also be reached by leaving the topic set empty.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="TextGrid__To_TextGridNavigator___.html">TextGrid: To TextGridNavigator...</a>
+<li><a href="TextGridNavigator___TextGrid__Add_search_tier___.html">TextGridNavigator & TextGrid: Add search tier...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20210723</p>
+</address>
+</body>
+</html>

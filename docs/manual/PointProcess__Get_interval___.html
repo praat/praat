@@ -1,0 +1,27 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PointProcess: Get interval...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PointProcess: Get interval...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="PointProcess.html">PointProcess</a> object.</p>
+<h2>Return value</h2>
+<p>the duration of the interval around a specified time. if the point process contains no points or if the specified time falls before the first point or not before the last point, the value is <a href="undefined.html">undefined</a>. Otherwise, the result is the distance between the nearest points to the left and to the right of the specified time. If the point process happens to contain a point at exactly the specified time, the duration of the interval following this point is returned.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Time (s)</b>
+<dd>the time around which a point is looked for, in seconds.</dd>
+</dl>
+<hr>
+<address>
+	<p>© ppgb 20021212</p>
+</address>
+</body>
+</html>

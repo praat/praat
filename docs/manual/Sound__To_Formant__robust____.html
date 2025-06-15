@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Formant (robust)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Formant (robust)...
+</b></font></table></table>
+<p>A command that creates a <a href="Formant.html">Formant</a> object from every selected <a href="Sound.html">Sound</a>. </p>
+<h2>Settings</h2>
+<p>The settings for <b>Time step (s)</b>, <b>Maximum number of formants</b>, <b>Formant ceiling (Hz), </b><b>Window</b> length (s)<b></b> and <b>Pre-emphasis from (Hz)</b> are as in <a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a>.  The following settings determine aspects of the iterative formant frequency refinement.</p>
+<dl>
+<dt><i>Number of std. dev.</i>,
+<dd>determines the number of standard deviations from where selective weighing of samples starts. </dd>
+<dt><i>Maximum number of iterations</i>,
+<dd>determines the maximum number of iterations allowed in the refinement step.</dd>
+<dt><i>Tolerance</i>,
+<dd>detemines another stop ctriterion for the refinement step. If the relative change in variance between successive iterations is less then this value, iteration stops. Iteration stops whenever one of the two defined stop criteria is reached.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>First the sound is downsampled to twice the maximum formant frequency. Next, the LPC coefficients are determined by the autocorrelation method. Finally, in an iterative procedure as described by <a href="Lee__1988_.html">Lee (1988)</a>, the formant frequencies and bandwidths are refined by selective weighting of samples values.</p>
+<hr>
+<address>
+	<p>© djmw 20111027</p>
+</address>
+</body>
+</html>

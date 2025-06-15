@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 2.7. Response categories</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 2.7. Response categories
+</b></font></table></table>
+<p>Every trial comes with the same set of response categories. The <a href="ExperimentMFC_2_1__The_experiment_file.html">example experiment</a> has five of them. For each response category, you supply the area of the screen where a rectangle will be drawn. The whole screen measures from 0.0 (left) to 1.0 (right) and from 0.0 (bottom) to 1.0 (top). Thus, &#8220;0.2 0.3 0.7 0.8&#8221; means that a rectangle will be drawn somewhere in the top left quadrant of the screen. You also supply the text that will be drawn in this rectangle, for instance the text &#8220;h I d&#8221;. After this you supply the font size for this text, for instance 40.</p>
+<p>The second text that you supply for every response is a response key on the keyboard. In the above example this is &#8220;&#8221;, i.e. the subject cannot press a key as a response. If you want the user to be able to press the &#8220;m&#8221; key instead of clicking in the &#8220;h I d&#8221; rectangle, the line in the experiment file would be:</p>
+<code>      0.2 0.3 0.7 0.8 "h I d" 40 "m" "i"<br></code>
+<p>The third text that you supply for each rectangle is the response category as it will be reported by Praat to you when the user clicks it, e.g. the text &#8220;i&#8221;. If you want Praat to ignore mouse clicks on this rectangle, specify an empty response category, i.e. "".</p>
+<p>The border of the rectangles will be maroon, the background of the screen will be light grey. The colour of clickable rectangles will be yellow, that of non-clickable rectangles (those with empty category specifications) light grey.</p>
+<p>You can have a picture instead of a text on a response button, by using \FI:</p>
+<code>      0.2 0.3 0.7 0.8 "\FIpictures/hello.jpg" 40 "m" "i"<br></code>
+<p>In this example, the picture <b>hello.jpg</b> from the subfolder <b>pictures</b> (i.e. a subfolder of the folder where your experiment file is) will be drawn into the rectangle [0.2, 0.3] &#215; [0.7, 0.8]. This currently (September 2011) works only on the Mac and Windows.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_2__The_first_example.html">ExperimentMFC 2. The first example</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20201229</p>
+</address>
+</body>
+</html>

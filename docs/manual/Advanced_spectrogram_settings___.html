@@ -1,0 +1,51 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Advanced spectrogram settings...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Advanced spectrogram settings...
+</b></font></table></table>
+<h2>Optimization</h2>
+<dl>
+<dt><i>Number of time steps</i>
+<dd>the maximum number of points along the time window for which Praat has to compute the spectrum. If your screen is not wider than 1200 pixels, then the standard of 1000 is appropriate, since there is no point in computing more than one spectrum per one-pixel-wide vertical line. If you have a really wide screen, you may see improvement if you raise this number to 1500.</dd>
+<dt><i>Number of frequency steps</i>
+<dd>the maximum number of points along the frequency axis for which Praat has to compute the spectrum. If your screen is not taller than 768 pixels, then the standard of 250 is appropriate, since there is no point in computing more than one spectrum per one-pixel-height horizontal line. If you have a really tall screen, you may see improvement if you raise this number.</dd>
+</dl>
+<p>For purposes of computation speed, Praat may decide to change the time step and the frequency step. This is because the time step never needs to be smaller than 1/(8&#8730;&#960;) of the window length, and the frequency step never needs to be smaller than (&#8730;&#960;)/8 of the inverse of the window length. For instance, if the window length is 5 ms, the actual time step will never be less than 5/(8&#8730;&#960;) = 0.353 ms, and the actual frequency step will never be less than (&#8730;&#960;)/8/0.005 = 44.31 Hz.</p>
+<h2>Spectrogram analysis settings</h2>
+<dl>
+<dt><i>Method</i>
+<dd>there is currently only one method available in this window for computing a spectrum from a sound: the Fourier transform.</dd>
+<dt><i>Window shape</i>
+<dd>the shape of the analysis window. To compute the spectrum at, say, 3.850 seconds, samples that lie close to 3.850 seconds are given more weight than samples further away. The relative extent to which each sample contributes to the spectrum is given by the window shape. You can choose from: Gaussian, Square (none, rectangular), Hamming (raised sine-squared), Bartlett (triangular), Welch (parabolic), and Hanning (sine-squared). The Gaussian window is superior, as it gives no <i>sidelobes</i> in your spectrogram (see below); it analyzes a factor of 2 slower than the other window shapes, because the analysis is actually performed on twice as many samples per frame.</dd>
+</dl>
+<h2>Sidelobes; anybody wants to win a cake?</h2>
+<p>The Gaussian window is the only shape that we can consider seriously as a candidate for the analysis window. To see this, create a 1000-Hz sine wave with <a href="Create_Sound_from_formula___.html">Create Sound from formula...</a> by typing <code><font size=+1>1/2 * sin (2*pi*1000*x)</font></code> as the formula, then click <b>View &amp; Edit</b>. If the window shape is Gaussian, the spectrogram will show a horizontal black line. If the window shape is anything else, the spectrogram will show many horizontal grey lines (<i>sidelobes</i>), which do not represent anything that is available in the signal. They are artifacts of the window shapes.</p>
+<p>We include these other window shapes only for pedagogical purposes and because the Hanning and Hamming windows have traditionally been used in other programs before computers were as fast as they are now (a spectrogram is computed twice as fast with these other windows). Several other programs still use these inferior window shapes, and you are likely to run into people who claim that the Gaussian window has disadvantages. We promise such people a large cake if they can come up with sounds that look better with Hanning or Hamming windows than with a Gaussian window. An example of the reverse is easy to find; we have just seen one.</p>
+<h2>Spectrogram blackness settings</h2>
+<dl>
+<dt><i>Autoscaling</i>
+<dt><i>Maximum</i> (dB/Hz)
+<dd>all parts of the spectrogram that have a power above <i>maximum</i> (after preemphasis) will be drawn in black. The standard maximum is 100 dB/Hz, but if <i>autoscaling</i> is on (which is the standard), Praat will use the maximum of the visible part of the spectrogram instead; this ensures that the window will always look well, but it also means that the blackness of a certain part of the spectrogram will change as you scroll.</dd>
+<dt><i>Preemphasis</i> (dB/octave)
+<dd>determines the steepness of a high-pass filter, i.e., how much the power of higher frequencies will be raised before drawing, as compared to lower frequencies. Since the spectral slope of human vowels is approximately -6 dB per octave, the standard value for this setting is +6 dB per octave, so that the spectrum is flattened and the higher formants look as strong as the lower ones. When you raise the preemphasis, frequency bands above 1000 Hz will become darker, those below 1000 Hz will become lighter.</dd>
+<dt><i>Dynamic compression</i>
+<dd>determines how much stronger weak spectra should be made before drawing. Normally, this parameter is between 0 and 1. If it is 0 (the standard value), there is no dynamic compression. If it is 1, all spectra will be drawn equally strong, i.e., all of them will contain frequencies that are drawn in black. If this parameter is 0.4 and the global maximum is at 80 dB, then a spectrum with a maximum at 20 dB (which will normally be drawn all white if the dynamic range is 50 dB), will be raised by 0.4 * (80 - 20) = 24 dB, so that its maximum will be seen at 44 dB (thus making this frame visible).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro_3_2__Configuring_the_spectrogram.html">Intro 3.2. Configuring the spectrogram</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20120531</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>FormantPathEditor</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+FormantPathEditor
+</b></font></table></table>
+<p>One of the <a href="Editors.html">Editors</a> in Praat, for editing a <a href="FormantPath.html">FormantPath</a> object.</p>
+<p>You can optionally include a <a href="Sound.html">Sound</a> and a <a href="TextGrid.html">TextGrid</a> in this editor, by selecting both the Sound and the FormantPath together, or the Sound and the TextGrid and the FormantPath together before clicking <b>View &amp; Edit</b>.</p>
+<p>With the FormantPathEditor you can, for each interval that you select, replace its formant frequencies and bandwidths by the corresponding values from one of the alternative Formant objects in the FormantPath's collection.</p>
+<h2>Editor layout</h2>
+<p>The left part of the editor is similar to the layout of the <a href="SoundEditor.html">SoundEditor</a>.</p>
+<p>The right part is called the <i>selection viewer</i>. Here you see alternative formant frequency analyses of the selected part of the sound laid out in a grid (or of the whole visible sound window if there is no selection).</p>
+<p>The selection viewer shows not only a formant's frequency but also its bandwidth as a vertical line. This will give you a better impression of the analysis results because well defined formants have small bandwidths and, therefore, show short vertical lines.</p>
+<h2>How to operate</h2>
+<p>When you start to edit a new FormantPath object, the formants in the path are set equal to the formants of the default analysis. This guarantees that there always is a path at the start. The ceiling of this path is indicated by the fat red line in the upper part of the spectrogram. If you click in one of the rectangles in the selection viewer the values of the formant frequencies (and bandwidths) in the selected part on the left are replaced by the values present in the rectangle and the fat red line will indicate the new ceiling. The colour of the clicked rectangle on the right will also change.</p>
+<p>This also works the other way around: if you click near a red line in the spectrogram the corresponding selection viewer will be shown.</p>
+<h2>Details</h2>
+<p>The stress numbers that are displayed above the rectangles in the selection viewer are explained in <a href="Weenink__2015_.html">Weenink (2015)</a>. Basically each number is a combined stress score of the individual formant tracks within the rectangle. Each track's stress score quantifies how well the track has been modelled. The lower this number is, the better the track is modelled by a polynomial of the chosen order. The higher the order, the more flexible the curve is and the better it can adapt to the data. The higher the order of the polynomial, the more parameters are needed in the model. You may change the number of parameters that model each track with the <b>Candidate modelling settings...</b> option in the Candidates menu.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Candidate_modelling_settings___.html">Candidate modelling settings...</a>
+<li><a href="What_was_new_in_6_2_.html">What was new in 6.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20220816</p>
+</address>
+</body>
+</html>

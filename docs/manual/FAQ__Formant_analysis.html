@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>FAQ: Formant analysis</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+FAQ: Formant analysis
+</b></font></table></table>
+<p><b>Problem</b>: I get different formant values if I choose to analyse 3 formants than if I choose to analyse 4 formants.</p>
+<p>Solution: the &#8220;number of formants&#8221; in formant analysis determines the number of peaks with which the <i>entire</i> spectrum is modelled. For an average female voice, you should choose to analyse 5 formants in the region up to 5500 Hz, even if you are interested only in the first three formants.</p>
+<p><b>Problem</b>: I often get only 1 formant in a region where I see clearly 2 formants in the spectrogram.</p>
+<p>This occurs mainly in back vowels (F1 and F2 close together) for male voices, if the &#8220;maximum formant&#8221; is set to the standard of 5500 Hz, which is appropriate for female voices. Set the &#8220;maximum formant&#8221; down to 5000 Hz. No, Praat comes without a guarantee: the formant analysis is based on LPC, and this comes with several assumptions as to what a speech spectrum is like.</p>
+<p><b>Question</b>: what algorithm is used for formant analysis?</p>
+<p>Answer: see <a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="FAQ__Frequently_Asked_Questions_.html">FAQ (Frequently Asked Questions)</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2003-09-16</p>
+</address>
+</body>
+</html>

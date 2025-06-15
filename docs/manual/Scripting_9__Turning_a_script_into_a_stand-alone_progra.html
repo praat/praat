@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 9. Turning a script into a stand-alone program</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 9. Turning a script into a stand-alone program
+</b></font></table></table>
+<p>You can turn your script into a double-clickable stand-alone program by including it into Praat's <b>main</b> procedure. If you want to try this, you should already know how to compile and link the Praat program on your computer.</p>
+<p>These stand-alone programs do not show the Objects window and the Picture window; therefore, you will usually want to use <a href="Demo_window.html">Demo window</a> commands in your script. Here is an example:</p>
+<code>   #include "praat.h"<br></code>
+<code>   <br></code>
+<code>   const char32 myScript [ ] = U""<br></code>
+<code>      "demo Text: 0.5, \"centre\", 0.5, \"half\", \"Hello world\"\n"<br></code>
+<code>      "demoWaitForInput ( )\n"<br></code>
+<code>   ;<br></code>
+<code>   <br></code>
+<code>   int main (int argc, char *argv [ ]) {<br></code>
+<code>      praat_setStandAloneScriptText (myScript);<br></code>
+<code>      praat_init (U"Hello", argc, argv);<br></code>
+<code>      INCLUDE_LIBRARY (praat_uvafon_init)<br></code>
+<code>      praat_run ();<br></code>
+<code>      return 0;<br></code>
+<code>   }<br></code>
+<p>The script in this example raises the Demo window, writes &#8220;Hello world&#8221; in the middle of the window, waits until the user clicks the mouse or presses a key, and then closes.</p>
+<p>Note that Praat is distributed under the General Public License (GPL). This means that if you distribute a Praat-based stand-alone program, you have to make it open source under the GPL as well (version 3.0 or later).</p>
+<p>See also <a href="Programming_with_Praat.html">Programming with Praat</a>.</p>
+<h2>Details</h2>
+<p>Your program can save its preferences in a folder of its choice, e.g. in <b><code><font size=+1>preferencesDirectory$ + “/../GuineaPigAnalyzer”</font></code></b> if your program is called GuineaPigAnalyzer. If you want to be less conspicuous and like to use the Praat preferences folder instead, please use the <b><code><font size=+1>apps</font></code></b> subfolder, in this way:</p>
+<code>   <a href="_createFolder_.html">createFolder</a>: preferencesDirectory$ + “/apps”<br></code>
+<code>   <a href="_createFolder_.html">createFolder</a>: preferencesDirectory$ + “/apps/GuineaPigAnalyzer”<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="What_was_new_in_5_2_.html">What was new in 5.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20201229</p>
+</address>
+</body>
+</html>

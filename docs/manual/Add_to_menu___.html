@@ -1,0 +1,44 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Add to menu...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Add to menu...
+</b></font></table></table>
+<p>A command in the File menu of a <a href="ScriptEditor.html">ScriptEditor</a> that was created in an editor (e.g. SoundEditor) window.</p>
+<p>With this command, you add a button to any fixed menu in an editor window. Clicking the added button will invoke the specified <a href="Praat_script.html">Praat script</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Window</b>
+<dd>the name of the type of window (e.g. &#8220;TextGridEditor&#8221;) that contains the menu that you want to change.</dd>
+<dt><b>Menu</b>
+<dd>the title of the menu that you want to change. If <b>Window</b> is &#8220;SoundEditor&#8221;, you can specify the File, Edit, Time, Play, Sound, Analyses, Spectrogram, Pitch, Intensity, Formants, or Pulses menu.</dd>
+<dt><b>Command</b>
+<dd>the title of the new menu button. To get a separator line instead of a command text, you specify a unique string that starts with a hyphen (&#8220;-&#8221;). To get a command with a rectangle to its right (like e.g. <b>Save sound to disk:</b> in the File menu of the SoundEditor), have the command end in a colon (&#8220;:&#8221;). To get a command with a rectangle to its right and a separator line above it, you can use e.g. <code><font size=+1>- Save sound to disk:</font></code> as a shorthand.</dd>
+<dt><b>After command</b>
+<dd>not used; always keep this empty (i.e. an empty string).</dd>
+<dt><b>Depth</b>
+<dd>0 if you want your button left-aligned in the menu, 1 if you want it indented (as e.g. the command <b>Save selected sound as WAV file...</b> in the File menu of the SoundEditor).</dd>
+<dt><b>Script</b>
+<dd>the full path name of the script to invoke. If you saved the script you are editing, its name will already have been filled in here. If you do not specify a script, you will get a separator line instead.</dd>
+</dl>
+<h2>Usage convention</h2>
+<p>Please adhere to the convention that commands that take arguments, such as &#8220;Lorenz...&#8221; above, end in three dots.</p>
+<h2>Using this command in a script</h2>
+<p>To add a fixed button from a script (perhaps your <a href="initialization_script.html">initialization script</a> or a <a href="plug-ins.html">plug-in</a>), use the hidden shell command <a href="Add_menu_command___.html">Add menu command...</a> instead. It has the exact same list of parameters.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023</p>
+</address>
+</body>
+</html>

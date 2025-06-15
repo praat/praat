@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Spectrum: Get centre of gravity...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Spectrum: Get centre of gravity...
+</b></font></table></table>
+<p>A command to query the selected <a href="Spectrum.html">Spectrum</a> object.</p>
+<p>If the complex spectrum is given by <i>S</i>(<i>f</i>), where <i>f</i> is the frequency, the <i>centre of gravity</i> is given by</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub>0</sub><sup>&#8734;</sup>  <i>f</i> |<i>S</i>(<i>f</i>)|<sup><i>p</i></sup> <i>df</i></table>
+<p>divided by the "energy"</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub>0</sub><sup>&#8734;</sup>  |<i>S</i>(<i>f</i>)|<sup><i>p</i></sup> <i>df</i></table>
+<p>Thus, the centre of gravity is the average of <i>f</i> over the entire frequency domain, weighted by |<i>S</i>(<i>f</i>)|<sup><i>p</i></sup>. For <i>p</i> = 2, the weighting is done by the power spectrum, and for <i>p</i> = 1, the weighting is done by the absolute spectrum. A value of <i>p</i> = 2/3 has been seen as well.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Power</b>
+<dd>the quantity <i>p</i> in the formulas above. Common values are 2, 1, or 2/3.</dd>
+</dl>
+<h2>Interpretation</h2>
+<p>The spectral centre of gravity is a measure for how high the frequencies in a spectrum are on average. For a sine wave with a frequency of 377 Hz, the centre of gravity is 377 Hz. You can easily check this in Praat by creating such a sine wave (<a href="Create_Sound_from_formula___.html">Create Sound from formula...</a>), then converting it to a Spectrum (<a href="Sound__To_Spectrum___.html">Sound: To Spectrum...</a>), then querying the mean frequency. For a white noise sampled at 22050 Hz, the centre of gravity is 5512.5 Hz, i.e. one half of the <a href="Nyquist_frequency.html">Nyquist frequency</a>.</p>
+<h2>Related measures</h2>
+<p>The centre of gravity is used in the computation of spectral moments:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Get_central_moment___.html">Spectrum: Get central moment...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Get_standard_deviation___.html">Spectrum: Get standard deviation...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Get_skewness___.html">Spectrum: Get skewness...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Get_kurtosis___.html">Spectrum: Get kurtosis...</a></dd>
+</dl>
+<hr>
+<address>
+	<p>© ppgb 20070225</p>
+</address>
+</body>
+</html>

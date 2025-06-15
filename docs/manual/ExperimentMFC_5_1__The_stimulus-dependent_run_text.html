@@ -1,0 +1,43 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 5.1. The stimulus-dependent run text</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 5.1. The stimulus-dependent run text
+</b></font></table></table>
+<p>The <a href="ExperimentMFC_2_1__The_experiment_file.html">example experiment</a> contained the following lines:</p>
+<code>   numberOfDifferentStimuli = 4<br></code>
+<code>      "heed"  ""<br></code>
+<code>      "hid"   ""<br></code>
+<code>      "hood"  ""<br></code>
+<code>      "hud"   ""<br></code>
+<code>   ...<br></code>
+<code>   ...<br></code>
+<code>   runText = "Choose the vowel that you heard."<br></code>
+<p>For every stimulus, the same &#8220;run text&#8221; was written at the top of the screen. But suppose you want to make that text dependent on the stimulus. You would do:</p>
+<code>      "heed"  "Choose the vowel you heard."<br></code>
+<code>      "hid"   "Click the vowel you heard."<br></code>
+<code>      "hood"  "Select the vowel you heard."<br></code>
+<code>      "hud"   "What's the vowel you heard?"<br></code>
+<code>   ...<br></code>
+<code>   ...<br></code>
+<code>   runText = ""<br></code>
+<p>In this case, each stimulus comes with its own text. The <i>runText</i> will only show up for stimuli for which you do not supply a separate text.</p>
+<p>This feature is useful mainly in cases where the responses are sounds but the stimulus is not (see <a href="ExperimentMFC_6__Responses_are_sounds.html">ExperimentMFC 6. Responses are sounds</a>) or if you want to cause some lexical priming.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_5__Stimulus-dependent_texts.html">ExperimentMFC 5. Stimulus-dependent texts</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20051205</p>
+</address>
+</body>
+</html>

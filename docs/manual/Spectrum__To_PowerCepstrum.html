@@ -1,0 +1,27 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Spectrum: To PowerCepstrum</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Spectrum: To PowerCepstrum
+</b></font></table></table>
+<p>A command to create a <a href="PowerCepstrum.html">PowerCepstrum</a> from every selected <a href="Spectrum.html">Spectrum</a>.</p>
+<h2>Mathematical procedure</h2>
+<p>The spectrum <i>X</i>(<i>f</i>) is transformed to a new spectrum <i>X</i>&#8242;(<i>f</i>), where Re(<i>X</i>&#8242;(<i>f</i>)) = ln (Re(<i>X</i>(<i>f</i>))<sup>2</sup> + Im(<i>X</i>(<i>f</i>))<sup>2</sup>) and Im(<i>X</i>&#8242;(<i>f</i>)) = 0.</p>
+<p>The new spectrum <i>X</i>&#8242;(<i>f</i>) is then transformed to a Sound <i>x</i>(<i>t</i>) by means of an inverse Fourier transform as is described in <a href="Spectrum__To_Sound.html">Spectrum: To Sound</a>. The <i>squares</i> of the transformed values, <i>x</i>(<i>t</i>)<sup>2</sup>, are stored in the <b>PowerCepstrum</b>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound__To_PowerCepstrogram___.html">Sound: To PowerCepstrogram...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20190908</p>
+</address>
+</body>
+</html>

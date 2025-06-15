@@ -1,0 +1,72 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>pitch analysis by raw autocorrelation</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+pitch analysis by raw autocorrelation
+</b></font></table></table>
+<h2>Purpose</h2>
+<p>to perform a pitch analysis based on an autocorrelation method.</p>
+<h2>Usage</h2>
+<p>Raw autocorrelation is the pitch analysis method of choice if you want measure the raw periodicity of a signal.</p>
+<p>Note that the preferred method for speech (intonation, vocal fold vibration) is <a href="pitch_analysis_by_filtered_autocorrelation.html">pitch analysis by filtered autocorrelation</a>. See <a href="how_to_choose_a_pitch_analysis_method.html">how to choose a pitch analysis method</a> for details.</p>
+<h2>Algorithm</h2>
+<p>The algorithm performs an acoustic periodicity detection on the basis of an accurate autocorrelation method, as described in <a href="Boersma__1993_.html">Boersma (1993)</a>. This method is more accurate, noise-resistant, and robust, than methods based on cepstrum or combs, or the original autocorrelation methods. The reason why other methods were invented, was the failure to recognize the fact that if you want to estimate a signal's short-term autocorrelation function on the basis of a windowed signal, you should divide the autocorrelation function of the windowed signal by the autocorrelation function of the window:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>r</i><sub><i>x</i></sub> (<i>&#964;</i>) &#8776; <i>r</i><sub><i>xw</i></sub> (<i>&#964;</i>) / <i>r</i><sub><i>w</i></sub> (<i>&#964;</i>)</table>
+<p>The pitch is basically determined as the inverse of the time (<i>lag</i>) where the autocorrelation function <i>r</i> has its maximum. However, there are likely to be multiple peaks in <i>r</i>, and all of these can be <i>pitch candidates</i>. For each moment in time (e.g. every 10 ms), the algorithm determines the (typically) 15 highest peaks in <i>r</i>, regards these as <i>candidates</i>, and then tracks an optimal path through the candidates over time.</p>
+<h2>Settings</h2>
+<p>Several settings are already described in <a href="Intro_4_2__Configuring_the_pitch_contour.html">Intro 4.2. Configuring the pitch contour</a>. The explanations below assume that you have gone through that part of the Intro.</p>
+<p>The settings that control the recruitment of the candidates are:</p>
+<dl>
+<dt><b>Time step (s)</b> (standard value: 0.0)
+<dd>the measurement interval (frame duration), in seconds. If you supply 0, Praat will use a time step of 0.75 / (<i>pitch floor</i>), e.g. 0.01 seconds if the pitch floor is 75 Hz; in this example, Praat computes 100 pitch values per second.</dd>
+<dt><b>Pitch floor (Hz)</b> (standard value: 75 Hz)
+<dd>candidates below this frequency will not be recruited. This parameter determines the effective length of the analysis window: it will be 3 longest periods long, i.e., if the pitch floor is 75 Hz, the window will be effectively 3/75 = 0.04 seconds long.</dd>
+</dl>
+<p>Note that if you set the time step to zero, the analysis windows for consecutive measurements will overlap appreciably: Praat will always compute 4 pitch values within one window length, i.e., the degree of <i>oversampling</i> is 4.</p>
+<dl>
+<dt><b>Pitch ceiling (Hz)</b> (standard value: 600 Hz)
+<dd>candidates above this frequency will be ignored.</dd>
+<dt><b>Max. number of candidates</b> (standard value: 15)
+<dd>each frame will contain at least this many pitch candidates. One of them is the &#8220;unvoiced candidate&#8221;; the others correspond to time lags over which the signal is more or less similar to itself.</dd>
+<dt><b>Very accurate</b> (standard value: <i>off</i>)
+<dd>if <i>off</i>, the window is a Hanning window with a physical length of  3 / (<i>pitch floor</i>). If <i>on</i>, the window is a Gaussian window with a physical length of  6 / (<i>pitch floor</i>), i.e. twice the effective length.</dd>
+</dl>
+<p>A post-processing algorithm seeks the cheapest path through the candidates. The settings that determine the cheapest path are:</p>
+<dl>
+<dt><b>Silence threshold</b> (standard value: 0.03)
+<dd>frames that do not contain amplitudes above this threshold (relative to the global maximum amplitude), are probably silent.</dd>
+<dt><b>Voicing threshold</b> (standard value: 0.45)
+<dd>the strength of the unvoiced candidate, relative to the maximum possible autocorrelation. If the amount of periodic energy in a frame is more than this fraction of the total energy (the remainder being noise), then Praat will prefer to regard this frame as voiced; otherwise as unvoiced. To increase the number of unvoiced decisions, increase the voicing threshold.</dd>
+<dt><b>Octave cost</b> (standard value: 0.01 per octave)
+<dd>degree of favouring of high-frequency candidates, relative to the maximum possible autocorrelation. This is necessary because even (or: especially) in the case of a perfectly periodic signal, all undertones of <i>F</i><sub>0</sub> are equally strong candidates as <i>F</i><sub>0</sub> itself. To more strongly favour recruitment of high-frequency candidates, increase this value.</dd>
+<dt><b>Octave-jump cost</b> (standard value: 0.35)
+<dd>degree of disfavouring of pitch changes, relative to the maximum possible autocorrelation. To decrease the number of large frequency jumps, increase this value. In contrast with what is described in the article, this value will be corrected for the time step: multiply by 0.01 s / <i>TimeStep</i> to get the value in the way it is used in the formulas in the article.</dd>
+<dt><b>Voiced / unvoiced cost</b> (standard value: 0.14)
+<dd>degree of disfavouring of voiced/unvoiced transitions, relative to the maximum possible autocorrelation. To decrease the number of voiced/unvoiced transitions, increase this value. In contrast with what is described in the article, this value will be corrected for the time step: multiply by 0.01 s / <i>TimeStep</i> to get the value in the way it is used in the formulas in the article.</dd>
+</dl>
+<p>The standard settings are best in most cases. For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.45, in order to get pitch values even in irregular parts of the signal. For prevoiced plosives, you may want to lower the silence threshold from 0.03 to 0.01 or so.</p>
+<h2>Availability in Praat</h2>
+<p>Pitch analysis by raw autocorrelation is available in two ways in Praat:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; via <a href="Sound__To_Pitch__raw_autocorrelation____.html">Sound: To Pitch (raw autocorrelation)...</a> from the <b>Analyse periodicity</b> menu in the Objects window when you select a Sound object;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; via <b>Show Pitch</b> and <b>Pitch analysis method is raw autocorrelation</b> from the <b>Pitch</b> menu when you are viewing a Sound or TextGrid object (<a href="SoundEditor.html">SoundEditor</a>, <a href="TextGridEditor.html">TextGridEditor</a>).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="pitch_analysis_by_filtered_cross-correlation.html">pitch analysis by filtered cross-correlation</a>
+<li><a href="pitch_analysis_by_raw_cross-correlation.html">pitch analysis by raw cross-correlation</a>
+<li><a href="Pitch_settings___.html">Pitch settings...</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1996,2001–2003,2022-2024</p>
+</address>
+</body>
+</html>

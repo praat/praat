@@ -1,0 +1,110 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat.</p>
+<p>A TableOfReal object contains a number of <i>cells</i>. Each cell belongs to a <i>row</i> and a <i>column</i>. For instance, a TableOfReal with 10 rows and 3 columns has 30 cells.</p>
+<p>Each row and each column may be labeled with a <i>title</i>.</p>
+<h2>Creating a TableOfReal from data in a text file</h2>
+<p>Suppose you have F1 and F2 data for vowels. You can create a simple text file like the following:</p>
+<code>   "ooTextFile"  ! The line by which Praat can recognize your file<br></code>
+<code>   "TableOfReal" ! The line that tells Praat about the contents<br></code>
+<code>   2   "F1"  "F2"      ! Number of columns, and column labels<br></code>
+<code>   3                   ! Number of rows<br></code>
+<code>   "a" 800 1100         ! Row label (vowel), F1 value, F2 value<br></code>
+<code>   "i" 280 2800         ! Row label (vowel), F1 value, F2 value<br></code>
+<code>   "u" 260  560         ! Row label (vowel), F1 value, F2 value<br></code>
+<p>Praat is rather forgiving about the use of spaces, tabs, and newlines. See <a href="Save_as_text_file___.html">Save as text file...</a> for general information.</p>
+<p>You will often have your data in a file with a self-describing format, i.e. in which the number of values on a line equals the number of columns of the table:</p>
+<code>   800 1100<br></code>
+<code>   280 2800<br></code>
+<code>   260 560<br></code>
+<p>Such a file can be read with <a href="Read_Matrix_from_raw_text_file___.html">Read Matrix from raw text file...</a>. This creates a Matrix object, which can be cast to a TableOfReal object by <a href="Matrix__To_TableOfReal.html">Matrix: To TableOfReal</a>. The resulting TableOfReal does not have any row or column labels yet. You could add column labels with:</p>
+<code>   Set column label (index): 1, “F1”<br></code>
+<code>   Set column label (index): 2, “F2”<br></code>
+<p>Of course, if the row labels contain crucial information, and the number of rows is large, this is not a feasible method.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Canonical_correlation_analysis.html">Canonical correlation analysis</a>
+<li><a href="CCA___TableOfReal__To_TableOfReal__loadings_.html">CCA & TableOfReal: To TableOfReal (loadings)</a>
+<li><a href="CCA___TableOfReal__To_TableOfReal__scores____.html">CCA & TableOfReal: To TableOfReal (scores)...</a>
+<li><a href="Confusion__To_TableOfReal__marginals_.html">Confusion: To TableOfReal (marginals)</a>
+<li><a href="Correlation__Confidence_intervals___.html">Correlation: Confidence intervals...</a>
+<li><a href="Covariance___TableOfReal__Extract_quantile_range___.html">Covariance & TableOfReal: Extract quantile range...</a>
+<li><a href="Covariance___TableOfReal__To_TableOfReal__mahalanobis__.html">Covariance & TableOfReal: To TableOfReal (mahalanobis)...</a>
+<li><a href="Covariance__To_TableOfReal__random_sampling____.html">Covariance: To TableOfReal (random sampling)...</a>
+<li><a href="Create_iris_data_set.html">Create iris data set</a>
+<li><a href="Create_TableOfReal.html">Create TableOfReal</a>
+<li><a href="Create_TableOfReal__Pols_1973____.html">Create TableOfReal (Pols 1973)...</a>
+<li><a href="Create_TableOfReal__Sandwell_1987_.html">Create TableOfReal (Sandwell 1987)</a>
+<li><a href="Create_TableOfReal__Van_Nierop_1973____.html">Create TableOfReal (Van Nierop 1973)...</a>
+<li><a href="Create_TableOfReal__Weenink_1985____.html">Create TableOfReal (Weenink 1985)...</a>
+<li><a href="Discriminant___TableOfReal__To_ClassificationTable___.html">Discriminant & TableOfReal: To ClassificationTable...</a>
+<li><a href="Discriminant___TableOfReal__To_Configuration___.html">Discriminant & TableOfReal: To Configuration...</a>
+<li><a href="Discriminant___TableOfReal__To_TableOfReal__mahalanobis.html">Discriminant & TableOfReal: To TableOfReal (mahalanobis)...</a>
+<li><a href="Dissimilarity.html">Dissimilarity</a>
+<li><a href="Distributions.html">Distributions</a>
+<li><a href="Eigen___TableOfReal__Project___.html">Eigen & TableOfReal: Project...</a>
+<li><a href="FFNet__Extract_weights___.html">FFNet: Extract weights...</a>
+<li><a href="Formulas_8__Attributes_of_objects.html">Formulas 8. Attributes of objects</a>
+<li><a href="GaussianMixture___TableOfReal__To_ClassificationTable.html">GaussianMixture & TableOfReal: To ClassificationTable</a>
+<li><a href="GaussianMixture___TableOfReal__To_Correlation__columns_.html">GaussianMixture & TableOfReal: To Correlation (columns)</a>
+<li><a href="GaussianMixture___TableOfReal__To_Table__BHEP_normality.html">GaussianMixture & TableOfReal: To Table (BHEP normality tests)...</a>
+<li><a href="HMM__Extract_emission_probabilities.html">HMM: Extract emission probabilities</a>
+<li><a href="HMM__Extract_transition_probabilities.html">HMM: Extract transition probabilities</a>
+<li><a href="MFCC__To_TableOfReal___.html">MFCC: To TableOfReal...</a>
+<li><a href="PCA___Configuration__To_TableOfReal__reconstruct_.html">PCA & Configuration: To TableOfReal (reconstruct)</a>
+<li><a href="PCA___TableOfReal__Get_fraction_variance___.html">PCA & TableOfReal: Get fraction variance...</a>
+<li><a href="PCA___TableOfReal__To_Configuration___.html">PCA & TableOfReal: To Configuration...</a>
+<li><a href="PCA___TableOfReal__To_TableOfReal__z-scores____.html">PCA & TableOfReal: To TableOfReal (z-scores)...</a>
+<li><a href="PCA__To_TableOfReal__reconstruct_1____.html">PCA: To TableOfReal (reconstruct 1)...</a>
+<li><a href="Principal_component_analysis.html">Principal component analysis</a>
+<li><a href="SSCP.html">SSCP</a>
+<li><a href="SSCP___TableOfReal__Extract_quantile_range___.html">SSCP & TableOfReal: Extract quantile range...</a>
+<li><a href="T-test.html">T-test</a>
+<li><a href="TableOfReal___Permutation__Permute_rows.html">TableOfReal & Permutation: Permute rows</a>
+<li><a href="TableOfReal__Centre_columns.html">TableOfReal: Centre columns</a>
+<li><a href="TableOfReal__Centre_rows.html">TableOfReal: Centre rows</a>
+<li><a href="TableOfReal__Change_column_labels___.html">TableOfReal: Change column labels...</a>
+<li><a href="TableOfReal__Change_row_labels___.html">TableOfReal: Change row labels...</a>
+<li><a href="TableOfReal__Draw_biplot___.html">TableOfReal: Draw biplot...</a>
+<li><a href="TableOfReal__Draw_box_plots___.html">TableOfReal: Draw box plots...</a>
+<li><a href="TableOfReal__Draw_rows_as_histogram___.html">TableOfReal: Draw rows as histogram...</a>
+<li><a href="TableOfReal__Get_table_norm.html">TableOfReal: Get table norm</a>
+<li><a href="TableOfReal__Normalize_columns___.html">TableOfReal: Normalize columns...</a>
+<li><a href="TableOfReal__Normalize_rows___.html">TableOfReal: Normalize rows...</a>
+<li><a href="TableOfReal__Normalize_table___.html">TableOfReal: Normalize table...</a>
+<li><a href="TableOfReal__Select_columns_where_row___.html">TableOfReal: Select columns where row...</a>
+<li><a href="TableOfReal__Set_value___.html">TableOfReal: Set value...</a>
+<li><a href="TableOfReal__Standardize_columns.html">TableOfReal: Standardize columns</a>
+<li><a href="TableOfReal__To_CCA___.html">TableOfReal: To CCA...</a>
+<li><a href="TableOfReal__To_Configuration__lda____.html">TableOfReal: To Configuration (lda)...</a>
+<li><a href="TableOfReal__To_Configuration__pca____.html">TableOfReal: To Configuration (pca)...</a>
+<li><a href="TableOfReal__To_Correlation.html">TableOfReal: To Correlation</a>
+<li><a href="TableOfReal__To_Correlation__rank_.html">TableOfReal: To Correlation (rank)</a>
+<li><a href="TableOfReal__To_Covariance.html">TableOfReal: To Covariance</a>
+<li><a href="TableOfReal__To_Discriminant.html">TableOfReal: To Discriminant</a>
+<li><a href="TableOfReal__To_GaussianMixture__row_labels____.html">TableOfReal: To GaussianMixture (row labels)...</a>
+<li><a href="TableOfReal__To_GaussianMixture___.html">TableOfReal: To GaussianMixture...</a>
+<li><a href="TableOfReal__To_PatternList_and_Categories___.html">TableOfReal: To PatternList and Categories...</a>
+<li><a href="TableOfReal__To_PCA.html">TableOfReal: To PCA</a>
+<li><a href="TableOfReal__To_SSCP___.html">TableOfReal: To SSCP...</a>
+<li><a href="TableOfReal__To_TableOfReal__means_by_row_labels____.html">TableOfReal: To TableOfReal (means by row labels)...</a>
+<li><a href="What_was_new_in_3_5_.html">What was new in 3.5?</a>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20030316</p>
+</address>
+</body>
+</html>

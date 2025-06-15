@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>BHEP multivariate normality test</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+BHEP multivariate normality test
+</b></font></table></table>
+<dl>
+<dt>Given a sample of <i>n</i> independent and identically distributed (i.i.d) observation vectors of dimension <i>d</i>, <b><i>x</i></b><sub>1</sub> , <b><i>x</i></b><sub>2</sub> , ..., <b><i>x</i></b><sub><i>n</i></sub>, drawn from an unknown continuous distribution function <i>F</i>(<b><i>x</i></b>), the Baringhaus&#8211;Henze&#8211;Epps&#8211;Pulley multivariate normality test tests 
+<dd>H<sub>0</sub>: <i>F</i>(<b><i>x</i></b>) = <i>F</i><sub>0</sub> (<b><i>x</i></b>) against H<sub>1</sub> : <i>F</i>(<b><i>x</i></b>) &#8800; <i>F</i><sub>0</sub>(<b><i>x</i></b>), where </dd>
+</dl>
+<p><i>F</i><sub>0</sub>(<b><i>x</i></b>) is the multivariate normal distribution function <i>N</i><sub><i>d</i></sub>(<b><i>&#956;</i></b>, <b><i>&#931;</i></b>) with mean <b><i>&#956;</i></b> and covariance matrix <b><i>&#931;</i></b> whose derivative with respect to <b><i>x</i></b> is the multivariate probability density function <i>f</i><sub>0</sub>(<b><i>x</i></b>)= (2&#960;)<sup>-<i>d</i>/2</sup> |<b><i>&#931;</i></b>|<sup>&#189;</sup> exp{-&#189;(<b><i>x</i></b>-<b><i>&#956;</i></b>)<sup>T</sup> <b><i>&#931;</i></b><sup>-1</sup> (<b><i>x</i></b>-<b><i>&#956;</i></b>)}.</p>
+<p>According to <a href="Henze___Wagner__1997_.html">Henze & Wagner (1997)</a> the test statistic in BHEP has a number of favourable characteristics: . it is affine invariant . it is consistent</p>
+<h2>Settings</h2>
+<p>The test depends on a smoothing parameter <i>h</i> that can be chosen in various ways: <a href="Henze___Wagner__1997_.html">Henze & Wagner (1997)</a> recommend <i>h</i> = 1.41, while <a href="Tenreiro__2009_.html">Tenreiro (2009)</a> recommends  <i>h</i><sub><i>s</i> </sub>= 0.448 + 0.026 c<i>d</i> for short tailed alternatives and " " <i>h</i><sub><i>l</i></sub> = 0.928 + 0.049 c<i>d</i> for long tailed alternatives.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="GaussianMixture___TableOfReal__To_Table__BHEP_normality.html">GaussianMixture & TableOfReal: To Table (BHEP normality tests)...</a>
+<li><a href="TableOfReal__Report_multivariate_normality__BHEP____.html">TableOfReal: Report multivariate normality (BHEP)...</a>
+</ul>
+<hr>
+<address>
+	<p>© David Weenink 2010-11-24</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>LPC: To Spectrum (slice)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+LPC: To Spectrum (slice)...
+</b></font></table></table>
+<p>You can choose this command after selecting 1 or more <a href="LPC.html">LPC</a> objects.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Time (s)</b>
+<dd>the time at which the Spectrum should be calculated.</dd>
+<dt><b>Minimum frequency resolution (Hz)</b>
+<dd>successive frequencies in the <a href="Spectrum.html">Spectrum</a> will be maximally this distance apart.</dd>
+<dt><b>Bandwidth reduction (Hz)</b>
+<dd>formants with small bandwidths show up very well as peaks in the spectrum because the poles lie close to the contour along which the spectrum is computed (the unit circle in the z-plane). Peak enhancement can be realized by computing the spectrum in the z-plane along a contour of radius <i>r</i> = exp (&#8211; <i>&#960;</i> &#183; <i>bandwidthReduction</i> / <i>samplingFrequency</i>). This technique is also called off-axis spectrum computation. Negative values evaluate the spectrum on a contour <i>outside</i> the unit circle and therefore result in a flattened  spectrum.</dd>
+<dt><b>De-emphasis frequency (Hz)</b>
+<dd>Performs de-emphasis when frequency is in the interval (0, <a href="Nyquist_frequency.html">Nyquist frequency</a>)</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The Spectrum at time <i>t</i> will be calculated from the <i>nearest</i> LPC frame according to:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>Spectrum (<i>f</i>) = &#8730;(<i>gain</i>&#183;<i>T</i>/<i>df</i>) / (1 + &#8721;<sub><i>k</i>=1..<i>numberOfCoefficients</i></sub> <i>a</i><sub><i>k</i></sub><i>z</i><sup>&#8211;<i>k</i></sup>),</table>
+<p>where <i>T</i> is the sampling period and <i>z</i> = exp (&#8211;2 <i>&#960;</i> <i>i</i> <i>f</i> <i>T</i>) and <i>df</i> is the distance in Hz between two successive components in the Spectrum.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Allocate a large enough buffer [1..<i>nfft</i>] to perform an FFT analysis.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Make the first value of the buffer 1 and copy the prediction coefficients <b>a</b> into the buffer. This results in buffer values: (1, <i>a</i><sub>1</sub>, ..., <i>a</i><sub><i>numberOfCoefficients</i></sub>, 0, ..., 0).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. If <b>De-emphasis frequency</b> is in the interval (0, <i>nyquistFrequency</i>) then "multiply" the buffer with (1 - <i>b</i> <i>z</i><sup>&#8211;1</sup>), where <i>b</i> = exp (&#8211; <i>&#960;</i> <i>deEmphasisFrequency</i> <i>T</i>). This results in buffer values: (1, <i>a</i><sub>1</sub>&#8211;<i>b</i>, <i>a</i><sub>2</sub>&#8211;<i>b</i>&#183;<i>a</i><sub>1</sub>, ..., <i>a</i><sub><i>numberOfCoefficients</i></sub>&#8211;<i>b</i>&#183;<i>a</i><sub><i>numberOfCoefficients</i>&#8211;1</sub>, &#8211;<i>b</i>&#183;<i>a</i><sub><i>numberOfCoefficients</i></sub>, 0, ..., 0). Note that the number of values in the buffer that differ from 0 has increased by one.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. If <b>Bandwidth reduction</b> is greater than 0 then multiply corresponding values in the buffer by <i>g</i><sup><i>i</i>&#8211;1</sup> where <i>g</i> = exp (2<i>&#960;</i> <i>bandwidthReduction</i> <i>T</i> / <i>nfft</i>), and <i>i</i> is the position index in the buffer. <i>i</i> runs from 1 to <i>numberOfCoefficients</i>+1+<i>t</i>, where <i>t</i> equals 1 when de-emphasis was performed, else 0.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">5. Calculate the FFT spectrum of the buffer with the coefficients. This results in complex amplitudes (<i>a</i><sub><i>j</i></sub>,<i>b</i><sub><i>j</i></sub>), <i>j</i>=1..<i>nfft</i>/2+1.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">6. Calculate the LPC Spectrum by taking the inverse of the FFT spectrum, i.e., each complex amplitude becomes (<i>a</i><sub><i>j</i></sub>,<i>b</i><sub><i>j</i></sub>)<sup>&#8211;1</sup> = (<i>a</i><sub><i>j</i></sub>,&#8211;<i>b</i><sub><i>j</i></sub>) / (<i>a</i><sub><i>j</i></sub><sup>2</sup> + <i>b</i><sub><i>j</i></sub><sup>2</sup>)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">7. Multiply all values with the scale factor &#8730;(<i>gain</i>&#183;<i>T</i>/<i>df</i>).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="LPC__To_Spectrogram___.html">LPC: To Spectrogram...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20071120</p>
+</address>
+</body>
+</html>

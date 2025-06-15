@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formant: Get mean...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formant: Get mean...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to ask the selected <a href="Formant.html">Formant</a> object for the mean value of the specified formant.</p>
+<h2>Return value</h2>
+<p>the mean, in hertz or Bark.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Formant number</b>
+<dd>the ordinal number of the formant, counting up from 0 Hz. Specify "2" for <i>F</i><sub>2</sub> etc.</dd>
+<dt><b>From time (s)</b>
+<dt><b>To time (s)</b>
+<dd>the selected time domain. Values outside this domain are ignored. If <b>To time</b> is not greater than <b>From time</b>, the entire time domain of the formant contour is considered.</dd>
+<dt><b>Units</b>
+<dd>the units of the result (<b>Hertz</b> or <b>Bark</b>).</dd>
+</dl>
+<h2>Scripting</h2>
+<p>You can use this command to put the mean into a script variable:</p>
+<code>   selectObject: "Formant hallo"<br></code>
+<code>   mean = Get mean: 2, 0, 0, "Hertz"<br></code>
+<p>In this case, the value will not be written into the Info window.</p>
+<hr>
+<address>
+	<p>© ppgb 20140421</p>
+</address>
+</body>
+</html>
