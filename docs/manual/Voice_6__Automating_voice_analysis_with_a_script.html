@@ -25,10 +25,10 @@ Voice 6. Automating voice analysis with a script
 <h2>4. Getting the whole voice report from a script</h2>
 <p>If you select the Sound, the Pitch, and the PointProcess together (all three), there will be a button that says <b>Voice report...</b>. If you press it, the voice report will be written to the Info window. This is identical to the voice report in the Sound window, although you will have to specify the time range by manually typing it.</p>
 <p>In a script, you can get the jitter and shimmer from the voice report by doing something like:</p>
-<code>   voiceReport$ = Voice report: 0, 0, 75, 500, 1.3, 1.6, 0.03, 0.45<br></code>
-<code>   jitter = extractNumber (voiceReport$, “Jitter (local): ”)<br></code>
-<code>   shimmer = extractNumber (voiceReport$, “Shimmer (local): ”)<br></code>
-<code>   writeInfoLine: “Jitter = ”, percent$ (jitter, 3), “, shimmer = ”, percent$ (shimmer, 3)<br></code>
+<code>   voiceReport$ = <b>Voice report:</b> 0, 0, 75, 500, 1.3, 1.6, 0.03, 0.45<br></code>
+<code>   jitter = <a href="_extractNumber_.html">extractNumber</a> (voiceReport$, “Jitter (local): ”)<br></code>
+<code>   shimmer = <a href="_extractNumber_.html">extractNumber</a> (voiceReport$, “Shimmer (local): ”)<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: “Jitter = ”, percent$ (jitter, 3), “, shimmer = ”, <a href="_percent-S_.html">percent$</a> (shimmer, 3)<br></code>
 <h2>5. Disadvantage of automating voice analysis</h2>
 <p>In all the commands mentioned above, you have to guess the time range, and you would usually supply &#8220;0.0&#8221; and &#8220;0.0&#8221;, in which case you will get the average jitter and shimmer for the whole sound. This may include parts of the sound that you are often not interested in, such as false starts. You do not have these problems when asking for a voice report in the sound window, because there you would make an explicit time selection by hand after judging what part of the sound is relevant.</p>
 <h3>Links to this page</h3>
@@ -38,7 +38,7 @@ Voice 6. Automating voice analysis with a script
 </ul>
 <hr>
 <address>
-	<p>© ppgb 20231115</p>
+	<p>© Paul Boersma 2005,2006,2014,2022,2023,2025</p>
 </address>
 </body>
 </html>
