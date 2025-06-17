@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PitchTier: Get standard deviation (curve)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PitchTier: Get standard deviation (curve)...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="PitchTier.html">PitchTier</a> object.</p>
+<h2>Return value</h2>
+<p>the standard deviation in the curve within a specified time window.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>From time (s)</b>
+<dt><b>To time (s)</b>
+<dd>the selected time domain. Values outside this domain are ignored. If <b>To time</b> is not greater than <b>From time</b>, the entire time domain of the tier is considered.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The curve consists of a sequence of line segments. The contribution of the line segment from (<i>t</i><sub>1</sub>, <i>f</i><sub>1</sub>) to (<i>t</i><sub>2</sub>, <i>f</i><sub>2</sub>) to the variance-multiplied-by-time is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>[ 1/4 (<i>f</i><sub>1</sub> + <i>f</i><sub>2</sub>)<sup>2</sup> + 1/12 (<i>f</i><sub>1</sub> &#8211; <i>f</i><sub>2</sub>)<sup>2</sup> ] (<i>t</i><sub>2</sub> &#8211; <i>t</i><sub>1</sub>)</table>
+<p>The standard deviation is the square root of: the sum of these values divided by <i>toTime</i> &#8211; <i>fromTime</i>.</p>
+<p>To get the standard deviation in the points only, i.e. not weighted by the durations of the line pieces, Use <a href="PitchTier__Get_standard_deviation__points____.html">PitchTier: Get standard deviation (points)...</a> instead.</p>
+<hr>
+<address>
+	<p>© ppgb 20010821</p>
+</address>
+</body>
+</html>

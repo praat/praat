@@ -1,0 +1,307 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas
+</b></font></table></table>
+<p>You can use numeric expressions and string (text) expressions in many places in Praat:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; in the <a href="Calculator.html">calculator</a> in Praat&#8217;s <a href="Goodies.html">Goodies</a> submenu;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; in the numeric fields of most settings windows;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; in a <a href="Praat_script.html">Praat script</a>.</dd>
+</dl>
+<p>For some types of objects (mainly Sound and Matrix), you can also apply formulas to all their contents at the same time:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; when you create a Sound or a Matrix from the <a href="New_menu.html">New menu</a>;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; when you choose <a href="Formula___.html">Formula...</a> from the <a href="Modify.html">Modify</a> menu for a selected object.</dd>
+</dl>
+<p>You can read this tutorial sequentially with the help of the &#8220;<b>&lt; 1</b>&#8221; and &#8220;<b>1 &gt;</b>&#8221; buttons.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. <a href="Formulas_1__My_first_formulas.html">My first formulas</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;1.1. <a href="Formulas_1_1__Formulas_in_the_calculator.html">Formulas in the calculator</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;1.2. <a href="Formulas_1_2__Numeric_expressions.html">Numeric expressions</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;1.3. <a href="Formulas_1_3__String_expressions.html">String expressions</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;1.4. <a href="Formulas_1_4__Array_expressions.html">Array expressions</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;1.5. <a href="Formulas_1_5__Formulas_in_settings_windows.html">Formulas in settings windows</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;1.6. <a href="Formulas_1_6__Formulas_for_creation.html">Formulas for creation</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;1.7. <a href="Formulas_1_7__Formulas_for_modification.html">Formulas for modification</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;1.8. <a href="Formulas_1_8__Formulas_in_scripts.html">Formulas in scripts</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. <a href="Formulas_2__Representations.html">Representations</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;2.1. <a href="Formulas_2_1__Representation_of_numbers.html">Representation of numbers</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;2.2. <a href="Formulas_2_2__Representation_of_strings.html">Representation of strings</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;2.3. <a href="Formulas_2_3__Representation_of_arrays.html">Representation of arrays</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. <a href="Formulas_3__Operators.html">Operators</a> (<code><font size=+1>+</font></code>, <code><font size=+1>-</font></code>, <code><font size=+1>*</font></code>, <code><font size=+1>/</font></code>, <code><font size=+1>^</font></code>)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. <a href="Formulas_4__Constants.html">Constants</a> (<code><font size=+1>pi</font></code>, <code><font size=+1>e</font></code>, <code><font size=+1>undefined</font></code>)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">5. <a href="Formulas_5__Mathematical_functions.html">Mathematical functions</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">6. <a href="Formulas_6__String_functions.html">String functions</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">7. <a href="Formulas_7__Control_structures.html">Control structures</a> (<code><font size=+1>if then else fi</font></code>, semicolon)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">8. <a href="Formulas_8__Attributes_of_objects.html">Attributes of objects</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">9. <a href="Formulas_9__Data_in_objects.html">Data in objects</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_abs-H-H_.html"><code><font size=+1>abs##</font></code></a>
+<li><a href="_abs-H_.html"><code><font size=+1>abs#</font></code></a>
+<li><a href="_abs_.html"><code><font size=+1>abs</font></code></a>
+<li><a href="_appDay_.html"><code><font size=+1>appDay</font></code></a>
+<li><a href="_appMonth-S_.html"><code><font size=+1>appMonth$</font></code></a>
+<li><a href="_appMonth_.html"><code><font size=+1>appMonth</font></code></a>
+<li><a href="_appVersion-S_.html"><code><font size=+1>appVersion$</font></code></a>
+<li><a href="_appVersion_.html"><code><font size=+1>appVersion</font></code></a>
+<li><a href="_appYear_.html"><code><font size=+1>appYear</font></code></a>
+<li><a href="_arccos-H-H_.html"><code><font size=+1>arccos##</font></code></a>
+<li><a href="_arccos-H_.html"><code><font size=+1>arccos#</font></code></a>
+<li><a href="_arccos_.html"><code><font size=+1>arccos</font></code></a>
+<li><a href="_arccosh-H-H_.html"><code><font size=+1>arccosh##</font></code></a>
+<li><a href="_arccosh-H_.html"><code><font size=+1>arccosh#</font></code></a>
+<li><a href="_arccosh_.html"><code><font size=+1>arccosh</font></code></a>
+<li><a href="_arcsin-H-H_.html"><code><font size=+1>arcsin##</font></code></a>
+<li><a href="_arcsin-H_.html"><code><font size=+1>arcsin#</font></code></a>
+<li><a href="_arcsin_.html"><code><font size=+1>arcsin</font></code></a>
+<li><a href="_arcsinh-H-H_.html"><code><font size=+1>arcsinh##</font></code></a>
+<li><a href="_arcsinh-H_.html"><code><font size=+1>arcsinh#</font></code></a>
+<li><a href="_arcsinh_.html"><code><font size=+1>arcsinh</font></code></a>
+<li><a href="_arctan-H-H_.html"><code><font size=+1>arctan##</font></code></a>
+<li><a href="_arctan-H_.html"><code><font size=+1>arctan#</font></code></a>
+<li><a href="_arctan2_.html"><code><font size=+1>arctan2</font></code></a>
+<li><a href="_arctan_.html"><code><font size=+1>arctan</font></code></a>
+<li><a href="_arctanh-H-H_.html"><code><font size=+1>arctanh##</font></code></a>
+<li><a href="_arctanh-H_.html"><code><font size=+1>arctanh#</font></code></a>
+<li><a href="_arctanh_.html"><code><font size=+1>arctanh</font></code></a>
+<li><a href="_backslashTrigraphsToUnicode-S_.html"><code><font size=+1>backslashTrigraphsToUnicode$</font></code></a>
+<li><a href="_barkToHertz_.html"><code><font size=+1>barkToHertz</font></code></a>
+<li><a href="_besselI_.html"><code><font size=+1>besselI</font></code></a>
+<li><a href="_besselK_.html"><code><font size=+1>besselK</font></code></a>
+<li><a href="_beta_.html"><code><font size=+1>beta</font></code></a>
+<li><a href="_between_by-H_.html"><code><font size=+1>between_by#</font></code></a>
+<li><a href="_between_count-H_.html"><code><font size=+1>between_count#</font></code></a>
+<li><a href="_binomialP_.html"><code><font size=+1>binomialP</font></code></a>
+<li><a href="_binomialQ_.html"><code><font size=+1>binomialQ</font></code></a>
+<li><a href="_ceiling-H-H_.html"><code><font size=+1>ceiling##</font></code></a>
+<li><a href="_ceiling-H_.html"><code><font size=+1>ceiling#</font></code></a>
+<li><a href="_ceiling_.html"><code><font size=+1>ceiling</font></code></a>
+<li><a href="_center_.html"><code><font size=+1>center</font></code></a>
+<li><a href="_chiSquareP_.html"><code><font size=+1>chiSquareP</font></code></a>
+<li><a href="_chiSquareQ_.html"><code><font size=+1>chiSquareQ</font></code></a>
+<li><a href="_clock_.html"><code><font size=+1>clock</font></code></a>
+<li><a href="_col-H_.html"><code><font size=+1>col#</font></code></a>
+<li><a href="_columnSums-H_.html"><code><font size=+1>columnSums#</font></code></a>
+<li><a href="_combine-H_.html"><code><font size=+1>combine#</font></code></a>
+<li><a href="_correlation_.html"><code><font size=+1>correlation</font></code></a>
+<li><a href="_cos-H-H_.html"><code><font size=+1>cos##</font></code></a>
+<li><a href="_cos-H_.html"><code><font size=+1>cos#</font></code></a>
+<li><a href="_cos_.html"><code><font size=+1>cos</font></code></a>
+<li><a href="_cosh-H-H_.html"><code><font size=+1>cosh##</font></code></a>
+<li><a href="_cosh-H_.html"><code><font size=+1>cosh#</font></code></a>
+<li><a href="_cosh_.html"><code><font size=+1>cosh</font></code></a>
+<li><a href="_date-H_.html"><code><font size=+1>date#</font></code></a>
+<li><a href="_date-S_.html"><code><font size=+1>date$</font></code></a>
+<li><a href="_date_iso-S_.html"><code><font size=+1>date_iso$</font></code></a>
+<li><a href="_date_utc-H_.html"><code><font size=+1>date_utc#</font></code></a>
+<li><a href="_date_utc-S_.html"><code><font size=+1>date_utc$</font></code></a>
+<li><a href="_date_utc_iso-S_.html"><code><font size=+1>date_utc_iso$</font></code></a>
+<li><a href="_differenceLimensToPhon_.html"><code><font size=+1>differenceLimensToPhon</font></code></a>
+<li><a href="_empty-S-H_.html"><code><font size=+1>empty$#</font></code></a>
+<li><a href="_endsWith_caseInsensitive_.html"><code><font size=+1>endsWith_caseInsensitive</font></code></a>
+<li><a href="_endsWith_.html"><code><font size=+1>endsWith</font></code></a>
+<li><a href="_environment-S_.html"><code><font size=+1>environment$</font></code></a>
+<li><a href="_erb_.html"><code><font size=+1>erb</font></code></a>
+<li><a href="_erbToHertz_.html"><code><font size=+1>erbToHertz</font></code></a>
+<li><a href="_erf_.html"><code><font size=+1>erf</font></code></a>
+<li><a href="_erfc_.html"><code><font size=+1>erfc</font></code></a>
+<li><a href="_exp-H-H_.html"><code><font size=+1>exp##</font></code></a>
+<li><a href="_exp-H_.html"><code><font size=+1>exp#</font></code></a>
+<li><a href="_exp_.html"><code><font size=+1>exp</font></code></a>
+<li><a href="_extractLine-S_.html"><code><font size=+1>extractLine$</font></code></a>
+<li><a href="_extractNumber_.html"><code><font size=+1>extractNumber</font></code></a>
+<li><a href="_extractWord-S_.html"><code><font size=+1>extractWord$</font></code></a>
+<li><a href="_fileNames-S-H_.html"><code><font size=+1>fileNames$#</font></code></a>
+<li><a href="_fileNames_caseInsensitive-S-H_.html"><code><font size=+1>fileNames_caseInsensitive$#</font></code></a>
+<li><a href="_fileReadable_.html"><code><font size=+1>fileReadable</font></code></a>
+<li><a href="_fisherP_.html"><code><font size=+1>fisherP</font></code></a>
+<li><a href="_fisherQ_.html"><code><font size=+1>fisherQ</font></code></a>
+<li><a href="_fixed-S_.html"><code><font size=+1>fixed$</font></code></a>
+<li><a href="_floor-H-H_.html"><code><font size=+1>floor##</font></code></a>
+<li><a href="_floor-H_.html"><code><font size=+1>floor#</font></code></a>
+<li><a href="_floor_.html"><code><font size=+1>floor</font></code></a>
+<li><a href="_folderExists_.html"><code><font size=+1>folderExists</font></code></a>
+<li><a href="_folderNames-S-H_.html"><code><font size=+1>folderNames$#</font></code></a>
+<li><a href="_folderNames_caseInsensitive-S-H_.html"><code><font size=+1>folderNames_caseInsensitive$#</font></code></a>
+<li><a href="_from_to-H_.html"><code><font size=+1>from_to#</font></code></a>
+<li><a href="_from_to_by-H_.html"><code><font size=+1>from_to_by#</font></code></a>
+<li><a href="_from_to_count-H_.html"><code><font size=+1>from_to_count#</font></code></a>
+<li><a href="_gaussP_.html"><code><font size=+1>gaussP</font></code></a>
+<li><a href="_gaussQ_.html"><code><font size=+1>gaussQ</font></code></a>
+<li><a href="_hertzToBark_.html"><code><font size=+1>hertzToBark</font></code></a>
+<li><a href="_hertzToErb_.html"><code><font size=+1>hertzToErb</font></code></a>
+<li><a href="_hertzToMel_.html"><code><font size=+1>hertzToMel</font></code></a>
+<li><a href="_hertzToSemitones_.html"><code><font size=+1>hertzToSemitones</font></code></a>
+<li><a href="_imax_.html"><code><font size=+1>imax</font></code></a>
+<li><a href="_imin_.html"><code><font size=+1>imin</font></code></a>
+<li><a href="_index_caseInsensitive_.html"><code><font size=+1>index_caseInsensitive</font></code></a>
+<li><a href="_index_regex_.html"><code><font size=+1>index_regex</font></code></a>
+<li><a href="_index_.html"><code><font size=+1>index</font></code></a>
+<li><a href="_inner_.html"><code><font size=+1>inner</font></code></a>
+<li><a href="_invBinomialP_.html"><code><font size=+1>invBinomialP</font></code></a>
+<li><a href="_invBinomialQ_.html"><code><font size=+1>invBinomialQ</font></code></a>
+<li><a href="_invChiSquareQ_.html"><code><font size=+1>invChiSquareQ</font></code></a>
+<li><a href="_invFisherQ_.html"><code><font size=+1>invFisherQ</font></code></a>
+<li><a href="_invGaussQ_.html"><code><font size=+1>invGaussQ</font></code></a>
+<li><a href="_invSigmoid-H-H_.html"><code><font size=+1>invSigmoid##</font></code></a>
+<li><a href="_invSigmoid-H_.html"><code><font size=+1>invSigmoid#</font></code></a>
+<li><a href="_invSigmoid_.html"><code><font size=+1>invSigmoid</font></code></a>
+<li><a href="_invStudentQ_.html"><code><font size=+1>invStudentQ</font></code></a>
+<li><a href="_left-S_.html"><code><font size=+1>left$</font></code></a>
+<li><a href="_length_.html"><code><font size=+1>length</font></code></a>
+<li><a href="_ln-H-H_.html"><code><font size=+1>ln##</font></code></a>
+<li><a href="_ln-H_.html"><code><font size=+1>ln#</font></code></a>
+<li><a href="_ln_.html"><code><font size=+1>ln</font></code></a>
+<li><a href="_lnGamma_.html"><code><font size=+1>lnGamma</font></code></a>
+<li><a href="_log2-H-H_.html"><code><font size=+1>log2##</font></code></a>
+<li><a href="_log2-H_.html"><code><font size=+1>log2#</font></code></a>
+<li><a href="_log2_.html"><code><font size=+1>log2</font></code></a>
+<li><a href="_log10-H-H_.html"><code><font size=+1>log10##</font></code></a>
+<li><a href="_log10-H_.html"><code><font size=+1>log10#</font></code></a>
+<li><a href="_log10_.html"><code><font size=+1>log10</font></code></a>
+<li><a href="_lowerCaseAppName-S_.html"><code><font size=+1>lowerCaseAppName$</font></code></a>
+<li><a href="_max_.html"><code><font size=+1>max</font></code></a>
+<li><a href="_mean_.html"><code><font size=+1>mean</font></code></a>
+<li><a href="_melToHertz_.html"><code><font size=+1>melToHertz</font></code></a>
+<li><a href="_mid-S_.html"><code><font size=+1>mid$</font></code></a>
+<li><a href="_min_.html"><code><font size=+1>min</font></code></a>
+<li><a href="_minusObject_.html"><code><font size=+1>minusObject</font></code></a>
+<li><a href="_mul-H-H_.html"><code><font size=+1>mul##</font></code></a>
+<li><a href="_number-H_.html"><code><font size=+1>number#</font></code></a>
+<li><a href="_number_.html"><code><font size=+1>number</font></code></a>
+<li><a href="_numberOfColumns_.html"><code><font size=+1>numberOfColumns</font></code></a>
+<li><a href="_numberOfRows_.html"><code><font size=+1>numberOfRows</font></code></a>
+<li><a href="_outer-H-H_.html"><code><font size=+1>outer##</font></code></a>
+<li><a href="_padLeft-S_.html"><code><font size=+1>padLeft$</font></code></a>
+<li><a href="_padOrTruncateLeft-S_.html"><code><font size=+1>padOrTruncateLeft$</font></code></a>
+<li><a href="_padOrTruncateRight-S_.html"><code><font size=+1>padOrTruncateRight$</font></code></a>
+<li><a href="_padRight-S_.html"><code><font size=+1>padRight$</font></code></a>
+<li><a href="_part-H-H_.html"><code><font size=+1>part##</font></code></a>
+<li><a href="_part-H_.html"><code><font size=+1>part#</font></code></a>
+<li><a href="_percent-S_.html"><code><font size=+1>percent$</font></code></a>
+<li><a href="_phonToDifferenceLimens_.html"><code><font size=+1>phonToDifferenceLimens</font></code></a>
+<li><a href="_plusObject_.html"><code><font size=+1>plusObject</font></code></a>
+<li><a href="_random_initializeSafelyAndUnpredictably_.html"><code><font size=+1>random_initializeSafelyAndUnpredictably</font></code></a>
+<li><a href="_random_initializeWithSeedUnsafelyButPredictably_.html"><code><font size=+1>random_initializeWithSeedUnsafelyButPredictably</font></code></a>
+<li><a href="_randomBernoulli-H-H_.html"><code><font size=+1>randomBernoulli##</font></code></a>
+<li><a href="_randomBernoulli-H_.html"><code><font size=+1>randomBernoulli#</font></code></a>
+<li><a href="_randomBernoulli_.html"><code><font size=+1>randomBernoulli</font></code></a>
+<li><a href="_randomGamma-H-H_.html"><code><font size=+1>randomGamma##</font></code></a>
+<li><a href="_randomGamma-H_.html"><code><font size=+1>randomGamma#</font></code></a>
+<li><a href="_randomGamma_.html"><code><font size=+1>randomGamma</font></code></a>
+<li><a href="_randomGauss-H-H_.html"><code><font size=+1>randomGauss##</font></code></a>
+<li><a href="_randomGauss-H_.html"><code><font size=+1>randomGauss#</font></code></a>
+<li><a href="_randomGauss_.html"><code><font size=+1>randomGauss</font></code></a>
+<li><a href="_randomInteger-H-H_.html"><code><font size=+1>randomInteger##</font></code></a>
+<li><a href="_randomInteger-H_.html"><code><font size=+1>randomInteger#</font></code></a>
+<li><a href="_randomInteger_.html"><code><font size=+1>randomInteger</font></code></a>
+<li><a href="_randomPoisson-H-H_.html"><code><font size=+1>randomPoisson##</font></code></a>
+<li><a href="_randomPoisson-H_.html"><code><font size=+1>randomPoisson#</font></code></a>
+<li><a href="_randomPoisson_.html"><code><font size=+1>randomPoisson</font></code></a>
+<li><a href="_randomUniform-H-H_.html"><code><font size=+1>randomUniform##</font></code></a>
+<li><a href="_randomUniform-H_.html"><code><font size=+1>randomUniform#</font></code></a>
+<li><a href="_randomUniform_.html"><code><font size=+1>randomUniform</font></code></a>
+<li><a href="_rectify-H-H_.html"><code><font size=+1>rectify##</font></code></a>
+<li><a href="_rectify-H_.html"><code><font size=+1>rectify#</font></code></a>
+<li><a href="_rectify_.html"><code><font size=+1>rectify</font></code></a>
+<li><a href="_removeObject_.html"><code><font size=+1>removeObject</font></code></a>
+<li><a href="_repeat-H_.html"><code><font size=+1>repeat#</font></code></a>
+<li><a href="_replace-S_.html"><code><font size=+1>replace$</font></code></a>
+<li><a href="_replace_regex-S_.html"><code><font size=+1>replace_regex$</font></code></a>
+<li><a href="_right-S_.html"><code><font size=+1>right$</font></code></a>
+<li><a href="_rindex_caseInsensitive_.html"><code><font size=+1>rindex_caseInsensitive</font></code></a>
+<li><a href="_rindex_regex_.html"><code><font size=+1>rindex_regex</font></code></a>
+<li><a href="_rindex_.html"><code><font size=+1>rindex</font></code></a>
+<li><a href="_round-H-H_.html"><code><font size=+1>round##</font></code></a>
+<li><a href="_round-H_.html"><code><font size=+1>round#</font></code></a>
+<li><a href="_round_.html"><code><font size=+1>round</font></code></a>
+<li><a href="_row-H_.html"><code><font size=+1>row#</font></code></a>
+<li><a href="_rowSums-H_.html"><code><font size=+1>rowSums#</font></code></a>
+<li><a href="_runSubprocess-S_.html"><code><font size=+1>runSubprocess$</font></code></a>
+<li><a href="_selected-H_.html"><code><font size=+1>selected#</font></code></a>
+<li><a href="_selected-S-H_.html"><code><font size=+1>selected$#</font></code></a>
+<li><a href="_selected-S_.html"><code><font size=+1>selected$</font></code></a>
+<li><a href="_selected_.html"><code><font size=+1>selected</font></code></a>
+<li><a href="_selectObject_.html"><code><font size=+1>selectObject</font></code></a>
+<li><a href="_semitonesToHertz_.html"><code><font size=+1>semitonesToHertz</font></code></a>
+<li><a href="_shuffle-H_.html"><code><font size=+1>shuffle#</font></code></a>
+<li><a href="_shuffle-S-H_.html"><code><font size=+1>shuffle$#</font></code></a>
+<li><a href="_sigmoid-H-H_.html"><code><font size=+1>sigmoid##</font></code></a>
+<li><a href="_sigmoid-H_.html"><code><font size=+1>sigmoid#</font></code></a>
+<li><a href="_sigmoid_.html"><code><font size=+1>sigmoid</font></code></a>
+<li><a href="_sin-H-H_.html"><code><font size=+1>sin##</font></code></a>
+<li><a href="_sin-H_.html"><code><font size=+1>sin#</font></code></a>
+<li><a href="_sin_.html"><code><font size=+1>sin</font></code></a>
+<li><a href="_sinc_.html"><code><font size=+1>sinc</font></code></a>
+<li><a href="_sincpi_.html"><code><font size=+1>sincpi</font></code></a>
+<li><a href="_sinh-H-H_.html"><code><font size=+1>sinh##</font></code></a>
+<li><a href="_sinh-H_.html"><code><font size=+1>sinh#</font></code></a>
+<li><a href="_sinh_.html"><code><font size=+1>sinh</font></code></a>
+<li><a href="_size_.html"><code><font size=+1>size</font></code></a>
+<li><a href="_softmax-H_.html"><code><font size=+1>softmax#</font></code></a>
+<li><a href="_softmaxPerRow-H-H_.html"><code><font size=+1>softmaxPerRow##</font></code></a>
+<li><a href="_sort-H_.html"><code><font size=+1>sort#</font></code></a>
+<li><a href="_sort-S-H_.html"><code><font size=+1>sort$#</font></code></a>
+<li><a href="_sort_numberAware-S-H_.html"><code><font size=+1>sort_numberAware$#</font></code></a>
+<li><a href="_splitByWhitespace-S-H_.html"><code><font size=+1>splitByWhitespace$#</font></code></a>
+<li><a href="_sqrt-H-H_.html"><code><font size=+1>sqrt##</font></code></a>
+<li><a href="_sqrt-H_.html"><code><font size=+1>sqrt#</font></code></a>
+<li><a href="_sqrt_.html"><code><font size=+1>sqrt</font></code></a>
+<li><a href="_startsWith_caseInsensitive_.html"><code><font size=+1>startsWith_caseInsensitive</font></code></a>
+<li><a href="_startsWith_.html"><code><font size=+1>startsWith</font></code></a>
+<li><a href="_stdev_.html"><code><font size=+1>stdev</font></code></a>
+<li><a href="_stopwatch_.html"><code><font size=+1>stopwatch</font></code></a>
+<li><a href="_string-S_.html"><code><font size=+1>string$</font></code></a>
+<li><a href="_studentP_.html"><code><font size=+1>studentP</font></code></a>
+<li><a href="_studentQ_.html"><code><font size=+1>studentQ</font></code></a>
+<li><a href="_sum_.html"><code><font size=+1>sum</font></code></a>
+<li><a href="_sumOver_.html"><code><font size=+1>sumOver</font></code></a>
+<li><a href="_tan-H-H_.html"><code><font size=+1>tan##</font></code></a>
+<li><a href="_tan-H_.html"><code><font size=+1>tan#</font></code></a>
+<li><a href="_tan_.html"><code><font size=+1>tan</font></code></a>
+<li><a href="_tanh-H-H_.html"><code><font size=+1>tanh##</font></code></a>
+<li><a href="_tanh-H_.html"><code><font size=+1>tanh#</font></code></a>
+<li><a href="_tanh_.html"><code><font size=+1>tanh</font></code></a>
+<li><a href="_to-H_.html"><code><font size=+1>to#</font></code></a>
+<li><a href="_transpose-H-H_.html"><code><font size=+1>transpose##</font></code></a>
+<li><a href="_truncateLeft-S_.html"><code><font size=+1>truncateLeft$</font></code></a>
+<li><a href="_truncateRight-S_.html"><code><font size=+1>truncateRight$</font></code></a>
+<li><a href="_unicode-S_.html"><code><font size=+1>unicode$</font></code></a>
+<li><a href="_unicode_.html"><code><font size=+1>unicode</font></code></a>
+<li><a href="_unicodeToBackslashTrigraphs-S_.html"><code><font size=+1>unicodeToBackslashTrigraphs$</font></code></a>
+<li><a href="_upperCaseAppName-S_.html"><code><font size=+1>upperCaseAppName$</font></code></a>
+<li><a href="_vertical-S_.html"><code><font size=+1>vertical$</font></code></a>
+<li><a href="_zero-H-H_.html"><code><font size=+1>zero##</font></code></a>
+<li><a href="_zero-H_.html"><code><font size=+1>zero#</font></code></a>
+<li><a href="Acknowledgments.html">Acknowledgments</a>
+<li><a href="Cochleagram__Formula___.html">Cochleagram: Formula...</a>
+<li><a href="Create_Configuration___.html">Create Configuration...</a>
+<li><a href="Create_Sound_from_formula___.html">Create Sound from formula...</a>
+<li><a href="Excitation__Formula___.html">Excitation: Formula...</a>
+<li><a href="Functions.html">Functions</a>
+<li><a href="Harmonicity__Formula___.html">Harmonicity: Formula...</a>
+<li><a href="Matrix__Formula___.html">Matrix: Formula...</a>
+<li><a href="Scripting_5_2__Expressions.html">Scripting 5.2. Expressions</a>
+<li><a href="Sound__Formula___.html">Sound: Formula...</a>
+<li><a href="Spectrogram__Formula___.html">Spectrogram: Formula...</a>
+<li><a href="Spectrum__Formula___.html">Spectrum: Formula...</a>
+<li><a href="VocalTract__Formula___.html">VocalTract: Formula...</a>
+<li><a href="What_was_new_in_4_1_.html">What was new in 4.1?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20170916</p>
+</address>
+</body>
+</html>

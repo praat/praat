@@ -1,0 +1,51 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>GaussianMixture & TableOfReal: Get likelihood value...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+GaussianMixture & TableOfReal: Get likelihood value...
+</b></font></table></table>
+<p>Calculates how well the <a href="GaussianMixture.html">GaussianMixture</a> model fits the data according to a criterion.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Maximum likelihood</b>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>ML = &#931;<sub><i>i</i>=1..<i>n</i></sub> log (&#931;<sub><i>m</i>=1..<i>k</i></sub> &#945;<sub><i>k</i></sub> <i>p</i><sub><i>ik</i></sub>)</table>
+<dl>
+<dt><b>Minimum message length</b>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>DL = ML - 0.5(N&#183;&#931;<sub><i>m</i>=1..<i>k</i></sub> log(<i>n&#945;</i><sub><i>m</i></sub>/12) -<i>k</i>&#183;log(<i>n</i>/12) -<i>k</i>(<i>N</i>+1))</table>
+<dl>
+<dt><b>Bayes information</b>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>BIC = 2&#183;ML - k&#183;N&#183;log(n)</table>
+<dl>
+<dt><b>Akaike information</b>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>AIC = 2(ML - k&#183;N) </table>
+<dl>
+<dt><b>Akaike corrected</b>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>AICc = 2(ML - k&#183;N&#183;n/(n-k&#183;N-1))</table>
+<dl>
+<dt><b>Complete-data ML</b>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#931;<sub><i>i</i>=1..<i>n</i></sub>&#931;<sub><i>m</i>=1..<i>k</i></sub> &#947;<sub><i>im</i></sub> log (&#947;<sub><i>im</i></sub>)</table>
+<p>In these formulas, <i>n</i> is the number of data points, <i>k</i> is the number of mixture components, <i>N</i> is the number of parameters in one component (i.e. <i>d</i> + <i>d</i>(<i>d</i>+1)/2 for a full covariance matrix of dimension <i>d</i> with means), &#945;<sub><i>k</i></sub> are the <i>mixing probabilities</i>, and <i>p</i><sub><i>ik</i></sub> are the <i>multinormal probabilities</i> for the <i>i</i>-th data vector in the <i>k</i>-th component. The <i>responsibilities</i> &#947;<sub><i>im</i></sub> are defined as </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#947;<sub><i>im</i></sub>= &#945;<sub><i>m</i></sub>&#183;<i>p</i><sub><i>im</i></sub> /(&#931;<sub><i>j</i>=1..<i>k</i></sub> &#945;<sub><i>j</i></sub>&#183;<i>p</i><sub><i>ij</i></sub>).</table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="TableOfReal__To_GaussianMixture___.html">TableOfReal: To GaussianMixture...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20190711</p>
+</address>
+</body>
+</html>

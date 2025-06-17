@@ -1,0 +1,46 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>MDS models</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+MDS models
+</b></font></table></table>
+<p>Multidimensional scaling (MDS) models are defined by specifying how given <a href="Dissimilarity.html">Dissimilarity</a> data, <i>&#948;</i><sub><i>ij</i></sub>, are mapped into distances of an <i>m</i>-dimensional MDS <a href="Configuration.html">Configuration</a> <i><b>X</i></b>. The mapping is specified by a <i>representation function</i>, <i>f</i> : <i>&#948;</i><sub><i>ij</i></sub> &#8594; <i>d</i><sub><i>ij</i></sub>(<b>X</b>), which specifies how dissimilarities should be related to the distances. The MDS analysis tries to find the configuration (in a given dimensionality) whose distances satisfy <i>f</i> as closely as possible. This closeness is quantified by a badness-of-fit measure which is often called <a href="stress.html">stress</a>.</p>
+<h2>Representation functions</h2>
+<p>In the application of MDS we try to find a configuration <b>X</b> such that the following relations are satisfied as well as possible:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i>(<i>&#948;</i><sub><i>ij</i></sub>) &#8776; <i>d</i><sub><i>ij</i></sub>(<b>X</b>)</table>
+<p>The numbers that result from applying <i>f</i> on <i>&#948;</i><sub><i>ij</i></sub> are sometimes called <a href="disparities.html">disparities</a> <i>d</i>&#8242;<sub><i>ij</i></sub>. In most applications of MDS, besides the configuration <b>X</b>, also the function <i>f</i> is not completely specified, i.e., the exact parameters of <i>f</i> are unknown and must also be estimated during the analysis. If no particular <i>f</i> can be derived from a theoretical model, one often restricts <i>f</i> to a particular class of functions on the basis of the scale level of the dissimilarity data. If the disparities are related to the proximities by a specific parametric function we speak of <i>metric</i> MDS otherwise we speak of <i>ordinal</i> or <i>non-metric</i> MDS.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <i>absolute</i> mds: <i>d</i>&#8242;<sub><i>ij</i></sub> = &#948;<sub><i>ij</i></sub></dd>
+<dd>No parameters need to be estimated.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <i>ratio</i> mds: <i>d</i>&#8242;<sub><i>ij</i></sub> = <i>b</i> &#183; &#948;<sub><i>ij</i></sub>,</dd>
+<dd>where the value of <i>b</i> can be estimated by a linear regression of <i>d</i><sub><i>ij</i></sub> on <i>&#948;</i><sub><i>ij</i></sub>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <i>interval</i> mds: <i>d</i>&#8242;<sub><i>ij</i></sub> = <i>a</i> + <i>b</i> &#183; <i>&#948;</i><sub><i>ij</i></sub>,</dd>
+<dd>where the values of <i>a</i> and <i>b</i> can be estimated by a linear regression of <i>d</i><sub><i>ij</i></sub> on <i>&#948;</i><sub><i>ij</i></sub>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <i>i</i>-spline mds: <i>d</i>&#8242;<sub><i>ij</i></sub> = <i>i</i>-spline(<i>&#948;</i><sub><i>ij</i></sub>),</dd>
+<dd>where <i>i</i>-spline(&#183;) is a smooth monotonically increasing <a href="spline.html">spline</a> curve. The conceptual idea is that it is not possible to map all dissimilarities into disparities by one simple function.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <i>monotone</i> mds: <i>d</i>&#8242;<sub><i>ij</i></sub> = <i>monotone</i>(&#948;<sub><i>ij</i></sub>),</dd>
+<dd>where <i>monotone</i>(&#183;) is restricted to be a monotonic function that preserves the order of the dissimilarities:</dd>
+</dl>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>if <i>&#948;</i><sub><i>ij</i></sub> &lt; <i>&#948;</i><sub><i>kl</i></sub>, then <i>d</i><sub><i>ij</i></sub>(<b>X</b>) &lt; <i>d</i><sub><i>kl</i></sub>(<b>X</b>)</table>
+<dl>
+<dd>If <i>&#948;</i><sub><i>ij</i></sub> = <i>&#948;</i><sub><i>kl</i></sub> and no particular constraint is involved for <i>d</i><sub><i>ij</i></sub>(<b>X</b>) and <i>d</i><sub><i>kl</i></sub>(<b>X</b>) this is referred to as the <i>primary approach</i> to ties. The <i>secondary approach</i> to ties requires that if <i>&#948;</i><sub><i>ij</i></sub> = <i>&#948;</i><sub><i>kl</i></sub>, then also <i>d</i><sub><i>ij</i></sub>(<b>X</b>) = <i>d</i><sub><i>kl</i></sub>(<b>X</b>).</dd>
+</dl>
+<p>More information on all aspects of multidimensional scaling can be found in: <a href="Borg___Groenen__1997_.html">Borg & Groenen (1997)</a> and <a href="Ramsay__1988_.html">Ramsay (1988)</a>.</p>
+<p>The most important object types used in Praat for MDS and the conversions between these types are shown in the following figure.</p>
+<p align=middle><img height=600 width=600 src=MDS_models_1.png></p><ul>
+<li><a href="Kruskal_analysis.html">Kruskal analysis</a>
+<li><a href="Multidimensional_scaling.html">Multidimensional scaling</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20101109</p>
+</address>
+</body>
+</html>

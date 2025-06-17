@@ -1,0 +1,31 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Script for creating a frequency sweep</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Script for creating a frequency sweep
+</b></font></table></table>
+<p>"I have to find a formula for a sinewave that sweeps from 1 kHz to 12 kHz in 60 seconds while ramping the amplitude from 1 to 12 volts in the same amount of time."</p>
+<p>The absolute amplitude in volts cannot be handled, of course, but linear crescendo is easy:</p>
+<code>   Create Sound from formula: "sweep", 1, 0, 60, 44100,<br></code>
+<code>   ... ~ 0.05 * (1 + 11 * x/60) * sin (2*pi * (1000 + 11000/2 * x/60) * x)<br></code>
+<p>Note the "/2" in this formula. Here is the derivation of the formula:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>frequency</i> (<i>t</i>) = 1000 + 11000 <i>t</i> / 60</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>phase</i> (<i>t</i>) = &#8747; <i>frequency</i> (<i>t</i>) <i>dt</i> = 1000 <i>t</i> + 11000 (<i>t</i><sup>2</sup>/2) / 60</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>signal</i> (<i>t</i>) = sin (<i>phase</i> (<i>t</i>))</table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting_examples.html">Scripting examples</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20170904</p>
+</address>
+</body>
+</html>

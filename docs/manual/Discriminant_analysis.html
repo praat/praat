@@ -1,0 +1,110 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Discriminant analysis</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Discriminant analysis
+</b></font></table></table>
+<p>This tutorial will show you how to perform discriminant analysis with Praat.</p>
+<p>As an example, we will use the dataset from <a href="Pols_et_al___1973_.html">Pols et al. (1973)</a> with the frequencies and levels of the first three formants from the 12 Dutch monophthongal vowels as spoken in /h_t/ context by 50 male speakers. This data set has been incorporated into Praat and can be called into play with the <a href="Create_TableOfReal__Pols_1973____.html">Create TableOfReal (Pols 1973)...</a> command that can be found under <b>New</b> &#8594; <b>Tables</b> &#8594; <b>Data sets from the literature</b>.</p>
+<p>In the list of objects a new TableOfReal object will appear with 6 columns and 600 rows (50 speakers &#215; 12 vowels). The first three columns contain the formant frequencies in Hz, the last three columns contain the levels of the first three formants given in decibels below the overall sound pressure level of the measured vowel segment. Each row is labelled with a vowel label.</p>
+<p>Pols et al. use logarithms of frequency values, we will too. Because the measurement units in the first three columns are in Hz and in the last three columns in dB, it is probably better to standardize the columns. The following script summarizes our achievements up till now:</p>
+<code>   table = Create TableOfReal (Pols 1973): "yes"<br></code>
+<code>   Formula: ~ if col &lt; 4 then log10 (self) else self fi<br></code>
+<code>   Standardize columns<br></code>
+<code>   # change the column labels too, for nice plot labels.<br></code>
+<code>   Set column label (index): 1, "standardized log (%F__1_)"<br></code>
+<code>   Set column label (index): 2, "standardized log (%F__2_)"<br></code>
+<code>   Set column label (index): 3, "standardized log (%F__3_)"<br></code>
+<code>   Set column label (index): 4, "standardized %L__1_"<br></code>
+<code>   Set column label (index): 5, "standardized %L__2_"<br></code>
+<code>   Set column label (index): 6, "standardized %L__3_"<br></code>
+<p>To get an indication of what these data look like, we make a scatter plot of the first standardized log-formant-frequency against the second standardized log-formant-frequency. With the next script fragment you can reproduce the following picture.</p>
+<code>   Select outer viewport: 0, 5, 0, 5<br></code>
+<code>   selectObject: table<br></code>
+<code>   Draw scatter plot: 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, "yes", "+", "yes"<br></code>
+<p align=middle><img height=500 width=500 src=Discriminant_analysis_1.png></p><p>Apart from a difference in scale this plot is the same as fig. 3 in the Pols et al. article.</p>
+<h2>1. How to perform a discriminant analysis</h2>
+<p>Select the TableOfReal and choose from the dynamic menu the option <a href="TableOfReal__To_Discriminant.html">To Discriminant</a>. This command is available in the "Multivariate statistics" action button. The resulting Discriminant object will bear the same name as the TableOfReal object. The following script summarizes:</p>
+<code>   selectObject: table<br></code>
+<code>   discriminant = To Discriminant<br></code>
+<h2>2. How to project data on the discriminant space</h2>
+<p>You select a TableOfReal and a Discriminant object together and choose: <a href="Discriminant___TableOfReal__To_Configuration___.html">To Configuration...</a>. One of the options of the newly created Configuration object is to draw it. The following picture shows how the data look in the plane spanned by the first two dimensions of this Configuration. The directions in this configuration are the eigenvectors from the Discriminant.</p>
+<p align=middle><img height=500 width=500 src=Discriminant_analysis_2.png></p><p>The following script summarizes:</p>
+<code>   selectObject: table, discriminant<br></code>
+<code>   To Configuration: 2<br></code>
+<code>   Select outer viewport: 0, 5, 0, 5<br></code>
+<code>   Draw: 1, 2, -2.9, 2.9, -2.9, 2.9, 12, "yes", "+", "yes"<br></code>
+<p>If you are only interested in this projection, there also is a shortcut without an intermediate Discriminant object:  select the TableOfReal object and choose <a href="TableOfReal__To_Configuration__lda____.html">To Configuration (lda)...</a>.</p>
+<h2>3. How to draw concentration ellipses</h2>
+<p>Select the Discriminant object and choose <a href="Discriminant__Draw_sigma_ellipses___.html">Draw sigma ellipses...</a>. In the form you can fill out the coverage of the ellipse by way of the <i>Number of sigmas</i> parameter. You can also select the projection plane. The next figure shows the 1-<i>&#963;</i> concentration ellipses in the standardized log <i>F</i><sub>1</sub> vs log <i>F</i><sub>2</sub> plane. When the data are multinormally distributed, a 1-<i>&#963;</i> ellipse will cover approximately 39.3% of the data. The following code summarizes:</p>
+<code>   selectObject: discriminant<br></code>
+<code>   Draw sigma ellipses: 1.0, "no", 1, 2, -2.9, 2.9, -2.9, 2.9, 12, "yes"<br></code>
+<p align=middle><img height=500 width=500 src=Discriminant_analysis_3.png></p><h2>4. How to classify</h2>
+<p>Select together the Discriminant object (the classifier), and a TableOfReal object (the data to be classified). Next you choose <a href="Discriminant___TableOfReal__To_ClassificationTable___.html">To ClassificationTable</a>. Normally you will enable the option <i>Pool covariance matrices</i> and the pooled covariance matrix will be used for classification.</p>
+<p>The ClassificationTable can be converted to a <a href="Confusion.html">Confusion</a> object and its fraction correct can be queried with: <a href="Confusion__Get_fraction_correct.html">Confusion: Get fraction correct</a>.</p>
+<p>In general you would separate your data into two independent sets, <font size=-1>TRAIN</font> and <font size=-1>TEST</font>. You would use <font size=-1>TRAIN</font> to train the discriminant classifier and <font size=-1>TEST</font> to test how well it classifies. Several possibilities for splitting a dataset into two sets exist. We mention the <a href="jackknife.html">jackknife</a> ("leave-one-out") and the <a href="bootstrap.html">bootstrap</a> methods ("resampling").</p>
+<h2>5.1 Jackknife classification</h2>
+<p>The following script summarizes <b>jackknife</b> classification of the dataset:</p>
+<code>   selectObject: table<br></code>
+<code>   numberOfRows = Get number of rows<br></code>
+<code>   for irow to numberOfRows<br></code>
+<code>      selectObject: table<br></code>
+<code>      rowi = Extract rows where: ~ row = irow<br></code>
+<code>      selectObject: table<br></code>
+<code>      rest = Extract rows where: ~ row &lt;&gt; irow<br></code>
+<code>      discriminant = To Discriminant<br></code>
+<code>      plusObject: rowi<br></code>
+<code>      classification = To ClassificationTable: "yes", "yes"<br></code>
+<code>      if irow = 1<br></code>
+<code>         confusion = To Confusion: "yes"<br></code>
+<code>      else<br></code>
+<code>         plusObject: confusion<br></code>
+<code>         Increase confusion count<br></code>
+<code>      endif<br></code>
+<code>      removeObject: rowi, rest, discriminant, classification<br></code>
+<code>   endfor<br></code>
+<code>   selectObject: confusion<br></code>
+<code>   fractionCorrect = Get fraction correct<br></code>
+<code>   appendInfoLine: fractionCorrect, " (fraction correct, jackknifed ", numberOfRows, " times)."<br></code>
+<code>   removeObject: confusion<br></code>
+<h2>5.2 Bootstrap classification</h2>
+<p>The following script summarizes bootstrap classification.</p>
+<code>   fractionCorrect = 0<br></code>
+<code>   for i to numberOfBootstraps<br></code>
+<code>      selectObject: table<br></code>
+<code>      resampled = To TableOfReal (bootstrap)<br></code>
+<code>      discriminant = To Discriminant<br></code>
+<code>      plusObject: resampled<br></code>
+<code>      classification = To ClassificationTable: "yes", "yes"<br></code>
+<code>      confusion = To Confusion: "yes"<br></code>
+<code>      fc = Get fraction correct<br></code>
+<code>      fractionCorrect += fc<br></code>
+<code>      removeObject: resampled, discriminant, classification, confusion<br></code>
+<code>   endfor<br></code>
+<code>   fractionCorrect /= numberOfBootstraps<br></code>
+<code>   appendInfoLine: fractionCorrect, " (fraction correct, bootstrapped ", numberOfBootstraps, " times)."<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Acknowledgments.html">Acknowledgments</a>
+<li><a href="Canonical_correlation_analysis.html">Canonical correlation analysis</a>
+<li><a href="Configuration.html">Configuration</a>
+<li><a href="Discriminant.html">Discriminant</a>
+<li><a href="Feedforward_neural_networks_3__FFNet_versus_discriminan.html">Feedforward neural networks 3. FFNet versus discriminant classifier</a>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Statistics.html">Statistics</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+<li><a href="What_was_new_in_3_9_.html">What was new in 3.9?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20170829</p>
+</address>
+</body>
+</html>

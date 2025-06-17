@@ -42,7 +42,7 @@ and the website [praat.org](http://praat.org), which has Praat tutorials in seve
 
 ## 1. Binary executables
 
-While the [Praat website](https://www.fon.hum.uva.nl/praat) contains the latest executable for all platforms that we support
+While the [Praat website](https://praat.github.io/praat) contains the latest executable for all platforms that we support
 (or used to support), the [releases on GitHub](https://github.com/praat/praat/releases) contain many older executables as well.
 
 The meaning of the names of binary files available on GitHub is as follows (editions that currently receive updates are in bold):
@@ -114,8 +114,8 @@ You need the Praat source code only in the following cases:
 e.g. Linux for some non-Intel computers, FreeBSD, HP-UX, SGI, or SPARC Solaris.
 
 Before trying to dive into Praat’s source code, you should be familiar with the working of the Praat program
-and with writing Praat scripts. The Praat program can be downloaded from https://www.fon.hum.uva.nl/praat,
-a place where you can also get to by just typing http://praat.org.
+and with writing Praat scripts. The Praat program can be downloaded from https://praat.github.io/praat,
+a place where you can also get to by just typing https://www.praat.org.
 
 ### 2.1. License
 
@@ -123,8 +123,8 @@ Most of the source code of Praat is distributed on GitHub under the General Publ
 [version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) or later.
 However, as Praat includes software written by others,
 the whole of Praat is distributed under the General Public License,
-[version 3](https://www.fon.hum.uva.nl/praat/manual/General_Public_License__version_3.html) or later.
-See [Acknowledgments](https://www.fon.hum.uva.nl/praat/manual/Acknowledgments.html) for details on the licenses
+[version 3](https://praat.github.io/praat/manual/General_Public_License__version_3.html) or later.
+See [Acknowledgments](https://praat.github.io/praat/manual/Acknowledgments.html) for details on the licenses
 of software libraries by others that are included in Praat.
 Of course, any improvements in the Praat source code are welcomed by the authors.
 
@@ -138,7 +138,7 @@ or fork ("clone") the praat/praat repository at any later change.
 
 First make sure that the source code can be compiled as is.
 Then add your own buttons by editing `main/main_Praat.cpp` or `fon/praat_Fon.cpp`.
-Consult the manual page on [Programming](http://www.fon.hum.uva.nl/praat/manual/Programming_with_Praat.html).
+Consult the manual page on [Programming](http://praat.github.io/praat/manual/Programming_with_Praat.html).
 
 ### 2.4. The programming language
 
@@ -188,7 +188,7 @@ run `clangarm64.exe` to get a `clangarm64` shell. In that shell, run `pacman -Su
 `pacman -S mingw-w64-clang-aarch64-clang` to install the build tools package.
 In the same way you can create a `clang64` toolchain and a `clang32` toolchain
 (`pacman -S mingw-w64-clang-x86_64-clang` and `pacman -S mingw-w64-i686-clang`),
-which are good alternatives to the .
+which are good alternatives to `mingw64` and `mingw32`.
 
 Move the Praat sources folders somewhere in your `/home/yourname` tree,
 perhaps even in three places, e.g. as `/home/yourname/praats-arm64`,
@@ -225,8 +225,8 @@ or start the shell `mingw32` and type
     cp makefiles/makefile.defs.msys-mingw32 ./makefile.defs
     make -j12
 
-(With Cygwin, you would install the Devel package mingw64-x86_64-gcc-g++
-for Praat’s Intel64/AMD64 edition and mingw64-i686-gcc-g++ for Praat’s Intel32 edition,
+(With Cygwin, you would install the Devel package `mingw64-x86_64-gcc-g++`
+for Praat’s Intel64/AMD64 edition and `mingw64-i686-gcc-g++` for Praat’s Intel32 edition,
 plus perhaps `make` and `pkg-config` if you dont’t have those yet.)
 
 **Code-signing.** From version 6.4.25 on, we have signed the three Praat executables

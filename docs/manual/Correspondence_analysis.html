@@ -1,0 +1,27 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Correspondence analysis</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Correspondence analysis
+</b></font></table></table>
+<p>Correspondence analysis provides a method for representing data in an Euclidean space so that the results can be visually examined for structure. For data in a typical two-way <a href="ContingencyTable.html">ContingencyTable</a> both the row variables and the column variables are represented in the same space. This means that one can examine relations not only among row or column variables but also between row and column variables.</p>
+<p>In correspondence analysis the data matrix is first transformed by dividing each cell by the square root of the corresponding row and column totals. The transformed matrix is then decomposed with singular value decomposition resulting in the singular values (which in this case are canonical correlations) and a set of row vectors and column vectors. Next the row and column vectors are rescaled with the original total frequencies to obtain optimal scores. These optimal scores are weighted by the square root of the singular values and become the coordinates of the points in the <a href="Configuration.html">Configuration</a>.</p>
+<p>Examples can be found in the books by <a href="Weller___Romney__1990_.html">Weller & Romney (1990)</a> and <a href="Gifi__1990_.html">Gifi (1990)</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ContingencyTable__To_Configuration__ca____.html">ContingencyTable: To Configuration (ca)...</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 19971216</p>
+</address>
+</body>
+</html>

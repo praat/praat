@@ -1,0 +1,44 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>padOrTruncateRight$</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+padOrTruncateRight$
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>padOrTruncateRight$</font></code></b> (<i><code><font size=+1>string$</font></code></i>, <i><code><font size=+1>newWidth</font></code></i> [, <i><code><font size=+1>pad$</font></code></i>])
+<dd>add characters (selected from <i><code><font size=+1>pad$</font></code></i>) to the right of <i><code><font size=+1>string$</font></code></i>, or remove characters from the right of <i><code><font size=+1>string$</font></code></i>, until the result is precisely <i><code><font size=+1>newWidth</font></code></i> characters long:</dd>
+</dl>
+<code>   <a href="_assert_.html">assert</a> <b>padOrTruncateRight$</b> ("hello", 12, ".") = "hello......."<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>padOrTruncateRight$</b> ("hello", 3, ".") = "hel"<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>padOrTruncateRight$</b> ("hello", 0) = ""<br></code>
+<p>If <i><code><font size=+1>pad$</font></code></i> is not given, the padding will be done with spaces:</p>
+<code>   <a href="_assert_.html">assert</a> <b>padOrTruncateRight$</b> ("hello", 12) = "hello       "<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>padOrTruncateRight$</b> ("hello", 3) = "hel"<br></code>
+<p>If characters have to be added, and <i><code><font size=+1>pad$</font></code></i> contains more than one character, the right edge of <i><code><font size=+1>pad$</font></code></i> is right-aligned to the resulting string, so that the result will look good if padding is used for visualizing columns:</p>
+<code>   <a href="_assert_.html">assert</a> <b>padOrTruncateRight$</b> ("hello", 12, ".-;)")   = "hello-;).-;)"<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>padOrTruncateRight$</b> ("goodbye", 12, ".-;)") = "goodbye).-;)"<br></code>
+<p>Note that <i><code><font size=+1>newWidth</font></code></i> cannot be negative:</p>
+<code>   <a href="_asserterror_.html">asserterror</a> Can never truncate a string down to -3 characters.<br></code>
+<code>   a$ = <b>padOrTruncateRight$</b> ("hello", -3)<br></code>
+<p>There will be an error message if padding is required but no characters are to be found in <i><code><font size=+1>pad$</font></code></i>:</p>
+<code>   <a href="_asserterror_.html">asserterror</a> Empty pad string.<br></code>
+<code>   a$ = <b>padOrTruncateRight$</b> ("hello", 12, "")<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Functions.html">Functions</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2024</p>
+</address>
+</body>
+</html>

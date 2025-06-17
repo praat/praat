@@ -1,0 +1,53 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>quantile algorithm</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+quantile algorithm
+</b></font></table></table>
+<p>An algorithm to compute the specified quantile of a sorted array of real numbers.</p>
+<p>The <i>n</i>% <i>quantile</i> of a continuous real-valued distribution is the value below which <i>n</i>% of the values is expected to lie. If we are given an array of real numbers that we want to interpret as having been drawn from a distribution, we can <i>estimate</i> the quantiles of the underlying distribution.</p>
+<h2>1. The median</h2>
+<p>The <i>median</i> is a special case of a quantile: it is the 50% quantile. It is usually estimated as follows: from an odd number of values, take the middle value; form an even number, take the average of the two midmost values. For instance, if our values are 15, 20, and 32, the median is 20; if our values are 15, 20, 32, and 60, the median is 26.</p>
+<p>This estimate is direction-independent: if we multiply all values by -1 (i.e., they become -60, -32, -20, and -15), the median is also multiplied by -1 (it becomes -26).</p>
+<h2>2. Percentiles?</h2>
+<p>The <i>n</i>th <i>percentile</i> of a set of values is usually defined as the highest attested value for which at most <i>n</i>% of all attested values are less or equal. For instance, if our values are 15, 20, 32, and 60, the 30th percentile is 15. Here is an extensive list:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Percentile number<td width=100 align=middle>Value</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>0<td width=100 align=middle>-</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>10<td width=100 align=middle>-</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>20<td width=100 align=middle>-</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>30<td width=100 align=middle>15</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>40<td width=100 align=middle>15</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>50<td width=100 align=middle>20</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>60<td width=100 align=middle>20</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>70<td width=100 align=middle>20</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>80<td width=100 align=middle>32</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>90<td width=100 align=middle>32</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>100<td width=100 align=middle>60</table></dd>
+</dl>
+<p>However, this procedure does not yield an estimate of the quantiles of the underlying distribution. For instance, the estimate is direction-dependent: if we multiply all values by -1, the 50th percentile becomes -32 instead of -20, and the 70th percentile becomes -32 instead of the expected -15, which is minus the 30th percentile of the original data set.</p>
+<h2>3. Unbiased quantiles</h2>
+<p>To get a better estimate of the quantiles of the underlying distribution, the interpolation that we used to determine the median, is generalized to <i>any</i> quantile.</p>
+<p>We assume that the attested values 15, 20, 32, and 60 each take up one quarter of the "quantile space". These four values are in the middles of those quarters, so they are at the 0.125, 0.375, 0.625, and 0.875 quantiles.</p>
+<p>Quantiles in between 0.125 and 0.875 are evaluated by linear interpolation: the 0.25, 0.50, and 0.75 quantiles are 17.5, 26, and 46, respectively. Note that the 0.50 quantile is the median. The 0.40 quantile, for example, is estimated as 20 + (32 - 20)&#183;(0.40 - 0.375)/(0.625 - 0.375) = 21.2.</p>
+<p>Quantiles between 0 and 0.125 or between 0.875 and 1 are evaluated by linear extrapolation from the lowest or highest pair of values: the 0% quantile is estimated as 15 - 1/2 (20 - 15) = 12.5, and the 100% quantile is estimated as 60 + 1/2 (60 &#8211; 32) = 74. The 0.10 quantile is estimated as 12.5 + (15 &#8211; 12.5)&#183;(0.10 &#8211; 0.0)/(0.125 &#8211; 0.0) = 14.5.</p>
+<p>Note that the estimated values for the very low or high quantiles can lie outside the range of attested values. In fact, the computed 0% and 100% quantiles are thought to be estimates of the minimum and maximum values of the distribution. For uniform distributions, these estimates are reasonable; for a normal distribution, of course, the 0% and 100% quantiles are meaningless.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formant__Get_quantile___.html">Formant: Get quantile...</a>
+<li><a href="Table__Get_median_absolute_deviation___.html">Table: Get median absolute deviation...</a>
+<li><a href="Table__Get_quantile___.html">Table: Get quantile...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 19980101</p>
+</address>
+</body>
+</html>

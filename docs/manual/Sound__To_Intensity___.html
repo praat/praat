@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Intensity...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Intensity...
+</b></font></table></table>
+<p>A command to create an <a href="Intensity.html">Intensity</a> object from every selected <a href="Sound.html">Sound</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Pitch floor (Hz)</b>
+<dd>the minimum periodicity frequency in your signal. If you set it too high, you will end up with a pitch-synchronous intensity modulation. If you set it too low, your intensity contour may appear smeared, so you should set it as high as allowed by the signal if you want a sharp contour.</dd>
+<dt><b>Time step (s)</b>
+<dd>the time step of the resulting intensity contour. If you set it to zero, the time step is computed as one quarter of the effective window length, i.e. as 0.8 / <i>pitchFloor</i>.</dd>
+<dt><b>Subtract mean</b>
+<dd>See <a href="Intro_6_2__Configuring_the_intensity_contour.html">Intro 6.2. Configuring the intensity contour</a>.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The values in the sound are first squared, then convolved with a Gaussian analysis window (Kaiser-20; sidelobes below -190 dB). The effective duration of this analysis window is 3.2 / <i>pitchFloor</i>, which will guarantee that a periodic signal is analysed as having a pitch-synchronous intensity ripple not greater than 0.00001 dB.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intensity__Get_mean___.html">Intensity: Get mean...</a>
+<li><a href="Intensity__To_TextGrid__silences____.html">Intensity: To TextGrid (silences)...</a>
+<li><a href="Intro_6_4__The_Intensity_object.html">Intro 6.4. The Intensity object</a>
+<li><a href="Script_for_listing_time_F0_intensity.html">Script for listing time–F0–intensity</a>
+<li><a href="Sound__To_KlattGrid__simple____.html">Sound: To KlattGrid (simple)...</a>
+<li><a href="Sound__To_TextGrid__silences____.html">Sound: To TextGrid (silences)...</a>
+<li><a href="Sound__Trim_silences___.html">Sound: Trim silences...</a>
+<li><a href="Time_step_settings___.html">Time step settings...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20100605</p>
+</address>
+</body>
+</html>

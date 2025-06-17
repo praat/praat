@@ -1,0 +1,52 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PitchTier: Modify interval (tone levels)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PitchTier: Modify interval (tone levels)...
+</b></font></table></table>
+<p>Modifies a selected interval from the chosen <a href="PitchTier.html">PitchTier</a> by replacing the contents of the interval by newly defined pitch points.</p>
+<p>For tone languages the pitch contours of the tones are often expressed as a sequence of tone levels instead of a sequence of real frequency values in hertz because tone levels abstract away from the possibly different pitch ranges of individual speakers.</p>
+<p>The tone levels <i>T</i> are calculated from a given pitch <i>frequency</i> in hertz as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>T</i> = <i>numberOfToneLevels</i> &#183; log (<i>frequency</i> / <i>F</i><sub>min</sub>) / log (<i>F</i><sub>max</sub> / <i>F</i><sub>min</sub>),</table>
+<p>where <i>F</i><sub>min</sub> and <i>F</i><sub>max</sub> are the minimum and the maximum frequency of a speaker's pitch range and <i>numberOfToneLevels</i> is the number of levels into which the pitch range is divided. This formula maps any frequency between <i>F</i><sub>min</sub> and <i>F</i><sub>max</sub> to a number between 0 and <i>numberOfToneLevels</i>.</p>
+<p>To get the frequency in hertz from a specified tone level <i>T</i> we have to use the inverse formula:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>frequency</i> = <i>F</i><sub>min</sub> &#183; 10<sup>(<i>T</i> &#183; log (<i>F</i><sub>max</sub> / <i>F</i><sub>min</sub>)) / <i>numberOfToneLevels</i>)</sup>.</table>
+<h2>Settings</h2>
+<p align=middle><img height=459.99999999999994 width=540 src=PitchTier__Modify_interval__tone_levels_____1.png></p><dl>
+<dt><b>Time range (s)</b>
+<dd>the start and end time of the interval where the changes will be applied.</dd>
+<dt><b>Pitch range (Hz)</b>
+<dd>The minimum and maximum frequency to which the tone levels refer.</dd>
+<dt><b>Number of tone levels</b>
+<dd>The number of levels into which the pitch range is divided.</dd>
+<dt><b>Relative times</b>
+<dd>determine, together with the following option, the times of the new pitch points with respect to the start time of the interval.</dd>
+<dd>determines how the times <i>t</i><sub><i>i</i></sub> of the new pitch points are calculated. The time of each new pitch point is determined by adding to the start time of the interval a time calculated from the relative time value. If <i>t</i><sub>min</sub> and <i>t</i><sub>max</sub> are the start and end time of the interval and <i>r</i><sub>i</sub> is the <i>i</i><sup>th</sup> relative time, the times <i>t</i><sub><i>i</i></sub> are calculated according to the options as:</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>fractions</i>
+<dd>&nbsp;&nbsp;&nbsp;<i>t</i><sub><i>i</i></sub> = <i>t</i><sub>min</sub> + <i>r</i><sub><i>i</i></sub> (<i>t</i><sub>max</sub> &#8211; <i>t</i><sub>min</sub>). The relative time values are fractions of the interval duration. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>percentages</i>
+<dd>&nbsp;&nbsp;&nbsp;<i>t</i><sub><i>i</i></sub> = <i>t</i><sub>min</sub>+ 0.01 <i>r</i><sub><i>i</i></sub> (<i>t</i><sub>max</sub> &#8211; <i>t</i><sub>min</sub>). The relative time values are percentages of the interval duration. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.</dd>
+<dt>&nbsp;&nbsp;&nbsp;<i>independent</i>
+<dd>&nbsp;&nbsp;&nbsp;<i>t</i><sub><i>i</i></sub> = <i>t</i><sub>min</sub> + <i>r</i><sub><i>i</i></sub>. The relative time values specify an offset in seconds here. </dd>
+<dt><b>Tone levels</b>
+<dd>specify the frequencies at the corresponding time points as tone levels.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>1. The real times are calculated from the relative times.</p>
+<p>2. The frequencies are calculated from the tone levels.</p>
+<p>3. The real times and the frequencies are sorted together by time.</p>
+<p>4. All pitch points in the PitchTier between the first and the last time of the sorted time array are removed.</p>
+<p>5. The newly calculated pitch points are added to the PitchTier.</p>
+<hr>
+<address>
+	<p>© djmw 20170801</p>
+</address>
+</body>
+</html>

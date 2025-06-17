@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas 1.6. Formulas for creation</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas 1.6. Formulas for creation
+</b></font></table></table>
+<p>With some commands in the <a href="New_menu.html">New menu</a>, you can supply a formula that Praat will apply to all elements of the new object.</p>
+<h2>Creating a Sound from a formula</h2>
+<p>Choose <a href="Create_Sound_from_formula___.html">Create Sound from formula...</a> and type the following into the <b><i>Formula</i></b> field:</p>
+<code>   1/2 * sin (2 * pi * 377 * x)<br></code>
+<p>When you click <b>OK</b>, a new <a href="Sound.html">Sound</a> object will appear in the list. After you click <b>View &amp; Edit</b> and zoom in a couple of times, you will see that the sound is a sine wave with a frequency of 377 hertz (cycles per second). This worked because the <code><font size=+1>x</font></code> in the formula represents the time, i.e. the formula was applied to every sample separately, with a different value of <code><font size=+1>x</font></code> for each sample.</p>
+<h2>Creating a Matrix from a formula</h2>
+<p>Choose <a href="Create_simple_Matrix___.html">Create simple Matrix...</a> and type the following into the <b><i>Formula</i></b> field:</p>
+<code>   8<br></code>
+<p>When you click OK, a new <a href="Matrix.html">Matrix</a> object will appear in the list. When you click <b>Info</b>, you will see that it is a matrix with 10 rows and 10 columns, and that all the 100 cells contain the value 8 (you can see this because both the minimum and the maximum are reported as being 8).</p>
+<p>A more interesting example is the formula</p>
+<code>   row * col<br></code>
+<p>For the resulting Matrix, choose <a href="Matrix__Paint_cells___.html">Paint cells...</a> and click <b>OK</b>. The Picture window will show a 10&#215;10 matrix whose elements are the product of the row and column numbers, i.e., they have values between 1 and 100. Beside <code><font size=+1>row</font></code> and <code><font size=+1>col</font></code>, you can use <code><font size=+1>x</font></code> for the distance along the horizontal axis and <code><font size=+1>y</font></code> for the distance along the vertical axis; see the following page for examples.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas.html">Formulas</a>
+<li><a href="Formulas_1__My_first_formulas.html">Formulas 1. My first formulas</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110128</p>
+</address>
+</body>
+</html>

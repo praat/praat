@@ -1,0 +1,52 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 6.8. Messages to the user</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 6.8. Messages to the user
+</b></font></table></table>
+<p>If the user makes a mistake (e.g. types conflicting settings into your form window), you can use the <b>exitScript</b> function (<a href="Scripting_5_9__Quitting.html">&#167;5.9</a>) to stop the execution of the script with an error message:</p>
+<code>   form: “My analysis”<br></code>
+<code>      real: “Starting time (s)”, “0.0”<br></code>
+<code>      real: “Finishing time (s)”, “1.0”<br></code>
+<code>   endform<br></code>
+<code>   if finishing_time &lt;= starting_time<br></code>
+<code>      <b>exitScript</b>: “The finishing time should exceed ”, starting_time, “ seconds.”<br></code>
+<code>   endif<br></code>
+<code>   # Proceed with the analysis...<br></code>
+<p>For things that should not normally go wrong, you can use the <b><code><font size=+1>assert</font></code></b> directive:</p>
+<code>   power = Get power<br></code>
+<code>   assert power &gt; 0<br></code>
+<p>This is the same as:</p>
+<code>   if (power &gt; 0) = undefined<br></code>
+<code>      exitScript: “Assertion failed in line ”, lineNumber, “ (undefined): power &gt; 0”<br></code>
+<code>   elsif not (power &gt; 0)<br></code>
+<code>      exitScript: “Assertion failed in line ”, lineNumber, “ (false): power &gt; 0”<br></code>
+<code>   endif<br></code>
+<p>You can prevent Praat from issuing warning messages:</p>
+<code>   nowarn Save as WAV file: “hello.wav”<br></code>
+<p>This prevents warning messages about clipped samples, for instance.</p>
+<p>You can also prevent Praat from showing a progress window:</p>
+<code>   pitch = noprogress To Pitch: 0, 75, 500<br></code>
+<p>This prevents the progress window from popping up during lengthy operations. Use this only if you want to prevent the user from stopping the execution of the script.</p>
+<p>Finally, you can make Praat ignore error messages:</p>
+<code>   nocheck Remove<br></code>
+<p>This would cause the script to continue even if there is nothing to remove.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_exitScript_.html"><code><font size=+1>exitScript</font></code></a>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_6__Communication_outside_the_script.html">Scripting 6. Communication outside the script</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20230122</p>
+</address>
+</body>
+</html>

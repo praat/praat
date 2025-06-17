@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>sound pressure calibration</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+sound pressure calibration
+</b></font></table></table>
+<p>Your computer's sound-recording software returns integer values between -32768 and 32767. Praat divides them by 32768 before putting them into a Sound object, so that the values in the Sound objects are always between -1 and +1.</p>
+<p>The Praat program considers these numbers to be air pressures in units of Pascal.</p>
+<p>These values in Pascal are probably not the actual true air pressures that went into the microphone. To determine what the actual air pressures were, you have to record an extra sound with a known air pressure, with the same recording gain as the rest of your recordings. It is best if this extra sound is something like a white noise, so that its <a href="sound_pressure_level.html">sound pressure level</a> can be determined reliably. A sine wave of 400 Hz, for instance, is less suitable, since its sound pressure level at your microphone can depend very strongly on the precise position and direction of the loudspeaker and on the position of other objects (like you, the experimenter) in the room (differences of 10 dB are no exception).</p>
+<p>For example, suppose that you record some speech on a CD recorder or with Praat's SoundRecorder. Immediately before or after this recording, you also record a white noise produced by a noise generator. With a dB meter (Linear or C setting), located at the same position as the microphone of the recording, you measure that the Sound Pressure Level of this noise is 76.5 dB. When you later open the recorded noise in Praat's sound window, Praat tells you that its average intensity (switch on <b>Show intensity</b>) is 68.6 dB. You then know that you have to add 7.9 dB to intensities measured in Praat to get at the true sound pressure level. Thus, if your speech contains a long [a:] whose average intensity is measured in the Sound window as 71.1 dB, its true sound pressure level must be 79.0 dB.</p>
+<p>In this example, you can make Praat's sound window show the true sound pressures in Pascal and true sound pressure levels in dB, if you multiply the sound with a factor of 10<sup>(7.9/20)</sup>, which you can do by selecting the Sound and choosing <b>Multiply...</b> from the <b>Modify</b> menu, then supplying <code><font size=+1>10^(7.9/20)</font></code> as the multiplication factor.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound_files_1_2__Quantization.html">Sound files 1.2. Quantization</a>
+<li><a href="SoundRecorder.html">SoundRecorder</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20041119</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sounds: Concatenate with overlap...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sounds: Concatenate with overlap...
+</b></font></table></table>
+<p>A command to concatenate all selected <a href="Sound.html">Sound</a> objects into a single large Sound, with smooth cross-fading between the sounds.</p>
+<p>All sounds must have equal sampling frequencies and equal numbers of channels. They are concatenated in the order in which they appear in the list of objects (not in the order in which you select them; remember: What You See Is What You Get).</p>
+<h2>Settings</h2>
+<p align=middle><img height=180 width=540 src=Sounds__Concatenate_with_overlap____1.png></p><dl>
+<dt><b>Overlap time (s)</b>
+<dd>the time by which any two adjacent sounds will come to overlap, i.e. the time during which the earlier sound fades out and the later sound fades in.</dd>
+</dl>
+<h2>Procedure</h2>
+<p>Suppose we start with the following two sounds. They are both 0.1 seconds long. The first sound is a sine wave with a frequency of 100 Hz, the second a sine wave with a frequency of 230 Hz:</p>
+<p align=middle><img height=300 width=500 src=Sounds__Concatenate_with_overlap____2.png></p><p align=middle><img height=300 width=500 src=Sounds__Concatenate_with_overlap____3.png></p><p>If the overlap time is 0.01 seconds, the concatenation of these two sounds will produce a Sound with a duration of 0.19 seconds, which is the sum of the durations of the two sounds, minus the overlap time.</p>
+<p>The concatenation works in the following way. The last 0.01 seconds of the first sound is multiplied by a falling raised cosine (the second half of a Hann window, see the first red curve), and the first 0.01 seconds of the second sound is multiplied by a rising raised cosine (the first half of a Hann window, see the second red curve):</p>
+<p align=middle><img height=500 width=670 src=Sounds__Concatenate_with_overlap____4.png></p><p>This figure shows how the two sounds are windowed (faded out and in), as well as how they will overlap.</p>
+<p>Finally, the two windowed ("cross-faded") sounds are added to each other:</p>
+<p align=middle><img height=300 width=670 src=Sounds__Concatenate_with_overlap____5.png></p><p>This example showed how it works if you concatenate two sounds; if you concatenate three sounds, there will be two overlaps, and so on.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sounds__Concatenate.html">Sounds: Concatenate</a>
+<li><a href="What_was_new_in_5_3_.html">What was new in 5.3?</a>
+<li><a href="What_was_new_in_6_2_.html">What was new in 6.2?</a>
+<li><a href="What_s_new_.html">What's new?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2017-09-04</p>
+</address>
+</body>
+</html>

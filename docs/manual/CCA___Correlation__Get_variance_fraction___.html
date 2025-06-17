@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>CCA & Correlation: Get variance fraction...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+CCA & Correlation: Get variance fraction...
+</b></font></table></table>
+<p>Determine from the selected <a href="CCA.html">CCA</a> and <a href="Correlation.html">Correlation</a> objects the fraction of the variance explained by the selected <a href="canonical_variate.html">canonical variate</a> range.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>X or Y</b>
+<dd>determines whether you select the dependent (y) or the independent (x) set.</dd>
+<dt><b>Canonical variate range</b>
+<dd>determines the canonical variates (or canonical variables).</dd>
+</dl>
+<h2>Remarks</h2>
+<p>1. In general the variance fractions for a particular canonical variate in the dependent and in the independent set are not the same.</p>
+<p>2. In general, the variance fractions for all canonical variates do not sum to 1. 
+(The technical reason is that for canonical correlation analysis in general the eigenvectors are not orthogonal, i.e. they overlap and therefore, necessarily, also the variance fractions overlap.) </p>
+<h2>Algorithm</h2>
+<p>The formulas can be found on page 170 of <a href="Cooley___Lohnes__1971_.html">Cooley & Lohnes (1971)</a>.</p>
+<p>For example, the fraction of the variance explained by the <i>i</i><sup>th</sup> canonical variable in the dependent set is:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>fractionVariance</i> = ((<b>y</b><sub>i</sub>&#8242; <b>R</b><sub>yy</sub>&#8242; <b>R</b><sub>yy</sub> <b>y</b><sub>i</sub>) / (<b>y</b><sub>i</sub>&#8242; <b>R</b><sub>yy</sub> <b>y</b><sub>i</sub>)) / <i>n</i><sub><i>y</i></sub>,</table>
+<p>where <b>y</b><sub><i>i</i></sub> is the eigenvector for dependent canonical variable <i>i</i> and <b>R</b><sub><i>yy</i></sub> is the correlation matrix for the <i>n</i><sub><i>y</i></sub> variables in the dependent set.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="CCA___Correlation__Get_redundancy__sl____.html">CCA & Correlation: Get redundancy (sl)...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20181112</p>
+</address>
+</body>
+</html>

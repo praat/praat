@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Lengthen (overlap-add)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Lengthen (overlap-add)...
+</b></font></table></table>
+<p>A command to convert each selected <a href="Sound.html">Sound</a> object into a longer new <a href="Sound.html">Sound</a> object.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Pitch floor (Hz)</b>
+<dd>the minimum pitch used in the periodicity analysis. The standard value is 75 Hz. For the voice of a young child, set this to 150 Hz." The shortest voiceless interval in the decomposition is taken as 1.5 divided by <i>minimum frequency</i>.</dd>
+<dt><b>Pitch ceiling (Hz)</b>
+<dd>the maximum pitch used in the periodicity analysis. The standard value is 600 Hz. For an adult male voice, set this to 300 Hz.</dd>
+<dt><b>Factor</b>
+<dd>the factor with which the sound will be lengthened. The standard value is 1.5. If you take a value less than 1, the resulting sound will be shorter than the original. A value larger than 3 will not work.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p><a href="overlap-add.html">overlap-add</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+<li><a href="What_was_new_in_3_8_.html">What was new in 3.8?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 20030916)   // 2023--</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intensity: Get mean...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intensity: Get mean...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="Intensity.html">Intensity</a> object.</p>
+<h2>Return value</h2>
+<p>the mean (in dB) of the intensity values of the frames within a specified time domain.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Time range (s)</b>
+<dd>the time range (<i>t</i><sub>1</sub>, <i>t</i><sub>2</sub>). Values outside this range are ignored. If <i>t</i><sub>1</sub> is not less than <i>t</i><sub>2</sub>, the entire time domain of the Intensity is considered.</dd>
+<dt><b>Averaging method</b>
+<dd>the units in which the averaging is performed. If the method is <b>energy</b>, the returned dB value is based on the mean power (in Pa<sup>2</sup>/s) between <i>t</i><sub>1</sub> and <i>t</i><sub>2</sub>. If the method is <b>dB</b>, the returned value is the mean of the intensity curve in dB. If the method is <b>sones</b>, the returned value is in between these two, and based on averaging properties of the human ear.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>If the averaging method is <b>dB</b>, the mean intensity between the times <i>t</i><sub>1</sub> and <i>t</i><sub>2</sub> is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>1/(<i>t</i><sub>2</sub> - <i>t</i><sub>1</sub>)  &#8747;<sub><i>t</i>1</sub><sup><i>t</i>2</sup> <i>x</i>(<i>t</i>) <i>dt</i></table>
+<p>where <i>x</i>(<i>t</i>) is the intensity as a function of time, in dB. If the method is <b>energy</b>, the result is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>10 log<sub>10</sub> { 1/(<i>t</i><sub>2</sub> - <i>t</i><sub>1</sub>)  &#8747;<sub><i>t</i>1</sub><sup><i>t</i>2</sup> 10<sup><i>x</i>(<i>t</i>)/10</sup> <i>dt</i> }</table>
+<p>If the method is <b>sones</b>, the result is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>10 log<sub>2</sub> { 1/(<i>t</i><sub>2</sub> - <i>t</i><sub>1</sub>)  &#8747;<sub><i>t</i>1</sub><sup><i>t</i>2</sup> 2<sup><i>x</i>(<i>t</i>)/10</sup> <i>dt</i> }</table>
+<h2>Behaviour</h2>
+<p>After you do <a href="Sound__To_Intensity___.html">Sound: To Intensity...</a>, the mean intensity of the resulting <b>Intensity</b>, if the averaging method is <b>energy</b>, should be close to the mean SPL of the original <b>Sound</b>, which can be found with <b>Info</b>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro_6_2__Configuring_the_intensity_contour.html">Intro 6.2. Configuring the intensity contour</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20041107</p>
+</address>
+</body>
+</html>

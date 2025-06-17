@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PointProcess: Get jitter (local, absolute)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PointProcess: Get jitter (local, absolute)...
+</b></font></table></table>
+<p>A command that becomes available in the <a href="Query_submenu.html">Query submenu</a> when you select a <a href="PointProcess.html">PointProcess</a> object.</p>
+<p>This command will write into the Info window the <i>absolute local jitter</i>, which is the average absolute difference between consecutive intervals, in seconds (an interval is the time between two consecutive points).</p>
+<p>As <i>jitter</i> is often used as a measure of voice quality (see <a href="Voice_2__Jitter.html">Voice 2. Jitter</a>), the intervals are often considered to be <i>glottal periods</i>. For this reason, the command has settings that can limit the possible duration of the interval (or period) or the possible difference in the durations of consecutive intervals (periods).</p>
+<h2>1. The command window</h2>
+<p align=middle><img height=300 width=540 src=PointProcess__Get_jitter__local__absolute_____1.png></p><dl>
+<dt><b>Time range (s)</b>
+<dd>the start time and end time of the part of the PointProcess that will be measured. Points outside this range will be ignored.</dd>
+<dt><b>Period floor (s)</b>
+<dd>the shortest possible interval that will be used in the computation of jitter, in seconds. If an interval is shorter than this, it will be ignored in the computation of jitter (and the previous and next intervals will not be regarded as consecutive). This setting will normally be very small, say 0.1 ms.</dd>
+<dt><b>Period ceiling (s)</b>
+<dd>the longest possible interval that will be used in the computation of jitter, in seconds. If an interval is longer than this, it will be ignored in the computation of jitter (and the previous and next intervals will not be regarded as consecutive). For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 0.02 seconds; intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.</dd>
+<dt><b>Maximum period factor</b>
+<dd>the largest possible difference between consecutive intervals that will be used in the computation of jitter. If the ratio of the durations of two consecutive intervals is greater than this, this pair of intervals will be ignored in the computation of jitter (each of the intervals could still take part in the computation of jitter in a comparison with its neighbour on the other side).</dd>
+</dl>
+<h2>2. Usage</h2>
+<p>The local jitter can be used as a measure of voice quality. See <a href="Voice_2__Jitter.html">Voice 2. Jitter</a>.</p>
+<h2>3. Algorithm</h2>
+<p>The absolute local jitter is defined as the absolute (i.e. non-relative) mean absolute (i.e. non-negative) second-order difference of the point process (= the first-order difference of the interval process), as follows.</p>
+<p>The absolute local jitter (in seconds) is the mean absolute (non-negative) difference of consecutive intervals:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>jitter</i>(seconds) = &#8721;<sub><i>i</i>=2</sub><sup><i>N</i></sup> |<i>T</i><sub><i>i</i></sub> - <i>T</i><sub><i>i</i>-1</sub>| / (<i>N</i> - 1)</table>
+<p>where <i>T</i><sub><i>i</i></sub> is the duration of the <i>i</i>th interval and <i>N</i> is the number of intervals. If an interval <i>T</i><sub><i>i</i>-1</sub> or <i>T</i><sub><i>i</i></sub> is not between <b>Period floor</b> and <b>Period ceiling</b>, or if <i>T</i><sub><i>i</i>-1</sub>/<i>T</i><sub><i>i</i></sub> or <i>T</i><sub><i>i</i></sub>/<i>T</i><sub><i>i</i>-1</sub> is greater than <b>Maximum period factor</b>, the term |<i>T</i><sub><i>i</i></sub> - <i>T</i><sub><i>i</i>-1</sub>| is not counted in the sum, and <i>N</i> is lowered by 1 (if <i>N</i> ends up being less than 2, the result of the command is <a href="undefined.html">undefined</a>).</p>
+<hr>
+<address>
+	<p>© ppgb 20221202</p>
+</address>
+</body>
+</html>

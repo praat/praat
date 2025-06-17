@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>power spectral density</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+power spectral density
+</b></font></table></table>
+<p>The average power in a sound during a certain time range and in a certain frequency range, expressed in Pa<sup>2</sup>/Hz.</p>
+<h2>Mathematical definition</h2>
+<p>The <i>complex spectrum</i> of a sound <i>x</i>(<i>t</i>) in the time range (<i>t</i><sub>1</sub>, <i>t</i><sub>2</sub>) is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>X</i>(<i>f</i>) &#8801; &#8747;<sub><i>t</i>1</sub><sup><i>t</i>2</sup> <i>x</i>(<i>t</i>) e<sup>-2<i>&#960;</i><i>ift</i></sup> <i>dt</i></table>
+<p>for any frequency <i>f</i> in the two-sided frequency domain (-<i>F</i>, +<i>F</i>). If <i>x</i>(<i>t</i>) is expressed in units of Pascal, <i>X</i>(<i>f</i>) is expressed in units of Pa/Hz. In Praat, this complex spectrum is the quantity stored in a <a href="Spectrum.html">Spectrum</a>.</p>
+<p>From the complex spectrum we can compute the <i>one-sided power spectral density</i> in Pa<sup>2</sup>/Hz as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>PSD(<i>f</i>) &#8801; 2|<i>X</i>(<i>f</i>)|<sup>2</sup> / (<i>t</i><sub>2</sub> - <i>t</i><sub>1</sub>)</table>
+<p>where the factor 2 is due to adding the contributions from positive and negative frequencies. In Praat, this power spectral density is the quantity stored in a <a href="Spectrogram.html">Spectrogram</a>.</p>
+<p>The PSD divides up the total power of the sound. To see this, we integrate it over its entire one-sided frequency domain (0, <i>F</i>):</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#8747;<sub>0</sub><sup><i>F</i></sup> PSD(<i>f</i>) <i>df</i> = &#8747;<sub>0</sub><sup><i>F</i></sup> 2|<i>X</i>(<i>f</i>)|<sup>2</sup>/(<i>t</i><sub>2</sub>-<i>t</i><sub>1</sub>) <i>df</i> =</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>= 1/(<i>t</i><sub>2</sub>-<i>t</i><sub>1</sub>) &#8747;<sub>-<i>F</i></sub><sup>+<i>F</i></sup> |<i>X</i>(<i>f</i>)|<sup>2</sup> <i>df</i> = 1/(<i>t</i><sub>2</sub>-<i>t</i><sub>1</sub>) &#8747;<sub><i>t</i>1</sub><sup><i>t</i>2</sup> |<i>x</i>(<i>t</i>)|<sup>2</sup> <i>dt</i></table>
+<p>where the last step uses <i>Parceval's theorem</i>. The result is precisely the average power of the sound in the time range (<i>t</i><sub>1</sub>, <i>t</i><sub>2</sub>).</p>
+<h2>The logarithmic power spectral density</h2>
+<p>It is often useful to express the power spectral density in dB relative to <i>P<sub>ref</sub></i> = 2&#183;10<sup>-5</sup> Pa:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>PSD<sub>dB</sub>(<i>f</i>) = 10 log<sub>10</sub> { PSD(<i>f</i>) / <i>P<sub>ref</sub></i><sup>2</sup> }</table>
+<p>Since the argument of the logarithm is in units of Hz<sup>-1</sup>, this spectral measure can loosely be said to be in units of &#8220;dB/Hz&#8221;. In Praat, this logarithmic power spectral density is the quantity stored in an <a href="Ltas.html">Ltas</a>; it is also the quantity shown in pictures of a <a href="Spectrum.html">Spectrum</a> and a <a href="Spectrogram.html">Spectrogram</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Spectrum__Tabulate__verbose_.html">Spectrum: Tabulate (verbose)</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20101026</p>
+</address>
+</body>
+</html>

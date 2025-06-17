@@ -1,0 +1,41 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>band filtering in the frequency domain</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+band filtering in the frequency domain
+</b></font></table></table>
+<p>We describe how band filtering in the frequency domain is performed.</p>
+<p>We start with a <a href="Sound.html">Sound</a> and end with a filter bank representation of this sound. We assume a standard analysis context: a sound divided into frames according to a certain <i>window length</i> and <i>time step</i>. We will simulate a filterbank with <i>N</i> filters.</p>
+<p>The algorithm for each sound frame proceeds in the following way:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Apply a Gaussian window to the sound frame.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Convert the windowed frame into a <a href="Spectrum.html">Spectrum</a> object.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Convert the spectral amplitudes to <i>energy</i> values by squaring the real and imaginary parts and multiplying by <i>df</i>, the frequency distance between two successive frequency points in the spectrum. Since the Spectrum object only contains positive frequencies, we have to multiply all energy values, except the first and the last frequency, by another factor of 2 to compensate for negative frequencies.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. For each of the <i>N</i> filters in the filter bank: determine the inner product of its filter function with the energies as determined in the previous step. The result of each inner product is the energy in the corresponding filter.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">5. Convert the energies in each filter to power by dividing by the <i>window length</i>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">6. Correct the power, due to the windowing of the frame, by dividing by the integral of the <i>squared</i> windowing function.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">7. Convert all power values to <i>dB</i>'s according to 10 * log10 (<i>power</i> / 4 10<sup>-10</sup>).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Filtering.html">Filtering</a>
+<li><a href="Sound___Pitch__To_Spectrogram___.html">Sound & Pitch: To Spectrogram...</a>
+<li><a href="Sound__To_BarkSpectrogram___.html">Sound: To BarkSpectrogram...</a>
+<li><a href="Sound__To_FormantFilter___.html">Sound: To FormantFilter...</a>
+<li><a href="Sound__To_MelSpectrogram___.html">Sound: To MelSpectrogram...</a>
+<li><a href="Sound__To_Spectrogram__pitch-dependent____.html">Sound: To Spectrogram (pitch-dependent)...</a>
+<li><a href="What_was_new_in_4_0_.html">What was new in 4.0?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20010404</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: To Covariance</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: To Covariance
+</b></font></table></table>
+<p>A command that creates a <a href="Covariance.html">Covariance</a> object from every selected <a href="TableOfReal.html">TableOfReal</a> object. The covariances are calculated between columns.</p>
+<h2>Algorithm</h2>
+<p>The covariance coefficients <i>s</i><sub><i>ij</i></sub>  between the elements of columns <i>i</i> and <i>j</i> are defined as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>s</i><sub><i>ij</i></sub> = &#931;<sub><i>k</i></sub> (<i>x</i><sub><i>ki</i></sub> - <i>x&#772;</i><sub><i>i</i></sub>)(<i>x</i><sub><i>kj</i></sub> - <i>x&#772;</i><sub><i>j</i></sub>)/(<i>numberOfObservations</i> - <i>numberOfConstraints</i>),</table>
+<p>where <i>x</i><sub><i>ki</i></sub> is the element <i>k</i> in column <i>i</i>, <i>x&#772;</i><sub><i>i</i></sub> is the mean of column <i>i</i>, <i>numberOfObservations</i> equals the number of rows in the table, and <i>numberOfConstraints</i> equals 1.</p>
+<p>The actual calculation goes as follows</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Centralize each column (subtract the mean).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Get its <a href="singular_value_decomposition.html">singular value decomposition</a> <b>U</b> <b>D</b> <b>V</b>&#8242;.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Form <b>S</b> = <b>V</b> <b>D</b> <b>V</b>&#8242;.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. Divide all elements in <b>S</b> by (<i>numberOfObservations</i> - 1).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="PCA___TableOfReal__Get_fraction_variance___.html">PCA & TableOfReal: Get fraction variance...</a>
+<li><a href="T-test.html">T-test</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20220111</p>
+</address>
+</body>
+</html>

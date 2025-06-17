@@ -1,0 +1,93 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formant</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formant
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. A Formant object represents spectral structure as a function of time: a <i>formant contour</i>. Unlike the time-stamped <a href="FormantGrid.html">FormantGrid</a> object, it is sampled into a number of <i>frames</i> centred around equally spaced times, Each frame contains frequency and bandwidth information about several formants.</p>
+<h2>Inside a Formant object</h2>
+<p>With <a href="Inspect.html">Inspect</a>, you will see the following attributes:</p>
+<dl>
+<dt><i>xmin</i>
+<dd>start time, in seconds.</dd>
+<dt><i>xmax</i>
+<dd>end time, in seconds.</dd>
+<dt><i>nx</i>
+<dd>the number of frames (&#8805; 1).</dd>
+<dt><i>dx</i>
+<dd>time step = frame length = frame duration, in seconds.</dd>
+<dt><i>x1</i>
+<dd>the time associated with the first frame, in seconds. This will usually be in the range [<i>xmin</i>, <i>xmax</i>]. The time associated with the last frame (i.e., <i>x1</i> + (<i>nx</i> &#8211; 1) <i>dx</i>)) will also usually be in that range.</dd>
+<dt><i>frame</i><sub><i>i</i></sub>, <i>i</i> = 1 ... <i>nx</i>
+<dd>the frames (see below).</dd>
+</dl>
+<h2>Attributes of a formant frame</h2>
+<p>Each <i>frame</i><sub><i>i</i></sub> contains the following attributes:</p>
+<dl>
+<dt><i>intensity</i>
+<dd>an indication of the maximum intensity (a squared sound amplitude) in this frame.</dd>
+<dt><i>nFormants</i>
+<dd>the number of formants in this frame (usually between 2 and 6).</dd>
+<dt><i>formant</i><sub><i>j</i></sub>, <i>j</i> = 1 ... <i>nFormants</i>
+<dd>the information about each formant (see below).</dd>
+</dl>
+<h2>Attributes of each formant</h2>
+<p>Each <i>formant</i><sub><i>j</i></sub> contains the following attributes:</p>
+<dl>
+<dt><i>frequency</i>
+<dd>the formant's centre frequency (in Hz).</dd>
+<dt><i>bandwidth</i>
+<dd>the formant's bandwidth (in Hz).</dd>
+</dl>
+<h2>See also</h2>
+<p><b>Linear Prediction</b></p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formant__Down_to_FormantGrid.html">Formant: Down to FormantGrid</a>
+<li><a href="Formant__Draw_tracks___.html">Formant: Draw tracks...</a>
+<li><a href="Formant__Formula__bandwidths____.html">Formant: Formula (bandwidths)...</a>
+<li><a href="Formant__Formula__frequencies____.html">Formant: Formula (frequencies)...</a>
+<li><a href="Formant__Get_bandwidth_at_time___.html">Formant: Get bandwidth at time...</a>
+<li><a href="Formant__Get_maximum___.html">Formant: Get maximum...</a>
+<li><a href="Formant__Get_mean___.html">Formant: Get mean...</a>
+<li><a href="Formant__Get_minimum___.html">Formant: Get minimum...</a>
+<li><a href="Formant__Get_number_of_formants.html">Formant: Get number of formants</a>
+<li><a href="Formant__Get_quantile___.html">Formant: Get quantile...</a>
+<li><a href="Formant__Get_standard_deviation.html">Formant: Get standard deviation</a>
+<li><a href="Formant__Get_time_of_maximum___.html">Formant: Get time of maximum...</a>
+<li><a href="Formant__Get_time_of_minimum___.html">Formant: Get time of minimum...</a>
+<li><a href="Formant__Get_value_at_time___.html">Formant: Get value at time...</a>
+<li><a href="Formant__List_formant_slope___.html">Formant: List formant slope...</a>
+<li><a href="Formant__Speckle___.html">Formant: Speckle...</a>
+<li><a href="Formant__Track___.html">Formant: Track...</a>
+<li><a href="FormantPath.html">FormantPath</a>
+<li><a href="Formants__Extract_smoothest_part__constrained____.html">Formants: Extract smoothest part (constrained)...</a>
+<li><a href="Formulas_8__Attributes_of_objects.html">Formulas 8. Attributes of objects</a>
+<li><a href="Get_frame_number_from_time___.html">Get frame number from time...</a>
+<li><a href="Get_number_of_frames.html">Get number of frames</a>
+<li><a href="Get_time_from_frame_number___.html">Get time from frame number...</a>
+<li><a href="Get_time_step.html">Get time step</a>
+<li><a href="Intro_5_4__The_Formant_object.html">Intro 5.4. The Formant object</a>
+<li><a href="Sound___Formant__Filter.html">Sound & Formant: Filter</a>
+<li><a href="Sound___Formant__Filter__no_scale_.html">Sound & Formant: Filter (no scale)</a>
+<li><a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a>
+<li><a href="Sound__To_Formant__keep_all____.html">Sound: To Formant (keep all)...</a>
+<li><a href="Sound__To_Formant__robust____.html">Sound: To Formant (robust)...</a>
+<li><a href="Sound__To_Formant__sl____.html">Sound: To Formant (sl)...</a>
+<li><a href="Source-filter_synthesis_4__Using_existing_sounds.html">Source-filter synthesis 4. Using existing sounds</a>
+<li><a href="time_domain.html">time domain</a>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20050427</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Confusion: To Dissimilarity (pdf)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Confusion: To Dissimilarity (pdf)...
+</b></font></table></table>
+<p>A command that creates a <a href="Dissimilarity.html">Dissimilarity</a> from every selected <a href="Confusion.html">Confusion</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Symmetrize first</b>
+<dd>when on, the confusion matrix is symmetrized before we calculate dissimilarities.</dd>
+<dt><b>Maximum dissimilarity (units of sigma)</b>
+<dd>specifies the dissimilarity from confusion matrix elements that are zero.</dd>
+</dl>
+<h2>Algorithm</h2>
+<dl>
+<dt>1. Normalize rows by dividing each row element by the row sum (optional).
+<dt>2. Symmetrize the matrix by averaging <i>f</i><sub><i>ij</i></sub> and <i>f</i><sub><i>ji</i></sub>.
+<dt>3. Transformation of the confusion measure which is a sort of <i>similarity</i> measure to the <i>dissimilarity</i> measure.
+</dl>
+<p>Similarity and dissimilarity have an inverse relationship: the greater the similarity, the smaller the dissimilarity and vice versa. Both have a monotonic relationship with distance. The most simple way to transform the similarities <i>f</i><sub><i>ij</i></sub> into dissimilarities is:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>dissimilarity</i><sub><i>ij</i></sub> = <i>maximumSimilarity</i> &#8211; <i>similarity</i><sub><i>ij</i></sub></table>
+<p>For ordinal analyses like Kruskal this transformation is fine because only order relations are important in this analysis. However, for metrical analyses like INDSCAL this is not optimal. In INDSCAL, distance is a linear function of dissimilarity. This means that, with the transformation above, you ultimately fit an INDSCAL model in which the distance between object <i>i</i> and <i>j</i> will be linearly related to the confusion between <i>i</i> and <i>j</i>.</p>
+<p>For the relation between confusion and dissimilarity, the model implemented here, makes the assumption that the amount of confusion between objects <i>i</i> and <i>j</i> is related to the amount that their probability density functions, pdf's, overlap. Because we do not know these pdf's we make the assumption that both are normal, have equal <i>sigma</i> and are one-dimensional. The parameter to be determined is the distance between the centres of both pdf's. According to formula 26.2.23 in <a href="Abramowitz___Stegun__1970_.html">Abramowitz & Stegun (1970)</a>, for each fraction <i>f</i><sub><i>ij</i></sub>, we have to find an <i>x</i> that solves:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i><sub><i>ij</i></sub> = 1 / &#8730;(2<i>&#960;</i>) &#8747;<sub><i>x</i></sub><sup>&#8734;</sup> e<sup>-<i>t</i>&#183;<i>t</i>/2</sup> <i>dt</i></table>
+<p>This <i>x</i> will be used as the dissimilarity between <i>i</i> and <i>j</i>. The relation between <i>x</i> and <i>f</i><sub><i>ij</i></sub> is monotonic. This means that the results for a Kruskal analysis will not change much. For INDSCAL, in general, you will note a significantly better fit.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Distance.html">Distance</a>
+<li><a href="INDSCAL_analysis.html">INDSCAL analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

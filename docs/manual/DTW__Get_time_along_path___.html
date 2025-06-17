@@ -1,0 +1,30 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>DTW: Get time along path...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+DTW: Get time along path...
+</b></font></table></table>
+<p>Queries the selected <a href="DTW.html">DTW</a> object for the time along the minimal path given the time along the "<i>x</i>-direction". This command is deprecated, the new commands for querying are <a href="DTW__Get_y_time_from_x_time___.html">DTW: Get y time from x time...</a> and <a href="DTW__Get_x_time_from_y_time___.html">DTW: Get x time from y time...</a>.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Time (s)</b>
+<dd>the time along the <i>x</i>-direction.</dd>
+</dl>
+<h2>Behaviour</h2>
+<p>When the <i>input</i> time is in the interval [<i>xmin</i>, <i>xmax</i>], the <i>returned</i> time will be in the interval [<i>ymin</i>, <i>ymax</i>], where [<i>xmin</i>, <i>xmax</i>] and [<i>ymin</i>, <i>ymax</i>] are the domains of the two "objects" from which the DTW-object was constructed.For all other input times we assume that the two object are aligned.</p>
+<p>We like to have a "continuous" interpretation of time for the quantized times in the <i>x</i> and <i>y</i> direction; we make the path piecewise linear. There are two special cases:</p>
+<p>1. The local path is horizontal. We calculate the <i>y</i>-time from the line that connects the lower-left position of the leftmost horizontal time block to the upper-right position of the rightmost horizontal  time block.</p>
+<p>2. The local path is vertical. We calculate the <i>y</i>-time from the line that connects the lower-left position of the bottommost vertical time block to the upper-right position of the topmost horizontal time block.</p>
+<hr>
+<address>
+	<p>© djmw 20110603</p>
+</address>
+</body>
+</html>

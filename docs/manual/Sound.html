@@ -1,0 +1,296 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. For tutorial information, see all of the <a href="Intro.html">Intro</a>.</p>
+<h2>Commands</h2>
+<p>Creation:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Record_mono_Sound___.html">Record mono Sound...</a> (from microphone or line input, with the <a href="SoundRecorder.html">SoundRecorder</a>)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Record_stereo_Sound___.html">Record stereo Sound...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_Sound_from_formula___.html">Create Sound from formula...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_Sound_as_tone_complex___.html">Create Sound as tone complex...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_Sound_as_gammatone___.html">Create Sound as gammatone...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_Sound_as_Shepard_tone___.html">Create Sound as Shepard tone...</a></dd>
+</dl>
+<p>Opening and saving:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound_files.html">Sound files</a></dd>
+</dl>
+<p>You can also use the text and binary (real-valued) formats for Sounds, like for any other class:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Save_as_text_file___.html">Save as text file...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Save_as_binary_file___.html">Save as binary file...</a></dd>
+</dl>
+<p>Viewing and editing:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="SoundEditor.html">SoundEditor</a>, <a href="ManipulationEditor.html">ManipulationEditor</a>, <a href="TextGridEditor.html">TextGridEditor</a>, <a href="PointEditor.html">PointEditor</a>, <a href="PitchTierEditor.html">PitchTierEditor</a>, <a href="SpectrumEditor.html">SpectrumEditor</a></dd>
+</dl>
+<p>Playing:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Play.html">Sound: Play</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Hum.html">PointProcess: Hum</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__Play.html">PointProcess: Play</a></dd>
+</dl>
+<p>Drawing:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Draw___.html">Sound: Draw...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Draw_where___.html">Sound: Draw where...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Paint_where___.html">Sound: Paint where...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sounds__Paint_enclosed___.html">Sounds: Paint enclosed...</a></dd>
+</dl>
+<p>Queries:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;structure:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="time_domain.html">time domain</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Get_number_of_samples.html">Get number of samples</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Get_sampling_period.html">Get sampling period</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Get_sampling_frequency.html">Get sampling frequency</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Get_time_from_sample_number___.html">Get time from sample number...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Get_sample_number_from_time___.html">Get sample number from time...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;content:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_value_at_time___.html">Sound: Get value at time...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_value_at_sample_number___.html">Sound: Get value at sample number...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;shape:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_minimum___.html">Sound: Get minimum...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_time_of_minimum___.html">Sound: Get time of minimum...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_maximum___.html">Sound: Get maximum...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_time_of_maximum___.html">Sound: Get time of maximum...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_absolute_extremum___.html">Sound: Get absolute extremum...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_nearest_zero_crossing___.html">Sound: Get nearest zero crossing...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;statistics:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_mean___.html">Sound: Get mean...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_root-mean-square___.html">Sound: Get root-mean-square...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_standard_deviation___.html">Sound: Get standard deviation...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;energy:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_energy___.html">Sound: Get energy...</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_power___.html">Sound: Get power...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;in air:</dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_energy_in_air.html">Sound: Get energy in air</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_power_in_air.html">Sound: Get power in air</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&#8226; <a href="Sound__Get_intensity__dB_.html">Sound: Get intensity (dB)</a></dd>
+</dl>
+<p>Modification:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Matrix__Formula___.html">Matrix: Formula...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Set_value_at_sample_number___.html">Sound: Set value at sample number...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter_with_one_formant__in-place____.html">Sound: Filter with one formant (in-place)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Pre-emphasize__in-place____.html">Sound: Pre-emphasize (in-place)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__De-emphasize__in-place____.html">Sound: De-emphasize (in-place)...</a></dd>
+</dl>
+<p>Annotation (see <a href="Intro_7__Annotation.html">Intro 7. Annotation</a>):</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_TextGrid___.html">Sound: To TextGrid...</a></dd>
+</dl>
+<p>Periodicity analysis:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Pitch__filtered_autocorrelation____.html">Sound: To Pitch (filtered autocorrelation)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Pitch__raw_cross-correlation____.html">Sound: To Pitch (raw cross-correlation)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Pitch__raw_autocorrelation____.html">Sound: To Pitch (raw autocorrelation)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Pitch__filtered_cross-correlation____.html">Sound: To Pitch (filtered cross-correlation)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Pitch__shs____.html">Sound: To Pitch (shs)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Harmonicity__ac____.html">Sound: To Harmonicity (ac)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Harmonicity__cc____.html">Sound: To Harmonicity (cc)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_PointProcess__periodic__cc____.html">Sound: To PointProcess (periodic, cc)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_PointProcess__periodic__peaks____.html">Sound: To PointProcess (periodic, peaks)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound___Pitch__To_PointProcess__cc_.html">Sound & Pitch: To PointProcess (cc)</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound___Pitch__To_PointProcess__peaks____.html">Sound & Pitch: To PointProcess (peaks)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Intensity___.html">Sound: To Intensity...</a></dd>
+</dl>
+<p>Spectral analysis:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Spectrum___.html">Sound: To Spectrum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Spectrogram___.html">Sound: To Spectrogram...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Formant__burg____.html">Sound: To Formant (burg)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_Formant__sl____.html">Sound: To Formant (sl)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__LPC_analysis.html">Sound: LPC analysis</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_LPC__autocorrelation____.html">Sound: To LPC (autocorrelation)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_LPC__covariance____.html">Sound: To LPC (covariance)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_LPC__burg____.html">Sound: To LPC (burg)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_LPC__marple____.html">Sound: To LPC (marple)...</a></dd>
+</dl>
+<p>Filtering (see <a href="Filtering.html">Filtering</a> tutorial):</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__pass_Hann_band____.html">Sound: Filter (pass Hann band)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__stop_Hann_band____.html">Sound: Filter (stop Hann band)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__formula____.html">Sound: Filter (formula)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__one_formant____.html">Sound: Filter (one formant)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__pre-emphasis____.html">Sound: Filter (pre-emphasis)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__de-emphasis____.html">Sound: Filter (de-emphasis)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="LPC___Sound__Filter___.html">LPC & Sound: Filter...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="LPC___Sound__Filter__inverse_.html">LPC & Sound: Filter (inverse)</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound___Formant__Filter.html">Sound & Formant: Filter</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound___FormantGrid__Filter.html">Sound & FormantGrid: Filter</a></dd>
+</dl>
+<p>Conversion:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Resample___.html">Sound: Resample...</a></dd>
+</dl>
+<p>Enhancement:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Lengthen__overlap-add____.html">Sound: Lengthen (overlap-add)...</a>: lengthen by a constant factor</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Deepen_band_modulation___.html">Sound: Deepen band modulation...</a>: strenghten intensity modulations in each critical band</dd>
+</dl>
+<p>Combination:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sounds__Convolve___.html">Sounds: Convolve...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sounds__Cross-correlate___.html">Sounds: Cross-correlate...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Autocorrelate___.html">Sound: Autocorrelate...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sounds__Concatenate.html">Sounds: Concatenate</a></dd>
+</dl>
+<p>Synthesis</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Source-filter_synthesis.html">Source-filter synthesis</a> tutorial</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Manipulation.html">Manipulation</a> (<a href="overlap-add.html">overlap-add</a> etc.)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__To_Sound.html">Spectrum: To Sound</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Pitch: To Sound...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__To_Sound__pulse_train____.html">PointProcess: To Sound (pulse train)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="PointProcess__To_Sound__hum____.html">PointProcess: To Sound (hum)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Pitch &amp; PointProcess: To Sound...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Articulatory_synthesis.html">Articulatory synthesis</a> tutorial</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Artword___Speaker__To_Sound___.html">Artword & Speaker: To Sound...</a></dd>
+</dl>
+<h2>Inside a Sound</h2>
+<p>With <a href="Inspect.html">Inspect</a>, you will see that a Sound contains the following data:</p>
+<dl>
+<dt><i>x</i><sub><i>min</i></sub>
+<dd>start time, in seconds.</dd>
+<dt><i>x</i><sub><i>max</i></sub> &gt; <i>x</i><sub><i>min</i></sub>
+<dd>end time, in seconds.</dd>
+<dt><i>n</i><sub><i>x</i></sub>
+<dd>the number of samples ( <sub> </sub>1).</dd>
+<dt><i>dx</i>
+<dd>sample period, in seconds. The inverse of the sampling frequency (in Hz).</dd>
+<dt><i>x</i><sub>1</sub>
+<dd>the time associated with the first sample (in seconds). This will normally be in the range [<i>xmin</i>, <i>xmax</i>]. The time associated with the last sample (i.e., <i>x</i><sub>1</sub> + (<i>nx</i> &#8722; 1) <i>dx</i>)) will also normally be in that range. Mostly, the sound starts at <i>t</i> = 0 seconds and <i>x</i><sub>1</sub> = <i>dx</i> / 2. Also, usually, <i>x</i><sub><i>max</i></sub> = <i>n</i><sub><i>x</i></sub> <i>dx</i>.</dd>
+<dt><i>z</i> [1] [1..<i>n</i><sub><i>x</i></sub>]
+<dd>the amplitude of the sound (stored as single-precision floating-point numbers). For the most common applications (playing and file I-O), Praat assumes that the amplitude is greater than -1 and less than +1. For some applications (modelling of the inner ear; articulatory synthesis), Praat assumes that the amplitude is expressed in Pascal units. If these interpretations are combined, we see that the maximum peak amplitude of a calibrated sound is 1 Pascal; for a sine wave, this means 91 dB SPL.</dd>
+</dl>
+<h2>Limitations</h2>
+<p>Since the Sound object completely resides in memory, its size is limited to the amount of RAM in your computer. For sounds longer than a few minutes, you could use the <a href="LongSound.html">LongSound</a> object instead, which you can view in the <a href="LongSoundEditor.html">LongSoundEditor</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="band_filtering_in_the_frequency_domain.html">band filtering in the frequency domain</a>
+<li><a href="DTW___Sounds__Draw_warp__x____.html">DTW & Sounds: Draw warp (x)...</a>
+<li><a href="DTW___Sounds__Draw___.html">DTW & Sounds: Draw...</a>
+<li><a href="Extract_one_channel___.html">Extract one channel...</a>
+<li><a href="FLAC_files.html">FLAC files</a>
+<li><a href="FormantPathEditor.html">FormantPathEditor</a>
+<li><a href="Formants___LPC_menu.html">Formants & LPC menu</a>
+<li><a href="Formulas_1_6__Formulas_for_creation.html">Formulas 1.6. Formulas for creation</a>
+<li><a href="Formulas_1_7__Formulas_for_modification.html">Formulas 1.7. Formulas for modification</a>
+<li><a href="Formulas_8__Attributes_of_objects.html">Formulas 8. Attributes of objects</a>
+<li><a href="How_to_concatenate_sound_files.html">How to concatenate sound files</a>
+<li><a href="Intro_1_2__Reading_a_sound_from_disk.html">Intro 1.2. Reading a sound from disk</a>
+<li><a href="Intro_2__What_to_do_with_a_sound.html">Intro 2. What to do with a sound</a>
+<li><a href="Intro_2_1__Saving_a_sound_to_disk.html">Intro 2.1. Saving a sound to disk</a>
+<li><a href="Intro_2_2__Viewing_and_editing_a_sound.html">Intro 2.2. Viewing and editing a sound</a>
+<li><a href="Intro_3_1__Viewing_a_spectrogram.html">Intro 3.1. Viewing a spectrogram</a>
+<li><a href="Intro_3_8__The_Spectrum_object.html">Intro 3.8. The Spectrum object</a>
+<li><a href="Intro_4_1__Viewing_a_pitch_contour.html">Intro 4.1. Viewing a pitch contour</a>
+<li><a href="Intro_4_5__The_Pitch_object.html">Intro 4.5. The Pitch object</a>
+<li><a href="Intro_5_1__Viewing_formant_contours.html">Intro 5.1. Viewing formant contours</a>
+<li><a href="Intro_5_4__The_Formant_object.html">Intro 5.4. The Formant object</a>
+<li><a href="Intro_6_1__Viewing_an_intensity_contour.html">Intro 6.1. Viewing an intensity contour</a>
+<li><a href="Intro_8_1__Manipulation_of_pitch.html">Intro 8.1. Manipulation of pitch</a>
+<li><a href="Intro_8_2__Manipulation_of_duration.html">Intro 8.2. Manipulation of duration</a>
+<li><a href="Intro_8_3__Manipulation_of_intensity.html">Intro 8.3. Manipulation of intensity</a>
+<li><a href="LPC___Sound__Filter__inverse__with_filter_at_time___.html">LPC & Sound: Filter (inverse) with filter at time...</a>
+<li><a href="LPC___Sound__Filter_with_filter_at_time___.html">LPC & Sound: Filter with filter at time...</a>
+<li><a href="Manipulation__Extract_original_sound.html">Manipulation: Extract original sound</a>
+<li><a href="Manipulation__Replace_original_sound.html">Manipulation: Replace original sound</a>
+<li><a href="MixingMatrix.html">MixingMatrix</a>
+<li><a href="NIST_files.html">NIST files</a>
+<li><a href="Periodicity_menu.html">Periodicity menu</a>
+<li><a href="pitch_analysis_by_filtered_autocorrelation.html">pitch analysis by filtered autocorrelation</a>
+<li><a href="pitch_analysis_by_filtered_cross-correlation.html">pitch analysis by filtered cross-correlation</a>
+<li><a href="Play.html">Play</a>
+<li><a href="PointProcess__To_Sound__phonation____.html">PointProcess: To Sound (phonation)...</a>
+<li><a href="Read_separate_channels_from_sound_file___.html">Read separate channels from sound file...</a>
+<li><a href="Record_Sound__fixed_time____.html">Record Sound (fixed time)...</a>
+<li><a href="sampling_frequency.html">sampling frequency</a>
+<li><a href="sampling_period.html">sampling period</a>
+<li><a href="Save_as_AIFC_file___.html">Save as AIFC file...</a>
+<li><a href="Save_as_AIFF_file___.html">Save as AIFF file...</a>
+<li><a href="Save_as_FLAC_file___.html">Save as FLAC file...</a>
+<li><a href="Save_as_NeXT_Sun_file___.html">Save as NeXT/Sun file...</a>
+<li><a href="Save_as_NIST_file___.html">Save as NIST file...</a>
+<li><a href="Save_as_WAV_file___.html">Save as WAV file...</a>
+<li><a href="Sesam_LVS_files.html">Sesam/LVS files</a>
+<li><a href="Sound___Formant__Filter__no_scale_.html">Sound & Formant: Filter (no scale)</a>
+<li><a href="Sound___FormantGrid__Filter__no_scale_.html">Sound & FormantGrid: Filter (no scale)</a>
+<li><a href="Sound___IntensityTier__Multiply.html">Sound & IntensityTier: Multiply</a>
+<li><a href="Sound___Pitch__Change_gender___.html">Sound & Pitch: Change gender...</a>
+<li><a href="Sound___Pitch__Change_speaker___.html">Sound & Pitch: Change speaker...</a>
+<li><a href="Sound___Pitch__To_Spectrogram___.html">Sound & Pitch: To Spectrogram...</a>
+<li><a href="Sound_files_1_2__Quantization.html">Sound files 1.2. Quantization</a>
+<li><a href="Sound_files_2_2__AIFF_files.html">Sound files 2.2. AIFF files</a>
+<li><a href="Sound_files_3__Files_that_Praat_can_read.html">Sound files 3. Files that Praat can read</a>
+<li><a href="Sound__Change_gender___.html">Sound: Change gender...</a>
+<li><a href="Sound__Change_speaker___.html">Sound: Change speaker...</a>
+<li><a href="Sound__Extract_Electroglottogram___.html">Sound: Extract Electroglottogram...</a>
+<li><a href="Sound__Extract_part___.html">Sound: Extract part...</a>
+<li><a href="Sound__Fade_in___.html">Sound: Fade in...</a>
+<li><a href="Sound__Fade_out___.html">Sound: Fade out...</a>
+<li><a href="Sound__Formula___.html">Sound: Formula...</a>
+<li><a href="Sound__Multiply_by_window___.html">Sound: Multiply by window...</a>
+<li><a href="Sound__Play_as_frequency_shifted___.html">Sound: Play as frequency shifted...</a>
+<li><a href="Sound__Remove_noise___.html">Sound: Remove noise...</a>
+<li><a href="Sound__Scale_intensity___.html">Sound: Scale intensity...</a>
+<li><a href="Sound__Scale_peak___.html">Sound: Scale peak...</a>
+<li><a href="Sound__To_BarkSpectrogram___.html">Sound: To BarkSpectrogram...</a>
+<li><a href="Sound__To_ConstantQLogFSpectrogram___.html">Sound: To ConstantQLogFSpectrogram...</a>
+<li><a href="Sound__To_Covariance__channels____.html">Sound: To Covariance (channels)...</a>
+<li><a href="Sound__To_CrossCorrelationTable___.html">Sound: To CrossCorrelationTable...</a>
+<li><a href="Sound__To_Formant__keep_all____.html">Sound: To Formant (keep all)...</a>
+<li><a href="Sound__To_Formant__robust____.html">Sound: To Formant (robust)...</a>
+<li><a href="Sound__To_FormantFilter___.html">Sound: To FormantFilter...</a>
+<li><a href="Sound__To_FormantPath__burg____.html">Sound: To FormantPath (burg)...</a>
+<li><a href="Sound__To_KlattGrid__simple____.html">Sound: To KlattGrid (simple)...</a>
+<li><a href="Sound__To_Ltas__pitch-corrected____.html">Sound: To Ltas (pitch-corrected)...</a>
+<li><a href="Sound__To_MelSpectrogram___.html">Sound: To MelSpectrogram...</a>
+<li><a href="Sound__To_MFCC___.html">Sound: To MFCC...</a>
+<li><a href="Sound__To_Pitch__ac____.html">Sound: To Pitch (ac)...</a>
+<li><a href="Sound__To_Pitch__cc____.html">Sound: To Pitch (cc)...</a>
+<li><a href="Sound__To_Pitch__filtered_ac____.html">Sound: To Pitch (filtered ac)...</a>
+<li><a href="Sound__To_Pitch__filtered_cc____.html">Sound: To Pitch (filtered cc)...</a>
+<li><a href="Sound__To_Pitch__raw_ac____.html">Sound: To Pitch (raw ac)...</a>
+<li><a href="Sound__To_Pitch__raw_cc____.html">Sound: To Pitch (raw cc)...</a>
+<li><a href="Sound__To_Pitch___.html">Sound: To Pitch...</a>
+<li><a href="Sound__To_Polygon___.html">Sound: To Polygon...</a>
+<li><a href="Sound__To_PowerCepstrogram___.html">Sound: To PowerCepstrogram...</a>
+<li><a href="Sound__To_Sound__derivative____.html">Sound: To Sound (derivative)...</a>
+<li><a href="Sound__To_Sound__whiten_channels____.html">Sound: To Sound (whiten channels)...</a>
+<li><a href="Sound__To_Spectrogram__pitch-dependent____.html">Sound: To Spectrogram (pitch-dependent)...</a>
+<li><a href="Sound__To_Spectrum__resampled____.html">Sound: To Spectrum (resampled)...</a>
+<li><a href="Sound__To_TextGrid__silences____.html">Sound: To TextGrid (silences)...</a>
+<li><a href="Sound__To_TextGrid__speech_activity____.html">Sound: To TextGrid (speech activity)...</a>
+<li><a href="Sound__Trim_silences___.html">Sound: Trim silences...</a>
+<li><a href="Sounds__Combine_to_stereo.html">Sounds: Combine to stereo</a>
+<li><a href="Sounds__Concatenate_with_overlap___.html">Sounds: Concatenate with overlap...</a>
+<li><a href="Source-filter_synthesis_1__Creating_a_source_from_pitch.html">Source-filter synthesis 1. Creating a source from pitch targets</a>
+<li><a href="Source-filter_synthesis_4__Using_existing_sounds.html">Source-filter synthesis 4. Using existing sounds</a>
+<li><a href="Spectrum__Tabulate__verbose_.html">Spectrum: Tabulate (verbose)</a>
+<li><a href="Spectrum__To_Sound__resampled____.html">Spectrum: To Sound (resampled)...</a>
+<li><a href="SpellingChecker.html">SpellingChecker</a>
+<li><a href="stereo.html">stereo</a>
+<li><a href="TextGrid.html">TextGrid</a>
+<li><a href="VowelEditor.html">VowelEditor</a>
+<li><a href="What_was_new_in_3_6_.html">What was new in 3.6?</a>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2016-10-13</p>
+</address>
+</body>
+</html>

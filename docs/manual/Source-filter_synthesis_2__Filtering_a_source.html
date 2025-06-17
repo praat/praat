@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Source-filter synthesis 2. Filtering a source</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Source-filter synthesis 2. Filtering a source
+</b></font></table></table>
+<p>Once you have a glottal source signal, you are ready to create a filter that represents the resonances of the vocal tract, as a function of time. In other words, you create a <a href="FormantGrid.html">FormantGrid</a> object.</p>
+<p>For a vowel spoken by an average (i.e. adult female) human voice, tradition assumes five formants in the range between 0 and 5500 hertz. This number comes from a computation of the formants of a straight tube, which has resonances at wavelengths of four tube lengths, four thirds of a tube length, four fifths, and so on. For a straight tube 16 centimetres long, the shortest wavelength is 64 cm, which, with a sound velocity of 352 m/s, means a resonance frequency of 352/0.64 = 550 hertz. The other resonances will be at 1650, 2750, 3850, and 4950 hertz.</p>
+<p>You can create a <a href="FormantGrid.html">FormantGrid</a> object with <a href="Create_FormantGrid___.html">Create FormantGrid...</a> from the <b>New</b> menu (submenu <b>Tiers</b>):</p>
+<code>   Create FormantGrid: “filter”, 0, 0.5, 10, 550, 1100, 60, 50<br></code>
+<p>This creates a FormantGrid with 10 formants and a single frequency value for each formant: <i>F</i><sub>1</sub> is 550 Hz and the higher formants are spaced 1100 Hz apart, i.e., they are 1650, 2750, 3850, 4950, 6050, 7150, 8250, 9350, and 10450 hertz; the ten bandwidths start at 60 Hz and have a spacing of 50 Hz, i.e., they are 60, 110, 160, 210, 260, 310, 360, 410, 460, and 510 hertz.</p>
+<p>You can then create formant contours with <a href="FormantGrid__Add_formant_point___.html">FormantGrid: Add formant point...</a>:</p>
+<code>   Remove formant points between: 1, 0, 0.5<br></code>
+<code>   Add formant point: 1, 0.00, 100<br></code>
+<code>   Add formant point: 1, 0.05, 700<br></code>
+<code>   Remove formant points between: 2, 0, 0.5<br></code>
+<code>   Add formant point: 2, 0.00, 500<br></code>
+<code>   Add formant point: 2, 0.05, 1100<br></code>
+<p>This example creates a spectral specification whose <i>F</i><sub>1</sub> rises from 100 to 700 hertz during the first 50 milliseconds (as for any obstruent), and whose <i>F</i><sub>2</sub> rises from 500 to 1100 hertz. The other eight formants keep their original values, as do the ten bandwidths. The resulting sound may be a [ba]-like formant transition.</p>
+<p>To get the final acoustic result (the sound), you select the glottal source signal together with the FormantGrid and choose <a href="Sound___FormantGrid__Filter.html">Sound & FormantGrid: Filter</a>.</p>
+<p>The resulting sound will have a fairly straight intensity contour. You can change this with the <b>Formula</b> command (<a href="Sound__Formula___.html">Sound: Formula...</a>), or by multiplying the source signal or the acoustic result with an <a href="Intensity.html">Intensity</a> or <a href="IntensityTier.html">IntensityTier</a> object.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Source-filter_synthesis.html">Source-filter synthesis</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140421</p>
+</address>
+</body>
+</html>

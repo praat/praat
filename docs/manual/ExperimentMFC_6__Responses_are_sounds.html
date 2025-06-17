@@ -1,0 +1,79 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 6. Responses are sounds</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 6. Responses are sounds
+</b></font></table></table>
+<p>In the <a href="ExperimentMFC_2_1__The_experiment_file.html">example experiment</a>, the stimuli were sounds, and the responses were categories whose labels appeared on buttons. Sometimes you want it the other way around.</p>
+<p>An example is the <i>/i/ prototype</i> task: the top of the screen just says &#8220;Please choose the best <i>ee</i>&#8221;, and no stimulus sound is played. Instead, the participant can click repeatedly on an array of 40 buttons, each of which contains a different [i]-like sound. That is, if the participant clicks on a response button, an [i]-like sound is played, and every response button has its own sound.</p>
+<p>Such a task can be regarded as reversing the task of the example experiment, in which the stimulus was a sound and the reponse was a phonological category. In the /i/ prototype task, the stimulus is a phonological category, and the response is a sound.</p>
+<p>This is what the experiment file could look like:</p>
+<code>   "ooTextFile"<br></code>
+<code>   "ExperimentMFC 7"<br></code>
+<code>   blankWhilePlaying? &lt;no&gt;<br></code>
+<code>   stimuliAreSounds? &lt;no&gt; "" "" "" "" 0 0 0<br></code>
+<code>   numberOfDifferentStimuli = 2<br></code>
+<code>      "i"  "Choose the best %%ee%."<br></code>
+<code>      "I"  "Choose the best %%i%."<br></code>
+<code>   numberOfReplicationsPerStimulus = 1<br></code>
+<code>   breakAfterEvery = 1<br></code>
+<code>   randomize = &lt;CyclicNonRandom&gt;<br></code>
+<code>   startText = "Click to start."<br></code>
+<code>   runText = ""<br></code>
+<code>   pauseText = "You can have a short break if you like. Click to proceed."<br></code>
+<code>   endText = "The experiment has finished."<br></code>
+<code>   maximumNumberOfReplays = 0<br></code>
+<code>   replayButton = 0 0 0 0 "" ""<br></code>
+<code>   okButton = 0.8 0.95 0.45 0.55 "OK" ""<br></code>
+<code>   oopsButton = 0 0 0 0 "" ""<br></code>
+<code>   responsesAreSounds? &lt;yes&gt;<br></code>
+<code>   responseFileNameHead = "Sounds/"<br></code>
+<code>   responseFileNameTail = ".wav"<br></code>
+<code>   responseCarrierBefore = ""<br></code>
+<code>   responseCarrierAfter = ""<br></code>
+<code>   responseInitialSilenceDuration = 0.3<br></code>
+<code>   responseMedialSilenceDuration = 0<br></code>
+<code>   responseFinalSilenceDuration = 0<br></code>
+<code>   numberOfDifferentResponses = 16<br></code>
+<code>      0.2 0.3 0.7 0.8 "" 10 "" "i11"<br></code>
+<code>      0.3 0.4 0.7 0.8 "" 10 "" "i12"<br></code>
+<code>      0.4 0.5 0.7 0.8 "" 10 "" "i13"<br></code>
+<code>      0.5 0.6 0.7 0.8 "" 10 "" "i14"<br></code>
+<code>      0.2 0.3 0.6 0.7 "" 10 "" "i21"<br></code>
+<code>      0.3 0.4 0.6 0.7 "" 10 "" "i22"<br></code>
+<code>      0.4 0.5 0.6 0.7 "" 10 "" "i23"<br></code>
+<code>      0.5 0.6 0.6 0.7 "" 10 "" "i24"<br></code>
+<code>      0.2 0.3 0.5 0.6 "" 10 "" "i31"<br></code>
+<code>      0.3 0.4 0.5 0.6 "" 10 "" "i32"<br></code>
+<code>      0.4 0.5 0.5 0.6 "" 10 "" "i33"<br></code>
+<code>      0.5 0.6 0.5 0.6 "" 10 "" "i34"<br></code>
+<code>      0.2 0.3 0.4 0.5 "" 10 "" "i41"<br></code>
+<code>      0.3 0.4 0.4 0.5 "" 10 "" "i42"<br></code>
+<code>      0.4 0.5 0.4 0.5 "" 10 "" "i43"<br></code>
+<code>      0.5 0.6 0.4 0.5 "" 10 "" "i44"<br></code>
+<code>   numberOfGoodnessCategories = 5<br></code>
+<code>      0.25 0.35 0.10 0.20 "1 (poor)" 24 ""<br></code>
+<code>      0.35 0.45 0.10 0.20 "2" 24 ""<br></code>
+<code>      0.45 0.55 0.10 0.20 "3" 24 ""<br></code>
+<code>      0.55 0.65 0.10 0.20 "4" 24 ""<br></code>
+<code>      0.65 0.75 0.10 0.20 "5 (good)" 24 ""<br></code>
+<p>The participant will see 16 squares on the screen. First she will have to find the best /i/, then the best /&#618;/. The sound files &#8220;Sounds/i11.wav&#8221; and so on must exist and have the same sampling frequency. A silence of 0.3 seconds is played just before each response sound.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_4_2__The_OK_button.html">ExperimentMFC 4.2. The OK button</a>
+<li><a href="ExperimentMFC_5_1__The_stimulus-dependent_run_text.html">ExperimentMFC 5.1. The stimulus-dependent run text</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20160925</p>
+</address>
+</body>
+</html>

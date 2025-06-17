@@ -1,0 +1,44 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intro 4.2. Configuring the pitch contour</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intro 4.2. Configuring the pitch contour
+</b></font></table></table>
+<p>With <a href="Pitch_settings___.html">Pitch settings...</a> from the <b>Pitch</b> menu, you can determine how the pitch contour is displayed and how it is computed. These settings will be remembered across Praat sessions. All these settings have standard values (&#8220;factory settings&#8221;), which appear when you click <b>Standards</b>.</p>
+<h2>The <i>pitch range</i> (<i>pitch floor and top</i>) setting</h2>
+<p>This is the most important setting for pitch analysis. The standard range (for filtered autocorrelation) is from 50 to 800 hertz, which means that the pitch analysis method will only find values between 50 and 800 Hz (and values between 400 and 800 Hz only rarely). The range that you set here will be shown to the right of the analysis window.</p>
+<p>You may have set the range to values appropriate for your speaker, because speakers can vary enormously in their pitch ranges. For some low-pitched (e.g. average male) voices, you might want to set the floor to 50 Hz, and the top to 600 Hz; for some high-pitched (e.g. average female) voices, a range of 100-800 Hz might instead be appropriate; however, it may well be the case that the standard setting of 50&#8211;800 Hz will work for all of these voices. On the high side, however, some children can reach almost 2000 Hz when yelling; on the low side, creaky voice can go as low as 30 Hz; if you investigate such cases, you may therefore want to experiment with this setting.</p>
+<p>Here is why you have to supply these settings. If the pitch floor is 50 Hz, the pitch analysis method requires a 60-millisecond analysis window, i.e., in order to measure the F0 at a time of, say, 0.850 seconds, Praat needs to consider a part of the sound that runs from 0.820 to 0.880 seconds. These 60 milliseconds correspond to 3 maximum pitch periods (3/50 = 0.060). If you set the pitch floor down to 25 Hz, the analysis window will grow to 120 milliseconds (which is again 3 maximum pitch periods), i.e., all times between 0.790 and 0.910 seconds will be considered. This makes it less easy to see fast F0 changes.</p>
+<p>So setting the floor of the pitch range is a technical requirement for the pitch analysis. If you set it too low, you will miss very fast F0 changes, and if you set it too high, you will miss very low F0 values. For children's voices you can often use 200 Hz, although 50 Hz will still give you the same time resolution as you get for low-pitched voices.</p>
+<h2>The <i>units</i> setting</h2>
+<p>This setting determines the units of the vertical pitch scale. Most people like to see the pitch range in hertz, but there are several other possibilities.</p>
+<h2>View range different from analysis range</h2>
+<p>Normally, the range of pitch values that can be seen in the editor window is equal to the range of pitch values that the analysis algorithm can determine. If you set the analysis range from 50 to 800 Hz, this will be the range you see in the editor window as well. If the pitch values in the curve happen to be between 350 and 400 Hz, you may want to zoom in to the 350-400 Hz pitch region. You will usually do this by changing the pitch range in the <a href="Pitch_settings___.html">Pitch settings...</a> window. However, the analysis range will also change in that case, so that the curve itself may change. If you do not want that, you can change the <i>View range</i> settings from &#8220;0.0 (= auto)&#8221; - &#8220;0.0 (= auto)&#8221; to something else, perhaps &#8220;350&#8221; - &#8220;400&#8221;.</p>
+<h2>Further reading</h2>
+<p>For more details, see:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="how_to_choose_a_pitch_analysis_method.html">how to choose a pitch analysis method</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="pitch_analysis_by_filtered_autocorrelation.html">pitch analysis by filtered autocorrelation</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="pitch_analysis_by_raw_cross-correlation.html">pitch analysis by raw cross-correlation</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="pitch_analysis_by_raw_autocorrelation.html">pitch analysis by raw autocorrelation</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="pitch_analysis_by_filtered_cross-correlation.html">pitch analysis by filtered cross-correlation</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Intro_4__Pitch_analysis.html">Intro 4. Pitch analysis</a>
+<li><a href="Intro_6_2__Configuring_the_intensity_contour.html">Intro 6.2. Configuring the intensity contour</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20231115</p>
+</address>
+</body>
+</html>

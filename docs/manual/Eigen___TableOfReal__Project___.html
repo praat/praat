@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Eigen & TableOfReal: Project...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Eigen & TableOfReal: Project...
+</b></font></table></table>
+<p>A command to project the rows of the <a href="TableOfReal.html">TableOfReal</a> object onto the eigenspace of the <a href="Eigen.html">Eigen</a> object.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Number of dimensions</b>
+<dd>defines the number of dimensions, i.e., the number of columns, of the resulting object.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>Project each row of the TableOfReal on the coordinate system given by the eigenvectors of the Eigen object. This can be done as follows:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i><sub><i>ij</i></sub> = &#931;<sub><i>k</i>=1..<i>numberOfColums</i></sub> <i>e</i><sub>jk</sub> <i>x</i><sub><i>ik</i></sub>, where</table>
+<p><i>e</i><sub><i>jk</i></sub> is the <i>k</i>-th element of the <i>j</i>-th eigenvector, <i>x</i><sub><i>ik</i></sub> is the <i>k</i>-th element of the <i>i</i>-th row and <i>y</i><sub><i>ij</i></sub> is the <i>j</i>-th element at the <i>i</i>-th row of the matrix part of the resulting object.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Discriminant___TableOfReal__To_Configuration___.html">Discriminant & TableOfReal: To Configuration...</a>
+<li><a href="PCA___TableOfReal__To_Configuration___.html">PCA & TableOfReal: To Configuration...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ManipulationEditor</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ManipulationEditor
+</b></font></table></table>
+<p>One of the <a href="Editors.html">Editors</a> in Praat, for viewing and manipulating a <a href="Manipulation.html">Manipulation</a> object.</p>
+<h2>Objects</h2>
+<p>The editor shows:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The original <a href="Sound.html">Sound</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The <a href="PointProcess.html">PointProcess</a> that represents the glottal <i>pulses</i>. You can edit it for improving the pitch analysis.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; A pitch contour based on the locations of the pulses, for comparison (drawn as grey dots). Changes shape if you edit the pulses.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The <a href="PitchTier.html">PitchTier</a> that determines the pitch contour of the resynthesized <a href="Sound.html">Sound</a> (drawn as blue circles). At the creation of the <a href="Manipulation.html">Manipulation</a> object, it is computed from the original pitch contour. You can manipulate it by simplifying it (i.e., removing targets), or by moving parts of it up and down, and back and forth.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; A <a href="DurationTier.html">DurationTier</a> for manipulating the relative durations of the voiced parts of the sound.</dd>
+</dl>
+<h2>Playing</h2>
+<p>To play (a part of) the <i>resynthesized</i> sound (by any of the methods shown in the <b>Synth</b> menu, like <a href="overlap-add.html">overlap-add</a> and <b>LPC</b>), <a href="Click.html">click</a> any of the 1 to 8 buttons below and above the drawing area or use the commands from the Play menu.</p>
+<p>To play the <i>original</i> sound instead, use <b>Shift-click</b>.</p>
+<h2>Pulses</h2>
+<dl>
+<dt>To add:
+<dd><b>click</b> at the desired time location, and choose <b>Add pulse at cursor</b> or type <a href="Keyboard_shortcuts.html">Command-P</a>.</dd>
+<dt>To remove:
+<dd>make a <a href="time_selection.html">time selection</a>, and choose <b>Remove pulse(s)</b> or type <a href="Keyboard_shortcuts.html">Option-Command-P</a>. If there is no selection, the pulse nearest to the cursor is removed.</dd>
+</dl>
+<h2>Pitch points</h2>
+<dl>
+<dt>To add one at a specified <i>time and frequency</i>:
+<dd><b>click</b> at the desired time-frequency location, and choose <b>Add pitch point at cursor</b> or type <a href="Keyboard_shortcuts.html">Command-t</a>.</dd>
+<dt>To add one at a specified <i>time</i> only:
+<dd><b>click</b> at the desired time, and choose <b>Add pitch point at time slice</b>. ManipulationEditor tries to compute the frequency from the intervals between the pulses, basically by a median-of-three method.</dd>
+<dt>To remove:
+<dd>make a <a href="time_selection.html">time selection</a>, and choose <b>Remove pitch point(s)</b> or type <a href="Keyboard_shortcuts.html">Option-Command-t</a>. If there is no selection, the pitch point nearest to the cursor is removed.</dd>
+<dt>To move <i>some</i>:
+<dd>make a <a href="time_selection.html">time selection</a> (the points become red) and <b>Shift-drag</b> the points across the window. You cannot drag them across adjacent points, or below 50 Hz, or above the maximum frequency. You can only drag them horizontally if the <i>dragging strategy</i> is <b>All</b> or <b>Only horizontal</b>, and you can drag them vertically if the dragging strategy is not <b>Only horizontal</b>. You can change the dragging strategy with <b>Set pitch dragging strategy...</b> from the <b>Pitch</b> menu.</dd>
+<dt>To move <i>one</i>:
+<dd><a href="Drag.html">drag</a> that point across the window. You can only drag it horizontally if the dragging strategy is not <b>Only vertical</b>, and you can drag it vertically if the dragging strategy is not <b>Only horizontal</b>.</dd>
+</dl>
+<h2>Duration points</h2>
+<p>Work pretty much the same as pitch points.</p>
+<h2>Stylization</h2>
+<p>Before editing the Pitch points, you may want to reduce their number by choosing any of the <b>Stylize</b> commands from the <b>Pitch</b> menu.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro_8_1__Manipulation_of_pitch.html">Intro 8.1. Manipulation of pitch</a>
+<li><a href="Intro_8_2__Manipulation_of_duration.html">Intro 8.2. Manipulation of duration</a>
+<li><a href="Intro_8_3__Manipulation_of_intensity.html">Intro 8.3. Manipulation of intensity</a>
+<li><a href="PitchTier__Stylize___.html">PitchTier: Stylize...</a>
+<li><a href="Source-filter_synthesis_4__Using_existing_sounds.html">Source-filter synthesis 4. Using existing sounds</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+<li><a href="What_was_new_in_3_5_.html">What was new in 3.5?</a>
+<li><a href="What_was_new_in_3_6_.html">What was new in 3.6?</a>
+<li><a href="What_was_new_in_4_0_.html">What was new in 4.0?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20030316</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Filter (pre-emphasis)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Filter (pre-emphasis)...
+</b></font></table></table>
+<p>A command to filter each selected <a href="Sound.html">Sound</a> object. The resulting Sound object has a higher spectral slope.</p>
+<p>The reverse of <a href="Sound__Filter__de-emphasis____.html">Sound: Filter (de-emphasis)...</a>.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>From frequency (Hz)</b>
+<dd>the frequency <i>F</i> above which the spectral slope will increase by 6 dB/octave.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The pre-emphasis factor <i>&#945;</i> is computed as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#945;</i> = exp (-2 <i>&#960;</i> <i>F</i> &#916;<i>t</i>)</table>
+<p>where &#916;<i>t</i> is the sampling period of the sound. The new sound <i>y</i> is then computed as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i><sub><i>i</i></sub> = <i>x</i><sub><i>i</i></sub> - <i>&#945;</i> <i>x</i><sub><i>i</i>-1</sub></table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Filtering.html">Filtering</a>
+<li><a href="Sound__Pre-emphasize__in-place____.html">Sound: Pre-emphasize (in-place)...</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2003-03-09</p>
+</address>
+</body>
+</html>

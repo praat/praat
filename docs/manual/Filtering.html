@@ -1,0 +1,64 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Filtering</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Filtering
+</b></font></table></table>
+<p>This tutorial describes the use of filtering techniques in Praat. It assumes you are familiar with the <a href="Intro.html">Intro</a>.</p>
+<h2>Frequency-domain filtering</h2>
+<p>Modern computer techniques make possible an especially simple batch filtering method: multiplying the complex spectrum in the frequency domain by any real-valued filter function. This leads to a zero phase shift for each frequency component. The impulse response is symmetric in the time domain, which also means that the filter is <i>acausal</i>: the filtered signal will show components before they start in the original.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Filter__pass_Hann_band____.html">Spectrum: Filter (pass Hann band)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Spectrum__Filter__stop_Hann_band____.html">Spectrum: Filter (stop Hann band)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__pass_Hann_band____.html">Sound: Filter (pass Hann band)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__stop_Hann_band____.html">Sound: Filter (stop Hann band)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__formula____.html">Sound: Filter (formula)...</a></dd>
+</dl>
+<p>Spectro-temporal:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="band_filtering_in_the_frequency_domain.html">band filtering in the frequency domain</a></dd>
+</dl>
+<h2>Fast time-domain filtering</h2>
+<p>Some very fast Infinite Impulse Response (IIR) filters can be defined in the time domain. These include recursive all-pole filters and pre-emphasis. These filters are causal but have non-zero phase shifts. There are versions that create new Sound objects:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__one_formant____.html">Sound: Filter (one formant)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__pre-emphasis____.html">Sound: Filter (pre-emphasis)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter__de-emphasis____.html">Sound: Filter (de-emphasis)...</a></dd>
+</dl>
+<p>And there are in-place versions, which modify the existing Sound objects:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Filter_with_one_formant__in-place____.html">Sound: Filter with one formant (in-place)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Pre-emphasize__in-place____.html">Sound: Pre-emphasize (in-place)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__De-emphasize__in-place____.html">Sound: De-emphasize (in-place)...</a></dd>
+</dl>
+<h2>Convolution</h2>
+<p>A Finite Impulse Response (FIR) filter can be described as a sampled sound. Filtering with such a filter amounts to a <i><b>convolution</i></b> of the original sound and the filter:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sounds__Convolve___.html">Sounds: Convolve...</a></dd>
+</dl>
+<h2>Described elsewhere</h2>
+<p>Described in the <a href="Source-filter_synthesis.html">Source-filter synthesis</a> tutorial:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound___Formant__Filter.html">Sound & Formant: Filter</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound___FormantGrid__Filter.html">Sound & FormantGrid: Filter</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="LPC___Sound__Filter___.html">LPC & Sound: Filter...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="LPC___Sound__Filter__inverse_.html">LPC & Sound: Filter (inverse)</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound.html">Sound</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20100324</p>
+</address>
+</body>
+</html>

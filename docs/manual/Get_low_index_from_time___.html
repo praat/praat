@@ -1,0 +1,27 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Get low index from time...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Get low index from time...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to ask the selected tier object (<a href="DurationTier.html">DurationTier</a>, <a href="IntensityTier.html">IntensityTier</a>, <a href="PitchTier.html">PitchTier</a>) which point is nearest to, but no later than, the specified time.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Time (s)</b>
+<dd>the time from which you want to get the point index.</dd>
+</dl>
+<h2>Return value</h2>
+<p>This query returns the index of the point with the highest time less than or equal to <b>Time</b>. It is <a href="undefined.html">undefined</a> if there are no points. It is 0 (offleft) if the specified time is less than the time of the first point.</p>
+<hr>
+<address>
+	<p>© Paul Boersma 2010-12-30</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 3.2. An AXB discrimination experiment</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 3.2. An AXB discrimination experiment
+</b></font></table></table>
+<p>In the AXB task, the subject will hear three stimuli in sequence, and has to say whether the second (X) is more similar to the first (A) or to the second (B). An experiment file could look like follows:</p>
+<code>   "ooTextFile"<br></code>
+<code>   "ExperimentMFC 7"<br></code>
+<code>   blankWhilePlaying? &lt;no&gt;<br></code>
+<code>   stimuliAreSounds? &lt;yes&gt;<br></code>
+<code>   "stimuli/"  ".wav"<br></code>
+<code>   carrier ""  ""<br></code>
+<code>   initial silence 0.5<br></code>
+<code>   inter-stimulus interval 0.3<br></code>
+<code>   final silence 0<br></code>
+<code>   100 stimuli<br></code>
+<code>      "300,300,320"  ""  "300,320,340"  ""  "300,340,340"  ""  "300,340,360"  ""<br></code>
+<code>      ...<br></code>
+<code>      (and 96 more triplets of substimuli)<br></code>
+<code>      ...<br></code>
+<code>   4 replications<br></code>
+<code>   break every 50<br></code>
+<code>   &lt;PermuteBalancedNoDoublets&gt;<br></code>
+<code>   "Click to start."<br></code>
+<code>   "Say whether the second sound is more similar to the first or to the third."<br></code>
+<code>   "You can have a short break if you like. Click to proceed."<br></code>
+<code>   "The experiment has finished."<br></code>
+<code>   0 replays<br></code>
+<code>   replay button 0 0 0 0 "" ""<br></code>
+<code>   ok button 0 0 0 0 "" ""<br></code>
+<code>   oops button 0 0 0 0 "" ""<br></code>
+<code>   responses are sounds? &lt;no&gt; "" "" "" "" 0 0 0<br></code>
+<code>   3 response categories<br></code>
+<code>      0.1 0.3 0.4 0.6 "first" 30 "" "A"<br></code>
+<code>      0.4 0.6 0.4 0.6 "second" 30 "" ""<br></code>
+<code>      0.7 0.9 0.4 0.6 "third" 30 "" "B"<br></code>
+<code>   0 goodness categories<br></code>
+<p>In this example, the subject has to click 400 times. She sees three buttons, labelled <i>first</i>, <i>second</i>, and <i>third</i>, but the second button (the one with the empty response category) is not clickable: it has a light grey rather than a yellow interior and cannot be chosen by the subject. In your ResultsMFC object, you will only see <i>A</i> and <i>B</i> responses.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_3__More_examples.html">ExperimentMFC 3. More examples</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20160925</p>
+</address>
+</body>
+</html>

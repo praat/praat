@@ -1,0 +1,53 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OT learning 3.2. Data from another grammar</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OT learning 3.2. Data from another grammar
+</b></font></table></table>
+<p>Instead of generating input-output pairs directly from a <a href="PairDistribution.html">PairDistribution</a> object, you can also generate input forms and their winning outputs from an <a href="OTGrammar.html">OTGrammar</a> grammar. Of course, that&#8217;s what the language data presented to real children comes from. Our example will be a tongue-root harmony grammar.</p>
+<p>Choose <a href="Create_tongue-root_grammar___.html">Create tongue-root grammar...</a> from the Optimality Theory submenu of the <a href="New_menu.html">New menu</a>. Set <b>Constraint set</b> to <b>Five</b>, and <b>Ranking</b> to <b>Wolof</b>. Click <b>OK</b>. An object called &#8220;OTGrammar Wolof&#8221; will appear in the list. Click <b>View &amp; Edit</b>. You will see the following grammar appear in the <a href="OTGrammarEditor.html">OTGrammarEditor</a>:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*[rtr / hi]</b><td width=100 align=middle>      100.000<td width=100 align=middle>      100.000<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font> (rtr)</b><td width=100 align=middle>      50.000<td width=100 align=middle>      50.000<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*G<font size=-1>ESTURE</font> (contour)</b><td width=100 align=middle>      30.000<td width=100 align=middle>      30.000<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font> (atr)</b><td width=100 align=middle>      20.000<td width=100 align=middle>      20.000<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*[atr / lo]</b><td width=100 align=middle>      10.000<td width=100 align=middle>      10.000<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>This simplified Wolof grammar, with five constraints with clearly different rankings, is equivalent to the traditional OT ranking</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>*[rtr / hi] &gt;&gt; P<font size=-1>ARSE</font> (rtr) &gt;&gt; *G<font size=-1>ESTURE</font> (contour) &gt;&gt; P<font size=-1>ARSE</font> (atr) &gt;&gt; *[atr / lo]</table>
+<p>These constraints are based on a description of Wolof by <a href="Archangeli___Pulleyblank__1994_.html">Archangeli & Pulleyblank (1994: 225&#8211;239)</a>. For the meaning of these constraints, see <a href="Boersma__1998_.html">Boersma (1998: 295)</a>, or the <a href="Create_tongue-root_grammar___.html">Create tongue-root grammar...</a> manual page.</p>
+<p>For each input, there are four output candidates: the vowel heights will be the same as those in the input, but the tongue-root values of V<sub>1</sub> and V<sub>2</sub> are varied. For example, for the input [ita] we will have the four candidates [ita], [it&#601;], [&#618;ta], and [&#618;t&#601;].</p>
+<p>With this way of generating candidates, we see that the five constraints are completely ranked. First, the absolute prohibition on surface [&#618;] shows that *[rtr / hi] outranks RTR faithfulness (otherwise, [&#618;t&#618;] would have been the winner):</p>
+<p align=middle><img height=150 width=400 src=OT_learning_3_2__Data_from_another_grammar_1.png></p><p>Second, the faithful surfacing of the disharmonic /it&#603;/ shows that RTR faithfulness must outrank the harmony (anti-contour) constraint (otherwise, [ite] would have been the winner):</p>
+<p align=middle><img height=150 width=400 src=OT_learning_3_2__Data_from_another_grammar_2.png></p><p>Third, the RTR-dominant harmonicization of underlying disharmonic /et&#603;/ shows that harmony must outrank ATR faithfulness (otherwise, [et&#603;] would have won):</p>
+<p align=middle><img height=150 width=400 src=OT_learning_3_2__Data_from_another_grammar_3.png></p><p>Finally, the faithful surfacing of the low ATR vowel /&#601;/ even if not forced by harmony, shows that ATR faithfulness outranks *[atr / lo] (otherwise, [ata] would have been the winning candidate):</p>
+<p align=middle><img height=150 width=400 src=OT_learning_3_2__Data_from_another_grammar_4.png></p><p>These four ranking arguments clearly establish the crucial rankings of all five constraints.</p>
+<h2>Generating inputs from the grammar</h2>
+<p>According to <a href="Prince___Smolensky__1993_.html">Prince & Smolensky (1993)</a>, the input to an OT grammar can be <i>anything</i>. This is the idea of <i><b>richness of the base</i></b>. When doing a practical investigation, however, we are only interested in the inputs that will illustrate the properties of our partial grammars. In the case of simplified Wolof, this means the 36 possible V<sub>1</sub>tV<sub>2</sub> sequences where V<sub>1</sub> and V<sub>2</sub> are any of the six front vowels i, &#618;, e, &#603;, &#601;, and a (see <a href="Create_tongue-root_grammar___.html">Create tongue-root grammar...</a>).</p>
+<p>A set of inputs can be generated from an <a href="OTGrammar.html">OTGrammar</a> object by inspecting the list of tableaus. So select the Wolof tongue-root grammar and choose <a href="OTGrammar__Generate_inputs___.html">Generate inputs...</a>. Set <i>Number of trials</i> to 100, and click <b>OK</b>. A <a href="Strings.html">Strings</a> object named <code><font size=+1>Wolof_in</font></code> will appear in the list. Click Inspect and examine the 100 input strings. You will see that they have been randomly chosen from the 36 possible V<sub>1</sub>tV<sub>2</sub> sequences as described at <a href="Create_tongue-root_grammar___.html">Create tongue-root grammar...</a>:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#603;ta, et&#603;, &#603;ti, it&#603;, &#603;t&#603;, iti, &#603;t&#618;, it&#618;, &#618;ti, et&#603;, ...</table>
+<p>Thus, when asked to generate a random input, these grammars produce any of the 36 possible V<sub>1</sub>tV<sub>2</sub> sequences, all with equal probability.</p>
+<h2>Generating outputs from the grammar</h2>
+<p>To compute the outputs for the above set of input forms, select <i>both</i> the <a href="OTGrammar.html">OTGrammar</a> object <i>and</i> the input <a href="Strings.html">Strings</a> object, and choose <a href="OTGrammar___Strings__Inputs_to_outputs___.html">Inputs to outputs...</a>, perhaps specifying zero evaluation noise. A new Strings objects called <code><font size=+1>Wolof_out</font></code> will appear in the list. If you Inspect it, you will see that it contains a string sequence aligned with the original input strings:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>&#603;ta, &#603;t&#603;, &#603;ti, it&#603;, &#603;t&#603;, iti, &#603;ti, iti, iti, &#603;t&#603;, ...</table>
+<p>In this way, we have created two Strings objects, which together form a series of input-output pairs needed for learning a grammar that contains faithfulness constraints.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="OT_learning.html">OT learning</a>
+<li><a href="OT_learning_3__Generating_language_data.html">OT learning 3. Generating language data</a>
+<li><a href="OT_learning_4__Learning_an_ordinal_grammar.html">OT learning 4. Learning an ordinal grammar</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110128</p>
+</address>
+</body>
+</html>

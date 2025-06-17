@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>EditDistanceTable</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+EditDistanceTable
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat.</p>
+<p>An EditDistanceTable shows the accumulated distances between a target string and a source string. For example, the accumulated distances between the target string "intention" and the source string "execution" can be expressed by the following EditDistanceTable:</p>
+<p align=middle><img height=350 width=500 src=EditDistanceTable_1.png></p><p>This figure was created by issuing the following commands:</p>
+<code>   target = Create Strings as characters: "intention"<br></code>
+<code>   source = Create Strings as characters: "execution"<br></code>
+<code>   plusObject: target<br></code>
+<code>   edt = To EditDistanceTable<br></code>
+<code>   Draw: "decimal", 1, 0<br></code>
+<p>The target string is always displayed vertically while the source string is displayed horizontally and the origin is at the bottom-left corner of the table. Each cell of this table, dist[<i>i</i>, <i>j</i>], contains the accumulated distance between the first <i>i</i> characters of the target and the first <i>j</i> characters of the source. The cells on the path through this table which have the minimum accumulated cost are shown with boxes around them. Below we will explain how this path is calculated.</p>
+<p>The local directional steps in this path show which <i>edit operations</i> we have to perform on the source string symbols to obtain the target string symbols. Three edit operations exist: (1) <i>insertion</i> of a target symbol in the source string. This happens each time we take a step in the vertical direction along the path. (2) <i>deletion</i> of a symbol in the source string. This happens each time we take a step in horizontal direction along the path. (3) <i>substitution</i> of a source symbol by a target symbol happens at each diagonal step along the path.</p>
+<p>If we trace the path from its start at the origin to its end, we see that it first moves up, indicating the insertion of an "i" symbol in the source string. In the next step which is in the diagonal direction, the "n" target is substituted for the "e" source symbol. Next follows another substitution, "t" for "x". The next diagonal step substitutes "e" for an identical "e". This step is followed by a horizontal step in which the source symbol "c" is deleted. The next diagonal step substitutes an "n" for a "u". The path now continues in the diagonal direction until the end point and only identical substitutions occur in the last part. The following figure shows these operations more explicitly.</p>
+<p align=middle><img height=150 width=400 src=EditDistanceTable_2.png></p><p>The value of the accumulated costs in a cell of the table is computed by taking the minimum of the accumulated distances from three possible paths that end in the current cell, i.e. the paths that come from the <i>left</i>, from the <i>diagonal</i> and from <i>below</i>.</p>
+<code>   dist[i,j] = min (d__left_, d__diag_, d__below_), <br></code>
+<p>where </p>
+<code>    d__left _ = dist[i-1,j]   + insertionCost(target[i])<br></code>
+<code>    d__diag _ = dist[i-1,j-1] + substitutionCost(source[j],target[i])<br></code>
+<code>    d__below_ = dist[i,j-1]   + deletionCost(source[j])<br></code>
+<p>Since the calculation is recursive we start at the origin. After calculating the accumulative distances for each cell in the table as based on the algorithm above, the cell at the top-right position will contain the accumulated edit distance. This distance happens to be 8 for the given example. The value 8 results from using the target-indepent value of 1.0 for the insertion cost, the source-independent value of 1.0 for the deletion costs and a constant value of 2.0 for the substitution costs. If target and source symbol happen to be equal no costs are assigned, or, equivalently the substitution costs are zero if target and source symbol match. If you want more control over these costs you can create an <a href="EditCostsTable.html">EditCostsTable</a> and specify your special costs and then <a href="EditDistanceTable___EditCostsTable__Set_new_edit_costs.html">set the new edit costs</a>.</p>
+<p>If during the calculations we also keep track of which of the three cells resulted in the local minimum accumulated distance, we can use this directional information to backtrack from the cell at the top-right position to the cell at the bottom-right position and obtain the minimum path.</p>
+<hr>
+<address>
+	<p>© djmw 20140509</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 5.2. Expressions</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 5.2. Expressions
+</b></font></table></table>
+<p>In a Praat script, you can use numeric expressions as well as string expressions.</p>
+<h2>Numeric expressions</h2>
+<p>You can use a large variety of <a href="Formulas.html">Formulas</a> in your script:</p>
+<code>   length = 10<br></code>
+<code>   height = length/2<br></code>
+<code>   area = length * height<br></code>
+<code>   writeInfoLine: “The area is ”, area, “.”<br></code>
+<p>You can use numeric variables and formulas in numeric arguments to commands:</p>
+<code>   Draw line: 0, 0, length / 2, 2 * height<br></code>
+<p>You can use numeric expressions in assignments (as above), or after <b><code><font size=+1>if</font></code></b>, <b><code><font size=+1>elsif</font></code></b>, <b><code><font size=+1>while</font></code></b>, <b><code><font size=+1>until</font></code></b>, and twice after <b><code><font size=+1>for</font></code></b>.</p>
+<h2>String expressions</h2>
+<p>You can use a large variety of <a href="Formulas.html">Formulas</a> in your script:</p>
+<code>   addressee$ = “Silke”<br></code>
+<code>   greeting$ = “Hi ” + addressee$ + “!”<br></code>
+<code>   writeInfoLine: “The greeting is: ”, greeting$<br></code>
+<p>You can use string variables and formulas in numeric arguments to commands:</p>
+<code>   Draw line: 0, length (greeting$), 0, 100<br></code>
+<code>   Draw line: 0, if answer$ = “yes” then 20 else 30 fi, 0, 100<br></code>
+<p>You can use numeric and string variables and formulas in string arguments to commands:</p>
+<code>   Text top: “yes”, “Hi ” + addressee$ + “!”<br></code>
+<code>   Text top: “yes”, left$ (fileName$, index (fileName$, “.”) - 1)<br></code>
+<h2>Assignments from query commands</h2>
+<p>On how to get information from commands that normally write to the Info window, see <a href="Scripting_6_3__Query_commands.html">Scripting 6.3. Query commands</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_5__Language_elements_reference.html">Scripting 5. Language elements reference</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20180721</p>
+</address>
+</body>
+</html>

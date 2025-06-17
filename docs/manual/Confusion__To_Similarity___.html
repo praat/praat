@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Confusion: To Similarity...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Confusion: To Similarity...
+</b></font></table></table>
+<p>A command that creates a <a href="Similarity.html">Similarity</a> from every selected <a href="Confusion.html">Confusion</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Normalize</b>
+<dd>when on, normalize rows by dividing each row element by the row sum. In this way you correct for unequal stimulus numbers.</dd>
+<dt><b>No symmetrization</b>, <b>Average</b>, <b>Houtgast</b>
+<dd>determine the symmetrization procedure.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The <i>Average</i> procedure averages:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>similarity</i><sub><i>ij</i></sub>= <i>similarity</i><sub><i>ji</i></sub> = (<i>confusion</i><sub><i>ij</i></sub> + <i>confusion</i><sub><i>ji</i></sub>) / 2</table>
+<p>The <i>Houtgast</i> procedure as described in the paper by <a href="Klein__Plomp___Pols__1970_.html">Klein, Plomp & Pols (1970)</a>, expresses similarity between stimuli <i>i</i> and <i>j</i> by the number of times that stimulus <i>i</i> and <i>j</i> have resulted in the same response, summated over all response categories.</p>
+<p>We use the following formula to calculate the <i>Houtgast</i> dissimilarities:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>similarity</i><sub><i>ij</i></sub> = &#8721;<sub><i>k</i>=1..<i>numberOfColumns</i></sub> min (<i>confusion</i><sub><i>ik</i></sub>, <i>confusion</i><sub><i>jk</i></sub>)</table>
+<p>which is equivalent to the formula in the Klein et al. paper:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>similarity</i><sub><i>ij</i></sub> = &#8721;<sub><i>k</i>=1..<i>numberOfColumns</i></sub> (<i>confusion</i><sub><i>ik</i></sub> + <i>confusion</i><sub><i>jk</i></sub> &#8211; |<i>confusion</i><sub><i>ik</i></sub> &#8211; <i>confusion</i><sub><i>jk</i></sub>|)</table>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Confusion__To_Dissimilarity___.html">Confusion: To Dissimilarity...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas 9. Data in objects</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas 9. Data in objects
+</b></font></table></table>
+<p>With square brackets, you can get the values inside some objects.</p>
+<h2>Object contents in the calculator</h2>
+<p>The outcomes of the following examples can be checked with the <a href="Calculator.html">calculator</a>.</p>
+<dl>
+<dt><b>object [<i>objectName$ or id</i>, <i>rowNumber</i>, <i>columnNumber</i>]</b>
+<dt><code><font size=+1>object ["Matrix hello", 10, 3]</font></code>
+<dd>gives the value in the cell at the third column of the 10th row of the Matrix called <i>hello</i>.</dd>
+<dt><code><font size=+1>object [5, 10, 3]</font></code>
+<dd>gives the value in the cell at the third column of the 10th row of the Matrix whose unique ID is 5 (i.e. that is labelled with the number 5 in the list of objects).</dd>
+<dt><code><font size=+1>object ["Sound hello", 0, 10000]</font></code>
+<dd>gives the value (in Pa) of the 10000th sample of the Sound <i>hello</i>, averaged over the channels.</dd>
+<dt><code><font size=+1>object [23, 1, 10000]</font></code>
+<dd>gives the value (in Pa) of the 10000th sample of the left channel of the Sound with ID 23.</dd>
+<dt><code><font size=+1>object [23, 2, 10000]</font></code>
+<dd>gives the value (in Pa) of the 10000th sample of the right channel of the Sound with ID 23.</dd>
+<dt><code><font size=+1>object ["TableOfReal tokens", 5, 12]</font></code>
+<dd>gives the value in the cell at the fifth row of the 12th column of the TableOfReal called <i>tokens</i>.</dd>
+<dt><code><font size=+1>object ["TableOfReal tokens", 5, "F1"]</font></code>
+<dd>gives the value in the cell at the fifth row of the column labelled <i>F1</i> of the TableOfReal <i>tokens</i>.</dd>
+<dt><code><font size=+1>object ["TableOfReal tokens", "\ct", "F1"]</font></code>
+<dd>gives the value in the cell at the row labelled <i>\ct</i> of column <i>F1</i> of the TableOfReal <i>tokens</i>.</dd>
+<dt><code><font size=+1>object ["Table listeners", 3, "m3ae"]</font></code>
+<dd>gives the numeric value in the cell at the third row of column <i>m3ae</i> of the Table <i>listeners</i>.</dd>
+<dt><code><font size=+1>object ["Table listeners", 3, 12]</font></code>
+<dd>gives the numeric value in the cell at the third row of the 12th column of the Table <i>listeners</i>.</dd>
+<dt><code><font size=+1>object$ ["Table results", 3, "response"]</font></code>
+<dd>gives the string value in the cell at the third row of column <i>response</i> of the Table <i>results</i>.</dd>
+<dt><code><font size=+1>object$ ["Table results", 3, 12]</font></code>
+<dd>gives the string value in the cell at the third row of the 12th column of the Table <i>results</i>.</dd>
+<dt><code><font size=+1>object ["PitchTier hello", 8]</font></code>
+<dd>gives the pitch (in Hertz) of the 8th point in the PitchTier <i>hello</i>.</dd>
+</dl>
+<p>Cells (or samples, or points) outside the objects are considered to contain zeroes.</p>
+<h2>Interpolation</h2>
+<p>The values inside some objects can be interpolated.</p>
+<dl>
+<dt><code><font size=+1>object ("Sound hello", 0.7, 0)</font></code>
+<dd>gives the value (in Pa) at a time of 0.7 seconds in the Sound <i>hello</i>, by linear interpolation between the two samples that are nearest to 0.7 seconds. The channels are averaged.</dd>
+<dt><code><font size=+1>object ("Sound hello", 0.7, 1)</font></code>
+<dd>gives the interpolated value (in Pa) at a time of 0.7 seconds in the left channel of the Sound <i>hello</i>.</dd>
+<dt><code><font size=+1>object ("Sound hello", 0.7, 2)</font></code>
+<dd>gives the interpolated value (in Pa) at a time of 0.7 seconds in the right channel of the Sound <i>hello</i>.</dd>
+<dt><code><font size=+1>object ("Spectrogram hallo", 0.7, 2500)</font></code>
+<dd>gives the value at a time of 0.7 seconds and at a frequency of 2500 Hz in the Spectrogram <i>hallo</i>, by linear interpolation between the four samples that are nearest to that point.</dd>
+<dt><code><font size=+1>object ("PitchTier hullo", 0.7)</font></code>
+<dd>gives the pitch (in Hertz) at a time of 0.7 seconds in the PitchTier <i>hullo</i>.</dd>
+</dl>
+<p>In the interpolation, times outside the time domain of the objects are considered to contain zeroes (this does not apply to PitchTiers and the like, which undergo <a href="constant_extrapolation.html">constant extrapolation</a>).</p>
+<h2>Object contents in a modification formula</h2>
+<p>Suppose you want to do the difficult way of reversing the contents of a Sound called <code><font size=+1>hello</font></code> (the easy way is to choose <b>Reverse</b> from the <a href="Modify.html">Modify</a> menu). You select this sound, then choose <a href="Copy___.html">Copy...</a> to duplicate it to a new Sound, which you name <code><font size=+1>hello_reverse</font></code>. You select this new Sound and choose <b>Formula...</b> from the <a href="Modify.html">Modify</a> menu. The formula will be</p>
+<code>   object ["Sound hello", row, ncol + 1 - col]<br></code>
+<p>From this example, you see that the indices between [ ] may be formulas themselves, and that you can use implicit attributes like <i>ncol</i> and position references like <i>col</i> (also <i>row</i>, which here means that the reversal is performed for each channel). An alternative formula is</p>
+<code>   object ("Sound hello", xmax - x, y)<br></code>
+<p>at least if <i>xmin</i> is zero. The advantage of the second method is that it also works correctly if the two sounds have different sampling frequencies; the disadvantage is that it may do some interpolation between the samples, which deteriorates the sound quality (the use of <i>y</i> here means that the reversal is done for all <i>y</i> values, i.e. all channels).</p>
+<h2>Object contents in a script</h2>
+<p>In scripts, the indices between [ ] and the values between ( ) may be formulas themselves and contain variables. The following script computes the sum of all the cells along the diagonal of a Matrix.</p>
+<code>   matrix = Create simple matrix: 10, 10, "x*y"<br></code>
+<code>   sumDiagonal = 0<br></code>
+<code>   for i to object[matrix].ncol<br></code>
+<code>      sumDiagonal += object [matrix, i, i]<br></code>
+<code>   endfor<br></code>
+<code>   writeInfoLine: "The sum of the cells along the diagonal is ", sumDiagonal, "."<br></code>
+<p>This example could have been written completely with commands from the dynamic menu:</p>
+<code>   matrix = Create simple matrix: 10, 10, "x*y"<br></code>
+<code>   sumDiagonal = 0<br></code>
+<code>   ncol = Get number of columns<br></code>
+<code>   for i to ncol<br></code>
+<code>      value = Get value in cell: i, i<br></code>
+<code>      sumDiagonal += value<br></code>
+<code>   endfor<br></code>
+<code>   writeInfoLine: "The sum of the cells along the diagonal is ", sumDiagonal, "."<br></code>
+<p>The first version, which accesses the contents directly, is not only two lines shorter, but also three times faster.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas.html">Formulas</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20170614</p>
+</address>
+</body>
+</html>

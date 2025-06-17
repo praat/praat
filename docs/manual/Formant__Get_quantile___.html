@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formant: Get quantile...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formant: Get quantile...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to ask the selected <a href="Formant.html">Formant</a> object for an estimation of the specified quantile of the distribution that underlies the attested values of the specified formant.</p>
+<h2>Return value</h2>
+<p>the quantile, in hertz or Bark.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Formant number</b>
+<dd>the ordinal number of the formant, counting up from 0 Hz. Specify "2" for <i>F</i><sub>2</sub> etc.</dd>
+<dt><b>From time (s)</b>
+<dt><b>To time (s)</b>
+<dd>the selected time domain. Values outside this domain are ignored. If <b>To time</b> is not greater than <b>From time</b>, the entire time domain of the formant contour is considered.</dd>
+<dt><b>Units</b>
+<dd>the units of the result (<b>Hertz</b> or <b>Bark</b>).</dd>
+<dt><b>Quantile</b>
+<dd>the fraction (between 0 and 1) of the values of the underlying distribution expected to lie below the result. For instance, if <b>Quantile</b> is 0.10, the algorithm estimates the formant value below which 10% of all formant values are expected to lie. To get an estimate of the <i>median</i> of the underlying distribution, specify a quantile of 0.50.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>First, the available formant values within the selected time domain are collected in an array. This array is then sorted and the <a href="quantile_algorithm.html">quantile algorithm</a> is performed. With Bark units, the hertz-to-Bark transformation is performed before the quantile algorithm.</p>
+<hr>
+<address>
+	<p>© ppgb 19991016</p>
+</address>
+</body>
+</html>

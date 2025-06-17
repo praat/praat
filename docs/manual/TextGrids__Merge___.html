@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TextGrids: Merge...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TextGrids: Merge...
+</b></font></table></table>
+<p>A command to merge all selected <a href="TextGrid.html">TextGrid</a> objects into a new <a href="TextGrid.html">TextGrid</a>.</p>
+<p>The time domain of the resulting TextGrid will be the union of the time domains of the constituent TextGrids.</p>
+<dl>
+<dt><b>Equalize time domains</b> (default: on)
+<dd>If on, then the time domain of each tier will be made equal to the time domain of the resulting TextGrid. If this leads to a change in the end time of an interval tier, a new empty interval will be added between the original end time of the tier and its new end time (an analogous insertion could happen at the start of the tier, though that is quite rare in practice, because usually all tiers start at 0 seconds).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="TextGrids__Merge.html">TextGrids: Merge</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 2025</p>
+</address>
+</body>
+</html>

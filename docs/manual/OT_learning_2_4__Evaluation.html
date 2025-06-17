@@ -1,0 +1,72 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OT learning 2.4. Evaluation</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OT learning 2.4. Evaluation
+</b></font></table></table>
+<p>In an Optimality-Theoretic model of grammar, <i><b>evaluation</i></b> refers to the determination of the winning candidate on the basis of the constraint ranking.</p>
+<p>In an ordinal OT model of grammar, repeated evaluations will yield the same winner again and again. We can simulate this behaviour with our N<font size=-1>O</font>C<font size=-1>ODA</font> example. In the editor, you can choose <b>Evaluate (zero noise)</b> or use its keyboard shortcut <a href="Keyboard_shortcuts.html">Command-0</a> (= Command-zero). Repeated evaluations (keep Command-0 pressed) will always yield the following grammar:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      100.000<td width=100 align=middle>      100.000<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      90.000<td width=100 align=middle>      90.000<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>In a stochastic OT model of grammar, repeated evaluations will yield different disharmonies each time. To see this, choose <b>Evaluate (noise 2.0)</b> or use its keyboard shortcut <a href="Keyboard_shortcuts.html">Command-2</a>. Repeated evaluations will yield grammars like the following:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      100.000<td width=100 align=middle>      100.427<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      90.000<td width=100 align=middle>      87.502<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>and</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      100.000<td width=100 align=middle>      101.041<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      90.000<td width=100 align=middle>      90.930<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>and</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      100.000<td width=100 align=middle>      96.398<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      90.000<td width=100 align=middle>      89.482<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>The disharmonies vary around the ranking values, according to a Gaussian distribution with a standard deviation of 2.0. The winner will still be [pa] in almost all cases, because the probability of bridging the gap between the two ranking values is very low, namely 0.02 per cent according to <a href="Boersma__1998_.html">Boersma (1998)</a>, page 332.</p>
+<p>With a noise much higher than 2.0, the chances of P<font size=-1>ARSE</font> outranking N<font size=-1>O</font>C<font size=-1>ODA</font> will rise. To see this, choose <b>Evaluate...</b> and supply 5.0 for the noise. Typical outcomes are:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      100.000<td width=100 align=middle>      92.634<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      90.000<td width=100 align=middle>      86.931<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>and</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      100.000<td width=100 align=middle>      101.162<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      90.000<td width=100 align=middle>      85.311<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>and</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      90.000<td width=100 align=middle>      99.778<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      100.000<td width=100 align=middle>      98.711<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>In the last case, the order of the constraints has been reversed. You will see that [pat] has become the winning candidate:</p>
+<p align=middle><img height=100 width=300 src=OT_learning_2_4__Evaluation_1.png></p><p>However, in the remaining part of this tutorial, we will stick with a noise with a standard deviation of 2.0. This specific number ensures that we can model fairly rigid rankings by giving the constraints a ranking difference of 10, a nice round number. Also, the learning algorithm will separate many constraints in such a way that the differences between their ranking values are in the vicinity of 10.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="OT_learning.html">OT learning</a>
+<li><a href="OT_learning_2__The_grammar.html">OT learning 2. The grammar</a>
+<li><a href="OTGrammar__Input_to_output___.html">OTGrammar: Input to output...</a>
+<li><a href="OTGrammar__Input_to_outputs___.html">OTGrammar: Input to outputs...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20070725</p>
+</address>
+</body>
+</html>

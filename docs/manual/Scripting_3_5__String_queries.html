@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 3.5. String queries</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 3.5. String queries
+</b></font></table></table>
+<p>Just as you can use menu commands (usually in a <a href="Query_submenu.html">Query submenu</a>) to query <a href="Scripting_3_3__Numeric_queries.html">numbers</a>, you can query texts as well.</p>
+<p>For instance, when you select a Textgrid, the <a href="Query_submenu.html">Query submenu</a> will contain the command <b>Get label of interval...</b>, which takes two numeric arguments, namely <b>Tier number</b> and <b>Interval number</b>:</p>
+<p align=middle><img height=220.00000000000003 width=540 src=Scripting_3_5__String_queries_1.png></p><p>When you click OK, and interval 3 of tier 1 happens to contain the text <code><font size=+1>hello</font></code>, the following appears in the Info window:</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_5__String_queries_2.png></p><p>In a script, you will want to put the result of the query in a string variable instead of in the Info window, because you want to manipulate it further:</p>
+<code>   text$ = Get label of interval: 1, 3<br></code>
+<code>   writeInfoLine: “The text in interval 3 of tier 1 is: ”, text$<br></code>
+<p>The script first stores the text of the interval, i.e. <code><font size=+1>hello</font></code>, into the variable <i><code><font size=+1>text$</font></code></i>, then writes it, preceded by some informative text, into the Info window:</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_5__String_queries_3.png></p><p>Hey, yet another way to implement &#8220;Hello world&#8221; with the Praat scripting language!</p>
+<h2>The difference between numeric queries and string queries</h2>
+<p>A string query stores in a string variable the whole text that would appear in the Info window. For instance, the script</p>
+<code>   power$ = Get power: 0.0, 0.0<br></code>
+<code>   writeInfoLine: power$<br></code>
+<p>could give you the following result:</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_5__String_queries_4.png></p><p>A numeric query stores in a numeric variable only the first number that it can find in the text that would appear in the Info window. For instance, the script</p>
+<code>   power = Get power: 0.0, 0.0<br></code>
+<code>   writeInfoLine: power<br></code>
+<p>could give you the following result:</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_5__String_queries_5.png></p><h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_3__Simple_language_elements.html">Scripting 3. Simple language elements</a>
+<li><a href="Scripting_3_6___For__loops.html">Scripting 3.6. “For” loops</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20221202</p>
+</address>
+</body>
+</html>

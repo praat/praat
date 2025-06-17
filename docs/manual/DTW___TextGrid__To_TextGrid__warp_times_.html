@@ -1,0 +1,26 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>DTW & TextGrid: To TextGrid (warp times)</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+DTW & TextGrid: To TextGrid (warp times)
+</b></font></table></table>
+<p>Create a new TextGrid from the selected <a href="DTW.html">DTW</a> and <a href="TextGrid.html">TextGrid</a> by warping the times from the selected TextGrid to the newly created TextGrid.</p>
+<h2>Algorithm</h2>
+<p>First we check whether the y-domain of the DTW and the domain of the TextGrid are equal. If they are, a new TextGrid is created by copying the selected one. We then change its domain and make it equal to the x-domain of the DTW. Then for each tier we change the domain and <a href="DTW__Get_x_time_from_y_time___.html">calculate new times</a> by using the path.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_5_2_.html">What was new in 5.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20110603</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting
+</b></font></table></table>
+<p>This is one of the tutorials of the Praat program. It assumes you are familiar with the <a href="Intro.html">Intro</a>.</p>
+<p>A <i>script</i> is a text that consists of menu commands and action commands. If you <i>run</i> the script (perhaps from a <a href="ScriptEditor.html">ScriptEditor</a>), the commands are executed as if you clicked on them. You can read this tutorial sequentially with the help of the &#8220;<b>&lt; 1</b>&#8221; and &#8220;<b>1 &gt;</b>&#8221; buttons.</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_1__Your_first_scripts.html">Scripting 1. Your first scripts</a> (how to create, how to run, how to save)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_2__How_to_script_settings_windows.html">Scripting 2. How to script settings windows</a> (numeric, boolean, multiple-choice, text, file)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_3__Simple_language_elements.html">Scripting 3. Simple language elements</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_3_1__Hello_world.html">Scripting 3.1. Hello world</a> (<code><font size=+1>writeInfoLine</font></code>, <code><font size=+1>appendInfoLine</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_3_2__Numeric_variables.html">Scripting 3.2. Numeric variables</a> (assignments)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_3_3__Numeric_queries.html">Scripting 3.3. Numeric queries</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_3_4__String_variables.html">Scripting 3.4. String variables</a> (assignments)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_3_5__String_queries.html">Scripting 3.5. String queries</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_3_6___For__loops.html">Scripting 3.6. “For” loops</a> (<code><font size=+1>for</font></code>, <code><font size=+1>endfor</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_3_7__Layout.html">Scripting 3.7. Layout</a> (white space, comments, continuation lines)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_4__Object_selection.html">Scripting 4. Object selection</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_4_1__Selecting_objects.html">Scripting 4.1. Selecting objects</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_4_2__Removing_objects.html">Scripting 4.2. Removing objects</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_4_3__Querying_objects.html">Scripting 4.3. Querying objects</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_5__Language_elements_reference.html">Scripting 5. Language elements reference</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_5_1__Variables.html">Scripting 5.1. Variables</a> (numeric, string)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_5_2__Expressions.html">Scripting 5.2. Expressions</a> (numeric, string)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_5_3__Jumps.html">Scripting 5.3. Jumps</a> (<code><font size=+1>if</font></code>, <code><font size=+1>then</font></code>, <code><font size=+1>elsif</font></code>, <code><font size=+1>else</font></code>, <code><font size=+1>endif</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_5_4__Loops.html">Scripting 5.4. Loops</a> (<code><font size=+1>for</font></code>/<code><font size=+1>endfor</font></code>, <code><font size=+1>while</font></code>/<code><font size=+1>endwhile</font></code>, <code><font size=+1>repeat</font></code>/<code><font size=+1>until</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_5_5__Procedures.html">Scripting 5.5. Procedures</a> (<code><font size=+1>@</font></code>, <code><font size=+1>procedure</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_5_6__Arrays_and_dictionaries.html">Scripting 5.6. Arrays and dictionaries</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_5_7__Vectors_and_matrices.html">Scripting 5.7. Vectors and matrices</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_5_8__Including_other_scripts.html">Scripting 5.8. Including other scripts</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_5_9__Quitting.html">Scripting 5.9. Quitting</a> (<code><font size=+1>exitScript</font></code>)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_6__Communication_outside_the_script.html">Scripting 6. Communication outside the script</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_6_1__Arguments_to_the_script.html">Scripting 6.1. Arguments to the script</a> (<code><font size=+1>form</font></code>/<code><font size=+1>endform</font></code>, <code><font size=+1>runScript</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_6_2__Writing_to_the_Info_window.html">Scripting 6.2. Writing to the Info window</a> (<code><font size=+1>writeInfoLine</font></code>, <code><font size=+1>appendInfoLine</font></code>, <code><font size=+1>appendInfo</font></code>, <code><font size=+1>tab$</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_6_3__Query_commands.html">Scripting 6.3. Query commands</a> (<b>Get</b>, <b>Count</b>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_6_4__Files.html">Scripting 6.4. Files</a> (<code><font size=+1>fileReadable</font></code>, <code><font size=+1>readFile</font></code>, <code><font size=+1>writeFile</font></code>, <code><font size=+1>deleteFile</font></code>, <code><font size=+1>createFolder</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_6_5__Calling_system_commands.html">Scripting 6.5. Calling system commands</a> (<code><font size=+1>runSystem</font></code>, <code><font size=+1>environment$</font></code>, <code><font size=+1>stopwatch</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_6_6__Controlling_the_user.html">Scripting 6.6. Controlling the user</a> (<code><font size=+1>pause</font></code>, <code><font size=+1>beginPause</font></code>/<code><font size=+1>endPause</font></code>, <code><font size=+1>chooseReadFile$</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_6_7__Sending_a_message_to_another_program.html">Scripting 6.7. Sending a message to another program</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_6_8__Messages_to_the_user.html">Scripting 6.8. Messages to the user</a> (<code><font size=+1>exitScript</font></code>, <code><font size=+1>assert</font></code>, <code><font size=+1>nowarn</font></code>, <code><font size=+1>nocheck</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_6_9__Calling_from_the_command_line.html">Scripting 6.9. Calling from the command line</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_7__Scripting_the_editors.html">Scripting 7. Scripting the editors</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_7_1__Scripting_an_editor_from_a_shell_script.html">Scripting 7.1. Scripting an editor from a shell script</a> (<code><font size=+1>editor</font></code>/<code><font size=+1>endeditor</font></code>)</dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_7_2__Scripting_an_editor_from_within.html">Scripting 7.2. Scripting an editor from within</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_8__Controlling_Praat_from_another_program.html">Scripting 8. Controlling Praat from another program</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_8_1__The_sendpraat_subroutine.html">Scripting 8.1. The sendpraat subroutine</a></dd>
+<dd>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Scripting_8_2__The_sendpraat_program.html">Scripting 8.2. The sendpraat program</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_9__Turning_a_script_into_a_stand-alone_progra.html">Scripting 9. Turning a script into a stand-alone program</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&nbsp;<a href="Scripting_10__Old_functions.html">Scripting 10. Old functions</a></dd>
+</dl>
+<p>Also see the <a href="Scripting_examples.html">scripting examples</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_appendFile_.html"><code><font size=+1>appendFile</font></code></a>
+<li><a href="_appendFileLine_.html"><code><font size=+1>appendFileLine</font></code></a>
+<li><a href="_appendInfo_.html"><code><font size=+1>appendInfo</font></code></a>
+<li><a href="_appendInfoLine_.html"><code><font size=+1>appendInfoLine</font></code></a>
+<li><a href="_assert_.html"><code><font size=+1>assert</font></code></a>
+<li><a href="_asserterror_.html"><code><font size=+1>asserterror</font></code></a>
+<li><a href="_asynchronous_.html"><code><font size=+1>asynchronous</font></code></a>
+<li><a href="_chooseFolder-S_.html"><code><font size=+1>chooseFolder$</font></code></a>
+<li><a href="_chooseReadFile-S_.html"><code><font size=+1>chooseReadFile$</font></code></a>
+<li><a href="_chooseWriteFile-S_.html"><code><font size=+1>chooseWriteFile$</font></code></a>
+<li><a href="_clearinfo_.html"><code><font size=+1>clearinfo</font></code></a>
+<li><a href="_createFolder_.html"><code><font size=+1>createFolder</font></code></a>
+<li><a href="_deleteFile_.html"><code><font size=+1>deleteFile</font></code></a>
+<li><a href="_demo_.html"><code><font size=+1>demo</font></code></a>
+<li><a href="_demoClicked_.html"><code><font size=+1>demoClicked</font></code></a>
+<li><a href="_demoClickedIn_.html"><code><font size=+1>demoClickedIn</font></code></a>
+<li><a href="_demoCommandKeyPressed_.html"><code><font size=+1>demoCommandKeyPressed</font></code></a>
+<li><a href="_demoInput_.html"><code><font size=+1>demoInput</font></code></a>
+<li><a href="_demoKey-S_.html"><code><font size=+1>demoKey$</font></code></a>
+<li><a href="_demoKeyPressed_.html"><code><font size=+1>demoKeyPressed</font></code></a>
+<li><a href="_demoOptionKeyPressed_.html"><code><font size=+1>demoOptionKeyPressed</font></code></a>
+<li><a href="_demoPeekInput_.html"><code><font size=+1>demoPeekInput</font></code></a>
+<li><a href="_demoShiftKeyPressed_.html"><code><font size=+1>demoShiftKeyPressed</font></code></a>
+<li><a href="_demoShow_.html"><code><font size=+1>demoShow</font></code></a>
+<li><a href="_demoWaitForInput_.html"><code><font size=+1>demoWaitForInput</font></code></a>
+<li><a href="_demoWindowTitle_.html"><code><font size=+1>demoWindowTitle</font></code></a>
+<li><a href="_demoX_.html"><code><font size=+1>demoX</font></code></a>
+<li><a href="_demoY_.html"><code><font size=+1>demoY</font></code></a>
+<li><a href="_editor_.html"><code><font size=+1>editor</font></code></a>
+<li><a href="_endeditor_.html"><code><font size=+1>endeditor</font></code></a>
+<li><a href="_endproc_.html"><code><font size=+1>endproc</font></code></a>
+<li><a href="_exitScript_.html"><code><font size=+1>exitScript</font></code></a>
+<li><a href="_fileNames-S-H_.html"><code><font size=+1>fileNames$#</font></code></a>
+<li><a href="_fileNames_caseInsensitive-S-H_.html"><code><font size=+1>fileNames_caseInsensitive$#</font></code></a>
+<li><a href="_fileReadable_.html"><code><font size=+1>fileReadable</font></code></a>
+<li><a href="_folderExists_.html"><code><font size=+1>folderExists</font></code></a>
+<li><a href="_folderNames-S-H_.html"><code><font size=+1>folderNames$#</font></code></a>
+<li><a href="_folderNames_caseInsensitive-S-H_.html"><code><font size=+1>folderNames_caseInsensitive$#</font></code></a>
+<li><a href="_goto_.html"><code><font size=+1>goto</font></code></a>
+<li><a href="_label_.html"><code><font size=+1>label</font></code></a>
+<li><a href="_pauseScript_.html"><code><font size=+1>pauseScript</font></code></a>
+<li><a href="_procedure_.html"><code><font size=+1>procedure</font></code></a>
+<li><a href="_readFile-H-H_.html"><code><font size=+1>readFile##</font></code></a>
+<li><a href="_readFile-H_.html"><code><font size=+1>readFile#</font></code></a>
+<li><a href="_readFile-S_.html"><code><font size=+1>readFile$</font></code></a>
+<li><a href="_readFile_.html"><code><font size=+1>readFile</font></code></a>
+<li><a href="_readLinesFromFile-S-H_.html"><code><font size=+1>readLinesFromFile$#</font></code></a>
+<li><a href="_runScript_.html"><code><font size=+1>runScript</font></code></a>
+<li><a href="_runSubprocess_.html"><code><font size=+1>runSubprocess</font></code></a>
+<li><a href="_runSystem-S_.html"><code><font size=+1>runSystem$</font></code></a>
+<li><a href="_runSystem_.html"><code><font size=+1>runSystem</font></code></a>
+<li><a href="_sleep_.html"><code><font size=+1>sleep</font></code></a>
+<li><a href="_tryToAppendFile_.html"><code><font size=+1>tryToAppendFile</font></code></a>
+<li><a href="_tryToWriteFile_.html"><code><font size=+1>tryToWriteFile</font></code></a>
+<li><a href="_variableExists_.html"><code><font size=+1>variableExists</font></code></a>
+<li><a href="Acknowledgments.html">Acknowledgments</a>
+<li><a href="Feedforward_neural_networks_1_1__The_learning_phase.html">Feedforward neural networks 1.1. The learning phase</a>
+<li><a href="Formulas_1_8__Formulas_in_scripts.html">Formulas 1.8. Formulas in scripts</a>
+<li><a href="Functions.html">Functions</a>
+<li><a href="History_mechanism.html">History mechanism</a>
+<li><a href="Intro_8_2__Manipulation_of_duration.html">Intro 8.2. Manipulation of duration</a>
+<li><a href="NotebookEditor.html">NotebookEditor</a>
+<li><a href="Praat_notebook.html">Praat notebook</a>
+<li><a href="Praat_script.html">Praat script</a>
+<li><a href="Programming_with_Praat.html">Programming with Praat</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2000,2002–2004,2008,2010,2011,2013,2014,2017,2020,2024</p>
+</address>
+</body>
+</html>

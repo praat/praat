@@ -1,0 +1,41 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To Polygon...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To Polygon...
+</b></font></table></table>
+<p>A command that creates a <a href="Polygon.html">Polygon</a> from a selected <a href="Sound.html">Sound</a>, where the Polygon's  points are defined by the (<i>time</i>, <i>amplitude</i>) pairs of the sound. </p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Channel</b>
+<dd>defines which channel of the sound is used.</dd>
+<dt><b>Time range (s)</b>
+<dd>defines the part of the sound whose (<i>time</i>, <i>amplitude</i>) pairs have to be included.</dd>
+<dt><b>Vertical range</b>
+<dd>defines the vertical limits, larger amplitudes will be clipped.</dd>
+<dt><b>Connection y-value</b>
+<dd>defines the y-value of the first and last point of the Polygon. This gives the opportunity to  draw a closed Polygon with the horizontal connection line at any position you like. </dd>
+</dl>
+<h2>Example</h2>
+<p>The following script paints the area under a sound curve in red and the area above in green.</p>
+<code>   s = Create Sound from formula: "s", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)<br></code>
+<code>   # Connection y-value is at amplitude -1: area under the curve.<br></code>
+<code>   p1 = To Polygon: 1, 0, 0, -1, 1, -1<br></code>
+<code>   Paint: "{1,0,0}", 0, 0, -1, 1<br></code>
+<code>   selectObject: s<br></code>
+<code>   # Connection y-value is now at amplitude 1: area above the curve.<br></code>
+<code>   p2 = To Polygon: 1, 0, 0, -1, 1, 1<br></code>
+<code>   Paint: "{0,1,0}", 0, 0, -1, 1<br></code>
+<p align=middle><img height=200 width=450 src=Sound__To_Polygon____1.png></p><hr>
+<address>
+	<p>© djmw 20170829</p>
+</address>
+</body>
+</html>

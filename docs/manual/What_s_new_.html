@@ -1,0 +1,229 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>What's new?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+What's new?
+</b></font></table></table>
+<p>Latest changes in Praat.</p>
+<p><b>6.4.35</b> (15 June 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Pitch analysis: guard against zero pitch floor if logarithmic.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <a href="_fixed-S_.html"><b><code><font size=+1>fixed$</font></code></b></a> () for vectors and matrices.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: removed hard-coded background colour.</dd>
+</dl>
+<p><b>6.4.34</b> (20 May 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: made <a href="_demoShow_.html"><b><code><font size=+1>demoShow</font></code></b></a> () work again on GTK 3.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <a href="_clock_.html"><b><code><font size=+1>clock</font></code></b></a> ().</dd>
+</dl>
+<p><b>6.4.33</b> (18 May 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; H1-minus-H2 in the voice report.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Repaired an old bug that made spectrogram computation in the Sound window crash under some uncommon combinations of settings.</dd>
+</dl>
+<p><b>6.4.32</b> (14 May 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Better continuity of integration of energy (finally corresponds to manual).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: more reliable <a href="_random_initializeWithSeedUnsafelyButPredictably_.html"><b><code><font size=+1>random_initializeWithSeedUnsafelyButPredictably</font></code></b></a> (works even after an odd number of <a href="_randomGauss_.html"><b><code><font size=+1>randomGauss</font></code></b></a>).</dd>
+</dl>
+<p><b>6.4.31</b> (3 May 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: rubber banding within the selection, by dragging a boundary while keeping the Option and Command keys pressed (plus the Shift key, if you want to drag in all tiers).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Backslash trigraphs: s&#812; (<code><font size=+1>s\vv</font></code>), m&#860;b (<code><font size=+1>m\LIb</font></code>), &#11377; (<code><font size=+1>\V^</font></code>), d&#824; (<code><font size=+1>d\//</font></code>), d&#822; (<code><font size=+1>d\-/</font></code>), &#621;&#820; (<code><font size=+1>\l.\~/</font></code>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Unicode 16.0.</dd>
+</dl>
+<p><b>6.4.30</b> (29 April 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Made the whole of the Buckeye corpus readable.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Backslash trigraphs for tone symbols: a&#7620; (<code><font size=+1>a\-'</font></code>), a&#7623; (<code><font size=+1>a\'-</font></code>), a&#7621; (<code><font size=+1>a\</font></code><code><font size=+1>-</font></code>), a&#7622; (<code><font size=+1>a\-</font></code><code><font size=+1></font></code>), a&#7624; (<code><font size=+1>a\rf</font></code>), a&#7625; (<code><font size=+1>a\fr</font></code>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Other backslash trigraphs: d&#828; (<code><font size=+1>d\mv</font></code>), d&#811; (<code><font size=+1>d\wv</font></code>).</dd>
+</dl>
+<p><b>6.4.29</b> (27 April 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Read Sound and adjacent annotation files (TIMIT)...</b>: if you open any sound file from the TIMIT corpus, the annotation files with the same name in the same folder are interpreted as a TextGrid and opened as well.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Read Sound and adjacent annotation files (Buckeye)...</b>: if you open any sound file from the Buckeye corpus, the annotation files with the same name in the same folder are interpreted as a TextGrid and opened as well.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Backslash trigraphs for tone symbols: a&#779; (<code><font size=+1>a\''</font></code>), a&#783; (<code><font size=+1>a\</font></code><code><font size=+1></font></code><code><font size=+1></font></code>), &#741; (<code><font size=+1>\-5</font></code>), &#742; (<code><font size=+1>\-4</font></code>), &#743; (<code><font size=+1>\-3</font></code>), &#744; (<code><font size=+1>\-2</font></code>), &#745; (<code><font size=+1>\-1</font></code>), &#42779; (<code><font size=+1>\|u</font></code>), &#42780; (<code><font size=+1>\|d</font></code>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Backslash trigraphs for diagonal arrows: &#8599; (<code><font size=+1>\NE</font></code>), &#8600; (<code><font size=+1>\SE</font></code>), &#8601; (<code><font size=+1>\SW</font></code>), &#8598; (<code><font size=+1>\NW</font></code>); the first two of these double as tone symbols.</dd>
+</dl>
+<p><b>6.4.28</b> (22 April 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: removed a bug that caused slow scrolling (i.e. computation of whole-sound Pitch and Formant objects) if the TextGrid was much longer than the Sound and the Sound was scrolled out of sight.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; EEG window: repaired a bug that caused Praat to crash when clicking <b>View &amp; Edit</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows Demo window: made Escape key available to <code><font size=+1>demoKey$()</font></code> (this had been a bug since the beginning of the Demo window, i.e. since May 2009).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Read TextGrid from ESPS label file...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Repaired a bug that could cause Praat to crash on pitch analysis when a part of the sound was constant.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Insert picture from file...</b>: the picture is now embedded into Praat picture files; this also solves a problem with file paths that surfaced when a script called another script that inserted a picture.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Photo: Save as PNG file...</b>: repaired a bug that caused a crash on the Mac.</dd>
+</dl>
+<p><b>6.4.27</b> (27 January 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Graphics text: better pipes and slashes.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows for ARM64 processors: removed a bug whereby dynamic menu deletion could crash after a sound was played in the Demo window.</dd>
+</dl>
+<p><b>6.4.26</b> (8 January 2025)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Rectangle text (maximal fit)...</b> is perhaps useful in general, but will especially facilitate text and button drawing in Demo window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux for ARM64 processors: sped up some slow computations by a factor of over 100.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>OTGrammar &amp; Strings &amp; Strings: Tabulate all correct rankings</b> lists all full rankings that map the given list of inputs to the given list of partial outputs, using brute-force permutation of up to 18 constraints.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>OTGrammar: Tabulate equivalent pairs</b> checks to what extent different candidates have different sets of constraint violations.</dd>
+</dl>
+<p><b>6.4.25</b> (8 December 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Command-line interface: solved a crash that occurred when a menu command was not available.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: open-source code signing.</dd>
+</dl>
+<p><b>6.4.24</b> (1 December 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; FormantPath: fixed bug with sampling frequency.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Formant measurements: fixed bugs in &#8221;autocorrelation&#8221; and &#8220;robust&#8221; methods.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Manual: better support for screens taller than 15 inches.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: support for subtraction and unary minus for tensors.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: removed <code><font size=+1>sendsocket</font></code>.</dd>
+</dl>
+<p><b>6.4.23</b> (27 October 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Audio output: higher-quality playback of sounds with unusual sampling frequencies.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: better error messages on <b>Save</b> commands.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Better HTML output from manuals (e.g. italicized or bolded backslash sequences).</dd>
+</dl>
+<p><b>6.4.22</b> (5 October 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More robustness against trying to run a binary file as a script.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows Sound window: faster zooming with Ctrl-scrollwheel.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: guarantee Explorer-type file selection windows.</dd>
+</dl>
+<p><b>6.4.21</b> (21 September 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SpeechSynthesizer: repaired an old bug whereby <b>Get phonemes from text...</b> could increase the duration of a subsequent <b>Play</b> (or <b>To Sound...</b>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SpeechSynthesizer and TextGrid alignment: repaired a bug (existing since 6.4.18) whereby <b>clause</b> and <b>word</b> tiers would be empty.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: disambiguated Command-F5 (now Option-F5 for <b>Get minimum pitch</b>; likewise, Option-F8 for <b>Get minimum intensity</b>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Calling Praat from command line: reenabled <code><font size=+1>--pref-dir=</font></code> option.</dd>
+</dl>
+<p><b>6.4.20</b> (18 September 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Linux: repaired a major bug whereby Praat could crash when trying to draw to a hidden Picture window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: just like normal forms, pause forms now also accept &#8220;yes&#8221; and &#8220;off&#8221; (and the like) instead of just 1 and 0.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: repaired a minor bug whereby <code><font size=+1>optionmenu</font></code> in forms would show an incorrect default value.</dd>
+</dl>
+<p><b>6.4.19</b> (4 September 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Repaired many bugs in the eSpeak part of Praat.</dd>
+</dl>
+<p><b>6.4.18</b> (21 August 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SpeechSynthesizer and TextGrid alignment: solved an eSpeak-internal bug that caused some rare long phoneme codes to be handled incorrectly.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <code><font size=+1>padLeft$</font></code>(), <code><font size=+1>truncateLeft$</font></code>() and <code><font size=+1>padOrTruncateLeft$</font></code>(), and their <code><font size=+1>Right</font></code> counterparts.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; s390x edition for Linux.</dd>
+</dl>
+<p><b>6.4.17</b> (8 August 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Spectrogram: <b>Paint</b>: solved a bug that could cause Praat to crash if the time domain was smaller than that of the Spectrogram.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; ScriptEditor: <b>Run selection</b> can call procedures outside the selected text.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Audio files: can open Polyphone (Shorten) files.</dd>
+</dl>
+<p><b>6.4.16</b> (29 July 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: make command-line output visible (new on ARM64, was lost in 6.4.14 for Intel64 and Intel32).</dd>
+</dl>
+<p><b>6.4.15</b> (26 July 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Distinguish between <i>pitch ceiling</i> (flat) and <i>pitch top</i> (curved ceiling), mainly because of their different meanings.</dd>
+</dl>
+<p><b>6.4.14</b> (22 July 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Pitch menu (in e.g. Sound or TextGrid window): separate settings for four pitch analysis methods.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Formant analysis: faster on all systems.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; ARM64 Windows: worked around a compiler bug that caused incorrect window sizes.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Pitch analysis: faster on Windows (Intel64 and Intel32).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: better fonts and background colours (perhaps dependent on language settings).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>TextGrids: Concatenate</b>: guard against some incorrect TextGrid files.</dd>
+</dl>
+<p><b>6.4.13</b> (10 June 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More manual pages.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sounds__Concatenate_with_overlap___.html">Sounds: Concatenate with overlap...</a>: guard against a crash that would occur if the total overlap time was longer than the original sounds together.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="_number_.html"><b><code><font size=+1>number</font></code></b></a> recognizes hexadecimal numbers again (bug since February 2023).</dd>
+</dl>
+<p><b>6.4.12</b> (2 May 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Align interval</b>: fewer error messages.</dd>
+</dl>
+<p><b>6.4.11</b> (26 April 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Menu commands that call a script (e.g. those that were added from a plug-in) are now visible as such by being marked with a little &#8220;+&#8221; sign.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Fixed a bug that could cause the SpeechSynthesizer to mishandle European characters with accents on Linux.</dd>
+</dl>
+<p><b>6.4.10</b> (21 April 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Function windows: fixed a problem that could cause Praat to crash when doing <b>all</b> after <b>Group</b> when windows had a different duration.</dd>
+</dl>
+<p><b>6.4.09</b> (20 April 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid window: fixed a rare problem with <b>Align interval</b> that could lead to a zero-length interval.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows ARM64 edition: fixed a bug that would cause <b>Align interval</b> to crash.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Sound &amp; TextGrid: Align interval...</b> now also available in the Objects window.</dd>
+</dl>
+<p><b>6.4.08</b> (14 April 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows: fixed a problem with the right and bottom edges of windows (half-visible scroll bars) for the Intel editions (the ARM64 edition still has this problem).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: fixed a bug that could cause Praat to crash when an unknown choice was given to an option menu.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; MelSpectrogram: fixed a bug that could cause Praat to crash if a mel value was negative.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; DataModeler: improved confidence limits on estimated model parameters.</dd>
+</dl>
+<p><b>6.4.07</b> (17 March 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The command <a href="Sound___Pitch__To_PointProcess__cc_.html">Sound & Pitch: To PointProcess (cc)</a>, which is also used when computing the times of pulses in the Sound window, could cause Praat to freeze when the pitch ceiling (and the measured pitch) were very high; this problem existed since at least 2001.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; eSpeak: new version, with e.g. Tigrinya.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Support for 119-dpi graphics on Windows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Repaired a bug that could cause the Artword windows to crash if the Time field was left empty.</dd>
+</dl>
+<p><b>6.4.06</b> (25 February 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Sound files on Windows: corrected a bug (existing since July 2021) that prevented reading FLAC files with special characters in their names.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; FormantPathEditor without Sound: corrected several bugs that caused Praat to crash (such as <b>Formant listing</b>, using the Pitch menu...).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Spectrogram painting: improved painting of very quiet spectrograms at extreme dynamic ranges.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: <a href="_folderExists_.html"><b><code><font size=+1>folderExists</font></code></b></a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Scripting: home-relative paths (such as <code><font size=+1>~/sounds/*.wav</font></code>) in more locations, such as <a href="_fileNames-S-H_.html"><b><code><font size=+1>fileNames$#</font></code></b></a>, <a href="Create_Strings_as_file_list___.html">Create Strings as file list...</a>, and <a href="_createFolder_.html"><b><code><font size=+1>createFolder</font></code></b></a>.</dd>
+</dl>
+<p><b>6.4.05</b> (27 January 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Many typos in manual.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Made TIMIT label files readable on Windows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Prevented 8000 files from being read at start-up.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Mac and Linux scripting: <a href="_fileReadable_.html"><b><code><font size=+1>fileReadable</font></code></b></a> now returns 0 if the argument is a folder (as already on Windows).</dd>
+</dl>
+<p><b>6.4.04</b> (6 January 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Typo in example script in manual.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; ARM64 edition for Linux (Ubuntu 20.04 and up).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; ARM64 edition for Chromebook (2020 and later).</dd>
+</dl>
+<p><b>6.4.03</b> (4 January 2024)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; ARM64 edition for Windows.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; ARM64 edition for Linux (Ubuntu 22.04 and up).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; ARM64 edition for Chromebook (2022 and later).</dd>
+</dl>
+<p><b>6.4.02</b> (30 December 2023)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Saving sounds as MP3 files.</dd>
+</dl>
+<p><b>6.4.01</b> (30 November 2023)</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed some visible percent signs before variable names from the scripting tutorial.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SoundEditor/TextGridEditor logging: when logging 'f0', Praat now correctly reports values in Hz (rather than logarithms) if Unit is set to &#8220;Hertz (logarithmic)&#8221;. This bug had existed since Praat version 4.3.16 (June 2005).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; SoundEditor/TextGridEditor scripting compatibility: made old versions of &#8220;Pitch settings...&#8221; and &#8220;Advanced pitch settings...&#8221; available to scripts again, made the old denominations &#8220;autocorrelation&#8221; and &#8220;cross-correlation&#8221; (as pitch analysis methods) available to scripts again, and made obsolete versions of pitch analysis settings (such as &#8220;Pitch silence threshold&#8221;) available again, now under the COMPATIBILITY section of the output of &#8220;Editor info&#8221;. This will allow older editor scripts to continue to run without change.</dd>
+</dl>
+<hr>
+<address>
+	<p>© Paul Boersma 1995–2025</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intro 7. Annotation</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intro 7. Annotation
+</b></font></table></table>
+<p>You can annotate existing <a href="Sound.html">Sound</a> objects and sound files (<a href="LongSound.html">LongSound</a> objects).</p>
+<p>The labelling data will reside in a <a href="TextGrid.html">TextGrid</a> object. This object is separate from the sound, which means that you will often see two objects in the list: a Sound or LongSound, and a TextGrid.</p>
+<h2>Creating a TextGrid</h2>
+<p>You create a new empty TextGrid from the Sound or LongSound with <a href="Sound__To_TextGrid___.html">Sound: To TextGrid...</a> or <a href="LongSound__To_TextGrid___.html">LongSound: To TextGrid...</a> from the <b>Annotate</b> menu (which shows up in the Objects window if you select a Sound or LongSound). In this way, the time domain of the <a href="TextGrid.html">TextGrid</a> will automatically equal that of the sound (if you choose <a href="Create_TextGrid___.html">Create TextGrid...</a> from the <a href="New_menu.html">New menu</a> instead, you will have to supply the time domain by yourself).</p>
+<p>When you create a TextGrid, you specify the names of the <i>tiers</i>. For instance, if you want to segment the sound into words and into phonemes, you may want to create two tiers and call them "words" and "phonemes" (you can easily add, remove, and rename tiers later). Since both of these tiers are <i>interval tiers</i> (you label the intervals between the word and phoneme boundaries, not the boundaries themselves), you specify "phonemes words" for <i>Tier names</i>, and you leave the <i>Point tiers</i> empty.</p>
+<h2>View and edit</h2>
+<p>You can edit a TextGrid object all by itself, but you will normally want to see the sound in the editor window as well. To achieve this, you select both the Sound (or LongSound) and the TextGrid, and click <a href="View___Edit.html">View & Edit</a>. A <a href="TextGridEditor.html">TextGridEditor</a> will appear on your screen. Like the Sound editor, the TextGrid editor will show you a spectrogram, a pitch contour, a formant contour, and an intensity contour. This editor will allow you to add, remove, and edit labels, boundaries, and tiers. Under Help in the TextGridEditor, you will find the <a href="TextGridEditor.html">TextGridEditor</a> manual page. You are strongly advised to read it, because it will show you how you can quickly zoom (drag the mouse), play (click a rectangle), or edit a label (just type).</p>
+<h2>Save</h2>
+<p>You will normally write the TextGrid to disk with <a href="Save_as_text_file___.html">Save as text file...</a> or <a href="Save_as_short_text_file___.html">Save as short text file...</a>. It is true that <a href="Save_as_binary_file___.html">Save as binary file...</a> will also work, but the others give you a file you can read with any text editor.</p>
+<p>However you saved it, you can read the TextGrid into Praat later with <a href="Read_from_file___.html">Read from file...</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Acknowledgments.html">Acknowledgments</a>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Labelling.html">Labelling</a>
+<li><a href="Segmentation.html">Segmentation</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110129</p>
+</address>
+</body>
+</html>

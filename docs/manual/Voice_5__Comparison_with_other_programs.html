@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Voice 5. Comparison with other programs</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Voice 5. Comparison with other programs
+</b></font></table></table>
+<p>Voicing, jitter, and shimmer measurements made by Praat cannot always be compared directly with those made by other programs such as MDVP. The causes are the voicing decision strategy and the accuracy of period and peak determination.</p>
+<h2>5.1. Voicing decisions: slightly different</h2>
+<p>Different programs use very different methods for deciding whether an irregular part of the signal is voiced or not. A comparison of <a href="Boersma__1993_.html">Boersma (1993)</a> for Praat and <a href="Deliyski__1993_.html">Deliyski (1993)</a> for MDVP leads to the following considerations. Both Praat and MDVP use an autocorrelation method for pitch analysis, but MDVP quantizes the amplitudes into the values -1, 0, and +1 before computing the autocorrelation, whereas Praat uses the original amplitude. Also, Praat corrects the autocorrelation function by dividing it by the autocorrelation function of the window, unlike any other program. Lastly, Praat uses sinc interpolation to compute an accurate estimate of the height of the autocorrelation peaks, unlike any other program. All three of these differences (and there are more) influence the measurement of the height of the autocorrelation peak at 1/F0. This height is generally taken as a criterion for voicing: if it is more than the <i>voicing threshold</i> (which you can change with <a href="Pitch_settings___.html">Pitch settings...</a>, the frame is considered voiced, otherwise voiceless. In Praat, the standard voicing threshold is 0.45, in MDVP it is 0.29, which suggests that MDVP tends to regard more frames as voiced than Praat. But the difference between these two numbers may partly be explained by the fact that MDVP does not correct the autocorrelation function and that MDVP does not do an accurate sinc interpolation: both of these properties cause the measured height of the peak at 1/F0 (in MDVP) to be lower than the real height, as explained by <a href="Boersma__1993_.html">Boersma (1993)</a>.</p>
+<h2>5.2. Jitter measurements: sometimes very different</h2>
+<p>The jitter measures in various programs may yield different results, with Praat often giving much lower values than MDVP, especially for noisy sounds. I will now explain where the difference comes from. A more elaborate explanation with pictures is given in <a href="Boersma__2009a_.html">Boersma (2009a)</a>.</p>
+<p>If a sound is computer-generated as a glottal source signal with a random period duration variation of 1 percent (around a constant F0), then filtered with the characteristics of a vocal tract configuration corresponding to a sustained vowel, both Praat and MDVP will measure this sound as having a &#8220;jitter&#8221; of 1 percent. For non-noisy jittery sginals, therefore, the two programs give equally accurate results.</p>
+<p>If a sound is computer-generated as a glottal source signal with a constant period, then filtered with the characteristics of a vocal tract configuration corresponding to a sustained vowel, both Praat and MDVP will measure this sound as having a &#8220;jitter&#8221; of less than 0.01 percent. The two programs, therefore, have a comparable sensitivity in measuring small jitter values.</p>
+<p>So far, the two programs give comparable results. The difference between the two programs comes when noise is added.</p>
+<p>If a sound is computer-generated as a glottal source signal with a constant period, then filtered with the characteristics of a vocal tract configuration corresponding to a sustained vowel, and if then 1 percent additive &#8220;white&#8221; noise (a quite usual amount) is added, Praat will measure this sound as having a &#8220;jitter&#8221; of 0.02 percent, whereas MDVP will measure this sound as having a &#8220;jitter&#8221; of 0.6 percent. In other words, Praat will tell you that there is almost no jitter, whereas MDVP will tell you that the jitter is of an almost pathological level. The relevant curves can be seen in my papers &#8220;Stemmen meten met Praat&#8221; and <a href="Boersma__2009a_.html">Boersma (2009a)</a>, and the numbers are confirmed by Deliyski, Shaw &amp; Evans (<i>Journal of Voice</i>, 2005: 23).</p>
+<p>One can see that Praat's &#8220;jitter&#8221; measure attempts to separate the influence of period duration variation (which it reports as &#8220;jitter&#8221;) from the influence of additive noise (which is does not report as &#8220;jitter&#8221;), and that MDVP&#8217;s &#8220;jitter&#8221; measure combines the influence of period duration variation with the influence of additive noise (both of which it reports as &#8220;jitter&#8221;).</p>
+<p>The difference between Praat&#8217;s and MDVP&#8217;s jitter measures is due to a difference between the way in which periods are measured. Praat uses <i>waveform-matching</i>, in which the duration of a period is determined by looking for best matching wave shapes (a &#8220;cross-correlation&#8221; maximum). MDVP uses <i>peak-picking</i> instead, where the duration of a period is determined by measuring the time difference between two locally highest peaks in the wave form. The waveform-matching method averages away much of the influence of additive noise, whereas peak-picking is highly sensitive to additive noise. For detailed illustrations, see <a href="Boersma__2009a_.html">Boersma (2009a)</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Voice.html">Voice</a>
+<li><a href="Voice_2__Jitter.html">Voice 2. Jitter</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2003,2006,2010</p>
+</address>
+</body>
+</html>

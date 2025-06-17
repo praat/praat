@@ -1,0 +1,28 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Get intensity (dB)</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Get intensity (dB)
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="Sound.html">Sound</a> object.</p>
+<h2>Return value</h2>
+<p>the intensity in air, expressed in dB relative to the auditory threshold.</p>
+<h2>Algorithm</h2>
+<p>The intensity of a sound in air is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>10 log<sub>10</sub> { 1 / (<i>T</i> <i>P</i><sub>0</sub><sup>2</sup>) &#8747;<i>dt</i> <i>x</i><sup>2</sup>(<i>t</i>) }</table>
+<p>where <i>x</i>(<i>t</i>) is the sound pressure in units of Pa (Pascal), <i>T</i> is the duration of the sound, and <i>P</i><sub>0</sub> = 2&#183;10<sup>-5</sup> Pa is the auditory threshold pressure. For how stereo sounds are handled, see <a href="Sound__Get_energy___.html">Sound: Get energy...</a>.</p>
+<h2>See also</h2>
+<p>For the intensity in Watt/m<sup>2</sup>, see <a href="Sound__Get_power_in_air.html">Sound: Get power in air</a>. For an auditory intensity, see <a href="Excitation__Get_loudness.html">Excitation: Get loudness</a>.</p>
+<hr>
+<address>
+	<p>© Paul Boersma 2007-01-29</p>
+</address>
+</body>
+</html>

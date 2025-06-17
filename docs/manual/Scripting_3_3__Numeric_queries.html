@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 3.3. Numeric queries</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 3.3. Numeric queries
+</b></font></table></table>
+<p>Now that you know how to script a menu command, and you know how variables work, you are ready to combine the two.</p>
+<p>Suppose you have selected a Sound in the object list. One of the commands available in the <a href="Query_submenu.html">Query submenu</a> is <b>Get power...</b>. When you choose it, you will see the following settings window:</p>
+<p align=middle><img height=179.99999999999997 width=540 src=Scripting_3_3__Numeric_queries_1.png></p><p>When you click OK, something like the following will appear in the Info window:</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_3__Numeric_queries_2.png></p><p>This is the mean power of the whole Sound.</p>
+<p>In a script, you want to use the value of this power in the script itself, not in the Info window, perhaps because you want to do computations with it or because you want to report the value with a nice text around it. This is how you do the latter:</p>
+<code>   power = Get power: 0.0, 0.0<br></code>
+<code>   writeInfoLine: “The power of this sound is ”, power, “ Pascal-squared.”<br></code>
+<p>The first line of this script executes the menu command <b>Get power...</b>, but puts the value 0.1350605005239421 into the variable <i><code><font size=+1>power</font></code></i> instead of into the Info window (the variable can have any name you like, as long as it starts with a lower-case letter and consists of letters and digits; see <a href="Scripting_5_1__Variables.html">Scripting 5.1. Variables</a>).</p>
+<p>The second line then reports the value in the Info window, this time with a nice text around it:</p>
+<p align=middle><img height=300 width=600 src=Scripting_3_3__Numeric_queries_3.png></p><h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_3__Simple_language_elements.html">Scripting 3. Simple language elements</a>
+<li><a href="Scripting_3_5__String_queries.html">Scripting 3.5. String queries</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20221202</p>
+</address>
+</body>
+</html>

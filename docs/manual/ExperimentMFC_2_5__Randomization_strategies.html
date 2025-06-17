@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 2.5. Randomization strategies</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 2.5. Randomization strategies
+</b></font></table></table>
+<p>The 3 times 4 stimuli will have to be played in a certain order. For the least random order, you say</p>
+<code>   randomize = &lt;CyclicNonRandom&gt;<br></code>
+<p>In this case, the stimuli will be played in the order in which they were specified in the file, 3 times:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>heed hid hood hud heed hid hood hud heed hid hood hud</table>
+<p>The most likely case in which you would want to use this randomization strategy, is if you have, say, 120 different stimuli and you want to play them only once (<i>numberOfReplicationsPerStimulus</i> = 1) in a fixed order.</p>
+<p>The other extreme, the most random order, is</p>
+<code>   randomize = &lt;WithReplacement&gt;<br></code>
+<p>In this case, a stimulus will be chosen at random 12 times without memory, for instance</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>hid hood hood heed hid hood hud hud hid hood heed hid</table>
+<p>The order will probably be different for each listener. In this example, <i>hood</i> and <i>hid</i> occur four times each, <i>heed</i> and <i>hud</i> only twice each. This strategy is too random for most experiments. Usually, you will want to have the same number of replications of each stimulus. The most random way to do this is</p>
+<code>   randomize = &lt;PermuteAll&gt;<br></code>
+<p>In this case, all stimuli will be played exactly 3 times, for instance</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>heed hood hud hud hid heed heed hud hood hid hid hood</table>
+<p>Quite often, you will want a less random order, namely one in which the 12 trials are divided into 3 blocks of 4 stimuli. Within each block, all 4 different stimuli occur in a random order:</p>
+<code>   randomize = &lt;PermuteBalanced&gt;<br></code>
+<p>In this case, each stimulus occurs exactly once within each block:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>heed hood hud hid hood hud hid heed heed hud hood hid</table>
+<p>This strategy ensures a certain spreading of the stimuli over the sequence of 12 trials. As we see here, it is still possible that the same stimulus (<i>heed</i>) occurs twice in a row, namely as the last stimulus of the second block and the first stimulus of the third. If you want to prevent that situation, you use</p>
+<code>   randomize = &lt;PermuteBalancedNoDoublets&gt;<br></code>
+<p>This will ensure that the same stimulus is never applied twice in a row:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>heed hood hud hid hood hud hid heed hud heed hood hid</table>
+<p>This randomization strategy is used in our example, and advised for most listening experiments in which you want to minimize effects of stimulus order.</p>
+<p>The randomization procedure does not interfere in any way with the breaks. The order is determined before any breaks are inserted.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+<li><a href="ExperimentMFC_2__The_first_example.html">ExperimentMFC 2. The first example</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20051205</p>
+</address>
+</body>
+</html>

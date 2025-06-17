@@ -1,0 +1,70 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas 2.1. Representation of numbers</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas 2.1. Representation of numbers
+</b></font></table></table>
+<p>Formulas can work with integer numbers as well as with real numbers.</p>
+<h2>Real numbers</h2>
+<p>You can type many real numbers by using a decimal notation, for instance 3.14159, 299792.5, or -0.000123456789. For very large or small numbers, you can use the <i>e</i>-notation: 6.022&#183;10<sup>23</sup> is typed as <code><font size=+1>6.022e23</font></code> or <code><font size=+1>6.022e+23</font></code>, and -1.6021917&#183;10<sup>-19</sup> is typed as <code><font size=+1>-1.6021917e-19</font></code>. You can use also use the percent notation: 0.157 can be typed as <code><font size=+1>15.7%</font></code>.</p>
+<p>There are some limitations as to the values that real numbers can have in Praat. The numbers must lie between -10<sup>308</sup> and +10<sup>308</sup>. If you type</p>
+<code>   1e200 * 1e100<br></code>
+<p>the outcome will be</p>
+<code>   1e+300<br></code>
+<p>but if you type</p>
+<code>   1e300 * 1e100<br></code>
+<p>the outcome will be</p>
+<code>   --undefined--<br></code>
+<p>Another limitation is that the smallest non-zero numbers lie near -10<sup>-308</sup> and +10<sup>-308</sup>. If you type</p>
+<code>   1e-200 / 1e100<br></code>
+<p>the outcome will be</p>
+<code>   1e-300<br></code>
+<p>but if you type</p>
+<code>   1e-300 / 1e100<br></code>
+<p>the outcome will be</p>
+<code>   0<br></code>
+<p>Finally, the precision of real numbers is limited by the number of bits that every real number is stored with in the computer, namely 64. For instance, if you type</p>
+<code>   pi<br></code>
+<p>the outcome will be</p>
+<code>   3.141592653589793<br></code>
+<p>because only 16 digits of precision are stored. This can lead to unexpected results caused by rounding. For instance, the formula</p>
+<code>   0.34999999999999999 - 0.35<br></code>
+<p>will result in</p>
+<code>   0<br></code>
+<p>rather than the correct value of 1e-17. This is because the numbers 0.34999999999999999 and 0.35 cannot be distinguished in the computer's memory. If you simply type</p>
+<code>   0.34999999999999999<br></code>
+<p>the outcome will be</p>
+<code>   0.35<br></code>
+<p>(as in this example, the calculator will always come up with the minimum number of digits needed to represent the number unambiguously).</p>
+<p>Another example of inaccuracy is the formula</p>
+<code>   1 / 7 / 59 * 413<br></code>
+<p>Because of rounding errors, the result will be</p>
+<code>   0.9999999999999999<br></code>
+<h2>Integer numbers</h2>
+<p>Formulas can work with integer (whole) numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000. You type them without commas and without the plus sign: 337, -848947328345289.</p>
+<p>You <i>can</i> work with larger numbers than that (up to 10<sup>308</sup>), but there will again be rounding errors. For instance, the formula</p>
+<code>   1000000000000000 + 1<br></code>
+<p>correctly yields</p>
+<code>   1000000000000001<br></code>
+<p>but the formula</p>
+<code>   10000000000000000 + 1<br></code>
+<p>yields an incorrect outcome:</p>
+<code>   1e16<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas.html">Formulas</a>
+<li><a href="Formulas_2__Representations.html">Formulas 2. Representations</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20170916</p>
+</address>
+</body>
+</html>

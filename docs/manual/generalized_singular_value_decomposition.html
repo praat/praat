@@ -1,0 +1,46 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>generalized singular value decomposition</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+generalized singular value decomposition
+</b></font></table></table>
+<p>For <i>m</i> &gt; <i>n</i>, the <i>generalized singular value decomposition</i> (gsvd) of an <i>m</i> &#215; <i>n</i> matrix <b><i>A</i></b> and a <i>p</i> &#215; <i>n</i> matrix <b><i>B</i></b> is given by the pair of factorizations</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b><i>A</i></b> = <b><i>U</i></b> <b><i>D</i></b><sub>1</sub> [<b><i>0</i></b>, <b><i>R</i></b>] <b><i>Q</i></b>&#8242; and <b><i>B</i></b> = <b><i>V</i></b> <b><i>D</i></b><sub>2</sub> [<b><i>0</i></b>, <b><i>R</i></b>] <b><i>Q</i></b>&#8242;</table>
+<p>The matrices in these factorizations have the following properties:</p>
+<dl>
+<dt>&#8226; <b><i>U</i></b> [<i>m</i> &#215; <i>m</i>], <b><i>V</i></b> [<i>p</i> &#215; <i>p</i>] and <b><i>Q</i></b> [<i>n</i> &#215; <i>n</i>]
+<dd>&nbsp;are orthogonal matrices. In the reconstruction formulas above we maximally need only the first <i>n</i> columns of matrices <b><i>U</i></b> and <b><i>V</i></b> (when <i>m</i> and/or <i>p</i> are greater than <i>n</i>).</dd>
+<dt>&#8226; <b><i>R</i></b> [<i>r</i> &#215; <i>r</i>],
+<dd>is an upper triangular nonsingular matrix. <i>r</i> is the rank of [<b><i>A</i></b>&#8242;, <b><i>B</i></b>&#8242;]&#8242; and <i>r</i> &#8804; <i>n</i>. The matrix [<b><i>0</i></b>, <b><i>R</i></b>] is <i>r</i> &#215; <i>n</i> and its first <i>n</i> &#215; (<i>n</i> &#8211; <i>r</i>) part is a zero matrix.</dd>
+<dt>&#8226; <b><i>D</i></b><sub>1</sub> [<i>m</i> &#215; <i>r</i>] and <b><i>D</i></b><sub>2</sub> [<i>p</i> &#215; <i>r</i>]
+<dd>are real, nonnegative and "diagonal".</dd>
+</dl>
+<p>In practice, the matrices <b><i>D</i></b><sub>1</sub> and <b><i>D</i></b><sub>2</sub> are never used. Instead a shorter representation with numbers <i>&#945;</i><sub><i>i</i></sub> and <i>&#946;</i><sub><i>i</i></sub> is used. These numbers obey 0 &#8804; &#945;<sub><i>i</i></sub> &#8804; 1 and &#945;<sub><i>i</i></sub><sup>2</sup> + &#946;<sub><i>i</i></sub><sup>2</sup> = 1. The following relations exist:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b><i>D</i></b><sub>1</sub>&#8242; <b><i>D</i></b><sub>1</sub> + <b><i>D</i></b><sub>2</sub>&#8242; <b><i>D</i></b><sub>2</sub> = <b><i>I</i></b>, </table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b><i>D</i></b><sub>1</sub>&#8242; <b><i>D</i></b><sub>1</sub> = <b>diag</b> (<i>&#945;</i><sub>1</sub><sup>2</sup>, ..., <i>&#945;</i><sub><i>r</i></sub><sup>2</sup>), and, </table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b><i>D</i></b><sub>2</sub>&#8242; <b><i>D</i></b><sub>2</sub> = <b>diag</b> (<i>&#946;</i><sub>1</sub><sup>2</sup>, ..., <i>&#946;</i><sub><i>r</i></sub><sup>2</sup>).</table>
+<p>The ratios &#945;<sub><i>i</i></sub> / &#946;<sub><i>i</i></sub> are called the <i>generalized singular values</i> of the pair <b><i>A</i></b>, <b><i>B</i></b>. Let <i>l</i> be the rank of <b><i>B</i></b> and <i>k</i> + <i>l</i> (= <i>r</i>) the rank of [<b><i>A</i></b>&#8242;, <b><i>B</i></b>&#8242;]&#8242;. Then the first <i>k</i> generalized singular values are infinite and the remaining <i>l</i> are finite. (When <i><b>B</i></b> is of full rank then, of course, <i>k</i> = 0).</p>
+<h2>Special cases</h2>
+<p>&#8226; If <b><i>B</i></b> is a square nonsingular matrix, the gsvd of <b><i>A</i></b> and <b><i>B</i></b> is equivalent to the singular value decomposition of <b><i>A</i></b> <b><i>B</i></b><sup>&#8211;1</sup>.</p>
+<p>&#8226; The generalized eigenvalues and eigenvectors of <b><i>A</i></b>&#8242; <b><i>A</i></b> - <i>&#955;</i>  <b><i>B</i></b>&#8242; <b><i>B</i></b> can be expressed in terms of the gsvd. The columns of the matrix <b><i>X</i></b>, constructed as</p>
+<code>   X = Q*( I   0    )<br></code>
+<code>         ( 0 inv(R) ),<br></code>
+<p>form the eigenvectors. The important eigenvectors, of course, correspond to the positions where the <i>l</i> eigenvalues are not infinite.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="SSCP__To_CCA___.html">SSCP: To CCA...</a>
+<li><a href="TableOfReal__To_Discriminant.html">TableOfReal: To Discriminant</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20220111</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ButtonEditor</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ButtonEditor
+</b></font></table></table>
+<p>An editor for viewing, hiding, showing, removing, and executing the commands in the fixed menus, editor menus and dynamic menus of the Praat program. To open the button editor, choose <b>Buttons...</b> from the Settings menu in the Praat menu of the <a href="Objects_window.html">Objects window</a>.</p>
+<h2>What the button editor shows</h2>
+<p>The button editor gives a list of:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. The five fixed buttons.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. The built-in and added <a href="fixed_menu_commands.html">fixed menu commands</a>, lexicographically sorted by window and menu name.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. The added editor menu commands, lexicographically sorted by editor and menu name.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. The built-in and added <a href="action_commands.html">action commands</a>, sorted by the names of the selected objects.</dd>
+</dl>
+<h2>Visibility of built-in commands</h2>
+<p>Most built-in commands are visible by default, but some are hidden by default (see <a href="hidden_commands.html">hidden commands</a>). The button editor shows these commands as &#8220;shown&#8221; or &#8220;hidden&#8221;, respectively. You can change the visibility of a command by clicking on the blue &#8220;shown&#8221; or &#8220;hidden&#8221; text; this text will then be replaced with &#8220;HIDDEN&#8221; or &#8220;SHOWN&#8221;, with capitals to signal their non-standard settings. These changes will be remembered in the <a href="buttons_file.html">buttons file</a> across sessions of your program. To return to the standard settings, click the blue &#8220;HIDDEN&#8221; or &#8220;SHOWN&#8221; texts again.</p>
+<p>Some built-in commands cannot be hidden. They are marked as &#8220;unhidable&#8221;. The most notable example is the <b>Buttons...</b> button (a failure to make the <b>Commands...</b> command unhidable in Microsoft Word causes some computer viruses to be very hard to remove...).</p>
+<h2>Added commands</h2>
+<p>Commands that you have added to the fixed or dynamic menus (probably with <a href="Add_to_fixed_menu___.html">Add to fixed menu...</a> or <a href="Add_to_dynamic_menu___.html">Add to dynamic menu...</a> in the <a href="ScriptEditor.html">ScriptEditor</a>), are marked as &#8220;ADDED&#8221;. They are remembered in the <a href="buttons_file.html">buttons file</a>. You can change the availability of these commands by clicking on the blue &#8220;ADDED&#8221; text, which will then be replaced with &#8220;REMOVED&#8221;. After this, the added command will no longer be remembered in the <a href="buttons_file.html">buttons file</a>. To make the command available again, click the blue &#8220;REMOVED&#8221; text again, before leaving the program.</p>
+<h2>Start-up commands</h2>
+<p>Commands that were added in an <a href="initialization_script.html">initialization script</a> or <a href="plug-ins.html">plug-in</a> (with <a href="Add_menu_command___.html">Add menu command...</a> or <a href="Add_action_command___.html">Add action command...</a>) are marked as &#8220;START-UP&#8221;. They are <i>not</i> remembered in the <a href="buttons_file.html">buttons file</a>. You can change the visibility of these commands by clicking on the blue &#8220;START-UP&#8221; text, which will then be replaced with &#8220;HIDDEN&#8221;. This setting <i>will</i> be remembered in the <a href="buttons_file.html">buttons file</a>. To make the command visible again, click the blue &#8220;HIDDEN&#8221; text again.</p>
+<h2>Executing commands</h2>
+<p>The button editor allows you to choose hidden commands without first making them visible in the fixed or dynamic menus.</p>
+<p>The editor shows all the executable commands in blue. These include:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. The fixed <b>Remove</b> button, if one or more objects are selected in the <a href="List_of_Objects.html">List of Objects</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. The other fixed buttons, if exactly one object is selected.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. All of the fixed menu commands, hidden or not, and &#8220;removed&#8221; or not.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. Those action commands that match the currently selected objects with respect to class and number.</dd>
+</dl>
+<p>To execute any of these blue commands, just click on it.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="objects.html">objects</a>
+<li><a href="Scripting_7_2__Scripting_an_editor_from_within.html">Scripting 7.2. Scripting an editor from within</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1998,2003,2005,2006,2023</p>
+</address>
+</body>
+</html>

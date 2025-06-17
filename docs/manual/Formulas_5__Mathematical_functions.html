@@ -1,0 +1,165 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas 5. Mathematical functions</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas 5. Mathematical functions
+</b></font></table></table>
+<dl>
+<dt><b>abs (<i>x</i>)</b>
+<dd>absolute value</dd>
+<dt><b>round (<i>x</i>)</b>
+<dd>nearest integer; round (1.5) = 2</dd>
+<dt><b>floor (<i>x</i>)</b>
+<dd>round down: highest integer value not greater than <i>x</i></dd>
+<dt><b>ceiling (<i>x</i>)</b>
+<dd>round up: lowest integer value not less than <i>x</i></dd>
+<dt><b>sqrt (<i>x</i>)</b>
+<dd>square root: &#8730;<i>x</i>, <i>x</i> &#8805; 0</dd>
+<dt><b>min (<i>x</i>, ...)</b>
+<dd>the minimum of a series of numbers, e.g. min (7.2, -5, 3) = -5</dd>
+<dt><b>max (<i>x</i>, ...)</b>
+<dd>the maximum of a series of numbers, e.g. max (7.2, -5, 3) = 7.2</dd>
+<dt><b>imin (<i>x</i>, ...)</b>
+<dd>the location of the minimum, e.g. imin (7.2, -5, 3) = 2</dd>
+<dt><b>imax (<i>x</i>, ...)</b>
+<dd>the location of the maximum, e.g. imax (7.2, -5, 3) = 1</dd>
+<dt><b>sin (<i>x</i>)</b>
+<dd>sine</dd>
+<dt><b>cos (<i>x</i>)</b>
+<dd>cosine</dd>
+<dt><b>tan (<i>x</i>)</b>
+<dd>tangent</dd>
+<dt><b>arcsin (<i>x</i>)</b>
+<dd>arcsine, -1 &#8804; <i>x</i> &#8804; 1</dd>
+<dt><b>arccos (<i>x</i>)</b>
+<dd>arccosine, -1 &#8804; <i>x</i> &#8804; 1</dd>
+<dt><b>arctan (<i>x</i>)</b>
+<dd>arctangent</dd>
+<dt><b>arctan2 (<i>y</i>, <i>x</i>)</b>
+<dd>argument angle</dd>
+<dt><b>sinc (<i>x</i>)</b>
+<dd>sinus cardinalis: sin (<i>x</i>) / <i>x</i></dd>
+<dt><b>sincpi (<i>x</i>)</b>
+<dd>sinc<sub><i>&#960;</i></sub>: sin (<i>&#960;</i><i>x</i>) / (<i>&#960;</i><i>x</i>)</dd>
+<dt><b>exp (<i>x</i>)</b>
+<dd>exponentiation: <i>e</i><sup><i>x</i></sup>; same as <b>e^<i>x</i></b></dd>
+<dt><b>ln (<i>x</i>)</b>
+<dd>natural logarithm, base <i>e</i></dd>
+<dt><b>log10 (<i>x</i>)</b>
+<dd>logarithm, base 10</dd>
+<dt><b>log2 (<i>x</i>)</b>
+<dd>logarithm, base 2</dd>
+<dt><b>sinh (<i>x</i>)</b>
+<dd>hyperbolic sine: (<i>e</i><sup><i>x</i></sup> - <i>e</i><sup>-<i>x</i></sup>) / 2</dd>
+<dt><b>cosh (<i>x</i>)</b>
+<dd>hyperbolic cosine: (<i>e</i><sup><i>x</i></sup> + <i>e</i><sup>-<i>x</i></sup>) / 2</dd>
+<dt><b>tanh (<i>x</i>)</b>
+<dd>hyperbolic tangent: sinh (<i>x</i>) / cosh (<i>x</i>)</dd>
+<dt><b>arcsinh (<i>x</i>)</b>
+<dd>inverse hyperbolic sine: ln (<i>x</i> + &#8730;(1+<i>x</i><sup>2</sup>))</dd>
+<dt><b>arccosh (<i>x</i>)</b>
+<dd>inverse hyperbolic cosine: ln (<i>x</i> + &#8730;(<i>x</i><sup>2</sup>&#8722;1))</dd>
+<dt><b>arctanh (<i>x</i>)</b>
+<dd>inverse hyperbolic tangent</dd>
+<dt><b>sigmoid (<i>x</i>)</b>
+<dd><b>R</b> &#8594; (0,1): 1 / (1 + <i>e</i><sup>&#8722;<i>x</i></sup>) or 1 &#8722; 1 / (1 + <i>e</i><sup><i>x</i></sup>)</dd>
+<dt><b>invSigmoid (<i>x</i>)</b>
+<dd>(0,1) &#8594; <b>R</b>: ln (<i>x</i> / (1 &#8722; <i>x</i>))</dd>
+<dt><b>erf (<i>x</i>)</b>
+<dd>the error function: 2/&#8730;<i>&#960;</i> <sub>0</sub>&#8747;<sup><i>x</i></sup> exp(-<i>t</i><sup>2</sup>) <i>dt</i></dd>
+<dt><b>erfc (<i>x</i>)</b>
+<dd>the complement of the error function: 1 - erf (<i>x</i>)</dd>
+<dt><b>randomUniform (<i>min</i>, <i>max</i>)</b>
+<dd>a uniform random real number between <i>min</i> (inclusive) and <i>max</i> (exclusive)</dd>
+<dt><b>randomInteger (<i>min</i>, <i>max</i>)</b>
+<dd>a uniform random integer number between <i>min</i> and <i>max</i> (inclusive)</dd>
+<dt><b>randomGauss (<i>&#956;</i>, <i>&#963;</i>)</b>
+<dd>a Gaussian random real number with mean <i>&#956;</i> and standard deviation <i>&#963;</i></dd>
+<dt><b>randomPoisson (<i>mean</i>)</b>
+<dd>a Poisson random real number</dd>
+<dt><b>randomGamma (<i>shape</i>, <i>rate</i>)</b>
+<dd>a random number drawn from a Gamma distribution with shape parameter <i>&#945;</i> and rate parameter <i>&#946;</i>, which is defined as <i>f</i>(<i>x</i>; <i>&#945;</i>, <i>&#946;</i>) = (1 / &#915; (<i>&#945;</i>)) <i>&#946;</i><i></i><sup><i>&#945;</i></sup> <i>x</i><sup><i>&#945;</i>&#8722;1</sup> <i>e</i><sup>&#8722;<i>&#946;</i> <i>x</i></sup>, for <i>x</i> &gt; 0, <i>&#945;</i> &gt; 0 and <i>&#946;</i> &gt; 0, following the method by <a href="Marsaglia___Tsang__2000_.html">Marsaglia & Tsang (2000)</a></dd>
+<dt><b>random_initializeWithSeedUnsafelyButPredictably (<i>seed</i>)</b>
+<dd>can be used in a script to create a reproducible sequence of random numbers (warning: this exceptional situation will continue to exist throughout Praat until you call the following function)</dd>
+<dt><b>random_initializeSafelyAndUnpredictably ()</b>
+<dd>undoes the exceptional situation caused by the previous function</dd>
+<dt><b>lnGamma (<i>x</i>)</b>
+<dd>logarithm of the &#915; function</dd>
+<dt><b>gaussP (<i>z</i>)</b>
+<dd>the area under the Gaussian distribution between &#8722;&#8734; and <i>z</i></dd>
+<dt><b>gaussQ (<i>z</i>)</b>
+<dd>the area under the Gaussian distribution between <i>z</i> and +&#8734;: the one-tailed "statistical significance <i>p</i>" of a value that is <i>z</i> standard deviations away from the mean of a Gaussian distribution</dd>
+<dt><b>invGaussQ (<i>q</i>)</b>
+<dd>the value of <i>z</i> for which <code><font size=+1>gaussQ</font></code> (<i>z</i>) = <i>q</i></dd>
+<dt><b>chiSquareP (<i><code><font size=+1>chiSquare</font></code></i>, <i><code><font size=+1>df</font></code></i>)</b>
+<dd>the area under the <i>&#967;</i><sup>2</sup> distribution between 0 and <i>chiSquare</i>, for <i><code><font size=+1>df</font></code></i> degrees of freedom</dd>
+<dt><b>chiSquareQ (<i><code><font size=+1>chiSquare</font></code></i>, <i><code><font size=+1>df</font></code></i>)</b>
+<dd>the area under the <i>&#967;</i><sup>2</sup> distribution between <i><code><font size=+1>chiSquare</font></code></i> and +&#8734;, for <i>df</i> degrees of freedom: the "statistical significance <i>p</i>" of the <i>&#967;</i><sup>2</sup> difference between two distributions in <i>df</i>+1 dimensions</dd>
+<dt><b>invChiSquareQ (<i>q</i>, <i>df</i>)</b>
+<dd>the value of <i>&#967;</i><sup>2</sup> for which <code><font size=+1>chiSquareQ</font></code> (<i>&#967;</i><sup>2</sup>, <i>df</i>) = <i>q</i></dd>
+<dt><b>studentP (<i>t</i>, <i>df</i>)</b>
+<dd>the area under the student T-distribution from -&#8734; to <i>t</i></dd>
+<dt><b>studentQ (<i>t</i>, <i>df</i>)</b>
+<dd>the area under the student T-distribution from <i>t</i> to +&#8734;</dd>
+<dt><b>invStudentQ (<i>q</i>, <i>df</i>)</b>
+<dd>the value of <i>t</i> for which <code><font size=+1>studentQ</font></code> (<i>t</i>, <i>df</i>) = <i>q</i></dd>
+<dt><b>fisherP (<i>f</i>, <i>df1</i>, <i>df2</i>)</b>
+<dd>the area under Fisher's F-distribution from 0 to <i>f</i></dd>
+<dt><b>fisherQ (<i>f</i>, <i>df1</i>, <i>df2</i>)</b>
+<dd>the area under Fisher's F-distribution from <i>f</i> to +&#8734;</dd>
+<dt><b>invFisherQ (<i>q</i>, <i>df1</i>, <i>df2</i>)</b>
+<dd>the value of <i>f</i> for which <code><font size=+1>fisherQ</font></code> (<i>f</i>, <i>df1</i>, <i>df2</i>) = <i>q</i></dd>
+<dt><b>binomialP (<i>p</i>, <i>k</i>, <i>n</i>)</b>
+<dd>the probability that in <i>n</i> experiments, an event with probability <i>p</i> will occur at most <i>k</i> times</dd>
+<dt><a href="_binomialQ_.html"><b><code><font size=+1>binomialQ</font></code></b></a> (<i>p</i>, <i>k</i>, <i>n</i>)
+<dd>the probability that in <i>n</i> experiments, an event with probability <i>p</i> will occur at least <i>k</i> times; equals 1 - <code><font size=+1>binomialP</font></code> (<i>p</i>, <i>k</i> - 1, <i>n</i>)</dd>
+<dt><b>invBinomialP (<i>P</i>, <i>k</i>, <i>n</i>)</b>
+<dd>the value of <i>p</i> for which <code><font size=+1>binomialP</font></code> (<i>p</i>, <i>k</i>, <i>n</i>) = <i>P</i></dd>
+<dt><a href="_invBinomialQ_.html"><b><code><font size=+1>invBinomialQ</font></code></b></a> (<i>Q</i>, <i>k</i>, <i>n</i>)
+<dd>the value of <i>p</i> for which <code><font size=+1>binomialQ</font></code> (<i>p</i>, <i>k</i>, <i>n</i>) = <i>Q</i></dd>
+<dt><b>hertzToBark (<i>x</i>)</b>
+<dd>from acoustic frequency to Bark-rate (perceptual spectral frequency; place on basilar membrane): 7 ln (<i>x</i>/650 + &#8730;(1 + (<i>x</i>/650)<sup>2</sup>))</dd>
+<dt><b>barkToHertz (<i>x</i>)</b>
+<dd>650 sinh (<i>x</i> / 7)</dd>
+<dt><b>hertzToMel (<i>x</i>)</b>
+<dd>from acoustic frequency to perceptual pitch: 550 ln (1 + <i>x</i> / 550)</dd>
+<dt><b>melToHertz (<i>x</i>)</b>
+<dd>550 (exp (<i>x</i> / 550) - 1)</dd>
+<dt><b>hertzToSemitones (<i>x</i>)</b>
+<dd>from acoustic frequency to a logarithmic musical scale, relative to 100 Hz: 12 ln (<i>x</i> / 100) / ln 2</dd>
+<dt><b>semitonesToHertz (<i>x</i>)</b>
+<dd>100 exp (<i>x</i> ln 2 / 12)</dd>
+<dt><b>erb (<i>f</i>)</b>
+<dd>the perceptual <i>equivalent rectangular bandwidth</i> (ERB) in hertz, for a specified acoustic frequency (also in hertz): 6.23&#183;10<sup>-6</sup> <i>f</i><sup>2</sup> + 0.09339 <i>f</i> + 28.52</dd>
+<dt><b>hertzToErb (<i>x</i>)</b>
+<dd>from acoustic frequency to ERB-rate: 11.17 ln ((<i>x</i> + 312) / (<i>x</i> + 14680)) + 43</dd>
+<dt><b>erbToHertz (<i>x</i>)</b>
+<dd>(14680 <i>d</i> - 312) / (1 - <i>d</i>) where <i>d</i> = exp ((<i>x</i> - 43) / 11.17)</dd>
+<dt><a href="_phonToDifferenceLimens_.html"><b><code><font size=+1>phonToDifferenceLimens</font></code></b></a> (<i>x</i>)
+<dd>from perceptual loudness (intensity sensation) level in phon, to the number of intensity difference limens above threshold: 30 &#183; ((61/60)<sup> <i>x</i></sup> &#8722; 1).</dd>
+<dt><a href="_differenceLimensToPhon_.html"><b><code><font size=+1>differenceLimensToPhon</font></code></b></a> (<i>x</i>)
+<dd>the inverse of the previous: ln (1 + <i>x</i> / 30) / ln (61 / 60).</dd>
+<dt><b>beta (<i>x</i>, <i>y</i>)</b>
+<dt><b>besselI (<i>n</i>, <i>x</i>)</b>
+<dt><b>besselK (<i>n</i>, <i>x</i>)</b>
+</dl>
+<p>For functions with arrays, see <a href="Scripting_5_7__Vectors_and_matrices.html">Scripting 5.7. Vectors and matrices</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas.html">Formulas</a>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+<li><a href="What_was_new_in_3_9_.html">What was new in 3.9?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20200801</p>
+</address>
+</body>
+</html>

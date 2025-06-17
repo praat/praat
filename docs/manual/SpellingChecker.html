@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>SpellingChecker</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+SpellingChecker
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. For checking the spelling in texts and <a href="TextGrid.html">TextGrid</a> objects.</p>
+<h2>1. How to create a SpellingChecker object</h2>
+<p>You normally read in a SpellingChecker with <a href="Read_from_file___.html">Read from file...</a> from the <b>Open</b> menu.</p>
+<h2>2. How to check the spelling of a <a href="TextGrid.html">TextGrid</a></h2>
+<p>A SpellingChecker object can be used fur purposes of spelling checking. In order to check the spellings in a <a href="TextGrid.html">TextGrid</a> object, you first view the TextGrid in an editor window by selecting the TextGrid together with the SpellingChecker object, and clicking <b>View &amp; Edit</b>. In most cases, you will also want to select a <a href="Sound.html">Sound</a> or <a href="LongSound.html">LongSound</a> object before clicking <b>View &amp; Edit</b>, so that a representation of the sound is also visible (and audible) in the editor. Thus, you typically select three objects and click <b>View &amp; Edit</b>. The editor then allows you to check the spellings (commands <b>Check spelling in tier</b> and <b>Check spelling in interval</b> from the <b>Spell</b> menu).</p>
+<h2>3. How to create a SpellingChecker object for the first time</h2>
+<p>If you are the maintainer of a word list for spelling checking, you will want to convert this list to a SpellingChecker object that you can distribute among the transcribers of your corpus.</p>
+<p>The first step is to create a <a href="WordList.html">WordList</a> object from your text file, as described on the <a href="WordList.html">WordList</a> man page. Then you simply click <b>To SpellingChecker</b>. A button labelled <b>View &amp; Edit...</b> appears. This command allows you to set the following attributes of the SpellingChecker object:</p>
+<dl>
+<dt><b>Allow all parenthesized</b>
+<dd>this flag determines whether text between parentheses is ignored in spelling checking. This would allow the transcriber to mark utterances in foreign languages, which cannot be found in the lexicon.</dd>
+<dt><b>Separating characters</b>
+<dd>determines the set of characters (apart from the space character) that separate words. The standard is ".,;:()". If a string like "error-prone" should be considered two separate words, you will like to change this to ".,;:()-". For the Corpus of Spoken Dutch (CGN), the hyphen is not a separator, since words like "mee-eter" should be checked as a whole. If a string like "Mary's" should be considered two separate words, include the apostrophe.</dd>
+<dt><b>Allow all names</b>
+<dd>determines whether all words that start with a capital are allowed. For the CGN, this is on, since the lexicon does not contain many names.</dd>
+<dt><b>Name prefixes</b>
+<dd>a space-separated list that determines what small groups of characters can precede names. For the CGN, this is "'s- d' l'", since names like <i>'s-Gravenhage</i>, <i>d'Ancona</i>, and <i>l'H&#244;pital</i> should be ignored by the spelling checker.</dd>
+<dt><b>Allow all words containing</b>
+<dd>a space-separated list of strings that make a word correct even if not in the lexicon. For the CGN, this is "* xxx", since words like <i>keuje*d</i> and <i>verxxxing</i> should be ignored by the spelling checker.</dd>
+<dt><b>Allow all words starting with</b>
+<dd>a space-separated list of prefixes that make a word correct even if not in the lexicon. For the CGN, this is empty.</dd>
+<dt><b>Allow all words ending in</b>
+<dd>a space-separated list of suffixes that make a word correct even if not in the lexicon. For the CGN, this is "-", since the first word in <i>verzekerings- en bankwezen</i> should be ignored by the spelling checker.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="TextGridEditor.html">TextGridEditor</a>
+<li><a href="What_was_new_in_3_9_.html">What was new in 3.9?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20190616</p>
+</address>
+</body>
+</html>

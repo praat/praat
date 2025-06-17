@@ -1,0 +1,70 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 4.1. Selecting objects</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 4.1. Selecting objects
+</b></font></table></table>
+<p>To simulate the mouse-clicked and dragged selection in the list of objects, you have the functions <a href="_selectObject_.html"><b><code><font size=+1>selectObject</font></code></b></a>, <a href="_plusObject_.html"><b><code><font size=+1>plusObject</font></code></b></a> and <a href="_minusObject_.html"><b><code><font size=+1>minusObject</font></code></b></a>.</p>
+<p>Suppose you start Praat and use <b>Create Sound as tone...</b> to create a Sound called <i>tone</i>. In the object list it looks like &#8220;1. Sound tone&#8221;. Suppose you then do <b>To Spectrum...</b> from the <b>Analyse Spectrum</b> menu. A second object, called &#8220;2. Spectrum tone&#8221; appears in the list and is selected. To select and play the Sound, you can do either</p>
+<code>   <b><a href="_selectObject_.html">selectObject</a></b>: 1<br></code>
+<code>   Play<br></code>
+<p>or</p>
+<code>   <b><a href="_selectObject_.html">selectObject</a></b>: “Sound tone”<br></code>
+<code>   Play<br></code>
+<p>So you can select an object either by its unique ID (identifier: the unique number by which it appears in the list) or by name.</p>
+<p>The function <a href="_selectObject_.html"><b><code><font size=+1>selectObject</font></code></b></a> works by first deselecting all objects, and then selecting the one you mention. If you don&#8217;t want to deselect the existing selection, you can use <a href="_plusObject_.html"><b><code><font size=+1>plusObject</font></code></b></a> or <a href="_minusObject_.html"><b><code><font size=+1>minusObject</font></code></b></a>. When the Sound is selected, you can select the Spectrum as well by doing</p>
+<code>   <b><a href="_plusObject_.html">plusObject</a></b>: 2<br></code>
+<p>or</p>
+<code>   <b><a href="_plusObject_.html">plusObject</a></b>: “Spectrum tone”<br></code>
+<p>If you then want to deselect the Sound, and keep the Spectrum selected, you can do</p>
+<code>   <b><a href="_minusObject_.html">minusObject</a></b>: 1<br></code>
+<p>or</p>
+<code>   <b><a href="_minusObject_.html">minusObject</a></b>: “Sound tone”<br></code>
+<p>All these functions can take more than one argument. To select the Sound and the Spectrum together, you can do</p>
+<code>   <b><a href="_selectObject_.html">selectObject</a></b>: 1, 2<br></code>
+<p>or</p>
+<code>   <b><a href="_selectObject_.html">selectObject</a></b>: “Sound tone”, “Spectrum tone”<br></code>
+<p>or even</p>
+<code>   <b><a href="_selectObject_.html">selectObject</a></b>: 1, “Spectrum tone”<br></code>
+<p>or, using a numeric vector:</p>
+<code>   myObjects# = { 1, 2 }<br></code>
+<code>   <b><a href="_selectObject_.html">selectObject</a></b>: myObjects#<br></code>
+<h2>How to refer to objects created in your script</h2>
+<p>In a script, you typically don't know whether the IDs of the objects are 1 and 2, or much higher numbers. Fortunately, commands that create a new object give you the ID of the object that is created, so that you can refer to the object later on. For instance, suppose you want to generate a sine wave, play it, draw its spectrum, and then throw away both the Sound and the Spectrum. Here is how you do it:</p>
+<code>   sound = Create Sound as pure tone: “sine377”,<br></code>
+<code>   ... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound<br></code>
+<code>   Play   ; the Sound is selected, so it plays<br></code>
+<code>   To Spectrum: “yes”<br></code>
+<code>   Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn<br></code>
+<code>   # Remove the created Spectrum and Sound:<br></code>
+<code>   <b><a href="_plusObject_.html">plusObject</a></b>: sound   ; the Spectrum was already selected<br></code>
+<code>   Remove<br></code>
+<p>You could also select the objects by name:</p>
+<code>   Create Sound as pure tone: “sine377”,<br></code>
+<code>   ... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; no need to remember the ID of the Sound<br></code>
+<code>   Play   ; the Sound is selected, so it plays<br></code>
+<code>   To Spectrum: “yes”<br></code>
+<code>   Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn<br></code>
+<code>   # Remove the created Spectrum and Sound:<br></code>
+<code>   <b><a href="_plusObject_.html">plusObject</a></b>: “Sound sine377”   ; the Spectrum was already selected<br></code>
+<code>   Remove<br></code>
+<p>This works even if there are multiple objects called &#8220;Sound sine377&#8221;, because if there are more objects with the same name, <a href="_selectObject_.html"><b><code><font size=+1>selectObject</font></code></b></a> and <a href="_plusObject_.html"><b><code><font size=+1>plusObject</font></code></b></a> select the most recently created one, i.e., the one nearest to the bottom of the list of objects.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_4__Object_selection.html">Scripting 4. Object selection</a>
+<li><a href="Scripting_4_2__Removing_objects.html">Scripting 4.2. Removing objects</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20180428</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Manipulation</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Manipulation
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat, for changing the pitch and duration contours of a sound.</p>
+<h2>Inside a manipulation object</h2>
+<p>With <a href="Inspect.html">Inspect</a>, you will see the following attributes:</p>
+<dl>
+<dt><b>timeStep</b>
+<dd>the time step (or <i>frame length</i>) used in the pitch analysis. A common value is 0.010 seconds.</dd>
+<dt><b>pitchFloor</b>
+<dd>the minimum pitch frequency considered in the pitch analysis. A common value is 75 hertz.</dd>
+<dt><b>pitchCeiling</b>
+<dd>the maximum pitch frequency considered in the pitch analysis. A common value is 600 hertz.</dd>
+</dl>
+<p>A Manipulation object also contains the following smaller objects:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. The original <a href="Sound.html">Sound</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. A <a href="PointProcess.html">PointProcess</a> representing glottal pulses.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. A <a href="PitchTier.html">PitchTier</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. A <a href="DurationTier.html">DurationTier</a>.</dd>
+</dl>
+<h2>Analysis</h2>
+<p>When a Manipulation object is created from a sound, the following steps are performed:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. A pitch analysis is performed on the original sound, with the method of <a href="Sound__To_Pitch___.html">Sound: To Pitch...</a>. This uses the time step, pitch floor, and pitch ceiling parameters.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. The information of the resulting pitch contour (frequency and voiced/unvoiced decisions) is used to posit glottal pulses where the original sound contains much energy. The method is the same as in <a href="Sound___Pitch__To_PointProcess__cc_.html">Sound & Pitch: To PointProcess (cc)</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. The pitch contour is converted to a pitch tier with many points (targets), with the method of <a href="Pitch__To_PitchTier.html">Pitch: To PitchTier</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. An empty <a href="DurationTier.html">DurationTier</a> is created.</dd>
+</dl>
+<h2>Resynthesis</h2>
+<dl>
+<dt>A Manipulation object can produce Sound input. This Sound can be computed in several ways:
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="overlap-add.html">overlap-add</a>: from original sound + pulses + pitch tier + duration tier;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>LPC</b>: from LPC (from original sound) + pulses + pitch tier;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; from the pulses only, as a pulse train or hummed;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; from the pitch tier only, as a pulse train or hummed.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro_8_1__Manipulation_of_pitch.html">Intro 8.1. Manipulation of pitch</a>
+<li><a href="Intro_8_2__Manipulation_of_duration.html">Intro 8.2. Manipulation of duration</a>
+<li><a href="Manipulation__Extract_duration_tier.html">Manipulation: Extract duration tier</a>
+<li><a href="Manipulation__Extract_original_sound.html">Manipulation: Extract original sound</a>
+<li><a href="Manipulation__Extract_pitch_tier.html">Manipulation: Extract pitch tier</a>
+<li><a href="Manipulation__Extract_pulses.html">Manipulation: Extract pulses</a>
+<li><a href="Manipulation__Get_resynthesis__overlap-add_.html">Manipulation: Get resynthesis (overlap-add)</a>
+<li><a href="Manipulation__Play__overlap-add_.html">Manipulation: Play (overlap-add)</a>
+<li><a href="Manipulation__Replace_duration_tier.html">Manipulation: Replace duration tier</a>
+<li><a href="Manipulation__Replace_original_sound.html">Manipulation: Replace original sound</a>
+<li><a href="Manipulation__Replace_pitch_tier.html">Manipulation: Replace pitch tier</a>
+<li><a href="Manipulation__Replace_pulses.html">Manipulation: Replace pulses</a>
+<li><a href="ManipulationEditor.html">ManipulationEditor</a>
+<li><a href="TextGrid__To_DurationTier___.html">TextGrid: To DurationTier...</a>
+<li><a href="What_was_new_in_3_5_.html">What was new in 3.5?</a>
+<li><a href="What_was_new_in_4_0_.html">What was new in 4.0?</a>
+<li><a href="What_was_new_in_6_2_.html">What was new in 6.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20030316</p>
+</address>
+</body>
+</html>

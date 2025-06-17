@@ -1,0 +1,41 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Voice 2. Jitter</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Voice 2. Jitter
+</b></font></table></table>
+<p>You can measure jitter in the Sound editor window, after choosing <a href="Show_pulses.html">Show pulses</a> from the <b>Pulses</b> menu. You will see blue lines that can be thought of as representing the glottal closures. Use <a href="Voice_report.html">Voice report</a> from the <b>Pulses</b> menu to get the jitter in the selected part. You typically perform jitter measurements only on long sustained vowels.</p>
+<p>The voice report gives five kinds of jitter measurements. All of these measurements are based on the computation of all <i>periods</i> by the waveform-matching procedure (see <a href="Voice_6__Automating_voice_analysis_with_a_script.html">Voice 6. Automating voice analysis with a script</a>), where the <b>Period floor</b> setting is 0.8 divided by the pitch ceiling, the <b>Period ceiling</b> setting is 1.25 divided by the pitch floor, and the <b>Maximum period factor</b> is determined in <a href="Advanced_pulses_settings___.html">Advanced pulses settings...</a>.</p>
+<h2>Jitter (local)</h2>
+<p>This is the average absolute difference between consecutive periods, divided by the average period. For the precise procedure, see <a href="PointProcess__Get_jitter__local____.html">PointProcess: Get jitter (local)...</a>.</p>
+<p>MDVP calls this parameter <i>Jitt</i>, and gives 1.040% as a threshold for pathology. As this number was based on jitter measurements influenced by noise (see <a href="Voice_5__Comparison_with_other_programs.html">Voice 5. Comparison with other programs</a>), the correct threshold is probably lower.</p>
+<h2>Jitter (local, absolute)</h2>
+<p>This is the average absolute difference between consecutive periods, in seconds. For the precise procedure, see <a href="PointProcess__Get_jitter__local__absolute____.html">PointProcess: Get jitter (local, absolute)...</a>.</p>
+<p>MDVP calls this parameter <i>Jita</i>, and gives 83.200 &#956;s as a threshold for pathology. As this number was based on jitter measurements influenced by noise (see <a href="Voice_5__Comparison_with_other_programs.html">Voice 5. Comparison with other programs</a>), the correct threshold is probably lower.</p>
+<h2>Jitter (rap)</h2>
+<p>This is the Relative Average Perturbation, the average absolute difference between a period and the average of it and its two neighbours, divided by the average period. For the precise procedure, see <a href="PointProcess__Get_jitter__rap____.html">PointProcess: Get jitter (rap)...</a>.</p>
+<p>MDVP gives 0.680% as a threshold for pathology. As this number was based on jitter measurements influenced by noise (see <a href="Voice_5__Comparison_with_other_programs.html">Voice 5. Comparison with other programs</a>), the correct threshold is probably lower.</p>
+<h2>Jitter (ppq5)</h2>
+<p>This is the five-point Period Perturbation Quotient, the average absolute difference between a period and the average of it and its four closest neighbours, divided by the average period. For the precise procedure, see <a href="PointProcess__Get_jitter__ppq5____.html">PointProcess: Get jitter (ppq5)...</a>.</p>
+<p>MDVP calls this parameter <i>PPQ</i>, and gives 0.840% as a threshold for pathology; as this number was based on jitter measurements influenced by noise (see <a href="Voice_5__Comparison_with_other_programs.html">Voice 5. Comparison with other programs</a>), the correct threshold is probably lower.</p>
+<h2>Jitter (ddp)</h2>
+<p>This is the average absolute difference between consecutive differences between consecutive periods, divided by the average period. For the precise procedure, see <a href="PointProcess__Get_jitter__ddp____.html">PointProcess: Get jitter (ddp)...</a>.</p>
+<p>This is Praat&#8217;s original <b>Get jitter</b>. The value is three times RAP.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Voice.html">Voice</a>
+<li><a href="What_was_new_in_5_3_.html">What was new in 5.3?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2003,2011</p>
+</address>
+</body>
+</html>

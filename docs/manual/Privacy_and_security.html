@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Privacy and security</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Privacy and security
+</b></font></table></table>
+<p>Praat is an &#8220;isolated&#8221; app. You download it from <code><font size=+1>praat.org</font></code>, then record sounds into Praat (all in RAM) or open a sound file, then analyse or manipulate that sound. The only way in which your results are saved to disk (as e.g. a Pitch file, a TextGrid file, or a sound file), is when you explicitly choose one of the <b>Save</b> or <b>Export</b> commands from Praat&#8217;s menus; Praat will not by itself save any data files to disk or send any information anywhere. When you create a picture in the Picture window, the only way to move that picture anywhere else is if you save it explicitly to a picture file (e.g. PNG) or if you Copy&#8211;Paste it to e.g. a text editing app such as e.g. Microsoft Word; Praat will not by itself save any picture to disk or to the clipboard or send any information anywhere. Praat will run just fine on your computer if it does not have Internet access, and in fact Praat cannot even notice whether you are in a network or not. Praat works entirely stand-alone.</p>
+<h2>Praat does not call home</h2>
+<p>When you are using Praat, you can be assured that Praat does not attempt to send any of your data or pictures or settings to the Praat team. In fact, Praat never accesses the Internet, not even to <a href="Checking_for_updates.html">check for updates</a>.</p>
+<h2>No telemetry</h2>
+<p>Praat does not send anything to the Praat team while you are using Praat:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; No surveillance</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; No tracking</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; No Google Analytics</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; In general, no spying or data mining by the Praat team</dd>
+</dl>
+<h2>What does Praat save to disk without asking you?</h2>
+<p>Praat will save your preferences to your own disk on your own computer, in a folder of your own, when you close Praat. This includes the settings in your Sound window (e.g. your last chosen Pitch range), so that your Sound windows will look the same after you start Praat up again. The goal of this is to provide a continuous user experience, and is what you probably expect, because most apps that you use on your computer work this way.</p>
+<h2>What we do measure</h2>
+<p>As mentioned above, Praat does no telemetry, i.e. it does not send us anything while you are using Praat. We <i>do</i><i></i> receive some information, though, when <i>you</i> contact <i>us</i>. This happens when you download a new Praat version for your computer. We log the Praat downloads, so that we can potentially count how often which edition and which version of Praat is downloaded.</p>
+<h2>Wouldn&#8217;t telemetry be useful for the quality of Praat?</h2>
+<p>Companies that use telemetry tend to justify that by arguing that gathering information on how their app is used is useful for improving the quality of their app (by collecting error messages), or to know which features are rarely used, so that those features can be removed.</p>
+<p>We are skeptical. If we, as Praat developers, have made a programming error, then we hope that an &#8220;assertion&#8221; will help solve the issue. An assertion is a place in our code where Praat will crash if a certain assumption is not met. A message window will pop up in Praat that says that Praat will crash, together with the request to send some relevant information by email to us, the developers of Praat. If you do send this crash information on to us (you can read it, as it is normal English without secrets), we will then virtually always find out (sometimes with some more help from you, such as the sound file or script that caused the crash) what was wrong, and correct the mistake, so that our programming error (&#8220;bug&#8221;) no longer occurs in the next version of Praat. We will also build an automatable test that checks, for all future versions of Praat, that the bug does not reappear. In this way, every Praat version tends to be more stable and correct than the previous version. We believe that this practice minimizes the problems with Praat sufficiently, and no automated reporting of error messages and crash messages is necessary.</p>
+<p>As for the removal of obsolete features, we are just very conservative. Typically, file types from the 1980s and 1990s can typically still be opened in the 2020s, and old Praat scripts should continue to run for at least 15 years after we marked a language feature as &#8220;deprecated&#8221; or &#8220;obsolete&#8221; (and removed it from the manual). This has not prevented us from also being able to open file types invented in the 2020s or to have a modern scripting language that supports vectors, matrices and string arrays, and backward compatibility hardly hampers the continual modernization of Praat.</p>
+<h2>Praat scripts and plug-ins</h2>
+<p>As with R scripts, Python scripts, and quite generally any kinds of scripts from any source, you should consider Praat scripts written by others, such as plug-ins that you download, as separate apps with their own privacy and security issues. Use a script or plug-in only if you completely trust that script or plug-in and its creators.</p>
+<hr>
+<address>
+	<p>© Paul Boersma 2022</p>
+</address>
+</body>
+</html>

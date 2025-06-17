@@ -1,0 +1,124 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Downloading Praat for Windows</title></head><body bgcolor="#CCCCFF">
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Downloading Praat for Windows
+</b></font></table></table>
+
+<hr><h3>1. Downloading your Windows edition</h3>
+<p>To download the latest version of the <b>Windows</b> (7, 8, 10, 11...) edition of <b>Praat</b>,
+download one of the following zip folders to your desktop:</p>
+<dl>
+<dd>64-bit edition (also known as Intel64, AMD64, x86_64, x64...): <b><a href="https://github.com/praat/praat/releases/download/v6.4.35/praat6435_win-intel64.zip">praat6435_win-intel64.zip</a></b> (15 June 2025; 22.0 MB) &nbsp; <b>&lt;-- you probably want this</b>
+<dd>ARM64 edition: <b><a href="https://github.com/praat/praat/releases/download/v6.4.35/praat6435_win-arm64.zip">praat6435_win-arm64.zip</a></b> (15 June 2025; 20.9 MB)
+<dd>32-bit edition (also known as Intel32, IA-32, x86, i386, i686...): <b><a href="https://github.com/praat/praat/releases/download/v6.4.35/praat6435_win-intel32.zip">praat6435_win-intel32.zip</a></b> (15 June 2025; 22.5 MB)
+</dl>
+
+<hr><h3>2. Which of the three editions do I need?</h3>
+<p>As a Praat user you will want to know what type of <i>processor</i> is inside your computer.
+Knowing this is relevant for installing all academic software, i.e. not only Praat
+but also the most used statistics software (R) or the most used scripting language (Python).
+In general, knowing your processor type is relevant for any software that you download
+from outside the Microsoft Store.</p>
+<p>To find your processor type, go to <b>Start</b> -> <b>Settings</b> -> <b>System</b> (the choice at the top) -> <b>About</b> (the choice at the bottom).
+It is most likely that you will see something like one of the following two tables:</p>
+<p align=middle><img height=400 src="pictures/intel64.png">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img height=400 src="pictures/arm64.png"></p>
+<p>The table on the left is what you get if you have an <b>Intel64 processor</b> (also called x64, AMD64, x86_64...):
+under “System type” you see that the processor is “x64-based”
+(the name of the processor often has an “i7” or “i9” in it, as here).
+The table on the right is what you get if you have an <b>ARM64 processor</b> (also called Aarch64):
+under “System type” you see that the processor is “ARM-based”
+(here, the name of the processor itself tells us that this is an Apple Silicon chip, which is one of the ARM64 types).</p>
+<p>If your computer has a processor that is of Intel64 type (these are by far the most common in 2024),
+then only Praat’s <b>Intel64 edition</b> will work; if your computer has an ARM64 processor (these are the future, because of their longer battery power on laptops),
+then choose Praat’s <b>ARM64 edition</b>
+(the Intel64 edition will also work, but the ARM64 edition will work much faster).</p>
+<p>The third possibility is that you have an old Intel32 computer,
+where the “System type“ is something like “32-bit operating system, x86-based processor”;
+in that case, you can only use Praat’s <b>Intel32 edition</b>.</p>
+
+<hr><h3>3. Installing your Windows edition</h3>
+<p>After downloading the right edition, you will see the zip folder as a folder icon with a zipper on it
+(or as some other icon if you installed a special zip program such as WinZip).</p>
+<p>When you double-click the zip folder, a file called <b>Praat</b> or <b>Praat.exe</b> will appear.
+This is the Praat program. You can drag it out of the zip folder to any location on your hard disk
+(so that you can use Praat even if your system administrator does not allow you to install other programs!).</p>
+
+<hr><h3>4. How to start</h3>
+<p>To start up the Praat program, just double-click it.
+If you use Praat for the first time, choose <b>Intro</b> from the Help menu.</p>
+<p><b>If you have trouble starting Praat for the first time:</b><br>
+To protect you against harmful software, Windows enforces increasingly severe security measures,
+initially trusting only apps that you downloaded from the Microsoft Store.
+This is a good thing, but it does make it increasingly difficult to start up reliable applications
+that you download from outside the Microsoft Store, such as Praat.
+Your Windows computer can throw a variety of messages at you:</p>
+<ul>
+<li>If your computer says “This app can’t run on your PC”,
+this could be caused by your trying to run the wrong Praat edition
+(usually, trying to run the ARM64 edition on an Intel64 computer),
+or by Windows Security (or Windows Defender, or a third-party virus scanner) blocking the app. In the latter case,
+it may help to (1) enable developer mode, (2) run the app as administrator,
+(3) or simply switch off “Smart App Blocking” in your security settings.
+<li>If your computer says “Windows protected your PC” and
+“Microsoft Defender Smartscreen prevented an unrecognized app from starting”,
+then you may still be able to click on “More info” and then “Run anyway”.
+If there is no “More info” button (only a “Don’t run” button, as below), then it is probably the case
+that your IT administrator “secured” your computer by removing the “More info” button;
+in that case, you may still be able to run Praat by right-clicking on the Praat icon,
+then choose “Properties”, then the “General” tab, then next to “Security” check “Unblock”, like so:
+<p align=middle><img height=400 src="pictures/dontrun.png">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img height=400 src="pictures/unblock.png"></p>
+<li>... (dear users, please send us more error messages, preferably with their solution)
+</ul>
+
+<hr><h3>5. Phonetic and international symbols</h3>
+<p>For best results with phonetic characters in the TextGrid and Picture windows,
+you should also download the Charis SIL and/or the Doulos SIL font,
+which were created by the <a href="https://www.sil.org">Summer Institute of Linguistics</a>.
+To install them, first download their zip-files:
+<dl>
+<dd><b><a href="CharisSIL-6.200.zip">CharisSIL-6.200.zip</a></b> (February 2023)
+<dd><b><a href="DoulosSIL-6.200.zip">DoulosSIL-6.200.zip</a></b> (February 2023)
+</dl>
+<p>Double-click the zip folders. You will see a folder called <b>CharisSIL-6.200</b> or <b>DoulosSIL-6.200</b>; drag it out of the zip folder to your desktop.
+When you open the <b>CharisSIL-6.200</b> or <b>DoulosSIL-6.200</b> folders, you will see TrueType font files such as
+<b>CharisSIL-Regular(.ttf)</b>, <b>CharisSIL-Bold(.ttf)</b>, <b>CharisSIL-Italic(.ttf)</b>, <b>CharisSIL-BoldItalic(.ttf)</b>, and <b>DoulosSIL-Regular(.ttf)</b>.
+To install a font, double-click its file and choose <b>Install</b>.</p>
+
+<hr><h3>6. Tuning Praat to your Windows PC</h3>
+<p>When you use Praat, you will work with many files with the same base name, such as <b>hello.wav</b>, <b>hello.TextGrid</b>, and <b>hello.Pitch</b>.
+On your computer, these might all look like being just called <b>hello</b>. This is confusing,
+especially when you open files in Praat with <b>Read from file...</b> or try to save a file
+with one of the <b>Save</b> commands. Our advice is that you make all extensions (such as <b>.wav</b>, <b>.TextGrid</b> and <b>.Pitch</b>)
+visible by going to Windows Explorer (not the internet browser, but the file viewer),
+then click on <b>View</b>, then <b>Show</b> (or <b>Show/Hide</b>), then check <b>File name extensions</b>.</p>
+
+<p>To get Praat in your Start menu: right-click on the Praat icon and choose "Pin to Start".</p>
+
+<p>To get a shortcut to Praat on the Desktop: keep the Alt key pressed and drag the Praat icon to the Desktop.</p>
+
+<p>To keep Praat in your taskbar even after Praat closes: start up Praat, right-click the Praat icon in the taskbar and choose "Pin to taskbar".</p>
+
+<hr><h3>7. Running Praat from the command line</h3>
+<p>To run Praat from a console window (the “command prompt”),
+write a Praat script and specify that script on the command line, optionally with arguments, e.g.:</p>
+<code>&nbsp;&nbsp;&nbsp;Praat.exe --run playsinewave.praat 377 0.9</code>
+<p>For details see <a href="manual/Scripting_6_9__Calling_from_the_command_line.html">Calling from the command line</a> in the Scripting manual.</p>
+
+<hr><h3>8. Editions of Praat for older operating system versions</h3>
+<p>On a modern computer you would use <a href="https://github.com/praat/praat/releases/download/v6.4.35/praat6435_win-intel64.zip">praat6435_win-intel64.zip</a>,
+or <a href="https://github.com/praat/praat/releases/download/v6.4.35/praat6435_win-arm64.zip">praat6435_win-arm64.zip</a>, as suggested above.
+If that does not work on your computer, you can probably use
+<a href="https://github.com/praat/praat/releases/download/v6.4.35/praat6435_win32.zip">praat6435_win32.zip</a> (as suggested above),
+or try an older version:</p>
+<ul>
+<li>If you have Windows 2000 or XP or Vista, try <a href="https://github.com/praat/praat/releases/download/v6.1.51/praat6151_win32.zip">praat6151_win32.zip</a> of 22 July 2021
+(or <a href="https://github.com/praat/praat/releases/download/v6.1.51/praat6151_win64.zip">praat6151_win64.zip</a> for 64-bit).
+<li>If you want to open the audio in a movie file, try <a href="https://github.com/praat/praat/releases/download/v5.3.14/praat5314_win32.zip">praat5314_win32.zip</a> of 28 April 2012.
+<li>If you have Windows 95/98/NT4/ME, try <a href="https://github.com/praat/praat/releases/download/v4.6.01/praat4601_win98sit.exe">praat4601_win98sit.exe</a> of 17 May 2007.
+The corresponding console edition is in <a href="https://github.com/praat/praat/releases/download/v4.6.01/praatcon4601_win98sit.exe">praatcon4601_win98sit.exe</a>.
+</ul>
+
+<hr>
+Back to the <a href="/">Praat home page</a>.
+
+</body></html>

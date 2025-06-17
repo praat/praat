@@ -1,0 +1,66 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Create tongue-root grammar...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Create tongue-root grammar...
+</b></font></table></table>
+<p>A command in the <b>Constraint grammars</b> submenu of the <a href="New_menu.html">New menu</a>, for creating an <a href="OTGrammar.html">OTGrammar</a> object with a tongue-root-harmony grammar.</p>
+<p>These OTGrammar grammars only accept inputs of the form V<sub>1</sub>tV<sub>2</sub>, where V<sub>1</sub> and V<sub>2</sub> are chosen from the six front vowels i, &#618;, e, &#603;, &#601;, and a.</p>
+<p>The following phonological features are relevant:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<td width=100 align=middle> ATR <td width=100 align=middle> RTR</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>high <td width=100 align=middle>  i  <td width=100 align=middle>  &#618;</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>mid  <td width=100 align=middle>  e  <td width=100 align=middle>  &#603;</table></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>low  <td width=100 align=middle>  &#601;  <td width=100 align=middle>  a</table></dd>
+</dl>
+<h2>Constraints</h2>
+<p>The resulting OTGrammar will usually contain at least the following five constraints:</p>
+<dl>
+<dt>*[rtr / hi]
+<dd>&#8220;do not implement [retracted tongue root] if the vowel is high.&#8221;</dd>
+<dt>*[atr / lo]
+<dd>&#8220;do not implement [advanced tongue root] if the vowel is low.&#8221;</dd>
+<dt>P<font size=-1>ARSE</font> (rtr)
+<dd>&#8220;make an underlying [retracted tongue root] specification surface.&#8221;</dd>
+<dt>P<font size=-1>ARSE</font> (atr)
+<dd>&#8220;make an underlying [advanced tongue root] specification surface.&#8221;</dd>
+<dt>*G<font size=-1>ESTURE</font> (contour)
+<dd>&#8220;do not go from advanced to retracted tongue root, nor the other way around, within a word.&#8221;</dd>
+</dl>
+<p>This set of constraints thus comprises:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; two <i><b>grounding conditions</b></i> (<a href="Archangeli___Pulleyblank__1994_.html">Archangeli & Pulleyblank (1994)</a>), which we can see as gestural constraints;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; two <i><b>faithfulness constraints</b></i>, which favour the similarity between input and output, and can be seen as implementing the principle of maximization of perceptual contrast;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; a <i><b>harmony constraint</b></i>, which, if crucially ranked higher than at least one faithfulness constraint, forces <i><b>tongue-root harmony</b></i>.</dd>
+</dl>
+<p>In addition, there may be the following four constraints:</p>
+<dl>
+<dt>*[rtr / mid]
+<dd>&#8220;do not implement [retracted tongue root] if the vowel is mid&#8221;; universally ranked lower than *[rtr / hi].</dd>
+<dt>*[rtr / lo]
+<dd>&#8220;do not implement [retracted tongue root] if the vowel is low&#8221;; universally ranked lower than *[rtr / mid].</dd>
+<dt>*[atr / mid]
+<dd>&#8220;do not implement [advanced tongue root] if the vowel is mid&#8221;; universally ranked lower than *[atr / lo].</dd>
+<dt>*[atr / hi]
+<dd>&#8220;do not implement [advanced tongue root] if the vowel is high&#8221;; universally ranked lower than *[atr / mid].</dd>
+</dl>
+<p>The universal rankings referred to are due to the <i><b>local-ranking principle</b></i> (<a href="Boersma__1998_.html">Boersma (1998)</a>). A learning algorithm may enforce this principle, e.g., if *[rtr / hi] falls down the ranking scale, *[rtr / mid] may be pushed along.</p>
+<p>For information on learning these tongue-root grammars, see <a href="OT_learning.html">OT learning</a> and <a href="Boersma__2000_.html">Boersma (2000)</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="OT_learning_3_2__Data_from_another_grammar.html">OT learning 3.2. Data from another grammar</a>
+<li><a href="OT_learning_4__Learning_an_ordinal_grammar.html">OT learning 4. Learning an ordinal grammar</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2014,2023</p>
+</address>
+</body>
+</html>

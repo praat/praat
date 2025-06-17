@@ -1,0 +1,37 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OT learning 2.5. Editing a grammar</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OT learning 2.5. Editing a grammar
+</b></font></table></table>
+<p>In the N<font size=-1>O</font>C<font size=-1>ODA</font> example, the winning candidate for the input /pat/ was always [pa].</p>
+<p>To make [pat] the winner instead, N<font size=-1>O</font>C<font size=-1>ODA</font> should be ranked lower than P<font size=-1>ARSE</font>. To achieve this even with zero noise, go to the OTGrammar window and select the N<font size=-1>O</font>C<font size=-1>ODA</font> constraint by clicking on it (a spade symbol &#9824;&#65038; will mark the selected constraint), and choose <b>Edit ranking...</b> from the Edit menu, or use the keyboard shortcut <a href="Keyboard_shortcuts.html">Command-E.</a></p>
+<p>In the resulting command window, we lower the ranking of the constraint from 100 to 80, and click <b>OK</b>. This is what you will then see in the OTGrammar window:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>&#9824;&#65038; <b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      80.000<td width=100 align=middle>      103.429<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      90.000<td width=100 align=middle>      88.083<td width=100 align=middle>       1.000</table></dd>
+<p align=middle><img height=100 width=300 src=OT_learning_2_5__Editing_a_grammar_1.png></p></dl>
+<p>Nothing has happened to the tableau, because the disharmonies still have their old values. So choose <b>Evaluate (noise 2.0)</b> (<a href="Keyboard_shortcuts.html">Command-2</a>) or <b>Evaluate (zero noise)</b> (<a href="Keyboard_shortcuts.html">Command-0</a>). The new disharmonies will centre around the new ranking values, and we see that [pat] becomes the new winner:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>P<font size=-1>ARSE</font></b><td width=100 align=middle>      90.000<td width=100 align=middle>      90.743<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>N<font size=-1>O</font>C<font size=-1>ODA</font></b><td width=100 align=middle>      80.000<td width=100 align=middle>      81.581<td width=100 align=middle>       1.000</table></dd>
+<p align=middle><img height=100 width=300 src=OT_learning_2_5__Editing_a_grammar_2.png></p></dl>
+<ul>
+<li><a href="OT_learning.html">OT learning</a>
+<li><a href="OT_learning_2__The_grammar.html">OT learning 2. The grammar</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20161028</p>
+</address>
+</body>
+</html>

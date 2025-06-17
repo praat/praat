@@ -1,0 +1,66 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Create Strings as file list...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Create Strings as file list...
+</b></font></table></table>
+<p>A command in the <a href="New_menu.html">New menu</a> to create a <a href="Strings.html">Strings</a> object containing a list of files in a given folder.</p>
+<h2>Settings</h2>
+<p align=middle><img height=244 width=540 src=Create_Strings_as_file_list____1.png></p><dl>
+<dt><b>Name</b>
+<dd>the name of the resulting Strings object.</dd>
+<dt><b>File path</b>
+<dd>the folder name, with an optional <i>wildcard</i> (see below) for selecting files.</dd>
+</dl>
+<h2>Behaviour</h2>
+<p>The resulting Strings object will contain an alphabetical list of file names (by na&#239;ve Unicode-sorting), without the preceding path through the folder structures. If there are no files that match the file path, the Strings object will contain no strings.</p>
+<h2>Usage</h2>
+<p>There are two ways to specify the file path.</p>
+<p>One way is to specify a folder name only. On Unix, the file path could be <code><font size=+1>/usr/people/miep/sounds</font></code> or <code><font size=+1>/usr/people/miep/sounds/</font></code>, for instance. On Windows, <code><font size=+1>C:\Users\Miep\Sounds</font></code> or <code><font size=+1>C:\Users\Miep\Sounds\</font></code>. On Macintosh, <code><font size=+1>/Users/miep/Sounds</font></code> or <code><font size=+1>/Users/miep/Sounds/</font></code>. Any of these produce a list of all the files in the specified folder.</p>
+<p>The other way is to specify a wildcard (a single asterisk) for the file names. To get a list of all the files whose names start with &#8220;<code><font size=+1>hal</font></code>&#8221; and end in &#8220;<code><font size=+1>.wav</font></code>&#8221;, type <code><font size=+1>/usr/people/miep/sounds/hal*.wav</font></code>, <code><font size=+1>C:\Users\Miep\Sounds\hal*.wav</font></code>, or <code><font size=+1>/Users/miep/Sounds/hal*.wav</font></code>.</p>
+<h2>Script usage</h2>
+<p>In a script, you can use this command to cycle through the files in a folder. For instance, to read in all the sound files in a specified folder, you could use the following script:</p>
+<code>   folder$ = “/usr/people/miep/sounds”<br></code>
+<code>   strings = <b>Create Strings as file list:</b> “list”, folder$ + “/*.wav”<br></code>
+<code>   numberOfFiles = Get number of strings<br></code>
+<code>   for ifile to numberOfFiles<br></code>
+<code>       <a href="_selectObject_.html">selectObject</a>: strings<br></code>
+<code>       fileName$ = Get string: ifile<br></code>
+<code>       <a href="Read_from_file___.html">Read from file:</a> folder$ + “/” + fileName$<br></code>
+<code>   endfor<br></code>
+<p>If the script has been saved to a script file, you can use file paths that are relative to the folder where you saved the script. Thus, with</p>
+<code>   <b>Create Strings as file list:</b> “list”, “*.wav”<br></code>
+<p>you get a list of all the <code><font size=+1>.wav</font></code> files that are in the same folder as the script that contains this line. And to get a list of all the <code><font size=+1>.wav</font></code> files in the folder <code><font size=+1>Sounds</font></code> that resides in the same folder as your script, you can do</p>
+<code>   <b>Create Strings as file list:</b> “list”, “Sounds/*.wav”<br></code>
+<p>As is usual in Praat scripting, the forward slash (&#8220;/&#8221;) in this example can be used on all platforms, including Windows. This makes your script portable across platforms.</p>
+<p>Note that the above functionality can also be written three lines shorter, using built-in functions:</p>
+<code>   folder$ = “/usr/people/miep/sounds”<br></code>
+<code>   list$# = <b><a href="_fileNames-S-H_.html">fileNames$#</a></b>: folder$ + “/*.wav”<br></code>
+<code>   for ifile to <a href="_size_.html">size</a> (list$#)<br></code>
+<code>       <a href="Read_from_file___.html">Read from file:</a> folder$ + “/” + list$# [ifile]<br></code>
+<code>   endfor<br></code>
+<p>This doesn&#8217;t produce a Strings object.</p>
+<h2>See also</h2>
+<p>To get a list of folders instead of files, use <a href="Create_Strings_as_folder_list___.html">Create Strings as folder list...</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="FAQ__Scripts.html">FAQ: Scripts</a>
+<li><a href="What_was_new_in_3_8_.html">What was new in 3.8?</a>
+<li><a href="What_was_new_in_4_5_.html">What was new in 4.5?</a>
+<li><a href="What_was_new_in_4_6_.html">What was new in 4.6?</a>
+<li><a href="What_was_new_in_5_4_.html">What was new in 5.4?</a>
+<li><a href="What_s_new_.html">What's new?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1998,2006,2013-2015,2020,2024</p>
+</address>
+</body>
+</html>

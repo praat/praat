@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Matrix: Draw distribution...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Matrix: Draw distribution...
+</b></font></table></table>
+<p>A command to draw the distribution histogram of the values in the selected part of a <a href="Matrix.html">Matrix</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Horizontal range</b>, <b>Vertical range</b>
+<dd>determine the part of the matrix whose distribution will be drawn.</dd>
+<dt><b>Minimum value</b>, <b>Maximum value</b>
+<dd>determine the range of values that will be considered in the distribution. To treat all bin widths equally, the range will include the <i>Minimum value</i> and exclude the <i>Maximum value</i> (see below).</dd>
+<dt><b>Number of bins</b>
+<dd>determines the number of bars in the distribution histogram.</dd>
+<dt><b>Minimum frequency</b>, <b>Maximum frequency</b>
+<dd>determine the limits of the vertical axis.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>For a particular matrix element <i>z</i>, the histogram bin number <i>i</i> that will be incremented obeys the following relation:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>lowerBinBorder</i><sub><i>i</i></sub> &#8804; <i>z</i> &lt;  <i>lowerBinBorder</i><sub><i>i</i></sub>+ <i>binWidth</i>,</table>
+<p>where</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>binWidth</i> = (<i>maximumValue</i> - <i>minimumValue</i>)/<i>numberOfBins</i>,</table>
+<p>and</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>lowerBinBorder</i><sub><i>i</i></sub> = <i>minimumValue</i> + (<i>i</i> - 1)&#183;<i>binWidth</i>.</table>
+<p>In this way all bins will be based on exactly the same width, as each binning interval includes its lower border and excludes its upper border (i.e., each interval is closed to the left and open to the right). </p>
+<hr>
+<address>
+	<p>© djmw 20041110</p>
+</address>
+</body>
+</html>

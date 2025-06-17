@@ -153,6 +153,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`fisherP` (%`f`, %`df1`, %`df2`) – area under the Fisher %F curve up to %`f`
 , @`fisherQ` (%`f`, %`df1`, %`df2`) – area under the Fisher %F curve after %`f`
 , @`fixed$` (%`number`, %`precision`) – format a number as a string, with %`precision` digits after the decimal point
+, @`fixed$` (%`vector#`, %`precision`) – format a vector as a string, with all elements expressed in %`precision` digits after the decimal point
+, @`fixed$` (%`matrix##`, %`precision`) – format a matrix as a string, with all cells expressed in %`precision` digits after the decimal point
 , @`floor` (%`x`) – round down to integer
 , @`floor#` (%`vector#`) – round down each element of %`vector#`
 , @`floor##` (%`matrix##`) – round down each cell of %`matrix##`
@@ -2206,7 +2208,7 @@ Related functions
 
 ################################################################################
 "`fixed$`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2025
 
 A function that can be used in @@Formulas@.
 
@@ -2214,6 +2216,28 @@ Syntax and semantics
 ====================
 #`fixed$` (%`number`, %`precision`)
 : format a number as a string, with %`precision` digits after the decimal point.
+
+#`fixed$` (%`vector#`, %`precision`)
+: format a vector as a string, with all elements expressed in %`precision` digits after the decimal point.
+
+#`fixed$` (%`matrix##`, %`precision`)
+: format a matrix as a string, with all cells expressed in %`precision` digits after the decimal point.
+
+Examples
+========
+
+{
+	assert fixed$ (pi, 3) = "3.142"
+	assert fixed$ (-1, 3) = "-1.000"
+	assert fixed$ (1e6, 3) = "1000000.000"
+	assert fixed$ (0.01, 3) = "0.010"
+	assert fixed$ (0.001, 3) = "0.001"
+	assert fixed$ (0.0001, 3) = "0.0001"   ; never less than 1 significant digit!
+	
+	assert fixed$ ({ pi, -1, 1e6, 0.0001 }, 3) =
+	... "3.142" + newline$ + "-1.000" + newline$ +
+	... "1000000.000" + newline$ + "0.0001" + newline$
+}
 
 ################################################################################
 "`floor`"

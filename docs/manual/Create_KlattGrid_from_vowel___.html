@@ -1,0 +1,63 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Create KlattGrid from vowel...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Create KlattGrid from vowel...
+</b></font></table></table>
+<p>Create a new <a href="KlattGrid.html">KlattGrid</a> from the specifications for a vowel.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Name</b>
+<dd>defines the name that the newly created KlattGrid will get in the list of objects.</dd>
+<dt><b>Duration (s)</b>
+<dd>defines the duration of the KlattGrid. The created KlattGrid will have a start time of 0 seconds and an end time of <i>duration</i> seconds.</dd>
+<dt><b>Pitch (Hz)</b>
+<dd>defines the value of the pitch point that will be added at the start of the Klattgrid.</dd>
+<dt><b>F1 (Hz)</b>, <b>F2 (Hz)</b>, <b>F3 (Hz), F4 (Hz)</b><b></b>
+<dd>define the frequencies in hertz of the first four formants. If a frequency is not positive the formant is not used.</dd>
+<dt><b>B1 (Hz)</b>, <b>B2 (Hz)</b>, <b>B3 (Hz)</b>
+<dd>define the bandwidths in hertz of the first three formants</dd>
+<dt><b>Bandwidth fraction</b>
+<dd>defines the bandwidths of the fourth and higher formants as a fraction of the formant's frequency (i.e. it is the inverse of the formant's <i>quality factor</i>). For example if F4 equals 2800 Hz and the "Bandwidth fraction" was chosen as 0.05 then its bandwidth will be 0.05*2800 = 140 Hz. The quality factor of this fourth formant is 20.</dd>
+<dt><b>Formant frequency interval (Hz)</b>
+<dd>defines the distances between the following formants in hertz. For example, if this values is chosen as 1100 Hz and if F4 happens to be 3000 Hz then F5 will be 4100 Hz, F6 will be 5200 Hz, F7 will be 6300 Hz, and so on. If the value is not positive these formants will not be created at all. You would typically choose this value as 1000 or 1100 Hz for an average male or female voice, respectively.</dd>
+</dl>
+<h2>Examples</h2>
+<p>The following script creates a vowel sound with many formants which will sound like the vowel [a]. The formant frequencies will be: F1 = 800 Hz, F2 = 1200 Hz, F3 = 2300 Hz, F4 = 2800 Hz. The frequencies of the higher formants will be at intervals of 1000 Hz, starting from F4. Therefore, F5 = 3800 Hz, F6 = 4800 Hz, F7 = 5800 Hz, and so on. The bandwidths will be B1 = 80 Hz, B2 = 80 Hz, B3 = 100 Hz. The bandwidths of the fourth and higher formants will be 0.05 times their frequency. Therefore, B4 = 140 Hz, B5 = 190 Hz, B6 = 240 Hz, B7 = 290 Hz, and so on.</p>
+<code>   Create KlattGrid from vowel: "a", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.05, 1000<br></code>
+<code>   To Sound<br></code>
+<p>The following script will create a two formant sound which also sounds like [a]. The formant frequencies will be 800 Hz and 1200 Hz.</p>
+<code>   Create KlattGrid from vowel: "a", 0.3, 125, 800, 80, 1200, 80, 0, 100, 0, 0.1, 0<br></code>
+<code>   To Sound<br></code>
+<p>The following script will create a formant sound which also sounds like [a]. The formant frequencies will be 800 Hz, 1200 Hz, 2200 Hz, 3200 Hz, 4200, and so on, with 1000 Hz separation).</p>
+<code>   Create KlattGrid from vowel: "a", 0.3, 125, 800, 80, 1200, 80, 0, 100, 0, 0.05, 1000<br></code>
+<code>   To Sound<br></code>
+<p>Because all the frequency points of the corresponding tiers in this KlattGrid are defined at the start time of the grid, i.e. at time 0.0 seconds, it is easy to change the characteristics of the vowel sound by adding new points. For example, given one of the [a] sounds above which were all synthesized with constant pitch we can have a falling pitch with:</p>
+<code>   Create KlattGrid from vowel: "a", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.05, 1000<br></code>
+<code>   Add pitch point: 0.3, 100.0<br></code>
+<code>   To Sound<br></code>
+<p>An [au] diphthong is also easily made by a simple extension with two oral formant frequency points:</p>
+<code>   Create KlattGrid from vowel: "au", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.05, 1000<br></code>
+<code>   Add pitch point: 0.3, 100.0<br></code>
+<code>   Add oral formant frequency point: 1, 0.3, 300<br></code>
+<code>   Add oral formant frequency point: 2, 0.3, 600<br></code>
+<code>   To Sound<br></code>
+<p>Formant frequencies and bandwidths for 16 Swedish vowels are presented by <a href="Hawks___Miller__1995_.html">Hawks & Miller (1995)</a> in their table 1. They further give equations for bandwidths as a function of formant frequency. <a href="Fleisher_et_al___2015_.html">Fleisher et al. (2015)</a> present in their table 1 values for the first 5 formant frequencies and bandwidths of the German vowels /a/, /i/ and /&#650;/ for speech mode and for singing mode. In general their bandwidths are lower than as predicted by the Hawks and Miller equations.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="New_menu.html">New menu</a>
+<li><a href="What_was_new_in_6_2_.html">What was new in 6.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© David Weenink 2023-08-01</p>
+</address>
+</body>
+</html>

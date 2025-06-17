@@ -1,0 +1,115 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Matrix</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Matrix
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. A Matrix object represents a function <i>z</i> (<i>x</i>, <i>y</i>) on the domain [<i>x</i><sub><i>min</i></sub>, <i>x</i><sub><i>max</i></sub>] &#215; [<i>y</i><sub><i>min</i></sub>, <i>y</i><sub><i>max</i></sub>]. The domain has been sampled in the <i>x</i> and <i>y</i> directions with constant sampling intervals (<i>dx</i> and <i>dy</i>) along each direction. The samples are thus <i>z</i> [<i>i</i><sub><i>y</i></sub>] [<i>i</i><sub><i>x</i></sub>], <i>i</i><sub><i>x</i></sub> = 1 ... <i>n</i><sub><i>x</i></sub>, <i>i</i><sub><i>y</i></sub> = 1 ... <i>n</i><sub><i>y</i></sub>. The samples represent the function values <i>z</i> (<i>x</i><sub>1</sub> + (<i>i</i><sub><i>x</i></sub> - 1) <i>dx</i>, <i>y</i><sub>1</sub> + (<i>i</i><sub><i>y</i></sub> - 1) <i>dy</i>).</p>
+<h2>Matrix commands</h2>
+<p>Creation:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_Matrix___.html">Create Matrix...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Create_simple_Matrix___.html">Create simple Matrix...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Read_from_file___.html">Read from file...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Read_Matrix_from_raw_text_file___.html">Read Matrix from raw text file...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Read Matrix from LVS AP file...</b></dd>
+</dl>
+<p>Drawing:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Matrix: Draw rows...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Matrix: Draw contours...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Matrix: Paint contours...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Matrix: Paint cells...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Matrix: Scatter plot...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Matrix__Draw_as_squares___.html">Matrix: Draw as squares...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Matrix: Draw value distribution...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Matrix: Paint surface...</b></dd>
+</dl>
+<p>Modification:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Matrix__Formula___.html">Matrix: Formula...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Matrix: Scale...</b></dd>
+</dl>
+<h2>Inside a Matrix object</h2>
+<p>With <a href="Inspect.html">Inspect</a>, you will see the following attributes.</p>
+<dl>
+<dt><i>xmin</i>, <i>xmax</i> &#8805; <i>xmin</i>
+<dd><i>x</i> domain.</dd>
+<dt><i>nx</i> &#8805; 1
+<dd>number of columns.</dd>
+<dt><i>dx</i> &gt; 0.0
+<dd>distance between columns.</dd>
+<dt><i>x1</i>
+<dd><i>x</i> value associated with first column.</dd>
+<dt><i>ymin</i>, <i>ymax</i> &#8805; <i>ymin</i>
+<dd><i>y</i> domain.</dd>
+<dt><i>ny</i> &#8805; 1
+<dd>number of rows.</dd>
+<dt><i>dy</i> &gt; 0.0
+<dd>distance between rows.</dd>
+<dt><i>y1</i>
+<dd><i>y</i> value associated with first row.</dd>
+<dt><i>z</i> [1..<i>ny</i>] [1..<i>nx</i>]
+<dd>The sample values.</dd>
+</dl>
+<p>After creation of the <b>Matrix</b>, <i>xmin</i>, <i>xmax</i>, <i>ymin</i>, <i>ymax</i>, <i>nx</i>, <i>ny</i>, <i>dx</i>, <i>dy</i>, <i>x1</i>, and <i>y1</i> do not usually change. The contents of <i>z</i> do.</p>
+<p>Normally, you will want <i>xmin</i> &#8804; <i>x1</i> and <i>xmax</i> &#8805; <i>x1</i> + (<i>nx</i> - 1) <i>dx</i>.</p>
+<h2>Example: simple matrix</h2>
+<p>If a simple matrix has <i>x</i> equal to column number and <i>y</i> equal to row number, it has the following attributes:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>xmin</i> = 1;   <i>xmax</i> = <i>nx</i>;   <i>dx</i> = 1;  <i>x1</i> = 1;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>ymin</i> = 1;   <i>ymax</i> = <i>ny</i>;   <i>dy</i> = 1;  <i>y1</i> = 1;</dd>
+</dl>
+<h2>Example: sampled signal</h2>
+<p>If the matrix represents a sampled signal of 1 second duration with a sampling frequency of 10 kHz, it has the following attributes:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>xmin</i> = 0.0;   <i>xmax</i> = 1.0;   <i>nx</i> = 10000 ;   <i>dx</i> = 1.0&#183;10<sup>-4</sup>;   <i>x1</i> = 0.5&#183;10<sup>-4</sup>;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>ymin</i> = 1;   <i>ymax</i> = 1;   <i>ny</i> = 1;   <i>dy</i> = 1;   <i>y1</i> = 1;</dd>
+</dl>
+<h2>Example: complex signal</h2>
+<p>If the matrix represents a complex spectrum derived with an <a href="FFT.html">FFT</a> from the sound of example 2, it has the following attributes:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>xmin</i> = 0.0;   <i>xmax</i> = 5000.0;   <i>nx</i> = 8193 ;   <i>dx</i> = 5000.0 / 8192;   <i>x1</i> = 0.0;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>ny</i> = 2 (real and imaginary part);</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>ymin</i> = 1 (first row, real part);</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>ymax</i> = 2 (second row, imaginary part);</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><i>dy</i> = 1;   <i>y1</i> = 1;  (so that <i>y</i> is equal to row number)</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ActivationList.html">ActivationList</a>
+<li><a href="BarkFilter.html">BarkFilter</a>
+<li><a href="BarkSpectrogram.html">BarkSpectrogram</a>
+<li><a href="CC__To_Matrix.html">CC: To Matrix</a>
+<li><a href="Create_simple_Matrix_from_values___.html">Create simple Matrix from values...</a>
+<li><a href="Eigen___Matrix__To_Matrix__project_columns____.html">Eigen & Matrix: To Matrix (project columns)...</a>
+<li><a href="Eigen___Matrix__To_Matrix__project_rows____.html">Eigen & Matrix: To Matrix (project rows)...</a>
+<li><a href="Eigen__Extract_eigenvector___.html">Eigen: Extract eigenvector...</a>
+<li><a href="FormantFilter.html">FormantFilter</a>
+<li><a href="Formulas_1_6__Formulas_for_creation.html">Formulas 1.6. Formulas for creation</a>
+<li><a href="Formulas_8__Attributes_of_objects.html">Formulas 8. Attributes of objects</a>
+<li><a href="GaussianMixture___PCA__To_Matrix__density____.html">GaussianMixture & PCA: To Matrix (density)...</a>
+<li><a href="LPC__To_Matrix.html">LPC: To Matrix</a>
+<li><a href="Matrix__Draw_distribution___.html">Matrix: Draw distribution...</a>
+<li><a href="Matrix__Paint_cells___.html">Matrix: Paint cells...</a>
+<li><a href="Matrix__Set_value___.html">Matrix: Set value...</a>
+<li><a href="Matrix__Solve_equation___.html">Matrix: Solve equation...</a>
+<li><a href="Matrix__To_TableOfReal.html">Matrix: To TableOfReal</a>
+<li><a href="MelSpectrogram.html">MelSpectrogram</a>
+<li><a href="PatternList.html">PatternList</a>
+<li><a href="Photo.html">Photo</a>
+<li><a href="RealTier.html">RealTier</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20240712</p>
+</address>
+</body>
+</html>

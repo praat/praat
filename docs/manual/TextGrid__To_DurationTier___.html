@@ -1,0 +1,48 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TextGrid: To DurationTier...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TextGrid: To DurationTier...
+</b></font></table></table>
+<p>Creates a <a href="DurationTier.html">DurationTier</a> that could scale the durations of the specified intervals of the selected <a href="TextGrid.html">TextGrid</a> with a specified factor.</p>
+<h2>Settings</h2>
+<p align=middle><img height=380 width=540 src=TextGrid__To_DurationTier____1.png></p><dl>
+<dt><b>Tier number</b>
+<dd>specifies the tier with the intervals.</dd>
+<dt><b>Time scale factor</b>
+<dd>specifies the scale factor by which the duration of a selected interval has to be multiplied.</dd>
+<dt><b>Left transition duration</b>
+<dd>specifies how long it takes to go from a time scale factor of 1.0 to the specified one. Default a very small duration is used. </dd>
+<dt><b>Right transition duration</b>
+<dd>specifies the time it takes to go from the specified time scale factor to 1.0. Default a very small duration is used.</dd>
+<dt><b>Scale intervals whose labels</b>
+<dd>specifies the interval selection criterion.</dd>
+<dt><b>...the text</b>
+<dd>specifies the text used in the selection criterion.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p align=middle><img height=300 width=500 src=TextGrid__To_DurationTier____2.png></p><p>For each selected interval its duration will be specified by four points in the duration tier as the figure above shows. Given that the start time and the end time of the interval are at <i>t</i><sub>1</sub> and <i>t</i><sub>4</sub>, respectively, the times of these four points will be <i>t</i><sub>1</sub>, <i>t</i><sub>2</sub>=<i>t</i><sub>1</sub>+<i>leftTransitionDuration</i>, <i>t</i><sub>3</sub>=<i>t</i><sub>4</sub>-<i>rightTransitionDuration</i> and <i>t</i><sub>4</sub>. The associated duration scale factors will be 1.0, <i>timeScalefactor</i>, <i>timeScalefactor</i> and 1.0, respectively.</p>
+<p>Normally we would use very small values for the right and the left transition durations, and the curve in the figure above would look more like a rectangular block instead of the trapezium above. If, on the contrary, larger values for the durations are taken, such that the sum of the left and the right transition durations <i>exceeds</i> the interval's width, then the ordering of the time points at <i>t</i><sub>1</sub> to <i>t</i><sub>4</sub> changes, which will have unexpected results on the duration tier.</p>
+<h2>Examples</h2>
+<p>Suppose you want to change the durations of some parts in a sound. The way to go is:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Create a TextGrid with at least one interval tier with the segments of interest labeled.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Select the TextGrid and choose <b>To DurationTier...</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Select the Sound and create a <a href="Manipulation.html">Manipulation</a> object from it. Check and potentially correct the pitch measurements in this Manipulation (<b>View &amp; Edit</b>), as the quality of the resynthesis depends critically on the quality of the pitch measurements.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. Select the Manipulation and the DurationTier together and choose <b>Replace duration tier</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">5. Select the Manipulation object and choose <b>Get resynthesis (overlap-add)</b>. The resulting Sound will have the durations of its selected intervals changed.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">6. Optionally you may also want to scale the TextGrid to line up with the newly created Sound. To do so, select the TextGrid and the DurationTier together and choose <b>To TextGrid (scale times)</b>. You will get a new TextGrid that is nicely aligned with the new sound.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20170617</p>
+</address>
+</body>
+</html>

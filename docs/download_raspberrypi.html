@@ -1,0 +1,51 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Downloading Praat for Raspberry Pi</title></head><body bgcolor="#CCCCFF">
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Downloading Praat for Raspberry Pi
+</b></font></table></table>
+
+<hr><h3>1. Downloading the Raspberry Pi edition</h3>
+
+<p>To download the latest version of the <b>Raspberry Pi</b> edition of <b>Praat</b>,
+click on one of the following compressed archives:</p>
+<ul>
+<li>32-bit edition (ARMv7 processor, e.g. the Pi 4B): <b><a href="https://github.com/praat/praat/releases/download/v6.4.35/praat6435_rpi-armv7.tar.gz">praat6435_rpi-armv7.tar.gz</a></b> (15 June 2025; 24.9 MB)
+<li>64-bit edition (ARM64/Aarch64 processor, e.g. the Pi 400): <b><a href="https://github.com/praat/praat/releases/download/v6.4.35/praat6435_linux-armv64.tar.gz">praat6435_linux-armv64.tar.gz</a></b> (15 June 2025; 27.2 MB; this is the general Linux ARM64 edition)
+</ul>
+<p>Unpack with <b>gunzip</b> and <b>tar xvf</b>. This will create the executable file <b>praat</b>.
+You can remove the <b>tar</b> file.</p>
+
+<hr><h3>2. How to start</h3>
+<p>Praat will work fine wherever it is on your disk; in the Terminal window,
+just navigate to the folder where the executable <b>praat</b> is,
+then type <b>./praat</b> (on some systems, clicking the icon could also work, but more often it won’t).
+If you use Praat for the first time, choose <b>Intro</b> from the Help menu.</p>
+
+<hr><h3>3. Phonetic symbols</h3>
+<p>If you want to see good phonetic characters,
+you have to install the Charis SIL and Doulos SIL fonts:</p>
+
+<code>
+&nbsp;&nbsp;&nbsp;sudo apt install fonts-sil-charis<br>
+&nbsp;&nbsp;&nbsp;sudo apt install fonts-sil-doulos
+</code>
+
+<p>If you cannot install those packages, you can download the two fonts
+from <a href=http://www.sil.org>Summer Institute of Linguistics</a> and follow the installation instructions there.</p>
+
+<hr><h3>4. Running Praat from the command line</h3>
+<p>To run Praat from a terminal window,
+write a Praat script and specify that script on the command line, optionally with arguments, e.g.:</p>
+<code>&nbsp;&nbsp;&nbsp;./praat --run playsinewave.praat 377 0.9</code>
+<p>For details see <a href="manual/Scripting_6_9__Calling_from_the_command_line.html">Calling from the command line</a> in the Scripting manual.</p>
+
+<hr><h3>5. Known possible problems, and their solution</h3>
+<p><b>5a. Sound recording does not work</b></p>
+<p>We do not yet support the microphone, but you should be able to get audio <i>output</i> to work
+by starting up the JACK daemon, for instance:</p>
+<code>&nbsp;&nbsp;&nbsp;jackd -d alsa &amp;</code>
+
+<hr>
+by Paul Boersma.<br>
+Back to the <a href="/">Praat home page</a>.
+</body></html>

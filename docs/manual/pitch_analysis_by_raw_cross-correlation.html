@@ -1,0 +1,49 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>pitch analysis by raw cross-correlation</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+pitch analysis by raw cross-correlation
+</b></font></table></table>
+<h2>Purpose</h2>
+<p>to perform a pitch analysis based on a cross-correlation method.</p>
+<h2>Usage</h2>
+<p>Raw cross-correlation is the pitch analysis method of choice if you want to do voice analysis (e.g. jitter, shimmer).</p>
+<p>Note that the preferred method for speech (intonation, vocal fold vibration) is <a href="pitch_analysis_by_filtered_autocorrelation.html">pitch analysis by filtered autocorrelation</a>. Raw cross-correlation is mainly for experimenting, or for applications where you need short time windows; for this latter reason, it is also the standard method for voice analysis.</p>
+<p>See <a href="how_to_choose_a_pitch_analysis_method.html">how to choose a pitch analysis method</a> for details.</p>
+<h2>Algorithm</h2>
+<p>The algorithm performs an acoustic periodicity detection on the basis of a forward cross-correlation analysis.</p>
+<h2>Settings</h2>
+<p>Several settings are already described in <a href="Intro_4_2__Configuring_the_pitch_contour.html">Intro 4.2. Configuring the pitch contour</a>. The explanations below assume that you have gone through that part of the Intro.</p>
+<dl>
+<dt><b>Time step (s)</b> (standard value: 0.0)
+<dd>the measurement interval (frame duration), in seconds. If you supply 0, Praat will use a time step of 0.25 / (<i>pitch floor</i>), e.g. 0.00333333 seconds if the pitch floor is 75 Hz; in this example, Praat computes 300 pitch values per second.</dd>
+<dt><b>Pitch floor (Hz)</b> (standard value: 75 Hz)
+<dd>candidates below this frequency will not be recruited. This parameter determines the length of the analysis window: it will be 1 longest period long, i.e., if the pitch floor is 75 Hz, the window will be 1/75 = 0.01333333 seconds long.</dd>
+</dl>
+<p>Note that if you set the time step to zero, the analysis windows for consecutive measurements will overlap appreciably: Praat will always compute 4 pitch values within one window length, i.e., the degree of <i>oversampling</i> is 4.</p>
+<p>The other settings are the same as for <a href="pitch_analysis_by_raw_autocorrelation.html">pitch analysis by raw autocorrelation</a>.</p>
+<h2>Availability in Praat</h2>
+<p>Pitch analysis by raw cross-correlation is available in two ways in Praat:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; via <a href="Sound__To_Pitch__raw_cross-correlation____.html">Sound: To Pitch (raw cross-correlation)...</a> from the <b>Analyse periodicity</b> menu in the Objects window when you select a Sound object;</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; via <b>Show Pitch</b> and <b>Pitch analysis method is raw cross-correlation</b> from the <b>Pitch</b> menu when you are viewing a Sound or TextGrid object (<a href="SoundEditor.html">SoundEditor</a>, <a href="TextGridEditor.html">TextGridEditor</a>).</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="FAQ__Pitch_analysis.html">FAQ: Pitch analysis</a>
+<li><a href="pitch_analysis_by_filtered_cross-correlation.html">pitch analysis by filtered cross-correlation</a>
+<li><a href="Pitch_settings___.html">Pitch settings...</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 1996,2003,2023,2024</p>
+</address>
+</body>
+</html>

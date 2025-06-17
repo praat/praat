@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ConstantQLogFSpectrogram</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ConstantQLogFSpectrogram
+</b></font></table></table>
+<p>A <b>ConstantQLogFSpectrogram</b> is a time-frequency representation of a sound that deviates from a traditional <a href="Spectrogram.html">Spectrogram</a> in two important ways. </p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. The frequency scale is logarithmic which means that the distances between successive frequencies are equal on a logarithmic scale.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. The frequency analysis is performed with filters that have a constant quality factor which essencially means that we are using the same number of periods in the analysis of each frequency bin and this results in longer analysis windows at low frequencies and shorter analysis windows at higher frequencies. As a result the sampling of each frequency bin is different, hence it is <i>multi-sampled</i>.</dd>
+</dl>
+<p>One of the characteristics of a <b>ConstantQLogFSpectrogram</b>'s representation is that the number of frequency bins in an octave is constant. If, for example, the number of frequency bins per octave is 24 this means that the number of frequency bins in the interval from 100 to 200 Hz equals 24 and that the number of frequency bins in the intervals from 200&#8211;400 Hz, 400&#8211;800 Hz, 800&#8211;1600 Hz, 1600&#8211;3200 Hz, etc. also equal 24. This behaviour mimics the layout of the frequency sensitivity of the human basilar membrane much better than a traditional <a href="Spectrogram.html">Spectrogram</a>.</p>
+<p>The frequency of the <i>k</i><sup>th</sup> frequency bin can be calculated as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i><sub><i>k</i></sub> = <i>lowestFrequency</i>&#183;2<sup>(<i>k</i>-1)/<i>numberOfFrequencyBinsPerOctave</i>). </sup></table>
+<p>A big advantage of the <b>ConstantQLogFSpectrogram</b> over a traditional <b>Spectrogram</b> is its invertability: we can create the original sound back from it. This provides a way to manipulate a sound in the frequency domain. </p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound__To_ConstantQLogFSpectrogram___.html">Sound: To ConstantQLogFSpectrogram...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20211111</p>
+</address>
+</body>
+</html>

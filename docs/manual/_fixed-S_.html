@@ -1,0 +1,49 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>fixed$</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+fixed$
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>fixed$</font></code></b> (<i><code><font size=+1>number</font></code></i>, <i><code><font size=+1>precision</font></code></i>)
+<dd>format a number as a string, with <i><code><font size=+1>precision</font></code></i> digits after the decimal point.</dd>
+<dt><b><code><font size=+1>fixed$</font></code></b> (<i><code><font size=+1>vector#</font></code></i>, <i><code><font size=+1>precision</font></code></i>)
+<dd>format a vector as a string, with all elements expressed in <i><code><font size=+1>precision</font></code></i> digits after the decimal point.</dd>
+<dt><b><code><font size=+1>fixed$</font></code></b> (<i><code><font size=+1>matrix##</font></code></i>, <i><code><font size=+1>precision</font></code></i>)
+<dd>format a matrix as a string, with all cells expressed in <i><code><font size=+1>precision</font></code></i> digits after the decimal point.</dd>
+</dl>
+<h2>Examples</h2>
+<code>   assert fixed$ (pi, 3) = "3.142"<br></code>
+<code>   assert fixed$ (-1, 3) = "-1.000"<br></code>
+<code>   assert fixed$ (1e6, 3) = "1000000.000"<br></code>
+<code>   assert fixed$ (0.01, 3) = "0.010"<br></code>
+<code>   assert fixed$ (0.001, 3) = "0.001"<br></code>
+<code>   assert fixed$ (0.0001, 3) = "0.0001"   ; never less than 1 significant digit!<br></code>
+<code>   <br></code>
+<code>   assert fixed$ ({ pi, -1, 1e6, 0.0001 }, 3) =<br></code>
+<code>   ... "3.142" + newline$ + "-1.000" + newline$ +<br></code>
+<code>   ... "1000000.000" + newline$ + "0.0001" + newline$<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_clock_.html"><code><font size=+1>clock</font></code></a>
+<li><a href="energy_integration_continuity_test.html">energy integration continuity test</a>
+<li><a href="Functions.html">Functions</a>
+<li><a href="Scripting_5_1__Variables.html">Scripting 5.1. Variables</a>
+<li><a href="What_was_new_in_4_0_.html">What was new in 4.0?</a>
+<li><a href="What_s_new_.html">What's new?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023,2025</p>
+</address>
+</body>
+</html>

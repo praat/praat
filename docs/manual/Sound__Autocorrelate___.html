@@ -1,0 +1,68 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Autocorrelate...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Autocorrelate...
+</b></font></table></table>
+<p>A command available in the <b>Periodicity</b> menu when you select one or more <a href="Sound.html">Sound</a> objects. This command autocorrelates the selected <a href="Sound.html">Sound</a> object. As a result, a new Sound will appear in the list of objects; this new Sound is the <i>autocorrelation</i> of the original Sound.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Amplitude scaling</b>
+<dd>Here you can choose between the &#8220;principled&#8221; options <b>integral</b>, <b>sum</b>, and <b>normalize</b>, which are explained in 1, 2 and 3 below. There is also a &#8220;pragmatic&#8221; option, namely <b>peak 0.99</b>, which scales the resulting sound in such a way that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it (see <a href="Sound__Scale_peak___.html">Sound: Scale peak...</a>).</dd>
+<dt><b>Signal outside time domain is...</b>
+<dd>Here you can choose whether outside its time domain the sound is considered to be <b>zero</b> (the standard value), or <b>similar</b> to the sound within the time domain. This is explained in 4 below.</dd>
+</dl>
+<h2>1. Autocorrelation as an integral</h2>
+<p>The autocorrelation of a continuous time signal <i>f</i>(<i>t</i>) is a function of the lag time <i>&#964;</i>, and defined as the <b>integral</b></p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>R</i><sub><i>f</i></sub> (<i>&#964;</i>) &#8801; &#8747; <i>f</i>(<i>t</i>) <i>f</i>(<i>t</i>+<i>&#964;</i>) <i>dt</i></table>
+<p>If <i>f</i> is a sampled signal (as Sounds are in Praat), with <a href="sampling_period.html">sampling period</a> <i>&#916;t</i>, the definition is discretized as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>R</i><sub><i>f</i></sub> [<i>&#964;</i>] &#8801; &#8721;<sub><i>t</i></sub> <i>f</i>[<i>t</i>] <i>f</i>[<i>t</i>+<i>&#964;</i>] <i>&#916;t</i></table>
+<p>where <i>&#964;</i> and <i>t</i>+<i>&#964;</i> are the discrete times at which <i>f</i> is defined.</p>
+<p>The autocorrelation is symmetric: <i>R</i><sub><i>f</i></sub> (&#8722;<i>&#964;</i>) = <i>R</i><sub><i>f</i></sub> (<i>&#964;</i>).</p>
+<h2>2. Autocorrelation as a sum</h2>
+<p>You can see in the formula above that if the input Sound is expressed in units of Pa, the resulting Sound should ideally be expressed in Pa<sup>2</sup>s. Nevertheless, Praat will express it in Pa, because Sounds cannot be expressed otherwise.</p>
+<p>This basically means that it is impossible to get the amplitude of the resulting Sound correct for all purposes. For this reason, Praat considers a different definition of autocorrelation as well, namely as the <b>sum</b></p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>R</i><sub><i>f</i></sub> [<i>&#964;</i>] &#8801; &#8721;<sub><i>t</i></sub> <i>f</i>[<i>t</i>] <i>g</i>[<i>t</i>+<i>&#964;</i>]</table>
+<p>The difference between the integral and sum definitions is that in the sum definition the resulting sound is divided by <i>&#916;t</i>.</p>
+<h2>3. Normalized autocorrelation</h2>
+<p>The <i>normalized autocorrelation</i> is defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>norm-autocorr (<i>f</i>) (<i>&#964;</i>) &#8801; &#8747; <i>f</i>(<i>t</i>) <i>f</i>(<i>t</i>+<i>&#964;</i>) <i>dt</i> / &#8747; <i>f</i><sup>2</sup>(<i>t</i>) <i>dt</i></table>
+<h2>4. Shape scaling</h2>
+<p>The boundaries of the integral in 1 are &#8722;&#8734; and +&#8734;. However, <i>f</i> is a Sound object in Praat and therefore has a finite time domain. If <i>f</i> runs from <i>t</i><sub>1</sub> to <i>t</i><sub>2</sub> and is assumed to be <b>zero</b> before <i>t</i><sub>1</sub> and after <i>t</i><sub>2</sub>, then the autocorrelation will be zero before <i>t</i><sub>1</sub>&#8722;<i>t</i><sub>2</sub> and after <i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub>, while between <i>t</i><sub>1</sub>&#8722;<i>t</i><sub>2</sub> and <i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub> it is</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>R</i><sub><i>f</i></sub> (<i>&#964;</i>) = &#8747;<sub><i>t1</i></sub><sup><i>t2</i></sup> <i>f</i>(<i>t</i>) <i>f</i>(<i>t</i>+<i>&#964;</i>) <i>dt</i></table>
+<p>In this formula, the argument of the first <i>f</i> runs from <i>t</i><sub>1</sub> to <i>t</i><sub>2</sub>, but the argument of the second <i>f</i> runs from <i>t</i><sub>1</sub>+(<i>t</i><sub>1</sub>&#8722;<i>t</i><sub>2</sub>) to <i>t</i><sub>2</sub>+(<i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub>), i.e. from <i>t</i><sub>1</sub>&#8722;(<i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub>) to <i>t</i><sub>2</sub>+(<i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub>). This means that the integration is performed over two equal stretches of time during which <i>f</i> must be taken zero, namely a time stretch before <i>t</i><sub>1</sub> and a time stretch after <i>t</i><sub>2</sub>, both of duration <i>t</i><sub>2</sub>&#8722;<i>t</i><sub>1</sub>.</p>
+<p>If you consider the sound outside its time domains as <b>similar</b> to what it is within its time domain, instead of <b>zero</b>, the discretized formula in 1 should be based on the average over the jointly defined values of <i>f</i>[<i>&#964;</i>] and <i>f</i>[<i>t</i>-<i>&#964;</i>], without counting any multiplications of values outside the time domain. Suppose that <i>f</i> is defined on the time domain [0, 1.2] with the value of 1 everywhere. Its autocorrelation under the assumption that it is <b>zero</b> elsewhere is then</p>
+<code>   Create Sound from formula: "sound", 1, 0.0, 1.2, 1000, ~ 1<br></code>
+<code>   Autocorrelate: "integral", "zero"<br></code>
+<code>   Draw: 0, 0, 0.0, 1.5, "yes", "curve"<br></code>
+<code>   One mark left: 1.2, "yes", "yes", "yes", ""<br></code>
+<p align=middle><img height=300 width=500 src=Sound__Autocorrelate____1.png></p><p>but under the assumption that the sound is <b>similar</b> (i.e. 1) elsewhere, its autocorrelation should be</p>
+<code>   Create Sound from formula: "sound", 1, 0.0, 1.2, 1000, ~ 1<br></code>
+<code>   Autocorrelate: "integral", "similar"<br></code>
+<code>   Draw: 0, 0, 0.0, 1.5, "yes", "curve"<br></code>
+<code>   One mark left: 1.2, "yes", "yes", "yes", ""<br></code>
+<p align=middle><img height=300 width=500 src=Sound__Autocorrelate____2.png></p><p>i.e. a constant value of 1.2. This is what you get by choosing the <b>similar</b> option; the autocorrelation will be divided by a triangular function to compensate for the fact that the autocorrelation has been computed over fewer values closer to the edges; this procedure is followed in all autocorrelation-based pitch computations in Praat (see <a href="Sound__To_Pitch___.html">Sound: To Pitch...</a>). For examples, see <a href="Boersma__1993_.html">Boersma (1993)</a>.</p>
+<h2>5. Behaviour</h2>
+<p>The start time of the resulting Sound will be the start time of <i>f</i> minus the end time of <i>f</i>, the end time of the resulting Sound will be the end time of <i>f</i> minus the start time of <i>f</i>, the time of the first sample of the resulting Sound will be the first sample of <i>f</i> minus the last sample of <i>f</i>, the time of the last sample of the resulting Sound will be the last sample of <i>f</i> minus the first sample of <i>f</i>, and the number of samples in the resulting Sound will be twice the number of samples of <i>f</i>, minus 1.</p>
+<h2>6. Behaviour for stereo and other multi-channel sounds</h2>
+<p>If the selected Sound has more than one channel, each channel of the resulting Sound is computed as the cross-correlation of the corresponding channel of the original Sound. For instance, if you autocorrelate a 10-channel sound, the resulting sound will again have 10 channels, and its 9th channel will be the autocorrelation of the 9th channel of the original sound.</p>
+<p>The amplitude scaling factor will be the same for all channels, so that the relative amplitude of the channels will be preserved in the resulting sound. For the <b>normalize</b> scaling, for instance, the squared norm of <i>f</i> in the formula above is taken over all channels of <i>f</i>. For the <b>peak 0.99</b> scaling, the resulting sound will typically have an absolute peak of 0.99 in only one channel, and lower absolute peaks in the other channels.</p>
+<h2>Algorithm</h2>
+<p>The autocorrelation is calculated as the <a href="Sounds__Cross-correlate___.html">cross-correlation</a> of a sound with itself.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_5_2_.html">What was new in 5.2?</a>
+</ul>
+<hr>
+<address>
+	<p>© David Weenink & Paul Boersma 2010-04-04,2024</p>
+</address>
+</body>
+</html>

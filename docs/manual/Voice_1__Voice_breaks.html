@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Voice 1. Voice breaks</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Voice 1. Voice breaks
+</b></font></table></table>
+<p>Normal voices can easily maintain phonation for some time when saying [a]. Some pathological voices have trouble with it. This can be measured in Praat in two ways.</p>
+<h2>Fraction of locally unvoiced pitch frames</h2>
+<p>This is the fraction of pitch frames that are analysed as unvoiced (MDVP calls it DUV). If the pitch floor is 75 Hz, your Sound editor window will contain pitch measurements that are 0.01 seconds apart, so that if you select one second, there will be 100 pitch frames. If 86 of these are locally voiced, the Fraction will be 14 percent.</p>
+<p>The usual pitch analysis contains a <i>path finder</i> that searches for a smooth path through the local pitch candidates. This path finder is temporarily switched off to determine the fraction of locally unvoiced frames. A frame is regarded as <i>locally</i> unvoiced if it has a voicing strength below the <i>voicing threshold</i> (whose standard value is 0.45), or a local peak below the <i>silence threshold</i> (whose standard value is 0.03).</p>
+<p>In the voice report, the fraction of unvoiced frames will be reported as follows:</p>
+<code>   Fraction of locally unvoiced frames: 14.000% (14/100)<br></code>
+<p>The numbers between parentheses are the number of unvoiced frames and the total number of frames, respectively (in MDVP, these are called NUV and SEG, respectively).</p>
+<p>The normative value for the fraction of unvoiced frames is 0, i.e., normal healthy voices should have no trouble maintaining voicing during a sustained vowel. Every non-zero value can be considered a sign of pathology (like a common cold). Naturally, you will not select the leading and trailing silences when measuring this parameter.</p>
+<h2>Number of voice breaks</h2>
+<p>The number of distances between consecutive pulses that are longer than 1.25 divided by the pitch floor. Thus, if the pitch floor is 75 Hz, all inter-pulse intervals longer than 16.6667 milliseconds are regarded as voice breaks.</p>
+<h2>Degree of voice breaks</h2>
+<p>This is the total duration of the breaks between the voiced parts of the signal, divided by the total duration of the analysed part of the signal (MDVP calls it DVB). Since silences at the beginning and the end of the signal are not considered breaks, you will probably not want to select these silences when measuring this parameter.</p>
+<p>In the voice report, the degree of voice breaks will be reported like this:</p>
+<code>   Degree of voice breaks: 29.529% (1.163061 s / 3.938685 s)<br></code>
+<p>The numbers between parentheses are the total duration of the voice breaks and the duration of the analysed part of the signal, respectively.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Voice.html">Voice</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2003</p>
+</address>
+</body>
+</html>

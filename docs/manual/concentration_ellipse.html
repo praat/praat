@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>concentration ellipse</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+concentration ellipse
+</b></font></table></table>
+<p>The percentage of bivariate normally distributed data covered by an ellipse whose axes have a length of <i>numberOfSigmas</i> &#183; <i>&#963;</i> can be obtained by integration of the probability distribution function over an elliptical area. This results in the following equation, as can be verified from equation 26.3.21 in <a href="Abramowitz___Stegun__1970_.html">Abramowitz & Stegun (1970)</a>:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>percentage</i> = (1 - exp (-<i>numberOfSigmas</i><sup>2</sup>/2)) &#183; 100%,</table>
+<p>where the <i>numberOfSigmas</i> is the radius of the "ellipse":</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(<i>x</i>/<i>&#963;</i><sub>x</sub>)<sup>2</sup> + (<i>y</i>/<i>&#963;</i><sub>y</sub>)<sup>2</sup> = <i>numberOfSigmas</i><sup>2</sup>.</table>
+<p>The <i>numberOfSigmas</i>=1 ellipse covers 39.3% of the data, the <i>numberOfSigmas</i>=2 ellipse 86.5%, and the <i>numberOfSigmas</i>=3 ellipse 98.9%.</p>
+<p>From the formula above we can show that if we want to cover <i>p</i> percent of the data, we have to choose <i>numberOfSigmas</i> as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>numberOfSigmas</i> = &#8730;(-2 ln(1-<i>p</i>/100)).</table>
+<p>For covering 95% of the data we calculate <i>numberOfSigmas</i> = 2.45.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Discriminant__Draw_sigma_ellipses___.html">Discriminant: Draw sigma ellipses...</a>
+<li><a href="Discriminant__Get_concentration_ellipse_area___.html">Discriminant: Get concentration ellipse area...</a>
+<li><a href="GaussianMixture___PCA__Draw_concentration_ellipses___.html">GaussianMixture & PCA: Draw concentration ellipses...</a>
+<li><a href="GaussianMixture__Draw_concentration_ellipses___.html">GaussianMixture: Draw concentration ellipses...</a>
+<li><a href="SSCP__Draw_sigma_ellipse___.html">SSCP: Draw sigma ellipse...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20071113</p>
+</address>
+</body>
+</html>

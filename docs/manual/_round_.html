@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>round</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+round
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>round</font></code></b> (<i><code><font size=+1>x</font></code></i>)
+<dd>round <i><code><font size=+1>x</font></code></i> to the nearest integer number.</dd>
+</dl>
+<code>   assert round (1.3) = 1<br></code>
+<code>   assert round (1.7) = 2<br></code>
+<code>   assert round (-1.3) = -1<br></code>
+<code>   assert round (-1.7) = -2<br></code>
+<p>Halves are rounded up:</p>
+<code>   assert round (-2.5) = -2<br></code>
+<code>   assert round (-1.5) = -1<br></code>
+<code>   assert round (-0.5) = 0<br></code>
+<code>   assert round (0.5) = 1<br></code>
+<code>   assert round (1.5) = 2<br></code>
+<code>   assert round (2.5) = 3<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_round-H-H_.html"><code><font size=+1>round##</font></code></a>
+<li><a href="_round-H_.html"><code><font size=+1>round#</font></code></a>
+<li><a href="Functions.html">Functions</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2023-06-30</p>
+</address>
+</body>
+</html>

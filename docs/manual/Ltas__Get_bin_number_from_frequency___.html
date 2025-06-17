@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Ltas: Get bin number from frequency...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Ltas: Get bin number from frequency...
+</b></font></table></table>
+<p>A <a href="Query_submenu.html">query</a> to the selected <a href="Ltas.html">Ltas</a> object.</p>
+<h2>Return bin</h2>
+<p>the band number belonging to the specified frequency, expressed as a real number.</p>
+<h2>Example</h2>
+<p>If the Ltas has a bin width of 1000 Hz, and the lowest frequency is 0 Hz, the bin number associated with a frequency of 1800 Hz is 2.3.</p>
+<h2>Scripting</h2>
+<p>You can use this command to put the nearest bin centre into a script variable:</p>
+<code>   selectObject: "Ltas hallo"<br></code>
+<code>   bin = Get bin number from frequency: 1800<br></code>
+<code>   nearestBin = round (bin)<br></code>
+<p>In this case, the value will not be written into the Info window. To round down or up, use</p>
+<code>   leftBin = floor (bin)<br></code>
+<code>   rightBin = ceiling (bin)<br></code>
+<hr>
+<address>
+	<p>© ppgb 20140421</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To TextGrid (speech activity)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To TextGrid (speech activity)...
+</b></font></table></table>
+<p>A command that creates a <a href="TextGrid.html">TextGrid</a> for the selected <a href="Sound.html">Sound</a> in which the non-speech intervals and the intervals with speech activity are marked. The discrimination between the two is based on a spectral flatness measure.</p>
+<p>Speech activity detection, in the technical literature often referred to as voice activity detection, is a method to discriminate speech segments from input noisy speech. According to the article of <a href="Ma___Nishihara__2013_.html">Ma & Nishihara (2013)</a>, spectral flatness is a measure of the width, uniformity, and noisiness of the power spectrum. A high spectral flatness indicates that the spectrum has a similar amount of power in all spectral bands, and the graph of the spectrum would appear relatively flat and smooth; A low spectral flatness indicates that the spectral power is less uniform, and this would be more typical for speech-like sounds. In general speech is a highly non-stationary signal while background noise can be considered stationary over relatively longer periods of time.  </p>
+<p>Because the spectral flatness measure is completely independent of the overall intensity of the sound we have added the possibility to also discriminate on intensity.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Time step (s)</b>
+<dd>determines the time interval between consecutive measurements of the spectral flatness measure. </dd>
+<dt><b>Long term window (s)</b>
+<dd>determines the window duration for the calculation of the long term spectral flatness measure. According to <b>Ma &amp; Nishihara (2013)</b> a value of approximately 0.3 s performed best on average for a number of different noise conditions.</dd>
+<dt><b>Short term window (s)</b>
+<dd>determines the interval for averaging spectral estimates. According to <b>Ma &amp; Nishihara (2013)</b> a value of approximately 0.1 s performed best on average for a number of different noise conditions.</dd>
+<dt><b>Frequency range (Hz)</b>
+<dd>determines the frequency range used in the calculation of the spectral flatness measure. Ma &amp; Nishihara (2013) used a range from 400 to 4000 Hz. Because fricatives tend to have strong components above 4000 Hz we increased the default value to 6000 Hz. In this way the fricative's intensity, which is calculated from this range, becomes higher and because of this a fricative is less likely to be skipped by a selection on the non-speech threshold. We also decreased the lower value from 400 to 70 Hz. In this way we increase chances that sounds at start or end positions with mainly low frequency components, like nasals, are detected.</dd>
+<dt><b>Flatness threshold</b>
+<dd>determines whether a frame is considered <i>speech</i> or not, based on a spectral flatness measure. Values of the flatness below the threshold are considered speech.</dd>
+<dt><b>Non-speech threshold (dB)</b>
+<dd>also determines whether a frame is considered <i>speech</i> or not, but based on intensity. Intervals with an intensity smaller than this value below the sound's maximum intensity value are considered as <i>non-speech</i> intervals. The intensity is calculated from the frequency range defined above. </dd>
+<dt><b>Minimum non-speech interval duration (s)</b>
+<dd>determines the minimum duration for an interval to be considered as non-speech. If you don't want the closure for a plosive to count as non-speech then use a large enough value.</dd>
+<dt><b>Minimum speech interval (s)</b>
+<dd>determines the minimum duration for an interval to be considered as speech. This offers the possibility to filter out small intense bursts of relatively short duration.</dd>
+<dt><b>Speech / Non-speech interval label</b>
+<dd>determine the labels for the corresponding intervals in the newly created TextGrid.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The speech activity algorithm is described in <a href="Ma___Nishihara__2013_.html">Ma & Nishihara (2013)</a>.</p>
+<p>The logarithm of the speech flatness at frame <i>m</i> is defined as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>L (m) = &#931;<sub>k</sub> log (GM(<i>m</i>, <i>f</i><sub><i>k</i></sub>) / AM (<i>m</i>, <i>f</i><sub><i>k</i></sub>)), </table>
+<p>&nbsp;where GM(<i>m</i>, <i>f</i><sub><i>k</i></sub>) and AM (<i>m</i>, <i>f</i><sub><i>k</i></sub>) are the geometric and arithmetic means for spectrum component <i>f</i><sub><i>k</i></sub>, respectively. The geometric mean GM (<i>m</i>, <i>f</i><sub><i>k</i></sub>) is defined as </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>GM(<i>m</i>, <i>f</i><sub><i>k</i></sub>) = {&#928;<sup><i>m</i></sup><sub><i>n</i>=<i>m</i>-<i>R</i>+1</sub> <i>S</i>(<i>n</i>, <i>f</i><sub><i>k</i></sub>)}<sup>(1/<i>R</i>)</sup></table>
+<p>&nbsp;where the number of frames <i>R</i> is determined by the setting of the <i>long term window</i> parameter. AM(<i>m</i>, <i>f</i><sub><i>k</i></sub>) is defined as </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>AM(<i>m</i>, <i>f</i><sub><i>k</i></sub>) = {&#931;<sup>m</sup><sub>n=<i>m</i>-<i>R</i>+1</sub> <i>S</i>(<i>n</i>, <i>f</i><sub><i>k</i></sub>)} / <i>R</i></table>
+<p>The <i>short</i> term window comes into play in the definition of the <i>S</i>(<i>n</i>, <i>f</i><sub><i>k</i></sub>), because this is itself the average of <i>M</i> local spectral frames</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>S</i>(<i>n</i>, <i>f</i><sub><i>k</i></sub>) = {&#931;<sup>M</sup><sub>p=<i>m</i>-<i>M</i>+1</sub> |X(p, <i>f</i><sub><i>k</i></sub>)|<sup>2</sup>} / <i>M</i>,</table>
+<p>where the number of frames <i>M</i> is determined by the setting of the <i>short term window</i> length. </p>
+<p>The ratio between the geometric and arithmetic mean is always smaller than or equal to one. Only when all numbers are equal, this means a flat spectrum, the ratio becomes equal to one. </p>
+<hr>
+<address>
+	<p>© djmw 20231209</p>
+</address>
+</body>
+</html>

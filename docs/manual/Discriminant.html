@@ -1,0 +1,63 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Discriminant</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Discriminant
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat.</p>
+<p>An object of type Discriminant represents the discriminant structure of a multivariate data set, i.e. a <i>numberOfObservations</i>&#215;<i>dimension</i> matrix. Each row in this data set belongs to one of <i>numberOfGroups</i> groups (or <i>classes</i> or <i>categories</i><i></i>, whatever terminology you prefer). A Discriminant can be used as a classifier to discriminate between these <i>numberOfGroups</i> groups.</p>
+<h2><b>Inside a Discriminant</b></h2>
+<p>With <a href="Inspect.html">Inspect</a>, you will see that a Discriminant contains the following data:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><b>eigen</b></dd>
+<dd>the <a href="Eigen.html">eigen</a> structure, i.e. the eigenvalues and eigenvectors.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><b>numberOfGroups</b></dd>
+<dd>the number of groups between which we can discriminate.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><b>groups</b></dd>
+<dd>a list of <i>dimension</i>&#215;<i>dimension</i> <a href="SSCP.html">SSCP</a> matrices, one for each group, <i>numberOfGroups</i> in total.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><b>aprioriProbabilities</b></dd>
+<dd>an array with <i>numberOfGroups</i> apriori probabilities of group membership</dd>
+</dl>
+<h2>Commands</h2>
+<p>Creation:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Discriminant_analysis.html">Discriminant analysis</a> tutorial</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="TableOfReal__To_Discriminant.html">TableOfReal: To Discriminant</a></dd>
+</dl>
+<p>Drawing</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Draw eigenvalues...</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Draw eigenvector...</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Discriminant__Draw_sigma_ellipses___.html">Draw sigma ellipses...</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Discriminant___PatternList__To_Categories___.html">Discriminant & PatternList: To Categories...</a>
+<li><a href="Discriminant___SSCP__Project.html">Discriminant & SSCP: Project</a>
+<li><a href="Discriminant___TableOfReal__To_ClassificationTable___.html">Discriminant & TableOfReal: To ClassificationTable...</a>
+<li><a href="Discriminant___TableOfReal__To_Configuration___.html">Discriminant & TableOfReal: To Configuration...</a>
+<li><a href="Discriminant___TableOfReal__To_TableOfReal__mahalanobis.html">Discriminant & TableOfReal: To TableOfReal (mahalanobis)...</a>
+<li><a href="Discriminant__Extract_pooled_within-groups_SSCP.html">Discriminant: Extract pooled within-groups SSCP</a>
+<li><a href="Discriminant__Extract_within-group_SSCP___.html">Discriminant: Extract within-group SSCP...</a>
+<li><a href="Discriminant__Get_concentration_ellipse_area___.html">Discriminant: Get concentration ellipse area...</a>
+<li><a href="Discriminant__Get_confidence_ellipse_area___.html">Discriminant: Get confidence ellipse area...</a>
+<li><a href="Discriminant__Get_contribution_of_component___.html">Discriminant: Get contribution of component...</a>
+<li><a href="Discriminant__Get_partial_discrimination_probability___.html">Discriminant: Get partial discrimination probability...</a>
+<li><a href="Discriminant__Get_Wilks__lambda___.html">Discriminant: Get Wilks' lambda...</a>
+<li><a href="epoch.html">epoch</a>
+<li><a href="Feedforward_neural_networks_3__FFNet_versus_discriminan.html">Feedforward neural networks 3. FFNet versus discriminant classifier</a>
+<li><a href="TableOfReal__To_Configuration__lda____.html">TableOfReal: To Configuration (lda)...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20160128</p>
+</address>
+</body>
+</html>

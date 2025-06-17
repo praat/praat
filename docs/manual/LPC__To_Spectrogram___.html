@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>LPC: To Spectrogram...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+LPC: To Spectrogram...
+</b></font></table></table>
+<p>You can choose this command after selecting 1 or more <a href="LPC.html">LPC</a> objects.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Minimum frequency resolution (Hz)</b>
+<dd>successive frequencies in the Spectrum will be maximally this distance apart</dd>
+<dt><b>Bandwidth reduction (Hz)</b>
+<dd>formants with small bandwidths show up very well as darker regions in the spectrogram because the poles lie close to the contour along which a spectrum is computed (the unit circle in the z-plane). Peak enhancement can be realized by computing a spectrum in the z-plane along a contour of radius <i>r</i> = exp (&#8211; <i>&#960;</i> &#183; <i>bandwidthReduction</i> / <i>samplingFrequency</i>).</dd>
+<dt><b>De-emphasis frequency (Hz)</b>
+<dd>Performs de-emphasis when value is in the interval (0, <a href="Nyquist_frequency.html">Nyquist frequency</a>)</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>For each LPC frame the corresponding Spectrum will be calculated according to the algorithm explained in <a href="LPC__To_Spectrum__slice____.html">LPC: To Spectrum (slice)...</a>. For each frequency the power, i.e., the square of the complex values, will be stored in the corresponding area in the Spectrogram.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Source-filter_synthesis_4__Using_existing_sounds.html">Source-filter synthesis 4. Using existing sounds</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

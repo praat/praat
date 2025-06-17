@@ -1,0 +1,54 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Difference of two proportions</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Difference of two proportions
+</b></font></table></table>
+<p>This page explains how you compute the significance of a difference between two proportions with a <i>&#967;</i><sup>2</sup> (chi-square) test.</p>
+<h2>1. Example of normal use</h2>
+<p>Suppose that you are interested in proving that for a certain experimental participant Task B is easier than Task A.You let the participant perform Task A 110 times, and she turns out to perform this task correctly 71 times. You also let her perform Task B 120 times, and she performs this task correctly 93 times. The following table summarizes the results of your experiment:</p>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>	Correct	Incorrect<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Task A	71	39<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Task B	93	27<br></code>
+<p>The null hypothesis is that both tasks are equally difficult for the participant and that the probability that she performs Task A correctly is equal to the probability that she performs Task B correctly.</p>
+<p>To compute the probability that the observed proportions are at least as different as 93/120 and 71/110 if the null hypothesis is true, go to <b>Report difference of two proportions</b> in the <a href="Goodies.html">Goodies</a> menu and fill in the four values 71, 39, 93, and 27. The resulting two-tailed <i>p</i> is 0.04300, suggesting that the null hypothesis can be rejected and the two tasks are not equally difficult for the participant (if the possibility that Task A is easier for her than Task B can be ruled out a priori, then the resulting one-tailed <i>p</i> is 0.02150).</p>
+<h2>2. Example of incorrect use: areal features</h2>
+<p>An anonymous linguist once proposed that there was a causal relation between blood groups and the incidence of dental fricatives. He noticed that dental fricatives occurred mainly in languages whose speakers predominantly had blood group O. To prove his point, he tabulated 100 languages:</p>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>		Has /θ/ or /ð/		No dental fricatives<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Group O		24		11<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Group A or B		29		36<br></code>
+<p>Since <i>p</i> &lt; 0.05, the linguist regarded his hypothesis as being supported by the facts. However, this <i>&#967;</i><sup>2</sup> test assumes that the 100 languages are independent, but they are not. Two adjacent languages tend to correlate in their probability of having dental fricatives, and their speakers tend to correlate in their blood groups. Both are <i>areal features</i>, which undermine the independence assumed by the <i>&#967;</i><sup>2</sup> test. The actual null hypothesis that the test rejected was the combined hypothesis that dental fricatives correlate with blood group <i>and</i> that the 100 languages are independent.</p>
+<p>Another anonymous linguist proposed that those Limburgian dialects that had lost their tone contrast compensated this by having larger vowel inventories. He drew up a table of the dialects of 100 villages:</p>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>		Has tone		Has no tone<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Has over 25 vowels		10		7<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Has under 25 vowels		80		3<br></code>
+<p>This result is very significant (<i>p</i> &lt; 10<sup>-4</sup>), but only shows that <i>either</i> there is a relation between tone and the number of vowels <i>or</i> that the dialects are not independent. And since adjacent dialects are arguably dependent both with respect to tone and the number of vowels, the statistical significance does not allow us to draw any conclusion about the relationship between tone and the number of vowels.</p>
+<h2>3. Example of problematic use: pooling participants</h2>
+<p>An anonymous student decided to do the Task A versus Task B experiment described above, but did not let one participant perform all the 230 tasks. Instead, she let 5 participants perform 46 tasks each (22 times task A, 24 times Task B). The pooled data were:</p>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>	Correct	Incorrect<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Task A	71	39<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Task B	104	16<br></code>
+<p>The resulting <i>p</i> is 0.00016. So what is the conclusion, if the measurements can clearly be dependent? Well, if the null hypothesis is that all five participants are equally good at Task A as at Task B, then this hypothesis can be rejected. The conclusion must be that <i>these five participants</i> have on average more trouble with Task A than with Task B. The student incorrectly concluded, however, that Task A was more difficult for the average population than Task B. In order to be able to draw such a conclusion, however, a different test would be required, namely one that takes into account that the five participants form a random sample from the total population. The simplest such test would be a sign test over the participants: count those participants who score better on Task A than on Task B and see whether this number is reliably less than 50 percent of all participants. For five participants, such a sign test would <i>never</i> reach significance at a two-tailed 5 percent level (2&#183;0.5<sup>5</sup> = 0.0625).</p>
+<h2>4. Example of problematic use: pooling participants</h2>
+<p>Our purpose was to disprove the null hypothesis that listeners' perception does not depend on the language they think they hear. However, certain vowel tokens acoustically in between the Dutch /&#593;/ and the Dutch /&#596;/ were perceived 50 percent of the time as /&#593;/ and 50 percent of the time as /&#596;/ when Dutch learners of Spanish thought they were hearing Dutch, but 60 percent of the time as /&#596;/ when they thought they were hearing Spanish. The responses of 40 listeners, all of whom underwent both language modes, is combined in the following table:</p>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>	/ɑ/	/ɔ/<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Dutch mode	200	200<br></code>
+<code>      <table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>Spanish mode	160	240<br></code>
+<p>The result was <i>p</i> = 0.0056, which reliably showed that these 40 listeners on average shifted their category boundary toward /&#593;/ when they thought that the language they were listening to was Spanish. The conclusion is that not all listeners were indifferent to the language mode, so that mode-dependent perception must exist. The explanation in this case was that the Spanish /a/ (which Dutch learners of Spanish identify with their /&#593;/) is more auditorily front than Dutch /&#593;/; in order to reject the null hypothesis that language modes exist but that their direction is random for each learner, i.e. the population average of the shift is zero, a separate test was required to show that the observed shift is representative of the population of Dutch learners of Spanish (this is easier to accomplish for 40 participants than for 5).</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Statistics.html">Statistics</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20090717</p>
+</address>
+</body>
+</html>

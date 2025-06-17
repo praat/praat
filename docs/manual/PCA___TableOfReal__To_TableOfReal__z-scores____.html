@@ -1,0 +1,31 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PCA & TableOfReal: To TableOfReal (z-scores)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PCA & TableOfReal: To TableOfReal (z-scores)...
+</b></font></table></table>
+<p>A command to construct a <a href="TableOfReal.html">TableOfReal</a> with z-scores from the selected <a href="TableOfReal.html">TableOfReal</a> and <a href="PCA.html">PCA</a>.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Number of dimensions</b>
+<dd>determines how many eigenvectors to use in the calculation of the z-scores and therefore the number of columns of the resulting TableOfReal.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The values <i>d</i><sub><i>ij</i></sub> in the new TableOfReal are calculated as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>d</i><sub><i>ij</i></sub> = <b>eigenvector</b><sub>j</sub>&#183; <b>z</b><sub><i>i</i></sub>,</table>
+<p>which is the inproduct of the <i>j</i>-th eigenvector and the z-score vector <b>z</b><sub><i>i</i></sub> of the <i>i</i>-th row whose elements <i>z</i><sub><i>ij</i></sub> are defined as</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>z</i><sub><i>ij</i></sub> = (<i>x</i><sub><i>ij</i></sub> - x&#772;<sub><i>j</i></sub>) / sqrt (eigenvalue<sub><i>j</i></sub>),</table>
+<p>in which <i>x</i><sub><i>ij</i></sub> is the data value at row <i>i</i> and column <i>j</i> of the selected TableOfReal and x&#772;<sub><i>j</i></sub> is the <i>j</i>-th centroid value of the PCA. The square root of the <i>j</i>-th eigenvalue is the standard deviation in  the <i>j</i>-th principal direction.</p>
+<hr>
+<address>
+	<p>© djmw 20211129</p>
+</address>
+</body>
+</html>

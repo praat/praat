@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>SVD: Get minimum number of singular values...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+SVD: Get minimum number of singular values...
+</b></font></table></table>
+<p>A command to get the minimum number of singular values (s.v.'s) whose sum, divided by the sum of all singular values, is smaller than the given fraction.</p>
+<h2>Examples</h2>
+<p>Given an SVD with four s.v's 10.0, 6.0, 3.0 and 1.0. The sum of the s.v's is 20.0.</p>
+<code>   Get minimum number of singular values: 0.5<br></code>
+<dl>
+<dd>The returned value would be 1. The first s.v. divided by the sum is 0.5 (= 10.0 / 20.0). For any fraction lower than 0.5 the query would also return 1, because the first s.v. already covers half of the total sum.</dd>
+</dl>
+<code>   Get minimum number of singular values: 0.8<br></code>
+<dl>
+<dd>The returned value would be 2. The sum of first two s.v.'s divided by the sum is 0.8 (= (10.0 + 6.0) / 20.0).  For any fraction between 0.5 and 0.8 the query would also return 2.</dd>
+</dl>
+<code>   Get minimum number of singular values: 0.95<br></code>
+<dl>
+<dd>The returned value would be 3. The sum of first three s.v.'s divided by the sum is 0.95 (= (10.0 + 6.0 + 3.0) / 20.0). For any fraction between 0.8 and 0.95 the query would also return 3.</dd>
+</dl>
+<code>   Get minimum number of singular values: 0.96<br></code>
+<dl>
+<dd>The returned value would be 4.</dd>
+</dl>
+<code>   Get minimum number of singular values: 0.99<br></code>
+<dl>
+<dd>The returned value would be 4.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20171214</p>
+</address>
+</body>
+</html>

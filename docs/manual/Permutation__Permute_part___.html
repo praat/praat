@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Permutation: Permute part...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Permutation: Permute part...
+</b></font></table></table>
+<p>A command to create a new <a href="Permutation.html">Permutation</a> which is a copy of the first selected Permutation but with a part that has been permuted according to a specification given by the second one.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Start index</b>
+<dd>the position in the first selected Permutation where the modification by the second one should start.</dd>
+</dl>
+<h2>Examples</h2>
+<p>Suppose the first permutation p1 is (1,2,3,4,5,6,7,8,9,10,11) and the second one p2 is (2,3,5,1,4).</p>
+<p>1. With <b>Start index</b> set to 1, the newly generated permutation p3 will be ((2,3,5,1,4), 6,7,8,9,10,11). The new p3 will have the same number of elements as p1. The permutation p2 which has 5 elements starts to operate at the first element and will stop after the fifth element. The first five elements in p3 will therefore equal the permuted first five elements of p1, while the last 6 elements of p3 will be a copy of those in p1.</p>
+<p>2. With <b>Start index</b> set to 6, the newly generated permutation will be (1,2,3,4,5, (7,8,10,6,9), 11).</p>
+<hr>
+<address>
+	<p>© djmw 20220929</p>
+</address>
+</body>
+</html>

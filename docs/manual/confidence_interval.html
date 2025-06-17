@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>confidence interval</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+confidence interval
+</b></font></table></table>
+<p>The confidence interval gives an estimated range of values which is likely to include a true but unknown population parameter. The estimated range is calculated from a given set of observations.</p>
+<h2>Examples</h2>
+<p>At the <i>&#945;</i> level of significance, a two-sided confidence interval for the true mean <i>&#956;</i> for normally distributed data with <i>observed</i> mean <i>m</i> and <i>true</i> standard deviation <i>&#963;</i> can be constructed as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>mean</i> - <i>z</i><sub>&#945;/2</sub> <i>&#963;</i> / &#8730;<i>N</i> &#8804; <i>&#956;</i> &#8804; <i>mean</i> + <i>z</i><sub><i>&#945;</i>/2</sub> <i>&#963;</i> / &#8730;<i>N</i>,</table>
+<p>where <i>z</i><sub><i>&#945;</i>/2</sub> = invGaussQ (<i>&#945;</i>/2) and <i>N</i> is the number of observations.</p>
+<p>If the standard deviation is <i>not</i> known, we have to estimate its value (<i>s</i>) from the data and the formula above becomes:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>mean</i> - <i>t</i><sub><i>&#945;/2;N</i></sub> <i>s</i> / &#8730;<i>N</i> &#8804; <i>&#956;</i> &#8804; <i>mean</i> + <i>t</i><sub><i>&#945;</i>/2;<i>N</i></sub> <i>s</i> / &#8730;<i>N</i>,</table>
+<p>where <i>t</i><sub><i>&#945;</i>/2;<i>N</i></sub> = invStudentQ (<i>&#945;</i>/2, <i>N</i>-1).</p>
+<p>For <i>&#945;</i>=0.05 and <i>N</i>=20 we get <i>z</i><sub>0.025</sub>=1.96 and <i>t</i><sub>0.025;20</sub>=2.093. This shows that for a fixed value of the standard deviation the confidence interval will always be wider if we had to estimate the standard deviation's value from the data instead of its value being known beforehand.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="confidence_level.html">confidence level</a>
+<li><a href="Correlation__Confidence_intervals___.html">Correlation: Confidence intervals...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20151109</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Filter (gammatone)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Filter (gammatone)...
+</b></font></table></table>
+<p>A command to filter a Sound by a fourth-order gammatone bandpass filter.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Centre frequency (Hz)</b>, <b>Bandwidth (Hz)</b>
+<dd>determine the passband of the filter.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The impulse response of the filter is a 4-th order <a href="gammatone.html">gammatone</a>. The filter is implemented as the convolution of the gammatone with the sound. The gain of the filter is scaled to unity at the centre frequency.</p>
+<h2>Remark</h2>
+<p>The old implementation with a simple 8-th order recursive digital filter with 4 zeros and 8 poles (these 8 poles consist of one conjugate pole pair to the 4-th power) as suggested by  <a href="Slaney__1993_.html">Slaney (1993)</a> was not stable for low frequencies. </p>
+<hr>
+<address>
+	<p>© djmw 20170829</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Feedforward neural networks 1. What is a feedforward neural network?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Feedforward neural networks 1. What is a feedforward neural network?
+</b></font></table></table>
+<p>A feedforward neural network is a biologically inspired classification algorithm. It consist of a (possibly large) number of simple neuron-like processing <i>units</i>, organized in <i>layers</i>. Every unit in a layer is connected with all the units in the previous layer. These connections are not all equal: each connection may have a different strength or <i>weight</i>. The weights on these connections encode the knowledge of a network. Often the units in a neural network are also called <i>nodes</i>.</p>
+<p>Data enters at the inputs and passes through the network, layer by layer, until it arrives at the outputs. During normal operation, that is when it acts as a classifier, there is no feedback between layers. This is why they are called <i>feedforward</i> neural networks. </p>
+<p>In the following figure we see an example of a 2-layered network with, from top to bottom: an output layer with 5 units, a <i>hidden</i> layer with 4 units, respectively. The network has 3 input units.</p>
+<p align=middle><img height=500 width=500 src=Feedforward_neural_networks_1__What_is_a_feedforward_ne_1.png></p><p>The 3 inputs are shown as circles and these do not belong to any layer of the network (although the inputs sometimes are considered as a virtual layer with layer number 0). Any layer that is not an output layer is a <i>hidden</i> layer. This network therefore has 1 hidden layer and 1 output layer. The figure also shows all the connections between the units in different layers. A layer only connects to the previous layer. </p>
+<p>The operation of this network can be divided into two phases:</p>
+<p><a href="Feedforward_neural_networks_1_1__The_learning_phase.html">1. The learning phase</a></p>
+<p><a href="Feedforward_neural_networks_1_2__The_classification_pha.html">2. The classification phase</a></p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Feedforward_neural_networks.html">Feedforward neural networks</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040426</p>
+</address>
+</body>
+</html>

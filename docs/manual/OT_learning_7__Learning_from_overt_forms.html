@@ -1,0 +1,67 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OT learning 7. Learning from overt forms</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OT learning 7. Learning from overt forms
+</b></font></table></table>
+<p>In order to be able to learn phonological production, both EDCD and GLA require pairs of underlying form and surface form. However, the language-learning child hears neither of these forms: she only hears <b><i>overt forms</i></b>, with less structural information than the underlying and surface forms contain.</p>
+<h2>Interpretive parsing</h2>
+<p>The language-learning child has to construct both the surface form and the underlying form from the overt form that she hears. <a href="Tesar___Smolensky__1998_.html">Tesar & Smolensky (1998)</a> proposed that the child computes a surface form from the overt form by using the same constraint ranking as in production. For instance, the overt form [&#963; &#963; &#963;], which is a sequence of three syllables with stress on the second syllable, will be interpreted as the surface form /(&#963; &#963;&#712;) &#963;/ in iambic left-aligning languages (I<font size=-1>AMBIC</font> &gt;&gt; T<font size=-1>ROCHAIC</font>, and A<font size=-1>LL</font>F<font size=-1>EET</font>L<font size=-1>EFT</font> &gt;&gt; A<font size=-1>LL</font>F<font size=-1>EET</font>R<font size=-1>IGHT</font>), but as the surface form /&#963; (&#963;&#712; &#963;)/ in trochaic right-aligning languages. Tesar &amp; Smolensky call this procedure <a href="Robust_Interpretive_Parsing.html">Robust Interpretive Parsing</a>, because it works even if the listener's grammar would never produce such a form. For instance, if I<font size=-1>AMBIC</font> &gt;&gt; A<font size=-1>LL</font>F<font size=-1>EET</font>R<font size=-1>IGHT</font> &gt;&gt; T<font size=-1>ROCHAIC</font> &gt;&gt; A<font size=-1>LL</font>F<font size=-1>EET</font>L<font size=-1>EFT</font>, the listener herself would produce the iambic right-aligned /&#963; (&#963; &#963;&#712;)/ for any trisyllabic underlying form, though she will still interpret [&#963; &#963;&#712; &#963;] as /(&#963; &#963;&#712;) &#963;/, which is illegal in her own grammar. Hearing forms that are illegal in one's own grammar is of course a common situation for language-learning children.</p>
+<p>In Tesar &amp; Smolensky's view, the underlying form can be trivially computed from the surface form, since the surface form <i>contains</i> enough information. For instance, the surface form /(&#963; &#963;&#712;) &#963;/ must lead to the underlying form |&#963; &#963; &#963;| if all parentheses and stress marks are removed. Since <a href="McCarthy___Prince__1995_.html">McCarthy & Prince (1995)</a>, this <i>containment</i> view of surface representations has been abandoned. In Praat, therefore, the underlying form is not trivially computed from the surface form, but all the tableaus are scanned for the surface form that violates the least high-ranked constraints (in the usual OT sense), as long as it contains the given overt form. For instance, if I<font size=-1>AMBIC</font> &gt;&gt; A<font size=-1>LL</font>F<font size=-1>EET</font>R<font size=-1>IGHT</font> &gt;&gt; T<font size=-1>ROCHAIC</font> &gt;&gt; A<font size=-1>LL</font>F<font size=-1>EET</font>L<font size=-1>EFT</font>, the overt form [&#963; &#963;&#712; &#963;] occurs in two candidates: the surface form /(&#963; &#963;&#712;) &#963;/ in the tableau for the underlying form |&#963; &#963; &#963;|, and the surface form /&#963; (&#963;&#712; &#963;)/ in the tableau for the underlying form |&#963; &#963; &#963;|. The best candidate is the surface form /(&#963; &#963;&#712;) &#963;/ in the tableau for the underlying form |&#963; &#963; &#963;|. Hence, Praat's version of Robust Interpretive Parsing will map the overt form [&#963; &#963;&#712; &#963;] to the underlying form |&#963; &#963; &#963;| (the &#8216;winning tableau&#8217;) and to the surface form /(&#963; &#963;&#712;) &#963;/ (to be sure, this is the same result as in Tesar &amp; Smolensky's version, but crucial differences between the two versions will appear when faithfulness constraints are involved).</p>
+<p>In Praat, you can do interpretive parsing. For example, create a grammar with <b>Create metrics grammar...</b> from the <a href="New_menu.html">New menu</a>. Then choose <b>Get interpretive parse...</b> from the <a href="Query_submenu.html">Query submenu</a> and supply "[L1 L L]" for the overt form, which means a sequence of three light syllables with a main stress on the first. The Info window will show you the optimal underlying and surface forms, given the current constraint ranking.</p>
+<h2>Learning from partial forms</h2>
+<p>Now that the learning child can convert an overt form to an underlying-surface pair, she can compare this surface form to the surface form that she herself would have derived from this underlying form. For instance, If I<font size=-1>AMBIC</font> &gt;&gt; A<font size=-1>LL</font>F<font size=-1>EET</font>R<font size=-1>IGHT</font> &gt;&gt; T<font size=-1>ROCHAIC</font> &gt;&gt; A<font size=-1>LL</font>F<font size=-1>EET</font>L<font size=-1>EFT</font>, the winning tableau is |&#963; &#963; &#963;|, and the perceived adult surface form is /(&#963; &#963;&#712;) &#963;/. But from the underlying form |&#963; &#963; &#963;|, the learner will derive /&#963; (&#963; &#963;&#712;)/ as her own surface form. The two surface forms are different, so that the learner can take action by reranking one or more constraints, perhaps with EDCD or GLA.</p>
+<p>In Praat, you can learn from partial forms. Select the metrics grammar and choose <b>Learn from one partial output...</b>, and supply "[L1 L L]". If you do this several times, you will see that the winner for the tableau "|L L L|" will become one of the two forms with overt part "[L1 L L]".</p>
+<p>To run a whole simulation, you supply a <a href="Distributions.html">Distributions</a> object with one column, perhaps from a text file. The following text file shows the overt forms for Latin, with the bisyllabic forms occurring more often than the trisyllabic forms:</p>
+<code>   "ooTextFile"<br></code>
+<code>   "Distributions"<br></code>
+<code>   1 column with numeric data<br></code>
+<code>      "Latin"<br></code>
+<code>   28 rows<br></code>
+<code>   "[L1 L]" 25<br></code>
+<code>   "[L1 H]" 25<br></code>
+<code>   "[H1 L]" 25<br></code>
+<code>   "[H1 H]" 25<br></code>
+<code>   "[L1 L L]" 5<br></code>
+<code>   "[H1 L L]" 5<br></code>
+<code>   "[L H1 L]" 5<br></code>
+<code>   "[H H1 L]" 5<br></code>
+<code>   "[L1 L H]" 5<br></code>
+<code>   "[H1 L H]" 5<br></code>
+<code>   "[L H1 H]" 5<br></code>
+<code>   "[H H1 H]" 5<br></code>
+<code>   "[L L1 L L]" 1<br></code>
+<code>   "[L H1 L L]" 1<br></code>
+<code>   "[L L H1 L]" 1<br></code>
+<code>   "[L H H1 L]" 1<br></code>
+<code>   "[L L1 L H]" 1<br></code>
+<code>   "[L H1 L H]" 1<br></code>
+<code>   "[L L H1 H]" 1<br></code>
+<code>   "[L H H1 H]" 1<br></code>
+<code>   "[H L1 L L]" 1<br></code>
+<code>   "[H H1 L L]" 1<br></code>
+<code>   "[H L H1 L]" 1<br></code>
+<code>   "[H H H1 L]" 1<br></code>
+<code>   "[H L1 L H]" 1<br></code>
+<code>   "[H H1 L H]" 1<br></code>
+<code>   "[H L H1 H]" 1<br></code>
+<code>   "[H H H1 H]" 1<br></code>
+<p>Read this file into Praat with <a href="Read_from_file___.html">Read from file...</a>. A <a href="Distributions.html">Distributions</a> object then appears in the object list. Click <a href="Distributions__To_Strings___.html">To Strings...</a>, then <b>OK</b>. A <a href="Strings.html">Strings</a> object containing 1000 strings, drawn randomly from the distribution, with relative frequencies as in the text file, will appear in the list. Click <a href="Inspect.html">Inspect</a> to check the contents.</p>
+<p>You can now select the <a href="OTGrammar.html">OTGrammar</a> together with the <a href="Strings.html">Strings</a> and choose <b>Learn from partial outputs...</b>. A thousand times, Praat will construct a surface form from the overt form by interpretive parsing, and also construct the underlying form in the same way, from which it will construct another surface form by evaluating the tableau. Whenever the two surface forms are not identical, some constraints will be reranked. In the current implementation, the disharmonies for interpretive parsing and for production are the same, i.e., if the evaluation noise is not zero, the disharmonies are randomly renewed before each interpretive parsing but stay the same for the subsequent virtual production.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="OT_learning.html">OT learning</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20031220</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>theil regression</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+theil regression
+</b></font></table></table>
+<p>a robust linear regression method, first proposed by <a href="Theil__1950_.html">Theil (1950)</a>. The slope of the regression line is estimated as the median of all pairwise slopes between each pair of points in the data set. Because this number of pairs increases quadratically with the number of data points, we have implemented a somewhat less computationally intensive procedure, the <i>incomplete</i> theil regression. In the incomplete method we first split the data set of <i>N</i> data points (<i>x</i><sub><i>i</i></sub>, <i>y</i><sub><i>i</i></sub>), <i>i</i> = 1..<i>N</i>, in two equal sets of size <i>N</i>/2 and then calculate <i>N</i>/2 slopes as </p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>m</i><sub><i>i</i></sub> = (<i>y</i><sub><i>N</i>/2+<i>i</i></sub> - <i>y</i><sub><i>i</i></sub>) / (<i>x</i><sub><i>N</i>/2+<i>i</i></sub> - <i>x</i><sub><i>i</i></sub>), for <i>i</i> = 1..<i>N</i>/2.</table>
+<p>The regression slope <i>m</i> is calculated as the median of these <i>N</i>/2 values <i>m</i><sub><i>i</i></sub>.</p>
+<p>Given the slope <i>m</i>, the offset <i>b</i> is calculated as the median of the <i>N</i> values <i>b</i><sub><i>i</i></sub>= <i>y</i><sub><i>i</i></sub> - <i>m</i>&#183;<i>x</i><sub><i>i</i></sub>.</p>
+<p>The theil regression has a breakdown point of 29.3%, which means that it can tolerate arbitrary corruption of up to 29.3% of the input data-points without degradation of its accuracy</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="PowerCepstrogram__Get_CPPS___.html">PowerCepstrogram: Get CPPS...</a>
+<li><a href="PowerCepstrum__Draw_trend_line___.html">PowerCepstrum: Draw trend line...</a>
+<li><a href="PowerCepstrum__Get_peak_prominence___.html">PowerCepstrum: Get peak prominence...</a>
+<li><a href="PowerCepstrum__Get_trend_line_intercept___.html">PowerCepstrum: Get trend line intercept...</a>
+<li><a href="PowerCepstrum__Get_trend_line_slope___.html">PowerCepstrum: Get trend line slope...</a>
+<li><a href="PowerCepstrum__Subtract_trend___.html">PowerCepstrum: Subtract trend...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20190909</p>
+</address>
+</body>
+</html>

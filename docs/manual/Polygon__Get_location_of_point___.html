@@ -1,0 +1,22 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Polygon: Get location of point...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Polygon: Get location of point...
+</b></font></table></table>
+<p>Determines whether a given point is on the <b>I</b>nside, the <b>O</b>utside, on an <b>E</b>dge or on a <b>V</b>ertex of the selected Polygon.</p>
+<h2>Algorithm</h2>
+<p>We determine how often a horizontal line extending from the point crosses the polygon. If the number of crossings is even, the point is on the outside, else on the inside. Special care is taken to be able to detect if a point is on the boundary of the polygon. The used algorithm is from <a href="Hormann___Agathos__2001_.html">Hormann & Agathos (2001)</a>.</p>
+<hr>
+<address>
+	<p>© djmw 20120220</p>
+</address>
+</body>
+</html>

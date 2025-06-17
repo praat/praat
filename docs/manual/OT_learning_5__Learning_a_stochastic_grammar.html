@@ -1,0 +1,76 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>OT learning 5. Learning a stochastic grammar</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+OT learning 5. Learning a stochastic grammar
+</b></font></table></table>
+<p>Having shown that the algorithm can learn deep obligatory rankings, we will now see that it also performs well in replicating the variation in the language environment.</p>
+<p>Create a place assimilation grammar as described in <a href="OT_learning_2_6__Variable_output.html">&#167;2.6</a>, and set all its rankings to 100.000:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*G<font size=-1>ESTURE</font></b><td width=100 align=middle>      100.000<td width=100 align=middle>      100.000<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (t, p)</b><td width=100 align=middle>      100.000<td width=100 align=middle>      100.000<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (n, m)</b><td width=100 align=middle>      100.000<td width=100 align=middle>      100.000<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>Create a place assimilation distribution and generate 1000 string pairs (<a href="OT_learning_3_1__Data_from_a_pair_distribution.html">&#167;3.1</a>). Select the grammar and the two <a href="Strings.html">Strings</a> objects, and learn with a plasticity of 0.1:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (t, p)</b><td width=100 align=middle>      104.540<td width=100 align=middle>      103.140<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (n, m)</b><td width=100 align=middle>      96.214<td width=100 align=middle>      99.321<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*G<font size=-1>ESTURE</font></b><td width=100 align=middle>      99.246<td width=100 align=middle>      97.861</table></dd>
+</dl>
+<p>The output distributions are now (using <a href="OTGrammar__To_output_Distributions___.html">OTGrammar: To output Distributions...</a>, see <a href="OT_learning_2_9__Output_distributions.html">&#167;2.9</a>):</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/an+pa/ &#8594; anpa<td width=100 align=middle>14.3%</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/an+pa/ &#8594; ampa<td width=100 align=middle>85.7%</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/at+ma/ &#8594; atma<td width=100 align=middle>96.9%</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/at+ma/ &#8594; apma<td width=100 align=middle>3.1%</table></dd>
+</dl>
+<p>After another 10,000 new string pairs, we have:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (t, p)</b><td width=100 align=middle>      106.764<td width=100 align=middle>      107.154<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*G<font size=-1>ESTURE</font></b><td width=100 align=middle>      97.899<td width=100 align=middle>      97.161<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (n, m)</b><td width=100 align=middle>      95.337<td width=100 align=middle>      96.848<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>With the following output distributions (measured with a million draws):</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/an+pa/ &#8594; anpa<td width=100 align=middle>18.31%</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/an+pa/ &#8594; ampa<td width=100 align=middle>81.69%</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/at+ma/ &#8594; atma<td width=100 align=middle>99.91%</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/at+ma/ &#8594; apma<td width=100 align=middle>0.09%</table></dd>
+</dl>
+<p>The error rate is acceptably low, but the accuracy in reproducing the 80% - 20% distribution could be better. This is because the relatively high plasticity of 0.1 can only give a coarse approximation. So we lower the plasticity to 0.001, and supply 100,000 new data:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><td width=100 align=middle>      <i>ranking value<td width=100 align=middle>      </i>disharmony<td width=100 align=middle>      <i>plasticity</i></table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (t, p)</b><td width=100 align=middle>      106.810<td width=100 align=middle>      107.184<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*G<font size=-1>ESTURE</font></b><td width=100 align=middle>      97.782<td width=100 align=middle>      99.682<td width=100 align=middle>       1.000</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle><b>*R<font size=-1>EPLACE</font> (n, m)</b><td width=100 align=middle>      95.407<td width=100 align=middle>      98.760<td width=100 align=middle>       1.000</table></dd>
+</dl>
+<p>With the following output distributions:</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/an+pa/ &#8594; anpa<td width=100 align=middle>20.08%</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/an+pa/ &#8594; ampa<td width=100 align=middle>79.92%</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/at+ma/ &#8594; atma<td width=100 align=middle>99.94%</table></dd>
+<dd>&nbsp;&nbsp;&nbsp;<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>/at+ma/ &#8594; apma<td width=100 align=middle>0.06%</table></dd>
+</dl>
+<p>So besides learning obligatory rankings like a child does, the algorithm can also replicate very well the probabilities of the environment. This means that a GLA learner can learn stochastic grammars.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="OT_learning.html">OT learning</a>
+<li><a href="OTGrammar___2_Strings__Learn___.html">OTGrammar & 2 Strings: Learn...</a>
+<li><a href="OTGrammar__Learn_one___.html">OTGrammar: Learn one...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20070725</p>
+</address>
+</body>
+</html>

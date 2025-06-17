@@ -1,0 +1,36 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Script for onset detection</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Script for onset detection
+</b></font></table></table>
+<p>"Can anybody provide me with a script that detects the onset of sound (i.e. the end of silence)."</p>
+<p>You can create an Intensity contour and look for the first frame that is above some predefined threshold:</p>
+<code>   To Intensity: 100, 0<br></code>
+<code>   n = Get number of frames<br></code>
+<code>   for i to n<br></code>
+<code>      intensity = Get value in frame: i<br></code>
+<code>      if intensity &gt; 40<br></code>
+<code>         time = Get time from frame: i<br></code>
+<code>         writeInfoLine: "Onset of sound at: ", fixed$ (time, 3), " seconds."<br></code>
+<code>         exit<br></code>
+<code>      endif<br></code>
+<code>   endfor<br></code>
+<p>Since the intensity is computed with rather long windows, the result may be 0.01 or 0.02 seconds before the actual start of sound.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting_examples.html">Scripting examples</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140112</p>
+</address>
+</body>
+</html>

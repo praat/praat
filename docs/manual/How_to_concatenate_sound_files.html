@@ -1,0 +1,42 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>How to concatenate sound files</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+How to concatenate sound files
+</b></font></table></table>
+<p>You can concatenate any combination of AIFF, AIFC, WAV, NeXT/Sun, NIST and FLAC audio files, and other files that you have read into memory.</p>
+<p>For instance, if you want to concatenate a 30-minute AIFF file, a 4-minute Kay sound file, and a 60-minute NeXT/Sun file, by saving them into a 94-minute WAV file, you do the following:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Open the AIFF file with <a href="Open_long_sound_file___.html">Open long sound file...</a> from the <a href="Open_menu.html">Open menu</a>. A <a href="LongSound.html">LongSound</a> object will appear in the list.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Read the Kay sound file into memory with <a href="Read_from_file___.html">Read from file...</a>. A <a href="Sound.html">Sound</a> object will appear in the list.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Open the AIFF file with <a href="Open_long_sound_file___.html">Open long sound file...</a> from the <a href="Open_menu.html">Open menu</a>. A second <a href="LongSound.html">LongSound</a> object will appear in the list.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. Select the three objects and choose <a href="Save_as_WAV_file___.html">Save as WAV file...</a> from the <a href="Save_menu.html">Save menu</a>.</dd>
+</dl>
+<p>This only works if all the sounds have the same sampling frequency and the same number of channels.</p>
+<h2>Available formats</h2>
+<p>The format of the original sound files may be 16-bit linear (with big-endian or little-endian byte order), 8-bit linear (signed or unsigned), 8-bit &#956;-law, or 8-bit A-law. The format of the resulting sound file is always 16-bit linear, with an appropriate default byte order. The following commands are available in the <a href="Save_menu.html">Save menu</a> if you select any combination of <a href="LongSound.html">LongSound</a> and/or <a href="Sound.html">Sound</a> objects:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Save_as_WAV_file___.html">Save as WAV file...</a> (little-endian)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Save_as_AIFF_file___.html">Save as AIFF file...</a> (big-endian)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Save_as_AIFC_file___.html">Save as AIFC file...</a> (big-endian)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Save_as_NeXT_Sun_file___.html">Save as NeXT/Sun file...</a> (big-endian)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Save_as_NIST_file___.html">Save as NIST file...</a> (little-endian)</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Save_as_FLAC_file___.html">Save as FLAC file...</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sounds__Concatenate.html">Sounds: Concatenate</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110131</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Scale intensity...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Scale intensity...
+</b></font></table></table>
+<p>A command available in the <b>Modify</b> menu when you select one or more <a href="Sound.html">Sound</a> objects. With this command you multiply the amplitude of each Sound in such a way that its average (i.e. root-mean-square) intensity becomes the <b>new average intensity</b> that you specify (see Settings).</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>New average intensity (dB SPL)</b>
+<dd>the new average intensity of the Sound. The standard value is 70 dB SPL. This means that the root-mean-square amplitude of the sound will come to lie 70 dB above the assumed auditory threshold of 0.00002 Pa. Please check whether as a result a peak in the sound does not get below -1 Pa or above +1 Pa. If that happens, the sound will be clipped when played, which will be audible as distortion; in thast case you may want to set this number to 60 dB or even lower.</dd>
+</dl>
+<hr>
+<address>
+	<p>© Paul Boersma 2012-06-14</p>
+</address>
+</body>
+</html>

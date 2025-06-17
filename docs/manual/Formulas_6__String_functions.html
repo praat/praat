@@ -1,0 +1,145 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Formulas 6. String functions</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Formulas 6. String functions
+</b></font></table></table>
+<p>String functions are functions that either return a text string or have at least one text string as an argument. Since string computations are not very useful in the <a href="Calculator.html">calculator</a>, in settings windows, or in creation and modification formulas, this page only gives examples of strings in scripts, so that the example may contain string variables.</p>
+<dl>
+<dt><b><code><font size=+1>length (a$)</font></code></b>
+<dd>gives the length of the string. After</dd>
+</dl>
+<code>         string$ = "hallo"<br></code>
+<code>         length = length (string$ + "dag")<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>length</font></code></i> contains the number 8 (by the way, from this example you see that variables can have the same names as functions, without any danger of confusing the interpreter).</dd>
+<dt><b><code><font size=+1>left$ (a$, n)</font></code></b>
+<dd>gives a string consisting of the first <i>n</i> characters of <i><code><font size=+1>a$</font></code></i>. After</dd>
+</dl>
+<code>         head$ = left$ ("hallo", 3)<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>head$</font></code></i> contains the string "hal".</dd>
+<dt><b><code><font size=+1>right$ (a$, n)</font></code></b>
+<dd>gives a string consisting of the last <i>n</i> characters of <i><code><font size=+1>a$</font></code></i>. After</dd>
+</dl>
+<code>         english$ = "he" + right$ ("hallo", 3)<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>english$</font></code></i> contains the string "hello".</dd>
+<dt><b><code><font size=+1>mid$ ("hello" , 3, 2)</font></code></b>
+<dd>gives a string consisting of 2 characters from &#8220;hello&#8221;, starting at the third character. Outcome: ll.</dd>
+<dt><b><code><font size=+1>index (a$, b$)</font></code></b>
+<dd>gives the index of the first occurrence of the string <i><code><font size=+1>b$</font></code></i> in the string <i><code><font size=+1>a$</font></code></i>. After</dd>
+</dl>
+<code>         where = index ("hallo allemaal", "al")<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>where</font></code></i> contains the number 2, because the first &#8220;al&#8221; starts at the second character of the longer string. If the first string does not contain the second string, <i><code><font size=+1>index</font></code></i> returns 0.</dd>
+<dt><b><code><font size=+1>rindex (a$, b$)</font></code></b>
+<dd>gives the index of the last occurrence of the string <i><code><font size=+1>b$</font></code></i> in the string <i><code><font size=+1>a$</font></code></i>. After</dd>
+</dl>
+<code>         where = rindex ("hallo allemaal", "al")<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>where</font></code></i> contains the number 13, because the last &#8220;al&#8221; starts at the 13th character. If the first string does not contain the second string, <i><code><font size=+1>rindex</font></code></i> returns 0.</dd>
+<dt><b><code><font size=+1>startsWith (a$, b$)</font></code></b>
+<dd>determines whether the string <i><code><font size=+1>a$</font></code></i> starts with the string <i><code><font size=+1>b$</font></code></i>. After</dd>
+</dl>
+<code>         where = startsWith ("internationalization", "int")<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>where</font></code></i> contains the number 1 (true).</dd>
+<dt><b><code><font size=+1>endsWith (a$, b$)</font></code></b>
+<dd>determines whether the string <i><code><font size=+1>a$</font></code></i> ends with the string <i><code><font size=+1>b$</font></code></i>. After</dd>
+</dl>
+<code>         where = endsWith ("internationalization", "nation")<br></code>
+<dl>
+<dd>the variable <i>where</i> contains the number 0 (false).</dd>
+<dt><b><code><font size=+1>replace$ (a$, b$, c$, n)</font></code></b>
+<dd>gives a string that is like <i><code><font size=+1>a$</font></code></i>, but where (at most <i>n</i>) occurrences of <i><code><font size=+1>b$</font></code></i> are replaced with the string <i><code><font size=+1>c$</font></code></i>. After</dd>
+</dl>
+<code>         s$ = replace$ ("hello", "l", "m", 0)<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>s$</font></code></i> contains the string "hemmo". After</dd>
+</dl>
+<code>         s$ = replace$ ("hello", "l", "m", 1)<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>s$</font></code></i> contains the string "hemlo". The number <i>n</i> determines the maximum number of occurrences of <i><code><font size=+1>b$</font></code></i> that can be replaced. If <i>n</i> is 0, all occurrences are replaced.</dd>
+<dt><b><code><font size=+1>index_regex (a$, b$)</font></code></b>
+<dd>determines where the string <i><code><font size=+1>a$</font></code></i> first matches the <a href="Regular_expressions.html">regular expression</a> <i><code><font size=+1>b$</font></code></i>. After</dd>
+</dl>
+<code>         where = index_regex ("internationalization", "a.*n")<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>where</font></code></i> contains the number 7. If there is no match, the outcome is 0.</dd>
+<dt><b><code><font size=+1>rindex_regex (a$, b$)</font></code></b>
+<dd>determines where the string <i><code><font size=+1>a$</font></code></i> last matches the <a href="Regular_expressions.html">regular expression</a> <i><code><font size=+1>b$</font></code></i>. After</dd>
+</dl>
+<code>         where = rindex_regex ("internationalization", "a.*n")<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>where</font></code></i> contains the number 16. If there is no match, the outcome is 0.</dd>
+<dt><b><code><font size=+1>replace_regex$ (a$, b$, c$, n)</font></code></b>
+<dd>gives a string that is like <i><code><font size=+1>a$</font></code></i>, but where (at most <i>n</i>) substrings that match the <a href="Regular_expressions.html">regular expression</a> <i><code><font size=+1>b$</font></code></i> are replaced with the expression <i><code><font size=+1>c$</font></code></i>. After</dd>
+</dl>
+<code>         s$ = replace_regex$ ("hello", ".", "&amp;&amp;", 0)<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>s$</font></code></i> contains the string "hheelllloo". If there is no match, the outcome is the original string <i><code><font size=+1>a$</font></code></i>. After</dd>
+</dl>
+<code>         s$ = replace_regex$ ("hello", ".", "&amp;&amp;", 1)<br></code>
+<dl>
+<dd>the variable <i><code><font size=+1>s$</font></code></i> contains the string "hhello". The number <i>n</i> determines the maximum number of text pieces that can be replaced. If <i>n</i> is 0, all matching text pieces are replaced.</dd>
+<dt><b><code><font size=+1>string$ (number)</font></code></b>
+<dd>formats a number as a string. Thus, <code><font size=+1>string$ (5e6)</font></code> becomes the string <code><font size=+1>5000000</font></code>, and <code><font size=+1>string$ (56%)</font></code> becomes the string <code><font size=+1>0.56</font></code>.</dd>
+<dt><b><code><font size=+1>fixed$ (number, precision)</font></code></b>
+<dd>formats a number as a string with <i>precision</i> digits after the decimal point. Thus, <code><font size=+1>fixed$ (72.65687, 3)</font></code> becomes the string <code><font size=+1>72.657</font></code>, and <code><font size=+1>fixed$ (72.65001, 3)</font></code> becomes the string <code><font size=+1>72.650</font></code>. In these examples, we see that the result can be rounded up and that trailing zeroes are kept. At least one digit of precision is always given, e.g. <code><font size=+1>fixed$ (0.0000157, 3)</font></code> becomes the string <code><font size=+1>0.00002</font></code>. The number 0 always becomes the string <code><font size=+1>0</font></code>.</dd>
+<dt><b><code><font size=+1>percent$ (number, precision)</font></code></b>
+<dd>the same as <code><font size=+1>fixed$</font></code> (), but with a percent sign. For instance, <code><font size=+1>percent$ (0.157, 3)</font></code> becomes <code><font size=+1>15.700%</font></code>, <code><font size=+1>percent$ (0.000157, 3)</font></code> becomes <code><font size=+1>0.016%</font></code>, and <code><font size=+1>percent$ (0.000000157, 3)</font></code> becomes <code><font size=+1>0.00002%</font></code>. The number 0 always becomes the string <code><font size=+1>0</font></code>.</dd>
+<dt><b><code><font size=+1>number (a$)</font></code></b>
+<dd>interprets a string as a number. After</dd>
+</dl>
+<code>         string$ = "5e6"<br></code>
+<code>         writeInfoLine: 3 + number (string$)<br></code>
+<dl>
+<dd>the Info window contains the number 5000003.</dd>
+<dt><b><code><font size=+1>date$ ( )</font></code></b>
+<dd>gives the date and time in the following format:</dd>
+</dl>
+<code>         Mon Jun 24 17:11:21 2002<br></code>
+<dl>
+<dd>To write the day of the month into the Info window, you type:</dd>
+</dl>
+<code>         date$ = date$ ()<br></code>
+<code>         day$ = mid$ (date$, 9, 2)<br></code>
+<code>         writeInfoLine: "The month day is ", day$, "."<br></code>
+<dl>
+<dt><b><code><font size=+1>unicode$ (228)</font></code></b>
+<dd>gives the 228th Unicode codepoint, i.e. "&#228;".</dd>
+<dt><b><code><font size=+1>unicode ("ä")</font></code></b>
+<dd>gives the Unicode codepoint number of "&#228;", i.e. 228.</dd>
+<dt><b><code><font size=+1>extractNumber ("Type: Sound" + newline$ + "Name: hello there" + newline$ + "Size: 44007", "Size:")</font></code></b>
+<dd>looks for a number after the first occurrence of &#8220;Size:&#8221; in the long string. Outcome: 44007. This is useful in scripts that try to get information from long reports, as the following script that runs in the Sound editor window:</dd>
+</dl>
+<code>         report$ = Editor info<br></code>
+<code>         maximumFrequency = extractNumber (report$, "Spectrogram window length:")<br></code>
+<dl>
+<dt><b><code><font size=+1>extractWord$ ("Type: Sound" + newline$ + "Name: hello there" + newline$ + "Size: 44007", "Type:")</font></code></b>
+<dd>looks for a word without spaces after the first occurrence of "Type:" in the long string. Outcome: Sound.</dd>
+<dt><b><code><font size=+1>extractLine$ ("Type: Sound" + newline$ + "Name: hello there" + newline$ + "Size: 44007", "Name: ")</font></code></b>
+<dd>looks for the rest of the line (including spaces) after the first occurrence of &#8220;Name: &#8221; in the long string. Outcome: hello there. Note how &#8220;Name: &#8221; includes a space, so that the &#8220;rest of the line&#8221; starts with the <i>h</i>.</dd>
+<dt><b><code><font size=+1>backslashTrigraphsToUnicode$ (x$), unicodeToBackslashTrigraphs$ (x$)</font></code></b>
+<dd>converts e.g. \ct to &#596; or the reverse. See <a href="Special_symbols.html">Special symbols</a>.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Formulas.html">Formulas</a>
+<li><a href="What_was_new_in_4_1_.html">What was new in 4.1?</a>
+<li><a href="What_was_new_in_4_5_.html">What was new in 4.5?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20180825</p>
+</address>
+</body>
+</html>

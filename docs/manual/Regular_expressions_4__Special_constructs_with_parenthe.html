@@ -1,0 +1,41 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Regular expressions 4. Special constructs with parentheses</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Regular expressions 4. Special constructs with parentheses
+</b></font></table></table>
+<p>Some special constructs exist with parentheses. </p>
+<dl>
+<dt><b>(?:</b><i>regex</i><b></b>)<b></b>   is a grouping-only construct.
+<dd>They exist merely for efficiency reasons and facilitate grouping.</dd>
+<dt><b>(?=</b><i>regex</i><b></b>)<b></b>   is a positive look-ahead.
+<dd>A match of the regular expression contained in the positive look-ahead construct is attempted. If the match succeeds, control is passed to the regex following this construct and the text consumed by this look-ahead construct is first unmatched. </dd>
+<dt><b>(?!</b><i>regex</i><b></b>)<b></b>   is a negative look-ahead.
+<dd>Functions like a positive look-ahead, only the <i>regex</i> must <i>not</i> match.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">Example: "abc(?!.*abc.*)" searches for the <i>last</i> occurrence of "abc" in a string.</dd>
+<dt><b>(?i</b><i>regex</i><b></b>)<b></b>   is a case insensitive regex.
+<dt><b>(?I</b><i>regex</i><b></b>)<b></b>   is a case sensitive regex.
+<dd>Default a regex is case sensitive. </dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "(?iaa)" matches "aa", "aA", "Aa" and "AA".</dd>
+<dt><b>(?n</b><i>regex</i><b></b>)<b></b>   matches newlines.
+<dt><b>(?N</b><i>regex</i><b></b>)<b></b>   doesn't match newlines.
+</dl>
+<p>All the constructs above do not capture text and cannot be referenced, i.e., the parentheses are not counted. However, you can make them capture text by surrounding them with <i>ordinary</i> parentheses.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Regular_expressions.html">Regular expressions</a>
+<li><a href="Regular_expressions_1__Special_characters.html">Regular expressions 1. Special characters</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20010710</p>
+</address>
+</body>
+</html>

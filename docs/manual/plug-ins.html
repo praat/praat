@@ -1,0 +1,60 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>plug-ins</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+plug-ins
+</b></font></table></table>
+<p>Experienced Praat script writers can distribute their product as a plug-in to Praat.</p>
+<h2>The Praat plug-in mechanism</h2>
+<p>When Praat starts up, it will execute all Praat scripts called <b><code><font size=+1>setup.praat</font></code></b> that reside in folders whose name starts with <b><code><font size=+1>plugin_</font></code></b> and that themselves reside in your Praat <a href="preferences_folder.html">preferences folder</a>.</p>
+<h2>How to write a Praat plug-in</h2>
+<p>Suppose that you have a set of Praat scripts specialized in the analysis and synthesis of vocalizations of guinea pigs, and that these scripts are called <code><font size=+1>analyseQueak.praat</font></code> and <code><font size=+1>createQueak.praat</font></code> (&#8220;queak&#8221; is what guinea pigs tend to say). With the <a href="ScriptEditor.html">ScriptEditor</a>, you have put the script <code><font size=+1>analyseQueak.praat</font></code> in the dynamic menu that appears if the user selects a Sound object, and you have put the script <code><font size=+1>createQueak.praat</font></code> in the <a href="New_menu.html">New menu</a>. Only the latter script requires the user to supply some settings in a form, so the two menu commands are <b>Analyse queak</b> (without dots) and <b>Create queak...</b> (with three dots), respectively. Suppose now that you want to distribute those two commands to other guinea pig vocalization researchers.</p>
+<p>What you do is that you create a Praat script called <code><font size=+1>setup.praat</font></code> (in the same folder as the two other scripts), that contains the following two lines:</p>
+<code>   <a href="Add_action_command___.html">Add action command:</a> "Sound", 1, "", 0, "", 0, "Analyse queak", "", 0, "analyseQueak.praat"<br></code>
+<code>   <a href="Add_menu_command___.html">Add menu command:</a> "Objects", "New", "Create queak...", "", 0, "createQueak.praat"<br></code>
+<p>(If you ran this script, Praat would install those two commands in the correct menus, and remember them in the <a href="buttons_file.html">buttons file</a>; but you are now going to install them in a different way.)</p>
+<p>You now put the three scripts in a new folder called <i><code><font size=+1>plugin_Queak</font></code></i>, and put this folder in your Praat preferences folder. If you are on Windows, you will now have a folder called something like <code><font size=+1>C:\Users\Your Name\Praat\plugin_Queak</font></code>.</p>
+<p>If you now start up Praat, Praat will automatically execute the script <code><font size=+1>C:\Users\Your Name\Praat\plugin_Queak\setup.praat</font></code> and thereby install the two buttons. The two buttons will <i>not</i> be remembered in the buttons file, but they will be installed at every Praat start-up. De-installation involves removing (or renaming) the <code><font size=+1>plugin_Queak</font></code> folder.</p>
+<p>To distribute the Queak plug-in among your colleague guinea pig researchers, you can use any installer program to put the <code><font size=+1>plugin_Queak</font></code> folder into the user&#8217;s Praat preferences folder; or you could ask those colleagues to move the <code><font size=+1>plugin_Queak</font></code> folder there by hand.</p>
+<h2>The structure of your plug-in folder</h2>
+<p>In the example <code><font size=+1>setup.praat</font></code> file above, the names of the scripts <code><font size=+1>analyseQueak.praat</font></code> and <code><font size=+1>createQueak.praat</font></code> occur without any folder information. This works because Praat regards these file names as being relative to the folder where <code><font size=+1>setup.praat</font></code> is located. If your plug-in is much larger than two scripts, you may want to put subdirectories into the folder <code><font size=+1>plugin_Queak</font></code>. For instance, if you put <code><font size=+1>analyseQueak.praat</font></code> into the subfolder <code><font size=+1>analysis</font></code>, your line in the <code><font size=+1>setup.praat</font></code> script would look as follows:</p>
+<code>   <a href="Add_action_command___.html">Add action command:</a> "Sound", 1, "", 0, "", 0, "Analyse queak", "", 0, "analysis/analyseQueak.praat"<br></code>
+<p>The forward slash (&#8220;/&#8221;) in this example makes your plug-in platform-independent: it will work unchanged on Windows, Macintosh, and Unix.</p>
+<p>Nothing prevents you from adding data files to your plug-in. For instance, your <code><font size=+1>plugin_Queak</font></code> folder could contain a subfolder <code><font size=+1>sounds</font></code> full of guinea pig recordings, and you could make them available in the New or Open menu.</p>
+<h2>Using a plug-in for site-wide customization</h2>
+<p>If your local guinea pig research group shares a number of Praat scripts, these can be made available to everybody in the following way:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Create a script that adds buttons to the fixed and dynamic menus, using the commands <a href="Add_menu_command___.html">Add menu command...</a> and <a href="Add_action_command___.html">Add action command...</a>. This script could be a slightly edited copy of someone&#8217;s <a href="buttons_file.html">buttons file</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Put this script where everybody can see it, for instance in <code><font size=+1>U:\MaldenGuineaPigResearchButtons.praat</font></code>, where <code><font size=+1>U</font></code> is your shared computer.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Create a file <code><font size=+1>setup.praat</font></code> that contains only the following line:</dd>
+</dl>
+<code>       runScript: "U:\MaldenGuineaPigResearchButtons.praat"<br></code>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. Put the <code><font size=+1>setup.praat</font></code> file in a new folder called <code><font size=+1>plugin_MaldenGuineaPigResearch</font></code>, and distribute this folder among your local colleagues.</dd>
+</dl>
+<p>This procedure allows all members of the group to automatically enjoy all the later changes in your custom command set.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Add_to_dynamic_menu___.html">Add to dynamic menu...</a>
+<li><a href="Add_to_fixed_menu___.html">Add to fixed menu...</a>
+<li><a href="Add_to_menu___.html">Add to menu...</a>
+<li><a href="ButtonEditor.html">ButtonEditor</a>
+<li><a href="hidden_commands.html">hidden commands</a>
+<li><a href="initialization_script.html">initialization script</a>
+<li><a href="plugins.html">plugins</a>
+<li><a href="Programming_with_Praat.html">Programming with Praat</a>
+<li><a href="What_was_new_in_4_5_.html">What was new in 4.5?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2006,2007,2014,2015,2020,2023</p>
+</address>
+</body>
+</html>

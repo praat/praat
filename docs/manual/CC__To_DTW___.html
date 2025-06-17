@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>CC: To DTW...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+CC: To DTW...
+</b></font></table></table>
+<p>You can choose this command after selecting two objects with cepstral coefficients (two <a href="MFCC.html">MFCC</a>'s or <a href="LFCC.html">LFCC</a>'s). With this command you perform dynamic time warping. </p>
+<h2>Algorithm</h2>
+<p>First we calculate the distance matrix <i>D</i> of all the distances between the cepstral frames of the two objects. This matrix has <i>n</i><sub>1</sub> rows, the number of frames in the first object, and <i>n</i><sub>2</sub> columns, the number of frames in the second object.</p>
+<p>The elements of <i>D</i> are the distances <i>d</i><sub><i>ij</i></sub> between frame <i>i</i> (from the first object) and frame <i>j</i> (from the second one). The <i>d</i><sub><i>ij</i></sub> are composed of three parts:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>d</i><sub><i>ij</i></sub> = <i>w</i><sub>1</sub> &#183; <i>d</i><sub>1</sub> + <i>w</i><sub>2</sub> &#183; <i>d</i><sub>2</sub> + <i>w</i><sub>3</sub> &#183; <i>d</i><sub>3</sub>,</table>
+<p>where <i>w</i><sub>1</sub>, <i>w</i><sub>2</sub> and <i>w</i><sub>3</sub> are user-supplied weights and </p>
+<dl>
+<dt><i>d</i><sub>1</sub> = &#8721;<sup>N</sup><sub><i>k</i>=1</sub> (<i>c</i><sub><i>ik</i></sub> - <i>c</i><sub><i>jk</i></sub>)<sup>2</sup>), 
+<dd>the sum of the squared distances between the <i>N</i> cepstral coefficients of the two frames. </dd>
+<dt><i>d</i><sub>2</sub> = (c<sub><i>i0</i></sub> - c<sub><i>j0</i></sub>)<sup>2</sup>
+<dd>the difference between the average 'power' of the two frames.</dd>
+<dt><i>d</i><sub>3</sub> = &#8721;<sup>N</sup><sub><i>k</i>=1</sub> (<i>r</i><sub><i>ik</i></sub> - <i>r</i><sub><i>jk</i></sub>)<sup>2</sup>), 
+<dd>in which <i>r</i><sub><i>ik</i></sub> is the regression coefficient of the cepstral coefficient <i>k</i>, calculated from the frames within a time span of <i>T</i> seconds, the <i>regression window length</i>, around the centre of frame <i>i</i>.</dd>
+</dl>
+<p>After calculation of all the frame distances <i>d</i><sub><i>ij</i></sub>, we find the optimal path through the distance matrix <i>D</i> with a Viterbi-algorithm.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="DTW.html">DTW</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20221114</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: Remove noise...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: Remove noise...
+</b></font></table></table>
+<p>A command to suppress noise in the selected <a href="Sound.html">Sound</a>.</p>
+<h2>Settings</h2>
+<p align=middle><img height=340 width=540 src=Sound__Remove_noise____1.png></p><dl>
+<dt><b>Noise time range (s)</b>
+<dd>the start and end time of a noise part in the sound whose characteristics will be used in the denoising. If the end time is chosen before the start time, the noise fragment will be chosen automatically around a position where the intensity is minimal. For good noise suppression it is important that the noise fragment's duration is chosen several times the length of the window.</dd>
+<dt><b>Window length (s)</b>
+<dd>denoising takes place in (overlapping) windows of this length.</dd>
+<dt><b>Filter frequency range (Hz)</b>
+<dd>before denoising the sound will be <a href="Sound__Filter__pass_Hann_band____.html">band-pass filtered</a>. </dd>
+<dt><b>Noise reduction method</b>
+<dd>The method of <i>spectral subtraction</i> was defined in <a href="Boll__1979_.html">Boll (1979)</a>. The variant implemented is modelled after a script by Ton Wempe.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20121122</p>
+</address>
+</body>
+</html>

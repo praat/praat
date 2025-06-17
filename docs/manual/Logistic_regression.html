@@ -1,0 +1,45 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Logistic regression</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Logistic regression
+</b></font></table></table>
+<p>This page explains how you do logistic regression with Praat. You start by saving a table in a text file (if it contains non-ASCII symbols such as &#230; or &#603;, use the UTF-8 or UTF-16 format). The following example contains natural stimuli (female speaker) with measured F1 and duration values, and the responses of a certain listener who is presented each stimulus 10 times.</p>
+<code>       F1    Dur   /æ/   /ɛ/<br></code>
+<code>       764    87    2     8<br></code>
+<code>       674   104    3     7<br></code>
+<code>       574   126    0    10<br></code>
+<code>       566    93    1     9<br></code>
+<code>       618   118    1     9<br></code>
+<code>      1025   147   10     0<br></code>
+<code>       722   117    7     3<br></code>
+<code>       696   169    9     1<br></code>
+<code>      1024   124   10     0<br></code>
+<code>       752    92    6     4<br></code>
+<p>In this table we see 10 different stimuli, each characterized by a certain combination of the factors (independent variables) <i>F1</i> (first formant in Hertz) and <i>Dur</i> (duration in milliseconds). The first row of the table means that there was a stimulus with an F1 of 764 Hz and a duration of 87 ms, and that the listener responded to this stimulus 2 times with the response category /&#230;/, and the remaining 8 times with the category /&#603;/.</p>
+<p>A table as above can be typed into a text file. The columns can be separated with spaces and/or tab stops. The file can be read into Praat with <b>Read Table from table file...</b>. The command <b>To logistic regression...</b> will become available in the <b>Statistics</b> menu.</p>
+<h2>What does it do?</h2>
+<p>The logistic regression method will find values <i>&#945;</i>, <i>&#946;<sub>F1</sub></i> and <i>&#946;<sub>dur</sub></i> that optimize</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#945;</i> + <i>&#946;</i><sub><i>F1</i></sub> <i>F1</i><sub><i>k</i></sub> + <i>&#946;</i><sub><i>dur</i></sub> <i>Dur</i><sub><i>k</i></sub> = ln (<i>p</i><sub><i>k</i></sub>(/&#603;/)/<i>p</i><sub><i>k</i></sub>(/&#230;/))</table>
+<p>where <i>k</i> runs from 1 to 10, and <i>p</i><sub><i>k</i></sub>(/&#230;/) + <i>p</i><sub><i>k</i></sub>(/&#603;/) = 1.</p>
+<p>The optimization criterion is <i>maximum likelihood</i>, i.e. those <i>&#945;</i>, <i>&#946;</i><sub><i>F1</i></sub> and <i>&#946;</i><sub><i>dur</i></sub> will be chosen that lead to values for <i>p</i><sub><i>k</i></sub>(/&#230;/) and <i>p</i><sub><i>k</i></sub>(/&#603;/) that make the observations in the table most likely.</p>
+<p>Praat will create an object of type <b>LogisticRegression</b> in the list. When you then click the <b>Info</b> button, Praat will write the values of <i>&#945;</i> (the <i>intercept</i>), <i>&#946;</i><sub><i>F1</i></sub> and <i>&#946;</i><sub><i>dur</i></sub> into the Info window (as well as much other information).</p>
+<p>The number of factors does not have to be 2; it can be 1 or more. The number of dependent categories is always 2.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Statistics.html">Statistics</a>
+<li><a href="What_was_new_in_5_0_.html">What was new in 5.0?</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20141001</p>
+</address>
+</body>
+</html>

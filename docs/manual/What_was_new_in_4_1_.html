@@ -1,0 +1,87 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>What was new in 4.1?</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+What was new in 4.1?
+</b></font></table></table>
+<h2>Praat 4.1, 5 June 2003</h2>
+<p>General:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; MacOS X edition.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Removed licensing.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More than 99 percent of the source code distributed under the <a href="General_Public_License__version_3.html">General Public License</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Windows 2000 and XP: put preferences files in home directory.</dd>
+</dl>
+<p>Phonetics:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Spectrum: the sign of the Fourier transform has changed, to comply with common use in technology and physics. Old Spectrum files are converted when read.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Spectral moments.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Many jitter and shimmer measures, also in the Sound editor window.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; PitchTier: shift or multiply frequencies (also in ManipulationEditor).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TextGrid: shift times, scale times.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Overlap-add synthesis: reduced buzz in voiceless parts.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__Change_gender___.html">Sound: Change gender...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Editors: <a href="Intro_3_6__Viewing_a_spectral_slice.html">Intro 3.6. Viewing a spectral slice</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Editors: <b>Get spectral power at cursor cross</b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Sound__To_PointProcess__periodic__peaks____.html">Sound: To PointProcess (periodic, peaks)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Ltas: merge.</dd>
+</dl>
+<p>Listening experiments:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Goodness judgments.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Multiple <b>ResultsMFC: To Table</b>, so that the whole experiment can go into a single statistics file.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Stimulus file path can be relative to directory of experiment file.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="ExperimentMFC.html">ExperimentMFC</a>: multiple substimuli for discrimination tests.</dd>
+</dl>
+<p>Statistics:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; New <a href="Table.html">Table</a> object for column <a href="Statistics.html">statistics</a>: Pearson's <i>r</i>, Kendall's <i>&#964;</i>-<i>b</i>, <i>t</i>-test.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Table: scatter plot.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Table: column names as variables.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="T-test.html">T-test</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TableOfReal: Extract rows where column...</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; TableOfReal: Get correlation....</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Correlation__Confidence_intervals___.html">Correlation: Confidence intervals...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="SSCP__Get_diagonality__bartlett____.html">SSCP: Get diagonality (bartlett)...</a></dd>
+</dl>
+<p>OT learning:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Tutorial for bidirectional learning.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Random choice between equally violating candidates.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; More constraints in metrics grammar.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Learning in editor.</dd>
+</dl>
+<p>Graphics:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Printing: hard-coded image interpolation for EPS files and PostScript printers.</dd>
+</dl>
+<p>Scripting:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; New <a href="Formulas.html">Formulas</a> tutorial.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Formulas.html">Formulas</a>: can use variables without quotes.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Formulas for PitchTier, IntensityTier, AmplitudeTier, DurationTier.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Refer to any matrices and tables in formulas, e.g. <code><font size=+1>Sound_hello (x)</font></code> or <code><font size=+1>Table_everything [row, col]</font></code> or <code><font size=+1>Table_tokens [i, “F1”]</font></code>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Assignment by modification, as with += -= *= /=.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; New functions: <a href="_date-S_.html"><b><code><font size=+1>date$</font></code></b></a> (), <a href="_extractNumber_.html"><b><code><font size=+1>extractNumber</font></code></b></a>, <a href="_extractWord-S_.html"><b><code><font size=+1>extractWord$</font></code></b></a>, <a href="_extractLine-S_.html"><b><code><font size=+1>extractLine$</font></code></b></a>. See <a href="Formulas_6__String_functions.html">Formulas 6. String functions</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Scripting_5_8__Including_other_scripts.html">Scripting 5.8. Including other scripts</a>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; String formulas in the calculator.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Stopped support of things that had been undocumented for the last four years: <b>let</b>, <b>getnumber</b>, <b>getstring</b>, <b>ARGS</b>, <b>copy</b>, <b>proc</b>, variables with capitals, and strings in numeric variables; there are messages about how to modify your old scripts.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Disallowed ambiguous expressions like -3^2.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="What_was_new_in_6_4_.html">What was new in 6.4?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2003</p>
+</address>
+</body>
+</html>

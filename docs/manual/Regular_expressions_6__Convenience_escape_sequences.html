@@ -1,0 +1,38 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Regular expressions 6. Convenience escape sequences</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Regular expressions 6. Convenience escape sequences
+</b></font></table></table>
+<p>Convenience escape sequences in a <a href="Regular_expressions.html">regular expression</a> present a shorthand for some character classes.</p>
+<dl>
+<dt><b></b>\d  matches a digit: [0-9].
+<dd>&nbsp;&nbsp;&nbsp;Example: "-?\d+" matches any integer.</dd>
+<dt><b></b>\D  <i>not</i> a digit: [^0-9].
+<dt><b></b>\l  a letter: [a-zA-Z].
+<dt><b></b>\L  <i>not</i> a letter: [^a-zA-Z].
+<dt><b></b>\s  whitespace: [ \t\n\r\f\v].
+<dt><b></b>\S  <i>not</i> whitespace: [^ \t\n\r\f\v].
+<dt><b></b>\w  "word" character: [a-zA-Z0-9_].
+<dd>&nbsp;&nbsp;&nbsp;Example: "\w+" matches a "word", i.e., a string of one or more characters that may consist of letters, digits and underscores.</dd>
+<dt><b></b>\W  <i>not</i> a "word" character: [^a-zA-Z0-9_].
+<dt><b></b>\B  any character that is <i>not</i> a word-delimiter.
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Regular_expressions_1__Special_characters.html">Regular expressions 1. Special characters</a>
+<li><a href="Regular_expressions_3__Anchors.html">Regular expressions 3. Anchors</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20010708</p>
+</address>
+</body>
+</html>

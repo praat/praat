@@ -1,0 +1,66 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 5.4. Loops</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 5.4. Loops
+</b></font></table></table>
+<h2>"For" loops</h2>
+<dl>
+<dt><b>for</b> <i>variable</i> <b>from</b> <i>expression</i><sub>1</sub> <b>to</b> <i>expression</i><sub>2</sub>
+<dt><b>for</b> <i>variable</i> <b>to</b> <i>expression</i>
+<dd>the statements between the <b>for</b> line and the matching <b>endfor</b> will be executed while a variable takes on values between two expressions, with an increment (raise) of 1 on each turn of the loop. If there is no <b>from</b>, the loop variable starts at 1.</dd>
+</dl>
+<p>The following script plays nine sine waves, with frequencies of 200, 300, ..., 1000 Hz:</p>
+<code>   <b>for</b> i <b>from</b> 2 <b>to</b> 10<br></code>
+<code>      Create Sound as pure tone: "tone", 1, 0, 0.3, 44100, i * 100, 0.2, 0.01, 0.01<br></code>
+<code>      Play<br></code>
+<code>      Remove<br></code>
+<code>   <b>endfor</b><br></code>
+<p>The stop value of the <b>for</b> loop is evaluated on each turn. If the second expression is already less than the first expression to begin with, the statements between <b>for</b> and <b>endfor</b> are not executed even once.</p>
+<h2>&#8220;Repeat&#8221; loops</h2>
+<dl>
+<dt><b>until</b> <i>expression</i>
+<dd>the statements between the matching preceding <b>repeat</b> and the <b>until</b> line will be executed again if the expression evaluates to zero or <i>false</i>.</dd>
+</dl>
+<p>The following script measures the number of trials it takes me to throw 12 with two dice:</p>
+<code>   throws = 0<br></code>
+<code>   <b>repeat</b><br></code>
+<code>      eyes = randomInteger (1, 6) + randomInteger (1, 6)<br></code>
+<code>      throws = throws + 1<br></code>
+<code>   <b>until</b> eyes = 12<br></code>
+<code>   writeInfoLine: "It took me ", throws, " trials to throw 12 with two dice."<br></code>
+<p>The statements in the <b>repeat</b>/<b>until</b> loop are executed at least once.</p>
+<h2>"While" loops</h2>
+<dl>
+<dt><b>while</b> <i>expression</i>
+<dd>if the expression evaluates to zero or <i>false</i>, the execution of the script jumps after the matching <b>endwhile</b>.</dd>
+<dt><b>endwhile</b>
+<dd>execution jumps back to the matching preceding <b>while</b> line, which is then evaluated again.</dd>
+</dl>
+<p>The following script forces the number <i>x</i> into the range [0; 2&#960;):</p>
+<code>   <b>while</b> x &lt; 0<br></code>
+<code>      x = x + 2 * pi<br></code>
+<code>   <b>endwhile</b><br></code>
+<code>   <b>while</b> x &gt;= 2 * pi<br></code>
+<code>      x = x - 2 * pi<br></code>
+<code>   <b>endwhile</b><br></code>
+<p>If the expression evaluates to zero or <i>false</i> to begin with, the statements between <b>while</b> and <b>endwhile</b> are not executed even once.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_5__Language_elements_reference.html">Scripting 5. Language elements reference</a>
+<li><a href="Scripting_5_5__Procedures.html">Scripting 5.5. Procedures</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20140111</p>
+</address>
+</body>
+</html>

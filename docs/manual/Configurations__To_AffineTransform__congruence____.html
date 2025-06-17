@@ -1,0 +1,33 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Configurations: To AffineTransform (congruence)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Configurations: To AffineTransform (congruence)...
+</b></font></table></table>
+<p>A command that creates an <a href="AffineTransform.html">AffineTransform</a> object from two selected <a href="Configuration.html">Configuration</a> objects.</p>
+<p>We calculate the affine transform that transforms the second selected Configuration object to match the first selected Configuration object as closely as possible. The degree of proportionality is the congruence between corresponding dimensions.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Maximum number of iterations</b>
+<dd>sets a limit to the number of iterations.</dd>
+<dt><b>Tolerance</b>
+<dd>also determines when the iteration stops. This happens if |<i>f</i>(<b>T</b><sub><i>i</i></sub>)&#8211;<i>f</i>(<b>T</b><sub><i>i</i>+1</sub>)| &lt; <i>tolerance</i> &#183; <i>f</i>(<b>T</b><sub><i>i</i></sub>), where <i>f</i>(<b>T</b><sub><i>i</i></sub>) is the sum of the congruences for the <i>i</i><sup>th</sup> iteration (see below).</dd>
+</dl>
+<p>The iteration process stops when either the <i>maximum number of iterations</i> is reached or the <i>tolerance</i> criterion is met, which ever one is first.</p>
+<h2>Algorithm</h2>
+<p>Sometimes the criterion used in a <a href="Procrustes_transform.html">Procrustes transform</a> is too restrictive for comparing two configurations. This criterion is only zero when the positions in the rotated configuration (<b>A</b><b>T</b>) equal the positions in the other configuration (<b>B</b>). <a href="Brokken__1983_.html">Brokken (1983)</a> proposed an algorithm to maximize instead the sum of congruences between corresponding dimensions of <b>AT</b> and <b>B</b>. Specifically he proposed to maximize</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>f</i>(<b>T</b>) = &#8721;<sub><i>i</i>=1..<i>numberOfDimensions</i></sub> <b>t</b>&#8242;<sub><i>i</i></sub><b>A</b>&#8242;<b>b</b><sub><i>i</i></sub> / ((<b>t</b>&#8242;<sub><i>i</i></sub><b>A</b>&#8242;<b>A</b><b>t</b><sub><i>i</i></sub>)<sup>1/2</sup>(<b>b</b>&#8242;<sub><i>i</i></sub><b>b</b><sub><i>i</i></sub>)<sup>1/2</sup>),</table>
+<p>where <b>t</b>&#8242;<sub><i>i</i></sub> and <b>b</b>&#8242;<sub><i>i</i></sub> are the <i>i</i><sup>th</sup> column of <b>T</b> and <b>B</b>, respectively. A direct solution for <b>T</b> is not available, it can only be obtained by an iterative procedure. The implemented algorithm is from <a href="Kiers___Groenen__1996_.html">Kiers & Groenen (1996)</a> and shows excellent convergence properties.</p>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

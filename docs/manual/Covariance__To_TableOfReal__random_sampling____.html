@@ -1,0 +1,41 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Covariance: To TableOfReal (random sampling)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Covariance: To TableOfReal (random sampling)...
+</b></font></table></table>
+<p>Generate a <a href="TableOfReal.html">TableOfReal</a> object by random sampling from a multi-variate normal distribution whose <a href="Covariance.html">Covariance</a> matrix is the selected object.</p>
+<h2>Setting</h2>
+<dl>
+<dt><b>Number of data points</b>
+<dd>determines the number of data points that will be generated. Each data point occupies one row in the generated table.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>The algorithm proceeds as follows:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. Diagonalize the covariance matrix: calculate the eigenvalues <code><font size=+1>v<sub></font></code><i>i</i></sub> and eigenvectors <i><b>e</i></b><sub><i>i</i></sub> of the <i>m</i> &#215; <i>m</i> Covariance matrix. In general there will also be <i>m</i> of these. Let <b><i>E</i></b> be the <i>m</i> &#215; <i>m</i> matrix with eigenvector <i><b>e</i></b><sub><i>j</i></sub> in column <i>j</i> (<i>j</i>=1..<i>m</i>).</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. Generate a vector <b>x</b> whose elements <i>x</i><sub><i>k</i></sub> equal <i>x</i><sub><i>k</i></sub> = randomGauss (0, &#8730; (<i>v</i><sub><i>k</i></sub>)). Each  <i>x</i><sub><i>k</i></sub> is a random deviate drawn from a Gaussian distribution with mean zero and standard deviation equal to the square root of the corresponding eigenvalue <i>v</i><sub><i>k</i></sub>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. Rotate back: calculate the vector <b>y</b> = <b><i>E</i></b> <b>x</b>, obtained by multiplying the vector <b>x</b> with the matrix <b><i>E</i></b>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">4. Add the centroid to <b>y</b> and copy the elements of <b>y</b> to the corresponding row of the TableOfReal object.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">5. Repeat steps 2, 3 and 4 until the desired number of data points has been reached.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">6. Copy the column labels from the Covariance object to the TableOfReal object.</dd>
+</dl>
+<p>In case the covariance matrix is diagonal, the algorithm is much simpler: we can skip the first and third step.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="GaussianMixture__To_TableOfReal__random_sampling____.html">GaussianMixture: To TableOfReal (random sampling)...</a>
+<li><a href="What_was_new_in_3_9_.html">What was new in 3.9?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20101101</p>
+</address>
+</body>
+</html>

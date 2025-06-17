@@ -1,0 +1,39 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Articulatory synthesis</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Articulatory synthesis
+</b></font></table></table>
+<p>This is a description of the articulatory synthesis package in Praat. For a detailed description of the physics and mathematics behind the model, see <a href="Boersma__1998_.html">Boersma (1998)</a>, chapters 2 and 3. For examples of how to synthesize utterances, consult http://www.fon.hum.uva.nl/paul/diss/ch5/.</p>
+<h2>How to start (after reading the <a href="Intro.html">Intro</a>)</h2>
+<p>We are going to have the synthesizer say [&#601;p&#601;]. We need a <a href="Speaker.html">Speaker</a> and an <a href="Artword.html">Artword</a> object.</p>
+<p>1. Create a speaker with <a href="Create_Speaker___.html">Create Speaker...</a> from the <a href="New_menu.html">New menu</a>.</p>
+<p>2. Create an articulation word of 0.5 seconds with <a href="Create_Artword___.html">Create Artword...</a>.</p>
+<p>3. Edit the Artword by selecting it and clicking <b>View &amp; Edit</b>.</p>
+<p>4. To set the glottis to a position suitable for phonation, use the ArtwordEditor to set the <i>Interarytenoid</i> activity to 0.5 throughout the utterance. You set two targets: 0.5 at a time of 0 seconds, and 0.5 at a time of 0.5 seconds.</p>
+<p>5. To prevent air escaping from the nose, close the nasopharyngeal port by setting the <i>LevatorPalatini</i> activity to 1.0 throughout the utterance.</p>
+<p>6. To generate the lung pressure needed for phonation, you set the <i>Lungs</i> activity at 0 seconds to 0.2, and at 0.1 seconds to 0.</p>
+<p>7. To force a jaw movement that closes the lips, set the <i>Masseter</i> activity at 0.25 seconds to 0.7, and the <i>OrbicularisOris</i> activity at 0.25 seconds to 0.2.</p>
+<p>8. Select the Speaker and the Artword and click <b>Play movie</b>; you will see a closing-and-opening gesture of the mouth.</p>
+<p>9. Select the Speaker and the Artword and click <b>To Sound...</b> (see <a href="Artword___Speaker__To_Sound___.html">Artword & Speaker: To Sound...</a>).</p>
+<p>10. Just click <b>OK</b>; the synthesis starts.</p>
+<p>11. If you are sitting at a 1997 computer, this will last for 5 minutes or so; at a 2019 computer, 1 second. If this is too slow for you, click <b>Interrupt</b>. Otherwise, you can watch the vibrating vocal cords and the changing vocal-tract shape.</p>
+<p>12. You can play, view, and analyse the resulting <a href="Sound.html">Sound</a> as you would any other. You can see and hear a sound movie if you select the Speaker, the Artword, and the Sound, and click <b>Play movie</b>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Acknowledgments.html">Acknowledgments</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20211016</p>
+</address>
+</body>
+</html>

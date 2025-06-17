@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Feedforward neural networks 1.1. The learning phase</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Feedforward neural networks 1.1. The learning phase
+</b></font></table></table>
+<p>During the learning phase the weights in the FFNet will be modified. All weights are modified in such a way that when a pattern is presented, the output unit with the correct category, hopefully, will have the largest output value.</p>
+<h2>How does learning take place?</h2>
+<p>The FFNet uses a <i>supervised</i> learning algorithm: besides the input pattern, the neural net also needs to know to what category the pattern belongs. Learning proceeds as follows: a pattern is presented at the inputs. The pattern will be transformed in its passage through the layers of the network until it reaches the output layer. The units in the output layer all belong to a different category. The outputs of the network as they are now are compared with the outputs as they ideally would have been if this pattern were correctly classified: in the latter case the unit with the correct category would have had the largest output value and the output values of the other output units would have been very small. On the basis of this comparison all the connection weights are modified a little bit to guarantee that, the next time this same pattern is presented at the inputs, the value of the output unit that corresponds with the correct category is a little bit higher than it is now and that, at the same time, the output values of all the other incorrect outputs are a little bit lower than they are now. (The differences between the actual outputs and the idealized outputs are propagated back from the top layer to lower layers to be used at these layers to modify connection weights. This is why the term <i>backpropagation network</i> is also often used to describe this type of neural network.)</p>
+<p>If you perform the procedure above once for every pattern and category pair in your data set you have performed one <a href="epoch.html">epoch</a> of learning.</p>
+<p>The hope is that eventually, probably after many epochs, the neural net will come to remember these pattern-category pairs. You even hope that the neural net, when the learning phase has terminated, will be able to <i>generalize</i> and has learned to <a href="FFNet___PatternList__To_Categories___.html">classify</a> correctly any unknown pattern presented to it. </p>
+<p>Because real-life data often contains noise as well as partly contradictory information, these hopes can be fulfilled only partly. </p>
+<p>For <a href="FFNet___PatternList___Categories__Learn___.html">learning</a> you need to select three different objects together: a FFNet (the <i>classifier</i>), a PatternList (the <i>inputs</i>) and a Categories (the <i>correct outputs</i>).</p>
+<h2>How long will the learning phase take?</h2>
+<p>In general, this question is hard to answer. It depends on the size of the neural network, the number of patterns to be learned, the number of epochs, the tolerance of the minimizer and the speed of your computer, how much computing time the learning phase may take. </p>
+<p>If computing time becomes excessive in your interactive environment then consider using the powerful <a href="Scripting.html">scripting</a> facilities in Praat to process your learning job as a batch job. </p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Feedforward_neural_networks.html">Feedforward neural networks</a>
+<li><a href="Feedforward_neural_networks_1__What_is_a_feedforward_ne.html">Feedforward neural networks 1. What is a feedforward neural network?</a>
+<li><a href="Feedforward_neural_networks_1_2__The_classification_pha.html">Feedforward neural networks 1.2. The classification phase</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040428</p>
+</address>
+</body>
+</html>

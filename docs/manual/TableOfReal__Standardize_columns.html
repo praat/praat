@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TableOfReal: Standardize columns</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+TableOfReal: Standardize columns
+</b></font></table></table>
+<p>Standardizes each column of the selected <a href="TableOfReal.html">TableOfReal</a>.</p>
+<p>The entries <i>x</i><sub><i>ij</i></sub> in the TableOfReal will change to:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>(<i>x</i><sub><i>ij</i></sub> &#8211; <i>&#956;</i><sub><i>j</i></sub>) / <i>&#963;</i><sub><i>j</i></sub>, </table>
+<p>where <i>&#956;</i><sub><i>j</i></sub> and <i>&#963;</i><sub><i>j</i></sub> are the mean and the standard deviation as calculated from the <i>j</i><sup>th</sup> column, respectively. After standardization all column means will equal zero and all column standard deviations will equal one.</p>
+<h2>Algorithm</h2>
+<p>Standard deviations are calculated with the corrected two-pass algorithm as described in <a href="Chan__Golub___LeVeque__1983_.html">Chan, Golub & LeVeque (1983)</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Principal_component_analysis.html">Principal component analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 19990428</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>vector peak interpolation</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+vector peak interpolation
+</b></font></table></table>
+<p>An algorithm for finding a maximum or a minimum in a sampled signal.</p>
+<h2>Overview</h2>
+<p>The signal is described with the sequence <i>y</i><sub><i>i</i></sub>, <i>i</i> = 1...<i>n</i>, where <i>n</i> is the number of samples. Each sample <i>i</i> is associated with an <i>x</i> value (typically, time) given by <i>x</i><sub><i>i</i></sub> = <i>x</i><sub>1</sub> + (<i>i</i> - 1) <i>dx</i>, where <i>dx</i> is the sample period.</p>
+<p>The maximum is looked for in two kinds of locations:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. At the left and right edge, i.e. at <i>i</i> = 1 and at <i>i</i> = <i>n</i>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. At or <i>near</i> all local maxima, i.e. at or <i>near</i> those <i>i</i> that satisfy <i>y</i><sub><i>i</i>-1</sub> &lt; <i>y</i><sub><i>i</i></sub> &#8804; <i>y</i><sub><i>i</i>+1</sub>.</dd>
+</dl>
+<p>The greatest of the following values, therefore, will be the maximum:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">1. <i>y</i><sub>1</sub>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">2. The local maxima, which are at or <i>near</i> <i>y</i><sub><i>i</i></sub>, where <i>y</i><sub><i>i</i>-1</sub> &lt; <i>y</i><sub><i>i</i></sub> &#8804; <i>y</i><sub><i>i</i>+1</sub>.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">3. <i>y</i><sub><i>n</i></sub>.</dd>
+</dl>
+<p>We will now see what <i>near</i> means. The precision of the result depends on the <i>interpolation method</i> of this algorithm.</p>
+<h2>1. Lowest precision: round to sample</h2>
+<p>If the interpolation method is &#8220;none&#8221;, the local maxima are <i>at</i> the samples <i>m</i> that satisfy <i>y</i><sub><i>m</i>-1</sub> &lt; <i>y</i><sub><i>m</i></sub> &#8804; <i>y</i><sub><i>m</i>+1</sub>. Thus, their <i>x</i> values are at <i>x</i><sub><i>m</i></sub> = <i>x</i><sub>1</sub> + (<i>m</i> - 1) <i>dx</i>, and their <i>y</i> values are <i>y</i><sub><i>m</i></sub>.</p>
+<p>This kind of precision is appropriate for an unordered sequence of values <i>y</i><sub><i>i</i></sub>: the result is simply the greatest available value.</p>
+<h2>2. Middle precision: parabolic interpolation</h2>
+<p>If the interpolation method is &#8220;parabolic&#8221;, the algorithm uses one point on each side of every local maximum <i>y</i><sub><i>m</i></sub> to estimate the location and value of the local maximum. Because a Taylor expansion shows that any smooth curve can be approximated as a parabola in the vicinity of any local maximum, the location <i>x</i><sub><i>max</i></sub> and value <i>y</i><sub><i>max</i></sub> can be found with the following procedure:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>dy</i> &#8801; 1/2 (<i>y</i><sub><i>m</i>+1</sub> - <i>y</i><sub><i>m</i>-1</sub>)</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>d</i><sup>2</sup><i>y</i> &#8801; (<i>y</i><sub><i>m</i></sub> - <i>y</i><sub><i>m</i>-1</sub>) + (<i>y</i><sub><i>m</i></sub>- <i>y</i><sub><i>m</i>+1</sub>)</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>m</i>&#8242; &#8801; <i>m</i> + <i>dy</i>/<i>d</i><sup>2</sup><i>y</i></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>x</i><sub><i>max</i></sub> = <i>x</i><sub>1</sub> + (<i>m</i>&#8242; - 1) <i>dx</i></table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>y</i><sub><i>max</i></sub> = <i>y</i><sub><i>m</i></sub> + 1/2 <i>dy</i><sup>2</sup> / <i>d</i><sup>2</sup><i>y</i></table>
+<p>This kind of precision is appropriate if <i>y</i> is considered a smooth function of <i>x</i>, as in:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Formant__Get_minimum___.html">Formant: Get minimum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Formant__Get_time_of_minimum___.html">Formant: Get time of minimum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Formant__Get_maximum___.html">Formant: Get maximum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Formant__Get_time_of_maximum___.html">Formant: Get time of maximum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Intensity__Get_minimum___.html">Intensity: Get minimum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Intensity__Get_time_of_minimum___.html">Intensity: Get time of minimum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Intensity__Get_maximum___.html">Intensity: Get maximum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Intensity__Get_time_of_maximum___.html">Intensity: Get time of maximum...</a></dd>
+</dl>
+<h2>3. Higher precision: cubic interpolation</h2>
+<p>If the interpolation method is &#8220;cubic&#8221;, the interpolation is performed over four points (see <a href="vector_value_interpolation.html">vector value interpolation</a>). The results are similar to those of the parabolic interpolation method, but you can use it (or sinc interpolation) if you want the result of a command like <b>Get maximum...</b> to be equal to the result of a sequence of commands like <b>Get time of maximum...</b> and <b>Get value at time...</b>.</p>
+<h2>4. Highest precision: sinc interpolation</h2>
+<p>If the interpolation method is &#8220;sinc70&#8221; or &#8220;sinc700&#8221;, the algorithm assumes that the signal is a sum of sinc functions, so that a number of points (namely, 70 or 700) on each side of the initial guess <i>m</i> must be taken into account (see <a href="vector_value_interpolation.html">vector value interpolation</a>). The algorithm finds the maximum of this continuous function by Brent's method (see <a href="Press_et_al___1992_.html">Press et al. (1992)</a>).</p>
+<p>This method is appropriate for signals that result from sampling a continuous signal after it has been low-pass filtered at the <a href="Nyquist_frequency.html">Nyquist frequency</a>. See:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Sound__Get_minimum___.html">Sound: Get minimum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Sound__Get_time_of_minimum___.html">Sound: Get time of minimum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Sound__Get_maximum___.html">Sound: Get maximum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Sound__Get_time_of_maximum___.html">Sound: Get time of maximum...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em"><a href="Sound__Get_absolute_extremum___.html">Sound: Get absolute extremum...</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Harmonicity__Get_maximum___.html">Harmonicity: Get maximum...</a>
+<li><a href="Harmonicity__Get_minimum___.html">Harmonicity: Get minimum...</a>
+<li><a href="Harmonicity__Get_time_of_maximum___.html">Harmonicity: Get time of maximum...</a>
+<li><a href="Harmonicity__Get_time_of_minimum___.html">Harmonicity: Get time of minimum...</a>
+<li><a href="Ltas__Get_frequency_of_maximum___.html">Ltas: Get frequency of maximum...</a>
+<li><a href="Ltas__Get_frequency_of_minimum___.html">Ltas: Get frequency of minimum...</a>
+<li><a href="Ltas__Get_maximum___.html">Ltas: Get maximum...</a>
+<li><a href="Ltas__Get_minimum___.html">Ltas: Get minimum...</a>
+<li><a href="PowerCepstrogram__Get_CPPS___.html">PowerCepstrogram: Get CPPS...</a>
+<li><a href="PowerCepstrum__Get_peak_prominence___.html">PowerCepstrum: Get peak prominence...</a>
+<li><a href="PowerCepstrum__Get_peak___.html">PowerCepstrum: Get peak...</a>
+<li><a href="PowerCepstrum__Get_quefrency_of_peak___.html">PowerCepstrum: Get quefrency of peak...</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20200912 20250418</p>
+</address>
+</body>
+</html>

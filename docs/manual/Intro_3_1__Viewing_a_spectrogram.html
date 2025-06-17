@@ -1,0 +1,34 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Intro 3.1. Viewing a spectrogram</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Intro 3.1. Viewing a spectrogram
+</b></font></table></table>
+<p>To see the spectral content of a sound as a function of time, select a <a href="Sound.html">Sound</a> or <a href="LongSound.html">LongSound</a> object and choose <a href="View___Edit.html">View & Edit</a>. A <a href="SoundEditor.html">SoundEditor</a> or <a href="LongSoundEditor.html">LongSoundEditor</a> window will appear on your screen. In the entire bottom half of this window you will see a greyish image, which is called a <i>spectrogram</i>. If you do not see it, choose <a href="Show_spectrogram.html">Show spectrogram</a> from the Spectrogram menu.</p>
+<p>The spectrogram is a <a href="spectro-temporal_representation.html">spectro-temporal representation</a> of the sound. The horizontal direction of the spectrogram represents <a href="time.html">time</a>, the vertical direction represents <a href="frequency.html">frequency</a>. The time scale of the spectrogram is the same as that of the waveform, so the spectrogram reacts to your zooming and scrolling. To the left of the spectrogram, you see the frequency scale. The frequency at the bottom of the spectrogram is usually 0 Hz (hertz, cps, cycles per second), and a common value for the frequency at the top is 5000 Hz.</p>
+<p>Darker parts of the spectrogram mean higher energy densities, lighter parts mean lower energy densities. If the spectrogram has a dark area around a time of 1.2 seconds and a frequency of 4000 Hz, this means that the sound has lots of energy for those high frequencies at that time. For many examples of spectrograms of speech sounds, see the textbook by <a href="Ladefoged__2001_.html">Ladefoged (2001)</a> and the reference work by <a href="Ladefoged___Maddieson__1996_.html">Ladefoged & Maddieson (1996)</a>.</p>
+<p>To see what time and frequency a certain part of the spectrogram is associated with, just click in the spectrogram and you will see the vertical time cursor showing the time above the waveform and the horizontal frequency cursor showing the frequency to the left of the spectrogram. This is one of the ways to find the <i>formant</i> frequencies for vowels, or the main spectral peaks for fricatives.</p>
+<h2>Hey, there are white vertical stripes at the edges!</h2>
+<p>This is normal. Spectral analysis requires an <i>analysis window</i> of a certain duration. For instance, if Praat wants to know the spectrum at 1.342 seconds, it needs to include information about the signal in a 10-milliseconds window around this time point, i.e., Praat will use signal information about all times between 1.337 and 1.347 seconds. At the very edges of the sound, this information is not available: if the sound runs from 0 to 1.8 seconds, no spectrum can be computed between 0 and 0.005 seconds or between 1.795 and 1.800 seconds. Hence the white stripes. If you do not see them immediately when you open the sound, zoom in on the beginning or end of the sound.</p>
+<p>When you zoom in on the middle of the sound (or anywhere not near the edges), the white stripes vanish. Suddenly you see only the time stretch between 0.45 and 1.35 seconds, for instance. But Praat did not forget what the signal looks like just outside the edges of this time window. To display a spectrogram from 0.45 to 1.35 seconds, Praat will use information from the wave form between 0.445 and 1.355 seconds, and if this is available, you will see no white stripes at the edges of the window.</p>
+<h2>Hey, it changes when I scroll!</h2>
+<p>This is normal as well, especially for long windows. If your visible time window is 20 seconds long, and the window takes up 1000 screen pixels horizontally, then you might think that every one-pixel-wide vertical line should represent the spectrum of 20 milliseconds of sound. But for reasons of computation speed, Praat will only show the spectrum of the part of the sound that lies around the centre of those 20 milliseconds, not the average or sum of all the spectra in those 20 milliseconds. This <i>undersampling</i> of the underlying spectrogram is different from what happens in the drawing of the wave form, where a vertical black line connects the minimum and maximum amplitude of all the samples that fall inside a screen pixel. We cannot do something similar for spectrograms. And since scrolling goes by fixed time steps (namely, 5 percent of the duration of the visible window), rather than by a whole number of screen pixels, the centres of the pixels will fall in different parts of the spectrogram with each scroll. Hence the apparent changes. If your visible window is shorter than a couple of seconds, the scrolling spectrogram will appear much smoother.</p>
+<p>The darkness of the spectrogram will also change when you scroll, because the visible part with the most energy is defined as black. When a very energetic part of the signal scrolls out of view, the spectrogram will turn darker. The next section will describe a way to switch this off.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Intro.html">Intro</a>
+<li><a href="Intro_3__Spectral_analysis.html">Intro 3. Spectral analysis</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20110128</p>
+</address>
+</body>
+</html>

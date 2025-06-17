@@ -1,0 +1,72 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>EditCostsTable</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+EditCostsTable
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat.</p>
+<p>The EditCostsTable determines the <i>string edit costs</i>, i.e. the costs involved in changing one string of symbols (the <i>source</i>) into another one (the <i>target</i>). String edit costs are generally divided into <i>insertion</i>, <i>deletion</i> and <i>substitution</i> costs. The latter terms refer to the operations that may be performed on a source string to transform it to a target string. For example, to change the source string "execution" to the target string "intention" we would need one insertion (i), one deletion (d) and three substitutions (s) as the following figure shows.</p>
+<p align=middle><img height=100 width=400 src=EditCostsTable_1.png></p><p>The figure above was produced with default values for the costs, i.e. the insertion and deletion costs were 1.0 while the substitution cost was 2.0. The actual edit distance between the target and source strings is calculated by the <a href="EditDistanceTable.html">EditDistanceTable</a> which uses an EditCostsTable to access the specific string edit costs. The figure above was produced by the following commands:</p>
+<code>   target = Create Strings as characters: "intention"<br></code>
+<code>   source = Create Strings as characters: "execution"<br></code>
+<code>   plusObject: target<br></code>
+<code>   edt = To EditDistanceTable<br></code>
+<code>   Draw edit operations<br></code>
+<p>The default EditCostsTable which is in every new EditDistanceTable object has only two rows and two columns, where the cells in this EditCostsTable have the following interpretation:
+</p>
+<dl>
+<dt>Cell [1] [2]:
+<dd>defines the cost for the insertion of a target symbol in the source string. The default insertion cost is 1.0.</dd>
+<dt>Cell [2] [1]:
+<dd>defines the cost of the deletion of a source symbol. The default value is 1.0.</dd>
+<dt>Cell [1] [1]:
+<dd>defines the cost of substituting a target symbol for a source symbol where the target and source symbols don't match. The default substitution cost is 2.0.</dd>
+<dt>Cell [2] [2]:
+<dd>defines the cost of substituting a target symbol for a source symbol where the target and source symbols do match. The deault value is 0.0.</dd>
+</dl>
+<h2>How to create a non-default EditCostsTable</h2>
+<p>In general we can define a table for <i>numberOfTargets</i> target symbols and <i>numberOfSources</i> source symbols. These numbers do not necessarily have to be equal to the number of different symbols that may occur in the target and source strings. They only represent the number of symbols that you like to give special edit costs. The EditCostTable will provide one extra dimension to accommodate target symbol insertion costs and source symbol deletion costs and another extra dimension to represent other target and source symbols that don't have separate entries and can therefore be treated as one group. The actual dimension of the table will therefore be (<i>numberOfTargets</i> + 2) &#215; (<i>numberOfSources</i> + 2). This is what the cells in the non-default table mean: </p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The upper matrix part of dimension <i>numberOfTargets</i> &#215; <i>numberOfSources</i> will show at cell [<i>i</i>] [<i>j</i>] the costs of substituting the <i>i</i>-th target symbol for the <i>j</i>-th source symbol.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The first <i>numberOfSources</i> values in row (<i>numberOfTargets</i> + 1) represent the costs of substituting one of the target symbols from the target <i>rest</i> category for the source symbol in the corresponding column.  The target rest category is the group of targets that do not belong to the <i>numberOfTargets</i> targets represented in the upper part of the matrix.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The first <i>numberOfTargets</i> values in the column (<i>numberOfSources</i> + 1) represent the costs of substituting the target symbol in the corresponding row for one of the source symbols from the source <i>rest</i> category.  The source rest category is the group of source symbols that do not belong to the <i>numberOfSources</i> source symbols represented in the upper part of the matrix.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The first <i>numberOfSources</i> cells in the last row represent the deletion cost of the corresponding source symbols.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; The first <i>numberOfTargets</i> cells in the last column represent the insertion costs of the corresponding target symbols.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; Finally the four numbers in the cells at the bottom-right corner have an interpretation analogous to the four numbers in the basic EditCostTable we discussed above (but now for the <i>rest</i> symbols).</dd>
+</dl>
+<h2>Example</h2>
+<p>If we extend the basic table with one extra target and one extra source symbol, then the EditCostTable will be a 3 by 3 table. The numbers in the following table have been chosen to be distinctive and therefore probably will not correspond to any practical situation.</p>
+<code>      s         <br></code>
+<code>   t 1.1 1.2 1.3<br></code>
+<code>     1.4 1.5 1.6<br></code>
+<code>     1.7 1.8 0.0<br></code>
+<p>By issuing the following series of commands this particular table can be created:</p>
+<code>   Create empty EditCostsTable: "editCosts", 1, 1<br></code>
+<code>   Set target symbol (index): 1, "t"<br></code>
+<code>   Set source symbol (index): 1, "s"<br></code>
+<code>   Set insertion costs: "t", 1.3<br></code>
+<code>   Set deletion costs: "s", 1.7<br></code>
+<code>   Set substitution costs: "t", "s", 1.1<br></code>
+<code>   Set substitution costs: "", "s", 1.4<br></code>
+<code>   Set substitution costs: "t", "", 1.2<br></code>
+<code>   Set costs (others): 1.6, 1.8, 0, 1.5<br></code>
+<p>In the first line we create the (empty) table, we name it <i>editCosts</i> and it creates space for one target and one source symbol. The next line defines the target symbol which becomes the label of the first row of the table. Line 3 defines the source symbol which will become the label of the first column of the table. We next define the insertion and deletion costs, they fill cells [1] [3] and [3] [1], respectively. Cell [1] [1] is filled by the command in line 6.  The command in line 7 fills cell [2] [1] which defines the cost of substituting any target symbol unequal to "t" for "s". The next line fills cell [1] [2] which defines the substitution costs of "t" for any source symbol unequal to "s". Finally, the command in the last line defines the little 2&#215;2 matrix at the bottom-right that is analogous to the default cost matrix explained above. Therefore cell [2] [2] defines the cost of substituting a target symbol unequal to "t" for a source symbol unequal to "s" where the target and source symbols don't match, while cell [3] [3] defines the costs when they do match. Cell [3] [2] defines the cost of the deletion of a source symbol unequal "s", while cell [2] [3] defines the cost for  the insertion of a target symbol unequal "t" in the source string. </p>
+<h2>How to use a special EditCostsTable</h2>
+<p>After creating the special EditCostsTable you select it together with the EditDistanceTable and issue the command <a href="EditDistanceTable___EditCostsTable__Set_new_edit_costs.html">Set new edit costs</a>. The EditDistanceTable will then find the minimum edit distance based on the new cost values.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_empty_EditCostsTable___.html">Create empty EditCostsTable...</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20140509</p>
+</address>
+</body>
+</html>

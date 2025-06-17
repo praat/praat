@@ -1,0 +1,49 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ContingencyTable: To Configuration (ca)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ContingencyTable: To Configuration (ca)...
+</b></font></table></table>
+<p>A command that creates a <a href="Configuration.html">Configuration</a> object from the selected <a href="ContingencyTable.html">ContingencyTable</a> object by means of <a href="Correspondence_analysis.html">Correspondence analysis</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Number of dimensions</b>
+<dd>The dimensionality of the Configuration.</dd>
+<dt><b>Scaling of the final configuration</b>
+<dd>determines whether row points are in the centre of gravity of column points, or, column points are in the centre of gravity of row points, or, whether roes and columns are treated symmetrically.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>1. We start with the following transformation of the entries <i>f</i><sub><i>ij</i></sub>:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>h</i><sub><i>ij</i></sub> = <i>f</i><sub><i>ij</i></sub> / &#8730; (<i>f</i><sub><i>i</i>+</sub><i>f</i><sub>+<i>j</i></sub>) - &#8730; (<i>f</i><sub><i>i</i>+</sub><i>f</i><sub>+<i>j</i></sub>) / <i>N</i>,</table>
+<p>where <i>h</i><sub><i>ij</i></sub> is the entry for a cell in the matrix <b>H</b> with transformed data, <i>f</i><sub><i>i</i>+</sub> is the total count for row <i>i</i>, <i>f</i><sub>+<i>j</i></sub> is the total count for column <i>j</i> and <i>N</i> is the grand total. This can be written in matrix form as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>H</b> = <b>R</b><sup>&#8211;1/2</sup><b>F</b><b>C</b><sup>&#8211;1/2</sup> &#8211; <b>R</b><sup>1/2</sup><b>uu</b>&#8242;<b>C</b><sup>1/2</sup> / <i>N</i>,</table>
+<p>where <b>R</b> and <b>C</b> are diagonal matrices with the row and column totals, respectively and <b>u</b> a column vector with all elements equal to 1. </p>
+<p>2. Next the singular value decomposition of matrix <b>H</b> is performed:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><b>H</b> = <b>K</b> <b>&#923;</b> <b>L</b>&#8242;,</table>
+<p>where <b>K</b>&#8242;<b>K</b> = <b>I</b>, <b>L</b>&#8242;<b>L</b> = <b>I</b>, and <b>&#923;</b> is a diagonal matrix with singular values.</p>
+<p>3. Now the row (<b>X</b>) and column points (<b>Y</b>) can be determined. Three normalizations are possible:</p>
+<dl>
+<dt>&#8226; Scale row points in the centre of gravity of column points
+<dd><b>X</b> = &#8730;<i>N</i> <b>R</b><sup>&#8211;1/2</sup><b>K</b><b>&#923;</b></dd>
+<dd><b>Y</b> = &#8730;<i>N</i> <b>C</b><sup>&#8211;1/2</sup><b>U</b></dd>
+<dt>&#8226; Scale column points in the centre of gravity of row points
+<dd><b>X</b> = &#8730;<i>N</i> <b>R</b><sup>&#8211;1/2</sup><b>K</b></dd>
+<dd><b>Y</b> = &#8730;<i>N</i> <b>C</b><sup>&#8211;1/2</sup><b>L</b><b>&#923;</b></dd>
+<dt>&#8226; Treat row points and column points symmetrically
+<dd><b>X</b> = &#8730;<i>N</i> <b>R</b><sup>&#8211;1/2</sup><b>K</b><b>&#923;</b><sup>&#8211;1/2</sup></dd>
+<dd><b>Y</b> = &#8730;<i>N</i> <b>C</b><sup>&#8211;1/2</sup><b>L&#923;</b><sup>&#8211;1/2</sup></dd>
+</dl>
+<p>For more details see <a href="Gifi__1990_.html">Gifi (1990)</a>, chapter 8.</p>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

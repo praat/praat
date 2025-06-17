@@ -1,0 +1,47 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>FAQ: Scripts</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+FAQ: Scripts
+</b></font></table></table>
+<p><b>Question</b>: how do I do something to all the files in a directory?</p>
+<p>Answer: look at <code><font size=+1>fileNames$#</font></code> () or <a href="Create_Strings_as_file_list___.html">Create Strings as file list...</a>.</p>
+<p></p>
+<p><b>Question</b>: why doesn't the editor window react to my commands?</p>
+<p>Your commands are probably something like:</p>
+<code>   Read from file: “hello.wav”<br></code>
+<code>   View &amp; Edit<br></code>
+<code>   Zoom: 0.3, 0.5<br></code>
+<p>Answer: Praat doesn&#8217;t know it has to send the <b>Zoom</b> command to the editor window called <b>14. Sound hello</b>. There could be several Sound editor windows on your screen. According to <a href="Scripting_7_1__Scripting_an_editor_from_a_shell_script.html">Scripting 7.1. Scripting an editor from a shell script</a>, you will have to say this explicitly:</p>
+<code>   Read from file: “hello.wav”<br></code>
+<code>   View &amp; Edit<br></code>
+<code>   editor: “Sound hello”<br></code>
+<code>   Zoom: 0.3, 0.5<br></code>
+<p></p>
+<p><b>Problem</b>: a line like &#8220;<i><code><font size=+1>Number = 1</font></code></i>&#8221; does not work.</p>
+<p>Solution: names of variables should start with a lower-case letter.</p>
+<p></p>
+<p><b>Question</b>: why do names of variables have to start with a lower-case letter? I would like to do things like &#8220;<code><font size=+1>F0 = Get mean pitch</font></code>&#8221;.</p>
+<p>Answer: Praat scripts combine button commands with things that only occur in scripts. Button commands always start with a capital letter, e.g. <code><font size=+1>Play</font></code> (there is a button <b>Play</b>). Script commands always start with lower case, e.g. <code><font size=+1>writeInfoLine: “Hello”</font></code> (<code><font size=+1>writeInfoLine</font></code> is a built-in function). A minimal pair is &#8220;<code><font size=+1>select</font></code>&#8221;, which simulates a mouse click in the object list, versus &#8220;<code><font size=+1>Select...</font></code>&#8221;, which sets the selection in editor windows. If we allowed initial capitals, variable names would become rather ambiguous in assignments, as in &#8220;<code><font size=+1>x = Get</font></code>&#8221;, where &#8220;<i><code><font size=+1>Get</font></code></i>&#8221; would be a variable, versus &#8220;<code><font size=+1>x = Get mean</font></code>&#8221;, where <b>Get mean</b> is a button command. To prevent this confusion, Praat enforces a rigorous lower-case/upper-case distinction.</p>
+<p></p>
+<p><b>Question</b>: how do I convert a number into a string?</p>
+<p>Answer: <code><font size=+1>a$ = string$ (a)</font></code></p>
+<p><b>Question</b>: how do I convert a string into a number?</p>
+<p>Answer: <code><font size=+1>a = number (a$)</font></code></p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="FAQ__Frequently_Asked_Questions_.html">FAQ (Frequently Asked Questions)</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20230201</p>
+</address>
+</body>
+</html>

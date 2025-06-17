@@ -1,0 +1,29 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>PowerCepstrum: Subtract trend...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+PowerCepstrum: Subtract trend...
+</b></font></table></table>
+<p>Subtract the cepstrum trend from the selected <a href="PowerCepstrum.html">PowerCepstrum</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Trend line quefrency range (s)</b>
+<dd>the quefrency range for which the amplitudes (in dB) will be modelled by a straight line. In <a href="Hillenbrand_et_al___1994_.html">Hillenbrand et al. (1994)</a>, the lower value for this range was chosen as 0.001 s in order to reduce the effect of very low quefrency data on the straight line fit. In our analysis this value is not so critical if we use the robust fitting procedure. If you choose the "Least squares" fit method then it matters more.</dd>
+<dt><b>Trend type</b>
+<dd>defines how to model the cepstrum background. We can model it with a straight line as was done in <a href="Hillenbrand_et_al___1994_.html">Hillenbrand et al. (1994)</a>. The slope of this line will generally be negative because the background amplitudes get weaker for higher quefrencies. Or, we could use an exponential model in which the background cepstral amplitudes decay in a non-linear fashion.  </dd>
+<dt><b>Fit method</b>
+<dd>defines how the line that models the cepstrum background is calculated. The default method, "Robust slow", corresponds to <a href="theil_regression.html">Theil's robust line fit</a>. The "Robust" method corresponds to the incomplete theil regression and is computationally faster but somewhat less precise. To be compatible with the past, a standard least squares line fit can also be chosen but it is much less precise than the other two because a least squares fit is much more influenced by the peak cepstral values than the other two.</dd>
+</dl>
+<hr>
+<address>
+	<p>© djmw 20190914</p>
+</address>
+</body>
+</html>

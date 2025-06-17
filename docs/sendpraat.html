@@ -1,0 +1,60 @@
+<html><head><title>Sendpraat: sending messages to a Praat shell program</title></head><body bgcolor="#FFCCCC">
+
+<table border=0 cellpadding=0 cellspacing=0 width="100%"><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9 width="100%"><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sendpraat: sending messages to a Praat shell program
+</b></font></table></table>
+
+<p>With the <b>sendpraat</b> source code, you can send messages to a running program that uses the Praat shell,
+like <a href=/praat/>Praat</a>.
+<b>Sendpraat</b> is available as a subroutine for macOS, Windows, and Linux,
+and as a command-line program for macOS, Windows, and Linux.
+The Praat manual contains a page about <a href=/praat/manual/sendpraat.html>how to use the
+<b>sendpraat</b> program</a>.
+</p>
+
+<p>The source code is in <a href=/praat/sendpraat.c>sendpraat.c</a>.
+In the line above the definition of main (), this file contains either "if 0" or "if 1",
+depending on whether you use it as a subroutine or as a command-line program.</p>
+
+<h2>Sendpraat for macOS</h2>
+<p>You can freely use sendpraat as a subroutine in your own C programs, in which case
+the <b>sendpraat subroutine</b> becomes a part of your macOS application,
+or use the executable program
+<a href=/praat/sendpraat-mac>sendpraat-mac</a> (17,756 bytes)
+from the macOS command line (Terminal).</p>
+<p>You could also compile this executable program yourself with</p>
+<pre>
+   cc sendpraat.c -o sendpraat-mac -DSTAND_ALONE -Dmacintosh -framework CoreServices -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers
+</pre>
+
+<h2>Sendpraat for Windows</h2>
+<p>You can freely use sendpraat as a subroutine in your own C programs, in which case
+the <b>sendpraat subroutine</b> becomes a part of your Windows application,
+or use the executable program
+<a href=/praat/sendpraat-win.exe>sendpraat-win.exe</a> (136,662 bytes)
+from the command line (console).</p>
+<p>You could also compile this executable program yourself under MinGW with something like</p>
+<pre>
+   ~/path/to/your/toolchains/mingw64/bin/gcc -std=gnu99 sendpraat.c -o sendpraat-win.exe -DSTAND_ALONE -D_WIN32 -isystem ~/path/to/your/toolchains/mingw64/include
+</pre>
+
+<h2>Sendpraat for Linux</h2>
+<p>You can freely use sendpraat as a subroutine in your own C programs, in which case
+the <b>sendpraat subroutine</b> becomes a part of your Linux application,
+or use the executable program
+<a href=/praat/sendpraat-linux>sendpraat-linux</a> (17,736 bytes; 64-bit)
+from the command line (Terminal).</p>
+<p>You could also compile this executable program yourself with</p>
+<pre>
+   gcc -std=gnu99 sendpraat.c -o sendpraat-linux -DSTAND_ALONE -DUNIX
+</pre>
+
+<hr>
+<a href=http://www.fon.hum.uva.nl/paul/>Paul Boersma</a>, November 13, 2021<br>
+Phonetic Sciences<br>
+University of Amsterdam<br>
+Spuistraat 134, Amsterdam<br>
+E-mail: <a href=mailto:paul.boersma@uva.nl>paul.boersma@uva.nl</a><br>
+
+</body>
+</html>

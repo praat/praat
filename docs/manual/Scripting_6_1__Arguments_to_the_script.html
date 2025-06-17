@@ -1,0 +1,177 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripting 6.1. Arguments to the script</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Scripting 6.1. Arguments to the script
+</b></font></table></table>
+<p>You can cause a Praat script to prompt for arguments. The file <code><font size=+1>playSine.praat</font></code> may contain the following:</p>
+<code>   <b>form</b>: "Play a sine wave"<br></code>
+<code>      <b>positive</b>: "Sine frequency (Hz)", "377.0"<br></code>
+<code>      <b>positive</b>: "Gain (0..1)", "0.3 (= not too loud)"<br></code>
+<code>   <b>endform</b><br></code>
+<code>   Create Sound as pure tone: "sine" + string$ (sine_frequency),<br></code>
+<code>   ... 1, 0, 1, 44100, sine_frequency, gain, 0.01, 0.01<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<p>When running this script, the interpreter puts a settings window (<i>form</i>) on your screen, entitled &#8220;Play a sine wave&#8221;, with two fields, titled &#8220;Sine frequency (Hz)&#8221; and &#8220;Gain&#8221;, that have been provided with the standard values &#8220;377.0&#8221; and &#8220;0.3 (= not too loud)&#8221;, which you can change before clicking <b>OK</b>.</p>
+<p>Inside the script, the field names can be accessed as variables: these have underscores instead of spaces, and the parentheses (Hz) have been chopped off. Note that the first letter of these variables is converted to lower case, so that you can assign to them in your script.</p>
+<p>Inside the script, the value &#8220;0.3 (= not too loud)&#8221; will be known as 0.3, because this is a numeric field.</p>
+<p>You can use the following field types in your forms:</p>
+<dl>
+<dt><b>real</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for real numbers.</dd>
+<dt><b>positive</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for positive real numbers: the form issues an error message if the number that you enter is negative or zero (further on in the script, you can freely change it to any real number, including negatives ones such as -1.5, or zero).</dd>
+<dt><b>integer</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for whole numbers: the form reads the number as an integer (further on in the script, you can give it any real value, e.g. 3.14).</dd>
+<dt><b>natural</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for positive whole numbers: the form issues an error message if the number that you enter is negative or zero (further on in the script, you can give it any real value).</dd>
+<dt><b>word</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for a string without spaces: the form only reads up to the first space ("oh yes" becomes "oh"; further on in the script, you can give the string any value, perhaps with spaces in it).</dd>
+<dt><b>sentence</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for any short string.</dd>
+<dt><b>text</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for any possibly long string (the variable name will show up above the field).</dd>
+<dt><b>text</b>: <i>numberOfLines</i>, <i>variable$</i>, <i>initialValue$</i>
+<dd>for any possibly very long string (multiple lines), <i></i> numberOfLines can be between 1 and 33.</dd>
+<dt><b>boolean</b>: <i>variable$</i>, <i>initialValue</i>
+<dd>a check box will be shown; the initial value is 1 (on) or 0 (off).</dd>
+<dt><b>boolean</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>a check box will be shown; to switch it on, set the initial value to <code><font size=+1>"on"</font></code>, <code><font size=+1>"yes"</font></code>, <code><font size=+1>"ON"</font></code>, <code><font size=+1>"YES"</font></code>, <code><font size=+1>"On"</font></code> or <code><font size=+1>"Yes"</font></code>; to switch it off, set it to <code><font size=+1>"off"</font></code>, <code><font size=+1>"no"</font></code>, <code><font size=+1>"OFF"</font></code>, <code><font size=+1>"NO"</font></code>, <code><font size=+1>"Off"</font></code> or <code><font size=+1>"No"</font></code>.</dd>
+<dt><b>choice</b>: <i>variable$</i>, <i>initialValue</i>
+<dd>a multiple-choice box (or &#8220;radio box&#8221;) will be shown; the value is 1 or higher. This is followed by a series of:</dd>
+<dt><b>option</b>: <i>text$</i>
+<dd>an option button in a multiple-choice box (see example below).</dd>
+<dt><b>optionmenu</b>: <i>variable$</i>, <i>initialValue</i>
+<dd>a multiple-choice menu header will be shown; the value is 1 or higher. Just as <code><font size=+1>choice</font></code>, this is followed by:</dd>
+<dt><b>option</b>: <i>text$</i>
+<dd>an option in a multiple-choice menu (see example below).</dd>
+<dt><b>comment</b>: <i>text$</i>
+<dd>a line with any text.</dd>
+<dt><b>infile</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for a full path to an existing file, usually for reading.</dd>
+<dt><b>outfile</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for a full path to a new file, usually for saving.</dd>
+<dt><b>folder</b>: <i>variable$</i>, <i>initialValue$</i>
+<dd>for a full path to a folder.</dd>
+<dt><b>realvector</b>: <i>variable$</i>, <i>format$</i>, <i>initialValue$</i>
+<dd>for a vector with real values. The format can be <code><font size=+1>"(whitespace-separated)"</font></code> or <code><font size=+1>"(formula)"</font></code>; the initial value should then be probably be something like <code><font size=+1>"10 -9 80"</font></code> or <code><font size=+1>"{ 10, -9, 80 }"</font></code>, respectively.</dd>
+<dt><b>realvector</b>: <i>numberOfLines</i>, <i>variable$</i>, <i>format$</i>, <i>initialValue$</i>
+<dd>use this if you want a field with less or more than the standard 7 lines.</dd>
+<dt><b>positivevector</b>: <i>variable$</i>, <i>format$</i>, <i>initialValue$</i>
+<dt><b>positivevector</b>: <i>numberOfLines</i>, <i>variable$</i>, <i>format$</i>, <i>initialValue$</i>
+<dd>use either of these if you want to check that all initial elements are positive real numbers.</dd>
+<dt><b>integervector</b>: <i>variable$</i>, <i>format$</i>, <i>initialValue$</i>
+<dt><b>integervector</b>: <i>numberOfLines</i>, <i>variable$</i>, <i>format$</i>, <i>initialValue$</i>
+<dd>use either of these if you want to check that all initial elements are whole numbers.</dd>
+<dt><b>naturalvector</b>: <i>variable$</i>, <i>format$</i>, <i>initialValue$</i>
+<dt><b>naturalvector</b>: <i>numberOfLines</i>, <i>variable$</i>, <i>format$</i>, <i>initialValue$</i>
+<dd>use either of these if you want to check that all initial elements are positive whole numbers.</dd>
+</dl>
+<p>Inside the script, strings are known as string variables, numbers as numeric variables. Consider the following form:</p>
+<code>   <b>form</b>: "Sink it"<br></code>
+<code>      <b>sentence</b>: "Name of the ship", "Titanic"<br></code>
+<code>      <b>real</b>: "Distance to the iceberg (m)", "500.0"<br></code>
+<code>      <b>natural</b>: "Number of people", "1800"<br></code>
+<code>      <b>natural</b>: "Number of boats", "10"<br></code>
+<code>   <b>endform</b><br></code>
+<p>In the script following this form, the variables will be known as <code><font size=+1>name_of_the_ship$</font></code>, <code><font size=+1>distance_to_the_iceberg</font></code>, <code><font size=+1>number_of_people</font></code>, and <code><font size=+1>number_of_boats</font></code>.</p>
+<p>The variable associated with a radio box will get a numeric as well as a string value:</p>
+<code>   <b>form</b>: "Fill attributes"<br></code>
+<code>      <b>comment</b>: "Choose any colour and texture for your paintings"<br></code>
+<code>      <b>choice</b>: "Colour", 5<br></code>
+<code>         <b>option</b>: "Dark red"<br></code>
+<code>         <b>option</b>: "Sea green"<br></code>
+<code>         <b>option</b>: "Navy blue"<br></code>
+<code>         <b>option</b>: "Canary yellow"<br></code>
+<code>         <b>option</b>: "Black"<br></code>
+<code>         <b>option</b>: "White"<br></code>
+<code>      <b>choice</b>: "Texture", 1<br></code>
+<code>         <b>option</b>: "Smooth"<br></code>
+<code>         <b>option</b>: "Rough"<br></code>
+<code>         <b>option</b>: "With holes"<br></code>
+<code>   <b>endform</b><br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: "You chose the colour ", colour$, " and the texture ", texture$, "."<br></code>
+<p>This shows two multiple-choice boxes. In the Colour box, the fifth button (Black) is the standard value here. If you click &#8220;Navy blue&#8221; and then <b><i>OK</i></b>, the variable <i><code><font size=+1>colour</font></code></i> will have the value 3, and the variable <i><code><font size=+1>colour$</font></code></i> will have the value &#8220;Navy blue&#8221;. So you can test the value of the Colour box in either of the following ways:</p>
+<code>   if colour = 4<br></code>
+<p>or</p>
+<code>   if colour$ = "Canary yellow"<br></code>
+<p>The field type <b><code><font size=+1>optionmenu</font></code></b> is completely analogous to <b><code><font size=+1>choice</font></code></b>, but uses up much less space on the screen:</p>
+<code>   <b>form</b>: "Fill attributes"<br></code>
+<code>      <b>comment</b>: "Choose any colour and texture for your paintings"<br></code>
+<code>      <b>optionmenu</b>: "Colour", 5<br></code>
+<code>         <b>option</b>: "Dark red"<br></code>
+<code>         <b>option</b>: "Sea green"<br></code>
+<code>         <b>option</b>: "Navy blue"<br></code>
+<code>         <b>option</b>: "Canary yellow"<br></code>
+<code>         <b>option</b>: "Black"<br></code>
+<code>         <b>option</b>: "White"<br></code>
+<code>      <b>optionmenu</b>: "Texture", 1<br></code>
+<code>         <b>option</b>: "Smooth"<br></code>
+<code>         <b>option</b>: "Rough"<br></code>
+<code>         <b>option</b>: "With holes"<br></code>
+<code>   <b>endform</b><br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: "You chose the colour ", colour$, " and the texture ", texture$, "."<br></code>
+<p>For the vector types <b><code><font size=+1>realvector</font></code></b>, <b><code><font size=+1>positivevector</font></code></b>, <b><code><font size=+1>integervector</font></code></b> and <b><code><font size=+1>naturalvector</font></code></b> you have to specify an initial format, which will be shown to the user:</p>
+<code>   <b>form</b>: "Interesting times"<br></code>
+<code>      <b>comment</b>: "List the times that you are interested in"<br></code>
+<code>      <b>realvector</b>: "Fixed times (s)", "(whitespace-separated)", "0.5 1.7 2.8"<br></code>
+<code>      <b>realvector</b>: "Random times (s)", "(formula)", "randomUniform# (5, 0.0, 1.0)"<br></code>
+<code>   <b>endform</b><br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: "Your fixed times are ", fixed_times#, " and your random times are ", random_times#, "."<br></code>
+<p>Clicking OK without editing the two fields may print</p>
+<code>   Your fixed times are 0.5 1.7 2.8 and your random times are 0.754675 0.121393653 0.39856 0.8376572 0.387537.<br></code>
+<p>The field types <b>infile</b>, <b>outfile</b> and <b>folder</b> always yield a full path. Consider the script <code><font size=+1>playFile.praat</font></code>, which contains the following:</p>
+<code>   <b>form</b>: "Play file"<br></code>
+<code>      <b>infile</b>: "File to play", "hello.wav"<br></code>
+<code>   <b>endform</b><br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: "You chose the file ", file_to_play$, "."<br></code>
+<code>   Read from file: file_to_play$<br></code>
+<code>   Play<br></code>
+<code>   Remove<br></code>
+<p>If you just click OK and <code><font size=+1>playFile.praat</font></code> is in the folder <code><font size=+1>/Users/miep/research/usefulScripts</font></code>, then this will print</p>
+<code>   You chose the file /Users/miep/research/usefulScripts/hello.wav.<br></code>
+<p>into the Info window, and play the sound in that file.</p>
+<p>You can combine two short fields into one by using <b><code><font size=+1>left</font></code></b> and <b><code><font size=+1>right</font></code></b>:</p>
+<code>   <b>form</b>: "Get duration"<br></code>
+<code>      <b>natural</b>: "left Year range", "1940"<br></code>
+<code>      <b>natural</b>: "right Year range", "1945"<br></code>
+<code>   <b>endform</b><br></code>
+<code>   duration = right_Year_range - left_Year_range<br></code>
+<code>   <a href="_writeInfoLine_.html">writeInfoLine</a>: "The duration is ", duration, " years."<br></code>
+<p>The interpreter will only show the single text &#8220;Year range&#8221;, followed by two small text fields.</p>
+<h2>Calling a script from another script</h2>
+<p>Scripts can be nested: the file <code><font size=+1>doremi.praat</font></code> may contain the following:</p>
+<code>   <b>runScript</b>: "playSine.praat", 550, 0.9<br></code>
+<code>   <b>runScript</b>: "playSine.praat", 615, 0.9<br></code>
+<code>   <b>runScript</b>: "playSine.praat", 687, 0.9<br></code>
+<p>With <b><code><font size=+1>runScript</font></code></b>, Praat will not display a form window, but simply execute the script with the two arguments that you supply on the same line (e.g. 550 and 0.9).</p>
+<p>Values for <b><code><font size=+1>choice</font></code></b> must be passed as strings:</p>
+<code>   <b>runScript</b>: "fill attributes.praat", "Navy blue", "With holes"<br></code>
+<p>Values for vectors can be passed either as a vector expression or as a white-space separated string, independently of the initial format:</p>
+<code>   <b>runScript</b>: "interesting times.praat", { 0.3, 0.5, 0.7, 2.0 }, "18000 0.3"<br></code>
+<p>You can pass values for <b>boolean</b> either as the quoted strings &#8220;yes&#8221; and &#8220;no&#8221; (or their variants) or as the unquoted numbers 1 and 0.</p>
+<p>In <b><code><font size=+1>runScript</font></code></b>, the path to the external script, as well as the paths to <b><code><font size=+1>infile</font></code></b>, <b><code><font size=+1>outfile</font></code></b> and <b><code><font size=+1>folder</font></code></b> parameters are taken relative to the folder of the current script. For instance, suppose that the current script is <code><font size=+1>/Users/miep/research/project19/analyse.praat</font></code> and contains:</p>
+<code>   <b>runScript</b>: "../usefulScripts/playFile.praat", "sounds/sound3.wav"<br></code>
+<p>then running the current script will run the above-mentioned script <code><font size=+1>/Users/miep/research/usefulScripts/playFile.praat</font></code>, which will play the file <code><font size=+1>/Users/miep/research/project19/sounds/sound3.wav</font></code>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="_runScript_.html"><code><font size=+1>runScript</font></code></a>
+<li><a href="Scripting.html">Scripting</a>
+<li><a href="Scripting_6__Communication_outside_the_script.html">Scripting 6. Communication outside the script</a>
+<li><a href="Scripting_6_6__Controlling_the_user.html">Scripting 6.6. Controlling the user</a>
+<li><a href="Scripting_6_9__Calling_from_the_command_line.html">Scripting 6.9. Calling from the command line</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20230129</p>
+</address>
+</body>
+</html>

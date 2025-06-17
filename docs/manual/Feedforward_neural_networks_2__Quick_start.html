@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Feedforward neural networks 2. Quick start</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Feedforward neural networks 2. Quick start
+</b></font></table></table>
+<p>You may create the iris example set with the <a href="Create_iris_example___.html">Create iris example...</a> command that you will find under the <b>Feedforward neural networks</b> option in the <b>New</b> menu. Three new objects will appear in the <a href="List_of_Objects.html">List of Objects</a>: a <a href="FFNet.html">FFNet</a>, a <a href="Categories.html">Categories</a> and a <a href="PatternList.html">PatternList</a>.</p>
+<p>The <b>PatternList</b> contains the <a href="iris_data_set.html">iris data set</a> in a matrix of 150 rows by 4 columns. To guarantee that every cell in the PatternList is in the [0,1] interval, all measurement values were divided by 10. In the <b>Categories</b> the three iris species <i>setosa</i>, <i>versicolor</i>, and <i>virginica</i> were categorized with the numbers <b>1</b>, <b>2</b> and <b>3</b>, respectively. Because there are 4 data columns in the PatternList and 3 different iris species in the Categories, the newly created <b>FFNet</b> has 4 inputs and 3 outputs. If you enter a positive number in one of the fields in the form, the FFNet will have this number of units in a <i>hidden layer</i>. The name of the newly created FFNet will reflect its topology. If you opt for the standard setting, which is 0 hidden units, the FFNet will be named 4-3.</p>
+<h2>Learning the iris data</h2>
+<p>The first thing you probably might want to do is to let the <b>FFNet</b> learn the association in each pattern-category pair. To do this select all three objects together and choose <a href="FFNet___PatternList___Categories__Learn___.html">Learn...</a>. A form will appear, asking you to supply some settings for the learning algorithm. Learning starts after you have clicked the OK button. As the example network has only a small number of weights that need to be adjusted, and the learning data set is very small, this will only take a very short time.</p>
+<h2>Classification</h2>
+<p>Now, if you are curious how well the FFNet has learned the iris data, you may select the <b>FFNet</b> and the <b>PatternList</b> together and choose <a href="FFNet___PatternList__To_Categories___.html">To Categories...</a>. A new <b>Categories</b> appears in the <b>List of Objects</b> with the name <code><font size=+1>4-3_iris</font></code> (if <code><font size=+1>4-3</font></code> was the name of the FFNet and <code><font size=+1>iris</font></code> the name of the PatternList). We have two different Categories in the list of objects, the topmost one has the original categories, the other the categories as were assigned by the FFNet classifier. The obvious thing to do now is to compare the original categories with the assigned categories by making a <a href="Confusion.html">confusion table</a>. Select the two <b>Categories</b> and choose <a href="Categories__To_Confusion.html">To Confusion</a> and a newly created <a href="Confusion.html">Confusion</a> appears. Pressing the <a href="Info.html">Info</a> button will show you an info window with, among others, the fraction correct. </p>
+<p>You may also want to <a href="Feedforward_neural_networks_3__FFNet_versus_discriminan.html">compare the FFNet classifier with a discriminant classifier</a>.</p>
+<h2>Create other neural net topologies</h2>
+<p>With a <b>PatternList</b> and a <b>Categories</b> selected together, you can for example create a new <b>FFNet</b> of a different topology.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Feedforward_neural_networks.html">Feedforward neural networks</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20040426</p>
+</address>
+</body>
+</html>

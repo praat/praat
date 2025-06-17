@@ -1,0 +1,30 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Configuration: Normalize...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Configuration: Normalize...
+</b></font></table></table>
+<p>Normalizes the selected <a href="Configuration.html">Configuration</a>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Sum of squares</b> (standard value: 0.0)
+<dd>The desired value for the variance.</dd>
+<dt><b>Each dimension separately</b>
+<dd>When on, the sum of squares in each dimension (column) will be scaled to <i>sumOfSquares</i> When off, the sum of squares of all the matrix elements will equal <i>sumOfSquares</i>.</dd>
+</dl>
+<p>With the default value (0.0) for <i>sumOfSquares</i>, and <i>eachDimensionSeparately</i> chosen, an INDSCAL-like normalization is applied: the sum of squares for each column is scaled to equal 1.0. When <i>eachDimensionSeparately</i> is off, a Kruskal-like normalization is applied: the sum of squares of the whole matrix is scaled equal to <i>numberOfRows</i>.</p>
+<h2>Behaviour</h2>
+<p>Before the normalization will be applied, however, we first translate the centre of the configuration to the origin by subtracting the mean for each dimension. The sum of squares than equals variance.</p>
+<hr>
+<address>
+	<p>© djmw 20040407</p>
+</address>
+</body>
+</html>

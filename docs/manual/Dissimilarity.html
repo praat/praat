@@ -1,0 +1,112 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Dissimilarity</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Dissimilarity
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat.</p>
+<p>It represents a one-way table with dissimilarities between "objects".</p>
+<h2>Creating a Dissimilarity from data in a text file</h2>
+<p>Suppose you have three objects A, B and C. In one way or another, you have acquired the following (symmetric) dissimilarities: <i>&#948;</i><sub><i>AB</i></sub> = 2 (= <i>&#948;</i><sub><i>BA</i></sub>) , <i>&#948;</i><sub><i>AC</i></sub> = 1 (= <i>&#948;</i><sub><i>CA</i></sub>), and <i>&#948;</i><sub><i>BC</i></sub> = 1.4 (= <i>&#948;</i><sub>CB</sub>), where <i>&#948;</i><sub><i>AB</i></sub> represents the dissimilarity between object A and object B.</p>
+<p>You can create a simple text file like the following:</p>
+<code>   "ooTextFile"  ! The line by which Praat can recognize your file<br></code>
+<code>   "Dissimilarity" ! The line that tells Praat about the contents<br></code>
+<code>   3     "A"  "B"  "C"   ! Number of columns, and column labels<br></code>
+<code>   3                     ! Number of rows<br></code>
+<code>   "A"    0    2    1    ! Row label (A), A-B value, A-C value<br></code>
+<code>   "B"    2    0  1.4    ! Row label (B), B-A value, B-C value<br></code>
+<code>   "C"    1    1.4  0    ! Row label (C), C-A value, C-B value<br></code>
+<p>Notice that:</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; the row and column labels are identical.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; the matrix elements on the diagonal are zero.</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; the matrix is symmetrical.</dd>
+</dl>
+<p>This text file can be read with the <a href="Read_from_file___.html">Read from file...</a> command. Since a Dissimilarity object has the data structure of a square symmetrical TableOfReal, you could also start from an appropriate <a href="TableOfReal.html">TableOfReal</a> object and cast it to a Dissimilarity object.</p>
+<h2>Commands</h2>
+<p>Creation</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Confusion__To_Dissimilarity___.html">Confusion: To Dissimilarity...</a></dd>
+</dl>
+<p>Drawing</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Draw as numbers...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Draw as squares...</b></dd>
+</dl>
+<p>Query</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Get column mean (index)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Get column mean (label)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Get column stdev (index)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Get column stdev (label)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__Get_additive_constant.html">Dissimilarity: Get additive constant</a></dd>
+</dl>
+<p>Modification</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Formula___.html">Formula...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Set value...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Remove column (index)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Insert column (index)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Set row label (index)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Set row label (label)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Set column label (index)...</b></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <b>Set column label (label)...</b></dd>
+</dl>
+<p>Multidimensional scaling analysis</p>
+<dl>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__To_Configuration__monotone_mds____.html">Dissimilarity: To Configuration (monotone mds)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__To_Configuration__i-spline_mds____.html">Dissimilarity: To Configuration (i-spline mds)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__To_Configuration__interval_mds____.html">Dissimilarity: To Configuration (interval mds)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__To_Configuration__ratio_mds____.html">Dissimilarity: To Configuration (ratio mds)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__To_Configuration__absolute_mds____.html">Dissimilarity: To Configuration (absolute mds)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__To_Configuration__kruskal____.html">Dissimilarity: To Configuration (kruskal)...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">Transformations</dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__To_Distance___.html">Dissimilarity: To Distance...</a></dd>
+<dd style="position:relative;padding-left:1em;text-indent:-2em">&#8226; <a href="Dissimilarity__To_Weight.html">Dissimilarity: To Weight</a></dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Confusion__To_Dissimilarity__pdf____.html">Confusion: To Dissimilarity (pdf)...</a>
+<li><a href="Create_INDSCAL_Carroll___Wish_example___.html">Create INDSCAL Carroll & Wish example...</a>
+<li><a href="Create_letter_R_example___.html">Create letter R example...</a>
+<li><a href="Dissimilarity___Configuration___Weight__Get_stress___.html">Dissimilarity & Configuration & Weight: Get stress...</a>
+<li><a href="Dissimilarity___Configuration___Weight__To_Configuratio.html">Dissimilarity & Configuration & Weight: To Configuration...</a>
+<li><a href="Dissimilarity___Configuration__Draw_regression__absolut.html">Dissimilarity & Configuration: Draw regression (absolute mds)...</a>
+<li><a href="Dissimilarity___Configuration__Draw_regression__i-splin.html">Dissimilarity & Configuration: Draw regression (i-spline mds)...</a>
+<li><a href="Dissimilarity___Configuration__Draw_regression__interva.html">Dissimilarity & Configuration: Draw regression (interval mds)...</a>
+<li><a href="Dissimilarity___Configuration__Draw_regression__monoton.html">Dissimilarity & Configuration: Draw regression (monotone mds)...</a>
+<li><a href="Dissimilarity___Configuration__Draw_regression__ratio_m.html">Dissimilarity & Configuration: Draw regression (ratio mds)...</a>
+<li><a href="Dissimilarity___Configuration__Draw_Shepard_diagram___.html">Dissimilarity & Configuration: Draw Shepard diagram...</a>
+<li><a href="Dissimilarity___Configuration__Get_stress__absolute_mds.html">Dissimilarity & Configuration: Get stress (absolute mds)...</a>
+<li><a href="Dissimilarity___Configuration__Get_stress__i-spline_mds.html">Dissimilarity & Configuration: Get stress (i-spline mds)...</a>
+<li><a href="Dissimilarity___Configuration__Get_stress__interval_mds.html">Dissimilarity & Configuration: Get stress (interval mds)...</a>
+<li><a href="Dissimilarity___Configuration__Get_stress__monotone_mds.html">Dissimilarity & Configuration: Get stress (monotone mds)...</a>
+<li><a href="Dissimilarity___Configuration__Get_stress__ratio_mds___.html">Dissimilarity & Configuration: Get stress (ratio mds)...</a>
+<li><a href="Dissimilarity___Configuration__To_Configuration__absolu.html">Dissimilarity & Configuration: To Configuration (absolute mds)...</a>
+<li><a href="Dissimilarity___Configuration__To_Configuration__i-spli.html">Dissimilarity & Configuration: To Configuration (i-spline mds)...</a>
+<li><a href="Dissimilarity___Configuration__To_Configuration__interv.html">Dissimilarity & Configuration: To Configuration (interval mds)...</a>
+<li><a href="Dissimilarity___Configuration__To_Configuration__kruska.html">Dissimilarity & Configuration: To Configuration (kruskal)...</a>
+<li><a href="Dissimilarity___Configuration__To_Configuration__monoto.html">Dissimilarity & Configuration: To Configuration (monotone mds)...</a>
+<li><a href="Dissimilarity___Configuration__To_Configuration__ratio_.html">Dissimilarity & Configuration: To Configuration (ratio mds)...</a>
+<li><a href="Dissimilarity___Weight__To_Configuration___.html">Dissimilarity & Weight: To Configuration...</a>
+<li><a href="Dissimilarity___Weight__To_Configuration___.html">Dissimilarity & Weight: To Configuration...</a>
+<li><a href="INDSCAL_analysis.html">INDSCAL analysis</a>
+<li><a href="Kruskal_analysis.html">Kruskal analysis</a>
+<li><a href="MDS_models.html">MDS models</a>
+<li><a href="Multidimensional_scaling.html">Multidimensional scaling</a>
+<li><a href="Similarity__To_Dissimilarity___.html">Similarity: To Dissimilarity...</a>
+<li><a href="Weight.html">Weight</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20010327</p>
+</address>
+</body>
+</html>

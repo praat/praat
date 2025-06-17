@@ -1,0 +1,32 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Polynomial: To Spectrum...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Polynomial: To Spectrum...
+</b></font></table></table>
+<p>A command to compute the <a href="Spectrum.html">spectrum</a> of the selected <a href="Polynomial.html">Polynomial</a> objects.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Nyquist frequency (Hz)</b>
+<dd>defines the highest frequency in the spectrum. The lowest frequency of the spectrum will be 0 Hz.</dd>
+<dt><b>Number of frequencies</b>
+<dd>defines the number of frequencies in the spectrum.</dd>
+</dl>
+<h2>Algorithm</h2>
+<p>We calculate the spectrum by evaluating the polynomial at regularly spaced points <i>z</i><sub><i>k</i></sub> on the upper half of a circle with radius <i>r</i> = 1 in the complex plane. The upperhalf of the unit circle, where <i>k</i>&#183;<i>&#966;</i> is in the interval [0, <i>&#960;</i>], will be mapped to frequencies [0, <a href="Nyquist_frequency.html">Nyquist frequency</a>] in the spectrum. </p>
+<p>The complex values <i>z</i><sub><i>k</i></sub> (<i>k</i>=1..<i>numberOfFrequencies</i>) are defined as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>z</i><sub><i>k</i></sub> = <i>r</i> e<sup><i>i</i> <i>k</i> <i>&#966;</i></sup>, where,</table>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle><i>&#966;</i> = &#960; / (<i>numberOfFrequencies</i> &#8211; 1) and <i>r</i> = 1.</table>
+<hr>
+<address>
+	<p>© djmw 19990616</p>
+</address>
+</body>
+</html>

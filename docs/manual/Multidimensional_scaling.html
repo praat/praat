@@ -1,0 +1,81 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Multidimensional scaling</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Multidimensional scaling
+</b></font></table></table>
+<p>This tutorial describes how you can use Praat to perform <b>M</b>ulti <b>D</b>imensional <b>S</b>caling (MDS) analysis.</p>
+<p>MDS helps us to represent <i>dissimilarities</i> between objects as <i>distances</i> in a <i>Euclidean space</i>. In effect, the more dissimilar two objects are, the larger the distance between the objects in the Euclidean space should be. The data types in Praat that incorporate these notions are <a href="Dissimilarity.html">Dissimilarity</a>, <a href="Distance.html">Distance</a> and <a href="Configuration.html">Configuration</a>.</p>
+<p>In essence, an MDS-analysis is performed when you select a Dissimilarity object and choose one of the <b>To Configuration (xxx)...</b> commands to obtain a Configuration object. In the above, method (xxx) represents on of the possible <a href="MDS_models.html">multidimensional scaling models</a>.</p>
+<h2>MDS-analysis</h2>
+<p>Let us first create a Dissimilarity object. You can for example <a href="Dissimilarity.html">create a Dissimilarity object from a file</a>. Here we will the use the Dissimilarity object from <a href="Create_letter_R_example___.html">the letter R example</a>. We have chosen the default value (32.5) for the (uniform) noise range. Note that this may result in substantial distortions between the dissimilarities and the distances.</p>
+<p>Now you can do the following, for example:</p>
+<p>Select the Dissimilarity and choose <a href="Dissimilarity__To_Configuration__monotone_mds____.html">To Configuration (monotone mds)...</a>, and you perform a <a href="Kruskal_analysis.html">kruskal</a>-like multidimensional scaling which results in a new Configuration object. (This Configuration could subsequently be used as the starting Configuration for a new MDS-analysis!).</p>
+<p>Select the Configuration and choose <a href="Configuration__Draw___.html">Draw...</a> and the following picture might result.</p>
+<p align=middle><img height=400 width=400 src=Multidimensional_scaling_1.png></p><p>The following script summarizes:</p>
+<code>   dissimilarity = Create letter R example: 32.5<br></code>
+<code>   configuration = To Configuration (monotone mds): 2, "Primary approach", 0.00001, 50, 1<br></code>
+<code>   Draw: 1, 2, -0.8, 1.2, -0.8, 0.7, "yes"<br></code>
+<h2>Obtaining the stress value</h2>
+<p>Select the Dissimilarity and the Configuration together and query for the <a href="stress.html">stress</a> value with: <a href="Dissimilarity___Configuration__Get_stress__monotone_mds.html">Get stress (monotone mds)...</a>. </p>
+<p>The following script summarizes:</p>
+<code>   selectObject: dissimilarity, configuration<br></code>
+<code>   Get stress (monotone mds): "Primary approach", "Kruskals's stress-1"<br></code>
+<h2>The Shepard diagram</h2>
+<p>Select the Dissimilarity and the Configuration together to <a href="Dissimilarity___Configuration__Draw_Shepard_diagram___.html">draw the Shepard diagram</a>.</p>
+<p align=middle><img height=400 width=400 src=Multidimensional_scaling_2.png></p><p>The following script summarizes:</p>
+<code>   selectObject: dissimilarity, configuration<br></code>
+<code>   Draw Shepard diagram: 0, 200, 0, 2.2, 1, "+", "yes"<br></code>
+<h2>The (monotone) regression</h2>
+<p>Select the Dissimilarity and the Configuration together to <a href="Dissimilarity___Configuration__Draw_regression__monoton.html">draw the monotone regression</a> of distances on dissimilarities.</p>
+<p align=middle><img height=400 width=400 src=Multidimensional_scaling_3.png></p><p>The following script summarizes:</p>
+<code>   selectObject: dissimilarity, configuration<br></code>
+<code>   Draw monotone regression: "Primary approach", 0, 200, 0, 2.2, 1, "+", "yes"<br></code>
+<p>When you enter <i>noiseRange</i> = 0 in the form for the letter <b>R</b>, perfect reconstruction is possible. The Shepard diagram then will show a perfectly smooth monotonically increasing function.</p>
+<h2>Weighing the dissimilarities</h2>
+<p>When you can't have equal confidence in all the number in the Dissimilarity object, you can give different weights to these numbers by associating a <a href="Weight.html">Weight</a> object with the Dissimilarity object. An easy way to do this is to select the Dissimilarity object and first choose <a href="Dissimilarity__To_Weight.html">To Weight</a>. Then you might change the individual weights in the Weight object with the <a href="TableOfReal__Set_value___.html"> Set value...</a> command (remember: make <i>w</i><sub><i>ij</i></sub> = <i>w</i><sub><i>ji</i></sub>).</p>
+<p>The following script summarizes:</p>
+<code>   selectObject: dissimilarity<br></code>
+<code>   weight = To Weight<br></code>
+<code>   ! Change [i] [j] and [j] [i] cells in the Weight object<br></code>
+<code>   Set value: i, j, val<br></code>
+<code>   Set value: j, i, val<br></code>
+<code>   ...<br></code>
+<code>   ! now we can do a weighed analysis.<br></code>
+<code>   selectObject: dissimilarity, weight<br></code>
+<code>   To Configuration (monotone mds): 2, "Primary approach", 0.00001, 50, 1)<br></code>
+<p>You can also query the <a href="stress.html">stress</a> values with three objects selected. The following script summarizes:</p>
+<code>   selectObject: dissimilarity, weight, configuration<br></code>
+<code>   Get stress (monotone mds): "Primary approach", "Kruskals's stress-1"<br></code>
+<h2>Using a start Configuration</h2>
+<p>You could also use a Configuration object as a starting configuration in the minimization process. Let's assume that you are not satisfied with the stress value from the Configuration object that you obtained in the previous analysis. You can than use this Configuration object as a starting point for further analysis:</p>
+<p>The following script summarizes:</p>
+<code>   selectObject: dissimilarity, configuration, weight<br></code>
+<code>   To Configuration (monotone mds): 2, "Primary approach", 0.00001, 50, 1<br></code>
+<h2>Multiple Dissimilarity's (INDSCAL)</h2>
+<p>When you have multiple Dissimilarity objects you can also perform <a href="individual_difference_scaling.html">individual difference scaling</a> (often called <a href="INDSCAL_analysis.html">INDSCAL analysis</a>). </p>
+<p>As an example we can use an <a href="Create_INDSCAL_Carroll___Wish_example___.html"> example taken from Carrol & Wish</a>. Because INDSCAL only works on metrical data, we cannot use Dissimilarity objects directly. We have to transform them first <a href="Dissimilarity__To_Distance___.html">to Distance</a> objects.</p>
+<p>This type of analysis on multiple objects results in two new objects: a Configuration and a <a href="Salience.html">Salience</a>.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Acknowledgments.html">Acknowledgments</a>
+<li><a href="Intro.html">Intro</a>
+<li><a href="New_menu.html">New menu</a>
+<li><a href="Statistics.html">Statistics</a>
+<li><a href="Types_of_objects.html">Types of objects</a>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+<li><a href="What_was_new_in_4_0_.html">What was new in 4.0?</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20140117</p>
+</address>
+</body>
+</html>

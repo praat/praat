@@ -1,0 +1,97 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>KlattGrid</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+KlattGrid
+</b></font></table></table>
+<p>A KlattGrid represents the source-filter model as a function of time. It consists of a number of tiers that model aspects of the source and the filter, and the interaction between source and filter. The KlattGrid implements a superset of the speech synthesizer described in figure 14 by <a href="Klatt___Klatt__1990_.html">Klatt & Klatt (1990)</a>.</p>
+<p>The following drawing represents a cascade synthesizer with six oral formants, one nasal formant, one nasal antiformant, one tracheal formant, one tracheal antiformant and six frication formants.</p>
+<p align=middle><img height=650 width=700 src=KlattGrid_1.png></p><p>In the next picture a parallel synthesizer branch is used instead of the cascade one.</p>
+<p align=middle><img height=650 width=700 src=KlattGrid_2.png></p><p>All parameters in the synthesizer are represented by separate tiers.</p>
+<h2>The source</h2>
+<p>The source is modelled by the following tiers:</p>
+<dl>
+<dt><b>Pitch</b>
+<dd>models fundamental frequency (in Hertz).</dd>
+<dt><b>Flutter</b>
+<dd>models a kind of &#8220;random&#8221; variation of the pitch (with a number between zero and one).</dd>
+<dt><b>Voicing amplitude</b>
+<dd>models the maximum amplitude of the glottal flow (in dB SPL).</dd>
+<dt><b>Open phase</b>
+<dd>models the open phase of the glottis (with a number between zero and one). If the tier is empty, a default of 0.7 will be used.</dd>
+<dt><b>Power1</b>, <b>Power2</b>
+<dd>model the shape of the glottal flow function <i>flow</i>(<i>t</i>)=<i>t</i><sup><i>power1</i></sup>&#8722;<i>t</i><sup><i>power2</i></sup> for 0 &#8804; <i>t</i> &#8804; 1. To make glottal closure possible, <i>power2</i> has to be larger than <i>power1</i>. If the power1 tier is empty, a default value of 3 will be used. If the power2 tier is empty, a default of 4 will be used.</dd>
+<dt><b>Collision phase</b>
+<dd>models the last part of the flow function with an exponential decay function instead of a polynomial one. More information about <b>Power1</b>, <b>Power2</b>, <b>Open phase</b> and <b>Collision phase</b> can be found in the <a href="PointProcess__To_Sound__phonation____.html">PointProcess: To Sound (phonation)...</a> manual.</dd>
+<dt><b>Spectral tilt</b>
+<dd>models the extra number of dB the voicing spectrum should be down at 3000 Hertz.</dd>
+<dt><b>Aspiration amplitude</b>
+<dd>models the (maximum) amplitude of the noise generated at the glottis (in dB SPL).</dd>
+<dt><b>Breathiness amplitude</b>
+<dd>models the maximum breathiness noise amplitude during the open phase of the glottis (in dB SPL). The amplitude of the breathiness noise is modulated by the glottal flow.</dd>
+<dt><b>Double pulsing</b>
+<dd>models diplophonia (by a fraction between zero and one). Whenever this parameter is greater than zero, alternate pulses are modified. A pulse is modified with this <i>single</i> parameter in <i>two</i> ways: it is <i>delayed in time</i> and its amplitude is <i>attenuated</i>.  If the double pulsing value is a maximum and equals one, the time of closure of the first peak coincides with the opening time of the second one.</dd>
+</dl>
+<h2>The vocal tract filter</h2>
+<p>The filter is modelled by a number of <a href="FormantGrid.html">FormantGrid</a>'s. For parallel synthesis the formant grids that normally only contain formant frequency and formant bandwidth tiers, have been extended with amplitude tiers. Amplitudes values are in dB. The following formant grids can be used:</p>
+<dl>
+<dt><b>Oral formants</b>
+<dd>represent the &#8220;standard&#8221; oral resonances of the vocal tract.</dd>
+<dt><b>Nasal formants</b>
+<dd>model resonances in the nasal tract. Because the shape of the nasal tract does not vary much during the course of an utterance, nasal formants tend to be constant.</dd>
+<dt><b>Nasal antiformants</b>
+<dd>model dips in the spectrum caused by leakage to the nasal tract.</dd>
+</dl>
+<h2>Interaction between source and filter</h2>
+<p>The interaction between source and filter is modelled by two formant grids.</p>
+<dl>
+<dt><b>Tracheal formants</b>
+<dd>model one aspect of the coupling of the trachea with the vocal tract transfer function, namely, by the introduction of extra formants (and antiformants) that sometimes distort vowel spectra to a varying degrees. According to <a href="Klatt___Klatt__1990_.html">Klatt & Klatt (1990)</a>, the other effect of tracheal formants is increased losses at glottal termination which primarily affect first-formant bandwidths.</dd>
+<dt><b>Tracheal antiformants</b>
+<dd>model dips in the spectrum caused by the trachea.</dd>
+<dt><b>Delta formants</b>
+<dd>The values in this grid model the number of hertz that the oral formants and/or bandwidths change during the open phase of the glottis. <a href="Klatt___Klatt__1990_.html">Klatt & Klatt (1990)</a> distinguish four types of source-filter interactions: an F1 ripple in the source waveform, a non-linear interaction between the first formant and the fundamental frequency, a truncation of the first formant and tracheal formants and antiformants.</dd>
+</dl>
+<h2>The frication section</h2>
+<p>The frication section is modelled with a frication formant grid, with formant frequencies, bandwidths and (separate) amplitudes (dB), a frication by-pass tier (dB) and an amplitude tier (dB SPL) that governs the frication noise source.</p>
+<h2>A minimal synthesizer</h2>
+<p>The following script produces a minimal voiced sound. The first line creates the standard KlattGrid." The next two lines define a pitch point, in Hz, and the voicing amplitude, in dB. The last line creates the sound.</p>
+<code>   Create KlattGrid: "kg", 0, 1, 6, 1, 1, 6, 1, 1, 1<br></code>
+<code>   Add pitch point: 0.5, 100<br></code>
+<code>   Add voicing amplitude point: 0.5, 90<br></code>
+<code>   To Sound<br></code>
+<p>The following script will produce raw frication noise. Because we do not specify formant amplitudes, we turn off the formants in the parallel section.</p>
+<code>   Create KlattGrid: "kg", 0, 1, 6, 1, 1, 6, 1, 1, 1<br></code>
+<code>   Add frication amplitude point: 0.5 ,80<br></code>
+<code>   Add frication bypass point: 0.5, 0<br></code>
+<code>   To Sound (special): 0, 0, 44100, "yes", "no", "yes", "yes", "yes", "yes",<br></code>
+<code>   ... "Powers in tiers", "yes", "yes", "yes",<br></code>
+<code>   ... "Cascade", 1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, "yes"<br></code>
+<h2>Changes</h2>
+<p>In Praat versions before 5.1.05 the values for the <i>oral / nasal / tracheal formant amplitudes</i> and <i>frication bypass amplitude</i> had to be given in dB SPL; now they are in real dB's, i.e. 0 dB means no change in amplitude. You can calculate new values from old values as: <code><font size=+1>new_value = old_value + 20*log10(2e-5)</font></code>. This means that you have to subtract approximately 94 dB from the old values.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Create_KlattGrid_from_vowel___.html">Create KlattGrid from vowel...</a>
+<li><a href="Create_KlattGrid___.html">Create KlattGrid...</a>
+<li><a href="KlattGrid__Play_special___.html">KlattGrid: Play special...</a>
+<li><a href="KlattGrid__To_Sound__phonation____.html">KlattGrid: To Sound (phonation)...</a>
+<li><a href="KlattGrid__To_Sound__special____.html">KlattGrid: To Sound (special)...</a>
+<li><a href="KlattTable.html">KlattTable</a>
+<li><a href="New_menu.html">New menu</a>
+<li><a href="Sound___KlattGrid__Filter_by_vocal_tract___.html">Sound & KlattGrid: Filter by vocal tract...</a>
+<li><a href="Sound__To_KlattGrid__simple____.html">Sound: To KlattGrid (simple)...</a>
+<li><a href="What_was_new_in_5_1_.html">What was new in 5.1?</a>
+</ul>
+<hr>
+<address>
+	<p>© David Weenink 2014-01-17</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Ltas</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Ltas
+</b></font></table></table>
+<p>One of the <a href="Types_of_objects.html">types of objects</a> in Praat. <b>Ltas</b> is short for Long-Term Average Spectrum.</p>
+<p>An object of class Ltas represents the logarithmic <a href="power_spectral_density.html">power spectral density</a> as a function of frequency, expressed in dB/Hz relative to 2&#183;10<sup>-5</sup> Pa.</p>
+<h2>Inside an Ltas object</h2>
+<p>With <a href="Inspect.html">Inspect</a>, you will see the following attributes:</p>
+<dl>
+<dt><i>x</i><sub><i>min</i></sub>
+<dd>the bottom of the frequency domain, in hertz. Usually 0.</dd>
+<dt><i>x</i><sub><i>max</i></sub>
+<dd>the top of the frequency domain, in hertz.</dd>
+<dt><i>n</i><sub><i>x</i></sub>
+<dd>the number of frequency bins (&#8805; 1).</dd>
+<dt><i>dx</i>
+<dd>the frequency step, or <i>bin width</i>, in hertz.</dd>
+<dt><i>x</i><sub>1</sub>
+<dd>the frequency associated with the first bin, in hertz. Usually equals <i>dx</i> / 2, because the first bin tends to start at 0 hertz.</dd>
+<dt><i>z</i><sub>1<i>i</i></sub>, <i>i</i> = 1 ... <i>n</i><sub><i>x</i></sub>
+<dd>the power spectral density, expressed in dB.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Ltas__Average.html">Ltas: Average</a>
+<li><a href="Ltas__Get_bin_number_from_frequency___.html">Ltas: Get bin number from frequency...</a>
+<li><a href="Ltas__Get_bin_width.html">Ltas: Get bin width</a>
+<li><a href="Ltas__Get_frequency_from_bin_number___.html">Ltas: Get frequency from bin number...</a>
+<li><a href="Ltas__Get_frequency_of_maximum___.html">Ltas: Get frequency of maximum...</a>
+<li><a href="Ltas__Get_frequency_of_minimum___.html">Ltas: Get frequency of minimum...</a>
+<li><a href="Ltas__Get_highest_frequency.html">Ltas: Get highest frequency</a>
+<li><a href="Ltas__Get_lowest_frequency.html">Ltas: Get lowest frequency</a>
+<li><a href="Ltas__Get_maximum___.html">Ltas: Get maximum...</a>
+<li><a href="Ltas__Get_mean___.html">Ltas: Get mean...</a>
+<li><a href="Ltas__Get_minimum___.html">Ltas: Get minimum...</a>
+<li><a href="Ltas__Get_number_of_bins.html">Ltas: Get number of bins</a>
+<li><a href="Ltas__Get_standard_deviation___.html">Ltas: Get standard deviation...</a>
+<li><a href="Ltas__Get_value_at_frequency___.html">Ltas: Get value at frequency...</a>
+<li><a href="Ltas__Get_value_in_bin___.html">Ltas: Get value in bin...</a>
+<li><a href="Sound__To_Ltas__pitch-corrected____.html">Sound: To Ltas (pitch-corrected)...</a>
+<li><a href="Spectrum__To_Ltas__1-to-1_.html">Spectrum: To Ltas (1-to-1)</a>
+<li><a href="What_was_new_in_3_7_.html">What was new in 3.7?</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2007-03-20</p>
+</address>
+</body>
+</html>

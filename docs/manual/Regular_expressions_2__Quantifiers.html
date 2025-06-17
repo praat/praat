@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Regular expressions 2. Quantifiers</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Regular expressions 2. Quantifiers
+</b></font></table></table>
+<p>Quantifiers specify how often the preceding <a href="Regular_expressions.html">regular expression</a> should match.</p>
+<dl>
+<dt><b>*</b>   Try to match the preceding regular expression zero or more times.
+<dd>&nbsp;&nbsp;&nbsp;Example: "(ab)c*" matches "ab" followed by zero or more "c"s, i.e., "ab", "abc", "abcc", "abccc" ...</dd>
+<dt><b>+</b>   Try to match the preceding regular expression one or more times.
+<dd>&nbsp;&nbsp;&nbsp;Example: "(ab)c+" matches "ab" followed by one or more "c"s, i.e., "abc", "abcc", "abccc" ...</dd>
+<dt><b>{<i>m</i>, <i>n</i>}</b>   Try to match the preceding regular expression between <i>m</i> and <i>n</i> times.
+<dd>If you leave <i>m</i> out, it is assumed to be zero. If you leave <i>n</i> out it is assumed to be infinity. I.e., "{,<i>n</i>}" matches from <i>zero</i> to <i>n</i> times, "{<i>m</i>,}" matches a minimum of <i>m</i> times, "{,}" matches the same as "*" and "{n}" is shorthand for "{n, n"} and matches exactly <i>n</i> times.</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: "(ab){1,2}" matches "ab" and "abab".</dd>
+<dt><b>?</b>   Try to match zero or one time.
+</dl>
+<h2>Changing match behaviour</h2>
+<p>Default the quantifiers above try to match as much as possible, they are <i>greedy</i>. You can change greedy behaviour to <i>lazy</i> behaviour by adding an extra "?" after the quantifier.</p>
+<dl>
+<dd>&nbsp;&nbsp;&nbsp;Example: In the string "cabddde", the search "abd{1,2}" matches "abdd", while the search for "abd{1,2}?" matches "abd".</dd>
+<dd>&nbsp;&nbsp;&nbsp;Example: In the string "cabddde", the search "abd+" matches "abddd", while the search for "abd+?" matches "abd".</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Regular_expressions_1__Special_characters.html">Regular expressions 1. Special characters</a>
+</ul>
+<hr>
+<address>
+	<p>© djmw 20010708</p>
+</address>
+</body>
+</html>

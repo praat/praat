@@ -1,0 +1,26 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ExperimentMFC 7. Blanking the screen</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+ExperimentMFC 7. Blanking the screen
+</b></font></table></table>
+<p>In all the earlier examples, the flag <code><font size=+1><i>blankWhilePlaying</i></font></code> was set to <code><font size=+1><no></font></code>. This means that in all those cases the participant will immediately see the response categories when the sound starts playing (or even earlier, if there is an initial silence).</p>
+<p>This can be changed by setting <code><font size=+1><i>blankWhilePlaying</i></font></code> to <code><font size=+1><yes></font></code>. When you do that, the participant will see a blank screen while the stimulus is playing, and the response buttons will come up only after the sound has finished. This is useful if you want to prevent the participant from clicking before the sound has finished, or for priming experiments. Reaction times are measured from when the response buttons appear.</p>
+<p>If you want the response buttons to come up 0.5 seconds after the sound finishes playing, you set the <code><font size=+1><i>stimulusFinalSilenceDuration</i></font></code> to 0.5.</p>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="ExperimentMFC.html">ExperimentMFC</a>
+</ul>
+<hr>
+<address>
+	<p>© ppgb 20130102</p>
+</address>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To BarkSpectrogram...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To BarkSpectrogram...
+</b></font></table></table>
+<p>A command that creates a <a href="BarkSpectrogram.html">BarkSpectrogram</a> object from every selected <a href="Sound.html">Sound</a> object by <a href="band_filtering_in_the_frequency_domain.html">band filtering in the frequency domain</a> with a bank of filters.</p>
+<p>The auditory filter functions used are defined as:</p>
+<table width="100%" style="white-space:pre-wrap"><tr><td align=middle>10 log <i><b>H</i></b>(<i>z</i>) = 7 - 7.5 * (<i>z</i><sub><i>c</i></sub> - <i>z</i> - 0.215) - 17.5 * &#8730; (0.196 + (<i>z</i><sub><i>c</i></sub> - <i>z</i> - 0.215)<sup>2</sup>)</table>
+<p>where <i>z</i><sub><i>c</i></sub> is the central (resonance) frequency of the filter in Bark. The bandwidths of these filters are constant and equal 1 Bark. </p>
+<p>The auditory filters are defined in <a href="Sekey___Hanson__1984_.html">Sekey & Hanson (1984)</a>. You can draw these filters from a BarkSpectrogram object by selecting <a href="BarkSpectrogram__Draw_Sekey-Hanson_auditory_filters___.html">BarkSpectrogram: Draw Sekey-Hanson auditory filters...</a>.</p>
+<hr>
+<address>
+	<p>© djmw 20141023</p>
+</address>
+</body>
+</html>
