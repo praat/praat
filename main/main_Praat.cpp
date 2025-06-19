@@ -68,14 +68,14 @@ static void logo (Graphics graphics) {
 	Graphics_text (graphics, 0.5, 0.35, Melder_cat (U"Copyright © 1992–", Melder_appYear(), U" by Paul Boersma and David Weenink"));
 	Graphics_setFontSize (graphics, 10.0);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (graphics, 0.39, 0.26, U"Download:");
-	Graphics_text (graphics, 0.39, 0.06, U"Source code:");
+	Graphics_text (graphics, 0.34, 0.26, U"Download:");
+	Graphics_text (graphics, 0.34, 0.06, U"Source code:");
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
 	Graphics_setFont (graphics, kGraphics_font::COURIER);
-	Graphics_text (graphics, 0.41, 0.26, U"www.fon.hum.uva.nl/praat");
-	Graphics_text (graphics, 0.41, 0.20, U"www.praat.org");
-	Graphics_text (graphics, 0.41, 0.14, U"praat.github.io/praat");
-	Graphics_text (graphics, 0.41, 0.06, U"github.com/praat/praat");
+	Graphics_text (graphics, 0.36, 0.26, U"https://www.fon.hum.uva.nl/praat");
+	Graphics_text (graphics, 0.36, 0.20, U"https://www.praat.org");
+	Graphics_text (graphics, 0.36, 0.14, U"https://praat.github.io/praat");
+	Graphics_text (graphics, 0.36, 0.06, U"https://github.com/praat/praat");
 }
 
 int main (int argc, char *argv []) {
