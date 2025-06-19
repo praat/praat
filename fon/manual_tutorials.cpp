@@ -175,7 +175,7 @@ Answer: see @@Sound: To Formant (burg)...@.
 
 ################################################################################
 "FAQ: How to cite Praat"
-© Paul Boersma 2014-08-26
+© Paul Boersma 2005,2010,2014,2025
 
 #Question: how do I cite Praat in my articles?
 
@@ -186,7 +186,7 @@ and therefore by many journals, is like the following
 {-
 	writeInfoLine: “Boersma, Paul & Weenink, David (”, appYear(),
 	... “). Praat: doing phonetics by computer [Computer program]. Version ”, appVersion$(),
-	... “, retrieved ”, appDay(), “ ”, appMonth$(), “ ”, appYear(), “ from http://www.praat.org/”
+	... “, retrieved ”, appDay(), “ ”, appMonth$(), “ ”, appYear(), “ from https://www.praat.org/”
 }
 If the journal does not allow you to cite a web site, then try:
 
@@ -404,7 +404,7 @@ MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
 "Intro"
-© Paul Boersma, 2011
+© Paul Boersma 2003,2004,2007,2009,2011,2025
 
 This is an introductory tutorial to Praat, a computer program
 with which you can analyse, synthesize, and manipulate speech,
@@ -478,7 +478,7 @@ The authors
 
 The Praat program was created by Paul Boersma and David Weenink of
 the Institute of Phonetics Sciences of the University of Amsterdam.
-Home page: #`http://www.praat.org` or #`https://www.fon.hum.uva.nl/praat/`.
+Home page: #`https://www.praat.org` or #`https://www.fon.hum.uva.nl/praat/`.
 
 For questions and suggestions, mail to the Praat discussion list,
 which is reachable from the Praat home page, or directly to #`paul.boersma@uva.nl`.
