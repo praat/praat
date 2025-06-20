@@ -38,7 +38,7 @@ Praat allows you to perform several statistical techniques, among which
 multidimensional scaling, principal component analysis, and discriminant analysis.
 
 For more information, consult the extensive manual in Praat (under Help),
-and the website [praat.org](http://praat.org), which has Praat tutorials in several languages.
+and the website [praat.org](https://praat.org), which has Praat tutorials in several languages.
 
 ## 1. Binary executables
 
