@@ -63,7 +63,7 @@ We included the following freely available software libraries in Praat (sometime
 	Frank Klemm, Don Melton, Albert L. Faber, Roberto Amorim, Josep Maria Antolín Segura, Dominique Duvivier,
 	Joseph Flynn, Peter Gubanov, Guillaume Lessard, Steve Lhomme, Darin Morrison, Dyle VanderBeek,
 	David Robinson, Glen Sawyer, Marcel Muller, Olcios, version 3.100 of October 2017 (@@General Public License, version 2|GPL 2@ or later).
-, FLAC: Free Lossless Audio Codec by Josh Coalson and Xiph.Org, version 1.3.3 (@@FLAC BSD 3-clause license@).
+, FLAC: Free Lossless Audio Codec by Josh Coalson and Xiph.Org, version 1.5.0 of February 2025 (@@FLAC BSD 3-clause license@).
 , Ogg Vorbis: audio compression by Christopher Montgomery (@@Ogg Vorbis BSD 3-clause license@).
 , Opus: audio compression by Jean-Marc Valin, Gregory Maxwell, Christopher Montgomery, Timothy Terriberry,
 	Koen Vos, Andrew Allen and others (@@Opus BSD 3-clause license@).
