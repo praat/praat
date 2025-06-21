@@ -1,6 +1,6 @@
 # Makefile of the library "external/flac"
 # Erez Volk, March 2007
-# Paul Boersma, 23 August 2021
+# Paul Boersma, 21 June 2025
 
 include ../../makefile.defs
 
@@ -24,7 +24,7 @@ OBJECTS = \
 	flac_stream_encoder.o \
 	flac_stream_encoder_framing.o \
 	flac_window.o \
-	flac_windows_unicode_filenames.o
+	flac_share_win_utf8_io.o
 
 .PHONY: all clean
 

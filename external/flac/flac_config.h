@@ -1,5 +1,5 @@
 /* flac_config.h
- * copyright Paul Boersma 2021
+ * copyright Paul Boersma 2021,2025
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,6 @@
 
 #define FLAC__NO_DLL
 
-#define PACKAGE_VERSION  "1.3.3"
+#define PACKAGE_VERSION  "1.5.0"
 
 /* End of file flac_config.h */

@@ -1,18 +1,18 @@
 Praats/external/flac/READ_ME.TXT
-Paul Boersma, 20 August 2021
+Paul Boersma, 21 June 2025
 24 February 2024: "Obsolete repairs"
 
-This file describes the adaptations to the FLAC 1.3.3 sources
+This file describes the adaptations to the FLAC 1.5.0 sources
 that are needed to make them compatible with Praat.
 
 The FLAC sources are distributed over multiple folders, which are in different deep
 branches of the FLAC root folder, as listed below. We flatten this hierarchy as shown.
 
-flac-1.3.3
-	config.cmake.h.in -> flac_config.h
+flac-1.5.0
+	config.cmake.h.in -> flac_config.h  BUT COMPLETELY CHANGED
 	include
 		FLAC
-			all.h -> flac_FLAC_all.h
+			all.h -> UNUSED
 			assert.h -> flac_FLAC_assert.h
 			callback.h -> flac_FLAC_callback.h
 			export.h -> flac_FLAC_export.h
@@ -36,12 +36,15 @@ flac-1.3.3
 			bitwriter.c -> flac_bitwriter.c
 			cpu.c -> flac_cpu.c
 			crc.c -> flac_crc.c
+			deduplication
+				bitreader_read_rice_signed_block.c -> flac_deduplication_bitreader_read_rice_signed_block_c.h
+				bitreader_lpc_compute_autocorrelation_intrin.c -> flac_deduplication_lpc_compute_autocorrelation_intrin_c.h
 			fixed.c -> flac_fixed.c
 			float.c -> flac_float.c
 			format.c -> flac_format.c
 			include
 				private
-					all.h -> flac_private_all.h
+					all.h -> UNUSED
 					bitmath.h -> flac_private_bitmath.h
 					bitreader.h -> flac_private_bitreader.h
 					bitwriter.h -> flac_private_bitwriter.h
@@ -55,15 +58,15 @@ flac-1.3.3
 					md5.h -> flac_private_md5.h
 					memory.h -> flac_private_memory.h
 					metadata.h -> flac_private_metadata.h
-					ogg_decoder_aspect.h -> flac_private_ogg_decoder_aspect.h
-					ogg_encoder_aspect.h -> flac_private_ogg_encoder_aspect.h
-					ogg_helper.h -> flac_private_ogg_helper.h
-					ogg_mapping.h -> flac_private_ogg_mapping.h
+					ogg_decoder_aspect.h -> UNUSED
+					ogg_encoder_aspect.h -> UNUSED
+					ogg_helper.h -> UNUSED
+					ogg_mapping.h -> UNUSED
 					stream_encoder_framing.h -> flac_private_stream_encoder_framing.h
-					stream_encoder.h -> UNUSED
+					stream_encoder.h -> flac_private_stream_encoder.h
 					window.h -> flac_private_window.h
 				protected
-					all.h -> flac_protected_all.h
+					all.h -> UNUSED flac_protected_all.h
 					stream_decoder.h -> flac_protected_stream_decoder.h
 					stream_encoder.h -> flac_protected_stream_encoder.h
 			lpc.c -> flac_lpc.c
@@ -155,3 +158,13 @@ so that file names with special characters were handled correctly on Windows:
 #endif
 
 However, from FLAC 1.3.3 on, we just call flac_set_utf8_filenames() in Melder_audiofiles_init().
+
+Do something to
+	#ifdef HAVE_STDINT_H
+such as replacing it with
+	#if HAVE_STDINT_H
+
+The reverse for
+	#if WORDS_BIGENDIAN
+to
+	#ifdef WORDS_BIGENDIAN
