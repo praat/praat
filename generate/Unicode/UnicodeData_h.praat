@@ -1,5 +1,5 @@
 # UnicodeData_h.praat
-# Paul Boersma, 18 May 2025
+# Paul Boersma, 21 June 2025
 
 Text writing preferences: "UTF-8"
 
@@ -30,7 +30,7 @@ for irow from 2 to numberOfRows
 		name$ = replace$ (name$, "-", "_", 0)
 		appendFileLine: outfile$,
 		... "#define UNICODE_" + name$ + “  0x” + code$, newline$,
-		... "#define UNITEXT_" + name$ + “  U"\u” + code$ + “"”
+		... "#define UNITEXT_" + name$ + if length (code$) = 5 then “  U"\U000” else “  U"\u” fi + code$ + “"”
 	endif
 endfor
 appendInfoLine: stopwatch
