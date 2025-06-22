@@ -4,7 +4,7 @@
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -665,7 +665,10 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 		else if (errno == ENAMETOOLONG)
 			Melder_appendError (U"Not-so-useful hint: the file path may be too long. This should not occur.");
 		else if (errno == ENOENT)
-			Melder_appendError (U"Hint: one of the folders in this file path does not exist.");
+			if (file -> openForWriting)
+				Melder_appendError (U"Hint: one of the folders in this file path does not exist.");
+			else
+				Melder_appendError (U"Hint: one of the folders or files in this file path does not exist.");
 		else if (errno == ENOTDIR)
 			Melder_appendError (U"Hint: a component of the file path is not a folder.");
 		else if (errno == EOVERFLOW)
@@ -786,6 +789,63 @@ void MelderFile_delete (MelderFile file) {
 	#elif defined (_WIN32)
 		DeleteFile (MelderFile_peekPathW (file));
 	#endif
+}
+
+void MelderFile_moveAndOrRename (MelderFile fromFile, MelderFile toFile) {
+	if (! fromFile || ! toFile)
+		return;
+	try {
+		#if defined (UNIX)
+			static char fromPath8 [1 + kMelder_MAXPATH], toPath8 [1 + kMelder_MAXPATH];
+			Melder_32to8_fileSystem_inplace (MelderFile_peekPath (fromFile), fromPath8);   // not MelderFile_peekPath8, because of static
+			Melder_32to8_fileSystem_inplace (MelderFile_peekPath (toFile), toPath8);
+			const int result = rename (fromPath8, toPath8);
+		#elif defined (_WIN32)
+			autostringW fromPathW = Melder_32toW_fileSystem (MelderFile_peekPath (fromFile));
+			autostringW toPathW = Melder_32toW_fileSystem (MelderFile_peekPath (toFile));
+			const int result = _wrename (fromPathW.get(), toPathW.get());
+		#endif
+		if (result == 0)
+			return;   // success
+		switch (errno) {
+			case EACCES:
+				Melder_throw (U"A folder in one of the paths doesn’t allow reading and/or writing access.");
+			case EBUSY:
+				Melder_throw (U"A folder in one of the paths is busy.");
+			case EINVAL:
+				Melder_throw (U"Invalid path (recursive? dots?).");
+			case EIO:
+				Melder_throw (U"Physical I/O error.");
+			case EISDIR:
+				Melder_throw (U"Cannot move an/or rename a file to a folder name.");
+			#if ! defined (UNIX) && ! defined (_WIN32)
+				case EMLOOP:
+					Melder_throw (U"Loop in symbolic links.");
+			#endif
+			case EMLINK:
+				Melder_throw (U"Too many links.");
+			case ENAMETOOLONG:
+				Melder_throw (U"Name too long.");
+			case ENOENT:
+				Melder_throw (U"A folder or file in the path does not exist.");
+			case ENOSPC:
+				Melder_throw (U"Folder cannot be extended.");
+			case ENOTDIR:
+				Melder_throw (U"A part of the path is not a folder (hint: look at the slahes).");
+			case EPERM:
+				Melder_throw (U"No permission to read and/or write in one of the paths.");
+			case EROFS:
+				Melder_throw (U"Cannot do links between file systems.");
+			#if ! defined (UNIX) && ! defined (_WIN32)
+				case ETXTBUSY:
+					Melder_throw (U"Busy pure procedure file.");
+			#endif
+			default:
+				Melder_throw (U"Unknown error ", errno, U".");
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Could not rename ", fromFile, U" to ", toFile, U".");
+	}
 }
 
 char32 * Melder_peekExpandBackslashes (conststring32 message) {

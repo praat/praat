@@ -423,6 +423,8 @@ void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, integer 
 }
 
 static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
+	TRACE
+	trace (0);
 	integer n = imax - imin + 1;
 	Melder_assert (n <= my nmax);
 	/*
@@ -452,6 +454,7 @@ static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
 	if (imin < 1)
 		imin = 1;
 	Melder_assert (imax - imin + 1 <= my nmax);
+	trace (1);
 	/*
 		Overlap?
 	*/
@@ -505,6 +508,7 @@ static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
 	}
 	my imin = imin;
 	my imax = imax;
+	trace (2);
 }
 
 bool LongSound_haveWindow (LongSound me, double tmin, double tmax) {

@@ -976,10 +976,6 @@ static void Melder_readFlacFile (FILE *f, MAT buffer) {
 		goto end;
 	}
 	result = FLAC__stream_decoder_process_until_end_of_stream (decoder);
-	if (result == 0) {
-		//Melder_appendError (U"Couldn’t process FLAC stream.");
-		result = 1;   // ignore the error
-	}
 	FLAC__stream_decoder_finish (decoder);
 end:
 	if (decoder)
@@ -2360,9 +2356,6 @@ void MelderFile_writeFloatToAudio (MelderFile file, constMATVU const& buffer, in
 }
 
 void Melder_audiofiles_init () {
-	#ifdef _WIN32
-		//flac_set_utf8_filenames (true);
-	#endif
 }
 
 /* End of file melder_audiofiles.cpp */
