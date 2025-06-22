@@ -29,10 +29,15 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.36# (21 June 2025)
+• Sound window: restore loudspeaker icon (for multi-channel sounds; bug since 6.4.31).
+• FLAC 1.5.0.
+
 ##6.4.35# (15 June 2025)
 • Pitch analysis: guard against zero pitch floor if logarithmic.
 • Scripting: @`fixed$` () for vectors and matrices.
 • Linux: removed hard-coded background colour.
+• Full website `https://praat.org` now mirrors `https://www.fon.hum.uva.nl/praat` (to prevent down time).
 
 ##6.4.34# (20 May 2025)
 • Linux: made @`demoShow` () work again on GTK 3.
