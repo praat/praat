@@ -207,7 +207,8 @@ enum { NO_SYMBOL_,
 			INDEX_, INDEX_CASE_INSENSITIVE_, RINDEX_, RINDEX_CASE_INSENSITIVE_,
 			STARTS_WITH_, STARTS_WITH_CASE_INSENSITIVE_, ENDS_WITH_, ENDS_WITH_CASE_INSENSITIVE_,
 			INDEX_REGEX_, RINDEX_REGEX_, EXTRACT_NUMBER_,
-		#define HIGH_FUNCTION_STR2  EXTRACT_NUMBER_
+			MOVE_AND_OR_RENAME_FILE_,
+		#define HIGH_FUNCTION_STR2  MOVE_AND_OR_RENAME_FILE_
 		EXTRACT_WORD_STR_, EXTRACT_LINE_STR_,
 		REPLACE_STR_, REPLACE_REGEX_STR_,
 		FIXED_STR_, PERCENT_STR_, HEXADECIMAL_STR_,
@@ -361,6 +362,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 		U"index", U"index_caseInsensitive", U"rindex", U"rindex_caseInsensitive",
 		U"startsWith", U"startsWith_caseInsensitive", U"endsWith", U"endsWith_caseInsensitive",
 		U"index_regex", U"rindex_regex", U"extractNumber",
+		U"moveAndOrRenameFile",
 	// HIGH_FUNCTION_STR2
 	U"extractWord$", U"extractLine$",
 	U"replace$", U"replace_regex$",
@@ -6739,6 +6741,20 @@ static void do_deleteFile () {
 		Melder_throw (U"The function “deleteFile” requires a string, not ", f->whichText(), U".");
 	}
 }
+static void do_moveAndOrRenameFile () {
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+		U"The function “moveAndOrRenameFile” is not available inside manuals.");
+	const Stackel to = pop, from = pop;
+	if (from->which == Stackel_STRING && to->which == Stackel_STRING) {
+		structMelderFile fromFile { }, toFile { };
+		Melder_relativePathToFile (from->getString(), & fromFile);
+		Melder_relativePathToFile (to->getString(), & toFile);
+		MelderFile_moveAndOrRename (& fromFile, & toFile);
+		pushNumber (1);
+	} else {
+		Melder_throw (U"The function “moveAndOrRenameFile” requires two strings, not ", from->whichText(), U" and ", to->whichText(), U".");
+	}
+}
 static void do_createFolder () {
 	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “createFolder” is not available inside manuals.");
@@ -8983,6 +8999,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case PERCENT_STR_: { do_percent_STR ();
 } break; case HEXADECIMAL_STR_: { do_hexadecimal_STR ();
 } break; case DELETE_FILE_: { do_deleteFile ();
+} break; case MOVE_AND_OR_RENAME_FILE_: { do_moveAndOrRenameFile ();
 } break; case CREATE_FOLDER_: { do_createFolder ();
 } break; case CREATE_DIRECTORY_: { do_createDirectory ();   // deprecated 2020
 } break; case SET_WORKING_DIRECTORY_: { do_setWorkingDirectory ();   // deprecated 2020

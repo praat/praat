@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /* libFLAC - Free Lossless Audio Codec library
  * Copyright (C) 2013-2025  Xiph.Org Foundation
  *
@@ -396,3 +397,4 @@ int rename_utf8(const char *oldname, const char *newname)
 
 	return ret;
 }
+#endif
