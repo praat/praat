@@ -283,7 +283,8 @@ Praat.app that was already there. If on the way you receive an error
 “App Store Connect Operation Error -- You must first sign the relevant contracts online”,
 or “Couldn’t communicate with a helper application“,
 you will have to log in to `developer.apple.com` and do Review Agreement -> Agree;
-you may then also have to go (or log in) to App Store Connect, then Business (or Agreements, Tax, and Banking)
+you may then also have to either wait for a couple of minutes,
+and or go (or log in) to App Store Connect, then Business (or Agreements, Tax, and Banking)
 -> Paid Apps Agreement -> View and Agree to Terms (even if you have no paid apps).
 
 **Testing** on multiple Intel64/AMD64 platform versions can be done on older Intel64 Macs,
