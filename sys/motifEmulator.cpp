@@ -2286,7 +2286,20 @@ void GuiNextEvent (XEvent *xevent) {
 	} else GetMessage (xevent, NULL, 0, 0);   // be neighbour-friendly: do not hand null events
 }
 
+static GuiObject _motif_findDrawingArea (GuiObject me) {
+	if (my widgetClass == xmDrawingAreaWidgetClass)
+		return me;
+	for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling)
+		if (! MEMBER (sub, Shell)) {   // only in same top window
+			GuiObject drawingArea = _motif_findDrawingArea (sub);
+			if (drawingArea)
+				return drawingArea;
+		}
+	return NULL;   // no DrawingArea found
+}
+
 static int win_shell_processKeyboardEquivalent (GuiObject me, int kar, int modifiers) {
+	//TRACE
 	for (int imenu = 1; imenu <= MAXIMUM_NUMBER_OF_MENUS; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> shell == me) {
 		for (GuiObject child = theMenus [imenu] -> firstChild; child != NULL; child = child -> nextSibling) {
 			if ((child -> widgetClass == xmPushButtonWidgetClass || child -> widgetClass == xmToggleButtonWidgetClass) &&
@@ -2301,6 +2314,22 @@ static int win_shell_processKeyboardEquivalent (GuiObject me, int kar, int modif
 					return 1;
 				}
 			}
+		}
+	}
+	if (me && my shell) {
+		GuiObject drawingArea = _motif_findDrawingArea (my shell);
+		if (drawingArea) {
+			trace (U"kar5 ", kar);
+			if ((modifiers & _motif_COMMAND_MASK) && kar >= 'A' && kar <= 'Z' && ! (modifiers & _motif_SHIFT_MASK))
+				kar += 'a' - 'A';
+			if (kar == VK_RETURN) kar = 10;
+			if (kar == VK_LEFT)   kar = 0x2190;
+			if (kar == VK_RIGHT)  kar = 0x2192;
+			if (kar == VK_UP)     kar = 0x2191;
+			if (kar == VK_DOWN)   kar = 0x2193;
+			if (kar == VK_OEM_7)  kar = '\'';
+			_GuiWinDrawingArea_handleKey (drawingArea, kar);   // TODO: event -> key?
+			return 1;
 		}
 	}
 	return 0;
@@ -2318,19 +2347,8 @@ static int win_processKeyboardEquivalent (GuiObject me, int kar, int modifiers) 
 	return 0;
 }
 
-static GuiObject _motif_findDrawingArea (GuiObject me) {
-	if (my widgetClass == xmDrawingAreaWidgetClass)
-		return me;
-	for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling)
-		if (! MEMBER (sub, Shell)) {   // only in same top window
-			GuiObject drawingArea = _motif_findDrawingArea (sub);
-			if (drawingArea)
-				return drawingArea;
-		}
-	return NULL;   // no DrawingArea found
-}
-
 void XtDispatchEvent (XEvent *xevent) {
+	//TRACE
 	MSG *message = (MSG *) xevent;
 	if (message -> message == 0)
 		return;   // null message from PeekMessage during work proc or time out.
@@ -2360,6 +2378,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 		message -> message == WM_SYSKEYDOWN && GetKeyState (VK_CONTROL) < 0)
 	{
 		int kar = LOWORD (message -> wParam);
+		trace (U"kar1 ", kar);
 		GuiObject me = (GuiObject) GetWindowLongPtr (message -> hwnd, GWLP_USERDATA);
 		int modifiers = 0;
 		if (GetKeyState (VK_CONTROL) < 0)
@@ -2430,7 +2449,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 				if (MEMBER (me, Text) && (kar == 'X' || kar == 'C' || kar == 'V' || kar == 'Z')) {
 					;   // let window proc handle text editing
 				} else if (kar >= 186) {
-					int shift = modifiers & _motif_SHIFT_MASK;
+					const int shift = modifiers & _motif_SHIFT_MASK;
 					/*
 					 * BUG: The following is not internationally correct.
 					 */
@@ -2466,6 +2485,13 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 		if (me && MEMBER2 (me, PushButton, ToggleButton)) {
 			GuiObject drawingArea = _motif_findDrawingArea (my shell);
 			if (drawingArea) {
+				trace (U"kar2 ", kar);
+				if (kar == VK_RETURN) kar = 10;
+				if (kar == VK_LEFT)   kar = 0x2190;
+				if (kar == VK_RIGHT)  kar = 0x2192;
+				if (kar == VK_UP)     kar = 0x2191;
+				if (kar == VK_DOWN)   kar = 0x2193;
+				if (kar == VK_OEM_7)  kar = '\'';
 				_GuiWinDrawingArea_handleKey (drawingArea, kar);   // TODO: event -> key?
 				return;
 			}
@@ -2726,6 +2752,8 @@ static void on_size (HWND window, UINT state, int cx, int cy) {
 	} else FORWARD_WM_SIZE (window, state, cx, cy, DefWindowProc);
 }
 static void on_key (HWND window, UINT key, BOOL down, int repeat, UINT flags) {
+	//TRACE
+	trace (U"KEY ", key);
 	Melder_assert (down == true);
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me && key >= VK_LEFT && key <= VK_DOWN) {
@@ -2734,6 +2762,13 @@ static void on_key (HWND window, UINT key, BOOL down, int repeat, UINT flags) {
 			GuiObject drawingArea = _motif_findDrawingArea (me);
 			if (drawingArea) {
 				GuiObject textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
+				trace (U"kar3 ", key);
+				if (key == VK_RETURN) key = 10;
+				if (key == VK_LEFT)   key = 0x2190;
+				if (key == VK_RIGHT)  key = 0x2192;
+				if (key == VK_UP)     key = 0x2191;
+				if (key == VK_DOWN)   key = 0x2193;
+				if (key == VK_OEM_7)  key = '\'';
 				_GuiWinDrawingArea_handleKey (drawingArea, key);
 			} else {
 				FORWARD_WM_KEYDOWN (window, key, repeat, flags, DefWindowProc);
@@ -2744,12 +2779,14 @@ static void on_key (HWND window, UINT key, BOOL down, int repeat, UINT flags) {
 	}
 }
 static void on_char (HWND window, TCHAR kar, int repeat) {
+	//TRACE
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me) {
 		if (MEMBER (me, Shell) || my widgetClass == xmDrawingAreaWidgetClass) {   // any change in this condition should be mirrored in `on_key`
 			GuiObject drawingArea = _motif_findDrawingArea (me);
 			if (drawingArea) {
 				GuiObject textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
+				trace (U"kar4 ", kar);
 				_GuiWinDrawingArea_handleKey (drawingArea, kar);
 			} else {
 				FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);

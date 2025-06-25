@@ -29,9 +29,11 @@ R"~~~(
 
 Latest changes in Praat.
 
-##6.4.36# (21 June 2025)
+##6.4.36# (25 June 2025)
 • Sound window: restore loudspeaker icon (for multi-channel sounds; bug since 6.4.31).
+• Scripting: function @`moveAndOrRenameFile` ().
 • FLAC 1.5.0.
+• Scripting on Windows: more Command-key combinations with @`demoKey$` in Demo window.
 
 ##6.4.35# (15 June 2025)
 • Pitch analysis: guard against zero pitch floor if logarithmic.

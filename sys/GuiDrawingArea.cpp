@@ -287,11 +287,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		if (my d_keyCallback) {
 			structGuiDrawingArea_KeyEvent event { me, 0 };
 			event. key = kar;
-			if (event. key == VK_RETURN) event. key = 10;
-			if (event. key == VK_LEFT)   event. key = 0x2190;
-			if (event. key == VK_RIGHT)  event. key = 0x2192;
-			if (event. key == VK_UP)     event. key = 0x2191;
-			if (event. key == VK_DOWN)   event. key = 0x2193;
 			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;   // TODO: event -> key?
 			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
 			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
