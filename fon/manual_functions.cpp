@@ -210,6 +210,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`mid$` (%`string$`, %`from`, %`n`) – the %`n` characters in %`string$` starting at position %`from`
 , @`min` (%`x`, `...`) – minimum
 , @`minusObject` (`...`) – shrink the selection of objects in the list
+, @`moveAndOrRenameFile` (%`fromFilePath$`, %`toFilePath$`) – move and/or rename a file (note: supply two paths)
 , @`mul##` (%`a##`, %`b##`) – matrix multiplication
 , @`ncol` – the number of columns of an object
 , @`nrow` – the number of rows of an object
@@ -2936,6 +2937,38 @@ Syntax and semantics
 ====================
 #`minusObject` (`...`)
 : deselect the objects given by IDs and/or full names.
+
+################################################################################
+"`moveAndOrRenameFile`"
+© Paul Boersma 2025
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`moveAndOrRenameFile` (%`fromFilePath$`, %`toFilePath$`)
+: move and/or rename an existing file to a new location and/or name.
+
+Example: rename
+===============
+{;
+	\#{moveAndOrRenameFile} (“/Users/me/Desktop/hello.wav”,
+	... “/Users/me/Desktop/goodbye.wav”)
+}
+
+Example: move
+===============
+{;
+	\#{moveAndOrRenameFile} (“/Users/me/Desktop/hello.wav”,
+	... “/Users/me/sound files/hello.wav”)
+}
+
+Example: move and rename
+========================
+{;
+	\#{moveAndOrRenameFile} (“/Users/me/Desktop/hello.wav”,
+	... “/Users/me/sound files/goodbye.wav”)
+}
 
 ################################################################################
 "`mul##`"
