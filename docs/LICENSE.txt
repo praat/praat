@@ -1,0 +1,74 @@
+Project: Praat
+Authors: Paul Boersma & David Weenink
+Websites: https://www.fon.hum.uva.nl/praat, https://www.praat.org (https://praat.github.io/praat)
+
+
+License for the Praat website
+=============================
+
+Most files in the `docs` folder (excluding the `manual` subfolder and the third-party files listed below)
+are licensed under CC BY-SA 4.0:
+
+Creative Commons Attribution-ShareAlike 4.0 International
+https://creativecommons.org/licenses/by-sa/4.0/
+
+The exceptions are listed below.
+
+
+License for the Praat manual pages (in `docs/manual`)
+======================================================
+
+The `docs/manual` folder contains a copy of the manual pages of the Praat application,
+i.e. of both the HTML files and their included pictures (PNG files).
+These pages are also available in the Praat program under Help,
+The versions on the website were generated from Praat with the menu command
+**Save manual to HTML folder...**. As the source of these manual pages is the Praat source code,
+all HTML and PNG files in `docs/manual` are licensed under GPL-3.0-or-later:
+
+GNU General Public License v3.0 or later
+https://www.gnu.org/licenses/gpl-3.0.html
+
+
+Third-party files included in `docs/`
+=====================================
+
+The following five files by third parties are included on the Praat download pages,
+but are not covered by the above licenses. We redistribute them unchanged under their original licenses:
+
+- `CharisSIL-7.000.zip`
+- `DoulosSIL-7.000.zip`
+  © SIL International 2004-2025.
+  Licensed under the SIL Open Font License 1.1 (https://openfontlicense.org).
+
+- `silipa93.exe`
+- `silipa93.sit`
+- `silipa93.zip`
+  © SIL International 1993.
+  License: "all files must be copied together; no fee may be charged for the fonts."
+  (https://scripts.sil.org/cms/scripts/page.php?id=encore-ipa-download&site_id=nrsi)
+
+
+Screen captures included in `docs/pictures`
+===========================================
+
+The following files in `docs/pictures` are screen captures of Microsoft Windows Settings
+or Microsoft Windows erro messages, perhaps edited with a red ellipse or arrow,
+and perhaps with blurring of private information (such as user names).
+The ellipses and arrows were added by the Praat team.
+
+- arm64.png
+- dontrun.png
+- intel64.png
+- unblock.png
+
+The underlying screen captures are copyrighted Microsoft Corporation,
+and we included these files in the Praat download pages solely
+in order to support the user in downloading and/or installing Praat.
+The Praat team believes that this usage of Microsoft content falls under fair use.
+
+The other files in `docs/pictures`, namely the Praat icons and Paul's and David's portraits,
+are licensed under CC BY-SA 4.0.
+
+
+----------------------
+For questions or clarifications, please contact paul.boersma@uva.nl.

@@ -1,10 +1,10 @@
 /* manual_soundFiles.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2010,2011,2014-2017,2019-2022 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2010,2011,2014-2017,2019-2023,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -227,7 +227,7 @@ NORMAL (U"Opus is a general-purpose patent-free lossy audio compression format, 
 	"(see also @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
 
-MAN_BEGIN (U"Sound files 3. Files that Praat can read", U"ppgb", 20210604)
+MAN_BEGIN (U"Sound files 3. Files that Praat can read", U"ppgb", 20210604)  // 2025
 INTRO (U"Praat can read five types of standard sound files in several formats, "
 	"and a number of proprietary types of sound files as well.")
 ENTRY (U"Standard sound files")
@@ -267,6 +267,8 @@ LIST_ITEM1 (U"• 8-bit, 16-bit, 24-bit or 32-bit")
 LIST_ITEM1 (U"• all sampling frequencies")
 LIST_ITEM (U"• MP3:")
 LIST_ITEM1 (U"• all constant or variable bitrates")
+LIST_ITEM (U"• Shorten:")
+LIST_ITEM1 (U"• 8-bit A-law")
 MAN_END
 
 MAN_BEGIN (U"Sound files 4. Files that Praat can write", U"ppgb", 20210604)
