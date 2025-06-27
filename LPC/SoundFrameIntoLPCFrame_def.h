@@ -92,11 +92,10 @@ oo_END_CLASS (SoundFrameIntoLPCFrameMarple)
 
 #define ooSTRUCT LPCAndSoundFramesIntoLPCFrameRobust
 oo_DEFINE_CLASS (LPCAndSoundFramesIntoLPCFrameRobust, SoundFrameIntoLPCFrame)
-	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, inputlpc)	
+	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, inputlpc)	// TODO rename as otherInputLPC ?
 	oo_STRUCT (LPC_Frame, otherInputLPCFrame)
 	
 	oo_INTEGER (currentPredictionOrder)
-	oo_INTEGER (soundFrameSize)
 	oo_DOUBLE (tol2)
 	oo_DOUBLE (k_stdev)
 	oo_INTEGER (iter)
