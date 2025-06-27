@@ -56,11 +56,15 @@ double VocalTract_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, do
 		LPC_Frame_into_Spectrum (thee, lps.get(), 0, 50);
 		autoSpectrumTier vtst = Spectrum_to_SpectrumTier_peaks (vts.get());
 		autoSpectrumTier lpst = Spectrum_to_SpectrumTier_peaks (lps.get());
-		const double vt_f1 = vtst -> points.at [1] -> number, vt_f2 = vtst -> points.at [2] -> number;
-		const double lp_f1 = lpst -> points.at [1] -> number, lp_f2 = lpst -> points.at [2] -> number;
-		const double df1 = lp_f1 - vt_f1, df2 =  lp_f2 - vt_f2, df = 0.5 * (df1 + df2);
-		const double dl = - df / lp_f2;
-		return my dx * my nx * (1 + dl);
+		double length = undefined;
+		if (vtst -> points.size > 1 && lpst -> points.size > 1) {
+			const double vt_f1 = vtst -> points.at [1] -> number, vt_f2 = vtst -> points.at [2] -> number;
+			const double lp_f1 = lpst -> points.at [1] -> number, lp_f2 = lpst -> points.at [2] -> number;
+			const double df1 = lp_f1 - vt_f1, df2 =  lp_f2 - vt_f2, df = 0.5 * (df1 + df2);
+			const double dl = - df / lp_f2;
+			length = my dx * my nx * (1 + dl);
+		}
+		return length;
 	} catch (MelderError) {
 		Melder_throw (U"Length could not be determined from VocalTract and LPC_Frame.");
 	}
