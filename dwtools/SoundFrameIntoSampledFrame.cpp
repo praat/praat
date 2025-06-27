@@ -90,7 +90,9 @@ static void windowShape_into_VEC_GAUSSIAN2_OLD (kSound_windowShape /* windowShap
 	}
 }
 
-void SoundFrameIntoSampledFrame_init (mutableSoundFrameIntoSampledFrame me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+void SoundFrameIntoSampledFrame_init (mutableSoundFrameIntoSampledFrame me, constSound input, mutableSampled output,
+	double effectiveAnalysisWidth, kSound_windowShape windowShape)
+{
 	SampledFrameIntoSampledFrame_init (me, output);
 	my sound = input;
 	my windowShape = windowShape;
@@ -101,6 +103,7 @@ void SoundFrameIntoSampledFrame_init (mutableSoundFrameIntoSampledFrame me, cons
 	windowShape_into_VEC (my windowShape, my windowFunction.get());
 	my frameAsSound = Sound_create (1_integer, 0.0, my soundFrameSize * input -> dx, my soundFrameSize, input -> dx, 0.5 * input -> dx); //
 	my soundFrame = my frameAsSound -> z.row (1);
+	Melder_assert (my soundFrame.size == my soundFrameSize);
 }
 
 /* End of file SoundFrameIntoSampledFrame.cpp */
