@@ -44,7 +44,7 @@ extern const char * ipaSerifRegularPS [];
 	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
 	static int win_isize2size (int isize) { return isize; }
 #elif quartz
-	static bool hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
+	static bool hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis, hasIpaSerif, hasCharis7;
 	#define mac_MAXIMUM_FONT_SIZE  500
 	static CTFontRef theScreenFonts [1 + kGraphics_font_DINGBATS] [1+mac_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 #endif
@@ -590,20 +590,28 @@ static conststring32 quartz_getFontName (int font, int style) {
 			if (Melder_debug == 900)
 				return U"DG Meta Serif Science";
 			else
-				return style == 0 ? U"Palatino"
-				: style == Graphics_BOLD ? U"Palatino Bold"
-				: style == Graphics_ITALIC ? U"Palatino Italic"
-				: U"Palatino Bold Italic";
+				return
+					style == 0 ? U"Palatino"
+					: style == Graphics_BOLD ? U"Palatino Bold"
+					: style == Graphics_ITALIC ? U"Palatino Italic"
+					: U"Palatino Bold Italic";
 		case kGraphics_font_SYMBOL:
 			return U"Symbol";
 		case kGraphics_font_IPATIMES:
 			return U"Doulos SIL";
 		case kGraphics_font_IPAPALATINO:
-			return
-				style == 0 ? U"Charis SIL"
-				: style == Graphics_BOLD ? U"Charis SIL Bold"
-				: style == Graphics_ITALIC ? U"Charis SIL Italic"
-				: U"Charis SIL Bold Italic";
+			if (hasCharis7)
+				return
+					style == 0 ? U"Charis"
+					: style == Graphics_BOLD ? U"Charis Bold"
+					: style == Graphics_ITALIC ? U"Charis Italic"
+					: U"Charis Bold Italic";
+			else
+				return
+					style == 0 ? U"Charis SIL"
+					: style == Graphics_BOLD ? U"Charis SIL Bold"
+					: style == Graphics_ITALIC ? U"Charis SIL Italic"
+					: U"Charis SIL Bold Italic";
 		case kGraphics_font_CHEROKEE:
 			return U"Plantagenet Cherokee";
 		case kGraphics_font_DINGBATS:
@@ -2197,7 +2205,11 @@ double Graphics_textWidth_ps (Graphics me, conststring32 txt, bool useSilipaPS) 
 		if (! hasPalatino)
 			hasPalatino = [fontNames containsObject: @"Book Antiqua"];
 		hasDoulos = [fontNames containsObject: @"Doulos SIL"];
-		hasCharis = [fontNames containsObject: @"Charis SIL"];
+		hasCharis = [fontNames containsObject: @"Charis"];   // Charis 7?
+		if (hasCharis)
+			hasCharis7 = true;
+		else
+			hasCharis = [fontNames containsObject: @"Charis SIL"];   // Charis 6?
 		hasIpaSerif = hasDoulos || hasCharis;
 		inited = true;
 		return true;

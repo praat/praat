@@ -1,4 +1,4 @@
-/* manual_FFNet.c
+/* manual_FFNet.cpp
  *
  * Copyright (C) 1994-2019.2023,2025 David Weenink
  *
@@ -462,4 +462,4 @@ NORMAL (U"J. Nocedal & S.J. Wright (1999): %%Numerical optimization.% Springer."
 MAN_END
 }
 
-/* End of file manual_FFNet.c */
+/* End of file manual_FFNet.cpp */
