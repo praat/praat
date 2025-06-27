@@ -25,6 +25,7 @@
 
 #include "Matrix.h"
 #include "NUM2.h"
+#include "NUMselect.h"
 #include "Polygon_extensions.h"
 #include "Vector.h"
 #include "DoublyLinkedList.h"
@@ -42,10 +43,10 @@ static double Polygon_area (Polygon me) {
 }
 
 void Polygon_getExtrema (Polygon me, double *out_xmin, double *out_xmax, double *out_ymin, double *out_ymax) {
-    const double xmin = NUMmin_e (my x.get());
-	const double xmax = NUMmax_e (my x.get());
-    const double ymin = NUMmin_e (my y.get());
-	const double ymax = NUMmax_e (my y.get());
+    const double xmin = num::NUMmin_e (my x.get());
+	const double xmax = num::NUMmax_e (my x.get());
+    const double ymin = num::NUMmin_e (my y.get());
+	const double ymax = num::NUMmax_e (my y.get());
     if (out_xmin)
 		*out_xmin = xmin;
     if (out_xmax)

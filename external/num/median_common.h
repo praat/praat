@@ -7,31 +7,6 @@
 #pragma once
 
 #include "melder.h"
-#include "ExtendedReal.h"
-
-/*
-template <class T>
-inline bool lessThan (T r1, T r2) { return r1 < r2; }
-template <class T>
-inline bool lessEqual (T r1, T r2) { return r1 <= r2; }
-template <class T>
-inline bool greaterThan (T r1, T r2) { return r1 > r2; }
-template <class T>
-inline bool greaterEqual (T r1, T r2) { return r1 >= r2; }
-template <class T>
-inline bool areEqual (T r1, T r2) { return r1 == r2; }
-template <class T>
-*/
-inline bool lessThan (const integer r1, const integer r2) { return r1 < r2; }
-inline bool lessEqual (const integer r1, const integer r2) { return r1 <= r2; }
-inline bool greaterThan (const integer r1, const integer r2) { return r1 > r2; }
-inline bool greaterEqual (const integer r1, const integer r2) { return r1 >= r2; }
-inline bool areEqual (const integer r1, const integer r2) { return r1 == r2; }
-inline bool lessThan (const double r1, const double r2) { return r1 < r2; }
-inline bool lessEqual (const double r1, const double r2) { return r1 <= r2; }
-inline bool greaterThan (const double r1, const double r2) { return r1 > r2; }
-inline bool greaterEqual (const double r1, const double r2) { return r1 >= r2; }
-inline bool areEqual (const double r1, const double r2) { return r1 == r2; }
 
 /**
 Swaps the median of r[a], r[b], and r[c] into r[b].
@@ -39,24 +14,24 @@ Swaps the median of r[a], r[b], and r[c] into r[b].
 template <class T>
 void median3(T* r, size_t a, size_t b, size_t c)
 {
-	if (lessThan (r[b], r[a])) // b < a
+	if (r[b] < r[a]) // b < a
 	{
-		if (lessThan (r[b], r[c])) // b < a, b < c
+		if (r[b] < r[c]) // b < a, b < c
 		{
-			if (lessThan (r[c], r[a])) // b < c < a
+			if (r[c] < r[a]) // b < c < a
 				std::swap (r[b], r[c]);
 			else  // b < a <= c
 				std::swap (r[b], r[a]);
 		}
 	}
-	else if (lessThan (r[c], r[b])) // a <= b, c < b
+	else if (r[c] < r[b]) // a <= b, c < b
 	{
-		if (lessThan (r[c], r[a])) // c < a <= b
+		if (r[c] < r[a]) // c < a <= b
 			std::swap (r[b], r[a]);
 		else  // a <= c < b
 			std::swap (r[b], r[c]);
 	}
-	Melder_assert (lessEqual (r[a], r[b]) && lessEqual (r[b], r[c]) || greaterEqual (r[a], r[b]) && greaterEqual (r[b], r[c]));
+	Melder_assert (r[a] <= r[b] && r[b] <= r[c] || r[a] >= r[b] && r[b] >= r[c]);
 }
 
 /**
@@ -65,9 +40,9 @@ Sorts in place r[a], r[b], and r[c].
 template <class T>
 void sort3(T* r, size_t a, size_t b, size_t c)
 {
-	if (lessThan (r[b], r[a])) // b < a
+	if (r[b] < r[a]) // b < a
 	{
-		if (lessThan (r[c], r[b])) // c < b < a
+		if (r[c] < r[b]) // c < b < a
 		{
 			std::swap (r[a], r[c]); // a < b < c
 		}
@@ -75,7 +50,7 @@ void sort3(T* r, size_t a, size_t b, size_t c)
 		{
 			auto t = r[a];
 			r[a] = r[b];
-			if (lessThan (r[c], t)) // b <= c < a
+			if (r[c] < t) // b <= c < a
 			{
 				r[b] = r[c];
 				r[c] = t;
@@ -86,11 +61,11 @@ void sort3(T* r, size_t a, size_t b, size_t c)
 			}
 		}
 	}
-	else if (lessThan (r[c], r[b])) // a <= b, c < b
+	else if (r[c] < r[b]) // a <= b, c < b
 	{
 		auto t = r[c];
 		r[c] = r[b];
-		if (lessThan (t, r[a])) // c < a < b
+		if (t < r[a]) // c < a < b
 		{
 			r[b] = r[a];
 			r[a] = t;
@@ -101,7 +76,7 @@ void sort3(T* r, size_t a, size_t b, size_t c)
 		}
 	}
 
-	Melder_assert (lessEqual (r[a], r[b]) && lessEqual (r[b], r[c]));
+	Melder_assert (r[a] <= r[b] && r[b] <= r[c]);
 }
 
 /**
@@ -117,42 +92,42 @@ void partition4(T* r, size_t a, size_t b, size_t c, size_t d)
 	/* static */ if (leanRight)
 	{
 		// In the median of 5 algorithm, consider r[e] infinite
-		if (lessThan (r[c], r[a])) {
+		if (r[c] < r[a]) {
 			std::swap (r[a], r[c]);
 		} // a <= c
-		if (lessThan (r[d], r[b])) {
+		if (r[d] < r[b]) {
 			std::swap (r[b], r[d]);
 		} // a <= c, b <= d
-		if (lessThan (r[d], r[c])) {
+		if (r[d] < r[c]) {
 			std::swap (r[c], r[d]); // a <= d, b <= c < d
 			std::swap (r[a], r[b]); // b <= d, a <= c < d
 		} // a <= c <= d, b <= d
-		if (lessThan (r[c], r[b])) { // a <= c <= d, c < b <= d
+		if (r[c] < r[b]) { // a <= c <= d, c < b <= d
 			std::swap (r[b], r[c]); // a <= b <= c <= d
 		} // a <= b <= c <= d
-		Melder_assert (lessEqual (r[a], r[c]) && lessEqual (r[b], r[c]) && lessEqual (r[c], r[d]));
+		Melder_assert (r[a] <= r[c] && r[b] <= r[c] && r[c] <= r[d]);
 	}
 	else
 	{
 		// In the median of 5 algorithm consider r[a] infinitely small, then
 		// change b->a. c->b, d->c, e->d
-		if (lessThan (r[c], r[a])) {
+		if (r[c] < r[a]) {
 			std::swap (r[a], r[c]);
 		}
-		if (lessThan (r[c], r[b])) {
+		if (r[c] < r[b]) {
 			std::swap (r[b], r[c]);
 		}
-		if (lessThan (r[d], r[a])) {
+		if (r[d] < r[a]) {
 			std::swap (r[a], r[d]);
 		}
-		if (lessThan (r[d], r[b])) {
+		if (r[d] < r[b]) {
 			std::swap (r[b], r[d]);
 		} else {
-			if (lessThan (r[b], r[a])) {
+			if (r[b] < r[a]) {
 				std::swap (r[a], r[b]);
 			}
 		}
-		Melder_assert (lessEqual (r[a], r[b]) && lessEqual (r[b], r[c]) && lessEqual (r[b], r[d]));
+		Melder_assert (r[a] <= r[b] && r[b] <= r[c] && r[b] <= r[d]);
 	}
 }
 
@@ -165,30 +140,30 @@ void partition5(T* r, size_t a, size_t b, size_t c, size_t d, size_t e)
 {
 	Melder_assert (a != b && a != c && a != d && a != e && b != c && b != d && b != e
 		&& c != d && c != e && d != e);
-	if (lessThan (r[c], r[a])) {
+	if (r[c] < r[a]) {
 		std::swap (r[a], r[c]);
 	}
-	if (lessThan (r[d], r[b])) {
+	if (r[d] < r[b]) {
 		std::swap (r[b], r[d]);
 	}
-	if (lessThan (r[d], r[c])) {
+	if (r[d] < r[c]) {
 		std::swap (r[c], r[d]);
 		std::swap (r[a], r[b]);
 	}
-	if (lessThan (r[e], r[b])) {
+	if (r[e] < r[b]) {
 		std::swap (r[b], r[e]);
 	}
-	if (lessThan (r[e], r[c])) {
+	if (r[e] < r[c]) {
 		std::swap (r[c], r[e]);
-		if (lessThan (r[c], r[a])) {
+		if (r[c] < r[a]) {
 			std::swap (r[a], r[c]);
 		}
 	} else {
-		if (lessThan (r[c], r[b])) {
+		if (r[c] < r[b]) {
 			std::swap (r[b], r[c]);
 		}
 	}
-	Melder_assert (lessEqual (r[a], r[c]) && lessEqual (r[b], r[c]) && lessEqual (r[c], r[d]) && lessEqual (r[c], r[e]));
+	Melder_assert (r[a] <= r[c] && r[b] <= r[c] && r[c] <= r[d] && r[c] <= r[e]);
 }
 
 /**
@@ -205,16 +180,16 @@ T* pivotPartition(T* r, size_t k, size_t length)
 		for (;; ++lo)
 		{
 			if (lo > hi) goto loop_done;
-			if (greaterEqual (r[lo], *r)) break;
+			if (r[lo] >= *r) break;
 		}
 		// found the left bound:  r[lo] >= r[0]
 		Melder_assert (lo <= hi);
-		for (; lessThan (*r, r[hi]); --hi)
+		for (; *r < r[hi]; --hi)
 		{
 		}
 		if (lo >= hi) break;
 		// found the right bound: r[hi] <= r[0], swap & make progress
-		Melder_assert (greaterEqual (r[lo], r[hi]));
+		Melder_assert (r[lo] >= r[hi]);
 		std::swap (r[lo], r[hi]);
 	}
 loop_done:
@@ -236,7 +211,7 @@ void quickselect(T* r, T* mid, T* end)
 	case 1:
 		return;
 	case 2:
-		if (greaterThan (*r, r[1])) std::swap (*r, r[1]);
+		if (*r > r[1]) std::swap (*r, r[1]);
 		return;
 	case 3:
 		sort3(r, 0, 1, 2);
@@ -291,9 +266,9 @@ anything.
 template <class T>
 size_t medianIndex(const T* r, size_t a, size_t b, size_t c)
 {
-	if (greaterThan (r[a], r[c])) std::swap(a, c);
-	if (greaterThan (r[b], r[c])) return c;
-	if (lessThan (r[b], r[a])) return a;
+	if (r[a] > r[c]) std::swap(a, c);
+	if (r[b] > r[c]) return c;
+	if (r[b] < r[a]) return a;
 	return b;
 }
 
@@ -305,29 +280,29 @@ the lower median.
 template <bool leanRight, class T>
 static size_t medianIndex(T* r, size_t a, size_t b, size_t c, size_t d)
 {
-	if (lessThan (r[d], r[c])) std::swap(c, d);
-	Melder_assert (lessEqual (r[c], r[d]));
+	if (r[d] < r[c]) std::swap(c, d);
+	Melder_assert (r[c] <= r[d]);
 	/* static */ if (leanRight)
 	{
-		if (lessThan (r[c], r[a]))
+		if (r[c] < r[a])
 		{
-			Melder_assert (lessThan (r[c], r[a]) && lessEqual (r[c], r[d])); // so r[c] is out
+			Melder_assert (r[c] < r[a] && r[c] <= r[d]); // so r[c] is out
 			return medianIndex(r, a, b, d);
 		}
-		Melder_assert (lessEqual (r[a], r[c]) && lessEqual (r[a], r[d])); // so r[a] is out
+		Melder_assert (r[a] <= r[c] && r[a] <= r[d]); // so r[a] is out
 	}
 	else
 	{
-		if (greaterEqual (r[d], r[a]))
+		if (r[d] >= r[a])
 		{
-			Melder_assert (greaterEqual (r[d], r[c]) && greaterEqual (r[d], r[a])); // so r[d] is out
+			Melder_assert (r[d] >= r[c] && r[d] >= r[a]); // so r[d] is out
 			return medianIndex(r, a, b, c);
 		}
-		Melder_assert (greaterThan (r[a], r[d]) && greaterThan (r[a], r[c])); // so r[a] is out
+		Melder_assert (r[a] > r[d] && r[a] > r[c]); // so r[a] is out
 	}
-	// Could return medianIndex(r, b, c, d) but we already know lessEqual (r[c], r[d])
-	if (lessEqual (r[b], r[c])) return c;
-	if (greaterThan (r[b], r[d])) return d;
+	// Could return medianIndex(r, b, c, d) but we already know r[c] <= r[d]
+	if (r[b] <= r[c]) return c;
+	if (r[b] > r[d]) return d;
 	return b;
 }
 
@@ -342,15 +317,15 @@ void ninther(T* r, size_t _1, size_t _2, size_t _3, size_t _4, size_t _5,
 {
 	_2 = medianIndex(r, _1, _2, _3);
 	_8 = medianIndex(r, _7, _8, _9);
-	if (greaterThan (r[_2], r[_8])) std::swap(_2, _8);
-	if (greaterThan (r[_4], r[_6])) std::swap(_4, _6);
+	if (r[_2] > r[_8]) std::swap(_2, _8);
+	if (r[_4] > r[_6]) std::swap(_4, _6);
 	// Here we know that r[_2] and r[_8] are the other two medians and that
 	// r[_2] <= r[_8]. We also know that r[_4] <= r[_6]
-	if (lessThan (r[_5], r[_4]))
+	if (r[_5] < r[_4])
 	{
 		// r[_4] is the median of r[_4], r[_5], r[_6]
 	}
-	else if (greaterThan (r[_5], r[_6]))
+	else if (r[_5] > r[_6])
 	{
 		// r[_6] is the median of r[_4], r[_5], r[_6]
 		_4 = _6;
@@ -358,14 +333,14 @@ void ninther(T* r, size_t _1, size_t _2, size_t _3, size_t _4, size_t _5,
 	else
 	{
 		// Here we know r[_5] is the median of r[_4], r[_5], r[_6]
-		if (lessThan (r[_5], r[_2])) return std::swap (r[_5], r[_2]);
-		if (greaterThan (r[_5], r[_8])) return std::swap (r[_5], r[_8]);
+		if (r[_5] < r[_2]) return std::swap (r[_5], r[_2]);
+		if (r[_5] > r[_8]) return std::swap (r[_5], r[_8]);
 		// This is the only path that returns with no swap
 		return;
 	}
 	// Here we know r[_4] is the median of r[_4], r[_5], r[_6]
-	if (lessThan (r[_4], r[_2])) _4 = _2;
-	else if (greaterThan (r[_4], r[_8])) _4 = _8;
+	if (r[_4] < r[_2]) _4 = _2;
+	else if (r[_4] > r[_8]) _4 = _8;
 	std::swap (r[_5], r[_4]);
 }
 
@@ -388,19 +363,19 @@ size_t expandPartitionRight(T* r, size_t hi, size_t rite)
 	for (; pivot < hi; --rite)
 	{
 		if (rite == hi) goto done;
-		if (greaterEqual (r[rite], r[0])) continue;
+		if (r[rite] >= r[0]) continue;
 		++pivot;
-		Melder_assert (greaterEqual (r[pivot], r[0]));
+		Melder_assert (r[pivot] >= r[0]);
 		std::swap (r[rite], r[pivot]);
 	}
 	// Second loop: make left and pivot meet
 	for (; rite > pivot; --rite)
 	{
-		if (greaterEqual (r[rite], r[0])) continue;
+		if (r[rite] >= r[0]) continue;
 		while (rite > pivot)
 		{
 			++pivot;
-			if (lessThan (r[0], r[pivot]))
+			if (r[0] < r[pivot])
 			{
 				std::swap (r[rite], r[pivot]);
 				break;
@@ -432,21 +407,21 @@ size_t expandPartitionLeft(T* r, size_t lo, size_t pivot)
 	for (; lo < pivot; ++left)
 	{
 		if (left == lo) goto done;
-		if (greaterEqual (r[oldPivot], r[left])) continue;
+		if (r[oldPivot] >= r[left]) continue;
 		--pivot;
-		Melder_assert (greaterEqual (r[oldPivot], r[pivot]));
+		Melder_assert (r[oldPivot] >= r[pivot]);
 		std::swap (r[left], r[pivot]);
 	}
 	// Second loop: make left and pivot meet
 	for (;; ++left)
 	{
 		if (left == pivot) break;
-		if (greaterEqual (r[oldPivot], r[left])) continue;
+		if (r[oldPivot] >= r[left]) continue;
 		for (;;)
 		{
 			if (left == pivot) goto done;
 			--pivot;
-			if (lessThan (r[pivot], r[oldPivot]))
+			if (r[pivot] < r[oldPivot])
 			{
 				std::swap (r[left], r[pivot]);
 				break;
@@ -485,14 +460,14 @@ size_t expandPartition(T* r, size_t lo, size_t pivot, size_t hi, size_t length)
 			if (left == lo)
 				return pivot +
 					expandPartitionRight(r + pivot, hi - pivot, length - pivot);
-			if (greaterThan (r[left], r[pivot])) break;
+			if (r[left] > r[pivot]) break;
 		}
 		for (;; --length)
 		{
 			if (length == hi)
 				return left +
 					expandPartitionLeft(r + left, lo - left, pivot - left);
-			if (greaterEqual (r[pivot], r[length])) break;
+			if (r[pivot] >= r[length]) break;
 		}
 		std::swap (r[left], r[length]);
 	}

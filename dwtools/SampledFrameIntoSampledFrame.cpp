@@ -69,7 +69,7 @@ void structSampledFrameIntoSampledFrame :: inputFramesToOutputFrames (integer fr
 		if (updateStatus)
 			status -> frameIntoFrameInfo [currentFrame] = frameAnalysisInfo;
 	}
-	// saveLocalOutputFrames (); to do when no other threads can interphere
+	// saveLocalOutputFrames (); to do when no other threads can interfere
 }
 
 void SampledFrameIntoSampledFrame_init (SampledFrameIntoSampledFrame me, mutableSampled output) {
@@ -85,7 +85,6 @@ void SampledFrameIntoSampledFrame_initFrameInterval (SampledFrameIntoSampledFram
 	Melder_assert (startFrame <= endFrame);
 	my startFrame = startFrame;
 	my numberOfFrames = endFrame - startFrame + 1;
-	my allocateOutputFrames ();
 }
 
 void SampledFrameIntoSampledFrame_saveLocalOutputFrames (SampledFrameIntoSampledFrame me) {

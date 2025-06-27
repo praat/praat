@@ -21,6 +21,7 @@
 #include "median_of_ninthers.h"
 #include "melder.h"
 #include "NUM2.h"
+#include "ExtendedReal.h"
 
 /*
 	Select the k-th largest element from the vector.
@@ -29,42 +30,64 @@
 */
 
 namespace num {
+	
+
 	template <typename T>
-	inline T NUMselect_inplace (vector<T> const& v, integer kth_asIfSorted) {
+	T& NUMselect (vector<T> const& v, integer kth_asIfSorted) {
 		adaptiveQuickselect (v.asArgumentToFunctionThatExpectsZeroBasedArray (), kth_asIfSorted - 1, v.size);
 		return v [kth_asIfSorted];
 	}
-
+	
 	template <typename T>
-	T NUMselect (constvector<T> const& v, integer kth_asIfSorted) {
-		autovector<T> vc = copy_VEC (v);
-		adaptiveQuickselect (vc.asArgumentToFunctionThatExpectsZeroBasedArray (), kth_asIfSorted - 1, v.size);
-		return vc [kth_asIfSorted];
+	T& NUMget_kth (vector<T> const& v, integer kth_asIfSorted) {
+		num::NUMselect (v, kth_asIfSorted);
+		return v[kth_asIfSorted];
 	}
 
 	template <typename T>
-	T NUMquantile (vector<T> const& v, double factor) {
+	T& NUMmin_e (vector<T> v) {
+		if (v.size == 0)
+			Melder_throw (U"min_e: cannot determine the minimum of an empty ExtendedReal vector.");
+		if (v.size == 1)
+			return v [1];
+		T *t = & v [1];
+		for (integer i = 2; i <=v.size; i ++ )
+			if (v [i] < *t)
+				t = & v [i];
+		return *t;
+	}
+
+	template <typename T>
+	T& NUMmax_e (vector<T> v) {
+		if (v.size == 0)
+			Melder_throw (U"max_e: cannot determine the maximum of an empty vector.");
+		if (v.size == 1)
+			return v [1];
+		T *t = & v [1];
+		for (integer i = 2; i <=v.size; i ++ )
+			if (v [i] > *t)
+				t = & v [i];
+		return *t;
+	}
+	
+	template <typename T>
+	T NUMquantile_e (vector<T> const& v, double factor) {
 		if (v.size < 1)
-			return undefined;
+			Melder_throw (U"quantile_e: cannot determine quantile from an emplty vector.");
 		if (v.size == 1)
 			return v [1];
 		const double place = factor * v.size + 0.5;
 		const integer left = Melder_clipped (1_integer, Melder_ifloor (place), v.size - 1);
 		trace (U"left:", left, U" size:", v.size);
-		NUMselect_inplace (v, left);
+		num::NUMselect (v, left);
 		vector<T> highPart = v.part (left + 1, v.size);
-		const double min = NUMmin_e (highPart);
+		const T min = num::NUMmin_e (highPart);
 		const double slope = min - v [left];
 		if (slope == 0.0)
 			return v [left];   // or a [left + 1], which is the same
 		return v [left] + (place - left) * slope;
 	}
-
-	structExtendedReal NUMmin_e (vector<structExtendedReal> v);
 	
-	structExtendedReal NUMmax_e (vector<structExtendedReal> v);
-
-	structExtendedReal NUMquantile (vector<structExtendedReal> const& v, double factor);
 }
 
 /* Only for timing the algorithms */

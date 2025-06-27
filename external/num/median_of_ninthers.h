@@ -7,6 +7,12 @@
 #pragma once
 #include "median_common.h"
 
+/* Copyright Andrei Alexandrescu, 2016-.
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or copy at
+ * https://boost.org/LICENSE_1_0.txt)
+ */
+
 template <class T>
 size_t partitionImpl(T* beg, size_t length);
 template <class T>
@@ -29,9 +35,9 @@ size_t medianOfMinima(T*const r, const size_t n, const size_t length)
 		const auto limit = j + computeMinOver;
 		size_t minIndex = j;
 		while (++j < limit)
-			if (lessThan (r[j], r[minIndex]))
+			if (r[j] < r[minIndex])
 				minIndex = j;
-		if (lessThan (r[minIndex], r[i]))
+		if (r[minIndex] < r[i])
 			std::swap (r[i], r[minIndex]);
 		Melder_assert (j < length || i + 1 == subset);
 	}
@@ -56,9 +62,9 @@ size_t medianOfMaxima(T*const r, const size_t n, const size_t length)
 		const auto limit = j + computeMaxOver;
 		size_t maxIndex = j;
 		while (++j < limit)
-			if (greaterThan (r[j], r[maxIndex]))
+			if (r[j] > r[maxIndex])
 				maxIndex = j;
-		if (greaterThan (r[maxIndex], r[i]))
+		if (r[maxIndex] > r[i])
 			std::swap (r[i], r[maxIndex]);
 		Melder_assert (j != 0 || i + 1 == length);
 	}
@@ -114,7 +120,7 @@ void adaptiveQuickselect(T* r, size_t n, size_t length)
 			// That would be the max
 			auto pivot = n;
 			for (++n; n < length; ++n)
-				if (lessThan (r[n], r[pivot])) pivot = n;
+				if (r[n] < r[pivot]) pivot = n;
 			std::swap (r[0], r[pivot]);
 			return;
 		}
@@ -123,7 +129,7 @@ void adaptiveQuickselect(T* r, size_t n, size_t length)
 			// That would be the min
 			auto pivot = 0;
 			for (n = 1; n < length; ++n)
-				if (lessThan (r[pivot], r[n])) pivot = n;
+				if (r[pivot] < r[n]) pivot = n;
 			std::swap (r[pivot], r[length - 1]);
 			return;
 		}

@@ -20,48 +20,6 @@
 #include "median_of_ninthers.h"
 #include "Permutation.h"
 
-
-structExtendedReal num::NUMmin_e (vector<structExtendedReal> v) {
-	if (v.size == 0)
-		Melder_throw (U"min_e: cannot determine the minimum of an empty ExtendedReal vector.");
-	if (v.size == 1)
-		return v [1];
-	ExtendedReal t = & v [1];
-	for (integer i = 2; i <=v.size; i ++ )
-		if (lessThan (v [i], *t))
-			t = & v [i];
-	return *t;
-}
-
-structExtendedReal num::NUMmax_e (vector<structExtendedReal> v) {
-	if (v.size == 0)
-		Melder_throw (U"max_e: cannot determine the maximum of an empty ExtendedReal vector.");
-	if (v.size == 1)
-		return v [1];
-	ExtendedReal t = & v [1];
-	for (integer i = 2; i <=v.size; i ++ )
-		if (greaterThan (v [i], *t))
-			t = & v [i];
-	return *t;
-}
-
-structExtendedReal num::NUMquantile (vector<structExtendedReal> const& v, double factor) {
-	if (v.size < 1)
-		return {undefined, 0};
-	if (v.size == 1)
-		return v [1];
-	const double place = factor * v.size + 0.5;
-	const integer left = Melder_clipped (1_integer, Melder_ifloor (place), v.size - 1);
-	trace (U"left:", left, U" size:", v.size);
-	num::NUMselect_inplace (v, left);
-	vector<structExtendedReal> highPart = v.part (left + 1, v.size);
-	const structExtendedReal min = num::NUMmin_e (highPart);
-	const double slope = min.real - v [left].real;
-	if (slope == 0.0)
-		return v [left];   // or a [left + 1], which is the same
-	return { v [left].real + (place - left) * slope, v [left].extension }; // ???
-}
-
 void timeMedian (void) {
     try {
         Melder_clearInfo ();
@@ -81,7 +39,7 @@ void timeMedian (void) {
             sort_VEC_inout (pc.get());
             double  median1 = NUMquantile (pc.get(), 0.5);
             double t1 = Melder_stopwatch ();
-            double median2 = num::NUMquantile (p.get(), 0.5);
+            double median2 = num::NUMquantile_e (p.get(), 0.5);
             double t2 = Melder_stopwatch ();
             Melder_assert (median1 == median2);
             MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"* increasing 1..n");
@@ -96,7 +54,7 @@ void timeMedian (void) {
             sort_VEC_inout (pc.get());
             median1 = NUMquantile (pc.get(), 0.5);
             t1 = Melder_stopwatch ();
-            median2 = num::NUMquantile (p.get(), 0.5);
+            median2 = num::NUMquantile_e (p.get(), 0.5);
             t2 = Melder_stopwatch ();
             Melder_assert (median1 == median2);
             MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"* decreasing n..1");
@@ -112,7 +70,7 @@ void timeMedian (void) {
             sort_VEC_inout (pc.get());
             median1 = NUMquantile (pc.get(), 0.5);
             t1 = Melder_stopwatch ();
-            median2 = num::NUMquantile (p.get(), 0.5);
+            median2 = num::NUMquantile_e (p.get(), 0.5);
             t2 = Melder_stopwatch ();
             Melder_assert (median1 == median2);
             MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"* inc-dec");
@@ -127,7 +85,7 @@ void timeMedian (void) {
             sort_VEC_inout (pc.get());
             median1 = NUMquantile (pc.get(), 0.5);
             t1 = Melder_stopwatch ();
-            median2 = num::NUMquantile (p.get(), 0.5);
+            median2 = num::NUMquantile_e (p.get(), 0.5);
             t2 = Melder_stopwatch ();
             Melder_assert (median1 == median2);
             MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"* uniform(-100,100)");
@@ -142,7 +100,7 @@ void timeMedian (void) {
             sort_VEC_inout (pc.get());
             median1 = NUMquantile (pc.get(), 0.5);
             t1 = Melder_stopwatch ();
-            median2 = num::NUMquantile (p.get(), 0.5);
+            median2 = num::NUMquantile_e (p.get(), 0.5);
             t2 = Melder_stopwatch ();
             Melder_assert (median1 == median2);
             MelderInfo_writeLine (n, U" ", t2, U" ", t1, U" *", t1 / t2, U"* gauss(0,1)");

@@ -161,6 +161,7 @@ autoSampledIntoSampled SampledIntoSampled_create (constSampled input, mutableSam
 		autoSampledIntoSampled me = Thing_new (SampledIntoSampled);
 		SampledIntoSampled_init (me.get(), input, output);
 		my frameIntoFrame.adoptFromAmbiguousOwner (ws.releaseToAmbiguousOwner());
+		my frameIntoFrame -> allocateOutputFrames ();
 		my status.adoptFromAmbiguousOwner (status.releaseToAmbiguousOwner());
 		const bool updateStatus = SampledIntoSampled_getExtraAnalysisInfo ();
 		SampledFrameIntoSampledFrame_initForStatusUpdates (my frameIntoFrame.get(), my status.get(), updateStatus);
@@ -206,16 +207,17 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 					const integer lastFrameInRun = ( irun < numberOfThreadRuns ? numberOfFramesInRun * irun : numberOfFrames);
 					for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++) {
 						SampledFrameIntoSampledFrame frameIntoFrameCopy = workThreads.at [ithread];
-						const integer firstFrame = numberOfFramesInRun * (irun - 1) + 1 + (ithread - 1) * numberOfFramesPerThread;
-						const integer lastFrame = ( ithread == numberOfThreadsInRun ? lastFrameInRun : firstFrame + numberOfFramesPerThread - 1 );
-						SampledFrameIntoSampledFrame_initFrameInterval (frameIntoFrameCopy, firstFrame, lastFrame);
+						const integer startFrame = numberOfFramesInRun * (irun - 1) + 1 + (ithread - 1) * numberOfFramesPerThread;
+						const integer endFrame = ( ithread == numberOfThreadsInRun ? lastFrameInRun : startFrame + numberOfFramesPerThread - 1 );
+						frameIntoFrameCopy -> startFrame = startFrame;
+						frameIntoFrameCopy -> numberOfFrames = endFrame - startFrame + 1;
 						
 						auto analyseFrames = [&globalFrameErrorCount] (SampledFrameIntoSampledFrame fifthread, integer fromFrame, integer toFrame) {
 							fifthread -> inputFramesToOutputFrames (fromFrame, toFrame);
 							globalFrameErrorCount += fifthread -> framesErrorCount;
 						};
 
-						threads [ithread] = std::thread (analyseFrames, frameIntoFrameCopy, firstFrame, lastFrame);
+						threads [ithread] = std::thread (analyseFrames, frameIntoFrameCopy, startFrame, endFrame);
 					}
 					for (integer ithread = 1; ithread <= numberOfThreadsInRun; ithread ++) {
 						threads [ithread]. join ();
