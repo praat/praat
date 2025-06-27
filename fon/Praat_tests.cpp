@@ -24,7 +24,7 @@
 
 #include "FileInMemory.h"
 #include "SampledIntoSampled.h"
-#include "NUMmedian.h"
+#include "NUMselect.h"
 #include "SlopeSelector.h"
 #include "Praat_tests.h"
 
