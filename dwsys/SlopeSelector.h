@@ -45,6 +45,7 @@
 #include "melder.h"
 #include "NUM2.h"
 #include "SlopeSelector_enums.h"
+#include "ExtendedReal.h"
 
 #include "SlopeSelector_def.h"
 

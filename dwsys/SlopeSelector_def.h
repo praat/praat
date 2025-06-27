@@ -16,12 +16,50 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT ExtendedNumber
-oo_DEFINE_STRUCT (ExtendedNumber)
-	oo_DOUBLE (number)
-	oo_INTEGER (index)
-oo_END_STRUCT (ExtendedNumber)
+/*
+	We would have liked to inherit from the ExtendedReal struct and only overload the operator<
+	but that is not possible in a _def file??
+*/
+#define ooSTRUCT ExtendedCrossing
+oo_DEFINE_STRUCT (ExtendedCrossing)
+	oo_DOUBLE (real)
+	oo_INTEGER (low)
+	oo_INTEGER (high)
+	#if oo_DECLARING
 
+		friend bool operator<  (const structExtendedCrossing& lhs, const structExtendedCrossing& rhs) {
+			auto approximatelyEqual = [&] (double numericalEqualityPrecision) {
+				if (std::fabs (lhs.real) < numericalEqualityPrecision || std::fabs (rhs.real) < numericalEqualityPrecision) {
+					return std::fabs(lhs.real - rhs.real) < numericalEqualityPrecision;
+				}
+				// Use relative difference otherwise
+				return std::fabs(lhs.real - rhs.real) <= numericalEqualityPrecision * std::fmax(std::fabs(lhs.real), std::fabs(rhs.real));
+			};
+			const bool r = ( !approximatelyEqual (1e-12) ? (lhs.real < rhs.real) :
+				(lhs.high != rhs.high ? (lhs.high > rhs.high) : (lhs.low < rhs.low)) );
+			return r;
+		}
+		/*
+			All derived from above comparison
+		*/
+		friend inline bool operator>  (const structExtendedCrossing& lhs, const structExtendedCrossing& rhs) {
+			return rhs < lhs;
+		}
+		friend inline bool operator<= (const structExtendedCrossing& lhs, const structExtendedCrossing& rhs) {
+			return ! (lhs > rhs);
+		}
+		friend inline bool operator>= (const structExtendedCrossing& lhs, const structExtendedCrossing& rhs) {
+			return ! (lhs < rhs);
+		}
+		friend inline bool operator== (const structExtendedCrossing& lhs, const structExtendedCrossing& rhs) {
+			return std::tie (lhs.real, lhs.low, lhs.high) == std::tie (rhs.real, rhs.low, rhs.high);
+		}
+		friend inline bool operator!= (const structExtendedCrossing& lhs, const structExtendedCrossing& rhs) {
+			return ! (lhs == rhs);
+		}
+		
+	#endif
+oo_END_STRUCT (ExtendedCrossing)
 #undef ooSTRUCT
 
 #define ooSTRUCT SlopeSelector
@@ -40,11 +78,9 @@ oo_DEFINE_CLASS (SlopeSelector, Daata)
 	oo_INTVEC (sortedRandomCrossingCodes, sampleSize)
 	oo_INTEGER (inversionsSize)
 	oo_INTVEC (currentInversions, inversionsSize)
-	oo_STRUCTVEC(ExtendedReal, slopes, maximumContractionSize)
-	oo_STRUCTVEC(ExtendedReal, xcrossings, numberOfPoints)
-	oo_INTEGER (siegelSize)
-	oo_VEC (siegelSlopes, siegelSize)
-	oo_VEC (siegelMedians, siegelSize)
+	oo_STRUCTVEC(ExtendedCrossing, xslopes, maximumContractionSize)
+	oo_VEC (buffer, maximumContractionSize) // for buffering and final quantile calculations
+	oo_STRUCTVEC(ExtendedCrossing, xcrossings, numberOfPoints)
 	oo_OBJECT (PermutationInversionCounter, 0, inversionCounter)
 
 	#if oo_DECLARING
@@ -74,7 +110,7 @@ oo_DEFINE_CLASS (SlopeSelector, Daata)
         }
     #endif
 	#if oo_COPYING
-		thy xp = xp; // superfluous, xp and yp need to be linked to external data (by newDataPoints)
+		thy xp = xp; // superfluous: xp and yp need to be linked explicitely to the external data (by newDataPoints)
 		thy yp = yp; //
 	#endif
 oo_END_CLASS (SlopeSelector)
