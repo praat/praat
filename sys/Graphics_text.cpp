@@ -43,6 +43,7 @@ extern const char * ipaSerifRegularPS [];
 	static HFONT fonts [1 + (int) kGraphics_resolution::MAX] [1 + kGraphics_font_JAPANESE] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
 	static int win_isize2size (int isize) { return isize; }
+	static bool hasDoulos, hasCharis, hasCharis7;
 #elif quartz
 	static bool hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis, hasIpaSerif, hasCharis7;
 	#define mac_MAXIMUM_FONT_SIZE  500
@@ -55,15 +56,14 @@ extern const char * ipaSerifRegularPS [];
 	#else
 		#define FONT_TYPE_TYPE  unsigned long int
 	#endif
-	static bool charisAvailable = false, doulosAvailable = false;
 	static int CALLBACK fontFuncEx_charis (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, FONT_TYPE_TYPE fontType, LPARAM lparam) {
 		const LPENUMLOGFONTW logFont = (LPENUMLOGFONTW) oldLogFont; (void) oldTextMetric; (void) fontType; (void) lparam;
-		charisAvailable = true;
+		hasCharis = true;
 		return 1;
 	}
 	static int CALLBACK fontFuncEx_doulos (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, FONT_TYPE_TYPE fontType, LPARAM lparam) {
 		const LPENUMLOGFONTW logFont = (LPENUMLOGFONTW) oldLogFont; (void) oldTextMetric; (void) fontType; (void) lparam;
-		doulosAvailable = true;
+		hasDoulos = true;
 		return 1;
 	}
 	static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
@@ -96,12 +96,18 @@ extern const char * ipaSerifRegularPS [];
 			LOGFONTW logFont;
 			logFont. lfCharSet = DEFAULT_CHARSET;
 			logFont. lfPitchAndFamily = 0;
-			wcscpy (logFont. lfFaceName, L"Charis SIL");
+			wcscpy (logFont. lfFaceName, L"Charis");   // try Charis 7
 			EnumFontFamiliesExW (my d_gdiGraphicsContext, & logFont, fontFuncEx_charis, 0, 0);
+			if (hasCharis) {
+				hasCharis7 = true;
+			} else {
+				wcscpy (logFont. lfFaceName, L"Charis SIL");   // try Charis 6
+				EnumFontFamiliesExW (my d_gdiGraphicsContext, & logFont, fontFuncEx_charis, 0, 0);
+			}
 			wcscpy (logFont. lfFaceName, L"Doulos SIL");
 			EnumFontFamiliesExW (my d_gdiGraphicsContext, & logFont, fontFuncEx_doulos, 0, 0);
 			ipaInited = true;
-			if (! charisAvailable && ! doulosAvailable) {
+			if (! hasCharis && ! hasDoulos) {
 				/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
 				Melder_warning (U"The phonetic font is not available.\n"
 					"Several characters may not look correct.\n"
@@ -116,7 +122,10 @@ extern const char * ipaSerifRegularPS [];
 			font == (int) kGraphics_font::COURIER   ? L"Courier New" :
 			font == (int) kGraphics_font::PALATINO  ? L"Book Antiqua" :
 			font == kGraphics_font_SYMBOL    ? L"Symbol" :
-			font == kGraphics_font_IPATIMES  ? ( doulosAvailable && style == 0 ? L"Doulos SIL" : charisAvailable ? L"Charis SIL" : L"Times New Roman" ) :
+			font == kGraphics_font_IPATIMES  ? ( hasDoulos && style == 0 ? L"Doulos SIL"
+			                                     : hasCharis ? ( hasCharis7 ? L"Charis" : L"Charis SIL" )
+			                                     : L"Times New Roman"
+			                                   ) :
 			font == kGraphics_font_DINGBATS  ? L"Wingdings" :
 			font == kGraphics_font_CHINESE   ? L"SimSun" :
 			font == kGraphics_font_JAPANESE  ? L"MS UI Gothic" :
@@ -175,11 +184,11 @@ inline static bool isDiacritic (Longchar_Info info, int font) {
 	
 	This is not good enough for Praat. We need more control over the shape
 	of phonetic characters. We therefore advise the use of Doulos SIL,
-	which is Times-like, or Charis SIL, which is Palatino-like.
+	which is Times-like, or Charis, which is Palatino-like.
 	For true continuity between non-phonetic and phonetic characters it is
 	mandatory that the exact same font is used for both types of characters,
 	so we use Doulos SIL to replace Times even for non-phonetic characters,
-	and Charis SIL to replace Palatino even for non-phonetic characters.
+	and Charis to replace Palatino even for non-phonetic characters.
 	A technical issue that makes this even more important is that diacritics
 	can look really weird if at the beginning of a Praat font stretch:
 	a "b" followed by a ring below will not be aligned correctly if they

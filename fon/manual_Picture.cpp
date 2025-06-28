@@ -619,7 +619,7 @@ See also
 © Paul Boersma 2004,2005,2007,2009,2025
 
 To draw phonetic symbols in the @@Picture window@ or in the @TextGridEditor,
-make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org.
+make sure that you have installed the Charis and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org.
 You can either type the symbols directly (if your computer has an input method for them), or use backslash trigraphs as described in:
 
 - @@Phonetic symbols: consonants
@@ -631,7 +631,7 @@ You can either type the symbols directly (if your computer has an input method f
 © Paul Boersma 2004,2005,2006,2007,2008,2009,2011,2013,2021,2025
 
 To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor,
-make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org.
+make sure that you have installed the Charis and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org.
 You can either type the symbols directly (if your computer has an input method for them),
 or use the backslash trigraphs in the following list.
 
@@ -736,9 +736,9 @@ Digraphs:
 MAN_PAGES_END
 
 
-MAN_BEGIN (U"Phonetic symbols: consonants", U"ppgb", 20090804)
+MAN_BEGIN (U"Phonetic symbols: consonants", U"ppgb", 20090804)  // 2025
 NORMAL (U"To draw phonetic symbols for consonants in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
+	"make sure that you have installed the Charis and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can either type the symbols directly (if your computer has an input method for them), or use the backslash sequences in the following table.")
 PICTURE (6.0, 7.0, draw_IPA_consonant_chart)
 NORMAL (U"Other consonant symbols:")
@@ -754,9 +754,9 @@ NORMAL (U"For most of the codes, the first letter tells you the most similar let
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN (U"Phonetic symbols: vowels", U"ppgb", 20090804)
+MAN_BEGIN (U"Phonetic symbols: vowels", U"ppgb", 20090804)  // 2025
 NORMAL (U"To draw phonetic symbols for vowels in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
+	"make sure that you have installed the Charis and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can either type the symbols directly (if your computer has an input method for them), or use the backslash sequences in the following table.")
 PICTURE (6.0, 5.0, draw_IPA_vowel_chart)
 NORMAL (U"Other vowel symbols are:")
