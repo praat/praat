@@ -52,7 +52,7 @@ Screen captures included in `docs/pictures`
 ===========================================
 
 The following files in `docs/pictures` are screen captures of Microsoft Windows Settings
-or Microsoft Windows erro messages, perhaps edited with a red ellipse or arrow,
+or Microsoft Windows error messages, perhaps edited with a red ellipse or arrow,
 and perhaps with blurring of private information (such as user names).
 The ellipses and arrows were added by the Praat team.
 
