@@ -29,6 +29,9 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.37# (28 June 2025)
+• Macintosh and Windows: support for the Charis 7 font.
+
 ##6.4.36# (25 June 2025)
 • Sound window: restore loudspeaker icon (for multi-channel sounds; bug since 6.4.31).
 • Scripting: function @`moveAndOrRenameFile` ().

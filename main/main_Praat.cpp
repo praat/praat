@@ -27,15 +27,15 @@ static void logo (Graphics graphics) {
 	Graphics_setFont (graphics, kGraphics_font::TIMES);
 	Graphics_setFontSize (graphics, 45.0);
 	Graphics_setColour (graphics, Melder_MAROON);
-	Graphics_text (graphics, 0.385, 0.87, U"P");
-	Graphics_text (graphics, 0.448, 0.87, U"\\s{R}");
-	Graphics_text (graphics, 0.510, 0.87, U"\\s{A}");
-	Graphics_text (graphics, 0.575, 0.87, U"\\s{A}");
-	Graphics_text (graphics, 0.628, 0.87, U"\\s{T}");
+	Graphics_text (graphics, 0.385, 0.89, U"P");
+	Graphics_text (graphics, 0.448, 0.89, U"\\s{R}");
+	Graphics_text (graphics, 0.510, 0.89, U"\\s{A}");
+	Graphics_text (graphics, 0.575, 0.89, U"\\s{A}");
+	Graphics_text (graphics, 0.628, 0.89, U"\\s{T}");
 	Graphics_setFontSize (graphics, 18.0);
-	Graphics_text (graphics, 0.5, 0.75, U"%%doing phonetics by computer");
+	Graphics_text (graphics, 0.5, 0.77, U"%%doing phonetics by computer");
 	Graphics_setFontSize (graphics, 14.0);
-	Graphics_text (graphics, 0.5, 0.60, Melder_cat (U"version ", Melder_appVersionSTR(),
+	Graphics_text (graphics, 0.5, 0.62, Melder_cat (U"version ", Melder_appVersionSTR(),
 			U" (", Melder_appMonthSTR(), U" ", Melder_appDay(), U", ", Melder_appYear(), U")"));
 	Graphics_setFontSize (graphics, 12.0);
 	[[maybe_unused]] constexpr bool isArm64 =
@@ -61,21 +61,21 @@ static void logo (Graphics graphics) {
 			U"";
 			#error Unknown OS type.
 		#endif
-	Graphics_text (graphics, 0.5, 0.52, Melder_cat (U"built for ", builtFor));
+	Graphics_text (graphics, 0.5, 0.54, Melder_cat (U"built for ", builtFor));
 	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_setFont (graphics, kGraphics_font::HELVETICA);
 	Graphics_setFontSize (graphics, 10.0);
-	Graphics_text (graphics, 0.5, 0.35, Melder_cat (U"Copyright © 1992–", Melder_appYear(), U" by Paul Boersma and David Weenink"));
+	Graphics_text (graphics, 0.5, 0.37, Melder_cat (U"Copyright © 1992–", Melder_appYear(), U" by Paul Boersma and David Weenink"));
 	Graphics_setFontSize (graphics, 10.0);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (graphics, 0.34, 0.26, U"Download:");
-	Graphics_text (graphics, 0.34, 0.06, U"Source code:");
+	Graphics_text (graphics, 0.34, 0.28, U"Download sites:");
+	Graphics_text (graphics, 0.34, 0.08, U"Source code:");
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
 	Graphics_setFont (graphics, kGraphics_font::COURIER);
-	Graphics_text (graphics, 0.36, 0.26, U"https://www.fon.hum.uva.nl/praat");
-	Graphics_text (graphics, 0.36, 0.20, U"https://www.praat.org");
-	Graphics_text (graphics, 0.36, 0.14, U"https://praat.github.io/praat");
-	Graphics_text (graphics, 0.36, 0.06, U"https://github.com/praat/praat");
+	Graphics_text (graphics, 0.36, 0.28, U"https://www.fon.hum.uva.nl/praat");
+	Graphics_text (graphics, 0.36, 0.22, U"https://www.praat.org");
+	Graphics_text (graphics, 0.36, 0.16, U"https://praat.github.io/praat");
+	Graphics_text (graphics, 0.36, 0.08, U"https://github.com/praat/praat");
 }
 
 int main (int argc, char *argv []) {
