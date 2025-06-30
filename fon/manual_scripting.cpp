@@ -3072,7 +3072,7 @@ This causes the program #Praat to run the script `doAll.praat` with an argument 
 How to download
 ===============
 You can download the source code of the sendpraat subroutine
-via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.
+via ##https://www.praat.org/sendpraat.html# or from ##https://www.fon.hum.uva.nl/praat/sendpraat.html#.
 
 Instead
 =======
@@ -3140,7 +3140,7 @@ This causes the program #Praat to execute the script ##doAll.praat# with an argu
 How to download
 ===============
 You can download the sendpraat program
-via `www.praat.org` or from `http://www.fon.hum.uva.nl/praat/sendpraat.html`.
+via `https://www.praat.org/sendpraat.html` or from `https://www.fon.hum.uva.nl/praat/sendpraat.html`.
 
 ################################################################################
 )~~~"
