@@ -25,7 +25,7 @@ MAN_BEGIN (U"Articulatory synthesis", U"ppgb", 20211016)
 INTRO (U"This is a description of the articulatory synthesis package in Praat. "
 	"For a detailed description of the physics and mathematics behind the model, "
 	"see @@Boersma (1998)@, chapters 2 and 3. "
-	"For examples of how to synthesize utterances, consult http://www.fon.hum.uva.nl/paul/diss/ch5/.")
+	"For examples of how to synthesize utterances, consult https://www.fon.hum.uva.nl/paul/diss/ch5/.")
 ENTRY (U"How to start (after reading the @Intro)")
 NORMAL (U"We are going to have the synthesizer say [əpə]. We need a @Speaker and an @Artword object.")
 NORMAL (U"1. Create a speaker with @@Create Speaker...@ from the @@New menu@.")
