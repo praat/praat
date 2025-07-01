@@ -212,23 +212,6 @@ autoLPC Sound_to_LPC_robust (constSound me, int predictionOrder, double effectiv
 	}
 }
 
-/*********************** analysis ******************************/
-
-void checkLPCAnalysisParameters_e (double sound_dx, integer sound_nx, double physicalAnalysisWidth, integer predictionOrder)
-{
-	volatile const double physicalDuration = sound_dx * sound_nx;
-	Melder_require (physicalAnalysisWidth <= physicalDuration,
-		U"Your sound is shorter than two window lengths. "
-		"Either your sound is too short or your window is too long.");
-	// we round the minimum duration to be able to use asserterror in testing scripts.
-	conststring32 minimumDurationRounded = Melder_fixed (predictionOrder * sound_dx , 5);
-	const integer approximateNumberOfSamplesPerWindow = Melder_roundDown (physicalAnalysisWidth / sound_dx);
-	Melder_require (approximateNumberOfSamplesPerWindow > predictionOrder,
-		U"Analysis window too short. For a prediction order of ", predictionOrder,
-		U", the window length should be greater than ", minimumDurationRounded,
-		U" s. Please increase the window length or lower the prediction order.");
-}
-
 /*********************** (inverse) filtering ******************************/
 
 static void LPC_Frame_Sound_filter (constLPC_Frame me, mutableSound thee, integer channel) {
