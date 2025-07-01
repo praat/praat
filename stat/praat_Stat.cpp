@@ -171,6 +171,16 @@ DO
 
 // MARK: Modify
 
+FORM (MODIFY_EACH__PairDistribution_setWeight, U"Set weight", nullptr) {
+	NATURAL (pairNumber, U"Pair number", U"1")
+	REAL (newWeight, U"New weight", U"10.0")
+	OK
+DO
+	MODIFY_EACH (PairDistribution)
+		PairDistribution_setWeight (me, pairNumber, newWeight);
+	MODIFY_EACH_END
+}
+
 DIRECT (MODIFY_EACH__PairDistribution_removeZeroWeights) {
 	MODIFY_EACH (PairDistribution)
 		PairDistribution_removeZeroWeights (me);
@@ -309,7 +319,7 @@ FORM (INFO_ONE__Table_list, U"Table: List", nullptr) {
 	OK
 DO
 	INFO_ONE (Table)
-	Table_list (me, includeRowNumbers);
+		Table_list (me, includeRowNumbers);
 	INFO_ONE_END
 }
 
@@ -1185,6 +1195,8 @@ praat_addAction1 (classDistributions, 0, U"Generate", nullptr, 0, nullptr);
 		praat_addAction1 (classPairDistribution, 1, U"Get fraction correct (probability matching)",
 				nullptr, 1, QUERY_ONE_FOR_REAL__PairDistribution_getFractionCorrect_probabilityMatching);
 	praat_addAction1 (classPairDistribution, 0, U"Modify -", nullptr, 0, nullptr);
+		praat_addAction1 (classPairDistribution, 1, U"Set weight...",
+				nullptr, 1, MODIFY_EACH__PairDistribution_setWeight);
 		praat_addAction1 (classPairDistribution, 0, U"Remove zero weights",
 				nullptr, 1, MODIFY_EACH__PairDistribution_removeZeroWeights);
 		praat_addAction1 (classPairDistribution, 0, U"Swap inputs and outputs",

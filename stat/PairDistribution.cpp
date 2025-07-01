@@ -1,10 +1,10 @@
 /* PairDistribution.cpp
  *
- * Copyright (C) 1997-2013,2015-2019,2021,2022 Paul Boersma
+ * Copyright (C) 1997-2013,2015-2019,2021,2022,2024,2025 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -67,14 +67,14 @@ int PairProbability_compare (PairProbability me, PairProbability thee) noexcept 
 	return str32cmp (my string1.get(), thy string1.get());
 }
 
-static void PairDistribution_checkSpecifiedPairNumber (PairDistribution me, integer pairNumber) {
+static void PairDistribution_checkSpecifiedPairNumber (PairDistribution me, const integer pairNumber) {
 	if (pairNumber < 1)
 		Melder_throw (me, U": the specified pair number is ", pairNumber, U", but should be at least 1.");
 	if (pairNumber > my pairs.size)
 		Melder_throw (me, U": the specified pair number is ", pairNumber, U", but should be at most my number of pairs (", my pairs.size, U").");
 }
 
-conststring32 PairDistribution_getString1 (PairDistribution me, integer pairNumber) {
+conststring32 PairDistribution_getString1 (PairDistribution me, const integer pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = my pairs.at [pairNumber];
@@ -84,7 +84,7 @@ conststring32 PairDistribution_getString1 (PairDistribution me, integer pairNumb
 	}
 }
 
-conststring32 PairDistribution_getString2 (PairDistribution me, integer pairNumber) {
+conststring32 PairDistribution_getString2 (PairDistribution me, const integer pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = my pairs.at [pairNumber];
@@ -94,7 +94,7 @@ conststring32 PairDistribution_getString2 (PairDistribution me, integer pairNumb
 	}
 }
 
-double PairDistribution_getWeight (PairDistribution me, integer pairNumber) {
+double PairDistribution_getWeight (PairDistribution me, const integer pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = my pairs.at [pairNumber];
@@ -104,7 +104,17 @@ double PairDistribution_getWeight (PairDistribution me, integer pairNumber) {
 	}
 }
 
-void PairDistribution_add (PairDistribution me, conststring32 string1, conststring32 string2, double weight) {
+void PairDistribution_setWeight (PairDistribution me, const integer pairNumber, const double newWeight) {
+	try {
+		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
+		PairProbability prob = my pairs.at [pairNumber];
+		prob -> weight = newWeight;
+	} catch (MelderError) {
+		Melder_throw (me, U": weight not changed.");
+	}
+}
+
+void PairDistribution_add (PairDistribution me, conststring32 string1, conststring32 string2, const double weight) {
 	autoPairProbability pair = PairProbability_create (string1, string2, weight);
 	my pairs. addItem_move (pair.move());
 }
