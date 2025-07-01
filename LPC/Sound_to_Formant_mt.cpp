@@ -22,7 +22,7 @@
 #include "Sound_extensions.h"
 /*
 	Precondition:
-		Sound already has the 'right' sampling frequency and has been preemphasized
+		Sound already has the 'right' sampling frequency and has been pre-emphasized
 */
 
 static autoFormant createFormant_common (constSound me, double dt, integer numberOfPoles, double effectiveAnalysisWidth,
