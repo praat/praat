@@ -8,7 +8,7 @@
  * The sendpraat program behaves identically from a macOS terminal window,
  * from a Windows console, or from a Linux command shell.
  *
- * Newer versions of sendpraat may be found at https://www.praat.org/sendpraat.html or https://www.fon.hum.uva.nl/praat/sendpraat.html
+ * Newer versions of sendpraat may be found at https://praat.org/sendpraat.html or https://www.fon.hum.uva.nl/praat/sendpraat.html
  *
  * On macOS X (and 11 and 12), this version works with all Praat versions.
  * On Windows, this version works only with Praat version 4.3.28 (November 2005) or newer.

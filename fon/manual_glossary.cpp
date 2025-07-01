@@ -122,7 +122,7 @@ MAN_END
 
 MAN_BEGIN (U"frequency", U"ppgb", 20030314)
 INTRO (U"Frequency is how often something happens in a certain time, for instance "
-	"the number of times the Praat home page www.praat.org is visited every day.")
+	"the number of times the Praat home page `praat.org` is visited every day.")
 NORMAL (U"In Praat, frequency is the number of vibration cycles per second. "
 	"Although one can sometimes see the abbreviation %cps, Praat always uses Hz (short for %hertz), "
 	"which means the same.")
