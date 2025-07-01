@@ -30,7 +30,8 @@ void LPC_into_Formant (constLPC me, mutableFormant thee, double margin) {
 	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.move(), status.move());
 	const integer numberOfErrorFrames = SampledIntoSampled_analyseThreaded (sis.get());
 	Formant_sort (thee);
-	Melder_warning (U"LPC_into_Formant: ", numberOfErrorFrames, U" frames have issues.");
+	if (numberOfErrorFrames > 0)
+		Melder_warning (U"LPC_into_Formant: ", numberOfErrorFrames, U" frames have issues.");
 }
 
 autoFormant LPC_to_Formant (constLPC me, double margin) {
