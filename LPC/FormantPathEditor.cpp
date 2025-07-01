@@ -23,6 +23,7 @@
 #include "Formant_extensions.h"
 #include "LPC_and_Formant.h"
 #include "NUM2.h"
+#include "NUMselect.h"
 #include "PitchTier.h"
 #include "PitchTier_to_PointProcess.h"
 #include "Sound_and_LPC.h"
@@ -202,7 +203,7 @@ static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_AR
 		const integer numberOfTracks = FormantPath_getNumberOfFormantTracks (my formantPath());
 		Melder_require (parameters.size <= numberOfTracks,
 			U"The number of coefficients (", parameters.size, U") should not exceed the number of tracks (", numberOfTracks, U").");
-		Melder_require (NUMmin_e (parameters.get()) > 0.0,
+		Melder_require (num::NUMmin_e (parameters.get()) > 0.0,
 			U"All coefficients should be larger than zero.");
 		my setInstancePref_modeler_varianceExponent (varianceExponent);
 		FunctionEditor_redraw (me);
