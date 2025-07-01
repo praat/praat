@@ -6,7 +6,7 @@
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -1031,6 +1031,7 @@
 	} \
 	if (history) \
 		praat_new (history.move(), my name.get()); \
+	praat_dataChanged (me);   /* No exception: data fully changed. */ \
 	MODIFY_END__
 
 #define MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3)  \
