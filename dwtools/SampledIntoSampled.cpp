@@ -180,6 +180,8 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 		
 		std::atomic<integer> globalFrameErrorCount (0);
 		
+		my frameIntoFrame -> allocateOutputFrames();
+		
 		if (SampledIntoSampled_useMultiThreading ()) {
 			integer numberOfThreadsNeeded, numberOfFramesPerThread;
 			SampledIntoSampled_getThreadingInfo (me, numberOfThreadsNeeded, numberOfFramesPerThread);
