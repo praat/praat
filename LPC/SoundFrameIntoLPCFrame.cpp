@@ -52,8 +52,8 @@ bool structSoundFrameIntoLPCFrame :: inputFrameToOutputFrame () {
 	return true;
 }
 
-void SoundFrameIntoLPCFrame_init (mutableSoundFrameIntoLPCFrame me, constSound input, mutableLPC outputlpc, double effectiveAnalysisWidth, 
-	kSound_windowShape windowShape)
+void SoundFrameIntoLPCFrame_init (mutableSoundFrameIntoLPCFrame me, constSound input, mutableLPC outputlpc,
+	double effectiveAnalysisWidth, kSound_windowShape windowShape)
 {
 	SoundFrameIntoSampledFrame_init (me, input, outputlpc, effectiveAnalysisWidth, windowShape);
 	my outputlpc = outputlpc;
@@ -520,8 +520,9 @@ end:
 
 Thing_implement (LPCAndSoundFramesIntoLPCFrameRobust, SoundFrameIntoLPCFrame, 0);
 
-autoLPCAndSoundFramesIntoLPCFrameRobust LPCAndSoundFramesIntoLPCFrameRobust_create (constLPC inputlpc, constSound input, mutableLPC output,
-	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax, double tol, double location, bool wantlocation)
+autoLPCAndSoundFramesIntoLPCFrameRobust LPCAndSoundFramesIntoLPCFrameRobust_create (constLPC inputlpc, constSound input,
+	mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax,
+	double tol, double location, bool wantlocation)
 {
 	try {
 		autoLPCAndSoundFramesIntoLPCFrameRobust me = Thing_new (LPCAndSoundFramesIntoLPCFrameRobust);
@@ -609,7 +610,8 @@ bool structLPCAndSoundFramesIntoLPCFrameRobust :: inputFrameToOutputFrame () {
 	LPC_Frame inputlpcf = & inputlpc -> d_frames [currentFrame];
 	LPC_Frame outputlpcf = & outputlpc -> d_frames [currentFrame];
 	currentPredictionOrder = inputlpcf -> nCoefficients;
-	outputlpcf -> copy (inputlpcf);
+	for (integer i = 1; i <= inputlpcf -> nCoefficients; i ++)
+		outputlpcf -> a[i] = inputlpcf -> a [i];
 	if (currentPredictionOrder == 0) // is empty frame ?
 		return true;
 	outputlpcf -> gain = inputlpcf -> gain;
