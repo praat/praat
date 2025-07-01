@@ -29,6 +29,11 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.38# (1 July 2025)
+• Macintosh and Windows: put back Charis SIL 6.200 for downloading with older Praat versions.
+• PairDistribution: ##Set weight...#.
+• OTGrammarEditor: removed a bug by which the window wouldn’t update automatically after learning.
+
 ##6.4.37# (28 June 2025)
 • Macintosh and Windows: support for the Charis 7 font.
 
