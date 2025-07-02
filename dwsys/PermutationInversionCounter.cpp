@@ -179,7 +179,7 @@ integer structPermutationInversionCounter :: getSelectedInversionsNotInOther (co
 integer structPermutationInversionCounter :: getSelectedInversions (constPermutation p,
 	constINTVEC const& sortedSelectedInversionIndices, INTVEC const& out_inversions)
 {
-	Melder_assert (out_inversions.size == sortedSelectedInversionIndices.size);
+	Melder_assert (out_inversions.size / 2 == sortedSelectedInversionIndices.size);
 	newData (p);
 	our sortedSelectedInversionIndices = sortedSelectedInversionIndices;
 	numberOfInversionsToRegister = sortedSelectedInversionIndices.size;
@@ -191,8 +191,8 @@ integer structPermutationInversionCounter :: getSelectedInversions (constPermuta
 integer structPermutationInversionCounter :: getInversions (constPermutation p, INTVEC const& out_inversions) {
 	try {
 		Melder_assert (out_inversions.size > 0);
-		autoINTVEC sortedSelectedInversionIndices = to_INTVEC (out_inversions.size);
-		const integer numberOfInversions =getSelectedInversions (p, sortedSelectedInversionIndices.get(), out_inversions);
+		autoINTVEC sortedSelectedInversionIndices = to_INTVEC (out_inversions.size / 2);
+		const integer numberOfInversions = getSelectedInversions (p, sortedSelectedInversionIndices.get(), out_inversions);
 		return numberOfInversions;
 	} catch (MelderError) {
 		Melder_throw (this, U": cannot determine the inversions.");
