@@ -1574,9 +1574,9 @@ if you completely trust that script or plug-in and its creators.
 
 ################################################################################
 "Checking for updates"
-© Paul Boersma 2022,2024
+© Paul Boersma 2022,2024,2025
 
-Updates for Praat are available from `www.fon.hum.uva.nl/praat` or `www.praat.org` (those are the same site).
+Updates for Praat are available from `praat.org` or `www.fon.hum.uva.nl/praat`.
 
 Your current version (if you are reading this from the manual inside the Praat program,
 rather than from the website) is:
@@ -1584,8 +1584,8 @@ rather than from the website) is:
 	writeInfoLine: appVersion$(), “, from ”, appMonth$(), “ ”, appDay(), “, ”, appYear()
 }
 Given that we tend to release new Praat versions once or twice a month,
-you can probably guess whether it would be worth your while to have a look at
-`www.fon.hum.uva.nl/praat` or `www.praat.org` to see what is new, and perhaps download a new version.
+you can probably guess whether it would be worth your while to have a look at `praat.org` or
+`www.fon.hum.uva.nl/praat` to see what is new, and perhaps download a new version.
 
 Praat improves continually, and old features will almost always continue to work,
 so there should never be a reason to continue to work with older versions.

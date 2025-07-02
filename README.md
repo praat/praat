@@ -114,8 +114,8 @@ You need the Praat source code only in the following cases:
 e.g. Linux for some non-Intel computers, FreeBSD, HP-UX, SGI, or SPARC Solaris.
 
 Before trying to dive into Praat’s source code, you should be familiar with the working of the Praat program
-and with writing Praat scripts. The Praat program can be downloaded from https://praat.github.io/praat,
-a place where you can also get to by just typing https://www.praat.org.
+and with writing Praat scripts. The Praat program can be downloaded from
+https://praat.org or https://praat.github.io/praat.
 
 ### 2.1. License
 
