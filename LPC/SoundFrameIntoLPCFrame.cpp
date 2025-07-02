@@ -66,7 +66,7 @@ void SoundFrameIntoLPCFrame_init (mutableSoundFrameIntoLPCFrame me, constSound i
 
 Thing_implement (SoundFrameIntoLPCFrameAuto, SoundFrameIntoLPCFrame, 0);
 
-autoSoundFrameIntoLPCFrameAuto SoundFrameIntoLPCFrameAuto_create (constSound input, mutableLPC output, double effectiveAnalysisWidth, 
+autoSoundFrameIntoLPCFrameAuto SoundFrameIntoLPCFrameAuto_create (constSound input, mutableLPC output, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape) {
 	try {
 		autoSoundFrameIntoLPCFrameAuto me = Thing_new (SoundFrameIntoLPCFrameAuto);
@@ -152,9 +152,11 @@ autoSoundFrameIntoLPCFrameCovar SoundFrameIntoLPCFrameCovar_create (constSound i
 		my cc = zero_VEC (my orderp1);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Cannot create WorkspaceLPCcovar.");
+		Melder_throw (U"Cannot create SoundFrameIntoLPCFrameCovar.");
 	}
 }
+
+
 
 /*
 	Markel & Gray, Linear Prediction of Speech, page 221
@@ -166,17 +168,14 @@ bool structSoundFrameIntoLPCFrameCovar :: inputFrameToOutputFrame () {
 	if (lpcf -> nCoefficients == 0) {
 		frameAnalysisInfo = 6;
 		return false;
-	}
-		
-	VEC x = soundFrame;
-	
-	frameAnalysisInfo = 0;
-	double gain = 0.0;
+	}		
+	constVEC x = soundFrame;
 	/*
 		Compute the covariances
 	*/
-	VEC xi = x.part(m + 1, n), xim1 = x.part(m, n - 1);
-	gain = NUMinner (xi, xi);
+	frameAnalysisInfo = 0;
+	constVECVU xi = x.part (m + 1, n), xim1 = x.part (m, n - 1);
+	double gain = NUMinner (xi, xi);
 	cc [1] = NUMinner (xi, xim1);
 	cc [2] = NUMinner (xim1, xim1);
 
@@ -189,19 +188,19 @@ bool structSoundFrameIntoLPCFrameCovar :: inputFrameToOutputFrame () {
 	}
 
 	b [1] = 1.0;
+	for (integer i = 2; i <= b.size; i ++)
+		b [i] = 0.0;
 	beta [1] = cc [2];
 	a [1] = 1.0;
 	a [2] = grc [1] = -cc [1] / cc [2];
 	lpcf -> gain = gain += grc [1] * cc [1];
-	integer iend = 1;
-	for (integer i = 2; i <= m; i ++) { // 130
+	integer i = 2;
+	for (i = 2; i <= m; i ++) { // 130
 		for (integer j = 1; j <= i; j ++)
 			cc [i - j + 2] = cc [i - j + 1] + x [m - i + 1] * x [m - i + j] - x [n - i + 1] * x [n - i + j];
-
-		long double s = 0.0;
-		for (integer j = m + 1; j <= n; j ++) // 30
-			s += x [j - i] * x [j];
-		cc [1] = s;
+		
+		// cc[1]=0.0; for (integer j = m + 1; j <= n; j ++) cc [1] += x [j - i] * x [j];
+		cc [1] = NUMinner (x.part (m + 1 - i, n - i), x.part (m + 1, n)); //30
 			
 		b [i * (i + 1) / 2] = 1.0;
 		for (integer j = 1; j <= i - 1; j ++) { // 70
@@ -211,23 +210,22 @@ bool structSoundFrameIntoLPCFrameCovar :: inputFrameToOutputFrame () {
 			} else if (beta [j] == 0.0)
 				continue;
 
-			s = 0.0;
+			double gam = 0.0;
 			for (integer k = 1; k <= j; k ++)
-				s += cc [k + 1] * b [j * (j - 1) / 2 + k]; // 50
-			const double gam = s / beta [j];
+				gam += cc [k + 1] * b [j * (j - 1) / 2 + k]; // 50
+			gam /= beta [j];
 			for (integer k = 1; k <= j; k ++)
 				b [i * (i - 1) / 2 + k] -= gam * b [j * (j - 1) / 2 + k]; // 60
 		}
 
-		s = 0.0;
+		beta [i] = 0.0;
 		for (integer j = 1; j <= i; j ++)
-			s += cc [j + 1] * b [i * (i - 1) / 2 + j]; // 80
-		beta [i] = s;
+			beta [i] += cc [j + 1] * b [i * (i - 1) / 2 + j]; // 80
 		if (beta [i] <= 0.0) {
 			frameAnalysisInfo = 3;
 			break;
 		}
-		s = 0.0;
+		double s = 0.0;
 		for (integer j = 1; j <= i; j ++)
 			s += cc [j] * a [j]; // 100
 		grc [i] = -s / beta [i];
@@ -242,12 +240,12 @@ bool structSoundFrameIntoLPCFrameCovar :: inputFrameToOutputFrame () {
 			break;
 		}
 		lpcf -> gain = gain;
-		iend ++;
 	}
 end:
-	lpcf -> a.resize (iend);
-	lpcf -> a.part (1, iend)  <<=  a.part (2, iend + 1);
-	lpcf -> nCoefficients = lpcf -> a.size; // maintain invariant
+	const integer numberOfCoefficients = i - 1;
+	lpcf -> a.resize (numberOfCoefficients);
+	lpcf -> a.part (1, numberOfCoefficients)  <<=  a.part (2, i);
+	lpcf -> nCoefficients = numberOfCoefficients; // maintain invariant
 	return true;
 }
 
