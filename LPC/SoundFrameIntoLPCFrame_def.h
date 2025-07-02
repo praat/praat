@@ -22,8 +22,8 @@ oo_DEFINE_CLASS (SoundFrameIntoLPCFrame, SoundFrameIntoSampledFrame)
 	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (LPC, outputlpc)
 	oo_INTEGER (order)
 	oo_INTEGER (currentOrder)
-	oo_INTEGER (orderp1) 	// conveniance order+1
-	oo_VEC (a, orderp1)		// common workvector
+	oo_INTEGER (orderp1) 	// convenience order+1
+	oo_VEC (a, orderp1)		// common work vector
 
 	#if oo_DECLARING
 	
