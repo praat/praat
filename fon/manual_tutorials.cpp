@@ -478,7 +478,7 @@ The authors
 
 The Praat program was created by Paul Boersma and David Weenink of
 the Institute of Phonetics Sciences of the University of Amsterdam.
-Home page: #`https://praat.org` or #`https://www.fon.hum.uva.nl/praat/`.
+Home page: #`https://praat.org` or #`https://www.fon.hum.uva.nl/praat`.
 
 For questions and suggestions, mail to the Praat discussion list,
 which is reachable from the Praat home page, or directly to #`paul.boersma@uva.nl`.

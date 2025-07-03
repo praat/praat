@@ -120,7 +120,8 @@ https://praat.org or https://praat.github.io/praat.
 ### 2.1. License
 
 Most of the source code of Praat is distributed on GitHub under the General Public License,
-[version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) or later.
+[version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) or later,
+or [version 3](https://praat.github.io/praat/manual/General_Public_License__version_3.html) or later.
 However, as Praat includes software written by others,
 the whole of Praat is distributed under the General Public License,
 [version 3](https://praat.github.io/praat/manual/General_Public_License__version_3.html) or later.
