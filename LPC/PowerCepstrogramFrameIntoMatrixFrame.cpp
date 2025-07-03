@@ -87,10 +87,10 @@ void structPowerCepstrogramFrameIntoMatrixFrame :: saveOutputFrame (void) {
 }
 
 void structPowerCepstrogramFrameIntoMatrixFrame :: saveLocalOutputFrames (void) {
-	Melder_assert (localOutput.ncol == numberOfFrames);
+	Melder_assert (localOutput.ncol == maximumNumberOfFrames);
 	Melder_assert (localOutput.nrow == matrix -> ny);
 	for (integer irow = 1; irow <= localOutput.nrow; irow ++)
-		for (integer outputcol = startFrame, icol = 1; icol <=numberOfFrames; icol ++, outputcol ++)
+		for (integer outputcol = startFrame, icol = 1; icol <=currentNumberOfFrames; icol ++, outputcol ++)
 			matrix -> z [irow] [outputcol] = localOutput [irow] [icol];
 }
 

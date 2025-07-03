@@ -32,7 +32,8 @@ oo_DEFINE_CLASS (SampledFrameIntoSampledFrame, Daata)
 	*/
 	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (SampledIntoSampledStatus, status)
 	oo_INTEGER (startFrame)
-	oo_INTEGER (numberOfFrames)
+	oo_INTEGER (maximumNumberOfFrames)		// for allocating thread specific memory
+	oo_INTEGER (currentNumberOfFrames)
 	oo_INTEGER (currentFrame)				// the frame we are working on
 	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in a frame analysis
 	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo
@@ -51,6 +52,8 @@ oo_DEFINE_CLASS (SampledFrameIntoSampledFrame, Daata)
 		virtual void inputFramesToOutputFrames (integer fromFrame, integer toFrame); // sets 'currentFrame'
 
 		virtual void allocateOutputFrames (void);
+		
+		virtual void allocateMemoryAfterThreadsAreKnown ();
 		
 		virtual void saveLocalOutputFrames (void) {};
 

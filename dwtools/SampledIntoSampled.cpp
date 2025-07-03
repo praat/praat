@@ -189,6 +189,8 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 			*/
 			const integer numberOfThreadsToUse = SampledIntoSampled_getNumberOfConcurrentThreadsToUse ();
 			const integer numberOfThreads = std::min (numberOfThreadsToUse, numberOfThreadsNeeded);
+			frameIntoFrame -> maximumNumberOfFrames = numberOfFramesPerThread;
+			frameIntoFrame -> allocateMemoryAfterThreadsAreKnown();
 			OrderedOf<structSampledFrameIntoSampledFrame> workThreads;
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
 				autoSampledFrameIntoSampledFrame frameIntoFrameCopy = Data_copy (frameIntoFrame);
@@ -210,7 +212,7 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 						const integer startFrame = numberOfFramesInRun * (irun - 1) + 1 + (ithread - 1) * numberOfFramesPerThread;
 						const integer endFrame = ( ithread == numberOfThreadsInRun ? lastFrameInRun : startFrame + numberOfFramesPerThread - 1 );
 						frameIntoFrameCopy -> startFrame = startFrame;
-						frameIntoFrameCopy -> numberOfFrames = endFrame - startFrame + 1;
+						frameIntoFrameCopy -> currentNumberOfFrames = endFrame - startFrame + 1;
 						
 						auto analyseFrames = [&globalFrameErrorCount] (SampledFrameIntoSampledFrame fifthread, integer fromFrame, integer toFrame) {
 							fifthread -> inputFramesToOutputFrames (fromFrame, toFrame);
@@ -234,6 +236,8 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 			}
 			my globalFrameErrorCount = globalFrameErrorCount;
 		} else {
+			frameIntoFrame -> maximumNumberOfFrames = numberOfFrames;
+			frameIntoFrame -> currentNumberOfFrames = numberOfFrames;
 			frameIntoFrame -> inputFramesToOutputFrames (1, numberOfFrames); // no threading
 			frameIntoFrame -> saveLocalOutputFrames();
 			globalFrameErrorCount = frameIntoFrame -> framesErrorCount;
