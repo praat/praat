@@ -74,8 +74,8 @@ static void logo (Graphics graphics) {
 	Graphics_setFont (graphics, kGraphics_font::COURIER);
 	Graphics_text (graphics, 0.36, 0.28, U"https://praat.org");
 	Graphics_text (graphics, 0.36, 0.22, U"https://www.fon.hum.uva.nl/praat");
-	Graphics_text (graphics, 0.36, 0.16, U"https://praat.github.io/praat");
-	Graphics_text (graphics, 0.36, 0.08, U"https://github.com/praat/praat");
+	Graphics_text (graphics, 0.36, 0.16, U"https://praat.github.io");
+	Graphics_text (graphics, 0.36, 0.08, U"https://github.com/praat/praat.github.io");
 }
 
 int main (int argc, char *argv []) {
