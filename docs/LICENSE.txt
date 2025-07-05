@@ -1,6 +1,6 @@
 Project: Praat
 Authors: Paul Boersma & David Weenink
-Websites: https://www.fon.hum.uva.nl/praat, https://praat.org (https://praat.github.io/praat)
+Websites: https://www.fon.hum.uva.nl/praat, https://praat.org (https://praat.github.io)
 
 
 License for the Praat website
