@@ -616,7 +616,7 @@ double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTrendBeforeSm
 			const double cpps = Table_getMean (table.get(), 1); // no frame number, no time, quefrency
 			return cpps;
 		} else  {
-			autoMatrix cpp = PowerCepstrogram_to_Matrix_CPP (me, trendSubtracted, pitchFloor, pitchCeiling, deltaF0,
+			autoMatrix cpp = PowerCepstrogram_to_Matrix_CPP (smooth.get(), trendSubtracted, pitchFloor, pitchCeiling, deltaF0,
 				peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
 			const double cpps = Matrix_getMean (cpp.get(), cpp -> xmin, cpp -> xmax, 5.5, 6.5); // TODO Sampled_getMean??
 			return cpps;
