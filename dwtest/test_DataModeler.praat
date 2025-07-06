@@ -242,7 +242,7 @@ procedure test_exponential_plus_constant
 	.dm2 = To DataModeler: -1, 1, "x", "y", "", "Exponential plus constant", 3	
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.95
-	;removeObject: .table, .dm, .dm2
+	removeObject: .table, .dm, .dm2
 	appendInfoLine: " OK"
 	appendInfoLine: tab$, "Test exponential plus constant OK"
 endproc

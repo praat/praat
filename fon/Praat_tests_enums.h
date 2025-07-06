@@ -63,6 +63,8 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 43, THING_AUTO, U"ThingAuto")
 	enums_add (kPraatTests, 44, FILEINMEMORY_IO, U"FileInMemory_io")
 	enums_add (kPraatTests, 45, TIME_MULTI_THREADING, U"TimeMultiThreading")
-enums_end (kPraatTests, 45, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 46, TIME_MEDIAN, U"TimeMedian")
+	enums_add (kPraatTests, 47, TIME_SLOPE_SELECTION, U"TimeSlopeSelection")
+	enums_end (kPraatTests, 47, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */

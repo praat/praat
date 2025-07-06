@@ -336,7 +336,9 @@ inline autoINTVEC shuffle_INTVEC (constINTVECVU const& x) {
 }
 
 extern void sort_e_VEC_inout (VEC const& x);   // cannot be a VECVU
+extern void sort_VEC_inout (VEC const& x);   // cannot be a VECVU
 extern void sort_INTVEC_inout (INTVEC const& x) noexcept;   // cannot be an INTVECVU
+
 
 inline autoVEC sort_e_VEC (constVECVU const& x) {
 	autoVEC result = copy_VEC (x);

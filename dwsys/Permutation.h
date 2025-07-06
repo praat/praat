@@ -2,7 +2,7 @@
 #define _Permutation_h_
 /* Permutation.h
  *
- * Copyright (C) 2005-2022 David Weenink
+ * Copyright (C) 2005-2022, 2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,19 @@
 
 #include "melder.h"
 #include "Collection.h"
+#include "Graphics.h"
 #include "NUMsorting.h"
 
 #include "Permutation_def.h"
 
 /*
 	Class invariant: any permutation equals the identity permutation after all its elements are sorted ascendingly.
+	Alternative: a permutation of size n contains all numbers from 1 to n.
 */
 
 void Permutation_init (Permutation me, integer numberOfElements);
+
+autoPermutation Permutation_createSimplePermutation (constINTVEC const& numbers);
 
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first);
 
@@ -41,12 +45,26 @@ autoPermutation Permutation_create (integer numberOfElements, bool identity);
 
 autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kStrings_sorting sorting);
 
+void Permutation_drawAsLine (Permutation me, Graphics g, bool garnish);
+
 void Permutation_checkInvariant (Permutation me);
 /* Check that the elements, if sorted ascendingly, are exactly equal to the identity (1,2,...). */
 
 
 void Permutation_sort (Permutation me);
 /* Set p [1..n] = 1,..n */
+
+integer Permutation_getNumberOfInversions (Permutation me);
+/*
+	Count the number of times when i < j && p [i] >  p [j].
+	E.g. {1,2,3} -> 0 iversions; {3,2,1} -> 3; {1,3,2} -> 1.
+ */
+
+autoINTVEC Permutation_getRandomInversionIndices (Permutation me, integer maxNumberOfRandomInversions);
+autoINTVEC Permutation_getAllInversionIndices (Permutation me);
+
+autoMAT Permutation_getRandomInversions (Permutation me, integer maxNumberOfRandomInversions); /* convenience for interface */
+autoMAT Permutation_getAllInversions (Permutation me); /* convenience for interface */
 
 void Permutation_permuteRandomly_inplace (Permutation me, integer from, integer to);
 
@@ -79,6 +97,7 @@ integer Permutation_getIndexAtValue (Permutation me, integer value);
 /* Find i for which p [i] = value */
 
 autoPermutation Permutation_invert (Permutation me);
+void Permutation_invert_into (Permutation me, mutablePermutation result);
 /*  */
 
 void Permutation_reverse_inline (Permutation me, integer from, integer to);
@@ -90,6 +109,7 @@ void Permutation_next_inplace (Permutation me);
 void Permutation_previous_inplace (Permutation me);
 
 autoPermutation Permutations_multiply2 (Permutation me, Permutation thee);
+void Permutations_multiply2_into (Permutation me, Permutation thee, mutablePermutation result);
 
 autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me);
 
@@ -103,5 +123,7 @@ void Permutation_permuteINTVEC_inout (Permutation me, INTVEC vec);
 void Permutation_permuteSTRVEC_inout (Permutation me, autoSTRVEC & vec); // special
 
 autoPermutation Permutation_moveElementsToTheFront (Permutation me, constINTVEC const& subsetPositions);
+
+void Permutations_swap (Permutation me, Permutation thee);
 
 #endif /* _Permutation_h_ */

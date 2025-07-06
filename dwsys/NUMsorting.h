@@ -199,5 +199,34 @@ inline void VECrankSorted (VECVU const& a) {
 		a [a.size] = a.size;
 }
 
- #endif /* _NUMsorting_h_ */
- 
+
+template <typename T>
+automatrix<T> matrix_sortRows (constmatrix<T> const& m, constINTVECVU const& columnNumbers) {
+	automatrix<T> result = newmatrixraw<T> (m.nrow, m.ncol);
+	autoINTVEC rows = to_INTVEC (m.nrow);
+	std::sort (rows.begin(), rows.end(),
+		[&] (integer rowi, integer rowj) -> bool {
+			for (integer icol = 1; icol <= columnNumbers.size; icol ++) {
+				const integer col = columnNumbers [icol];
+				if (m [rowi] [col] < m [rowj] [col])
+					return true;
+				if (m [rowi] [col] > m [rowj] [col])
+					return false;
+			}
+			return false;
+		}
+	);
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		result.row (irow)  <<=  m.row (rows [irow]);
+	return result;
+}
+
+inline autoINTMAT sortRows_INTMAT (constINTMAT const& m, constINTVECVU const& columnNumbers) {
+	return matrix_sortRows<integer> (m, columnNumbers);
+}
+
+inline autoMAT sortRows_MAT (constMAT const& m, constINTVECVU const& columnNumbers) {
+	return matrix_sortRows<double> (m, columnNumbers);
+}
+
+#endif /* _NUMsorting_h_ */

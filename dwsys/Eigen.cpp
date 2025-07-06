@@ -39,6 +39,7 @@
 #include "Eigen.h"
 #include "MAT_numerics.h"
 #include "NUMmachar.h"
+#include "NUMselect.h"
 #include "NUMlapack.h"
 #include "NUM2.h"
 #include "SVD.h"
@@ -169,7 +170,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	/*
 		Deselect the eigenvalues < eps * max_eigenvalue by making them undefined
 	*/
-	const double maxEigenvalue = NUMmax_e (alpha.part (k + 1, k + ll));
+	const double maxEigenvalue = num::NUMmax_e (alpha.part (k + 1, k + ll));
 	integer numberOfDeselected = 0;
 	for (integer i = k + 1; i <= k + ll; i ++) {
 		if (alpha [i] < NUMfpp -> eps * maxEigenvalue) {

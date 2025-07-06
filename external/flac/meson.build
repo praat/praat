@@ -1,5 +1,5 @@
 # meson.build of the external library "flac"
-# David Weenink, 4 January 2024
+# David Weenink, 23 June 2025
 
 sources = '''
 	flac_bitmath.c flac_bitreader.c
@@ -10,7 +10,7 @@ sources = '''
 	flac_memory.c flac_metadata_iterators.c
 	flac_metadata_object.c flac_stream_decoder.c
 	flac_stream_encoder.c flac_stream_encoder_framing.c
-	flac_window.c flac_windows_unicode_filenames.c'''.split()
+	flac_window.c flac_share_win_utf8_io.c'''.split()
 
 libflac = static_library (
 	'flac',

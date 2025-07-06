@@ -1,6 +1,6 @@
 /* manual_Permutation.cpp
  *
- * Copyright (C) 2005-2023 David Weenink
+ * Copyright (C) 2005-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ NORMAL (U"'1-2', '1-02', '1-20', '10-20', 'fred', 'jane', 'pic01', 'pic2', 'pic0
 	"'tom', 'x2-g8', 'x2-y7', 'x2-y08', 'x8-y8'.")
 MAN_END
 
-MAN_BEGIN (U"Permutation", U"djmw", 20050721)
+MAN_BEGIN (U"Permutation", U"djmw", 20250120)
 INTRO (U"One of the @@types of objects@ in Praat. A Permutation object with %n elements consists of some ordering of "
 	"the numbers 1,2...%n.")
 ENTRY (U"Interpretation")
@@ -61,6 +61,7 @@ NORMAL (U"Query:")
 LIST_ITEM (U"\\bu ##Get number of elements#")
 LIST_ITEM (U"\\bu @@Permutation: Get value...|Get value...@")
 LIST_ITEM (U"\\bu @@Permutation: Get index...|Get index...@")
+LIST_ITEM (U"\\bu @@Permutation: Get number of inversions|Get number of inversions...@")
 NORMAL (U"Modification:")
 LIST_ITEM (U"\\bu @@Permutation: Sort|Sort@")
 LIST_ITEM (U"\\bu @@Permutation: Swap blocks...|Swap blocks...@")
@@ -107,6 +108,15 @@ MAN_BEGIN (U"Permutation: Get index...", U"djmw", 20050714)
 INTRO (U"Get the index position of the value. ")
 ENTRY (U"Example")
 NORMAL (U"The query for the index of value 3 for the permutation (3,2,4,5,1) gives 1.")
+MAN_END
+
+MAN_BEGIN (U"Permutation: Get number of inversions", U"djmw", 20250120)
+INTRO (U"Get the number of %inversions in a Permutation object. An inversion is defined as: if i < j then p(i) >  p(j).")
+ENTRY (U"Examples")
+NORMAL (U"The query for the number of inversions in the permutation (3,2,4,5,1) gives 3 because 3>2, 3>1 and 2>1.")
+NORMAL (U"The permutation (1,2,3,4) has 0 inversions.")
+NORMAL (U"The permutation (4,3,2,1) has 6 inversions.")
+NORMAL (U"The number of inversions of a permutation with %n elements is always in the closed interval [0, %n(%n-1)/2].")
 MAN_END
 
 MAN_BEGIN (U"Permutation: Table jump...", U"djmw", 20191211)

@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2023 David Weenink, 2015,2023,2024 Paul Boersma
+ * Copyright (C) 1993-2025 David Weenink, 2015,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@
 #include "Polygon_extensions.h"
 #include "Polynomial_to_Spectrum.h"
 #include "Roots_to_Spectrum.h"
-#include "SampledToSampledWorkspace.h"
+#include "SampledIntoSampled.h"
 #include "Sound_and_Spectrum_dft.h"
 #include "Sound_extensions.h"
 #include "Sound_and_TextGrid_extensions.h"
@@ -4609,6 +4609,15 @@ DIRECT (HELP__Permutation_help) {
 	HELP (U"Permutation")
 }
 
+FORM (GRAPHICS_EACH__Permutation_drawAsLine, U"", nullptr) {
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO
+	GRAPHICS_EACH (Permutation)
+		Permutation_drawAsLine (me, GRAPHICS, garnish);
+	GRAPHICS_EACH_END
+}
+
 FORM (CREATE_ONE__Permutation_create, U"Create Permutation", U"Create Permutation...") {
 	WORD (name, U"Name", U"p")
 	NATURAL (numberOfElements, U"Number of elements", U"10")
@@ -4617,6 +4626,16 @@ FORM (CREATE_ONE__Permutation_create, U"Create Permutation", U"Create Permutatio
 DO
 	CREATE_ONE
 		autoPermutation result = Permutation_create (numberOfElements, identity);
+	CREATE_ONE_END (name)
+}
+
+FORM (CREATE_ONE__Permutation_createSimplePermutation, U"Permutation: Create simple Permutation", U"") {
+	WORD (name, U"Name", U"p")
+	INTEGERVECTOR (numbers, U"The Permutation", WHITESPACE_SEPARATED_, U"3 1 2")
+	OK
+DO
+	CREATE_ONE
+		autoPermutation result = Permutation_createSimplePermutation (numbers);
 	CREATE_ONE_END (name)
 }
 
@@ -4641,6 +4660,27 @@ DIRECT (QUERY_ONE_FOR_REAL_VECTOR__Permutation_listValues) {
 		for (integer i = 1; i <= my numberOfElements; i++)
 			result [i] = my p [i];
 	QUERY_ONE_FOR_REAL_VECTOR_END
+}
+
+DIRECT (QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfInversions) {
+	QUERY_ONE_FOR_INTEGER (Permutation)
+		const integer result = Permutation_getNumberOfInversions (me);
+	QUERY_ONE_FOR_INTEGER_END (U" (inversions)")
+}
+
+FORM (QUERY_ONE_FOR_MATRIX__Permutation_listRandomInversions, U"Permutation: Get random inversions", U"Permutation: Get random inversions...") {
+	NATURAL (maxNumberOfInversions, U"max. number of inversions", U"1")
+	OK
+DO
+	QUERY_ONE_FOR_MATRIX (Permutation)
+		autoMAT result = Permutation_getRandomInversions (me, maxNumberOfInversions);
+	QUERY_ONE_FOR_MATRIX_END
+}
+
+DIRECT (QUERY_ONE_FOR_MATRIX__Permutation_listAllInversions) {
+	QUERY_ONE_FOR_MATRIX (Permutation)
+		autoMAT result = Permutation_getAllInversions (me);
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 FORM (QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue, U"Permutation: Get index", U"Permutation: Get index...") {
@@ -5338,28 +5378,29 @@ DIRECT (MODIFY_FIRST_OF_ONE_AND_ONE__Roots_Polynomial_polish) {
 
 FORM (SETTINGS__SampledDataAnalysisSettings, U"Sampled data analysis settings", U"Sampled data analysis settings...") {
 	COMMENT (U"This setting determines how fast your analyses will be performed on your computer.")
-	
+	COMMENT (U"")
 	BOOLEAN (useMultithreading, U"Use multi-threading", true)
-	COMMENT (SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailableInfo ());
+	COMMENT (SampledIntoSampled_getNumberOfConcurrentThreadsAvailableInfo ())
+	COMMENT (U"")
 	NATURAL (numberOfConcurrentThreadsToUse, U"Number of threads to use",
-		Melder_integer (SampledToSampledWorkspace_getNumberOfConcurrentThreadsAvailable ()));
+		Melder_integer (SampledIntoSampled_getNumberOfConcurrentThreadsAvailable ()))
 	COMMENT (U"The minimum number of frames to be analysed in a thread:")
+	COMMENT (U"")
 	INTEGER (minimumNumberOfFramesPerThread, U"Min. frames / thread",
-		Melder_integer (SampledToSampledWorkspace_getMinimumNumberOfFramesPerThread ()));
-	COMMENT (U"The maximum number of frames to be analysed in a thread,")
-	COMMENT (U"where a value of 0 means no upper limit.")
+		Melder_integer (SampledIntoSampled_getMinimumNumberOfFramesPerThread ()))
+	COMMENT (U"The maximum number of frames to be analysed in a thread, where a value of 0 means no upper limit.")
+	COMMENT (U"")
 	INTEGER (maximumNumberOfFramesPerThread, U"Max. frames / thread",
-		Melder_integer (SampledToSampledWorkspace_getMaximumNumberOfFramesPerThread ()));
+		Melder_integer (SampledIntoSampled_getMaximumNumberOfFramesPerThread ()))
+	BOOLEAN (extraAnalysisInfo, U"Extra analysis info", false)
 	OK
 DO
 	PREFS
-		SampledToSampledWorkspace_setMultiThreading (useMultithreading);
-		SampledToSampledWorkspace_setNumberOfConcurrentThreadsToUse (numberOfConcurrentThreadsToUse);
-		SampledToSampledWorkspace_setMinimumNumberOfFramesPerThread (minimumNumberOfFramesPerThread);
-		SampledToSampledWorkspace_setMaximumNumberOfFramesPerThread (maximumNumberOfFramesPerThread);
-		Melder_require (!useMultithreading || maximumNumberOfFramesPerThread == 0 ||
-			maximumNumberOfFramesPerThread >= minimumNumberOfFramesPerThread,
-			U"The minimum number of frames per thread should not exceed the maximum number of frames per thread.");
+	Melder_require (!useMultithreading || maximumNumberOfFramesPerThread == 0 ||
+		maximumNumberOfFramesPerThread >= minimumNumberOfFramesPerThread,
+		U"The minimum number of frames per thread should not exceed the maximum number of frames per thread.");
+	SampledIntoSampled_dataAnalysisSettings (useMultithreading, numberOfConcurrentThreadsToUse, 
+		minimumNumberOfFramesPerThread, maximumNumberOfFramesPerThread, extraAnalysisInfo);
 	PREFS_END
 }
 
@@ -8958,7 +8999,9 @@ void praat_David_generics_new_init () {
 	);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 1,
-			CREATE_ONE__Permutation_create);
+						  CREATE_ONE__Permutation_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple Permutation...", nullptr, 1,
+						  CREATE_ONE__Permutation_createSimplePermutation);
 	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", nullptr, 2,
 			CREATE_ONE__Polynomial_create);
@@ -10021,6 +10064,8 @@ void praat_David_init () {
 
 	praat_addAction1 (classPermutation, 0, U"Permutation help",
 			nullptr, 0, HELP__Permutation_help);
+	praat_addAction1 (classPermutation, 0, U"Draw as line...",
+					  nullptr, 0, GRAPHICS_EACH__Permutation_drawAsLine);
 	praat_addAction1 (classPermutation, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classPermutation, 1, U"Get number of elements",
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfElements);
@@ -10030,7 +10075,13 @@ void praat_David_init () {
 				nullptr, 1, QUERY_ONE_FOR_REAL_VECTOR__Permutation_listValues);
 		praat_addAction1 (classPermutation, 1, U"Get index...",
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue);
-	praat_addAction1 (classPermutation, 0, U"Modify -", nullptr, 0, nullptr);
+		praat_addAction1 (classPermutation, 1, U"Get number of inversions",
+				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfInversions);
+		praat_addAction1 (classPermutation, 1, U"List random inversions...",
+						  nullptr, 1, QUERY_ONE_FOR_MATRIX__Permutation_listRandomInversions);
+		praat_addAction1 (classPermutation, 1, U"List all inversions",
+						  nullptr, 1, QUERY_ONE_FOR_MATRIX__Permutation_listAllInversions);
+		praat_addAction1 (classPermutation, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classPermutation, 0, U"Permute randomly (in-place)...",
 				nullptr, 1, MODIFY__Permutation_permuteRandomlyInplace);
 		praat_addAction1 (classPermutation, 1, U"Sort",

@@ -38,7 +38,7 @@ libfon = static_library (
 	'fon',
 	sources : sources,
 	dependencies : gtk_dep,
-	include_directories : [dwsys_inc, dwtools_inc, espeak_inc, flac_inc, mp3_inc, portaudio_inc, fon_inc, foned_inc, gram_inc, kar_inc, LPC_inc, melder_inc, stat_inc, sys_inc]
+	include_directories : [dwsys_inc, dwtools_inc, espeak_inc, flac_inc, mp3_inc, portaudio_inc, fon_inc, foned_inc, gram_inc, kar_inc, LPC_inc, melder_inc, num_inc, stat_inc, sys_inc]
 )
 
 libfon_dep = declare_dependency (

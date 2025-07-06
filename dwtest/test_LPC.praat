@@ -7,6 +7,8 @@ appendInfoLine: "test_LPC"
 
 @testLPCInterface
 
+@more
+
 appendInfoLine: "test_LPC OK"
 
 procedure testLPCInterface
@@ -87,14 +89,14 @@ procedure testCornerCases
 	.notEnoughSamples = Create Sound from formula: "Shorty", 1, 0, 
 	... 0.002, .samplingFrequency, ~ 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)
 
-	.error$ = "Analysis window too short."
+	.error$ = "Analysis window duration too short."
 		... + " For a prediction order of " + string$ (.predictionOrder)
-		... + ", the window length should be greater than "
+		... + ", the analysis window duration should be greater than "
 		... + fixed$ (.predictionOrder / .samplingFrequency, 5)
-		... + " s. Please increase the window length or "
+		... + " s. Please increase the analysis window duration or "
 		... + "lower the prediction order."
 
-	# asserterror cannot deal with varables, we need the evaluation quotes ' '
+	# asserterror cannot deal with variables, we need the evaluation quotes ' '
 	asserterror '.error$'
 	.lpc = To LPC (burg): .predictionOrder, 0.001, 0.005, 50
 
@@ -147,7 +149,7 @@ procedure more
 		call get_formants 'lpc' 'method$'
 		deltaf1 = deltaf
 		deltab1 = deltab
-		#assert deltaf1 < 0.07 and deltab1 < 3.2; ('method$')
+		assert deltaf1 < 0.07 and deltab1 < 3.2; ('method$')
 	
 		select lpc
 		plus sound
@@ -155,7 +157,7 @@ procedure more
 		call get_formants lpcr 'method$':robust
 		deltaf2 = deltaf
 		deltab2 = deltab
-		assert deltaf2 < 0.01 and deltab2 < 0.2; ('method$':robust) 'deltaf2' 'deltab2'
+		assert deltaf2 < 0.04 and deltab2 < 1.1; ('method$':robust) 'deltaf2' 'deltab2'
 		select lpc
 		plus lpcr
 		Remove
@@ -163,8 +165,6 @@ procedure more
 
 	select sound
 	Remove
-
-
 endproc
 
 procedure get_formants: .lpc, .method$

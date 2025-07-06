@@ -1,6 +1,6 @@
 /* PowerCepstrogram.cpp
  *
- * Copyright (C) 2013-2022 David Weenink
+ * Copyright (C) 2013-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,12 @@
  */
 
 #include "PowerCepstrogram.h"
+#include "PowerCepstrogramFrameIntoMatrixFrame.h"
+#include "SoundFrameIntoPowerCepstrogramFrame.h"
 #include "Cepstrum_and_Spectrum.h"
+#include "Matrix_extensions.h"
 #include "NUM2.h"
+#include "SampledIntoSampled.h"
 #include "Sound_and_Spectrum.h"
 #include "Sound_extensions.h"
 
@@ -26,6 +30,8 @@
 #define TOLOG(x) ((1 / NUMln10) * log ((x) + 1e-30))
 #define TO10LOG(x) ((10 / NUMln10) * log ((x) + 1e-30))
 #define FROMLOG(x) (exp ((x) * (NUMln10 / 10.0)) - 1e-30)
+
+integer a = sizeof(struct structMatrix);
 
 Thing_implement (PowerCepstrogram, Matrix, 2); // derives from Matrix -> also version 2
 
@@ -100,7 +106,23 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	}
 }
 
-void PowerCepstrogram_subtractTrend_inplace (PowerCepstrogram me, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod) {
+void PowerCepstrogram_subtractTrend_inplace (mutablePowerCepstrogram me, double qstartFit, double qendFit, 
+	kCepstrum_trendType trendLineType, kCepstrum_trendFit fitMethod)
+{
+	autoPowerCepstrogramFrameIntoMatrixFrame ws = PowerCepstrogramFrameIntoMatrixFrame_create (me, me, qstartFit, qendFit,
+		trendLineType, fitMethod); // output == input
+	ws -> getSlopeAndIntercept = true;
+	ws -> getPeakAndPosition = false;
+	ws -> subtractTrend = true;
+	ws -> trendSubtracted = false;
+	autoPowerCepstrogramIntoMatrixStatus status =  PowerCepstrogramIntoMatrixStatus_create (my nx);
+	autoSampledIntoSampled sis = SampledIntoSampled_create (me, me, ws.move(), status.move());
+	SampledIntoSampled_analyseThreaded (sis.get());	
+}
+
+void PowerCepstrogram_subtractTrend_inplace_old (PowerCepstrogram me, double qstartFit, double qendFit, 
+	kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod)
+{
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
 		for (integer icol = 1; icol <= my nx; icol ++) {
@@ -113,7 +135,7 @@ void PowerCepstrogram_subtractTrend_inplace (PowerCepstrogram me, double qstartF
 	}
 }
 
-autoPowerCepstrogram PowerCepstrogram_subtractTrend (PowerCepstrogram me, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod) {
+autoPowerCepstrogram PowerCepstrogram_subtractTrend (constPowerCepstrogram me, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod) {
 	try {
 		autoPowerCepstrogram thee = Data_copy (me);
 		PowerCepstrogram_subtractTrend_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
@@ -121,7 +143,6 @@ autoPowerCepstrogram PowerCepstrogram_subtractTrend (PowerCepstrogram me, double
 	} catch (MelderError) {
 		Melder_throw (me, U": no tilt subtracted.");
 	}
-	
 }
 
 autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pitchFloor, double pitchCeiling) {
@@ -132,7 +153,7 @@ autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pit
 		for (integer icol = 1; icol <= my nx; icol ++) {
 			his z.row (1)  <<=  my z.column (icol);
 			double qpeak;
-			const double cpp = PowerCepstrum_getPeakProminence_hillenbrand (him.get(), pitchFloor, pitchCeiling, & qpeak);
+			const double cpp = PowerCepstrum_getPeakProminence_hillenbrand (him.get(), pitchFloor, pitchCeiling, qpeak);
 			const double time = Sampled_indexToX (me, icol);
 			Table_setNumericValue (thee.get(), icol, 1, time);
 			Table_setNumericValue (thee.get(), icol, 2, qpeak);
@@ -142,6 +163,39 @@ autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pit
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Table with cepstral peak prominence values created.");
+	}
+}
+
+void PowerCepstrogram_into_Matrix_CPP (PowerCepstrogram me, mutableMatrix thee, bool trendSubtracted, double pitchFloor,
+	double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType, double qminFit, double qmaxFit,
+	kCepstrum_trendType trendLineType, kCepstrum_trendFit fitMethod)
+{
+		Sampled_assertEqualDomains (me, thee);
+		
+		autoPowerCepstrogramFrameIntoMatrixFrame ws = PowerCepstrogramFrameIntoMatrixFrame_create (me, thee, qminFit, qmaxFit, trendLineType, fitMethod);
+		ws -> getSlopeAndIntercept = true;
+		ws -> getPeakAndPosition = true;
+		ws -> subtractTrend = false;
+		ws -> trendSubtracted = trendSubtracted;
+		const double qminSearchInterval = 1.0 / pitchCeiling, qmaxSearchInterval = 1.0 / pitchFloor;
+		PowerCepstrumWorkspace_initPeakSearchPart (ws -> powerCepstrumWs.get(), qminSearchInterval, qmaxSearchInterval, peakInterpolationType);
+		autoPowerCepstrogramIntoMatrixStatus status =  PowerCepstrogramIntoMatrixStatus_create (thy nx);
+		autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.move(), status.move());
+		SampledIntoSampled_analyseThreaded (sis.get());
+}
+
+autoMatrix PowerCepstrogram_to_Matrix_CPP (PowerCepstrogram me, bool trendSubtracted, double pitchFloor, double pitchCeiling,
+	double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit,
+	kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod)
+{
+	try {
+		/* Matrix rows: time, cppRaw, slope, intercept, cppCorrected, peakQuefrency */
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 6.5, 6, 1.0, 1.0);
+		PowerCepstrogram_into_Matrix_CPP (me, thee.get(), trendSubtracted, pitchFloor, pitchCeiling, deltaF0, peakInterpolationType, 
+			qstartFit, qendFit, lineType, fitMethod);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": could mot create Matrix with CPP values. ");
 	}
 }
 
@@ -168,7 +222,7 @@ autoTable PowerCepstrogram_to_Table_CPP (PowerCepstrogram me, bool includeFrameN
 			his z.row (1)  <<=  my z.column (iframe);
 			double peakQuefrency;
 			const double cpp = PowerCepstrum_getPeakProminence (him.get(), pitchFloor, pitchCeiling, peakInterpolationType,
-				qstartFit, qendFit, lineType, fitMethod, & peakQuefrency);
+				qstartFit, qendFit, lineType, fitMethod, peakQuefrency);
 			if (includePeakQuefrency)
 				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (peakQuefrency, numberOfQuefrencyDecimals));
 			Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (cpp, numberOfCPPdecimals));
@@ -176,6 +230,27 @@ autoTable PowerCepstrogram_to_Table_CPP (PowerCepstrogram me, bool includeFrameN
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Table with cepstral peak prominence values created.");
+	}
+}
+autoTable PowerCepstrogram_to_Table_CPPvalues (PowerCepstrogram me, double pitchFloor, double pitchCeiling,
+	double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit,
+	kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod)
+{
+	try {
+		static const conststring32 colNames [] = { U"time(s)", U"dB/s", U"intercept(dB)", U"peak(dB)", U"quefrency(s)", U"cpp(dB)" };
+		autoTable thee = Table_createWithColumnNames (my nx, ARRAY_TO_STRVEC (colNames));
+		if (lineType == kCepstrum_trendType::EXPONENTIAL_DECAY)
+			Table_renameColumn_e (thee.get(), 2, U"dB/ln(s)");
+		autoMatrix m = PowerCepstrogram_to_Matrix_CPP (me, false, pitchFloor, pitchCeiling,
+			deltaF0,  peakInterpolationType,  qstartFit,  qendFit, lineType, fitMethod);
+		Melder_assert (m -> nx == my nx && m -> ny == 6);
+		for (integer irow = 1; irow <= my nx; irow ++) {
+			for (integer icol = 1; icol <= m -> ny; icol ++)
+				Table_setNumericValue (thee.get(), irow, icol, m -> z [icol] [irow]);
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"Could not create Table from PowerCepstrogram.");
 	}
 }
 
@@ -268,10 +343,9 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 		if (numberOfFrames > 1.0) {
 			const double sigma = numberOfFrames / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
 			const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (my nx));   // TODO: explain edge case
-			autoNUMfft_Table fourierTable;
-			NUMfft_Table_init (& fourierTable, nfft);
+			autoNUMFourierTable fourierTable = NUMFourierTable_create (nfft);
 			for (integer iq = 1; iq <= my ny; iq ++) {
-				VECsmooth_gaussian (thy z.row (iq), my z.row (iq), sigma, & fourierTable);
+				VECsmooth_gaussian (thy z.row (iq), my z.row (iq), sigma, fourierTable.get());
 				abs_VEC_inout (thy z.row (iq));
 			}
 		}
@@ -281,11 +355,10 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 		const double numberOfQuefrencyBins = quefrencyAveragingWindow / my dy;
 		if (numberOfQuefrencyBins > 1.0) {
 			const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (my ny));   // TODO: explain edge case
-			autoNUMfft_Table fourierTable;
-			NUMfft_Table_init (& fourierTable, nfft);
+			autoNUMFourierTable fourierTable = NUMFourierTable_create (nfft);
 			const double sigma = numberOfQuefrencyBins / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
-				VECsmooth_gaussian_inplace (thy z.column (iframe), sigma, & fourierTable);
+				VECsmooth_gaussian_inplace (thy z.column (iframe), sigma, fourierTable.get());
 				abs_VEC_inout (thy z.column (iframe));
 			}
 		}
@@ -336,13 +409,48 @@ autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 	}
 }
 
-autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
+void Sound_into_PowerCepstrogram (Sound input, PowerCepstrogram output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+	Sampled_assertEqualDomains (input,  output);
+	autoSoundFrameIntoPowerCepstrogramFrame ws = SoundFrameIntoPowerCepstrogramFrame_create (input, output, effectiveAnalysisWidth, windowShape);
+	autoSoundIntoPowerCepstrogramStatus status = SoundIntoPowerCepstrogramStatus_create (output -> nx);
+	autoSampledIntoSampled sis = SampledIntoSampled_create (input, output, ws.move(), status.move());
+	SampledIntoSampled_analyseThreaded (sis.get());
+}
+
+autoPowerCepstrogram Sound_to_PowerCepstrogram_new (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
+	try {
+		const kSound_windowShape windowShape = kSound_windowShape::GAUSSIAN_2;
+		const double effectiveAnalysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
+		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
+		const double physicalSoundDuration = my dx * my nx;
+		volatile const double windowDuration = Melder_clippedRight (physicalAnalysisWidth, physicalSoundDuration);
+		Melder_require (physicalSoundDuration >= physicalAnalysisWidth,
+			U"Your sound is too short:\n"
+			U"it should be longer than ", physicalAnalysisWidth, U" s.");
+		const double samplingFrequency = 2.0 * maximumFrequency;
+		autoSound input = Sound_resampleAndOrPreemphasize (me, maximumFrequency, 50_integer, preEmphasisFrequency);
+		double t1;
+		integer nFrames;
+		Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
+		const integer soundFrameSize = getSoundFrameSize (physicalAnalysisWidth, input -> dx);
+		const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (soundFrameSize));
+		const integer nq = nfft / 2 + 1;
+		const double qmax = 0.5 * nfft / samplingFrequency, dq = 1.0 / samplingFrequency;
+		autoPowerCepstrogram output = PowerCepstrogram_create (my xmin, my xmax, nFrames, dt, t1, 0, qmax, nq, dq, 0);
+		Sound_into_PowerCepstrogram (input.get(), output.get(), effectiveAnalysisWidth, windowShape);
+		return output;
+	} catch (MelderError) {
+		Melder_throw (me, U": no PowerCepstrogram created.");
+	}
+}
+
+autoPowerCepstrogram Sound_to_PowerCepstrogram_old (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
 		const double analysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
 		const double physicalAnalysisWidth = 2.0 * analysisWidth;
-		const double physicalDuration = my dx * my nx;
+		const double physicalSoundDuration = my dx * my nx;
 		volatile const double windowDuration = Melder_clippedRight (2.0 * analysisWidth, my dx * my nx);   // gaussian window
-		Melder_require (physicalDuration >= physicalAnalysisWidth,
+		Melder_require (physicalSoundDuration >= physicalAnalysisWidth,
 			U"Your sound is too short:\n"
 			U"it should be longer than 6.0 / pitchFloor (", physicalAnalysisWidth, U" s).");
 		// Convenience: analyse the whole sound into one Cepstrogram_frame
@@ -382,6 +490,15 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 	} catch (MelderError) {
 		Melder_throw (me, U": no PowerCepstrogram created.");
 	}
+}
+
+autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
+	autoPowerCepstrogram result;
+	if (Melder_debug == -10)
+		result = Sound_to_PowerCepstrogram_old (me, pitchFloor, dt, maximumFrequency, preEmphasisFrequency);
+	else
+		result = Sound_to_PowerCepstrogram_new (me, pitchFloor, dt, maximumFrequency, preEmphasisFrequency);
+	return result;
 }
 
 //       1           2                          nfftdiv2
@@ -439,8 +556,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		const integer nfftdiv2 = nfft / 2;
 		autoVEC fftbuf = zero_VEC (nfft); // "complex" array
 		autoVEC spectrum = zero_VEC (nfftdiv2 + 1); // +1 needed 
-		autoNUMfft_Table fftTable;
-		NUMfft_Table_init (& fftTable, nfft); // sound to spectrum
+		autoNUMFourierTable fftTable = NUMFourierTable_create (nfft); // sound to spectrum
 		
 		const double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv2 + 1);
 		autoPowerCepstrogram him = PowerCepstrogram_create (my xmin, my xmax, numberOfFrames, dt, t1, 0, qmax, nfftdiv2+1, dq, 0);
@@ -455,7 +571,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			fftbuf.part (1, nosInWindow)  <<=  thy z.row (1).part (istart, iend) * hamming.all();
 			fftbuf.part (nosInWindow + 1, nfft)  <<=  0.0;
 			
-			NUMfft_forward (& fftTable, fftbuf.get());
+			NUMfft_forward (fftTable.get(), fftbuf.get());
 			complexfftoutput_to_power (fftbuf.get(), spectrum.get(), true); // log10(|fft|^2)
 		
 			centre_VEC_inout (spectrum.get()); // subtract average
@@ -472,7 +588,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 				fftbuf [i+i-1] = 0.0;
 			}
 			fftbuf [nfft] = spectrum [nfftdiv2 + 1];
-			NUMfft_backward (& fftTable, fftbuf.get());
+			NUMfft_backward (fftTable.get(), fftbuf.get());
 			for (integer i = 1; i <= nfftdiv2 + 1; i ++)
 				his z [i] [iframe] = fftbuf [i] * fftbuf [i];
 
@@ -486,28 +602,37 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 	}
 }
 
-double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod) {
+double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTrendBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod) {
 	try {
 		autoPowerCepstrogram flattened;
-		if (subtractTiltBeforeSmoothing)
+		bool trendSubtracted = subtractTrendBeforeSmoothing;
+		if (subtractTrendBeforeSmoothing)
 			flattened = PowerCepstrogram_subtractTrend (me, qstartFit, qendFit, lineType, fitMethod);
 
-		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (flattened ? flattened.get() : me, timeAveragingWindow, quefrencyAveragingWindow);
-		autoTable table = PowerCepstrogram_to_Table_CPP (smooth.get(), false, false, 6, 16, false, 6, pitchFloor, pitchCeiling, deltaF0, peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
-		const double cpps = Table_getMean (table.get(), 1); // no frame number, no time, quefrency
-		return cpps;
+		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (subtractTrendBeforeSmoothing ? flattened.get() : me, timeAveragingWindow, quefrencyAveragingWindow);
+		if (Melder_debug == -6) { // old algorithm
+			autoTable table = PowerCepstrogram_to_Table_CPP (smooth.get(), false, false, 6, 16, false, 6, pitchFloor, pitchCeiling,
+				deltaF0, peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
+			const double cpps = Table_getMean (table.get(), 1); // no frame number, no time, quefrency
+			return cpps;
+		} else  {
+			autoMatrix cpp = PowerCepstrogram_to_Matrix_CPP (smooth.get(), trendSubtracted, pitchFloor, pitchCeiling, deltaF0,
+				peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
+			const double cpps = Matrix_getMean (cpp.get(), cpp -> xmin, cpp -> xmax, 5.5, 6.5); // TODO Sampled_getMean??
+			return cpps;
+		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no CPPS value calculated.");
 	}
 }
 
-double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling) {
+double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractTrendBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling) {
 	try {
 		autoPowerCepstrogram him;
-		if (subtractTiltBeforeSmoothing)
+		if (subtractTrendBeforeSmoothing)
 			him = PowerCepstrogram_subtractTrend (me, 0.001, 0, kCepstrum_trendType::LINEAR, kCepstrum_trendFit::LEAST_SQUARES);
 
-		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (subtractTiltBeforeSmoothing ? him.get() : me, timeAveragingWindow, quefrencyAveragingWindow);
+		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (subtractTrendBeforeSmoothing ? him.get() : me, timeAveragingWindow, quefrencyAveragingWindow);
 		autoTable table = PowerCepstrogram_to_Table_hillenbrand (smooth.get(), pitchFloor, pitchCeiling);
 		const double cpps = Table_getMean (table.get(), 3);
 		return cpps;

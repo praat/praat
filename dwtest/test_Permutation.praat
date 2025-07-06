@@ -1,5 +1,5 @@
 # test_Permutation.praat
-# djmw 20050710, 20070820, 20100525, 20100819, 20110418, 20220825
+# djmw 20050710, 20070820, 20100525, 20100819, 20110418, 20220825, 20250110
 
 appendInfoLine: "test_Permutation.praat"
 
@@ -12,6 +12,8 @@ appendInfoLine: "test_Permutation.praat"
 @multiply
 @jump
 @distributionTest: 10, 10000
+@countInversions
+@testCreateSimple
 
 appendInfoLine: "test_Permutation OK"
 
@@ -36,7 +38,7 @@ procedure multiply:
 	for .i to .numberOfPermutations + 1
 		removeObject: .p [.i]
 	endfor
-	appendInfoLine:  ".o.k."
+	appendInfoLine:  ".OK"
 endproc
 
 procedure rotate
@@ -44,11 +46,11 @@ procedure rotate
 	for .i to 20
 		.p = Create Permutation: "test", .i,  "yes"
 	
-		appendInfo: tab$, .i
+		appendInfo: tab$, tab$, .i
 		for .k to .i
 			selectObject: .p
 			.pk = Rotate: 0, 0, .k
-			.pkk = Get value: .k+1
+			.pkk = Get value: .k + 1
 			if .pkk > 0
 				assert .pkk = 1 ; i='.i', k='.k'
 			endif
@@ -60,7 +62,7 @@ procedure rotate
 			removeObject: .pk, .pki
 			appendInfo: "."
 		endfor
-		appendInfoLine: " o.k."
+		appendInfoLine: " OK"
 		removeObject: .p
 	endfor
 endproc
@@ -79,7 +81,7 @@ procedure invertp
 		appendInfo: "."
 		removeObject: .pin, .p, .pm
 	endfor
-	appendInfoLine: "o.k."
+	appendInfoLine: "OK"
 endproc
 
 procedure test_600_12
@@ -94,7 +96,7 @@ procedure test_600_12
 		assert .pkil = .l; l='.l'
 	endfor
 	removeObject: .pin, .pininv, .p, .pm
-	appendInfoLine: "o.k."
+	appendInfoLine: " OK"
 endproc  
 
 procedure sequence
@@ -116,7 +118,7 @@ procedure sequence
 		appendInfo: "."
 	endfor
 	removeObject: p
-	appendInfoLine: "o.k." 
+	appendInfoLine: "OK"
 endproc
  
 procedure swap
@@ -141,7 +143,7 @@ procedure swap
 		endfor
 	endfor
 	removeObject: .p
-	appendInfoLine: "o.k."
+	appendInfoLine: "OK"
 endproc
 
 procedure jump
@@ -174,10 +176,11 @@ procedure jump
 	assert .p# [9] = 7
 	assert .p# [10] = 10
 	removeObject: .p1, .p2
-	appendInfoLine: ".o.k." 
+	appendInfoLine: ".OK"
 endproc
 
 procedure distributionTest: .size, .numberOfRepetitions
+	appendInfoLine: tab$, "distributionTest"
 	.permutation = Create Permutation: "p", .size, "yes"
 	.distribution## = zero## (.size, .size)
 	for .iperm to .numberOfRepetitions
@@ -203,15 +206,22 @@ procedure distributionTest: .size, .numberOfRepetitions
 	.df = (.size - 1)^2 ; last value in each row and whole last row are completely determined
 	.p = chiSquareQ (.chiSq, .df)
 	assert .p > 0.999
-	appendInfoLine: tab$, "p = ", .p, " for chiSquare = ",
+	appendInfoLine: tab$, tab$, "p = ", .p, " for chiSquare = ",
 	...  .chiSq, " with ", .df, " degrees of freedom."
 	removeObject: .permutation, .tor
-	appendInfo: tab$, "Realized## - expected (=", fixed$ (.expected, 0), "):", 
-	... newline$,  tab$, .diff##, newline$
+	appendInfoLine: tab$, tab$, "Realized## - expected (=", fixed$ (.expected, 0), "):"
+	for .irow to .size
+		appendInfo: tab$, tab$, tab$, .diff## [.irow, 1]
+		for .icol from 2 to .size
+			appendInfo: " ", .diff## [.irow, .icol]
+		endfor
+		appendInfoLine: ""
+	endfor
+	appendInfoLine: tab$, "distributionTest OK"
 endproc
  
 procedure testPermutePart
-	appendInfoLine: tab$, "Permute part"
+	appendInfo: tab$, "Permute part"
 	.p10 = Create Permutation: "p", 10, "yes"
 	.v10# = List values
 	.p5 = Create Permutation: "p", 5, "no"
@@ -231,9 +241,135 @@ procedure testPermutePart
 		assert .v2# [5 + i] = 5 + .v5# [i]
 	endfor
 	removeObject: .p2, .p1, .p5, .p10
-	appendInfoLine: tab$, "Permute part OK"
+	appendInfoLine: " OK"
 endproc
 
+procedure countInversions
+	appendInfoLine: tab$, "Count inversions"
+	appendInfo: tab$, tab$, "Counting"
+	.size = 20
+	for .i from 2 to .size
+		.p = Create Permutation: "p", .i, "yes"
+		for .repetions to max (5, min (10, .size * (.size - 1) / 2))
+			Permute randomly (in-place): 0, 0
+			.inversions = Get number of inversions
+			.inversionsc = 0
+			.values# = List values
+			for .k to .i - 1
+				.valk = .values# [.k]
+				for .j from .k + 1 to .i
+					if .valk > .values# [.j]
+						.inversionsc += 1
+					endif
+				endfor
+			endfor
+			assert .inversions = .inversionsc
+		endfor
+		removeObject: .p
+	endfor
+	appendInfoLine: "  OK"
 
+	.p = Create Permutation: "p", 10, "yes"
+	# 1,2,3,4,5,6,7,8,9,10 -> 0
+	.pi = Interleave: 0, 0, 5, 0
+	# 1,6,2,7,3,8,4,9,5,10 -> 10
+	.numberOfInversions = Get number of inversions
+	assert .numberOfInversions = 10
 
+	appendInfo: tab$, tab$, "List all inversions"
+	.inversions_known## = {{6,2}, {6,3}, {6,4}, {6,5}, {7,3}, {7,4}, {7,5}, {8,4}, {8,5}, {9,5}}
+	.inversions## = List all inversions
+	assert numberOfRows (.inversions##) = .numberOfInversions
+	for .irow to .numberOfInversions
+		.known = .inversions_known## [.irow, 1]
+		.test = .inversions## [.irow, 1]
+		assert .known = .test ; col1 '.known' '.test'
+		.known = .inversions_known## [.irow, 2]
+		.test = .inversions## [.irow, 2]
+		assert .known = .test ; col2 '.known' '.test'
+	endfor
+	appendInfoLine: " OK"
 
+	appendInfo: tab$, tab$, "List random inversions"
+	.nrandom = 2
+	.randomInversions## = List random inversions: .nrandom
+	@checkInversions: .randomInversions##, .inversions_known##;
+
+	.nrandom = .numberOfInversions + 5
+	.randomInversions## = List random inversions: .nrandom
+	@checkInversions: .randomInversions##, .inversions_known##;
+	appendInfoLine: " OK"
+
+	removeObject: .pi, .p
+	appendInfoLine: tab$, "Count inversions OK"
+endproc
+
+procedure checkInversions: .r##, .ref##
+	for .irowr to numberOfRows (.r##)
+		.found = 0
+		.irow = 1
+		repeat
+			if .r## [.irowr, 1] = .ref## [.irow, 1] and .r## [.irowr, 2] = .ref## [.irow, 2]
+				.found = 1
+			endif
+			.irow += 1
+		until .found or .irow > numberOfRows (.ref##)
+		assert .found; '.irowr'
+	endfor
+endproc
+
+procedure testCreateSimple
+	appendInfo: tab$ ,"testCreateSimple"
+	.p1 = Create simple Permutation: "p1", {1, 2}
+	asserterror There should be at least one element in a Permutation.
+	.p2 = Create simple Permutation: "p2", {}
+	asserterror All numbers from 1 to 3 should occur exactly once, e.g. the value 1 occurs 2 times.
+	.p3 = Create simple Permutation: "p3",  {3, 1, 1}
+	asserterror Your maximum number (4) should not be larger than the number of elements you supplied (3).
+	.p4 = Create simple Permutation: "p4",  {3, 1, 4}
+	asserterror Your minimum number should be 1 (it is 0).
+	.p5 = Create simple Permutation: "p5",  {0, 1, 2}
+	removeObject: .p1
+	appendInfoLine: " OK"
+endproc
+
+procedure multiplyP: .a, .b
+	assert .a < .b
+	selectObject: .a, .b
+	.a$ = selected$ ("Permutation", 1)
+	.b$ = selected$ ("Permutation", 2)
+	.r = Multiply
+	.newName$ = .a$ + "_x_" + .b$
+	Rename: .newName$
+	.numberOfInversions =  Get number of inversions
+	appendInfoLine: .numberOfInversions, " inversions for: ", .newName$
+endproc
+
+procedure checkDifferenceBetweenTwoPermutations
+	.b = Create simple Permutation: "b", {2, 6, 7, 10, 5, 1, 4, 9, 3, 8}
+	.e = Create simple Permutation: "e", {10, 9, 7, 8, 6, 5, 4, 2, 3, 1}
+	.nie = Get number of inversions
+	.ei = Invert
+	Rename: "ei"
+	selectObject: .b
+	.nib = Get number of inversions
+	appendInfoLine: "We want ", .nie - .nib, " inversions"
+	.bi = Invert
+	Rename: "bi"
+	selectObject: .b
+	.bc = Copy: "b"
+	selectObject: .e
+	.ec = Copy: "e"
+	selectObject: .ei
+	.eic = Copy: "ei"
+	@multiplyP: .b, .e
+	@multiplyP: .e, .bc
+	@multiplyP: .b, .ei
+	@multiplyP: .ei, .bc
+	@multiplyP: .ei, .bi
+	@multiplyP: .e, .bi
+	@multiplyP: .bi, .ec
+	@multiplyP: .bi, .eic
+	
+	removeObject: .b, .e, .bi, .ei, .b_x_ei, .ei_x_b, .ei_x_bi
+endproc

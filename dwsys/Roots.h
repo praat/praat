@@ -2,7 +2,7 @@
 #define _Roots_h_
 /* Roots.h
  *
- * Copyright (C) 1993-2024 David Weenink
+ * Copyright (C) 1993-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20110306 Latest modification.
 */
 
 #include "Data.h"
@@ -59,10 +58,11 @@ void Roots_Polynomial_polish (mutableRoots me, constPolynomial thee);
 autoPolynomial Roots_to_Polynomial (constRoots me, bool rootsAreReal);
 
 /*
-	workspace >= n * n + 3 * n =
+	workspace size >= n * n + 2 * n + 11 * n=
 		n * n		; for hessenberg matrix
 		+ 2 * n 	; for real and imaginary parts
-		+ 6 * n		; the maximum for dhseqr_
+		+ 11 * n	; the maximum for dhseqr_
 */
-void Polynomial_into_Roots (constPolynomial me, mutableRoots r, mutableWorkvectorPool workspace);
+void Polynomial_into_Roots (constPolynomial me, mutableRoots r, VEC workspace);
+
 #endif /* _Roots_h_ */

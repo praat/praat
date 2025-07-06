@@ -2,7 +2,7 @@
 #define _Sound_to_Formant_mt_h_
 /* Sound_to_Formant.h
  *
- * Copyright (C) 1993-2024 David Weenink
+ * Copyright (C) 1993-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@
 #include "Formant.h"
 #include "Sound_and_LPC.h"
 
-#include "SoundToFormantWorkspace.h"
-
 void Sound_into_Formant_robust_mt (constSound me, Formant out,	double windowLength,
 	integer numberOfPoles, double safetyMargin, double k, integer itermax, double tol, double location, bool wantlocation
 );
@@ -44,15 +42,15 @@ autoFormant Sound_to_Formant_burg_mt (constSound me, double dt, double numberOfF
 );
 
 
-void Sound_into_Formant_autocorrelation_mt (constSound me, Formant thee, double windowLength, integer numberOfPoles, double safetyMargin);
+void Sound_into_Formant_auto_mt (constSound me, Formant thee, double windowLength, integer numberOfPoles, double safetyMargin);
 
-autoFormant Sound_to_Formant_autocorrelation_mt (constSound me, double dt, double numberOfFormants, double maximumFrequency,
+autoFormant Sound_to_Formant_auto_mt (constSound me, double dt, double numberOfFormants, double maximumFrequency,
 	double windowLength, double preemphasisFrequency, double safetyMargin
 );
 
-void Sound_into_Formant_covariance_mt (constSound me, Formant thee, double windowLength, integer numberOfPoles, double safetyMargin);
+void Sound_into_Formant_covar_mt (constSound me, Formant thee, double windowLength, integer numberOfPoles, double safetyMargin);
 
-autoFormant Sound_to_Formant_covariance_mt (constSound me, double dt, double numberOfFormants, double maximumFrequency,
+autoFormant Sound_to_Formant_covar_mt (constSound me, double dt, double numberOfFormants, double maximumFrequency,
 	double windowLength, double preemphasisFrequency, double safetyMargin
 );
 

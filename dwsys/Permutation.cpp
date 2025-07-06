@@ -1,6 +1,6 @@
 /* Permutation.cpp
  *
- * Copyright (C) 2005-2022 David Weenink
+ * Copyright (C) 2005-2022, 2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,10 @@
 */
 
 #include <time.h>
+#include "BinaryIndexedTree.h"
 #include "Permutation.h"
 #include "NUM2.h"
+#include "PermutationInversionCounter.h"
 
 #include "oo_DESTROY.h"
 #include "Permutation_def.h"
@@ -60,10 +62,23 @@ static integer Permutation_checkRange (Permutation me, integer *from, integer *t
 }
 
 void Permutation_checkInvariant (Permutation me) {
-	autoINTVEC p = sort_INTVEC (my p.get());
+	/*
+		All element numbers should be in the interval [1, numberOfElements].
+	*/
+	MelderIntegerRange irange = NUMextrema_e (my p.get());
+	Melder_require (irange.first == 1,
+		U"Your minimum number should be 1 (it is ", irange.first, U").");
+	Melder_require (irange.last == my numberOfElements,
+		U"Your maximum number (", irange.last, U") should not be larger than the number of elements you supplied (", my numberOfElements, U").");
+	/*
+		All element numbers should occur exactly once
+	*/
+	autoINTVEC p = zero_INTVEC (my numberOfElements);
 	for (integer i = 1; i <= my numberOfElements; i ++)
-		Melder_require (p [i] == i,
-			me, U": is not a valid permutation.");
+		p [my p [i]] ++;
+	for (integer i = 1; i <= my numberOfElements; i ++)
+		Melder_require (p [i] == 1,
+			U"All numbers from 1 to ", my numberOfElements, U" should occur exactly once, e.g. the value ", i, U" occurs ", p [i], U" times.");
 }
 
 void structPermutation :: v1_info () {
@@ -82,6 +97,40 @@ void structPermutation :: v1_readText (MelderReadText text, int /*formatVersion*
 void Permutation_init (Permutation me, integer numberOfElements) {
 	my numberOfElements = numberOfElements;
 	my p = to_INTVEC (numberOfElements);
+}
+
+autoPermutation Permutation_createSimplePermutation (constINTVEC const& numbers) {
+	try {
+		Melder_require (numbers.size > 0,
+			U"There should be at least one element in a Permutation.");
+		autoPermutation me = Permutation_create (numbers.size, true);
+		my p.get()  <<=  numbers;
+		Permutation_checkInvariant (me.get());
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"The permutation could not be created.");
+	}
+}
+
+void Permutation_drawAsLine (Permutation me, Graphics g, bool garnish) {
+	const double xmin = 0.0, xmax = my numberOfElements + 1.0;
+	const double ymin = xmin, ymax = xmax;
+	Graphics_setInner (g);
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	autoVEC x = raw_VEC (my numberOfElements), y = raw_VEC (my numberOfElements);
+	for (integer i = 1; i <= my numberOfElements; i ++) {
+		x [i] = i;
+		y [i] = my p [i];
+	}
+	Graphics_polyline (g, my numberOfElements, & x [1], & y [1]);
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_markLeft (g, 1, true, true, false, U"");
+		Graphics_markLeft (g, my numberOfElements, true, true, false, U"");
+		Graphics_markBottom (g, 1, true, true, false, U"");
+		Graphics_markBottom (g, my numberOfElements, true, true, false, U"");
+	}
 }
 
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first) {
@@ -343,12 +392,17 @@ integer Permutation_getIndexAtValue (Permutation me, integer value) {
 autoPermutation Permutation_invert (Permutation me) {
 	try {
 		autoPermutation thee = Data_copy (me);
-		for (integer i = 1; i <= my numberOfElements; i ++)
-			thy p [my p [i]] = i;
+		Permutation_invert_into (me, thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not inverted.");
 	}
+}
+
+void Permutation_invert_into (Permutation me, mutablePermutation result) {
+	Melder_assert (my numberOfElements == result -> numberOfElements);
+	for (integer i = 1; i <= my numberOfElements; i ++)
+		result -> p [my p [i]] = i;
 }
 
 void Permutation_reverse_inline (Permutation me, integer from, integer to) {
@@ -420,14 +474,18 @@ autoPermutation Permutations_multiply2 (Permutation me, Permutation thee) {
 	try {
 		Melder_require (my numberOfElements == thy numberOfElements,
 			U"Number of elements should be equal.");
-		
 		autoPermutation him = Data_copy (me);
-		for (integer i = 1; i <= my numberOfElements; i ++)
-			his p [i] = my p [thy p [i]];
+		Permutations_multiply2_into (me, thee, him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U" not multiplied.");
 	}
+}
+
+void Permutations_multiply2_into (Permutation me, Permutation thee, mutablePermutation result) {
+	Melder_assert (my numberOfElements == thy numberOfElements && my numberOfElements == result -> numberOfElements);
+	for (integer i = 1; i <= my numberOfElements; i ++)
+		result -> p [i] = my p [thy p [i]];
 }
 
 autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me) {
@@ -523,6 +581,7 @@ autoPermutation Permutation_moveElementsToTheFront (Permutation me, constINTVEC 
 			bool inSubset = false;
 			for (integer j = 1; j <= subsetPositions.size; j++)
 				if (my p [i] == thy p [j]) {
+				thy p [++ nextPos] = my p [i];
 					inSubset = true;
 					break;
 				}
@@ -547,6 +606,101 @@ autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kSt
 	} catch (MelderError) {
 		Melder_throw (U"Could not create Permutation from STRVEC.");
 	}	
+}
+
+integer Permutation_getNumberOfInversions (Permutation me) {
+	autoPermutationInversionCounter pic = PermutationInversionCounter_create (my numberOfElements);
+	return pic -> getNumberOfInversions (me);
+}
+
+// count the number of permutations between the two
+integer Permutations_getNumberOfInversions (Permutation me, Permutation thee) {
+	autoPermutation invert = Permutation_invert (me);
+	autoPermutation mult = Permutations_multiply2 (invert.get(), thee);
+	return Permutation_getNumberOfInversions (mult.get());
+}
+
+autoINTVEC Permutation_getAllInversionIndices (Permutation me) {
+	try {
+		const integer maximumNumberOfInversions = Permutation_getNumberOfInversions (me);
+		autoPermutationInversionCounter pic = PermutationInversionCounter_create (my numberOfElements);
+		autoINTVEC inversionIndices = raw_INTVEC (2 * maximumNumberOfInversions);
+		const integer numberOfInversions = pic -> getInversions (me, inversionIndices.get());
+		Melder_assert (numberOfInversions == maximumNumberOfInversions);
+		return inversionIndices;
+	} catch (MelderError) {
+		Melder_throw (me, U"Could not determine all inversions.");
+	}
+}
+
+autoINTVEC Permutation_getRandomInversionIndices (Permutation me, integer numberOfRandomInversions) {
+	try {
+		const integer maximumNumberOfInversions = Permutation_getNumberOfInversions (me);
+		autoPermutationInversionCounter pic = PermutationInversionCounter_create (my numberOfElements);
+		autoINTVEC inversionIndices = raw_INTVEC (2 * numberOfRandomInversions);
+		autoINTVEC sortedRandomInversionNumbers = raw_INTVEC (numberOfRandomInversions);
+		for (integer i = 1; i <= numberOfRandomInversions; i ++)
+			sortedRandomInversionNumbers [i] = NUMrandomInteger (1, maximumNumberOfInversions);
+		sort_INTVEC_inout (sortedRandomInversionNumbers.get());
+		const integer numberOfInversions = pic -> getSelectedInversions (
+			me, sortedRandomInversionNumbers.get(), inversionIndices.get()
+		);
+		Melder_assert (numberOfInversions == maximumNumberOfInversions);
+		return inversionIndices;
+	} catch (MelderError) {
+		Melder_throw (me, U"Could not determine random inversion indices.");
+	}
+}
+
+autoMAT Permutation_getRandomInversions (Permutation me, integer numberOfRandomInversions) {
+	try {
+		autoMAT inversions;
+		autoINTVEC inversionIndices = Permutation_getRandomInversionIndices (me, numberOfRandomInversions);
+		if (inversionIndices.size > 0) {
+			const integer numberOfPairs = inversionIndices.size / 2;
+			inversions = raw_MAT (numberOfPairs, 2_integer);
+			for (integer i = 1; i <= numberOfPairs; i ++) {
+				inversions [i] [1] = inversionIndices [2 * i];		// ihigh
+				inversions [i] [2] = inversionIndices [2 * i - 1];	// ilow
+				if (inversions [i] [1] < inversions [i] [2])
+					std::swap (inversions [i] [1], inversions [i] [2]);
+			}
+		}
+		return inversions;
+	} catch (MelderError) {
+		Melder_throw (me, U"Could not determine random inversions.");
+	}
+}
+
+autoMAT Permutation_getAllInversions (Permutation me) {
+	try {
+		autoMAT inversions;
+		autoINTVEC inversionIndices = Permutation_getAllInversionIndices (me);
+		if (inversionIndices.size > 0) {
+			const integer numberOfPairs = inversionIndices.size / 2;
+			autoINTVEC columnNumbers {1,2};
+			inversions = raw_MAT (numberOfPairs, 2_integer);
+			for (integer i = 1; i <= numberOfPairs; i ++) {
+				inversions [i] [1] = inversionIndices [2 * i];		// ihigh
+				inversions [i] [2] = inversionIndices [2 * i - 1];	// ilow
+				if (inversions [i] [1] < inversions [i] [2])
+					std::swap (inversions [i] [1], inversions [i] [2]);
+			}
+			autoMAT sorted = sortRows_MAT (inversions.get(), columnNumbers.get());
+			inversions.get()  <<=  sorted.get();
+		}
+		return inversions;
+	} catch (MelderError) {
+		Melder_throw (me, U": Could not determine inversions.");
+	}
+}
+
+void Permutations_swap (Permutation me, Permutation thee) {
+	Melder_assert (my numberOfElements == thy numberOfElements);
+	INTVEC tmp1 = my p.releaseToAmbiguousOwner ();
+	INTVEC tmp2 = thy p.releaseToAmbiguousOwner ();
+	my p.adoptFromAmbiguousOwner (tmp2);
+	thy p.adoptFromAmbiguousOwner (tmp1);
 }
 
 /* End of Permutation.cpp */

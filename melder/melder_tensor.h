@@ -70,7 +70,7 @@ struct vector {
 		: cells (givenCells), size (givenSize) { }
 	explicit vector (matrix<T> const& mat)
 		: vector (mat.cells, mat.nrow * mat.ncol) { }
-	T& operator[] (integer i) const {
+	inline T& operator[] (integer i) const {
 		return our cells [i - 1];
 	}
 	/*

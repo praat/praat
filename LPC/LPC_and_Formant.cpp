@@ -1,6 +1,6 @@
 /* LPC_and_Formant.cpp
  *
- * Copyright (C) 1994-2024 David Weenink
+ * Copyright (C) 1994-2025 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LPCToFormantWorkspace.h"
+#include "LPCFrameIntoFormantFrame.h"
 #include "LPC_and_Formant.h"
 #include "LPC_and_Polynomial.h"
 #include "NUM2.h"
@@ -24,8 +24,14 @@
 
 void LPC_into_Formant (constLPC me, mutableFormant thee, double margin) {
 	Sampled_requireEqualDomainsAndSampling (me, thee);
-	
-	
+
+	autoLPCFrameIntoFormantFrame ws = LPCFrameIntoFormantFrame_create (me, thee, margin);
+	autoLPCIntoFormantStatus status = LPCIntoFormantStatus_create (thy nx);
+	autoSampledIntoSampled sis = SampledIntoSampled_create (me, thee, ws.move(), status.move());
+	const integer numberOfErrorFrames = SampledIntoSampled_analyseThreaded (sis.get());
+	Formant_sort (thee);
+	if (numberOfErrorFrames > 0)
+		Melder_warning (U"LPC_into_Formant: ", numberOfErrorFrames, U" frames have issues.");
 }
 
 autoFormant LPC_to_Formant (constLPC me, double margin) {
@@ -40,12 +46,7 @@ autoFormant LPC_to_Formant (constLPC me, double margin) {
 		Melder_require (my maxnCoefficients < 100,
 			U"We cannot find the roots of a polynomial of order > 99.");
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, maximumNumberOfFormants);
-		autoLPCToFormantWorkspace ws = LPCToFormantWorkspace_create (me, thee.get(), margin);
-		SampledToSampledWorkspace_analyseThreaded (ws.get());
-		
-		Formant_sort (thee.get());
-		if (ws -> globalFrameErrorCount > 0)
-			Melder_warning (ws -> globalFrameErrorCount, U" formant frames out of ", thy nx, U" are suspect.");
+		LPC_into_Formant (me, thee.get(), margin);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Formant created.");

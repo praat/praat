@@ -35,6 +35,7 @@ all-external:
 	$(MAKE) -C external/glpk
 	$(MAKE) -C external/lame
 	$(MAKE) -C external/mp3
+	$(MAKE) -C external/num
 	$(MAKE) -C external/flac
 	$(MAKE) -C external/portaudio
 	$(MAKE) -C external/espeak

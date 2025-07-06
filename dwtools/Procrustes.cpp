@@ -46,8 +46,6 @@
 #include "oo_DESCRIPTION.h"
 #include "Procrustes_def.h"
 
-#include "NUM2.h"
-
 Thing_implement (Procrustes, AffineTransform, 0);
 
 void structProcrustes :: v_transform (MATVU const& out, constMATVU const& in) {

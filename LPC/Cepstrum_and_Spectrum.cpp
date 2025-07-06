@@ -49,9 +49,33 @@ autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 	}
 }
 
+autoSpectrum PowerCepstrum_to_Spectrum (PowerCepstrum me, bool randomPhases) {
+	try {
+		autoSound him = Sound_createSimple (1_integer, my xmax, 1.0 / my dx);
+		for (integer i = 1; i <= my nx; i ++)
+			his z [1] [i] = sqrt (my z [1] [i]);
+		const double mean = NUMmean (his z.row(1));
+		his z.row(1)  -=  mean;
+		autoSpectrum thee = Sound_to_Spectrum (him.get(), true);
+		for (integer i = 1; i <= thy nx; i ++) {
+			thy z [1] [i] = exp (0.5 * thy z [1] [i] / thy dx);
+			thy z [2] [i] = 0.0;
+		}
+		if (randomPhases)
+			for (integer i = 1; i <= thy nx; i ++) {
+				double phase = NUMrandomUniform (0, NUMpi);
+				thy z [2] [i] = thy z [1] [i] * sin (phase);
+				thy z [1] [i] *= cos (phase);
+			}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to Spectrum.");
+	}
+}
+
 autoCepstrum Spectrum_to_Cepstrum (Spectrum me) {
 	try {
-		autoSpectrum dBspectrum = Data_copy (me);
+		autoSpectrum dBspectrum = Data_copy (me); 
 		const VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
 		for (integer i = 1; i <= dBspectrum -> nx; i ++) {
 			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-300);
@@ -87,17 +111,16 @@ autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 
 autoCepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
 	try {
-		autoNUMfft_Table fftTable;
 		// originalNumberOfSamplesProbablyOdd irrelevant
 		Melder_require (my x1 == 0.0,
 			U"A Fourier-transformable Spectrum should have a first frequency of 0 Hz, not ", my x1, U" Hz.");
 		const integer numberOfSamples = my nx - 1;
 		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
-		NUMfft_Table_init (& fftTable, my nx);
+		autoNUMFourierTable fftTable = NUMFourierTable_create (my nx);
 		autoVEC amp = raw_VEC (my nx);
 		for (integer i = 1; i <= my nx; i ++)
 			amp [i] = my v_getValueAtSample (i, 0, 2);
-		NUMfft_forward (& fftTable, amp.get());
+		NUMfft_forward (fftTable.get(), amp.get());
 		
 		for (integer i = 1; i <= my nx; i ++) {
 			const double val = amp [i] / numberOfSamples;// scaling 1/n because ifft(fft(1))= n;
