@@ -236,10 +236,9 @@ integer SampledIntoSampled_analyseThreaded (mutableSampledIntoSampled me)
 			}
 			my globalFrameErrorCount = globalFrameErrorCount;
 		} else {
-			frameIntoFrame -> maximumNumberOfFrames = numberOfFrames;
-			frameIntoFrame -> currentNumberOfFrames = numberOfFrames;
+			frameIntoFrame -> allocateMemoryAfterThreadsAreKnown ();
 			frameIntoFrame -> inputFramesToOutputFrames (1, numberOfFrames); // no threading
-			frameIntoFrame -> saveLocalOutputFrames();
+			frameIntoFrame -> saveLocalOutputFrames ();
 			globalFrameErrorCount = frameIntoFrame -> framesErrorCount;
 		}
 		if (frameIntoFrame -> updateStatus)
