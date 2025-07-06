@@ -77,6 +77,9 @@ void structSampledFrameIntoSampledFrame :: inputFramesToOutputFrames (integer fr
 
 void SampledFrameIntoSampledFrame_init (SampledFrameIntoSampledFrame me, mutableSampled output) {
 	my output = output;
+	my startFrame = 1;
+	my maximumNumberOfFrames = output -> nx;
+	my currentNumberOfFrames = output -> nx;
 }
 
 void SampledFrameIntoSampledFrame_initForStatusUpdates (SampledFrameIntoSampledFrame me, mutableSampledIntoSampledStatus status, bool updateStatus) {
