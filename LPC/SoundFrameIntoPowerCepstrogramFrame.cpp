@@ -79,8 +79,9 @@ void structSoundFrameIntoPowerCepstrogramFrame :: saveOutputFrame () {
 	localOutput.column (localFrame)  <<=  powercepstrum -> z.row (1);	
 }
 
-autoSoundFrameIntoPowerCepstrogramFrame SoundFrameIntoPowerCepstrogramFrame_create (constSound input, mutablePowerCepstrogram output, double effectiveAnalysisWidth, 
-	kSound_windowShape windowShape) {
+autoSoundFrameIntoPowerCepstrogramFrame SoundFrameIntoPowerCepstrogramFrame_create (constSound input, mutablePowerCepstrogram output,
+	double effectiveAnalysisWidth, kSound_windowShape windowShape)
+{
 	try {
 		autoSoundFrameIntoPowerCepstrogramFrame me = Thing_new (SoundFrameIntoPowerCepstrogramFrame);
 		SoundFrameIntoMatrixFrame_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);

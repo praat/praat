@@ -223,7 +223,7 @@ procedure test_perfectCosine: .f0
 	.spectrum2 = Copy: "c"
 	@fillSpectrumWithCosine: .spectrum2, .f0
 	.pc = To PowerCepstrum
-	.qAtPeak = Get quefrency of peak: 1, 330.0, "parabolic"
+	.qAtPeak = Get quefrency of peak: 60, 330.0, "parabolic"
 	.qtoF0 = 1.0 / .qAtPeak
 	assert abs(.qtoF0 - .f0)/ .f0 < 0.005; q: '.qtoF0' , '.f0'
 	appendInfoLine: " OK"
@@ -408,7 +408,7 @@ procedure testCalibratedPowerCepstrogram: .duration, .approximateF0, .peak_dB, .
 	.cpps1 = Get CPPS: "yes", .timeAveragingWindow, .quefrencyAveragingWindow, 60, 350, 0.05, "parabolic",
 		... 0.001, 0.005, "Exponential decay", "Robust" 
 	.rdif1 = abs (.cppsGiven1 - .cpps1)/.cppsGiven1
-	assert .rdif1 < 1e-14; CPPS '.rdif1'
+	assert .rdif1 < 1e-14; CPPS='.rdif1' given='.cppsGiven1' cpps='.cpps1'
 	#
 	# Smoothing with a window 1*dq wide, the background will stay at the same level
 	# only the peak will be widened to three bins
@@ -420,7 +420,7 @@ procedure testCalibratedPowerCepstrogram: .duration, .approximateF0, .peak_dB, .
 	.cpps2 = Get CPPS: "yes", .timeAveragingWindow, .quefrencyAveragingWindow, 60, 350, 0.05, "parabolic",
 		... 0.001, 0.005, "Exponential decay", "Robust" 
 	.rdif2 = abs (.cppsGiven2 - .cpps2)/.cppsGiven2
-	assert .rdif2 < 1e-14; CPPS '.rdif2'
+	assert .rdif2 < 1e-14; CPPS '.rdif2' given='.cppsGiven2' cpps='.cpps2'
 	#
 	# Smoothing with a window 4*dq wide, the background wil stay at the same level
 	# only the peak will be widened but the peak will be at the center so parabolic interpolation 
@@ -434,7 +434,7 @@ procedure testCalibratedPowerCepstrogram: .duration, .approximateF0, .peak_dB, .
 	.cpps3 = Get CPPS: "yes", .timeAveragingWindow, .quefrencyAveragingWindow, 60, 350, 0.05, "parabolic",
 		... 0.001, 0.005, "Exponential decay", "Robust"
 	.rdif3 = abs (.cppsGiven3 - .cpps3) / .cppsGiven3
-	assert .rdif3 < 1e-14; CPPS '.rdif3'
+	assert .rdif3 < 1e-14; CPPS '.rdif3' given='.cppsGiven3' cpps='.cpps3'
 
 	for .ismooth to 0
 		.quefrencyAveragingWindow = randomUniform (0.0006, 0.0003)
@@ -446,7 +446,7 @@ procedure testCalibratedPowerCepstrogram: .duration, .approximateF0, .peak_dB, .
 		selectObject: .powercepstrum
 		.smoothpowercepstrum2 = Smooth: .quefrencyAveragingWindow, 1
 		.cpps2 = Get peak prominence: 60, 350, "parabolic", 0.001, .qmax, "Straight", "Robust slow"
-		assert .cpps == .cpps2 ;
+		assert .cpps == .cpps2; cpps='.cpps' cpps2='.cpps2'
 		removeObject: .smoothcepstrogram, .smoothpowercepstrum, .smoothpowercepstrum2
 	endfor
 	removeObject: .s, .powercepstrum, .powercepstrogram
