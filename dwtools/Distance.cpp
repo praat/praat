@@ -48,7 +48,7 @@ autoDistance Configuration_to_Distance (Configuration me) {
 			for (integer j = i + 1; j <= thy numberOfColumns; j ++) {
 				dist.all()  <<=  my data.row (i)  -  my data.row (j);
 				abs_VEC_inout (dist.get());
-				const double dmax = num::NUMmax_e (dist.get());
+				const double dmax = NUMmax_e (dist.get());
 				double d = 0.0;
 				if (dmax > 0.0) {
 					dist.all()  /=  dmax;   // prevent overflow
