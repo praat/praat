@@ -20,6 +20,9 @@
 
 #include "melder.h"
 
+
+/* Temporary repair to make Praat compilable again */
+
 namespace num {
 	template <class T>
 	T NUMselect (struct vector <T> v, integer k) {
@@ -33,7 +36,7 @@ namespace num {
 	
 	template <class T>
 	T NUMget_kth (struct vector <T>  v, integer k) {
-		
+		return v[1];
 	}
 	
 	template <class T>
@@ -54,6 +57,7 @@ namespace num {
 		return max;
 	}
 }
+
 void timeMedian (void);
 
 #endif /* _NUMselect_h_ */
