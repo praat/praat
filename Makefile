@@ -1,7 +1,7 @@
 # File: Makefile
 
 # Makefile for Praat
-# Paul Boersma & David Weenink, 12 December 2023
+# Paul Boersma & David Weenink, 7 July 2025
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed
@@ -25,6 +25,7 @@ all: all-external all-self
 		external/glpk/libglpk.a \
 		external/clapack/libclapack.a \
 		external/gsl/libgsl.a \
+		external/num/libnum.a \
 		external/vorbis/libvorbis.a \
 		external/opusfile/libopusfile.a \
 		$(LIBS)
@@ -68,6 +69,7 @@ clean-external:
 	$(MAKE) -C external/glpk clean
 	$(MAKE) -C external/lame clean
 	$(MAKE) -C external/mp3 clean
+	$(MAKE) -C external/num clean
 	$(MAKE) -C external/flac clean
 	$(MAKE) -C external/portaudio clean
 	$(MAKE) -C external/espeak clean
