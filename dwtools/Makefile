@@ -1,11 +1,12 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 16 April 2025
+# 7 July 2025
 
 include ../makefile.defs
 
 CPPFLAGS = -I . -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../fon -I ../LPC -I ../foned -I ../EEG \
-	-I ../external/clapack -I ../external/vorbis -I ../external/opusfile -I ../external/portaudio -I ../external/espeak
+	-I ../external/clapack -I ../external/vorbis -I ../external/opusfile -I ../external/portaudio -I ../external/espeak \
+	-I ..external/num
 
 OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Categories.o CategoriesEditor.o \
@@ -20,7 +21,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Discriminant.o  Discriminant_PatternList_Categories.o \
 	EditDistanceTable.o EEG_extensions.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
-	Eigen_and_TableOfReal.o\
+	Eigen_and_TableOfReal.o \
 	Eigen_and_SSCP.o Excitations.o \
 	FilterBank.o FormantGrid_extensions.o \
 	GaussianMixture.o \
@@ -43,7 +44,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Proximity.o Proximity_and_Distance.o \
 	Resonator.o Roots_to_Spectrum.o \
 	SampledIntoSampled.o SampledFrameIntoSampledFrame.o SampledIntoSampledStatus.o \
-	SoundFrameIntoSampledFrame.o \
+	SoundFrameIntoSampledFrame.o SoundFrameIntoMatrixFrame.o SampledFrameIntoMatrixFrame.o \
 	Sound_and_MultiSampledSpectrogram.o Sound_and_MixingMatrix.o \
 	Sound_and_Spectrum_dft.o \
 	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o \
