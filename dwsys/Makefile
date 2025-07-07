@@ -1,5 +1,5 @@
 # makefile for library "dwsys".
-# David Weenink 20250416
+# David Weenink 20250707
 # Paul Boersma 20180810,20240830
 
 include ../makefile.defs
@@ -9,17 +9,17 @@ CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../
 all: libdwsys.a
 
 OBJECTS = ChebyshevSeries.o Collection_extensions.o Command.o \
-	DoublyLinkedList.o Eigen.o \
+	DoublyLinkedList.o Eigen.o ExtendedReal.o \
 	FileInMemory.o \
 	FunctionSeries.o \
 	Graphics_extensions.o Index.o \
 	LegendreSeries.o \
 	MAT_numerics.o \
-	NMF.o NUM2.o NUMhuber.o NUMmachar.o \
+	NMF.o NUM2.o NUMhuber.o NUMmachar.o  \
 	NUMcomplex.o NUMFourier.o NUMsorting.o \
-	NUMmathlib.o NUMstring.o \
-	Permutation.o Permutation_and_Index.o \
-	PermutationInversionCounter.o Polynomial.o \
+	NUMmathlib.o NUMstring.o NUMselect.o \
+	Permutation.o PermutationInversionCounter.o Permutation_and_Index.o \
+	Polynomial.o \
 	Roots.o \
 	SlopeSelector.o Spline.o SVD.o WorkvectorPool.o
 
