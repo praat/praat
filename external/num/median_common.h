@@ -11,6 +11,7 @@
 /**
 Swaps the median of r[a], r[b], and r[c] into r[b].
 */
+
 template <class T>
 void median3(T* r, size_t a, size_t b, size_t c)
 {

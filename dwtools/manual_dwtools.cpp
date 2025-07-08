@@ -3703,6 +3703,27 @@ LIST_ITEM (U"\\bu ##Get real part of root...#")
 LIST_ITEM (U"\\bu ##Get imaginary part of root...#")
 MAN_END
 
+MAN_BEGIN (U"Sampled data analysis settings...", U"djmw", 20250706)
+INTRO (U"This setting determines how fast your data analyses will be performed on your computer. ")
+ENTRY (U"Settings")
+TERM (U"##Use multi-threading#")
+DEFINITION (U"Only if you choose %on, the computing load will be equally divided among a number of different processors"
+	" on your computer. ")
+TERM (U"##Number of threads to use#")
+DEFINITION (U"determines the number of threads that you would like to use. Most modern computers can use multiple "
+	"processors and each processor can process two threads. For each thread all the memory and data structures "
+	" that are needed to perform its analysis have to be allocated beforehand. In this way each thread has its "
+	"own memory and does not interfere with other threads.")
+TERM (U"##Min. frames / thread#")
+DEFINITION (U"the minimum number of frames in a thread. This number should not be too low otherwise ")
+TERM (U"##Max. frames / thread#")
+DEFINITION (U"the maximum number of frames in a thread. ")
+TERM (U"##Extra analysis info#")
+DEFINITION (U"returns extra information for each analysed frame in the info window.")
+ENTRY (U"Examples")
+NORMAL (U"Suppose we have 10 threads available for an analysis that needs 500 frames to be processed. ")
+MAN_END
+
 MAN_BEGIN (U"Scree plot", U"djmw", 20040331)
 NORMAL (U"A scree plot shows the sorted eigenvalues, from large to "
 	"small, as a function of the eigenvalue index.")
