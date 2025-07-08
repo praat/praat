@@ -1,10 +1,10 @@
 /* DataModeler.cpp
  *
- * Copyright (C) 2014-2024 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2014-2025 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
@@ -21,7 +21,6 @@
 #include "NUMmachar.h"
 #include "SVD.h"
 #include "Strings_extensions.h"
-#include "Sound_and_LPC_robust.h"
 #include "Table_extensions.h"
 
 #include "oo_DESTROY.h"
