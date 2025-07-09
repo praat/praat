@@ -1,20 +1,17 @@
+#ifndef _median_of_ninthers_h_
+#define _median_of_ninthers_h_
 /* Copyright Andrei Alexandrescu, 2016-.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * https://boost.org/LICENSE_1_0.txt)
  */
 
-#pragma once
+#include "melder_assert.h"
 #include "median_common.h"
-
-/* Copyright Andrei Alexandrescu, 2016-.
- * Distributed under the Boost Software License, Version 1.0.
- * (See accompanying file LICENSE_1_0.txt or copy at
- * https://boost.org/LICENSE_1_0.txt)
- */
 
 template <class T>
 size_t partitionImpl(T* beg, size_t length);
+
 template <class T>
 void adaptiveQuickselect(T* beg, size_t n, size_t length);
 
@@ -162,3 +159,5 @@ void adaptiveQuickselect(T* r, size_t n, size_t length)
 		}
 	}
 }
+
+#endif /* _median_of_ninthers_h_ */

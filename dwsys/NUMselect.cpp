@@ -17,7 +17,6 @@
 */
 
 #include "NUMselect.h"
-#include "median_of_ninthers.h"
 #include "Permutation.h"
 
 void timeMedian (void) {
@@ -110,4 +109,5 @@ void timeMedian (void) {
         Melder_throw (U"Could not perform timing of medians.");
     }
 }
+
 /* End of file NUMselect.cpp */
