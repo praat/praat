@@ -107,7 +107,7 @@ extern const char * ipaSerifRegularPS [];
 			wcscpy (logFont. lfFaceName, L"Doulos SIL");
 			EnumFontFamiliesExW (my d_gdiGraphicsContext, & logFont, fontFuncEx_doulos, 0, 0);
 			ipaInited = true;
-			if (! hasCharis && ! hasDoulos) {
+			if (! hasCharis && ! hasDoulos &&0) {
 				/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
 				Melder_warning (U"The phonetic font is not available.\n"
 					"Several characters may not look correct.\n"
